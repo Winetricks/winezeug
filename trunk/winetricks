@@ -2,7 +2,7 @@
 # Quick and dirty script to download and install various 
 # redistributable runtime libraries
 #
-# Copyright 2007 Google (Dan Kegel, dank@kegel.com)
+# Copyright 2007, 2008 Google (Dan Kegel, dank@kegel.com)
 # Thanks to Detlef Riekenberg for lots of updates
 # Thanks to Saulius Krasuckas for corrections and suggestions
 
@@ -62,6 +62,7 @@ usage() {
     echo " msxml3     (Note: install a bit squidgy; see http://bugs.winehq.org/show_bug.cgi?id=7849)"
     echo " msxml4     (Note: installing this requires fake c: to be named harddrive1!)"
     echo " pdh        Install pdh.dll (Performance Data Helper)"
+    echo " riched20   Use Microsoft's riched20 and riched32"
     echo " tahoma     Install MS Tahoma font (not part of corefonts)"
     echo " vbvm50     Visual Basic 5 runtime"
     echo " vbrun60    Visual Basic 6 runtime"
@@ -534,6 +535,18 @@ volnum() {
 
 #----------------------------------------------------------------
 
+load_riched20() {
+    # http://support.microsoft.com/?kbid=249973
+    download http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
+    try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/Q249973i.EXE
+    try cp -f $WINETRICKS_TMP/riched??.dll $WINEPREFIX/drive_c/windows/system32
+    override_dlls riched20 riched32
+    
+    rm -rf $WINETRICKS_TMP/*
+}
+
+#----------------------------------------------------------------
+
 load_tahoma() {
     # The tahoma font is needed by e.g. Steam
     download http://internap.dl.sourceforge.net/sourceforge/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
@@ -674,6 +687,7 @@ do
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
     pdh) load_pdh;;
+    riched20) load_riched20;;
     tahoma) load_tahoma;;
     vbvm50) load_vbvm50;;
     vbrun60) load_vbrun60;;
