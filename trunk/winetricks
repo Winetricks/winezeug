@@ -404,15 +404,12 @@ load_mdac28() {
 #----------------------------------------------------------------
 
 load_mfc40() {
-    # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=cf3005d4-7009-4d2d-89d1-b32c482c8a2d
-    echo "Note: Microsoft has since pulled this download.  Sorry!"
-    
-    download . http://download.microsoft.com/download/sql65/Patch/6.5/WIN98/EN-US/MFC40i.exe af289f72aceda7ac2b43bf94b574e74a48cb5663
-    cd $WINETRICKS_TMP/
+    # See http://support.microsoft.com/kb/122244
+    download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
+    try unzip -d $WINETRICKS_TMP $WINETRICKS_CACHE/ole2v.exe
+    try cp -f $WINETRICKS_TMP/MFC40.DLL $WINEPREFIX/drive_c/windows/system32/
+
     rm -rf $WINETRICKS_TMP/*
-    try cabextract $WINETRICKS_CACHE/MFC40i.exe
-    try cp mfc40.dll $WINEPREFIX/drive_c/windows/system32/
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
