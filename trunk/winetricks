@@ -57,7 +57,7 @@ usage() {
     echo " mdac28     MDAC 2.8."
     echo " mfc40"
     echo " mono11     mono 1.1.13-gtksharp-2.8.2 (deprecated, use 1.2)"
-    echo " mono12     mono mono-1.2.5.2-gtksharp-2.10.2"
+    echo " mono12     mono mono-1.2.6-gtksharp-2.10.2"
     echo " msi2       Microsoft Installer 2.0"
     echo " msxml3     (Note: install a bit squidgy; see http://bugs.winehq.org/show_bug.cgi?id=7849)"
     echo " msxml4     (Note: installing this requires fake c: to be named harddrive1!)"
@@ -66,13 +66,19 @@ usage() {
     echo " tahoma     Install MS Tahoma font (not part of corefonts)"
     echo " vbvm50     Visual Basic 5 runtime"
     echo " vbrun60    Visual Basic 6 runtime"
+    echo " xvid       Install xvid video codecs"
+    echo " ffdshow    Install ffdshow video codecs"
     echo " vcrun6     vc6redist from VS6sp4, including mfc42"
     echo " vcrun2005  Visual C++ 2005 redistributable libraries"
+    echo " vcrun2005sp1 Visual C++ 2005sp1 redistributable libraries"
+    echo " vcrun2008  Visual C++ 2008 redistributable libraries"
     echo " wsh51      Windows Scripting Host 5.1"
     echo " wsh56      Windows Scripting Host 5.6 (install vcrun6 first)"
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb    Windows scripting 5.6, vbscript only, no cscript"
     echo "Pseudopackages:"
+    echo " allfonts     Install above fonts (corefonts, tahoma, liberation)"
+    echo " allvcodecs   Install Open Source video codecs (xvid, ffdshow)"
     echo " fakeie6      Set registry to claim IE6sp1 is installed"
     echo " native_mdac  Override odbc32 and odbccp32"
     echo " winver=nt40  Set windows version to nt40"
@@ -119,13 +125,22 @@ try() {
 }
 
 # Download a file
+# Usage: package url [sha1sum [filename]]
+# Caches downloads in winetrickscache/$package
 download() {
-    file=`basename "$1"`
-    test -f $WINETRICKS_CACHE/$file || (cd $WINETRICKS_CACHE; wget -c "$1")
-    if [ "$2"x != ""x ]
+    if [ "$4"x != ""x ]
     then
-	echo "$2  $WINETRICKS_CACHE/$file" > $WINETRICKS_CACHE/$file.sha1sum
-	try sha1sum --status -c $WINETRICKS_CACHE/$file.sha1sum
+        file="$4"
+    else
+        file=`basename "$2"`
+    fi
+    cache=$WINETRICKS_CACHE/$1
+    mkdir -p $cache
+    test -f $cache/$file || (cd $cache; wget -c "$2")
+    if [ "$3"x != ""x ]
+    then
+	echo "$3  $cache/$file" > $cache/$file.sha1sum
+	try sha1sum --status -c $cache/$file.sha1sum
     fi
 }
 
@@ -173,7 +188,7 @@ _EOF_
 #----- One function per package, in alphabetical order ----------
 
 load_art2kmin() {
-    download http://download.microsoft.com/download/office2000dev/art2kmin/1/win98/en-us/art2kmin.exe 73be2622254d1f857a204a03f068787542b985e9
+    download . http://download.microsoft.com/download/office2000dev/art2kmin/1/win98/en-us/art2kmin.exe 73be2622254d1f857a204a03f068787542b985e9
     try $WINE $WINETRICKS_CACHE/art2kmin.exe
     cd "$WINEPREFIX/drive_c/ART2KMin Setup"
     try $WINE Setup.exe INSTALLPFILES=1 /wait $WINETRICKS_QUIET
@@ -184,7 +199,7 @@ load_art2kmin() {
 
 load_cc580() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=6f94d31a-d1e0-4658-a566-93af0d8d4a1e
-    download http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
+    download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
     try $WINE $WINETRICKS_CACHE/cc32inst.exe "/T:`$WINE winepath -w $WINETRICKS_TMP`" /c $WINETRICKS_QUIET
     try $WINE $WINETRICKS_TMP/comctl32.exe
@@ -201,8 +216,8 @@ load_corefonts() {
     # TODO: let user pick mirror, check md5; 
     # see http://corefonts.sourceforge.net/msttcorefonts-2.0-1.spec for how
     # TODO: add more fonts
-    download http://internap.dl.sourceforge.net/sourceforge/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
-    download http://internap.dl.sourceforge.net/sourceforge/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
+    download . http://downloads.sourceforge.net/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
+    download . http://downloads.sourceforge.net/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
     try $WINE $WINETRICKS_CACHE/arial32.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/times32.exe $WINETRICKS_QUIET
 }
@@ -212,7 +227,7 @@ load_corefonts() {
 load_dcom98() {
     # Install native dcom per http://wiki.winehq.org/NativeDcom
     # to avoid http://bugs.winehq.org/show_bug.cgi?id=4228
-    download http://download.microsoft.com/download/d/1/3/d13cd456-f0cf-4fb2-a17f-20afc79f8a51/DCOM98.EXE aff002bd03f17340b2bef2e6b9ea8e3798e9ccc1
+    download . http://download.microsoft.com/download/d/1/3/d13cd456-f0cf-4fb2-a17f-20afc79f8a51/DCOM98.EXE aff002bd03f17340b2bef2e6b9ea8e3798e9ccc1
 
     # Pick win98 so we can install native dcom
     set_winver win98
@@ -275,6 +290,14 @@ _EOF_
 
 #----------------------------------------------------------------
 
+load_ffdshow() {
+    # ffdshow
+    download . http://downloads.sourceforge.net/ffdshow-tryout/ffdshow_beta4a_rev1723_20071224_clsid.exe 6e018139c3ed4800aa3580267d1da47fa936a82a
+    try $WINE $WINETRICKS_CACHE/ffdshow_beta4a_rev1723_20071224_clsid.exe $WINETRICKS_SILENT
+}
+
+#----------------------------------------------------------------
+
 load_gecko() {
     # Load the HTML rendering Engine (Gecko)
     # FIXME: shouldn't this code be in some script installed 
@@ -286,7 +309,7 @@ load_gecko() {
 
     if ! test -f $WINETRICKS_CACHE/wine_gecko-$GECKO_VERSION.cab
     then
-       download "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION"
+       download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION"
     fi
 
     cat > $WINETRICKS_TMP/geckopath.reg <<_EOF_
@@ -319,7 +342,7 @@ load_gdiplus() {
     # http://msdn.microsoft.com/library/en-us/gdicpp/GDIPlus/GDIPlus.asp
     # however, there's no standalone installer.  So install a random
     # app that happens to bundle it.
-    download http://download.microsoft.com/download/a/1/a/a1adc39b-9827-4c7a-890b-91396aed2b86/ppviewer.exe 4d13ca85d1d366167b6247ac7340b7736b1bff87
+    download . http://download.microsoft.com/download/a/1/a/a1adc39b-9827-4c7a-890b-91396aed2b86/ppviewer.exe 4d13ca85d1d366167b6247ac7340b7736b1bff87
     try $WINE $WINETRICKS_CACHE/ppviewer.exe $WINETRICKS_QUIET
     # And then make it globally available.
     try cp "$programfilesdir_unix/Microsoft Office/PowerPoint Viewer/GDIPLUS.DLL" $WINEPREFIX/drive_c/windows/system32/
@@ -330,7 +353,7 @@ load_gdiplus() {
 load_jet40() {
     # http://support.microsoft.com/kb/239114
     # See also http://bugs.winehq.org/show_bug.cgi?id=6085
-    download http://download.microsoft.com/download/4/3/9/4393c9ac-e69e-458d-9f6d-2fe191c51469/jet40sp8_9xnt.exe 8cd25342030857969ede2d8fcc34f3f7bcc2d6d4
+    download . http://download.microsoft.com/download/4/3/9/4393c9ac-e69e-458d-9f6d-2fe191c51469/jet40sp8_9xnt.exe 8cd25342030857969ede2d8fcc34f3f7bcc2d6d4
     try $WINE $WINETRICKS_CACHE/jet40sp8_9xnt.exe $WINETRICKS_QUIET
 }
 
@@ -338,7 +361,7 @@ load_jet40() {
 
 load_liberation() {
     # http://www.redhat.com/promo/fonts/
-    download http://www.redhat.com/f/fonts/liberation-fonts-ttf-3.tar.gz 503fd3c60174b53f59ca41927b72e4a44bab586b
+    download . http://www.redhat.com/f/fonts/liberation-fonts-ttf-3.tar.gz 503fd3c60174b53f59ca41927b72e4a44bab586b
     tar --wildcards -C $WINEPREFIX/drive_c/windows/fonts -xvzf $WINETRICKS_CACHE/liberation-fonts-ttf-3.tar.gz '*.ttf'
 }
 
@@ -350,37 +373,31 @@ set_native_mdac() {
     override_dlls odbc32 odbccp32
 }
 
+#----------------------------------------------------------------
+
 load_mdac25() {
-    # FIXME flush cache before and after to avoid clash with other versions
-    rm -f $WINETRICKS_CACHE/mdac_typ.exe
-    download http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
+    download mdac25 http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
     set_native_mdac
     set_winver nt40
-    try $WINE $WINETRICKS_CACHE/mdac_typ.exe
+    try $WINE $WINETRICKS_CACHE/mdac25/mdac_typ.exe
     unset_winver
-    rm -f $WINETRICKS_CACHE/mdac_typ.exe
 }
 
+#----------------------------------------------------------------
+
 load_mdac27() {
-    # FIXME to support other versions of mdac, will need to change
-    # 'download' to save in a subdirectory named after the package,
-    # since every version of mdac uses the same installer filename
-    download http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
+    download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
     set_native_mdac
-    try $WINE $WINETRICKS_CACHE/mdac_typ.exe
+    try $WINE $WINETRICKS_CACHE/mdac27/mdac_typ.exe
 }
 
 #----------------------------------------------------------------
 
 load_mdac28() {
-    # FIXME to support other versions of mdac, will need to change
-    # 'download' to save in a subdirectory named after the package,
-    # since every version of mdac uses the same installer filename
-    # Well, shoot.  Can we get away with case sensitivity here?
-    download http://download.microsoft.com/download/c/d/f/cdfd58f1-3973-4c51-8851-49ae3777586f/MDAC_TYP.EXE 91bd59f0b02b67f3845105b15a0f3502b9a2216a
+    download mdac28 http://download.microsoft.com/download/c/d/f/cdfd58f1-3973-4c51-8851-49ae3777586f/MDAC_TYP.EXE 91bd59f0b02b67f3845105b15a0f3502b9a2216a
     set_native_mdac
     set_winver win98
-    try $WINE $WINETRICKS_CACHE/MDAC_TYP.EXE
+    try $WINE $WINETRICKS_CACHE/mdac28/MDAC_TYP.EXE
     unset_winver
 }
 
@@ -390,7 +407,7 @@ load_mfc40() {
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=cf3005d4-7009-4d2d-89d1-b32c482c8a2d
     echo "Note: Microsoft has since pulled this download.  Sorry!"
     
-    download http://download.microsoft.com/download/sql65/Patch/6.5/WIN98/EN-US/MFC40i.exe af289f72aceda7ac2b43bf94b574e74a48cb5663
+    download . http://download.microsoft.com/download/sql65/Patch/6.5/WIN98/EN-US/MFC40i.exe af289f72aceda7ac2b43bf94b574e74a48cb5663
     cd $WINETRICKS_TMP/
     rm -rf $WINETRICKS_TMP/*
     try cabextract $WINETRICKS_CACHE/MFC40i.exe
@@ -403,7 +420,7 @@ load_mfc40() {
 load_mono11() {
     echo "Mono-1.1 is deprecated.  The Mono team prefers you use Mono-1.2 instead."
     # Load Mono, have it handle all .net requests
-    download ftp://www.go-mono.com/archive/1.1.13.8.2/windows-installer/0/mono-1.1.13.8.2-gtksharp-2.8.2-win32-0.exe e8725d03f51fcca2849d1a8f1d87ceb6f77c1d82
+    download . ftp://www.go-mono.com/archive/1.1.13.8.2/windows-installer/0/mono-1.1.13.8.2-gtksharp-2.8.2-win32-0.exe e8725d03f51fcca2849d1a8f1d87ceb6f77c1d82
     # Anyone know how to get it to do a silent install?
     try $WINE $WINETRICKS_CACHE/mono-1.1.13.8.2-gtksharp-2.8.2-win32-0.exe
 
@@ -426,9 +443,9 @@ _EOF_
 
 load_mono12() {
     # Load Mono, have it handle all .net requests
-    download ftp://www.go-mono.com/archive/1.2.5.2/windows-installer/0/mono-1.2.5.2-gtksharp-2.10.2-win32-0.exe 58fc6b9e7bedc9110c2e8f0864c39c8335f34533
+    download . ftp://www.go-mono.com/archive/1.2.6/windows-installer/5/mono-1.2.6-gtksharp-2.10.2-win32-5.exe 71248e9dd4c96b63878a54ef21f71cdc9a77083d
     # Anyone know how to get it to do a silent install?
-    try $WINE $WINETRICKS_CACHE/mono-1.2.5.2-gtksharp-2.10.2-win32-0.exe
+    try $WINE $WINETRICKS_CACHE/mono-1.2.6-gtksharp-2.10.2-win32-5.exe
 
     cat > $WINETRICKS_TMP/mono_1.2.reg <<_EOF_
 REGEDIT4
@@ -448,7 +465,7 @@ _EOF_
 
 load_msi2() {
     # Install native msi per http://wiki.winehq.org/NativeMsi
-    download http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
 
     # Pick win98 so we can install native msi
     set_winver win98
@@ -471,7 +488,7 @@ load_msxml3() {
     # Service Pack 5
     #download http://download.microsoft.com/download/a/5/e/a5e03798-2454-4d4b-89a3-4a47579891d8/msxml3.msi
     # Service Pack 7
-    download http://download.microsoft.com/download/8/8/8/888f34b7-4f54-4f06-8dac-fa29b19f33dd/msxml3.msi d4c2178dfb807e1a0267fce0fd06b8d51106d913
+    download . http://download.microsoft.com/download/8/8/8/888f34b7-4f54-4f06-8dac-fa29b19f33dd/msxml3.msi d4c2178dfb807e1a0267fce0fd06b8d51106d913
     # http://bugs.winehq.org/show_bug.cgi?id=7849 fixed since 0.9.37
     override_dlls msxml3
     try $WINE msiexec /i $WINETRICKS_CACHE/msxml3.msi $WINETRICKS_QUIET
@@ -483,7 +500,7 @@ load_msxml4() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
     if ! test -f $WINETRICKS_CACHE/msxml4.msi
     then
-       download http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
+       download . http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
        rm -rf $WINETRICKS_TMP/*
 
        try $WINE $WINETRICKS_CACHE/msxml4-KB927978-enu.exe "/x:`$WINE winepath -w $WINETRICKS_TMP`" $WINETRICKS_QUIET
@@ -504,7 +521,7 @@ load_pdh() {
     # http://support.microsoft.com/kb/284996
     if ! test -f $WINETRICKS_CACHE/pdhinst.exe
     then
-       download http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
+       download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
     fi
     try $WINE $WINETRICKS_CACHE/pdhinst.exe
     try cp -f $WINEPREFIX/drive_c/windows/temp/x86/Pdh.Dll $WINEPREFIX/drive_c/windows/system32/pdh.dll
@@ -537,7 +554,7 @@ volnum() {
 
 load_riched20() {
     # http://support.microsoft.com/?kbid=249973
-    download http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
+    download . http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/Q249973i.EXE
     try cp -f $WINETRICKS_TMP/riched??.dll $WINEPREFIX/drive_c/windows/system32
     override_dlls riched20 riched32
@@ -549,7 +566,7 @@ load_riched20() {
 
 load_tahoma() {
     # The tahoma font is needed by e.g. Steam
-    download http://internap.dl.sourceforge.net/sourceforge/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
+    download . http://downloads.sourceforge.net/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/wd97vwr32.exe
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_TMP/Viewer1.cab
     try cp -f $WINETRICKS_TMP/tahoma.ttf $WINEPREFIX/drive_c/windows/fonts/tahoma.ttf
@@ -559,14 +576,14 @@ load_tahoma() {
 #----------------------------------------------------------------
 
 load_vbvm50() {
-    download http://download.microsoft.com/download/vb50pro/utility/1/win98/en-us/msvbvm50.exe 28bfaf09b8ac32cf5ffa81252f3e2fadcb3a8f27
+    download . http://download.microsoft.com/download/vb50pro/utility/1/win98/en-us/msvbvm50.exe 28bfaf09b8ac32cf5ffa81252f3e2fadcb3a8f27
     try $WINE $WINETRICKS_CACHE/msvbvm50.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
 
 load_vbrun60() {
-    download http://download.microsoft.com/download/vb60pro/install/6/win98me/en-us/vbrun60.exe 2dc00e5fc701492bcba7ac58f057ee43751e18e5
+    download . http://download.microsoft.com/download/vb60pro/install/6/win98me/en-us/vbrun60.exe 2dc00e5fc701492bcba7ac58f057ee43751e18e5
     # Exits with status 43 for some reason?
     $WINE $WINETRICKS_CACHE/vbrun60.exe $WINETRICKS_QUIET || true
 }
@@ -578,7 +595,7 @@ load_vcrun6() {
 
     if ! test -f $WINETRICKS_CACHE/vcredist.exe
     then
-       download http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
+       download . http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
        rm -rf $WINETRICKS_TMP/*
        
        try $WINE $WINETRICKS_CACHE/vc6redistsetup_enu.exe "/T:`$WINE winepath -w $WINETRICKS_TMP`" /c $WINETRICKS_QUIET
@@ -610,8 +627,29 @@ load_vcrun6() {
 load_vcrun2005() {
     # Load the Visual C++ 2005 runtime libraries
     # See http://www.microsoft.com/downloads/details.aspx?familyid=32BC1BEE-A3F9-4C13-9C99-220B62A191EE
-    download http://download.microsoft.com/download/d/3/4/d342efa6-3266-4157-a2ec-5174867be706/vcredist_x86.exe 47fba37de95fa0e2328cf2e5c8ebb954c4b7b93c
-    try $WINE $WINETRICKS_CACHE/vcredist_x86.exe $WINETRICKS_QUIET
+    download vcrun2005 http://download.microsoft.com/download/d/3/4/d342efa6-3266-4157-a2ec-5174867be706/vcredist_x86.exe 47fba37de95fa0e2328cf2e5c8ebb954c4b7b93c
+    try $WINE $WINETRICKS_CACHE/vcrun2005/vcredist_x86.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
+load_vcrun2005sp1() {
+    # Load the Visual C++ 2005 SP1 runtime libraries
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=200b2fd9-ae1a-4a14-984d-389c36f85647
+    download vcrun2005sp1 http://download.microsoft.com/download/e/1/c/e1c773de-73ba-494a-a5ba-f24906ecf088/vcredist_x86.exe 7dfa98be78249921dd0eedb9a3dd809e7d215c8d 
+    try $WINE $WINETRICKS_CACHE/vcrun2005sp1/vcredist_x86.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
+load_vcrun2008() {
+    # Otherwise it complains...
+    volnum
+
+    # Load the Visual C++ 2008 runtime libraries
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=9b2da534-3e03-4391-8a4d-074b9f2bc1bf
+    download vcrun2008 http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe 56719288ab6514c07ac2088119d8a87056eeb94a 
+    try $WINE $WINETRICKS_CACHE/vcrun2008/vcredist_x86.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -619,7 +657,7 @@ load_vcrun2005() {
 load_wsh51() {
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=bfdb7709-51e4-4aa6-adb0-05444e68dd80&DisplayLang=en
     echo "Note: Microsoft has since pulled this download.  Sorry!"
-    download http://download.microsoft.com/download/8/7/5/8751c696-282d-49da-b118-2735315dbb5e/ste51en.exe ecc0fb713684294fe6c759f4633c5befbeba1ade
+    download . http://download.microsoft.com/download/8/7/5/8751c696-282d-49da-b118-2735315dbb5e/ste51en.exe ecc0fb713684294fe6c759f4633c5befbeba1ade
 
     try $WINE $WINETRICKS_CACHE/ste51en.exe $WINETRICKS_QUIET
 
@@ -632,7 +670,7 @@ load_wsh51() {
 load_wsh56() {
     # See also http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=C717D943-7E4B-4622-86EB-95A22B832CAA
     echo "Note: Microsoft has since pulled this download.  Sorry!"
-    download http://download.microsoft.com/download/2/8/a/28a5a346-1be1-4049-b554-3bc5f3174353/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe f4692766caa3ee9b38d4166845486c6199a33457
+    download . http://download.microsoft.com/download/2/8/a/28a5a346-1be1-4049-b554-3bc5f3174353/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe f4692766caa3ee9b38d4166845486c6199a33457
 
     try $WINE $WINETRICKS_CACHE/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe $WINETRICKS_QUIET
 }
@@ -642,7 +680,7 @@ load_wsh56() {
 load_wsh56js() {
     # This installs jscript 5.6 (but not vbscript)
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=16dd21a1-c4ee-4eca-8b80-7bd1dfefb4f8&DisplayLang=en
-    download http://download.microsoft.com/download/b/c/3/bc3a0c36-fada-497d-a3de-8b0139766f3b/Windows2000-KB917344-56-x86-enu.exe add5f74c5bd4da6cfae47f8306de213ec6ed52c8
+    download . http://download.microsoft.com/download/b/c/3/bc3a0c36-fada-497d-a3de-8b0139766f3b/Windows2000-KB917344-56-x86-enu.exe add5f74c5bd4da6cfae47f8306de213ec6ed52c8
 
     try $WINE $WINETRICKS_CACHE/Windows2000-KB917344-56-x86-enu.exe $WINETRICKS_QUIET
 }
@@ -652,9 +690,17 @@ load_wsh56js() {
 load_wsh56vb() {
     # This installs vbscript 5.6 (but not jscript)
     # See also http://www.microsoft.com/downloads/details.aspx?familyid=4F728263-83A3-464B-BCC0-54E63714BC75
-    download http://download.microsoft.com/download/IE60/Patch/Q318089/W9XNT4Me/EN-US/vbs56men.exe 48f14a93db33caff271da0c93f334971f9d7cb22
+    download . http://download.microsoft.com/download/IE60/Patch/Q318089/W9XNT4Me/EN-US/vbs56men.exe 48f14a93db33caff271da0c93f334971f9d7cb22
 
     try $WINE $WINETRICKS_CACHE/vbs56men.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
+load_xvid() {
+    # xvid
+    download . "http://www.digital-digest.com/software/getdownload.php?sid=1052&did=1" c4440346a09261af3eda3aa3fe2a17e46c817515 XviD-1.1.3-28062007.exe
+    try $WINE $WINETRICKS_CACHE/XviD-1.1.3-28062007.exe $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
@@ -662,9 +708,11 @@ load_wsh56vb() {
 
 while test "$1" != ""
 do
+    PACKAGE=$1
     case $1 in
     -q) WINETRICKS_QUIET="/q"
         WINETRICKS_UNIXQUIET="-q"
+        WINETRICKS_SILENT="/silent"
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
         ;;
@@ -673,6 +721,7 @@ do
     cc580) load_cc580;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
+    ffdshow) load_ffdshow;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     jet40) load_jet40;;
@@ -691,14 +740,20 @@ do
     tahoma) load_tahoma;;
     vbvm50) load_vbvm50;;
     vbrun60) load_vbrun60;;
+    vcodecs) load_vcodecs;;
     vcrun6) load_vcrun6;;
     vcrun2005) load_vcrun2005;;
+    vcrun2005sp1) load_vcrun2005sp1;;
+    vcrun2008) load_vcrun2008;;
     wsh51) load_wsh51;;
     wsh56) load_wsh56;;
     wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
+    xvid) load_xvid;;
 
     fakeie6) set_fakeie6;;
+    allfonts) load_corefonts; load_tahoma; load_liberation;;
+    allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
     winver=nt40) set_winver nt40;;
     winver=win98) set_winver win98;;
     winver=winxp) set_winver winxp;;
