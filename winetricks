@@ -88,15 +88,113 @@ usage() {
     echo " winver=winxp Set windows version to winxp"
     echo " winver=      Set windows version to default (win2k)"
     echo " volnum      Rename drive_c to harddiskvolume0 (was needed by some installers before 0.9.54)"
-    exit 1
+}
+
+#----------------------------------------------------------------
+# Trivial GUI just to handle case where user tries running without commandline
+
+# Checks for known desktop environments
+# set variable DE to the desktop environments name, lowercase
+
+detectDE() {
+    if [ x"$KDE_FULL_SESSION" = x"true" ]
+    then 
+        DE=kde
+    elif [ x"$GNOME_DESKTOP_SESSION_ID" != x"" ]
+    then
+        DE=gnome
+    elif [ x"$DISPLAY" != x"" ]
+    then
+        DE=x
+    else 
+        DE=none
+    fi
+}
+
+gnome_showmenu() {
+    title="$1"
+    shift
+    text="$1"
+    shift
+    col1name="$1"
+    shift
+    col2name="$1"
+    shift
+    while test $# -gt 0
+    do
+        args="$args FALSE $1"
+        shift
+    done
+    zenity --title "$title" --text "$text" --list --checklist --column "$col1name" --column "$col2name" --height 400 $args | tr '|' '\012'
+}
+
+kde_showmenu() {
+    title="$1"
+    shift
+    text="$1"
+    shift
+    col1name="$1"
+    shift
+    col2name="$1"
+    shift
+    while test $# -gt 0
+    do
+        args="$args $1 $1 off"
+        shift
+    done
+    kdialog --title "$title" --separate-output --checklist "$text" $args
+}
+
+x_showmenu() {
+    title="$1"
+    shift
+    text="$1"
+    shift
+    col1name="$1"
+    shift
+    col2name="$1"
+    shift
+    if test $# -gt 0
+    then
+        args="$1"
+        shift
+    fi
+    while test $# -gt 0
+    do
+        args="$args,$1"
+        shift
+    done
+    (echo "$title"; echo ""; echo "$text") > /tmp/x_showmenu.txt 
+    xmessage -print -file /tmp/x_showmenu.txt -buttons "Cancel,$args" | sed 's/Cancel//'
+}
+
+showmenu()
+{
+    detectDE
+    case $DE in
+    kde) kde_showmenu "$@" ;;
+    gnome) gnome_showmenu "$@" ;;
+    x) x_showmenu "$@" ;;
+    none) usage 1>&2; exit 1;;
+    esac
+}
+ 
+dogui()
+{
+  packages=`usage | awk '/^ [a-z]/ {print $1}'`
+  export todo=`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`
+  if test "$todo"x = x
+  then
+     exit 0
+  fi
 }
 
 #----------------------------------------------------------------
 
-if test "$1" = "" 
-then
-    usage
-fi
+case x"$1" in
+x) dogui ; set $todo ;;
+x-h|x--help|xhelp) usage ; exit 1 ;;
+esac
 test -d $WINEPREFIX || $WINEPREFIXCREATE
 mkdir -p $WINETRICKS_CACHE
 mkdir -p $WINETRICKS_TMP
@@ -785,7 +883,7 @@ do
     winver=) unset_winver;;
     native_mdac) set_native_mdac;;
     volnum) volnum;;
-    *) echo Unknown arg $1; usage;;
+    *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
     test "$WINETRICKS_QUIET" = "" && case $1 in 
