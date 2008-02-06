@@ -59,10 +59,12 @@ usage() {
     echo " mono11     mono 1.1.13-gtksharp-2.8.2 (deprecated, use 1.2)"
     echo " mono12     mono mono-1.2.6-gtksharp-2.10.2"
     echo " msi2       Microsoft Installer 2.0"
-    echo " msxml3     (Note: install a bit squidgy; see http://bugs.winehq.org/show_bug.cgi?id=7849)"
-    echo " msxml4     (Note: installing this requires fake c: to be named harddrive1!)"
+    echo " msxml3     Microsoft XML version 3"
+    echo " msxml4     Microsoft XML version 4"
+    echo " msxml6     Microsoft XML version 6" 
     echo " pdh        Install pdh.dll (Performance Data Helper)"
     echo " riched20   Use Microsoft's riched20 and riched32"
+    echo " riched30   Use Microsoft's riched30"
     echo " tahoma     Install MS Tahoma font (not part of corefonts)"
     echo " vbvm50     Visual Basic 5 runtime"
     echo " vbrun60    Visual Basic 6 runtime"
@@ -85,7 +87,7 @@ usage() {
     echo " winver=win98 Set windows version to win98"
     echo " winver=winxp Set windows version to winxp"
     echo " winver=      Set windows version to default (win2k)"
-    echo " volnum      Rename drive_c to harddiskvolume0 (needed by some installers)"
+    echo " volnum      Rename drive_c to harddiskvolume0 (was needed by some installers before 0.9.54)"
     exit 1
 }
 
@@ -462,6 +464,7 @@ _EOF_
 
 load_msi2() {
     # Install native msi per http://wiki.winehq.org/NativeMsi
+    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
 
     # Pick win98 so we can install native msi
@@ -514,12 +517,18 @@ load_msxml4() {
 
 #----------------------------------------------------------------
 
+load_msxml6() {
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=993c0bcf-3bcf-4009-be21-27e85e1857b1
+    download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6.msi 2308743ddb4cb56ae910e461eeb3eab0a9e58058
+
+    try $WINE msiexec /i $WINETRICKS_CACHE/msxml6.msi $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_pdh() {
     # http://support.microsoft.com/kb/284996
-    if ! test -f $WINETRICKS_CACHE/pdhinst.exe
-    then
-       download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
-    fi
+    download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
     try $WINE $WINETRICKS_CACHE/pdhinst.exe
     try cp -f $WINEPREFIX/drive_c/windows/temp/x86/Pdh.Dll $WINEPREFIX/drive_c/windows/system32/pdh.dll
 }
@@ -555,6 +564,23 @@ load_riched20() {
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/Q249973i.EXE
     try cp -f $WINETRICKS_TMP/riched??.dll $WINEPREFIX/drive_c/windows/system32
     override_dlls riched20 riched32
+    
+    rm -rf $WINETRICKS_TMP/*
+}
+
+#----------------------------------------------------------------
+
+load_riched30() {
+    # http://www.novell.com/documentation/nm1/readmeen_web/readmeen_web.html#Akx3j64
+    # claims that Groupwise Messenger's View / Text Size command
+    # only works with riched30, and recommends getting it by installing 
+    # msi 2, which just happens to come with riched30 version of riched20
+    # (though not with a corresponding riched32, which might be a problem)
+    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
+    download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/InstMsiA.exe
+    try cp -f $WINETRICKS_TMP/riched20.dll $WINEPREFIX/drive_c/windows/system32
+    override_dlls riched20 
     
     rm -rf $WINETRICKS_TMP/*
 }
@@ -732,8 +758,10 @@ do
     msi2) load_msi2;;
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
+    msxml6) load_msxml6;;
     pdh) load_pdh;;
     riched20) load_riched20;;
+    riched30) load_riched30;;
     tahoma) load_tahoma;;
     vbvm50) load_vbvm50;;
     vbrun60) load_vbrun60;;
