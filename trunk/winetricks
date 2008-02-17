@@ -14,7 +14,16 @@ WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 # Internal variables; these locations are not too important
 WINETRICKS_CACHE=$HOME/winetrickscache
+# Default to hiding the directory, by popular demand
+test -d $WINETRICKS_CACHE || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
+
+case "$1" in
+-V|--version) 
+  echo "Winetricks version 20080216.  (C) Dan Kegel.  LGPL."
+  exit 0
+  ;;
+esac
 
 which "$WINE" > /dev/null
 if test "$?" -ne "0"
@@ -42,7 +51,8 @@ usage() {
     echo ""
     echo "Options:"
     echo " -q         quiet.  You must have already agreed to the EULAs."
-    echo " -v         Verbose"
+    echo " -v         verbose"
+    echo " -V         display Version"
     echo "Packages:"    
     echo " art2kmin   Access 2000 runtime.  License required!"
     echo " cc580      Install native common controls 5.80, override comctl32"
@@ -277,6 +287,11 @@ REGEDIT4
 _EOF_
     while test "$1" != ""
     do
+        case "$1" in
+        comctl32)
+           rm -rf $WINEPREFIX/drive_c/windows/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           ;;
+        esac
         echo "\"$1\"=\"native,builtin\"" >> $WINETRICKS_TMP/override-dll.reg
 	shift
     done
