@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080216.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080222.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
