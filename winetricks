@@ -56,6 +56,7 @@ usage() {
     echo "Packages:"    
     echo " art2kmin   Access 2000 runtime.  License required!"
     echo " cc580      Install native common controls 5.80, override comctl32"
+    echo " colorprofile  Install standard RGB color profile"
     echo " corefonts  Install MS Times, Arial fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
     echo " gdiplus    Install gdiplus.dll from pp viewer (got a better idea?)"
@@ -322,6 +323,15 @@ load_cc580() {
     cp $WINETRICKS_TMP/comcnt.dll $WINEPREFIX/drive_c/windows/system32/comctl32.dll
 
     override_dlls comctl32
+}
+
+#----------------------------------------------------------------
+
+load_colorprofile() {
+    download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
+    unzip -d $WINETRICKS_TMP $WINETRICKS_CACHE/ColorProfile.exe
+    mkdir -p $WINEPREFIX/drive_c/windows/system32/spool/drivers/color
+    cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" $WINEPREFIX/drive_c/windows/system32/spool/drivers/color
 }
 
 #----------------------------------------------------------------
@@ -855,6 +865,7 @@ do
     -v) set -x;;
     art2kmin) load_art2kmin;;
     cc580) load_cc580;;
+    colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
     ffdshow) load_ffdshow;;
