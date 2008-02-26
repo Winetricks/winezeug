@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080222.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080226.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -59,6 +59,7 @@ usage() {
     echo " colorprofile  Install standard RGB color profile"
     echo " corefonts  Install MS Times, Arial fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
+    echo " dotnet11   Install native .NET 1.1"
     echo " gdiplus    Install gdiplus.dll from pp viewer (got a better idea?)"
     echo " gecko      Install the HTML rendering Engine (Mozilla)"
     echo " jet40      Install Jet 4.0 Service Pack 8"
@@ -373,6 +374,14 @@ load_dcom98() {
 
     # and undo version win98
     unset_winver
+}
+
+#----------------------------------------------------------------
+
+load_dotnet11() {
+    # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
+    download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
+    try $WINE $WINETRICKS_CACHE/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -868,6 +877,7 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
+    dotnet11) load_dotnet11;;
     ffdshow) load_ffdshow;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
