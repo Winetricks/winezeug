@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080226.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080227.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -78,8 +78,10 @@ usage() {
     echo " riched20   Use Microsoft's riched20 and riched32"
     echo " riched30   Use Microsoft's riched30"
     echo " tahoma     Install MS Tahoma font (not part of corefonts)"
-    echo " vbvm50     Visual Basic 5 runtime"
-    echo " vbrun60    Visual Basic 6 runtime"
+    echo " vb3run     Visual Basic 3 runtime"
+    echo " vb4run     Visual Basic 4 runtime"
+    echo " vb5run     Visual Basic 5 runtime"
+    echo " vb6run     Visual Basic 6 runtime"
     echo " xvid       Install xvid video codecs"
     echo " ffdshow    Install ffdshow video codecs"
     echo " vcrun6     vc6redist from VS6sp4, including mfc42"
@@ -330,7 +332,7 @@ load_cc580() {
 
 load_colorprofile() {
     download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
-    unzip -d $WINETRICKS_TMP $WINETRICKS_CACHE/ColorProfile.exe
+    try unzip -o $WINETRICKS_UNIXQUIET -d $WINETRICKS_TMP $WINETRICKS_CACHE/ColorProfile.exe
     mkdir -p $WINEPREFIX/drive_c/windows/system32/spool/drivers/color
     cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" $WINEPREFIX/drive_c/windows/system32/spool/drivers/color
 }
@@ -540,7 +542,7 @@ load_mdac28() {
 load_mfc40() {
     # See http://support.microsoft.com/kb/122244
     download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
-    try unzip -d $WINETRICKS_TMP $WINETRICKS_CACHE/ole2v.exe
+    try unzip -o $WINETRICKS_UNIXQUIET -d $WINETRICKS_TMP $WINETRICKS_CACHE/ole2v.exe
     try cp -f $WINETRICKS_TMP/MFC40.DLL $WINEPREFIX/drive_c/windows/system32/
 
     rm -rf $WINETRICKS_TMP/*
@@ -730,6 +732,27 @@ load_tahoma() {
 
 #----------------------------------------------------------------
 
+load_vb3run() {
+    # See http://support.microsoft.com/kb/196285
+    download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
+    try unzip -o $WINETRICKS_UNIXQUIET -d $WINETRICKS_TMP $WINETRICKS_CACHE/vb3run.exe
+    try cp -f "$WINETRICKS_TMP/Vbrun300.dll" $WINEPREFIX/drive_c/windows/system32/
+
+}
+
+#----------------------------------------------------------------
+
+load_vb4run() {
+    # See http://support.microsoft.com/kb/196286
+    download . http://download.microsoft.com/download/vb40ent/sample27/1/w9xnt4/en-us/vb4run.exe 83e968063272e97bfffd628a73bf0ff5f8e1023b
+    try unzip -o $WINETRICKS_UNIXQUIET -d $WINETRICKS_TMP $WINETRICKS_CACHE/vb4run.exe
+    try cp -f "$WINETRICKS_TMP/Vb40032.dll" $WINEPREFIX/drive_c/windows/system32/
+    try cp -f "$WINETRICKS_TMP/Vb40016.dll" $WINEPREFIX/drive_c/windows/system32/
+
+}
+
+#----------------------------------------------------------------
+
 load_vbvm50() {
     download . http://download.microsoft.com/download/vb50pro/utility/1/win98/en-us/msvbvm50.exe 28bfaf09b8ac32cf5ffa81252f3e2fadcb3a8f27
     try $WINE $WINETRICKS_CACHE/msvbvm50.exe $WINETRICKS_QUIET
@@ -897,8 +920,10 @@ do
     riched20) load_riched20;;
     riched30) load_riched30;;
     tahoma) load_tahoma;;
-    vbvm50) load_vbvm50;;
-    vbrun60) load_vbrun60;;
+    vb3run) load_vb3run;;
+    vb4run) load_vb4run;;
+    vbvm50|vb5run) load_vbvm50;;
+    vbrun60|vb6run) load_vbrun60;;
     vcodecs) load_vcodecs;;
     vcrun6) load_vcrun6;;
     vcrun2005) load_vcrun2005;;
