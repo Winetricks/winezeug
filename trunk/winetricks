@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080227.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080309.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -57,11 +57,13 @@ usage() {
     echo " art2kmin   Access 2000 runtime.  License required!"
     echo " cc580      Install native common controls 5.80, override comctl32"
     echo " colorprofile  Install standard RGB color profile"
-    echo " corefonts  Install MS Times, Arial fonts"
+    echo " corefonts  Install MS Arial, Courier, Times fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
     echo " dotnet11   Install native .NET 1.1"
+    echo " ffdshow    Install ffdshow video codecs"
     echo " gdiplus    Install gdiplus.dll from pp viewer (got a better idea?)"
     echo " gecko      Install the HTML rendering Engine (Mozilla)"
+    echo " icodecs    Intel Codecs"
     echo " jet40      Install Jet 4.0 Service Pack 8"
     echo " liberation Install Red Hat's Liberation fonts (Sans, Serif, Mono)"
     echo " mdac25     MDAC 2.5: Microsoft ODBC drivers, etc."
@@ -82,8 +84,6 @@ usage() {
     echo " vb4run     Visual Basic 4 runtime"
     echo " vb5run     Visual Basic 5 runtime"
     echo " vb6run     Visual Basic 6 runtime"
-    echo " xvid       Install xvid video codecs"
-    echo " ffdshow    Install ffdshow video codecs"
     echo " vcrun6     vc6redist from VS6sp4, including mfc42"
     echo " vcrun2005  Visual C++ 2005 redistributable libraries"
     echo " vcrun2005sp1 Visual C++ 2005sp1 redistributable libraries"
@@ -92,9 +92,10 @@ usage() {
     echo " wsh56      Windows Scripting Host 5.6 (install vcrun6 first)"
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb    Windows scripting 5.6, vbscript only, no cscript"
+    echo " xvid       Install xvid video codecs"
     echo "Pseudopackages:"
-    echo " allfonts     Install above fonts (corefonts, tahoma, liberation)"
-    echo " allvcodecs   Install Open Source video codecs (xvid, ffdshow)"
+    echo " allfonts     Install all listed fonts (corefonts, tahoma, liberation)"
+    echo " allcodecs    Install all listed codecs (xvid, ffdshow, icodecs)"
     echo " fakeie6      Set registry to claim IE6sp1 is installed"
     echo " native_mdac  Override odbc32 and odbccp32"
     echo " winver=nt40  Set windows version to nt40"
@@ -345,8 +346,10 @@ load_corefonts() {
     # see http://corefonts.sourceforge.net/msttcorefonts-2.0-1.spec for how
     # TODO: add more fonts
     download . http://downloads.sourceforge.net/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
+    download . http://downloads.sourceforge.net/corefonts/courie32.exe 06a745023c034f88b4135f5e294fece1a3c1b057
     download . http://downloads.sourceforge.net/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
     try $WINE $WINETRICKS_CACHE/arial32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/courie32.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/times32.exe $WINETRICKS_QUIET
 }
 
@@ -482,6 +485,14 @@ load_gdiplus() {
     try $WINE $WINETRICKS_CACHE/ppviewer.exe $WINETRICKS_QUIET
     # And then make it globally available.
     try cp "$programfilesdir_unix/Microsoft Office/PowerPoint Viewer/GDIPLUS.DLL" $WINEPREFIX/drive_c/windows/system32/
+}
+
+#----------------------------------------------------------------
+
+load_icodecs() {
+    # http://downloadcenter.intel.com/Detail_Desc.aspx?strState=LIVE&ProductID=355&DwnldID=2846
+    download . http://downloadmirror.intel.com/2846/eng/codinstl.exe 2c5d64f472abe3f601ce352dcca75b4f02996f8a
+    try $WINE $WINETRICKS_CACHE/codinstl.exe
 }
 
 #----------------------------------------------------------------
@@ -847,7 +858,7 @@ load_wsh51() {
 
 load_wsh56() {
     # See also http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=C717D943-7E4B-4622-86EB-95A22B832CAA
-    echo "Note: Microsoft has since pulled this download.  Sorry!"
+    # FIXME: depends on vcrun6, should we install that automatically?
     download . http://download.microsoft.com/download/2/8/a/28a5a346-1be1-4049-b554-3bc5f3174353/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe f4692766caa3ee9b38d4166845486c6199a33457
 
     try $WINE $WINETRICKS_CACHE/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe $WINETRICKS_QUIET
@@ -904,6 +915,7 @@ do
     ffdshow) load_ffdshow;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
+    icodecs) load_icodecs;;
     jet40) load_jet40;;
     liberation) load_liberation;;
     mdac25) load_mdac25;;
@@ -924,7 +936,6 @@ do
     vb4run) load_vb4run;;
     vbvm50|vb5run) load_vbvm50;;
     vbrun60|vb6run) load_vbrun60;;
-    vcodecs) load_vcodecs;;
     vcrun6) load_vcrun6;;
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
@@ -937,7 +948,7 @@ do
 
     fakeie6) set_fakeie6;;
     allfonts) load_corefonts; load_tahoma; load_liberation;;
-    allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
+    allvcodecs|allcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
     winver=nt40) set_winver nt40;;
     winver=win98) set_winver win98;;
     winver=winxp) set_winver winxp;;
