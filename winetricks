@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080309.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080314.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -85,6 +85,7 @@ usage() {
     echo " vb5run     Visual Basic 5 runtime"
     echo " vb6run     Visual Basic 6 runtime"
     echo " vcrun6     vc6redist from VS6sp4, including mfc42"
+    echo " vcrun2003  Visual C++ 2003 redistributables (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005  Visual C++ 2005 redistributable libraries"
     echo " vcrun2005sp1 Visual C++ 2005sp1 redistributable libraries"
     echo " vcrun2008  Visual C++ 2008 redistributable libraries"
@@ -197,7 +198,7 @@ showmenu()
 dogui()
 {
   packages=`usage | awk '/^ [a-z]/ {print $1}'`
-  export todo=`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`
+  export todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
   if test "$todo"x = x
   then
      exit 0
@@ -284,7 +285,9 @@ _EOF_
 }
 
 override_dlls() {
-    echo Overriding following DLLs: $@
+    mode=$1
+    shift
+    echo Using $mode override for following DLLs: $@
     cat > $WINETRICKS_TMP/override-dll.reg <<_EOF_
 REGEDIT4
 
@@ -297,7 +300,7 @@ _EOF_
            rm -rf $WINEPREFIX/drive_c/windows/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
-        echo "\"$1\"=\"native,builtin\"" >> $WINETRICKS_TMP/override-dll.reg
+        echo "\"$1\"=\"$mode\"" >> $WINETRICKS_TMP/override-dll.reg
 	shift
     done
 
@@ -326,7 +329,7 @@ load_cc580() {
     try $WINE $WINEPREFIX/drive_c/windows/temp/x86/50ComUpd.Exe "/T:`$WINE winepath -w $WINETRICKS_TMP`" /c $WINETRICKS_QUIET
     cp $WINETRICKS_TMP/comcnt.dll $WINEPREFIX/drive_c/windows/system32/comctl32.dll
 
-    override_dlls comctl32
+    override_dlls native,builtin comctl32
 }
 
 #----------------------------------------------------------------
@@ -375,7 +378,7 @@ load_dcom98() {
     WINEDLLOVERRIDES="ole32,advpack=n" try $WINE $WINETRICKS_CACHE/DCOM98.EXE $WINETRICKS_QUIET
 
     # Set native DCOM by default for all apps (ok, this might be overkill)
-    override_dlls ole32 oleaut32 rpcrt4
+    override_dlls native,builtin ole32 oleaut32 rpcrt4
 
     # and undo version win98
     unset_winver
@@ -384,10 +387,32 @@ load_dcom98() {
 #----------------------------------------------------------------
 
 load_dotnet11() {
+    DOTNET_INSTALL_DIR="$WINEPREFIX/drive_c/windows/Microsoft.NET/Framework/v1.1.4322" 
+
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
     try $WINE $WINETRICKS_CACHE/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
-}
+
+    # It installs ok, but doesn't work yet, see http://bugs.winehq.org/show_bug.cgi?id=11742
+    # Here's the workaround for now until we implement MsiPublishAssemblies()
+
+    # get .NET 1.1 SP1 (which contains the GAC tool)
+    download dotnet11 http://download.microsoft.com/download/8/b/4/8b4addd8-e957-4dea-bdb8-c4e00af5b94b/NDP1.1sp1-KB867460-X86.exe  74a5b25d65a70b8ecd6a9c301a0aea10d8483a23
+    try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/dotnet11/NDP1.1sp1-KB867460-X86.exe
+    # "DDPatch.UpdateGacFile" -> "gacutil.exe"
+    try cp -f $WINETRICKS_TMP/DDPatch.UpdateGacFile "$DOTNET_INSTALL_DIR/gacutil.exe"
+    # install all .NET 1.1 assemblies into GAC (-f = force reinstall of assembly)
+    cd $DOTNET_INSTALL_DIR
+    for assembly in ./GAC/*
+    do
+        $WINE gacutil.exe -i $assembly -f
+    done
+    cd "$olddir"
+
+    # Need native gdiplus, else it crashes on unimplemented function gdiplus.dll.GdipGetFamily
+    cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINEPREFIX/drive_c/windows/system32/"
+    override_dlls native gdiplus mscoree
+} 
 
 #----------------------------------------------------------------
 
@@ -485,6 +510,9 @@ load_gdiplus() {
     try $WINE $WINETRICKS_CACHE/ppviewer.exe $WINETRICKS_QUIET
     # And then make it globally available.
     try cp "$programfilesdir_unix/Microsoft Office/PowerPoint Viewer/GDIPLUS.DLL" $WINEPREFIX/drive_c/windows/system32/
+
+    # For some reason, native,builtin isn't good enough...?
+    override_dlls native gdiplus
 }
 
 #----------------------------------------------------------------
@@ -517,7 +545,7 @@ load_liberation() {
 set_native_mdac() {
     # Set those overrides globally so user programs get MDAC's odbc
     # instead of wine's unixodbc
-    override_dlls odbc32 odbccp32
+    override_dlls native,builtin odbc32 odbccp32
 }
 
 #----------------------------------------------------------------
@@ -621,7 +649,7 @@ load_msi2() {
 
     WINEDLLOVERRIDES="msi,msiexec.exe=n" try $WINE $WINETRICKS_CACHE/InstMSIA.exe $WINETRICKS_QUIET
 
-    override_dlls msi msiexec.exe
+    override_dlls native,builtin msi msiexec.exe
 
     # and undo version win98
     unset_winver
@@ -635,7 +663,7 @@ load_msxml3() {
     # Service Pack 7
     download . http://download.microsoft.com/download/8/8/8/888f34b7-4f54-4f06-8dac-fa29b19f33dd/msxml3.msi d4c2178dfb807e1a0267fce0fd06b8d51106d913
     # http://bugs.winehq.org/show_bug.cgi?id=7849 fixed since 0.9.37
-    override_dlls msxml3
+    override_dlls native,builtin msxml3
     try $WINE msiexec /i $WINETRICKS_CACHE/msxml3.msi $WINETRICKS_QUIET
 }
 
@@ -708,7 +736,7 @@ load_riched20() {
     download . http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/Q249973i.EXE
     try cp -f $WINETRICKS_TMP/riched??.dll $WINEPREFIX/drive_c/windows/system32
-    override_dlls riched20 riched32
+    override_dlls native,builtin riched20 riched32
     
     rm -rf $WINETRICKS_TMP/*
 }
@@ -725,7 +753,7 @@ load_riched30() {
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/InstMsiA.exe
     try cp -f $WINETRICKS_TMP/riched20.dll $WINEPREFIX/drive_c/windows/system32
-    override_dlls riched20 
+    override_dlls native,builtin riched20 
     
     rm -rf $WINETRICKS_TMP/*
 }
@@ -809,6 +837,17 @@ load_vcrun6() {
     try cabextract $WINETRICKS_CACHE/vcredist.exe
     mv mfc42u.dll $WINEPREFIX/drive_c/windows/system32/
     cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_vcrun2003() {
+    # Load the Visual C++ 2003 runtime libraries
+    # Sadly, I know of no Microsoft URL for these
+    echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
+    download . http://dl.sourceforge.net/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
+    try $WINE $WINETRICKS_CACHE/BZEditW32_1.6.5_Installer.exe $WINETRICKS_S
+    cp $WINEPREFIX/drive_c/Program\ Files/BZEdit1.6.5/m*71* $WINEPREFIX/drive_c/windows/system32/
 }
 
 #----------------------------------------------------------------
@@ -902,6 +941,7 @@ do
     -q) WINETRICKS_QUIET="/q"
         WINETRICKS_UNIXQUIET="-q"
         WINETRICKS_SILENT="/silent"
+        WINETRICKS_S="/S"                 # for NSIS installers
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
         ;;
@@ -937,6 +977,7 @@ do
     vbvm50|vb5run) load_vbvm50;;
     vbrun60|vb6run) load_vbrun60;;
     vcrun6) load_vcrun6;;
+    vcrun2003) load_vcrun2003;;
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
     vcrun2008) load_vcrun2008;;
