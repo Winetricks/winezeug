@@ -393,10 +393,11 @@ load_dotnet11() {
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
     try $WINE $WINETRICKS_CACHE/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
 
-    # It installs ok, but doesn't work yet, see http://bugs.winehq.org/show_bug.cgi?id=11742
-    # Here's the workaround for now until we implement MsiPublishAssemblies()
+    # It installs ok, but doesn't work yet without the following three kludges:
 
-    # get .NET 1.1 SP1 (which contains the GAC tool)
+    # Need to preload the Global Assembly Cache until Wine implements MsiPublishAssemblies()
+    # see http://bugs.winehq.org/show_bug.cgi?id=11742
+    # Get .NET 1.1 SP1 (which contains the GAC tool)
     download dotnet11 http://download.microsoft.com/download/8/b/4/8b4addd8-e957-4dea-bdb8-c4e00af5b94b/NDP1.1sp1-KB867460-X86.exe  74a5b25d65a70b8ecd6a9c301a0aea10d8483a23
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/dotnet11/NDP1.1sp1-KB867460-X86.exe
     # "DDPatch.UpdateGacFile" -> "gacutil.exe"
@@ -409,9 +410,13 @@ load_dotnet11() {
     done
     cd "$olddir"
 
-    # Need native gdiplus, else it crashes on unimplemented function gdiplus.dll.GdipGetFamily
+    # Need native gdiplus until wine implements gdiplus.GdipGetFamily
     cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINEPREFIX/drive_c/windows/system32/"
-    override_dlls native gdiplus mscoree
+    override_dlls native gdiplus 
+
+    # Need native mscoree until wine implements mscoree.ND_RU1 et al
+    # see http://bugs.winehq.org/show_bug.cgi?id=11742#c7
+    override_dlls native mscoree
 } 
 
 #----------------------------------------------------------------
