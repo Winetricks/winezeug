@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080317.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080321.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -73,6 +73,7 @@ usage() {
     echo " mono11     mono 1.1.13-gtksharp-2.8.2 (deprecated, use 1.2)"
     echo " mono12     mono mono-1.2.6-gtksharp-2.10.2"
     echo " msi2       Microsoft Installer 2.0"
+    echo " msls31     Microsoft Line Services 3.1 (needed by native riched?)"
     echo " msxml3     Microsoft XML version 3"
     echo " msxml4     Microsoft XML version 4"
     echo " msxml6     Microsoft XML version 6" 
@@ -662,6 +663,21 @@ load_msi2() {
 
 #----------------------------------------------------------------
 
+load_msls31() {
+    # Install native Microsoft Line Services (needed by e-Sword, possibly only when using native riched20)
+    # http://www.microsoft.com/reader/downloads/pc.mspx
+    if ! test -f $WINEPREFIX/drive_c/Program\ Files/Microsoft\ Reader/msls31.dll
+    then
+        echo "Installing Microsoft Reader (which includes a copy of msls31.dll)"
+        download . http://download.microsoft.com/download/d/0/9/d099ad62-41d1-4e92-9935-67955a437460/MSReaderSetupUSA.exe 055af1f589e2ae9896f17dbf33d8a3f156d10282
+        try $WINE $WINETRICKS_CACHE/MSReaderSetupUSA.exe 
+    fi
+
+    cp $WINEPREFIX/drive_c/Program\ Files/Microsoft\ Reader/msls31.dll $WINEPREFIX/drive_c/windows/system32
+}
+
+#----------------------------------------------------------------
+
 load_msxml3() {
     # Service Pack 5
     #download http://download.microsoft.com/download/a/5/e/a5e03798-2454-4d4b-89a3-4a47579891d8/msxml3.msi
@@ -970,6 +986,7 @@ do
     mono11) load_mono11;;
     mono12) load_mono12;;
     msi2) load_msi2;;
+    msls31) load_msls31;;
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
