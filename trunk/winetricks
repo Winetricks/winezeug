@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080321.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080326.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -666,14 +666,14 @@ load_msi2() {
 load_msls31() {
     # Install native Microsoft Line Services (needed by e-Sword, possibly only when using native riched20)
     # http://www.microsoft.com/reader/downloads/pc.mspx
-    if ! test -f $WINEPREFIX/drive_c/Program\ Files/Microsoft\ Reader/msls31.dll
+    if ! test -f "$programfilesdir_unix/Microsoft Reader"/msls31.dll
     then
         echo "Installing Microsoft Reader (which includes a copy of msls31.dll)"
         download . http://download.microsoft.com/download/d/0/9/d099ad62-41d1-4e92-9935-67955a437460/MSReaderSetupUSA.exe 055af1f589e2ae9896f17dbf33d8a3f156d10282
         try $WINE $WINETRICKS_CACHE/MSReaderSetupUSA.exe 
     fi
 
-    cp $WINEPREFIX/drive_c/Program\ Files/Microsoft\ Reader/msls31.dll $WINEPREFIX/drive_c/windows/system32
+    cp "$programfilesdir_unix/Microsoft Reader"/msls31.dll $WINEPREFIX/drive_c/windows/system32
 }
 
 #----------------------------------------------------------------
@@ -868,7 +868,7 @@ load_vcrun2003() {
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     download . http://dl.sourceforge.net/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
     try $WINE $WINETRICKS_CACHE/BZEditW32_1.6.5_Installer.exe $WINETRICKS_S
-    cp $WINEPREFIX/drive_c/Program\ Files/BZEdit1.6.5/m*71* $WINEPREFIX/drive_c/windows/system32/
+    cp "$programfilesdir_unix/BZEdit1.6.5"/m*71* $WINEPREFIX/drive_c/windows/system32/
 }
 
 #----------------------------------------------------------------
