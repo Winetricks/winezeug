@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080326.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080328.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -61,6 +61,7 @@ usage() {
     echo " dcom98     Install native DCOM, override the Wine implementation"
     echo " dotnet11   Install native .NET 1.1"
     echo " ffdshow    Install ffdshow video codecs"
+    echo " flash      Install Adobe Flash Player activex"
     echo " gdiplus    Install gdiplus.dll from pp viewer (got a better idea?)"
     echo " gecko      Install the HTML rendering Engine (Mozilla)"
     echo " icodecs    Intel Codecs"
@@ -464,6 +465,14 @@ load_ffdshow() {
     # ffdshow
     download . http://downloads.sourceforge.net/ffdshow-tryout/ffdshow_beta4a_rev1723_20071224_clsid.exe 6e018139c3ed4800aa3580267d1da47fa936a82a
     try $WINE $WINETRICKS_CACHE/ffdshow_beta4a_rev1723_20071224_clsid.exe $WINETRICKS_SILENT
+}
+
+#----------------------------------------------------------------
+
+load_flash() {
+    # www.adobe.com/products/flashplayer/
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi f4dd1c0c715b791db2c972aeba90d3b78372996a  
+    try $WINE msiexec /i $WINETRICKS_CACHE/install_flash_player_active_x.msi $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -974,6 +983,7 @@ do
     dcom98) load_dcom98;;
     dotnet11) load_dotnet11;;
     ffdshow) load_ffdshow;;
+    flash) load_flash;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     icodecs) load_icodecs;;
