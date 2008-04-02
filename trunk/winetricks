@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080328.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080402.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -550,9 +550,9 @@ load_jet40() {
 #----------------------------------------------------------------
 
 load_liberation() {
-    # http://www.redhat.com/promo/fonts/
-    download . http://www.redhat.com/f/fonts/liberation-fonts-ttf-3.tar.gz 503fd3c60174b53f59ca41927b72e4a44bab586b
-    tar --wildcards -C $WINEPREFIX/drive_c/windows/fonts -xvzf $WINETRICKS_CACHE/liberation-fonts-ttf-3.tar.gz '*.ttf'
+    # http://www.redhat.com/promo/fonts/ 				
+    download . http://www.redhat.com/f/fonts/liberation-fonts.tar.gz 38276ab5e4322e131217d26f193bfce396195c0a
+    tar --wildcards -C $WINEPREFIX/drive_c/windows/fonts -xvzf $WINETRICKS_CACHE/liberation-fonts.tar.gz '*.ttf'
 }
 
 #----------------------------------------------------------------
