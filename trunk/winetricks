@@ -393,6 +393,9 @@ load_dcom98() {
 load_dotnet11() {
     DOTNET_INSTALL_DIR="$WINEPREFIX/drive_c/windows/Microsoft.NET/Framework/v1.1.4322" 
 
+    # Set win2k so .net installs gdiplus
+    set_winver win2k
+
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
     try $WINE $WINETRICKS_CACHE/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
@@ -415,8 +418,11 @@ load_dotnet11() {
     cd "$olddir"
 
     # Need native gdiplus until wine implements gdiplus.GdipGetFamily
+    #load_gdiplus
     cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINEPREFIX/drive_c/windows/system32/"
-    override_dlls native gdiplus 
+    override_dlls native gdiplus
+
+    unset_winver
 } 
 
 #----------------------------------------------------------------
