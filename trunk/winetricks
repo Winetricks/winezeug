@@ -59,7 +59,8 @@ usage() {
     echo " colorprofile  Install standard RGB color profile"
     echo " corefonts  Install MS Arial, Courier, Times fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
-    echo " dotnet11   Install native .NET 1.1"
+    echo " dotnet11   Install native .NET 1.1 (requires Windows license)"
+    echo " dotnet20   Install native .NET 2.0 (requires Windows license)"
     echo " ffdshow    Install ffdshow video codecs"
     echo " flash      Install Adobe Flash Player activex"
     echo " gdiplus    Install gdiplus.dll from pp viewer (got a better idea?)"
@@ -102,9 +103,10 @@ usage() {
     echo " fakeie6      Set registry to claim IE6sp1 is installed"
     echo " native_mdac  Override odbc32 and odbccp32"
     echo " winver=nt40  Set windows version to nt40"
-    echo " winver=win98 Set windows version to win98"
-    echo " winver=winxp Set windows version to winxp"
-    echo " winver=      Set windows version to default (win2k)"
+    echo " winver=win98 Set windows version to Windows 98"
+    echo " winver=win2k Set windows version to Windows 2000"
+    echo " winver=winxp Set windows version to Windows XP"
+    echo " winver=      Set windows version to default (winxp)"
     echo " volnum      Rename drive_c to harddiskvolume0 (was needed by some installers before 0.9.54)"
 }
 
@@ -395,7 +397,7 @@ load_dotnet11() {
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
     try $WINE $WINETRICKS_CACHE/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
 
-    # It installs ok, but doesn't work yet without the following three kludges:
+    # It installs ok, but doesn't work yet without the following two kludges:
 
     # Need to preload the Global Assembly Cache until Wine implements MsiPublishAssemblies()
     # see http://bugs.winehq.org/show_bug.cgi?id=11742
@@ -415,10 +417,26 @@ load_dotnet11() {
     # Need native gdiplus until wine implements gdiplus.GdipGetFamily
     cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINEPREFIX/drive_c/windows/system32/"
     override_dlls native gdiplus 
+} 
 
-    # Need native mscoree until wine implements mscoree.ND_RU1 et al
-    # see http://bugs.winehq.org/show_bug.cgi?id=11742#c7
-    override_dlls native mscoree
+#----------------------------------------------------------------
+
+load_dotnet20() {
+    # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
+    test -d "$WINEPREFIX/drive_c/windows/gecko" || load_gecko
+    set_winver win2k
+    # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
+    download dotnet20 http://kegel.com/wine/l_intl.nls
+    try cp -f $WINETRICKS_CACHE/dotnet20/l_intl.nls "$WINEPREFIX/drive_c/windows/system32/"
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5
+    download dotnet20 http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe a3625c59d7a2995fb60877b5f5324892a1693b2a
+    if [ "$WINETRICKS_QUIET"x = ""x ]
+    then
+       try $WINE $WINETRICKS_CACHE/dotnet20/dotnetfx.exe 
+    else
+       try $WINE $WINETRICKS_CACHE/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
+    fi
 } 
 
 #----------------------------------------------------------------
@@ -982,6 +1000,7 @@ do
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
     dotnet11) load_dotnet11;;
+    dotnet20) load_dotnet20;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
     gdiplus) load_gdiplus;;
@@ -1022,9 +1041,10 @@ do
     fakeie6) set_fakeie6;;
     allfonts) load_corefonts; load_tahoma; load_liberation;;
     allvcodecs|allcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
-    winver=nt40) set_winver nt40;;
-    winver=win98) set_winver win98;;
-    winver=winxp) set_winver winxp;;
+    nt40|winver=nt40) set_winver nt40;;
+    win98|winver=win98) set_winver win98;;
+    win2k|winver=win2k) set_winver win2k;;
+    winxp|winver=winxp) set_winver winxp;;
     winver=) unset_winver;;
     native_mdac) set_native_mdac;;
     volnum) volnum;;
