@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080402.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080406.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -73,7 +73,7 @@ usage() {
     echo " mdac28     MDAC 2.8."
     echo " mfc40"
     echo " mono11     mono 1.1.13-gtksharp-2.8.2 (deprecated, use 1.2)"
-    echo " mono12     mono mono-1.2.6-gtksharp-2.10.2"
+    echo " mono12     mono mono-1.9-gtksharp-2.10.4-win32-4"
     echo " msi2       Microsoft Installer 2.0"
     echo " msls31     Microsoft Line Services 3.1 (needed by native riched?)"
     echo " msxml3     Microsoft XML version 3"
@@ -654,7 +654,7 @@ _EOF_
 
 load_mono12() {
     # Load Mono, have it handle all .net requests
-    download . ftp://www.go-mono.com/archive/1.9/windows-installer/4/mono-1.9-gtksharp-2.10.4-win32-4.exe 52c79aa8a4fcb29570ecf8e3cfcc417317852c16
+    download .  http://ftp.novell.com/pub/mono/archive/1.9/windows-installer/4/mono-1.9-gtksharp-2.10.4-win32-4.exe 52c79aa8a4fcb29570ecf8e3cfcc417317852c16
     # Anyone know how to get it to do a silent install?
     try $WINE $WINETRICKS_CACHE/mono-1.9-gtksharp-2.10.4-win32-4.exe
 
