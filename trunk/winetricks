@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080406.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080408.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -312,6 +312,33 @@ _EOF_
     rm $WINETRICKS_TMP/override-dll.reg
 }
 
+override_app_dlls() {
+    app=$1
+    shift
+    mode=$1
+    shift
+    echo Using $mode override for following DLLs when running $app: $@
+    ( 
+    echo REGEDIT4 
+    echo "" >> $WINETRICKS_TMP/override-dll.reg 
+    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app\\DllOverrides]" 
+    ) > $WINETRICKS_TMP/override-dll.reg 
+
+    while test "$1" != ""
+    do
+        case "$1" in
+        comctl32)
+           rm -rf $WINEPREFIX/drive_c/windows/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           ;;
+        esac
+        echo "\"$1\"=\"$mode\"" >> $WINETRICKS_TMP/override-dll.reg
+	shift
+    done
+
+    try $WINE regedit $WINETRICKS_TMP/override-dll.reg
+    rm $WINETRICKS_TMP/override-dll.reg
+}
+
 #----- One function per package, in alphabetical order ----------
 
 load_art2kmin() {
@@ -383,6 +410,11 @@ load_dcom98() {
 
     # Set native DCOM by default for all apps (ok, this might be overkill)
     override_dlls native,builtin ole32 oleaut32 rpcrt4
+
+    # but not for a few builtin apps that don't like it
+    override_app_dlls services.exe builtin ole32 oleaut32 rpcrt4
+    override_app_dlls wineboot.exe builtin ole32 oleaut32 rpcrt4
+    override_app_dlls winedevice.exe builtin ole32 oleaut32 rpcrt4
 
     # and undo version win98
     unset_winver
