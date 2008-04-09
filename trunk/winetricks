@@ -106,6 +106,7 @@ usage() {
     echo " winver=win98 Set windows version to Windows 98"
     echo " winver=win2k Set windows version to Windows 2000"
     echo " winver=winxp Set windows version to Windows XP"
+    echo " winver=vista Set windows version to Windows Vista"
     echo " winver=      Set windows version to default (winxp)"
     echo " volnum      Rename drive_c to harddiskvolume0 (was needed by some installers before 0.9.54)"
 }
@@ -1111,6 +1112,7 @@ do
     win98|winver=win98) set_winver win98;;
     win2k|winver=win2k) set_winver win2k;;
     winxp|winver=winxp) set_winver winxp;;
+    vista|winver=vista) set_winver vista;;
     winver=) unset_winver;;
     native_mdac) set_native_mdac;;
     volnum) volnum;;
