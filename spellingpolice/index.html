@@ -52,14 +52,14 @@ First, I spellcheck the <i>noncomment</i> portion of the source,
 saving the list of apparant typos (really, variable names and the like)
 to the file stop1.txt, like this:
 <pre>
-find wine-git -name '*.[ch]' | xargs perl lspell2.pl /dev/null | grep -v ':' | tr ' ' '\012' | sort -f | uniq &gt; stop1.txt
+$ find wine-git/ -name '*.[ch]' | xargs perl lspell2.pl /dev/null | grep -v ':' | tr ' ' '\012' | sort -f | uniq &gt; stop1.txt
 </pre>
 
 Second, I spellcheck the <i>comment</i> part of wine's source, 
 telling the spellchecker to ignore any of the variable names found
 in the previous step:
 <pre>
-find wine-git -name '*.[ch]' | xargs perl lspell.pl stop1.txt | grep -v ':' | tr ' ' '\012' | sort -f | uniq &gt; stop2.txt
+$ find wine-git/ -name '*.[ch]' | xargs perl lspell.pl stop1.txt | grep -v ':' | tr ' ' '\012' | sort -f | uniq &gt; stop2.txt
 </pre>
 
 Third, I manually edit 'stop2.txt' and remove lines that <b>are</b> 
@@ -69,7 +69,7 @@ lines that are jokes or britishisms, for instance.)
 <p>
 Finally, I generate the custom dictionary by combining stop1.txt and stop2.txt:
 <pre>
-sort -u stop[12].txt &gt; stop.txt
+$ sort -u stop[12].txt &gt; stop.txt
 </pre>
 and manually removing obvious crap like blank lines etc. from stop.txt.
 <p>
@@ -78,7 +78,7 @@ and should be filtered out when spellchecking.
 <p>
 Now you're set to use a mass spellchecker on the wine source tree, e.g.
 <pre>
-perl lspell.pl stop.txt `find wine-git -name '*.[ch]'`
+$ perl lspell.pl stop.txt `find wine-git/ -name '*.[ch]'`
 </pre>
 
 <h2>Other spell checkers</h2>
