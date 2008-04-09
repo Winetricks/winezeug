@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080408.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080409.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -226,6 +226,23 @@ rm -rf $WINETRICKS_TMP/*
 programfilesdir_win=`$WINE cmd.exe /c echo "%ProgramFiles%"`
 programfilesdir_unix=`$WINE winepath -u "$programfilesdir_win"`
 
+# Mac folks tend to have curl rather than wget
+if which xcurl > /dev/null
+then
+   WGET="curl -L -O -C -"
+else
+   # Use -nd to insulate ourselves from people who set -x in WGETRC
+   WGET="wget -nd -c"
+fi
+
+# Mac folks tend to not have sha1sum, but we can make do with openssl
+if which sha1sum > /dev/null
+then
+   SHA1SUM="sha1sum"
+else
+   SHA1SUM="openssl dgst -sha1"
+fi
+
 #-----  Helpers  ------------------------------------------------
 
 # Execute with error checking
@@ -244,6 +261,18 @@ try() {
     fi
 }
 
+# verify an sha1sum
+verify_sha1sum() {
+    wantsum=$1
+    file=$2
+   
+    gotsum=`$SHA1SUM < $file | sed 's/ .*//'`
+    if [ "$gotsum"x != "$wantsum"x ]
+    then
+       abort "file $file sha1sum mismatch"
+    fi
+}
+
 # Download a file
 # Usage: package url [sha1sum [filename]]
 # Caches downloads in winetrickscache/$package
@@ -256,11 +285,10 @@ download() {
     fi
     cache=$WINETRICKS_CACHE/$1
     mkdir -p $cache
-    test -f $cache/$file || (cd $cache; wget -c "$2")
+    test -f $cache/$file || (cd $cache; $WGET "$2")
     if [ "$3"x != ""x ]
     then
-	echo "$3  $cache/$file" > $cache/$file.sha1sum
-	try sha1sum --status -c $cache/$file.sha1sum
+	verify_sha1sum $3  "$cache/$file"
     fi
 }
 
