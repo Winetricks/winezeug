@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080409.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080410.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -663,7 +663,9 @@ load_mdac25() {
 load_mdac27() {
     download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
     set_native_mdac
+    set_winver win2k
     try $WINE $WINETRICKS_CACHE/mdac27/mdac_typ.exe
+    unset_winver
 }
 
 #----------------------------------------------------------------
