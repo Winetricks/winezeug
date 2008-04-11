@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080410.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080411.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -233,7 +233,12 @@ then
    WGET="curl -L -O -C -"
 else
    # Use -nd to insulate ourselves from people who set -x in WGETRC
-   WGET="wget -nd -c"
+   # [*] --retry-connrefused works around the broken sf.net mirroring
+   # system when downloading corefonts
+   # [*] --read-timeout is useful on the adobe server that doesn't
+   # close the connection unless you tell it to (control-C or closing
+   # the socket)
+   WGET="wget -nd -c --read-timeout=300 --retry-connrefused"
 fi
 
 # Mac folks tend to not have sha1sum, but we can make do with openssl
@@ -408,12 +413,34 @@ load_corefonts() {
     # TODO: let user pick mirror, check md5; 
     # see http://corefonts.sourceforge.net/msttcorefonts-2.0-1.spec for how
     # TODO: add more fonts
-    download . http://downloads.sourceforge.net/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
-    download . http://downloads.sourceforge.net/corefonts/courie32.exe 06a745023c034f88b4135f5e294fece1a3c1b057
-    download . http://downloads.sourceforge.net/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
+    
+    # Added More Fonts (see msttcorefonts)
+    # [*] Pointed download locations to sites that actually contained the
+    # fonts to download (as of 04-03-2008)			    
+    download . http://internap.dl.sourceforge.net/sourceforge/corefonts/andale32.exe c4db8cbe42c566d12468f5fdad38c43721844c69
+    download . http://easynews.dl.sourceforge.net/sourceforge/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
+    download . http://internap.dl.sourceforge.net/sourceforge/corefonts/arialb32.exe d45cdab84b7f4c1efd6d1b369f50ed0390e3d344
+    download . http://easynews.dl.sourceforge.net/sourceforge/corefonts/comic32.exe 2371d0327683dcc5ec1684fe7c275a8de1ef9a51
+    download . http://internap.dl.sourceforge.net/sourceforge/corefonts/courie32.exe 06a745023c034f88b4135f5e294fece1a3c1b057
+    download . http://easynews.dl.sourceforge.net/sourceforge/corefonts/georgi32.exe 90e4070cb356f1d811acb943080bf97e419a8f1e
+    download . http://internap.dl.sourceforge.net/sourceforge/corefonts/impact32.exe 86b34d650cfbbe5d3512d49d2545f7509a55aad2
+    download . http://easynews.dl.sourceforge.net/sourceforge/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
+    download . http://internap.dl.sourceforge.net/sourceforge/corefonts/trebuc32.exe 50aab0988423efcc9cf21fac7d64d534d6d0a34a
+    download . http://internap.dl.sourceforge.net/sourceforge/corefonts/verdan32.exe f5b93cedf500edc67502f116578123618c64a42a
+    download . http://easynews.dl.sourceforge.net/sourceforge/corefonts/webdin32.exe 2fb4a42c53e50bc70707a7b3c57baf62ba58398f
+
+    # note: andale32 errors with 43 and georgi32 reports BAD EXEC warning
+    #    try $WINE $WINETRICKS_CACHE/andale32.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/arial32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/arialb32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/comic32.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/courie32.exe $WINETRICKS_QUIET
+    #    try $WINE $WINETRICKS_CACHE/georgi32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/impact32.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/times32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/trebuc32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/verdan32.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/webdin32.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
