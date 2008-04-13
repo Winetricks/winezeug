@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080411.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080412.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -228,7 +228,7 @@ programfilesdir_win=`$WINE cmd.exe /c echo "%ProgramFiles%"`
 programfilesdir_unix=`$WINE winepath -u "$programfilesdir_win"`
 
 # Mac folks tend to have curl rather than wget
-if which xcurl > /dev/null
+if which curl > /dev/null
 then
    WGET="curl -L -O -C -"
 else
