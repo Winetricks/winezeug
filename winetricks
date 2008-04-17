@@ -25,18 +25,27 @@ case "$1" in
   ;;
 esac
 
+die() {
+  echo "$@"
+
+  case x"$GUI" in
+  x1) xmessage -center "               Winetricks error: $@                 " ;;
+  *) ;;
+  esac
+
+  exit 1
+}
+
 which "$WINE" > /dev/null
 if test "$?" -ne "0"
 then
-  echo "Cannot find wine ($WINE)"
-  exit 1
+  die "Cannot find wine ($WINE)"
 fi
 
 which "$WINEPREFIXCREATE" > /dev/null
 if test "$?" -ne "0"
 then
-  echo "Cannot find wineprefixcreate ($WINEPREFIXCREATE)"
-  exit 1
+  die "Cannot find wineprefixcreate ($WINEPREFIXCREATE)"
 fi
 
 #----------------------------------------------------------------
@@ -214,8 +223,9 @@ dogui()
 
 #----------------------------------------------------------------
 
+GUI=0
 case x"$1" in
-x) dogui ; set $todo ;;
+x) GUI=1; dogui ; set $todo ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
 esac
 test -d $WINEPREFIX || $WINEPREFIXCREATE
@@ -251,6 +261,12 @@ else
    SHA1SUM="openssl dgst -sha1"
 fi
 
+which cabextract > /dev/null
+if test "$?" -ne "0"
+then
+  echo "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+fi
+
 #-----  Helpers  ------------------------------------------------
 
 # Execute with error checking
@@ -264,8 +280,7 @@ try() {
     status=$?
     if test $status -ne 0
     then
-        echo "Note: command '$@' returned status $status.  Aborting."
-	exit $status
+        die "Note: command '$@' returned status $status.  Aborting."
     fi
 }
 
@@ -434,15 +449,16 @@ load_corefonts() {
     # note: andale32 errors with 43 and georgi32 reports BAD EXEC warning
     #    try $WINE $WINETRICKS_CACHE/andale32.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/arial32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/arialb32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/comic32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/courie32.exe $WINETRICKS_QUIET
-    #    try $WINE $WINETRICKS_CACHE/georgi32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/impact32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/times32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/trebuc32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/verdan32.exe $WINETRICKS_QUIET
-    try $WINE $WINETRICKS_CACHE/webdin32.exe $WINETRICKS_QUIET
+    # One EULA is enough...
+    try $WINE $WINETRICKS_CACHE/arialb32.exe /q
+    try $WINE $WINETRICKS_CACHE/comic32.exe /q
+    try $WINE $WINETRICKS_CACHE/courie32.exe /q
+    #    try $WINE $WINETRICKS_CACHE/georgi32.exe /q
+    try $WINE $WINETRICKS_CACHE/impact32.exe /q
+    try $WINE $WINETRICKS_CACHE/times32.exe /q
+    try $WINE $WINETRICKS_CACHE/trebuc32.exe /q
+    try $WINE $WINETRICKS_CACHE/verdan32.exe /q
+    try $WINE $WINETRICKS_CACHE/webdin32.exe /q
 }
 
 #----------------------------------------------------------------
@@ -825,8 +841,7 @@ load_msxml4() {
        try $WINE $WINETRICKS_CACHE/msxml4-KB927978-enu.exe "/x:`$WINE winepath -w $WINETRICKS_TMP`" $WINETRICKS_QUIET
        if ! test -f $WINETRICKS_TMP/msxml.msi
        then
-          echo msxml.msi not found
-          exit 1
+          die msxml.msi not found
        fi
        mv $WINETRICKS_TMP/msxml.msi $WINETRICKS_CACHE/msxml4.msi
     fi
@@ -969,8 +984,7 @@ load_vcrun6() {
        try $WINE $WINETRICKS_CACHE/vc6redistsetup_enu.exe "/T:`$WINE winepath -w $WINETRICKS_TMP`" /c $WINETRICKS_QUIET
        if ! test -f $WINETRICKS_TMP/vcredist.exe
        then
-          echo vcredist.exe not found
-          exit 1
+          die vcredist.exe not found
        fi
        mv $WINETRICKS_TMP/vcredist.exe $WINETRICKS_CACHE
     fi
