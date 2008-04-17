@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080412.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080417.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -92,6 +92,7 @@ usage() {
     echo " vcrun2005  Visual C++ 2005 redistributable libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2005sp1 Visual C++ 2005sp1 redistributable libraries"
     echo " vcrun2008  Visual C++ 2008 redistributable libraries (mfc90,msvcp90,msvcr90)"
+    echo " wmp9       Windows Media Player 9"
     echo " wsh51      Windows Scripting Host 5.1"
     echo " wsh56      Windows Scripting Host 5.6 (install vcrun6 first)"
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
@@ -1026,6 +1027,22 @@ load_vcrun2008() {
 
 #----------------------------------------------------------------
 
+load_wmp9() {
+    # Not really expected to work well yet; see
+    # http://appdb.winehq.org/appview.php?versionId=1449
+
+    # See also http://www.microsoft.com/windows/windowsmedia/player/9series/default.aspx
+    download wmp9 http://download.microsoft.com/download/1/b/c/1bc0b1a3-c839-4b36-8f3c-19847ba09299/MPSetup.exe 580536d10657fa3868de2869a3902d31a0de791b
+
+    set_winver win2k
+    # Have to run twice; see http://bugs.winehq.org/show_bug.cgi?id=1886
+    try $WINE $WINETRICKS_CACHE/wmp9/MPSetup.exe $WINETRICKS_QUIET
+    try $WINE $WINETRICKS_CACHE/wmp9/MPSetup.exe $WINETRICKS_QUIET
+    unset_winver
+}
+
+#----------------------------------------------------------------
+
 load_wsh51() {
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=bfdb7709-51e4-4aa6-adb0-05444e68dd80&DisplayLang=en
     echo "Note: Microsoft has since pulled this download.  Sorry!"
@@ -1128,6 +1145,7 @@ do
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
     vcrun2008) load_vcrun2008;;
+    wmp9) load_vcrun6; load_wsh56; load_wmp9;;
     wsh51) load_wsh51;;
     wsh56) load_wsh56;;
     wsh56js) load_wsh56js;;
