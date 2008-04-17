@@ -92,7 +92,8 @@ usage() {
     echo " vcrun2005  Visual C++ 2005 redistributable libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2005sp1 Visual C++ 2005sp1 redistributable libraries"
     echo " vcrun2008  Visual C++ 2008 redistributable libraries (mfc90,msvcp90,msvcr90)"
-    echo " wmp9       Windows Media Player 9"
+    echo " wmp9       Windows Media Player 9 (requires Windows license)"
+    echo " wmp10      Windows Media Player 10 (requires Windows license)"
     echo " wsh51      Windows Scripting Host 5.1"
     echo " wsh56      Windows Scripting Host 5.6 (install vcrun6 first)"
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
@@ -954,6 +955,11 @@ load_vbrun60() {
 
 load_vcrun6() {
     # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
+    if test -f $WINEPREFIX/drive_c/windows/system32/mfc42u.dll
+    then
+        echo "vcrun6 already installed, skipping"
+        return
+    fi
 
     if ! test -f $WINETRICKS_CACHE/vcredist.exe
     then
@@ -1031,13 +1037,39 @@ load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
 
+    set_winver win2k
+
     # See also http://www.microsoft.com/windows/windowsmedia/player/9series/default.aspx
     download wmp9 http://download.microsoft.com/download/1/b/c/1bc0b1a3-c839-4b36-8f3c-19847ba09299/MPSetup.exe 580536d10657fa3868de2869a3902d31a0de791b
 
-    set_winver win2k
     # Have to run twice; see http://bugs.winehq.org/show_bug.cgi?id=1886
     try $WINE $WINETRICKS_CACHE/wmp9/MPSetup.exe $WINETRICKS_QUIET
     try $WINE $WINETRICKS_CACHE/wmp9/MPSetup.exe $WINETRICKS_QUIET
+
+    # Also install the codecs
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
+    download . http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
+    try $WINE $WINETRICKS_CACHE/WM9Codecs9x.exe $WINETRICKS_QUIET
+
+    unset_winver
+}
+
+#----------------------------------------------------------------
+
+load_wmp10() {
+    # See http://appdb.winehq.org/appview.php?iVersionId=3212
+
+    # See also http://www.microsoft.com/windows/windowsmedia/player/10
+    download . http://download.microsoft.com/download/1/2/A/12A31F29-2FA9-4F50-B95D-E45EF7013F87/MP10Setup.exe 69862273a5d9d97b4a2e5a3bd93898d259e86657
+
+    # Crashes on exit, but otherwise ok; see http://bugs.winehq.org/show_bug.cgi?id=12633
+    $WINE $WINETRICKS_CACHE/MP10Setup.exe $WINETRICKS_QUIET || true
+
+    # Also install the codecs
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
+    download . http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
+    set_winver win2k
+    try $WINE $WINETRICKS_CACHE/WM9Codecs9x.exe $WINETRICKS_QUIET
     unset_winver
 }
 
@@ -1146,6 +1178,7 @@ do
     vcrun2005sp1) load_vcrun2005sp1;;
     vcrun2008) load_vcrun2008;;
     wmp9) load_vcrun6; load_wsh56; load_wmp9;;
+    wmp10) load_vcrun6; load_wsh56; load_wmp10;;
     wsh51) load_wsh51;;
     wsh56) load_wsh56;;
     wsh56js) load_wsh56js;;
