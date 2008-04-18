@@ -113,13 +113,13 @@ usage() {
     echo " allcodecs    Install all listed codecs (xvid, ffdshow, icodecs)"
     echo " fakeie6      Set registry to claim IE6sp1 is installed"
     echo " native_mdac  Override odbc32 and odbccp32"
-    echo " winver=nt40  Set windows version to nt40"
-    echo " winver=win98 Set windows version to Windows 98"
-    echo " winver=win2k Set windows version to Windows 2000"
-    echo " winver=winxp Set windows version to Windows XP"
-    echo " winver=vista Set windows version to Windows Vista"
+    echo " nt40         Set windows version to nt40"
+    echo " win98        Set windows version to Windows 98"
+    echo " win2k        Set windows version to Windows 2000"
+    echo " winxp        Set windows version to Windows XP"
+    echo " vista        Set windows version to Windows Vista"
     echo " winver=      Set windows version to default (winxp)"
-    echo " volnum      Rename drive_c to harddiskvolume0 (was needed by some installers before 0.9.54)"
+    echo " volnum       Rename drive_c to harddiskvolume0 (needed by some installers)"
 }
 
 #----------------------------------------------------------------
