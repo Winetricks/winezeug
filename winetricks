@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080418.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080419.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -1137,8 +1137,8 @@ load_wsh56vb() {
 
 load_xvid() {
     # xvid
-    download . "http://www.digital-digest.com/software/getdownload.php?sid=1052&did=1" c4440346a09261af3eda3aa3fe2a17e46c817515 XviD-1.1.3-28062007.exe
-    try $WINE $WINETRICKS_CACHE/XviD-1.1.3-28062007.exe $WINETRICKS_SILENT
+    download . http://download.videohelp.com/download/Xvid-1.1.3-12042008.exe 8de4950fb3c53dd3c8d486c0b9d516ede4beded6
+    try $WINE $WINETRICKS_CACHE/Xvid-1.1.3-12042008.exe $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
