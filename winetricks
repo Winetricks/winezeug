@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080419.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080423.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -78,11 +78,10 @@ usage() {
     echo " jet40      Install Jet 4.0 Service Pack 8"
     echo " liberation Install Red Hat's Liberation fonts (Sans, Serif, Mono)"
     echo " mdac25     MDAC 2.5: Microsoft ODBC drivers, etc."
-    echo " mdac27     MDAC 2.7."
-    echo " mdac28     MDAC 2.8."
+    echo " mdac27     MDAC 2.7"
+    echo " mdac28     MDAC 2.8"
     echo " mfc40"
-    echo " mono11     mono 1.1.13-gtksharp-2.8.2 (deprecated, use 1.2)"
-    echo " mono12     mono mono-1.9-gtksharp-2.10.4-win32-4"
+    echo " mono19     mono-1.9.1-gtksharp-2.10.4-win32-2"
     echo " msi2       Microsoft Installer 2.0"
     echo " msls31     Microsoft Line Services 3.1 (needed by native riched?)"
     echo " msxml3     Microsoft XML version 3"
@@ -308,7 +307,12 @@ download() {
     fi
     cache=$WINETRICKS_CACHE/$1
     mkdir -p $cache
-    test -f $cache/$file || (cd $cache; $WGET "$2")
+    if ! test -f $cache/$file
+    then
+        cd $cache
+        try $WGET "$2"
+        cd $olddir
+    fi
     if [ "$3"x != ""x ]
     then
 	verify_sha1sum $3  "$cache/$file"
@@ -739,37 +743,13 @@ load_mfc40() {
 
 #----------------------------------------------------------------
 
-load_mono11() {
-    echo "Mono-1.1 is deprecated.  The Mono team prefers you use Mono-1.2 instead."
+load_mono19() {
     # Load Mono, have it handle all .net requests
-    download . ftp://www.go-mono.com/archive/1.1.13.8.2/windows-installer/0/mono-1.1.13.8.2-gtksharp-2.8.2-win32-0.exe e8725d03f51fcca2849d1a8f1d87ceb6f77c1d82
+    download .  http://ftp.novell.com/pub/mono/archive/1.9.1/windows-installer/2/mono-1.9.1-gtksharp-2.10.4-win32-2.exe 47ccc5dbba22f6f684833a4efea5119231e8e71e
     # Anyone know how to get it to do a silent install?
-    try $WINE $WINETRICKS_CACHE/mono-1.1.13.8.2-gtksharp-2.8.2-win32-0.exe
+    try $WINE $WINETRICKS_CACHE/mono-1.9.1-gtksharp-2.10.4-win32-2.exe
 
-    # FIXME: what are the right registry entries here?
-    cat > $WINETRICKS_TMP/mono.reg <<_EOF_
-REGEDIT4
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v1.1.4322]
-"Install"=dword:00000001
-"SP"=dword:00000001
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v1.1]
-"4322"="3706-4322"
-_EOF_
-    try $WINE regedit $WINETRICKS_TMP/mono.reg
-    rm -f $WINETRICKS_TMP/mono.reg
-}
-
-#----------------------------------------------------------------
-
-load_mono12() {
-    # Load Mono, have it handle all .net requests
-    download .  http://ftp.novell.com/pub/mono/archive/1.9/windows-installer/4/mono-1.9-gtksharp-2.10.4-win32-4.exe 52c79aa8a4fcb29570ecf8e3cfcc417317852c16
-    # Anyone know how to get it to do a silent install?
-    try $WINE $WINETRICKS_CACHE/mono-1.9-gtksharp-2.10.4-win32-4.exe
-
-    cat > $WINETRICKS_TMP/mono_1.2.reg <<_EOF_
+    cat > $WINETRICKS_TMP/mono_1.9.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
@@ -779,8 +759,8 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try $WINE regedit $WINETRICKS_TMP/mono_1.2.reg
-    rm -f $WINETRICKS_TMP/mono_1.2.reg
+    try $WINE regedit $WINETRICKS_TMP/mono_1.9.reg
+    rm -f $WINETRICKS_TMP/mono_1.9.reg
 }
 
 #----------------------------------------------------------------
@@ -1174,8 +1154,7 @@ do
     mdac27) load_mdac27;;
     mdac28) load_mdac28;;
     mfc40) load_mfc40;;
-    mono11) load_mono11;;
-    mono12) load_mono12;;
+    mono19) load_mono19;;
     msi2) load_msi2;;
     msls31) load_msls31;;
     msxml3) load_msxml3;;
