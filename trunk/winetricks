@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080423.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080502.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -238,20 +238,6 @@ rm -rf $WINETRICKS_TMP/*
 programfilesdir_win=`$WINE cmd.exe /c echo "%ProgramFiles%"`
 programfilesdir_unix=`$WINE winepath -u "$programfilesdir_win"`
 
-# Mac folks tend to have curl rather than wget
-if which curl > /dev/null
-then
-   WGET="curl -L -O -C -"
-else
-   # Use -nd to insulate ourselves from people who set -x in WGETRC
-   # [*] --retry-connrefused works around the broken sf.net mirroring
-   # system when downloading corefonts
-   # [*] --read-timeout is useful on the adobe server that doesn't
-   # close the connection unless you tell it to (control-C or closing
-   # the socket)
-   WGET="wget -nd -c --read-timeout=300 --retry-connrefused"
-fi
-
 # Mac folks tend to not have sha1sum, but we can make do with openssl
 if which sha1sum > /dev/null
 then
@@ -305,12 +291,26 @@ download() {
     else
         file=`basename "$2"`
     fi
-    cache=$WINETRICKS_CACHE/$1
-    mkdir -p $cache
-    if ! test -f $cache/$file
+    cache="$WINETRICKS_CACHE/$1"
+    mkdir -p "$cache"
+    if ! test -f "$cache/$file"
     then
-        cd $cache
-        try $WGET "$2"
+        cd "$cache"
+        # Mac folks tend to have curl rather than wget
+        if which wget > /dev/null
+        then
+           # Use -nd to insulate ourselves from people who set -x in WGETRC
+           # [*] --retry-connrefused works around the broken sf.net mirroring
+           # system when downloading corefonts
+           # [*] --read-timeout is useful on the adobe server that doesn't
+           # close the connection unless you tell it to (control-C or closing
+           # the socket)
+           try wget -nd -c --read-timeout=300 --retry-connrefused "$2"
+        else
+           # curl doesn't get filename from the location given by the server!
+           # fortunately, we know it
+           try curl -L -o $file -C - "$2"
+        fi
         cd $olddir
     fi
     if [ "$3"x != ""x ]
@@ -625,7 +625,8 @@ load_gecko() {
 
     if ! test -f $WINETRICKS_CACHE/wine_gecko-$GECKO_VERSION.cab
     then
-       download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION"
+       # FIXME: busted if using curl!
+       download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION" c16f1072dc6b0ced20935662138dcf019a38cd56 wine_gecko-$GECKO_VERSION.cab
     fi
 
     cat > $WINETRICKS_TMP/geckopath.reg <<_EOF_
@@ -689,7 +690,9 @@ load_jet40() {
 load_liberation() {
     # http://www.redhat.com/promo/fonts/ 				
     download . http://www.redhat.com/f/fonts/liberation-fonts.tar.gz 38276ab5e4322e131217d26f193bfce396195c0a
-    tar --wildcards -C $WINEPREFIX/drive_c/windows/fonts -xvzf $WINETRICKS_CACHE/liberation-fonts.tar.gz '*.ttf'
+    # Fixme: get fonts path from SHGetFolderPath
+    # see also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
+    tar --wildcards -C $WINEPREFIX/drive_c/windows/Fonts -xvzf $WINETRICKS_CACHE/liberation-fonts.tar.gz '*.ttf'
 }
 
 #----------------------------------------------------------------
@@ -909,7 +912,9 @@ load_tahoma() {
     download . http://downloads.sourceforge.net/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/wd97vwr32.exe
     try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_TMP/Viewer1.cab
-    try cp -f $WINETRICKS_TMP/tahoma.ttf $WINEPREFIX/drive_c/windows/fonts/tahoma.ttf
+    # Fixme: get fonts path from SHGetFolderPath
+    # see also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
+    try cp -f $WINETRICKS_TMP/tahoma.ttf $WINEPREFIX/drive_c/windows/Fonts/tahoma.ttf
     rm -rf $WINETRICKS_TMP/*
 }
 
