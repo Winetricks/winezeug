@@ -104,7 +104,7 @@ usage() {
     echo " wmp9       Windows Media Player 9 (requires Windows license)"
     echo " wmp10      Windows Media Player 10 (requires Windows license)"
     echo " wsh51      Windows Scripting Host 5.1"
-    echo " wsh56      Windows Scripting Host 5.6 (install vcrun6 first)"
+    echo " wsh56      Windows Scripting Host 5.6"
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb    Windows scripting 5.6, vbscript only, no cscript"
     echo " xvid       Install xvid video codecs"
@@ -519,9 +519,6 @@ load_dotnet11() {
     cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINEPREFIX/drive_c/windows/system32/"
     override_dlls native gdiplus
 
-    # Override bad linux fonts if present
-    load_fontfix
-
     unset_winver
 } 
 
@@ -543,10 +540,6 @@ load_dotnet20() {
     else
        try $WINE $WINETRICKS_CACHE/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
     fi
-
-    # TODO: do we need these?  We sure need fontfix for .net 1.1, so seems likely
-    #load_fontfix
-    #load_corefonts
 } 
 
 #----------------------------------------------------------------
@@ -620,7 +613,7 @@ load_fontfix() {
         then
             download . http://apt.debian.org.tw/pool/t/ttf-arphic-ukai/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 46cc7b67b6117a7e161c1a573502c0bf2b09cbdc  
             cd "$WINETRICKS_TMP/"
-	    tar -xzvf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
+	    tar -xzf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
 	    try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$WINEPREFIX/drive_c/windows/Fonts"
             cd "$olddir"
         fi
@@ -633,7 +626,7 @@ load_fontfix() {
         then
             download . http://apt.debian.org.tw/pool/t/ttf-arphic-uming/ttf-arphic-uming_0.1.20060108.orig.tar.gz ec34aeb240fcce09d25fce2fbe5e5b6f358c2f24  
             cd "$WINETRICKS_TMP/"
-	    tar -xzvf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
+	    tar -xzf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
 	    try mv ttf-arphic-uming-0.1.20060108/*.ttf "$WINEPREFIX/drive_c/windows/Fonts"
             cd "$olddir"
         fi
@@ -1174,8 +1167,8 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
-    dotnet11) load_dotnet11;;
-    dotnet20) load_dotnet20;;
+    dotnet11) load_dotnet11; load_fontfix;;
+    dotnet20) load_dotnet20; load_fontfix;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
     fontfix) load_fontfix;;
@@ -1210,7 +1203,7 @@ do
     wmp9) load_vcrun6; load_wsh56; load_wmp9;;
     wmp10) load_vcrun6; load_wsh56; load_wmp10;;
     wsh51) load_wsh51;;
-    wsh56) load_wsh56;;
+    wsh56) load_vcrun6; load_wsh56;;
     wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
     xvid) load_xvid;;
