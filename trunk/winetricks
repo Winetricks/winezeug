@@ -20,7 +20,7 @@ WINETRICKS_TMP=$WINEPREFIX/drive_c/winetrickstmp
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080502.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080511.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -72,6 +72,7 @@ usage() {
     echo " dotnet20   Install native .NET 2.0 (requires Windows license)"
     echo " ffdshow    Install ffdshow video codecs"
     echo " flash      Install Adobe Flash Player activex"
+    echo " fontfix    Fix bad fonts which cause crash in some apps (e.g. .net)."
     echo " gdiplus    Install gdiplus.dll from pp viewer (got a better idea?)"
     echo " gecko      Install the HTML rendering Engine (Mozilla)"
     echo " icodecs    Intel Codecs"
@@ -503,6 +504,9 @@ load_dcom98() {
 load_dotnet11() {
     DOTNET_INSTALL_DIR="$WINEPREFIX/drive_c/windows/Microsoft.NET/Framework/v1.1.4322" 
 
+    # need corefonts, else installer crashes
+    load_corefonts
+
     # Set win2k so .net installs gdiplus
     set_winver win2k
 
@@ -510,27 +514,13 @@ load_dotnet11() {
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
     try $WINE $WINETRICKS_CACHE/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
 
-    # It installs ok, but doesn't work yet without the following two kludges:
-
-    # Need to preload the Global Assembly Cache until Wine implements MsiPublishAssemblies()
-    # see http://bugs.winehq.org/show_bug.cgi?id=11742
-    # Get .NET 1.1 SP1 (which contains the GAC tool)
-    download dotnet11 http://download.microsoft.com/download/8/b/4/8b4addd8-e957-4dea-bdb8-c4e00af5b94b/NDP1.1sp1-KB867460-X86.exe  74a5b25d65a70b8ecd6a9c301a0aea10d8483a23
-    try cabextract --directory=$WINETRICKS_TMP $WINETRICKS_CACHE/dotnet11/NDP1.1sp1-KB867460-X86.exe
-    # "DDPatch.UpdateGacFile" -> "gacutil.exe"
-    try cp -f $WINETRICKS_TMP/DDPatch.UpdateGacFile "$DOTNET_INSTALL_DIR/gacutil.exe"
-    # install all .NET 1.1 assemblies into GAC (-f = force reinstall of assembly)
-    cd $DOTNET_INSTALL_DIR
-    for assembly in ./GAC/*
-    do
-        $WINE gacutil.exe -i $assembly -f
-    done
-    cd "$olddir"
-
     # Need native gdiplus until wine implements gdiplus.GdipGetFamily
     #load_gdiplus
     cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINEPREFIX/drive_c/windows/system32/"
     override_dlls native gdiplus
+
+    # Override bad linux fonts if present
+    load_fontfix
 
     unset_winver
 } 
@@ -553,6 +543,10 @@ load_dotnet20() {
     else
        try $WINE $WINETRICKS_CACHE/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
     fi
+
+    # TODO: do we need these?  We sure need fontfix for .net 1.1, so seems likely
+    #load_fontfix
+    #load_corefonts
 } 
 
 #----------------------------------------------------------------
@@ -610,6 +604,40 @@ load_flash() {
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
     download . http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2  
     try $WINE msiexec /i $WINETRICKS_CACHE/install_flash_player_active_x.msi $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
+load_fontfix() {
+    # some versions of ukai.ttf and uming.ttf crash .net and picasa
+    # See http://bugs.winehq.org/show_bug.cgi?id=7098#c9
+    # Could fix globally, but that needs root, so just fix for wine
+    if test -f /usr/share/fonts/truetype/arphic/ukai.ttf 
+    then
+        gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/ukai.ttf | sed 's/ .*//'`
+        # FIXME: do all affected versions of the font have same sha1sum as Gutsy?  Seems unlikely.
+        if [ "$gotsum"x = "96e1121f89953e5169d3e2e7811569148f573985"x ]
+        then
+            download . http://apt.debian.org.tw/pool/t/ttf-arphic-ukai/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 46cc7b67b6117a7e161c1a573502c0bf2b09cbdc  
+            cd "$WINETRICKS_TMP/"
+	    tar -xzvf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
+	    try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$WINEPREFIX/drive_c/windows/Fonts"
+            cd "$olddir"
+        fi
+    fi
+
+    if test -f /usr/share/fonts/truetype/arphic/uming.ttf 
+    then
+        gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/uming.ttf | sed 's/ .*//'`
+        if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
+        then
+            download . http://apt.debian.org.tw/pool/t/ttf-arphic-uming/ttf-arphic-uming_0.1.20060108.orig.tar.gz ec34aeb240fcce09d25fce2fbe5e5b6f358c2f24  
+            cd "$WINETRICKS_TMP/"
+	    tar -xzvf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
+	    try mv ttf-arphic-uming-0.1.20060108/*.ttf "$WINEPREFIX/drive_c/windows/Fonts"
+            cd "$olddir"
+        fi
+    fi
 }
 
 #----------------------------------------------------------------
@@ -1150,6 +1178,7 @@ do
     dotnet20) load_dotnet20;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
+    fontfix) load_fontfix;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     icodecs) load_icodecs;;
