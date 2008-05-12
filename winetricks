@@ -376,7 +376,7 @@ override_app_dlls() {
     echo Using $mode override for following DLLs when running $app: $@
     ( 
     echo REGEDIT4 
-    echo "" >> $WINETRICKS_TMP/override-dll.reg 
+    echo "" 
     echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app\\DllOverrides]" 
     ) > $WINETRICKS_TMP/override-dll.reg 
 
