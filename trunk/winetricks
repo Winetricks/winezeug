@@ -1239,7 +1239,7 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
-    dotnet11) load_dotnet11;; # load_fontfix;;
+    dotnet11) load_dotnet11; load_fontfix;;
     dotnet20) load_dotnet20; load_fontfix;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
