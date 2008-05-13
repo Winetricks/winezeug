@@ -1,0 +1,68 @@
+#!/bin/sh
+for verb in \
+    colorprofile \
+    corefonts \
+    dcom98 \
+    dotnet20 \
+    ffdshow \
+    flash \
+    fontfix \
+    gecko \
+    jet40 \
+    liberation \
+    mfc40 \
+    msi2 \
+    msxml3 \
+    msxml6 \
+    riched20 \
+    riched30 \
+    tahoma \
+    vb3run \
+    vb4run \
+    vbvm50 \
+    vb5run \
+    vbrun60 \
+    vb6run \
+    vcrun6 \
+    vcrun2003 \
+    vcrun2005 \
+    vcrun2005sp1 \
+    vcrun2008 \
+    wmp9 \
+    wmp10 \
+    wsh51 \
+    wsh56 \
+    wsh56js \
+    wsh56vb \
+    xvid \
+    fakeie6 \
+    allfonts \
+    native_mdac \
+    volnum 
+do
+    wineserver -k
+    rm -rf ~/.wine
+    sh winetricks  -q -v $verb
+done
+
+# Known to have problems
+
+# Ignores -q
+sh winetricks -v \
+    allcodecs \
+    allvcodecs \
+    art2kmin \
+    cc580 \
+    gdiplus \
+    icodecs \
+    mdac25 \
+    mdac27 \
+    mdac28 \
+    mono19 \
+    msls31 \
+    pdh 
+
+# Fail on -q
+sh winetricks -v \
+    dotnet11 \
+    msxml4 
