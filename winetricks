@@ -17,10 +17,11 @@ WINETRICKS_CACHE=$HOME/winetrickscache
 # Default to hiding the directory, by popular demand
 test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_TMP="$WINEPREFIX"/drive_c/winetrickstmp
+mkdir -p "$WINETRICKS_TMP"
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080512.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080519.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -77,11 +78,12 @@ usage() {
     echo " gecko      Install the HTML rendering Engine (Mozilla)"
     echo " icodecs    Intel Codecs"
     echo " jet40      Install Jet 4.0 Service Pack 8"
-    echo " liberation Install Red Hat's Liberation fonts (Sans, Serif, Mono)"
+    echo " liberation Install Red Hat Liberation fonts (Sans, Serif, Mono)"
     echo " mdac25     MDAC 2.5: Microsoft ODBC drivers, etc."
     echo " mdac27     MDAC 2.7"
     echo " mdac28     MDAC 2.8"
     echo " mfc40"
+    echo " mfc42      see vcrun6"
     echo " mono19     mono-1.9.1-gtksharp-2.10.4-win32-2"
     echo " msi2       Microsoft Installer 2.0"
     echo " msls31     Microsoft Line Services 3.1 (needed by native riched?)"
@@ -89,8 +91,8 @@ usage() {
     echo " msxml4     Microsoft XML version 4"
     echo " msxml6     Microsoft XML version 6" 
     echo " pdh        Install pdh.dll (Performance Data Helper)"
-    echo " riched20   Use Microsoft's riched20 and riched32"
-    echo " riched30   Use Microsoft's riched30"
+    echo " riched20   Use Microsoft riched20 and riched32"
+    echo " riched30   Use Microsoft riched30"
     echo " tahoma     Install MS Tahoma font (not part of corefonts)"
     echo " vb3run     Visual Basic 3 runtime"
     echo " vb4run     Visual Basic 4 runtime"
@@ -143,23 +145,6 @@ detectDE() {
     fi
 }
 
-gnome_showmenu() {
-    title="$1"
-    shift
-    text="$1"
-    shift
-    col1name="$1"
-    shift
-    col2name="$1"
-    shift
-    while test $# -gt 0
-    do
-        args="$args FALSE $1"
-        shift
-    done
-    zenity --title "$title" --text "$text" --list --checklist --column "$col1name" --column "$col2name" --height 400 $args | tr '|' '\012'
-}
-
 kde_showmenu() {
     title="$1"
     shift
@@ -205,7 +190,7 @@ showmenu()
     detectDE
     case $DE in
     kde) kde_showmenu "$@" ;;
-    gnome) gnome_showmenu "$@" ;;
+    #gnome) gnome_showmenu "$@" ;;
     x) x_showmenu "$@" ;;
     none) usage 1>&2; exit 1;;
     esac
@@ -213,8 +198,17 @@ showmenu()
  
 dogui()
 {
-  packages=`usage | awk '/^ [a-z]/ {print $1}'`
-  export todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
+  detectDE
+  if [ $DE = gnome ]
+  then
+    echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 400 --width 400 \\" > $WINETRICKS_TMP/zenity.sh
+    usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
+    export todo="`sh $WINETRICKS_TMP/zenity.sh`"
+  else
+    packages=`usage | awk '/^ [a-z]/ {print $1}'`
+    export todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
+  fi
+
   if test "$todo"x = x
   then
      exit 0
@@ -230,7 +224,6 @@ x-h|x--help|xhelp) usage ; exit 1 ;;
 esac
 test -d "$WINEPREFIX" || $WINEPREFIXCREATE
 mkdir -p "$WINETRICKS_CACHE"
-mkdir -p "$WINETRICKS_TMP"
 olddir=`pwd`
 # Clean up after failed runs, if needed
 rm -rf "$WINETRICKS_TMP"/*
@@ -1267,7 +1260,7 @@ do
     vb4run) load_vb4run;;
     vbvm50|vb5run) load_vbvm50;;
     vbrun60|vb6run) load_vbrun60;;
-    vcrun6) load_vcrun6;;
+    vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
