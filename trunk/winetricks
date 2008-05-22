@@ -18,10 +18,11 @@ WINETRICKS_CACHE=$HOME/winetrickscache
 test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_TMP="$WINEPREFIX"/drive_c/winetrickstmp
 mkdir -p "$WINETRICKS_TMP"
+WINETRICKS_TMP_WIN='c:\winetrickstmp'
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080519.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080522.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -69,6 +70,7 @@ usage() {
     echo " colorprofile  Install standard RGB color profile"
     echo " corefonts  Install MS Arial, Courier, Times fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
+    echo " directx9   Install DirectX 9 user redistributable"
     echo " dotnet11   Install native .NET 1.1 (requires Windows license)"
     echo " dotnet20   Install native .NET 2.0 (requires Windows license)"
     echo " ffdshow    Install ffdshow video codecs"
@@ -529,6 +531,23 @@ load_corefonts() {
     try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/webdin32.exe
     try cp -f "$WINETRICKS_TMP"/Webdings.TTF "$WINEPREFIX"/drive_c/windows/Fonts
     register_font Webdings.TTF "Webdings (TrueType)"
+}
+
+#----------------------------------------------------------------
+
+load_directx9() {
+    # March 2008 DirectX 9c User Redistributable
+    # http://www.microsoft.com/downloads/details.aspx?familyid=740AC79A-5B72-447D-84F9-EE6407ED1A91
+    download . http://download.microsoft.com/download/6/4/c/64c3d3d6-c5da-47eb-9db4-86e45b9f579e/directx_mar2008_redist.exe 21aa91ca8e0cbb5fbb986f47a1ccdad5d2984cae
+    # Stefan suggested that, when installing, one should override as follows:
+    # 1) use builtin wintrust (we don't run native properly somehow?)
+    # 2) disable mscoree (else if it's present some module misbehaves?)
+    # 3) override native any directx DLL whose Wine version doesn't register itself well yet
+    # For #3, I have no idea which DLLs don't register themselves well yet,
+    # so I'm just listing a few of the basic ones.  Let's whittle that
+    # list down as soon as we can.  
+    WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
+       try $WINE "$WINETRICKS_CACHE"/directx_mar2008_redist.exe /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -1232,6 +1251,7 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
+    directx9) load_directx9;;
     dotnet11) load_dotnet11; load_fontfix;;
     dotnet20) load_dotnet20; load_fontfix;;
     ffdshow) load_ffdshow;;
