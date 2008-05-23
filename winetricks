@@ -214,7 +214,7 @@ dogui()
   then
     echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 400 --width 400 \\" > $WINETRICKS_TMP/zenity.sh
     usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
-    export todo="`sh $WINETRICKS_TMP/zenity.sh`"
+    export todo="`sh $WINETRICKS_TMP/zenity.sh | tr '|' ' '`"
   else
     packages=`usage | awk '/^ [a-z]/ {print $1}'`
     export todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
