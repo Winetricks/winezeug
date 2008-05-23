@@ -1,4 +1,5 @@
 #!/bin/sh
+set -ex
 for verb in \
     colorprofile \
     corefonts \
