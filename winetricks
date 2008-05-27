@@ -31,7 +31,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080523.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080527.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -102,6 +102,7 @@ usage() {
     echo " msxml4     Microsoft XML version 4"
     echo " msxml6     Microsoft XML version 6" 
     echo " pdh        Install pdh.dll (Performance Data Helper)"
+    echo " quicktime72 Apple Quicktime 7.2"
     echo " riched20   Use Microsoft riched20 and riched32"
     echo " riched30   Use Microsoft riched30"
     echo " tahoma     Install MS Tahoma font (not part of corefonts)"
@@ -982,6 +983,28 @@ load_pdh() {
 
 #----------------------------------------------------------------
 
+load_quicktime72() {
+    # http://www.apple.com/support/downloads/quicktime72forwindows.html
+    download quicktime72 'http://wsidecar.apple.com/cgi-bin/nph-reg3rdpty2.pl/product=14402&cat=59&platform=osx&method=sa/QuickTimeInstaller.exe' bb89981f10cf21de57b9453e53cf81b9194271a9
+    unset QUICKTIME_QUIET
+    if test "$WINETRICKS_QUIET"x != x
+    then
+       QUICKTIME_QUIET="/qn"  # ISSETUPDRIVEN=0
+    fi
+    # set vista mode to inhibit directdraw overlay use that blacks the screen
+    set_winver vista
+    try $WINE "$WINETRICKS_CACHE"/quicktime72/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET
+    unset_winver 
+    # user might want to set vista mode himself, or run
+    #  wine control ".wine/drive_c/Program Files/QuickTime/QTSystem/QuickTime.cpl"
+    # and pick Advanced / Safe Mode (gdi only).
+    # We could probably force that by overwriting QuickTime.qtp
+    # (probably in Program Files/QuickTime/QTSystem/QuickTime.qtp)
+    # but the format isn't known, so we'd have to override all other settings, too.
+}
+
+#----------------------------------------------------------------
+
 volnum() {
     # Recent Microsoft installers are often based on "windows package manager", see
     # http://support.microsoft.com/kb/262841 and
@@ -1296,6 +1319,7 @@ do
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
     pdh) load_pdh;;
+    quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
     tahoma) load_tahoma;;
