@@ -1216,6 +1216,7 @@ load_wmp10() {
     download . http://download.microsoft.com/download/1/2/A/12A31F29-2FA9-4F50-B95D-E45EF7013F87/MP10Setup.exe 69862273a5d9d97b4a2e5a3bd93898d259e86657
 
     # Crashes on exit, but otherwise ok; see http://bugs.winehq.org/show_bug.cgi?id=12633
+    echo Executing $WINE "$WINETRICKS_CACHE"/MP10Setup.exe $WINETRICKS_QUIET
     $WINE "$WINETRICKS_CACHE"/MP10Setup.exe $WINETRICKS_QUIET || true
 
     # Also install the codecs
