@@ -1320,7 +1320,7 @@ do
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
     pdh) load_pdh;;
-    quicktime72) load_quicktime72;;
+    quicktime72) load_gdiplus; load_quicktime72;;  # needs e.g. gdiplus.dll.GdipCloneImage
     riched20) load_riched20;;
     riched30) load_riched30;;
     tahoma) load_tahoma;;
