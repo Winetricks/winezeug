@@ -1,26 +1,54 @@
-#!/bin/sh
+#!/bin/bash
+# (Needs bash extension for 'select')
 # Script to install and test WMP and Quicktime codec on Wine
+# Dan Kegel, Google, 2008
+
 WINE="${WINE:-wine}"
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
-set -x
 
 # Download and install sample files
+# See http://www.jhepple.com/support/sample_movies1.htm
+mkdir -p samples
+cd samples
 test -f 40_020a05.mov    || wget  http://www.webaim.org/techniques/captions/quicktime/media/40_020a05.mov
-test -f mediaexample.wmv || wget  http://support.microsoft.com/support/mediaplayer/wmptest/samples/new/mediaexample.wmv
-
-# Download and install codecs (also installs codec-specific players, but we'll ignore them)
-test -d "${WINEPREFIX}/drive_c/Program Files/Windows Media Player" || sh winetricks -q win2k wmp10
-test -d "${WINEPREFIX}/drive_c/Program Files/QuickTime"            || sh winetricks -q quicktime72 vista
+#test -f mediaexample.wmv || wget  http://support.microsoft.com/support/mediaplayer/wmptest/samples/new/mediaexample.wmv
+for file in \
+    asf_to_mpeg-1.mpeg \
+    AVI_DivX.avi \
+    AVI_to_MPEG-4.avi \
+    DVD.mpg \
+    MPEG-1.mpg \
+    MPEG-1_with_VCD_extensions.mpeg \
+    MPEG-2.mpg \
+    MPEG-2_with_DVD_Extensions.mpeg \
+    MPEG-2_with_Super_VideoCD_Extensions.mpeg \
+    niceday.asf \
+    niceday.rm \
+    niceday.wmv \
+    Real_Media.rm \
+    Standard_MPEG-2.mpeg \
+    SVCD.mpg \
+    vcd.mpg \
+    WindowsMedia.wmv
+do
+    test -f $file || wget http://www.jhepple.com/support/SampleMovies/$file || wget http://www.jhepple.com/SampleMovies/$file
+done
+cd ..
 
 # Download and install simple standalone player that uses system's codecs
-test -f "${WINEPREFIX}/drive_c/mplayerc.exe"                       || sh winetricks mpc
+test -f "${WINEPREFIX}/drive_c/mplayerc.exe"   || sh winetricks mpc
 
-# Play Quicktime sample movie.  Succeeds!
-$WINE "${WINEPREFIX}/drive_c/mplayerc.exe" 40_020a05.mov
-
-# Play WMP sample movie.  Fails with 
-# err:ole:CoGetClassObject no class object {51b4abf3-748f-4e3b-a276-c828330e926a} could be created for context 0x17
-# Needs Maarten's Video Mixing Renderer 9 implementation
-$WINE "${WINEPREFIX}/drive_c/mplayerc.exe" mediaexample.wmv
+# Set vista mode, else divx codec crashes, and quicktime codec blacks screen
+cd samples
+select file in _install_wmp10 _install_qt _install_xvid _install_divx *
+do
+    case $file in
+    _install_wmp10) sh winetricks -q winxp wmp10 vista ;;
+    _install_qt)    sh winetricks -q quicktime72 vista ;;
+    _install_xvid)  sh winetricks -q xvid vista ;;
+    _install_divx)  echo "Deselect everything but the codec!"; sh winetricks divx vista ;;
+    *) $WINE "${WINEPREFIX}/drive_c/mplayerc.exe" $file > ../$file.log 2>&1 ;;
+    esac
+done
 
 # Todo: Dirac codecs and sample movie.  
