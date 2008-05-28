@@ -1,0 +1,26 @@
+#!/bin/sh
+# Script to install and test WMP and Quicktime codec on Wine
+WINE="${WINE:-wine}"
+WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+set -x
+
+# Download and install sample files
+test -f 40_020a05.mov    || wget  http://www.webaim.org/techniques/captions/quicktime/media/40_020a05.mov
+test -f mediaexample.wmv || wget  http://support.microsoft.com/support/mediaplayer/wmptest/samples/new/mediaexample.wmv
+
+# Download and install codecs (also installs codec-specific players, but we'll ignore them)
+test -d "${WINEPREFIX}/drive_c/Program Files/Windows Media Player" || sh winetricks -q win2k wmp10
+test -d "${WINEPREFIX}/drive_c/Program Files/QuickTime"            || sh winetricks -q quicktime72 vista
+
+# Download and install simple standalone player that uses system's codecs
+test -f "${WINEPREFIX}/drive_c/mplayerc.exe"                       || sh winetricks mpc
+
+# Play Quicktime sample movie.  Succeeds!
+$WINE "${WINEPREFIX}/drive_c/mplayerc.exe" 40_020a05.mov
+
+# Play WMP sample movie.  Fails with 
+# err:ole:CoGetClassObject no class object {51b4abf3-748f-4e3b-a276-c828330e926a} could be created for context 0x17
+# Needs Maarten's Video Mixing Renderer 9 implementation
+$WINE "${WINEPREFIX}/drive_c/mplayerc.exe" mediaexample.wmv
+
+# Todo: Dirac codecs and sample movie.  
