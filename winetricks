@@ -122,6 +122,8 @@ usage() {
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb    Windows scripting 5.6, vbscript only, no cscript"
     echo " xvid       Install xvid video codecs"
+    echo "Apps:"
+    echo " vlc        VLC media player"
     echo "Pseudopackages:"
     echo " allfonts     Install all listed fonts (corefonts, tahoma, liberation)"
     echo " allcodecs    Install all listed codecs (xvid, ffdshow, icodecs)"
@@ -234,7 +236,7 @@ case x"$1" in
 x) GUI=1; dogui ; set $todo ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
 esac
-test -d "$WINEPREFIX" || $WINEPREFIXCREATE
+test -d "$WINEPREFIX" || $WINEPREFIXCREATE > /dev/null 2>&1
 mkdir -p "$WINETRICKS_CACHE"
 olddir=`pwd`
 # Clean up after failed runs, if needed
@@ -994,6 +996,12 @@ load_quicktime72() {
     # set vista mode to inhibit directdraw overlay use that blacks the screen
     set_winver vista
     try $WINE "$WINETRICKS_CACHE"/quicktime72/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET
+    if test "$WINETRICKS_QUIET"x = x
+    then
+        echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
+        try $WINE control ${programfilesdir_win}'\QuickTime\QTSystem\QuickTime.cpl'
+    fi
+    
     unset_winver 
     # user might want to set vista mode himself, or run
     #  wine control ".wine/drive_c/Program Files/QuickTime/QTSystem/QuickTime.cpl"
@@ -1186,6 +1194,14 @@ load_vcrun2008() {
 
 #----------------------------------------------------------------
 
+load_vlc() {
+    # want http://www.videolan.org/mirror.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe but it doesn't redirect?
+    download . http://mirrors.optralan.com/videolan/vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
+    try $WINE "$WINETRICKS_CACHE"/vlc-0.8.6f-win32.exe $WINETRICKS_S
+}
+
+#----------------------------------------------------------------
+
 load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
@@ -1333,6 +1349,7 @@ do
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
     vcrun2008) load_vcrun2008;;
+    vlc) load_vlc;;
     wmp9) load_vcrun6; load_wsh56; load_wmp9;;
     wmp10) load_vcrun6; load_wsh56; load_wmp10;;
     wsh51) load_wsh51;;
