@@ -31,7 +31,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080527.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080528.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -80,6 +80,7 @@ usage() {
     echo " corefonts  Install MS Arial, Courier, Times fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
     echo " directx9   Install DirectX 9 user redistributable"
+    echo " divx       Install divx video codec"
     echo " dotnet11   Install native .NET 1.1 (requires Windows license)"
     echo " dotnet20   Install native .NET 2.0 (requires Windows license)"
     echo " ffdshow    Install ffdshow video codecs"
@@ -121,7 +122,7 @@ usage() {
     echo " wsh56      Windows Scripting Host 5.6"
     echo " wsh56js    Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb    Windows scripting 5.6, vbscript only, no cscript"
-    echo " xvid       Install xvid video codecs"
+    echo " xvid       Install xvid video codec"
     echo "Apps:"
     echo " vlc        VLC media player"
     echo " mpc        Media Player Classic"
@@ -574,6 +575,13 @@ load_directx9() {
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
        try $WINE "$WINETRICKS_CACHE"/directx_mar2008_redist.exe /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
     unset_winver
+}
+
+#----------------------------------------------------------------
+
+load_divx() {
+    download . http://download.divx.com/divx/DivXInstaller.exe 02203fdc4dddd13e789c39b22902837da31d2a1d
+    try $WINE "$WINETRICKS_CACHE"/DivXInstaller $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
@@ -1301,8 +1309,8 @@ load_wsh56vb() {
 
 load_xvid() {
     # xvid
-    download . http://download.videohelp.com/download/Xvid-1.1.3-12042008.exe 8de4950fb3c53dd3c8d486c0b9d516ede4beded6
-    try $WINE "$WINETRICKS_CACHE"/Xvid-1.1.3-12042008.exe $WINETRICKS_SILENT
+    download . http://download2.videohelp.com/download/Xvid-1.1.3-27042008.exe f1008a11037c0b9368aa4979e62d0963d05d8007
+    try $WINE "$WINETRICKS_CACHE"/Xvid-1.1.3-27042008.exe $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
@@ -1326,6 +1334,7 @@ do
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
     directx9) load_directx9;;
+    divx) load_divx;;
     dotnet11) load_dotnet11; load_fontfix;;
     dotnet20) load_dotnet20; load_fontfix;;
     ffdshow) load_ffdshow;;
