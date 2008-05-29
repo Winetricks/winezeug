@@ -39,14 +39,17 @@ cd ..
 test -f "${WINEPREFIX}/drive_c/mplayerc.exe"   || sh winetricks mpc
 
 # Set vista mode, else divx codec crashes, and quicktime codec blacks screen
+# Note: dirac0.8 directshow support isn't very useful; I include it so you can see that for yourself
+# We need somebody *cough*Maarten*cough* to implement a Schroedinger-1.0-based directshow filter
 cd samples
-select file in _install_wmp10 _install_qt _install_xvid _install_divx *
+select file in _install_wmp10 _install_qt _install_xvid _install_divx _install_dirac0.8 *
 do
     case $file in
-    _install_wmp10) sh winetricks -q winxp wmp10 vista ;;
-    _install_qt)    sh winetricks -q quicktime72 vista ;;
-    _install_xvid)  sh winetricks -q xvid vista ;;
-    _install_divx)  echo "Deselect everything but the codec!"; sh winetricks divx vista ;;
+    _install_wmp10) sh ../winetricks -q winxp wmp10 vista ;;
+    _install_qt)    sh ../winetricks -q quicktime72 vista ;;
+    _install_xvid)  sh ../winetricks -q xvid vista ;;
+    _install_dirac0.8) sh ../winetricks dirac0.8 vista ;;
+    _install_divx)  echo "Deselect everything but the codec!"; sh ../winetricks divx vista ;;
     *) $WINE "${WINEPREFIX}/drive_c/mplayerc.exe" $file > ../$file.log 2>&1 ;;
     esac
 done
