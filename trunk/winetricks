@@ -31,7 +31,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080528.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080529.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -79,6 +79,7 @@ usage() {
     echo " colorprofile  Install standard RGB color profile"
     echo " corefonts  Install MS Arial, Courier, Times fonts"
     echo " dcom98     Install native DCOM, override the Wine implementation"
+    echo " dirac0.8   Install the obsolete Dirac 0.8 directshow filter"
     echo " directx9   Install DirectX 9 user redistributable"
     echo " divx       Install divx video codec"
     echo " dotnet11   Install native .NET 1.1 (requires Windows license)"
@@ -556,6 +557,13 @@ load_corefonts() {
     try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/webdin32.exe
     try cp -f "$WINETRICKS_TMP"/Webdings.TTF "$winefontsdir"
     register_font Webdings.TTF "Webdings (TrueType)"
+}
+
+#----------------------------------------------------------------
+
+load_dirac() {
+    download . http://codecpack.nl/dirac_dsfilter_080.exe aacfcddf6b2636de5f0a50422ba9155e395318af
+    try $WINE "$WINETRICKS_CACHE"/dirac_dsfilter_080.exe $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
@@ -1333,6 +1341,7 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
+    dirac) load_dirac;;
     directx9) load_directx9;;
     divx) load_divx;;
     dotnet11) load_dotnet11; load_fontfix;;
