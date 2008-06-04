@@ -239,3 +239,19 @@
    obj:*
    fun:call_req_handler
 }
+{
+   suppress_gmtime
+   Memcheck:Cond
+   obj:*
+   obj:*
+   fun:gmtime
+   fun:FileTimeToDosDateTime
+}
+{
+   suppress_gmtime_r
+   Memcheck:Cond
+   obj:*
+   obj:*
+   fun:gmtime_r
+   fun:FileTimeToDosDateTime
+}
