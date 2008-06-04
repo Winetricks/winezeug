@@ -21,6 +21,11 @@
    fun:__nss_database_lookup
 }
 {
+   bogus_addr4_ldso_27
+   Memcheck:Addr4
+   obj:/lib/ld-2.7.so
+}
+{
    bogus_addr4_ldso_261
    Memcheck:Addr4
    obj:/lib/ld-2.6.1.so
@@ -34,6 +39,11 @@
    bogus_addr4_ldso_236
    Memcheck:Addr4
    obj:/lib/ld-2.3.6.so
+}
+{
+   bogus_cond_ldso_27
+   Memcheck:Cond
+   obj:/lib/ld-2.7.so
 }
 {
    bogus_cond_ldso_261
