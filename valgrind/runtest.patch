@@ -1,0 +1,14 @@
+diff --git a/tools/runtest b/tools/runtest
+index 43f513f..6c4715c 100755
+--- a/tools/runtest
++++ b/tools/runtest
+@@ -118,4 +118,8 @@ fi
+ WINETEST_PLATFORM=${platform:-wine}
+ export WINETEST_PLATFORM WINETEST_DEBUG
+ 
+-exec "$topobjdir/wine" "$program" "$infile" "$@"
++case x"$RUNTEST_USE_VALGRIND" in
++x1) abstopobjdir=`cd $topobjdir; pwd`; RUNTEST_VALGRIND_CMD="/usr/local/valgrind-svn/bin/valgrind --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$abstopobjdir/tools/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes " ;;
++esac
++
++exec $RUNTEST_VALGRIND_CMD "$topobjdir/wine" "$program" "$infile" "$@"
