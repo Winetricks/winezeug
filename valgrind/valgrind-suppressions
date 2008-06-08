@@ -294,3 +294,13 @@
    fun:lstrlenA
    fun:test_CreateThread_basic
 }
+{
+   suppress_wine_IsBadReadPtr
+   Memcheck:Addr1
+   fun:IsBadReadPtr
+}
+{
+   suppress_wine_doCrash
+   Memcheck:Addr1
+   fun:doCrash
+}
