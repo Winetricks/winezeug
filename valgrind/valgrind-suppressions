@@ -61,6 +61,21 @@
    obj:/lib/ld-2.3.6.so
 }
 {
+   bogus_cond_libglcore_16912
+   Memcheck:Cond
+   obj:/usr/lib/libGLcore.so.169.12
+}
+{
+   bogus_value4_libglcore_16912
+   Memcheck:Value4
+   obj:/usr/lib/libGLcore.so.169.12
+}
+{   
+   bogus_addr2_libglcore_16912
+   Memcheck:Addr2
+   obj:/usr/lib/libGLcore.so.169.12 
+}
+{
    bogus_addr4_libgl_109631
    Memcheck:Addr4
    obj:/usr/lib/libGL.so.1.0.9631
@@ -264,4 +279,18 @@
    obj:*
    fun:gmtime_r
    fun:FileTimeToDosDateTime
+}
+{ 
+   suppress_if_name2index_glibc_27
+   Memcheck:Param
+   ioctl(SIOCGIFINDEX)
+   obj:/lib/ld-2.7.so
+   fun:getInterfaceIndexByName
+}
+{   
+   suppress_wine_test_CreateThread_basic_badaccess
+   Memcheck:Addr1
+   fun:strlen
+   fun:lstrlenA
+   fun:test_CreateThread_basic
 }
