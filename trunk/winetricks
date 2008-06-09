@@ -666,6 +666,7 @@ load_dotnet20() {
     else
        try $WINE "$WINETRICKS_CACHE"/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
     fi
+    unset_winver
 } 
 
 #----------------------------------------------------------------
