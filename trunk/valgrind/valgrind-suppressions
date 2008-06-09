@@ -300,6 +300,11 @@
    fun:IsBadReadPtr
 }
 {
+   suppress_wine_IsBadWritePtr
+   Memcheck:Addr1
+   fun:IsBadWritePtr
+}
+{
    suppress_wine_doCrash
    Memcheck:Addr1
    fun:doCrash
