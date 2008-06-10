@@ -23,81 +23,81 @@
 {
    bogus_addr4_ldso_27
    Memcheck:Addr4
-   obj:/lib/ld-2.7.so
+   obj:/lib*/ld-2.7.so
 }
 {
    bogus_addr4_ldso_261
    Memcheck:Addr4
-   obj:/lib/ld-2.6.1.so
+   obj:/lib*/ld-2.6.1.so
 }
 {
    bogus_addr4_ldso_25
    Memcheck:Addr4
-   obj:/lib/ld-2.5.so
+   obj:/lib*/ld-2.5.so
 }
 {
    bogus_addr4_ldso_236
    Memcheck:Addr4
-   obj:/lib/ld-2.3.6.so
+   obj:/lib*/ld-2.3.6.so
 }
 {
    bogus_cond_ldso_27
    Memcheck:Cond
-   obj:/lib/ld-2.7.so
+   obj:/lib*/ld-2.7.so
 }
 {
    bogus_cond_ldso_261
    Memcheck:Cond
-   obj:/lib/ld-2.6.1.so
+   obj:/lib*/ld-2.6.1.so
 }
 {
    bogus_cond_ldso_25
    Memcheck:Cond
-   obj:/lib/ld-2.5.so
+   obj:/lib*/ld-2.5.so
 }
 {
    bogus_cond_ldso_236
    Memcheck:Cond
-   obj:/lib/ld-2.3.6.so
+   obj:/lib*/ld-2.3.6.so
 }
 {
    bogus_cond_libglcore_16912
    Memcheck:Cond
-   obj:/usr/lib/libGLcore.so.169.12
+   obj:/usr/lib*/libGLcore.so.169.12
 }
 {
    bogus_value4_libglcore_16912
    Memcheck:Value4
-   obj:/usr/lib/libGLcore.so.169.12
+   obj:/usr/lib*/libGLcore.so.169.12
 }
 {   
    bogus_addr2_libglcore_16912
    Memcheck:Addr2
-   obj:/usr/lib/libGLcore.so.169.12 
+   obj:/usr/lib*/libGLcore.so.169.12 
 }
 {
    bogus_addr4_libgl_109631
    Memcheck:Addr4
-   obj:/usr/lib/libGL.so.1.0.9631
+   obj:/usr/lib*/libGL.so.1.0.9631
 }
 {
    bogus_addr4_libgl_109639
    Memcheck:Addr4
-   obj:/usr/lib/libGL.so.1.0.9639
+   obj:/usr/lib*/libGL.so.1.0.9639
 }
 
 {
    suppress_leak_libgl_109631
    Memcheck:Leak
    fun:malloc
-   obj:/usr/lib/libGL.so.1.0.9631
+   obj:/usr/lib*/libGL.so.1.0.9631
 }
 {
    bogus_X11_1
    Memcheck:Param
    write(buf)
    obj:*
-   obj:/usr/lib/libX11.so.6.2.0
+   obj:/usr/lib*/libX11.so.6.2.0
 }
 {
    bogus_X11_2
@@ -105,75 +105,75 @@
    write(buf)
    obj:*
    obj:*
-   obj:/usr/lib/libX11.so.6.2.0
+   obj:/usr/lib*/libX11.so.6.2.0
 }
 {
    bogus_Xcursor
    Memcheck:Cond
-   obj:/usr/lib/libXcursor.so.1.0.2
+   obj:/usr/lib*/libXcursor.so.1.0.2
 }
 {
    suppress_i915_ioctl
    Memcheck:Param
    ioctl(generic)
    obj:*
-   obj:/usr/lib/dri/i915_dri.so
+   obj:/usr/lib*/dri/i915_dri.so
 }
 {
    suppress_i915_cond
    Memcheck:Cond
-   obj:/usr/lib/dri/i915_dri.so
+   obj:/usr/lib*/dri/i915_dri.so
 }
 {
    suppress_i915_value
    Memcheck:Value4
-   obj:/usr/lib/dri/i915_dri.so
+   obj:/usr/lib*/dri/i915_dri.so
 }
 {
    suppress_i915_leak1
    Memcheck:Leak
    fun:malloc
-   obj:/usr/lib/dri/i915_dri.so
+   obj:/usr/lib*/dri/i915_dri.so
 }
 {
    suppress_i915_leak2
    Memcheck:Leak
    fun:memalign
    fun:*
-   obj:/usr/lib/dri/i915_dri.so
+   obj:/usr/lib*/dri/i915_dri.so
 }
 {
    suppress_libasound_overlap
    Memcheck:Overlap
    fun:memcpy
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    suppress_libasound_connect
    Memcheck:Param
    socketcall.connect(serv_addr..sun_path)
    obj:*
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    suppress_libasound_connect2
    Memcheck:Cond
    fun:snd_pcm_direct_client_connect
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    suppress_libasound_bind
    Memcheck:Param
    socketcall.bind(my_addr..sun_path)
    obj:*
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    suppress_libasound_ioctl
    Memcheck:Param
    ioctl(arg)
    obj:*
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    suppress_libasound_ioctl2
@@ -181,26 +181,26 @@
    ioctl(arg)
    obj:*
    fun:ioctl
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    suppress_libasound_semctl
    Memcheck:Param
    semctl(IPC_SET, arg.buf)
    obj:*
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    todo_suppress_libasound_leak
    Memcheck:Leak
    fun:*
-   obj:/usr/lib/libasound.so.2.0.0
+   obj:/usr/lib*/libasound.so.2.0.0
 }
 {
    todo_suppress_libfontconfig_leak
    Memcheck:Leak
    fun:malloc
-   obj:/usr/lib/libfontconfig.so.1.2.0
+   obj:/usr/lib*/libfontconfig.so.1.2.0
 }
 {
    todo_suppress_x11drv_init_leak
