@@ -74,55 +74,56 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"    
-    echo " art2kmin      Access 2000 runtime.  License required!"
-    echo " cc580         Native common controls 5.80, override comctl32"
+    echo " art2kmin      MS Access 2000 runtime.  License required!"
     echo " colorprofile  Standard RGB color profile"
+    echo " comctl32      MS common controls 5.80"
+    echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
     echo " corefonts     MS Arial, Courier, Times fonts"
-    echo " dcom98        native DCOM, override the Wine implementation"
+    echo " dcom98        MS DCOM, override the Wine implementation"
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
-    echo " directx9      DirectX 9 user redistributable"
+    echo " directx9      MS DirectX 9 user redistributable"
     echo " divx          divx video codec"
-    echo " dotnet11      native .NET 1.1 (requires Windows license)"
-    echo " dotnet20      native .NET 2.0 (requires Windows license)"
+    echo " dotnet11      MS .NET 1.1 (requires Windows license)"
+    echo " dotnet20      MS .NET 2.0 (requires Windows license)"
     echo " ffdshow       ffdshow video codecs"
     echo " flash         Adobe Flash Player activex"
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
-    echo " gdiplus       gdiplus.dll from pp viewer (got a better idea?)"
-    echo " gecko         the HTML rendering Engine (Mozilla)"
+    echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
+    echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " icodecs       Intel Codecs"
-    echo " jet40         Jet 4.0 Service Pack 8"
+    echo " jet40         MS Jet 4.0 Service Pack 8"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
-    echo " mdac25        MDAC 2.5: Microsoft ODBC drivers, etc."
-    echo " mdac27        MDAC 2.7"
-    echo " mdac28        MDAC 2.8"
-    echo " mfc40         mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
-    echo " mfc42         mfc42 (see vcrun6 below)"
+    echo " mdac25        MS MDAC 2.5: Microsoft ODBC drivers, etc."
+    echo " mdac27        MS MDAC 2.7"
+    echo " mdac28        MS MDAC 2.8"
+    echo " mfc40         MS mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
+    echo " mfc42         MS mfc42 (see vcrun6 below)"
     echo " mono19        mono-1.9.1-gtksharp-2.10.4-win32-2"
-    echo " msi2          Microsoft Installer 2.0"
-    echo " msls31        Microsoft Line Services 3.1 (needed by native riched?)"
-    echo " msxml3        Microsoft XML version 3"
-    echo " msxml4        Microsoft XML version 4"
-    echo " msxml6        Microsoft XML version 6" 
-    echo " pdh           pdh.dll (Performance Data Helper)"
+    echo " msi2          MS Installer 2.0"
+    echo " msls31        MS Line Services 3.1 (needed by native riched?)"
+    echo " msxml3        MS XML version 3"
+    echo " msxml4        MS XML version 4"
+    echo " msxml6        MS XML version 6" 
+    echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " quicktime72   Apple Quicktime 7.2"
-    echo " riched20      Microsoft riched20 and riched32"
-    echo " riched30      Microsoft riched30"
+    echo " riched20      MS riched20 and riched32"
+    echo " riched30      MS riched30"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
-    echo " vb3run        Visual Basic 3 runtime"
-    echo " vb4run        Visual Basic 4 runtime"
-    echo " vb5run        Visual Basic 5 runtime"
-    echo " vb6run        Visual Basic 6 runtime"
-    echo " vcrun6        Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
-    echo " vcrun2003     Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
-    echo " vcrun2005     Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
-    echo " vcrun2005sp1  Visual C++ 2005 sp1 libraries"
-    echo " vcrun2008     Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
-    echo " wmp9          Windows Media Player 9 (requires Windows license)"
-    echo " wmp10         Windows Media Player 10 (requires Windows license)"
-    echo " wsh51         Windows Scripting Host 5.1"
-    echo " wsh56         Windows Scripting Host 5.6"
-    echo " wsh56js       Windows scripting 5.6, jscript only, no cscript"
-    echo " wsh56vb       Windows scripting 5.6, vbscript only, no cscript"
+    echo " vb3run        MS Visual Basic 3 runtime"
+    echo " vb4run        MS Visual Basic 4 runtime"
+    echo " vb5run        MS Visual Basic 5 runtime"
+    echo " vb6run        MS Visual Basic 6 runtime"
+    echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
+    echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
+    echo " vcrun2005     MS Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
+    echo " vcrun2005sp1  MS Visual C++ 2005 sp1 libraries"
+    echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
+    echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
+    echo " wmp10         MS Windows Media Player 10 (requires Windows license)"
+    echo " wsh51         MS Windows Scripting Host 5.1"
+    echo " wsh56         MS Windows Scripting Host 5.6"
+    echo " wsh56js       MS Windows scripting 5.6, jscript only, no cscript"
+    echo " wsh56vb       MS Windows scripting 5.6, vbscript only, no cscript"
     echo " xvid          xvid video codec"
     echo "Apps:"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
@@ -462,6 +463,17 @@ load_cc580() {
     cp "$WINETRICKS_TMP"/comcnt.dll "$WINEPREFIX"/drive_c/windows/system32/comctl32.dll
 
     override_dlls native,builtin comctl32
+}
+
+#----------------------------------------------------------------
+
+load_comctl32ocx() {
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=25437D98-51D0-41C1-BB14-64662F5F62FE
+    download . http://download.microsoft.com/download/3/a/5/3a5925ac-e779-4b1c-bb01-af67dc2f96fc/VisualBasic6-KB896559-v1-ENU.exe f52cf2034488235b37a1da837d1c40eb2a1bad84
+
+    try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
+    cp "$WINETRICKS_TMP"/mscomctl.ocx "$WINEPREFIX"/drive_c/windows/system32/mscomctl.ocx
+    cp "$WINETRICKS_TMP"/comctl32.ocx "$WINEPREFIX"/drive_c/windows/system32/comctl32.ocx
 }
 
 #----------------------------------------------------------------
@@ -1347,7 +1359,8 @@ do
     -v) set -x;;
     art2kmin) load_art2kmin;;
     autohotkey) load_autohotkey;;
-    cc580) load_cc580;;
+    cc580|comctl32) load_cc580;;
+    comctl32.ocx) load_comctl32ocx;;
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     dcom98) load_dcom98;;
