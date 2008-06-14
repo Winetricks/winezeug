@@ -125,6 +125,7 @@ usage() {
     echo " wsh56vb       Windows scripting 5.6, vbscript only, no cscript"
     echo " xvid          xvid video codec"
     echo "Apps:"
+    echo " autohotkey    Autohotkey (open source gui scripting language)"
     echo " mpc           Media Player Classic"
     echo " vlc           VLC media player"
     echo "Pseudopackages:"
@@ -440,6 +441,13 @@ load_art2kmin() {
     cd "$WINEPREFIX/drive_c/ART2KMin Setup"
     try $WINE Setup.exe INSTALLPFILES=1 /wait $WINETRICKS_QUIET
     cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_autohotkey() {
+    download . http://www.autohotkey.net/programs/AutoHotkey104706_Install.exe 3d3d8845473dea477d6983d063f0afc9999d880f
+    try $WINE "$WINETRICKS_CACHE"/AutoHotkey104706_Install.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
@@ -1338,6 +1346,7 @@ do
         ;;
     -v) set -x;;
     art2kmin) load_art2kmin;;
+    autohotkey) load_autohotkey;;
     cc580) load_cc580;;
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
