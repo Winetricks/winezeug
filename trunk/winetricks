@@ -474,6 +474,8 @@ load_comctl32ocx() {
     try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
     cp "$WINETRICKS_TMP"/mscomctl.ocx "$WINEPREFIX"/drive_c/windows/system32/mscomctl.ocx
     cp "$WINETRICKS_TMP"/comctl32.ocx "$WINEPREFIX"/drive_c/windows/system32/comctl32.ocx
+    try $WINE regsvr32 comctl32.ocx
+    try $WINE regsvr32 mscomctl.ocx
 }
 
 #----------------------------------------------------------------
