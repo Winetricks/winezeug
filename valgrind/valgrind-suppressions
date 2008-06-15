@@ -202,11 +202,26 @@
    fun:malloc
    obj:/usr/lib*/libfontconfig.so.1.*
 }
+# thread_detach() should clean this up??
 {
-   todo_suppress_x11drv_init_leak
+   todo_wine_dlls_winex11drv__x11drv_init_thread_data_main
    Memcheck:Leak 
    fun:RtlAllocateHeap
    fun:x11drv_init_thread_data
+}
+# Supposedly there's a call back to X11DRV_DestroyIM at thread destruction time...?
+# and thread_detach() should also clean it up??
+{
+   todo_wine_dlls_winex11drv__x11drv_init_thread_data_xim
+   Memcheck:Leak
+   fun:malloc
+   fun:_XimOpenIM
+   fun:_XimRegisterIMInstantiateCallback
+   fun:XRegisterIMInstantiateCallback
+   fun:X11DRV_SetupXIM
+   fun:x11drv_init_thread_data
+   fun:x11drv_thread_data
+   fun:X11DRV_SetWindowPos
 }
 {
    todo_suppress_alloc_module_leak
