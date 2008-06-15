@@ -200,7 +200,7 @@
    todo_suppress_libfontconfig_leak
    Memcheck:Leak
    fun:malloc
-   obj:/usr/lib*/libfontconfig.so.1.2.0
+   obj:/usr/lib*/libfontconfig.so.1.*
 }
 {
    todo_suppress_x11drv_init_leak
