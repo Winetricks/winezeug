@@ -287,25 +287,36 @@
    obj:/lib/ld-2.7.so
    fun:getInterfaceIndexByName
 }
+# Naming convention for Wine suppressions:
+# If we think it's solid:
+# suppress_wine_dirname__functionname[_moreifneeded]
+# If we aren't sure, change suppress to todo
 {   
-   suppress_wine_test_CreateThread_basic_badaccess
+   suppress_wine_dlls_kernel32_tests__CreateThread_basic_badaccess
    Memcheck:Addr1
    fun:strlen
    fun:lstrlenA
    fun:test_CreateThread_basic
 }
 {
-   suppress_wine_IsBadReadPtr
+   suppress_wine_dlls_kernel32_IsBadReadPtr
    Memcheck:Addr1
    fun:IsBadReadPtr
 }
 {
-   suppress_wine_IsBadWritePtr
+   suppress_wine_dlls_kernel32__IsBadWritePtr
    Memcheck:Addr1
    fun:IsBadWritePtr
 }
 {
-   suppress_wine_doCrash
+   suppress_wine_dlls_kernel32_tests__doCrash
    Memcheck:Addr1
    fun:doCrash
+}
+{
+   suppress_wine_dlls_crypt32_tests__test_data_msg
+   Memcheck:Addr4
+   fun:__wine_call_from_32_regs
+   fun:CryptMsgUpdate
+   fun:test_data_msg
 }
