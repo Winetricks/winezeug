@@ -308,7 +308,6 @@
    socketcall.sendto(msg)
    obj:/lib/ld-2.3.*.so
    fun:if_nameindex
-   fun:getNumNonLoopbackInterfaces
 }
 # Naming convention for Wine suppressions:
 # If we think it's solid:
