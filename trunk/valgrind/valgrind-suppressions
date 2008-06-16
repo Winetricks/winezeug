@@ -328,10 +328,32 @@
    Memcheck:Addr1
    fun:doCrash
 }
+# This one is for a jump to zero done intentionally by the crypt32 tests
+# compiled with -O2, it looks like this?
 {
-   suppress_wine_dlls_crypt32_tests__test_data_msg
+   suppress_wine_dlls_crypt32_tests__test_data_msg_O2
    Memcheck:Addr4
    fun:__wine_call_from_32_regs
    fun:CryptMsgUpdate
    fun:test_data_msg
+}
+# compiled with -O0, it looks like this?
+{
+   suppress_wine_dlls_crypt32_tests__test_data_msg_O0
+   Memcheck:Jump
+   obj:*
+   fun:CryptMsgUpdate
+   fun:test_data_msg_update
+   fun:test_data_msg
+}
+# gecko is #1 in the list of offending upstream libraries...
+{
+   todo_gecko_warnings_r_us
+   Memcheck:Addr4
+   obj:*wine_gecko*
+}
+{
+   todo_gecko_warnings_r_us2
+   Memcheck:Cond
+   obj:*wine_gecko*
 }
