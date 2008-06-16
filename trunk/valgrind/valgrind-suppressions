@@ -302,6 +302,14 @@
    obj:/lib/ld-2.7.so
    fun:getInterfaceIndexByName
 }
+{
+   suppress_if_nameindex_glibc_23
+   Memcheck:Param
+   socketcall.sendto(msg)
+   obj:/lib/ld-2.3.*.so
+   fun:if_nameindex
+   fun:getNumNonLoopbackInterfaces
+}
 # Naming convention for Wine suppressions:
 # If we think it's solid:
 # suppress_wine_dirname__functionname[_moreifneeded]
