@@ -7,7 +7,7 @@
 sub is_error
 {
 	#return /uninitialised|Unhandled exception:|Invalid read|Warning: invalid file descriptor|blocks are definitely lost/;
-	return /uninitialised|Unhandled exception:|Invalid read|Source and destination overlap|Warning: invalid file descriptor/ && !/Warning: invalid file descriptor -1 in syscall close/;
+	return /uninitialised|Unhandled exception:|Invalid read|Invalid write|Invalid free|Source and destination overlap|Mismatched free|unaddressable byte|Uninitialised value was created|vex x86|Warning: invalid file descriptor/ && !/Warning: invalid file descriptor -1 in syscall close/;
 
 }
 
