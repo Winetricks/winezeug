@@ -253,6 +253,15 @@
    fun:get_load_order
 }
 {
+   todo_suppress_wine_init_load_order_leak
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:RtlAnsiStringToUnicodeString
+   fun:RtlCreateUnicodeStringFromAsciiz
+   fun:init_load_order
+}
+{
    todo_suppress_explorer_leak
    Memcheck:Leak
    fun:RtlAllocateHeap
