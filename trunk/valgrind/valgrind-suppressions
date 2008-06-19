@@ -261,6 +261,15 @@
    fun:RtlCreateUnicodeStringFromAsciiz
    fun:init_load_order
 }
+# ntdll/loader.c explicitly avoids freeing when .exe's exit at the moment
+{
+   todo_suppress_wine_alloc_module_leak
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:RtlCreateUnicodeString
+   fun:alloc_module
+}
 {
    todo_suppress_explorer_leak
    Memcheck:Leak
