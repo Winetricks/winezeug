@@ -297,6 +297,16 @@
    obj:*
    fun:call_req_handler
 }
+# See comment in dlls/kernel32/tests/thread.c at end of threadFunc1
+{
+   suppress_wine_verify_lstrlenA_deadbeef_zero
+   Memcheck:Addr1
+   fun:strlen
+   fun:lstrlenA
+   fun:threadFunc1
+   obj:/home/dank/wine-git/dlls/ntdll/ntdll.dll.so
+   fun:call_thread_func
+}
 {
    suppress_gmtime
    Memcheck:Cond
