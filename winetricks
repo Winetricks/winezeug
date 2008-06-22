@@ -118,6 +118,7 @@ usage() {
     echo " vcrun2005     MS Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2005sp1  MS Visual C++ 2005 sp1 libraries"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
+    echo " vjrun20       MS Visual J# 2.0 libraries (requires dotnet20)"
     echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license)"
     echo " wsh51         MS Windows Scripting Host 5.1"
@@ -604,6 +605,17 @@ load_directx9() {
     set_winver win2k
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
        try $WINE "$WINETRICKS_CACHE"/directx_mar2008_redist.exe /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
+
+    # How many of these do we really need?
+    override_dlls native d3dim d3drm d3dx8 d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29
+    override_dlls native d3dx9_30 d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dxof
+    override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle 
+    override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby 
+    override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
+    override_dlls builtin d3d8 d3d9 dinput dinput8 dsound
+    
+    try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe
+
     unset_winver
 }
 
@@ -1247,6 +1259,13 @@ load_vcrun2008() {
 
 #----------------------------------------------------------------
 
+load_vjrun20() {
+    download vjrun20 http://download.microsoft.com/download/9/2/3/92338cd0-759f-4815-8981-24b437be74ef/vjredist.exe 80a098e36b90d159da915aebfbfbacf35f302bd8
+    try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_vlc() {
     # want http://www.videolan.org/mirror.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe but it doesn't redirect?
     download . http://mirrors.optralan.com/videolan/vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
@@ -1407,6 +1426,7 @@ do
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
     vcrun2008) load_vcrun2008;;
+    vjrun20) load_vjrun20;;
     vlc) load_vlc;;
     wmp9) load_vcrun6; load_wsh56; load_wmp9;;
     wmp10) load_vcrun6; load_wsh56; load_wmp10;;
