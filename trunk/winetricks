@@ -31,7 +31,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080614.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080622.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
