@@ -327,14 +327,14 @@
    suppress_if_name2index_glibc_27
    Memcheck:Param
    ioctl(SIOCGIFINDEX)
-   obj:/lib/ld-2.7.so
+   obj:/lib*/ld-2.7.so
    fun:getInterfaceIndexByName
 }
 {
    suppress_if_nameindex_glibc_23
    Memcheck:Param
    socketcall.sendto(msg)
-   obj:/lib/ld-2.3.*.so
+   obj:/lib*/ld-2.3.*.so
    fun:if_nameindex
 }
 # Naming convention for Wine suppressions:
@@ -380,6 +380,29 @@
    fun:CryptMsgUpdate
    fun:test_data_msg_update
    fun:test_data_msg
+}
+# These two functions test error returned by file read/write with null buffers 
+{
+   suppress_wine_kernel32_tests__test_read_write_nullwrite
+   Memcheck:Param
+   write(buf)
+   obj:/lib*/ld-*.so
+   fun:WriteFile
+   fun:test_read_write
+   fun:func_file
+   fun:run_test
+   fun:main
+}
+{
+   suppress_wine_kernel32_tests__test_read_write_nullread
+   Memcheck:Param
+   read(buf)
+   obj:/lib*/ld-*.so
+   fun:ReadFile
+   fun:test_read_write
+   fun:func_file
+   fun:run_test
+   fun:main
 }
 # gecko is #1 in the list of offending upstream libraries...
 {
