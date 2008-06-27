@@ -9,7 +9,6 @@
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
 WINE=${WINE:-wine}
-WINEPREFIXCREATE=${WINEPREFIXCREATE:-wineprefixcreate}
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 # Internal variables; these locations are not too important
@@ -51,12 +50,6 @@ which "$WINE" > /dev/null
 if test "$?" -ne "0"
 then
   die "Cannot find wine ($WINE)"
-fi
-
-which "$WINEPREFIXCREATE" > /dev/null
-if test "$?" -ne "0"
-then
-  die "Cannot find wineprefixcreate ($WINEPREFIXCREATE)"
 fi
 
 #----------------------------------------------------------------
@@ -242,7 +235,7 @@ case x"$1" in
 x) GUI=1; dogui ; set $todo ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
 esac
-test -d "$WINEPREFIX" || $WINEPREFIXCREATE > /dev/null 2>&1
+test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
 mkdir -p "$WINETRICKS_CACHE"
 olddir=`pwd`
 # Clean up after failed runs, if needed
