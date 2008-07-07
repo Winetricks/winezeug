@@ -55,7 +55,10 @@ cat > sum2
 cat sum2 | sed 's/by 0x[0-9a-fA-F]*:/by /' | sed 's/at 0x[0-9a-fA-F]*:/at /'  > sum3
 sed 's/^ \([^ ]\)/|\1/' < sum3 > sum4
 cat sum4 | tr '\012' '\011' | tr '|' '\012' | sed 's/  */ /g' | sed 's/[ 	]*$//' | grep . > sum5
-sort < sum5 | uniq -c | sort -rn > logs-$DATE.counts.txt
+sort < sum5 | uniq -c | sort -rn > logs-$DATE-count-by-error.txt
+
+# Generate count of errors by file
+for a in `cd logs-$DATE; ls *.txt | grep -v .-diff`; do echo -n "$a    "; egrep  'uninitialised|Unhandled exception:|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86' < logs-$DATE/$a | wc -l; done | sort --k 2n > logs-$DATE-count-by-file.txt
 
 PREV=`ls -d logs-????-??-?? | tail -2 | head -1`
 diff -Nu  -x '*diff.txt' $PREV logs-$DATE >  logs-$DATE-diff.txt
