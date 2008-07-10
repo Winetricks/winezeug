@@ -743,8 +743,13 @@ _EOF_
 
 load_firefox3() {
     # Firefox 3
-    download . "ftp://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0/win32/en-US/Firefox Setup 3.0.exe" 91cf99edbc4eb1ef6af3179e6126abc659309265
-    try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.exe" $WINETRICKS_SILENT
+    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0/win32/en-US/Firefox Setup 3.0.exe" 91cf99edbc4eb1ef6af3179e6126abc659309265
+    if [ "$WINETRICKS_QUIET"x = ""x ]
+    then
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.exe" 
+    else
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.exe" -ms
+    fi
 }
 
 #----------------------------------------------------------------
@@ -1403,7 +1408,7 @@ do
     divx) load_divx;;
     dotnet11) load_dotnet11; load_fontfix;;
     dotnet20) load_dotnet20; load_fontfix;;
-    firefox3) load_firefox3;;
+    firefox|firefox3) load_firefox3;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
     fontfix) load_fontfix;;
