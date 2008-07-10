@@ -244,8 +244,8 @@ olddir=`pwd`
 rm -rf "$WINETRICKS_TMP"/*
 
 # The folder-name is localized!
-programfilesdir_win=`$WINE cmd.exe /c echo "%ProgramFiles%"`
-programfilesdir_unix=`$WINE winepath -u "$programfilesdir_win"`
+programfilesdir_win="`$WINE cmd.exe /c echo "%ProgramFiles%"`"
+programfilesdir_unix="`$WINE winepath -u "$programfilesdir_win"`"
 
 # Did the user rename Fonts to fonts?
 if ! test -d "$WINEPREFIX"/drive_c/windows/Fonts && test -d "$WINEPREFIX"/drive_c/windows/fonts 
