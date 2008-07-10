@@ -4,12 +4,17 @@
 # Dan Kegel, Google, 2008
 
 WINE="${WINE:-wine}"
+WINEPATH="${WINEPATH:-winepath}"
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
 
 # Download and install sample files
 # See http://www.jhepple.com/support/sample_movies1.htm
 mkdir -p samples
 cd samples
+# Maarten's example theora+vorbis in ogg video
+# Note: windows files are not allowed to contain colons in the filename
+test -f Acadiane.ogg || wget -O Acadiane.ogg http://upload.wikimedia.org/wikipedia/commons/3/3a/Acadiane.ogg
+
 test -f 40_020a05.mov    || wget  http://www.webaim.org/techniques/captions/quicktime/media/40_020a05.mov
 #test -f mediaexample.wmv || wget  http://support.microsoft.com/support/mediaplayer/wmptest/samples/new/mediaexample.wmv
 for file in \
@@ -42,15 +47,19 @@ test -f "${WINEPREFIX}/drive_c/mplayerc.exe"   || sh winetricks mpc
 # Note: dirac0.8 directshow support isn't very useful; I include it so you can see that for yourself
 # We need somebody *cough*Maarten*cough* to implement a Schroedinger-1.0-based directshow filter
 cd samples
-select file in _install_wmp10 _install_qt _install_xvid _install_divx _install_dirac0.8 *
+WDIR=$($WINEPATH -w `pwd`)
+select file in _install_wmp10 _install_qt _install_xvid _install_divx _install_ogg *
 do
     case $file in
     _install_wmp10) sh ../winetricks -q winxp wmp10 vista ;;
     _install_qt)    sh ../winetricks -q quicktime72 vista ;;
     _install_xvid)  sh ../winetricks -q xvid vista ;;
     _install_dirac0.8) sh ../winetricks dirac0.8 vista ;;
+    _install_ogg)   sh ../winetricks ogg vista ;;
     _install_divx)  echo "Deselect everything but the codec!"; sh ../winetricks divx vista ;;
     *) $WINE "${WINEPREFIX}/drive_c/mplayerc.exe" $file > ../$file.log 2>&1 ;;
+    #*) echo $WINE "${WINEPREFIX}/drive_c/Program Files/Windows Media Player/wmplayer.exe" /play $WINEPATH $WDIR\\$file ;
+            #WINEDEBUG=+shell32,+ole,+seh $WINE "${WINEPREFIX}/drive_c/Program Files/Windows Media Player/wmplayer.exe" /play $WDIR\\$file > ../$file.log 2>&1 ;;
     esac
 done
 

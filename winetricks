@@ -97,6 +97,7 @@ usage() {
     echo " msxml3        MS XML version 3"
     echo " msxml4        MS XML version 4"
     echo " msxml6        MS XML version 6" 
+    echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, ogm source, ogg source"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
@@ -1056,6 +1057,15 @@ load_msxml6() {
 
 #----------------------------------------------------------------
 
+load_ogg() {
+    # flac, ogg, speex, vorbis, ogm source, ogg source
+    #download . http://cross-lfs.org/~mlankhorst/oggcodecs_0.81.1.exe 6e83bfa5c0378d5801ca7f15dc802f5993adec6a
+    download . http://kegel.com/wine/oggcodecs_0.81.2.exe c9d10a8f1b65b9f3824e227333d66247e14fad4c
+    try $WINE "$WINETRICKS_CACHE"/oggcodecs_0.81.2.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_pdh() {
     # http://support.microsoft.com/kb/284996
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
@@ -1431,6 +1441,7 @@ do
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
+    ogg) load_ogg;;
     pdh) load_pdh;;
     quicktime72) load_gdiplus; load_quicktime72;;  # needs e.g. gdiplus.dll.GdipCloneImage
     riched20) load_riched20;;
