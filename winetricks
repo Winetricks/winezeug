@@ -97,7 +97,7 @@ usage() {
     echo " msxml3        MS XML version 3"
     echo " msxml4        MS XML version 4"
     echo " msxml6        MS XML version 6" 
-    echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, ogm source, ogg source"
+    echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, schroedinger"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
@@ -1059,9 +1059,14 @@ load_msxml6() {
 
 load_ogg() {
     # flac, ogg, speex, vorbis, ogm source, ogg source
-    #download . http://cross-lfs.org/~mlankhorst/oggcodecs_0.81.1.exe 6e83bfa5c0378d5801ca7f15dc802f5993adec6a
-    download . http://kegel.com/wine/oggcodecs_0.81.2.exe c9d10a8f1b65b9f3824e227333d66247e14fad4c
-    try $WINE "$WINETRICKS_CACHE"/oggcodecs_0.81.2.exe $WINETRICKS_QUIET
+    download . http://cross-lfs.org/~mlankhorst/oggcodecs_0.81.2.exe c9d10a8f1b65b9f3824e227333d66247e14fad4c
+    #try $WINE "$WINETRICKS_CACHE"/oggcodecs_0.81.2.exe $WINETRICKS_QUIET
+    # oh, and the new schroedinger direct show filter, too
+    # see http://cross-lfs.org/~mlankhorst/direct-schro.txt
+    # Requires wine-1.1.1
+    download . http://cross-lfs.org/~mlankhorst/direct-schro.dll
+    cp "$WINETRICKS_CACHE"/direct-schro.dll "$WINEPREFIX"/drive_c/windows/system32/direct-schro.dll
+    try $WINE regsvr32 direct-schro.dll
 }
 
 #----------------------------------------------------------------
