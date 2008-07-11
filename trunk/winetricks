@@ -1062,7 +1062,10 @@ load_ogg() {
     download . http://cross-lfs.org/~mlankhorst/oggcodecs_0.81.2.exe c9d10a8f1b65b9f3824e227333d66247e14fad4c
     #try $WINE "$WINETRICKS_CACHE"/oggcodecs_0.81.2.exe $WINETRICKS_QUIET
     # oh, and the new schroedinger direct show filter, too
-    # see http://cross-lfs.org/~mlankhorst/direct-schro.txt
+    # see following URLs for more info
+    # http://www.diracvideo.org/
+    # http://cross-lfs.org/~mlankhorst/direct-schro.txt
+    # http://www.diracvideo.org/git?p=direct-schro.git;a=summary
     # Requires wine-1.1.1
     download . http://cross-lfs.org/~mlankhorst/direct-schro.dll
     cp "$WINETRICKS_CACHE"/direct-schro.dll "$WINEPREFIX"/drive_c/windows/system32/direct-schro.dll
