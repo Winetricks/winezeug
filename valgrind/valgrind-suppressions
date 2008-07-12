@@ -1,3 +1,5 @@
+# These three happen if valgrind doesn't notice and handle speculative
+# implementations of strchr/strlen/strcat properly.
 {
    visual_c_ignore_strchr
    Memcheck:Cond
@@ -13,6 +15,9 @@
    Memcheck:Cond
    fun:strcat
 }
+# These two are because ioctl often involves structs with holes.
+# We need to either add one of these per ioctl, or
+# just make it apply for *any* call to NtFsControlFile.
 {
    wine_struct_hole_FILE_PIPE_WAIT_FOR_BUFFER
    Memcheck:Param
@@ -34,11 +39,14 @@
    fun:NtFsControlFile
    fun:WaitNamedPipeW
 }
+# We sure got a lot of these in the logs when I first started.
+# I suppressed them to avoid dispair.  
 {
    todo_wine_arrgh_wcstombs
    Memcheck:Value4
    fun:wine_cp_wcstombs
 }
+# Now on to system bugs that aren't Wine's fault.
 {
    suppress_nss_leak
    Memcheck:Leak
@@ -430,6 +438,25 @@
    fun:run_test
    fun:main
 }
+
+# test_SetThreadContext:
+# The code in question looks like this:
+#/* simulate a call to set_test_val(10) */
+#stack = (int *)ctx.Esp;
+#stack[-1] = 10;
+#stack[-2] = ctx.Eip;
+# So we actually are writing to the stack, just not using 'proper'
+# access to the stack.
+{
+  suppress_wine_kernel32_tests__test_SetThreadContext
+  Memcheck:Addr4
+  fun:test_SetThreadContext
+  fun:func_thread
+  fun:run_test
+  fun:main
+}
+
+# Back to system suppressions that aren't wine's fault
 # gecko is #1 in the list of offending upstream libraries...
 {
    todo_gecko_warnings_r_us
