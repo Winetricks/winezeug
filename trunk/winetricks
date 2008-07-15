@@ -246,7 +246,9 @@ rm -rf "$WINETRICKS_TMP"/*
 
 # The folder-name is localized!
 programfilesdir_win="`$WINE cmd.exe /c echo "%ProgramFiles%"`"
+test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 programfilesdir_unix="`$WINE winepath -u "$programfilesdir_win"`"
+test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 
 # Did the user rename Fonts to fonts?
 if ! test -d "$WINEPREFIX"/drive_c/windows/Fonts && test -d "$WINEPREFIX"/drive_c/windows/fonts 
@@ -332,7 +334,7 @@ download() {
            # fortunately, we know it
            try curl -L -o $file -C - --header "Accept-Encoding: gzip,deflate" "$2"
         fi
-        cd $olddir
+        cd "$olddir"
     fi
     if [ "$3"x != ""x ]
     then
