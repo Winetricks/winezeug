@@ -44,7 +44,6 @@ wait_for_update()
   while ! checked_git_pull
   do
      sleep 600
-     echo foo
   done
 
   # Then wait for no change for ten minutes 
