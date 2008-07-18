@@ -1,14 +1,39 @@
 diff --git a/tools/runtest b/tools/runtest
-index 43f513f..6c4715c 100755
+index 43f513f..dc106c5 100755
 --- a/tools/runtest
 +++ b/tools/runtest
-@@ -118,4 +118,8 @@ fi
+@@ -47,6 +47,8 @@ EOF
+ platform=$WINETEST_PLATFORM
+ WINETEST_DEBUG=${WINETEST_DEBUG:-1}
+ 
++cmdline="$0 $*"
++
+ # parse command-line options
+ while [ "$#" != 0 ]; do
+     case "$1" in
+@@ -118,4 +120,23 @@ fi
  WINETEST_PLATFORM=${platform:-wine}
  export WINETEST_PLATFORM WINETEST_DEBUG
  
 -exec "$topobjdir/wine" "$program" "$infile" "$@"
-+case x"$RUNTEST_USE_VALGRIND" in
-+x1) abstopobjdir=`cd $topobjdir; pwd`; RUNTEST_VALGRIND_CMD="/usr/local/valgrind-svn/bin/valgrind --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$abstopobjdir/tools/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes " ;;
++# Detect Valgrind
++case x"$VALGRIND_OPTS"x in
++xx) ;;
++*) RUNTEST_WRAPPER=valgrind;;
 +esac
 +
-+exec $RUNTEST_VALGRIND_CMD "$topobjdir/wine" "$program" "$infile" "$@"
++# Detect parallel make
++case x"$MAKEFLAGS"x in
++*-j*) 
++  # If parallel make, avoid interleaving results
++  logfile=`basename "$infile" .c`.log
++  echo "# $cmdline" > $logfile
++  $RUNTEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@" >> $logfile 2>&1
++  RETVAL=$?
++  cat $logfile
++  rm $logfile
++  exit $RETVAL ;;
++*) 
++  exec $RUNTEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@" ;;
++esac
+
