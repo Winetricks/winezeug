@@ -1,5 +1,7 @@
 #!/bin/sh
 # Usage: sh tools/valgrind-continuous.sh
+set -e
+set -x
 while true
 do
     sh tools/valgrind-sync.sh

@@ -6,9 +6,12 @@ set -e
 
 export WINEPREFIX=$HOME/.wine-test
 
-./configure CFLAGS="-g -O0" --prefix=/usr/local/wine
-make clean
-make -j3
+if true
+then
+    ./configure CFLAGS="-g -O0" --prefix=/usr/local/wine
+    make clean
+    time make -j3
+fi
 make testclean
 
 rm -rf $WINEPREFIX
@@ -28,15 +31,17 @@ set +e
 server/wineserver -w
 ./wine notepad &
 
-# Get info about what tree we're testing
-git log -n 1 > logs/$DATE.log
 # Should we use date or id from git log?
 DATE=`date +%F-%H.%M`
+# Get info about what tree we're testing
+git log -n 1 > logs/$DATE.log
+
+# Choose the version of valgrind
+PATH=/usr/local/valgrind-svn/bin:$PATH
 
 # Finally run the test
-# Sure would be nice if we could use -j2 here
-export RUNTEST_USE_VALGRIND=1
-make -k test >> logs/$DATE.log 2>&1
+export VALGRIND_OPTS="--trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$PWD/tools/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes"
+time make -j2 -k test >> logs/$DATE.log 2>&1
 
 # Kill off our notepad and any stragglers
 server/wineserver -k || true
@@ -83,7 +88,7 @@ cd logs/$DATE
 for file in `ls vg*.txt | grep -v .-diff.txt`
 do
 	out=`basename $file .txt`-diff.txt
-	diff -Nu ../$PREV/$file $file > $out
+	diff -Nu ../../$PREV/$file $file > $out
 done
 chmod 644 *
 chmod 755 .

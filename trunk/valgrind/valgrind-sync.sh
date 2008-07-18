@@ -1,4 +1,29 @@
 #!/bin/sh
+set -e
+set -x
+
+setup()
+{
+   # Unapply local patches before sync
+   git diff > valgrind-sync-$$.patch
+   patch -R -p1 < valgrind-sync-$$.patch
+   cleaned=0
+   trap cleanup 0 INT 
+}
+
+cleanup()
+{
+   # Reapply local patches after sync
+   test $cleaned = 1 && exit
+   patch -p1 < valgrind-sync-$$.patch
+   status=$?
+   cleaned=1
+
+   case $status in
+   0) exit 0 ;;
+   *) echo "Patch failed"; exit 1
+   esac
+}
 
 # Returns success if something was pulled
 checked_git_pull()
@@ -30,5 +55,6 @@ wait_for_update()
   done
 }
 
+setup
 wait_for_update
-
+cleanup

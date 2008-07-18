@@ -28,7 +28,10 @@ sub flushlog
 }
 
 while (<>) {
-	if (/runtest.*-M (.*)\.dll.*exe\.so (.*)\.c /) {
+        # runtest puts a # in front of commandlines when reassembling parallel logs
+	s/# runtest/runtest/;
+
+	if (/runtest.*-M (.*)\.dll.*exe\.so (.*)\.c/) {
 		&flushlog();
 	}
 	if ($saved ne "" || &is_error()) {
