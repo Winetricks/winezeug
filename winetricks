@@ -30,7 +30,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080710.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20080720.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -761,8 +761,8 @@ load_firefox3() {
 
 load_ffdshow() {
     # ffdshow
-    download . $SOURCEFORGE/ffdshow-tryout/ffdshow_beta4a_rev1723_20071224_clsid.exe 6e018139c3ed4800aa3580267d1da47fa936a82a
-    try $WINE "$WINETRICKS_CACHE"/ffdshow_beta4a_rev1723_20071224_clsid.exe $WINETRICKS_SILENT
+    download . $SOURCEFORGE/ffdshow-tryout/ffdshow_beta5_rev2033_20080705_clsid.exe 6da6837e2f400923ff5294a6591a88a3eee5ee40
+    try $WINE "$WINETRICKS_CACHE"/ffdshow_beta5_rev2033_20080705_clsid.exe $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
