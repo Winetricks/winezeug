@@ -79,7 +79,7 @@ usage() {
     echo " dotnet11      MS .NET 1.1 (requires Windows license)"
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
     echo " ffdshow       ffdshow video codecs"
-    echo " flash         Adobe Flash Player activex"
+    echo " flash         Adobe Flash Player ActiveX and firefox plugins"
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
@@ -769,11 +769,18 @@ load_ffdshow() {
 
 load_flash() {
     # www.adobe.com/products/flashplayer/
+
+    # Active X plugin
     # http://blogs.adobe.com/psirt/2008/03/preparing_for_april_flash_play.html
     # 2008-04-01: old version sha1sum f4dd1c0c715b791db2c972aeba90d3b78372996a
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
     download . http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2  
     try $WINE msiexec /i "$WINETRICKS_CACHE"/install_flash_player_active_x.msi $WINETRICKS_QUIET
+
+    # Mozilla / Firefox plugin
+    # 2008-07-22: sha1sum 1e6f7627784a5b791e99ae9ad63133dc11c7940b
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 1e6f7627784a5b791e99ae9ad63133dc11c7940b
+    try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
