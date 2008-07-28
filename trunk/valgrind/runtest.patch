@@ -1,5 +1,5 @@
 diff --git a/tools/runtest b/tools/runtest
-index 43f513f..dc106c5 100755
+index a3c9331..ffbdf36 100755
 --- a/tools/runtest
 +++ b/tools/runtest
 @@ -47,6 +47,8 @@ EOF
@@ -11,29 +11,22 @@ index 43f513f..dc106c5 100755
  # parse command-line options
  while [ "$#" != 0 ]; do
      case "$1" in
-@@ -118,4 +120,23 @@ fi
- WINETEST_PLATFORM=${platform:-wine}
- export WINETEST_PLATFORM WINETEST_DEBUG
+@@ -124,4 +126,17 @@ export WINETEST_PLATFORM WINETEST_DEBUG
+ #  WINETEST_WRAPPER=valgrind
+ # would run the tests under valgrind to look for memory errors.
  
--exec "$topobjdir/wine" "$program" "$infile" "$@"
-+# Detect Valgrind
-+case x"$VALGRIND_OPTS"x in
-+xx) ;;
-+*) RUNTEST_WRAPPER=valgrind;;
-+esac
-+
-+# Detect parallel make
+-exec $WINETEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@"
++# If user ran "make -j2" or the like, use a temporary log file to
++# prevent mushing results from different tests together
 +case x"$MAKEFLAGS"x in
 +*-j*) 
-+  # If parallel make, avoid interleaving results
 +  logfile=`basename "$infile" .c`.log
 +  echo "# $cmdline" > $logfile
-+  $RUNTEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@" >> $logfile 2>&1
++  $WINETEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@" >> $logfile 2>&1
 +  RETVAL=$?
 +  cat $logfile
 +  rm $logfile
 +  exit $RETVAL ;;
 +*) 
-+  exec $RUNTEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@" ;;
++  exec $WINETEST_WRAPPER "$topobjdir/wine" "$program" "$infile" "$@" ;;
 +esac
-
