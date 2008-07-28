@@ -41,6 +41,7 @@ PATH=/usr/local/valgrind-svn/bin:$PATH
 
 # Finally run the test
 export VALGRIND_OPTS="--trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$PWD/tools/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes"
+export WINETEST_WRAPPER=valgrind
 time make -j2 -k test >> logs/$DATE.log 2>&1
 
 # Kill off our notepad and any stragglers

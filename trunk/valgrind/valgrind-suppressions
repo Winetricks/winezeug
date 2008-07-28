@@ -341,6 +341,17 @@
    obj:/home/dank/wine-git/dlls/ntdll/ntdll.dll.so
    fun:call_thread_func
 }
+# test_UnpackDDElParam intentionally passes a bad pointer
+{
+  suppress_wine_user32_dde_tests
+  Memcheck:Addr2
+  fun:GlobalLock
+  fun:UnpackDDElParam
+  fun:test_UnpackDDElParam
+  fun:func_dde
+  fun:run_test
+  fun:main
+}
 {
    suppress_gmtime
    Memcheck:Cond
