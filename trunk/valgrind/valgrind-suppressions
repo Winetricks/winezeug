@@ -481,14 +481,59 @@
 }
 # followed by openssl
 {
-   todo_openssl_warnings_r_us
+   todo_openssl_warnings_r_us1a
    Memcheck:Addr4
-   obj:*libcrypto*
+   obj:/usr/lib*/libcrypto.so*
 }
 {
-   todo_openssl_warnings_r_us2
+   todo_openssl_warnings_r_us1b
+   Memcheck:Value4
+   obj:/usr/lib*/*libcrypto.so*
+}
+{
+   todo_openssl_warnings_r_us1c
    Memcheck:Cond
-   obj:*libcrypto*
+   obj:/usr/lib*/*libcrypto.so*
+}
+{
+   todo_openssl_warnings_r_us2a
+   Memcheck:Addr4
+   obj:*
+   obj:/usr/lib*/*libcrypto.so*
+}
+{
+   todo_openssl_warnings_r_us2b
+   Memcheck:Value4
+   obj:*
+   obj:/usr/lib*/*libcrypto.so*
+}
+{
+   todo_openssl_warnings_r_us2c
+   Memcheck:Cond
+   obj:*
+   obj:/usr/lib*/*libcrypto.so*
+}
+{
+   todo_openssl_warnings_r_us1d
+   Memcheck:Param
+   write(buf)
+   obj:*
+   obj:/usr/lib*/*libcrypto.so*
+}
+{
+   todo_openssl_warnings_r_us3a
+   Memcheck:Addr4
+   obj:/usr/lib*/*libssl.so*
+}
+{
+   todo_openssl_warnings_r_us3b
+   Memcheck:Value4
+   obj:/usr/lib*/*libssl.so*
+}
+{
+   todo_openssl_warnings_r_us3c
+   Memcheck:Cond
+   obj:/usr/lib*/*libssl.so*
 }
 # And sane
 {
@@ -500,4 +545,15 @@
    todo_sane_warnings_r_us2
    Memcheck:Cond
    obj:*libsane*
+}
+# and visual C++ 6
+{
+   todo_visual_c_chkstk
+   Memcheck:Addr4
+   fun:$$$00001
+}
+{
+   visual_c_ignore_bad_typeid
+   Memcheck:Cond
+   fun:??0bad_typeid@@QAE@ABV0@@Z
 }
