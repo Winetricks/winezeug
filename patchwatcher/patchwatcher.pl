@@ -21,16 +21,30 @@ $parser->output_dir($outputdir);
 my $i;
 ## process all messages in pop3 inbox
 for ($i = 1; $i <= $pop->Count(); $i++) {
-   print "$i \n";
    my $msg;
    $msg = $pop->HeadAndBody( $i );
    my $entity = $parser->parse_data($msg);
 
-   print $parser->results->top_head->get('Date');
-   print $parser->results->top_head->get('From');
-   print $parser->results->top_head->get('Subject');
-   $entity->dump_skeleton;
+   $entity->make_singlepart;
 
+   if ($entity->parts < 2) {
+	if ($entity->bodyhandle->as_string =~ m/diff/) {
+		print $entity->head->get('Date');
+		print $entity->head->get('From');
+		print $entity->head->get('Subject');
+		print $entity->bodyhandle->as_string;
+	}
+   } else {
+	foreach ($entity->parts) {
+		if ($_->bodyhandle->as_string =~ m/diff/) {
+			print $entity->head->get('Date');
+			print $entity->head->get('From');
+			print $entity->head->get('Subject');
+			print $_->bodyhandle->as_string;
+			last;
+		}
+	}
+   }
 }
 
 
