@@ -1,4 +1,11 @@
 #!/usr/bin/perl
+# Retrieve next patch from the specified mailbox, delete it
+# Also delete any non-patch email encountered
+# Dan Kegel 2008
+
+# TODO: recognize patch series by the convention %d/%d in the subject
+# line and only retrieve them in order when the patch series is complete
+
 use strict;
 use warnings;
 use Mail::POP3Client;
@@ -14,6 +21,7 @@ my $pop = new Mail::POP3Client(
 my $fh = new IO::Handle();
 
 ## Initialize stuff for MIME::Parser;
+# TODO: stop using outputdir
 my $outputdir = "./mimemail";
 my $parser = new MIME::Parser;
 $parser->output_dir($outputdir);
@@ -31,9 +39,9 @@ for ($i = 1; $i <= $pop->Count() && !$done; $i++) {
 
    if ($entity->parts < 2) {
 	if ($entity->bodyhandle->as_string =~ m/diff/) {
-		print $entity->head->get('Date');
-		print $entity->head->get('From');
-		print $entity->head->get('Subject');
+		print "From: ".$entity->head->get('From');
+		print "Subject: ".$entity->head->get('Subject');
+		print "Date: ".$entity->head->get('Date');
 		print "\n";
 		print $entity->bodyhandle->as_string;
                 $done = 1;                
@@ -41,9 +49,9 @@ for ($i = 1; $i <= $pop->Count() && !$done; $i++) {
    } else {
 	foreach ($entity->parts) {
 		if ($_->bodyhandle->as_string =~ m/diff/) {
-			print $entity->head->get('Date');
-			print $entity->head->get('From');
-			print $entity->head->get('Subject');
+			print "From: ".$entity->head->get('From');
+			print "Subject: ".$entity->head->get('Subject');
+			print "Date: ".$entity->head->get('Date');
 		        print "\n";
 			print $_->bodyhandle->as_string;
                         $done = 1;                
