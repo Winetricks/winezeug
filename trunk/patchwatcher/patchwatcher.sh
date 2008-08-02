@@ -61,6 +61,7 @@ use_tree()
 
 continuous_build()
 {
+  while sleep 1
   do
      refresh_tree
      use_tree
