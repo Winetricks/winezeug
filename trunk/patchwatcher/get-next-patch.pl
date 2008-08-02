@@ -19,10 +19,12 @@ my $parser = new MIME::Parser;
 $parser->output_dir($outputdir);
 
 my $i;
-## process all messages in pop3 inbox
-for ($i = 1; $i <= $pop->Count(); $i++) {
+my $done = 0;
+## get first patch in pop3 inbox
+for ($i = 1; $i <= $pop->Count() && !$done; $i++) {
    my $msg;
    $msg = $pop->HeadAndBody( $i );
+   $pop->Delete( $i );
    my $entity = $parser->parse_data($msg);
 
    $entity->make_singlepart;
@@ -32,7 +34,9 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
 		print $entity->head->get('Date');
 		print $entity->head->get('From');
 		print $entity->head->get('Subject');
+		print "\n";
 		print $entity->bodyhandle->as_string;
+                $done = 1;                
 	}
    } else {
 	foreach ($entity->parts) {
@@ -40,11 +44,12 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
 			print $entity->head->get('Date');
 			print $entity->head->get('From');
 			print $entity->head->get('Subject');
+		        print "\n";
 			print $_->bodyhandle->as_string;
+                        $done = 1;                
 			last;
 		}
 	}
    }
 }
-
-
+$pop->Close();
