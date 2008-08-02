@@ -2,22 +2,40 @@
 # Simple continuous build for Wine 
 # Dan Kegel 2008
 #
-# Watches both git and wine-patches
+# Watches wine-patches, builds incoming patches against
+# current git, sends email out with results.
+
+# Prerequisites:
 # Must do
 #    sudo apt-get install libmail-pop3client-perl 
-# before running first time.
-# Must also set environment variables to point to a mailbox subscribed to wine-patches
+#    sudo apt-get install mailx
+# and make sure mailx can send mail before running first time.
+# (You may need to do sudo dpkg-reconfigure exim4-config.)
+#
+# Must set environment vars to point to a mailbox subscribed to wine-patches
 #   PATCHWATCHER_USER=user@host.com
 #   PATCHWATCHER_HOST=mail.host.com
 #   PATCHWATCHER_PASSWORD=userpass 
 # before running.  All messages will slowly be deleted from the mailbox
 # as this script runs.
 
+# This script configures and builds wine in a directory called 'active'.
+# Then whenever it wants to try a new patch, it moves that directory
+# aside and replaces it with a copy.
+# When it's done trying out the patch, it deletes the copy and moves
+# the real directory back where it was.
+# All this fancy dancing is just to avoid irritating anything
+# that depends on absolute paths being the same as when 'configure' was run.
+# The copies sound slow but they only take a few seconds on a 
+# modern machine.
+
 set -e
 set -x
 
 # Set this to true on first run and after debugging
 initialize=false
+# Set this to true for continuous build
+loop=false
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -25,6 +43,13 @@ WORK=$TOP/wine-continuous-workdir
 if $initialize
 then
     rm -rf $WORK
+else
+    # Recover from run aborted with ^C
+    if -d $WORK/golden
+    then
+        rm -rf $WORK/active
+        mv $WORK/golden $WORK/active
+    fi
 fi
 mkdir -p $WORK/mimemail $PATCHES
 LAST=`ls $TOP/patches | tail -1 | sed 's/\.patch$//;s/\.log$//'`
@@ -42,6 +67,9 @@ initialize_tree()
 refresh_tree()
 {
     cd $WORK/active
+    # Recover from any accidental damage
+    git diff > git.diff && patch -R -p1 < git.diff
+    # Grab latest source
     git pull > git.log 2>&1
     cat git.log
     if ! grep -q "Already up-to-date." < git.log
@@ -50,17 +78,50 @@ refresh_tree()
     fi
 }
 
+# Usage: report_results build|make|success patch log
+report_results()
+{
+    status=$1
+    patch=$2
+    log=$3
+    # Retrieve sender and subject from patch file
+    # Patch file is written by get-next-patch.pl in a specific format,
+    # always starts with an email header.
+    patch_sender=`cat $patch | grep '^From:' | sed 's/^From: //'`
+    patch_subject=`cat $patch | grep '^Subject:' | sed 's/^Subject: //'`
+    case $status in
+    patch)   status_long="failed to apply" ;;
+    build)   status_long="failed to build" ;;
+    success) status_long="applied and built successfully" ;;
+    esac
+
+    cat - $patch $log > msg.txt <<_EOF_
+Hi!  This is Dan Kegel's experimental automated wine patchwatcher service.
+I patched the latest git sources with your patch
+"$patch_subject"
+The result: the patch $status_long.
+
+Here is the patch and the log.
+I hope this service is useful.  
+Please send comments, suggestions, and complaints to dank@kegel.com.
+
+_EOF_
+    mailx -s "Wine Patchwatcher results: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
+}
+
 use_tree()
 {
     cd $WORK
-    NEXT=`expr $LAST + 1`
-    if ! perl $TOP/get-next-patch.pl > $PATCHES/$NEXT.patch || ! test -s $PATCHES/$NEXT.patch
+    if ! perl $TOP/get-next-patch.pl > temp.patch || ! test -s temp.patch
     then
+       rm -f temp.patch
        echo No patch
        sleep 60
        return 0
     fi
+    NEXT=`expr $LAST + 1`
     LAST=$NEXT
+    mv temp.patch $PATCHES/$NEXT.patch
     echo Processing patch:
     cat $PATCHES/$NEXT.patch
 
@@ -70,16 +131,15 @@ use_tree()
     cd active
     if ! patch -p1 < $PATCHES/$NEXT.patch > $PATCHES/$NEXT.log 2>&1
     then
-       echo Patch failed
-       # TODO: send negative report to author
+       report_results patch $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
     else
-       if ! make >> $PATCHES/$NEXT.log 2>&1
+       # TODO: need to run configure?
+       # Note: don't use parallel build, we want to email a nice clean log
+       if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log
        then
-           echo Build failed
-           # TODO: send negative report to author
+           report_results build $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
        else
-           echo Patch and build succeeded
-           # TODO: send positive report to author
+           report_results success $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
        fi
        cat $PATCHES/$NEXT.log
     fi
@@ -90,11 +150,13 @@ use_tree()
 
 continuous_build()
 {
-  while sleep 1
+  while true
   do
      date
      refresh_tree
      use_tree
+     sleep 1
+     $loop || break
   done
 }
 
