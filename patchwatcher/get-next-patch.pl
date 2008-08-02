@@ -53,3 +53,9 @@ for ($i = 1; $i <= $pop->Count() && !$done; $i++) {
    }
 }
 $pop->Close();
+if ($done) {
+    exit(0);
+} else {
+    exit(1);
+}
+
