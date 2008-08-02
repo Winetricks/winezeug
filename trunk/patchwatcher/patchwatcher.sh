@@ -6,11 +6,12 @@
 # Must do
 #    sudo apt-get install libmail-pop3client-perl 
 # before running first time.
-# Must also set environment variables
+# Must also set environment variables to point to a mailbox subscribed to wine-patches
 #   PATCHWATCHER_USER=user@host.com
 #   PATCHWATCHER_HOST=mail.host.com
 #   PATCHWATCHER_PASSWORD=userpass 
-# before running.
+# before running.  All messages will slowly be deleted from the mailbox
+# as this script runs.
 
 set -e
 set -x
@@ -19,12 +20,14 @@ set -x
 initialize=false
 
 TOP=`pwd`
+PATCHES=$TOP/patches
 WORK=$TOP/wine-continuous-workdir
 if $initialize
 then
     rm -rf $WORK
 fi
-mkdir -p $WORK/mimemail
+mkdir -p $WORK/mimemail $PATCHES
+LAST=`ls $TOP/patches | tail -1 | sed 's/\.patch$//;s/\.log$//'`
 
 initialize_tree()
 {
@@ -50,24 +53,27 @@ refresh_tree()
 use_tree()
 {
     cd $WORK
-    if ! perl $TOP/get-next-patch.pl > current.patch 
+    NEXT=`expr $LAST + 1`
+    if ! perl $TOP/get-next-patch.pl > $PATCHES/$NEXT.patch || ! test -s $PATCHES/$NEXT.patch
     then
+       echo No patch
        sleep 60
        return 0
     fi
+    LAST=$NEXT
     echo Processing patch:
-    cat current.patch
+    cat $PATCHES/$NEXT.patch
 
     rm -rf golden
     mv active golden
     cp -a golden active
     cd active
-    if ! patch -p1 < ../current.patch > current.log 2>&1
+    if ! patch -p1 < $PATCHES/$NEXT.patch > $PATCHES/$NEXT.log 2>&1
     then
        echo Patch failed
        # TODO: send negative report to author
     else
-       if ! make >> current.log 2>&1
+       if ! make >> $PATCHES/$NEXT.log 2>&1
        then
            echo Build failed
            # TODO: send negative report to author
@@ -75,7 +81,7 @@ use_tree()
            echo Patch and build succeeded
            # TODO: send positive report to author
        fi
-       cat current.log
+       cat $PATCHES/$NEXT.log
     fi
     cd $WORK
     rm -rf active
@@ -86,6 +92,7 @@ continuous_build()
 {
   while sleep 1
   do
+     date
      refresh_tree
      use_tree
   done
