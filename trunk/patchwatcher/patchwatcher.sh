@@ -33,9 +33,9 @@ set -e
 set -x
 
 # Set this to true on first run and after debugging
-initialize=true
+initialize=false
 # Set this to true for continuous build
-loop=true
+loop=false
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -45,14 +45,13 @@ then
     rm -rf $WORK
 else
     # Recover from run aborted with ^C
-    if -d $WORK/golden
+    if test -d $WORK/golden
     then
         rm -rf $WORK/active
         mv $WORK/golden $WORK/active
     fi
 fi
-mkdir -p $WORK/mimemail $PATCHES
-LAST=`ls $TOP/patches | tail -1 | sed 's/\.patch$//;s/\.log$//'`
+mkdir -p $PATCHES/mimemail
 
 initialize_tree()
 {
@@ -78,6 +77,18 @@ refresh_tree()
     fi
 }
 
+retrieve_patches()
+{
+    cd $PATCHES
+    LAST=`ls *.patch | tail -1 | sed 's/\.patch$//'`
+    NEXT=`expr $LAST + 1`
+    if ! perl $TOP/get-next-patch.pl $NEXT
+    then
+        echo "No patches to retrieve"
+        sleep 60
+    fi
+}
+
 # Usage: report_results build|make|success patch log
 report_results()
 {
@@ -96,7 +107,7 @@ report_results()
     esac
 
     cat - $patch $log > msg.txt <<_EOF_
-Hi!  This is Dan Kegel's experimental automated wine patchwatcher service.
+Hi!  This is Dan Kegel's experimental automated wine patchwatcher thingy.
 I patched the latest git sources with your patch
 "$patch_subject"
 The result: the patch $status_long.
@@ -106,25 +117,30 @@ I hope this service is useful.
 Please send comments, suggestions, and complaints to dank@kegel.com.
 
 _EOF_
+
+    # don't email on success, too noisy
+    case $status in
+    success) return ;;
+    esac
+
     mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
 }
 
-use_tree()
+# Return true if a patch was tried, false if no patches left to try
+try_one_patch()
 {
-    cd $WORK
-    if ! perl $TOP/get-next-patch.pl > temp.patch || ! test -s temp.patch
-    then
-       rm -f temp.patch
-       echo No patch
-       sleep 60
-       return 0
-    fi
+    cd $PATCHES
+    LAST=`ls *.log | tail -1 | sed 's/\.log$//'`
     NEXT=`expr $LAST + 1`
-    LAST=$NEXT
-    mv temp.patch $PATCHES/$NEXT.patch
-    echo Processing patch:
-    cat $PATCHES/$NEXT.patch
+    if ! test -f $NEXT.patch
+    then
+        echo No patch to apply
+        return 1
+    fi
+    echo Processing patch ${NEXT}:
+    cat $NEXT.patch
 
+    cd $WORK
     rm -rf golden
     mv active golden
     cp -a golden active
@@ -146,6 +162,7 @@ use_tree()
     cd $WORK
     rm -rf active
     mv golden active
+    return 0
 }
 
 continuous_build()
@@ -154,8 +171,12 @@ continuous_build()
   do
      date
      refresh_tree
-     use_tree
-     sleep 1
+     retrieve_patches
+     while try_one_patch
+     do
+         sleep 1
+         $loop || break
+     done
      $loop || break
   done
 }
