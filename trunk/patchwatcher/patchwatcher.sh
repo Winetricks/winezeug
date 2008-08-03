@@ -33,9 +33,9 @@ set -e
 set -x
 
 # Set this to true on first run and after debugging
-initialize=false
+initialize=true
 # Set this to true for continuous build
-loop=false
+loop=true
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -106,7 +106,7 @@ I hope this service is useful.
 Please send comments, suggestions, and complaints to dank@kegel.com.
 
 _EOF_
-    mailx -s "Wine Patchwatcher results: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
+    mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
 }
 
 use_tree()
@@ -135,7 +135,7 @@ use_tree()
     else
        # TODO: need to run configure?
        # Note: don't use parallel build, we want to email a nice clean log
-       if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log
+       if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log || ! grep "^Wine build complete" $PATCHES/$NEXT.log 
        then
            report_results build $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
        else
