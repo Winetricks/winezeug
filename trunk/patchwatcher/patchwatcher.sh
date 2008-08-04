@@ -82,7 +82,7 @@ retrieve_patches()
     cd $PATCHES
     LAST=`ls *.patch | tail -1 | sed 's/\.patch$//'`
     NEXT=`expr $LAST + 1`
-    if ! perl $TOP/get-next-patch.pl $NEXT
+    if ! perl $TOP/get-patches.pl $NEXT
     then
         echo "No patches to retrieve"
         sleep 60
@@ -96,7 +96,7 @@ report_results()
     patch=$2
     log=$3
     # Retrieve sender and subject from patch file
-    # Patch file is written by get-next-patch.pl in a specific format,
+    # Patch file is written by get-patches.pl in a specific format,
     # always starts with an email header.
     patch_sender=`cat $patch | grep '^From:' | sed 's/^From: //'`
     patch_subject=`cat $patch | grep '^Subject:' | sed 's/^Subject: //'`
