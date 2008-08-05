@@ -8,6 +8,7 @@
 # Prerequisites:
 # Must do
 #    sudo apt-get install libmail-pop3client-perl 
+#    sudo apt-get install libmime-perl
 #    sudo apt-get install mailx
 # and make sure mailx can send mail before running first time.
 # (You may need to do sudo dpkg-reconfigure exim4-config.)
