@@ -3,7 +3,13 @@
 # Drop any patch older than three days 
 # Also delete any non-patch email encountered
 # Argument is number of first patch to output.
-# Patches are output as %d.patch in utf-8 format.
+#
+# Patches are output as %d.txt in utf-8 format.
+# Once a patch has been fully dealt with (e.g. not a patch, multiple patches,
+# fails to apply, fails to build, or builds successfully),
+# a corresponding .log is created.  The last line of the .log file
+# is a short status message suitable for displaying in a dashboard.
+# Any .txt file without a matching .log file is ready to be applied and tested.
 
 # Dan Kegel 2008
 
@@ -33,11 +39,13 @@ if ($curpatch eq "") {
 
 my $patches_written = 0;
 
-sub output_patch
+sub output_message
 {
     my $header = $_[0];
     my $body = $_[1];
-    open FILE, "> $curpatch.patch" || die "can't create $curpatch.patch";
+    my $status = $_[2];
+
+    open FILE, "> $curpatch.txt" || die "can't create $curpatch.txt";
     binmode FILE, ":utf8";
     $curpatch++;
     $patches_written++;
@@ -49,6 +57,14 @@ sub output_patch
     print FILE $body;
 
     close FILE;
+
+    if (defined($status)) {
+        open FILE, "> $curpatch.log" || die "can't create $curpatch.log";
+    
+        print FILE $status;
+    
+        close FILE;
+    }
 }
 
 # Is a body string a patch?
@@ -148,7 +164,7 @@ sub consume_series_patch
         # Yes!  Output them all.
         for ($j=1; $j <= $series_num_patches; $j++) {
             #print "Outputting patch $j of $series_num_patches\n";
-            output_patch($series_headers[$j], $series_bodies[$j]);
+            output_message($series_headers[$j], $series_bodies[$j], undef);
             #$pop->Delete( $series_indices[$j] );
         }
         @series_headers = ();
@@ -157,6 +173,7 @@ sub consume_series_patch
         $series_sender = "";
         $series_num_patches = "";
     }
+    # else let it sit in mailbox until it's complete.
 }
 
 sub consume_patch
@@ -166,7 +183,7 @@ sub consume_patch
     my $index = $_[2];
 
     if ($header->get('Subject') !~ /(\d+)\/(\d+)/) {
-        output_patch($header, $body);
+        output_message($header, $body, undef);
         #$pop->Delete( $index );
     } else {
         # part of sequence 
@@ -174,6 +191,7 @@ sub consume_patch
         my $num_patches = $2;
         if ($which_patch == 0) {
             # Zeroth patch in series is supposed to be just explanation?
+            output_message($header, $body, "patch zero of a series");
             #$pop->Delete( $index );
         } else {
             # Patches that are part of a series get special treatment
@@ -189,18 +207,21 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
 
     # Delete messages without body?
     if (!defined($body)) {
+        output_message($head, $body, "No body");
         print "no body: $subject\n";
         ; # $pop->Delete( $i );
         next;
     }
 
     if ($numpatches_in_msg == 0) {
+        output_message($head, $body, "No patch detected");
         print "No patch: $subject\n";
         ; # $pop->Delete( $i );
         next;
     }
 
     if ($numpatches_in_msg > 1) {
+        output_message($head, $body, "Multiple patches detected, ignoring");
         print "Multiple patches in one message not allowed (this is a wine-patches policy): $subject\n";
         ; # $pop->Delete( $i );
         next;
@@ -209,6 +230,7 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
     # TODO: delete patches older than three days
     #my $date = $head->get('Date');
     #if ($today - $date  > 3 days) {
+    #    output_message($head, $body, "Old message, ignoring");
     #    $pop->Delete( $i );
     #   next;
     #}

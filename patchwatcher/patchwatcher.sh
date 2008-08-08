@@ -131,32 +131,42 @@ _EOF_
 try_one_patch()
 {
     cd $PATCHES
-    LAST=`ls *.log | tail -1 | sed 's/\.log$//'`
-    NEXT=`expr $LAST + 1`
-    if ! test -f $NEXT.patch
+
+    # Find first patch that doesn't have a .log
+    NEXT=""
+    for p in `ls *.txt *.log | sed 's/\..*//' | sort -n | uniq -c | awk '$1 == 1 {print $2}'`
+    do
+        if test -f $p.txt
+        then
+           NEXT=$p
+           break
+        fi
+    done
+
+    if test -z "$NEXT"
     then
         echo No patch to apply
         return 1
     fi
-    echo Processing patch ${NEXT}:
-    cat $NEXT.patch
+    echo Processing patch $NEXT.txt:
+    cat $NEXT.txt
 
     cd $WORK
     rm -rf golden
     mv active golden
     cp -a golden active
     cd active
-    if ! patch -p1 < $PATCHES/$NEXT.patch > $PATCHES/$NEXT.log 2>&1
+    if ! patch -p1 < $PATCHES/$NEXT.txt > $PATCHES/$NEXT.log 2>&1
     then
-       report_results patch $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
+       report_results patch $PATCHES/$NEXT.txt  $PATCHES/$NEXT.log
     else
        # TODO: need to run configure?
        # Note: don't use parallel build, we want to email a nice clean log
        if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log || ! grep "^Wine build complete" $PATCHES/$NEXT.log 
        then
-           report_results build $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
+           report_results build $PATCHES/$NEXT.txt  $PATCHES/$NEXT.log
        else
-           report_results success $PATCHES/$NEXT.patch  $PATCHES/$NEXT.log
+           report_results success $PATCHES/$NEXT.txt  $PATCHES/$NEXT.log
        fi
        cat $PATCHES/$NEXT.log
     fi
