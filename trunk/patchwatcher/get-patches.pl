@@ -56,7 +56,7 @@ sub is_patch
 {
     my $body = $_[0];
 
-    return $body =~ m/^diff|\ndiff|^--- |\n--- /;
+    return $body =~ m/^diff|\ndiff|^\+\+\+ |\n\+\+\+ /;
 }
 
 sub netascii_to_host
@@ -67,31 +67,44 @@ sub netascii_to_host
    return $body;
 }
 
-# Given an index into the mailbox, return a pair
-# ($head_object, $message_as_plaintext)
+# Given an index into the mailbox, return a triple
+# ($head_object, $message_as_plaintext, $numpatches)
 # Flattens attachments.
-# FIXME: currently only includes the patch part of the body
+# Third element is number of patches; 0 means it contains no patches, 
+# 2 or higher means somebody attached multiple patches 
+# (or had one inline and one attached)
 sub retrieve_message
 {
    my $index = $_[0];
-
    my $msg = $pop->HeadAndBody( $index );
    my $entity = $parser->parse_data($msg);
+   my $text = "";
+   my $numpatches = 0;
 
-   $entity->make_singlepart;
-
-   # Convert from netascii to ascii
-   if ($entity->parts < 2) {
-        return ($entity->head, netascii_to_host($entity->bodyhandle->as_string));
-   } else {
-        my $part = 1;
-        foreach ($entity->parts) {
-            if (defined($_->bodyhandle) && is_patch($_->bodyhandle->as_string)) {
-                return ($entity->head, netascii_to_host($_->bodyhandle->as_string));
-            }
-        }
+   # Turns out preamble is just "This is a MIME message" usually.
+   #if (defined($entity->preamble)) {
+   #   foreach (@{$entity->preamble}) {
+   #      $text .= $_;
+   #   }
+   #   $text .= "\n";
+   #}
+   foreach ($entity->parts_DFS) {
+      $text .= "\n";
+      if ($_->effective_type eq "text/html") {
+          $text .= "[HTML message skipped]\n";
+      } else {
+          $text .= $_->bodyhandle->as_string if defined($_->bodyhandle);
+          $numpatches++ if (defined($_->bodyhandle) && is_patch($_->bodyhandle->as_string));
+      }
    }
-   return ($entity->head, undef);
+   #if (defined($entity->epilogue)) {
+   #   $text .= "\n";
+   #   foreach (@{$entity->epilogue}) {
+   #      $text .= $_;
+   #   }
+   #}
+
+   return ($entity->head, netascii_to_host($text), $numpatches);
 }
 
 my $series_sender = "";
@@ -171,17 +184,24 @@ sub consume_patch
 
 my $i;
 for ($i = 1; $i <= $pop->Count(); $i++) {
-    my ($head, $body) = retrieve_message($i);
+    my ($head, $body, $numpatches_in_msg) = retrieve_message($i);
+    my $subject = $head->get('Subject');
 
     # Delete messages without body?
     if (!defined($body)) {
-        #print "no body?\n";
+        print "no body: $subject\n";
         ; # $pop->Delete( $i );
         next;
     }
 
-    # Delete non-patches
-    if (! is_patch($body)) {
+    if ($numpatches_in_msg == 0) {
+        print "No patch: $subject\n";
+        ; # $pop->Delete( $i );
+        next;
+    }
+
+    if ($numpatches_in_msg > 1) {
+        print "Multiple patches in one message not allowed (this is a wine-patches policy): $subject\n";
         ; # $pop->Delete( $i );
         next;
     }
