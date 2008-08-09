@@ -1,0 +1,53 @@
+/* give a WineHQ-ish look to the result list */
+
+body {
+    background-color: #E2E2E2;
+    color: #000000;
+    font-family: "bitstream vera sans", "verdana", "arial", "helvetica", sans-serif;
+    margin: 10px;
+    font-size: small;
+}
+
+a                   { color: #A50D0D; text-decoration: none; }
+a:visited           { color: #FF0000; }
+a:hover             { color: #FF6666; text-decoration: underline; }
+a:active            { color: #FF0000; }
+a.hidden            { text-decoration: none; color: #000000; }
+
+table {
+    margin-right: auto;
+    text-spacing: 0;
+    border-spacing: 0;
+    white-space: nowrap;
+}
+
+table th {
+    line-height: 0.9;
+    vertical-align: text-top;
+    border-width: thin;
+    background-color: #601919;
+    color: #ffffff;
+    padding: 5px;
+    font-size: small;
+}
+
+table td {
+    padding: 1px 5px;
+    font-size: small;
+}
+
+tr.light { background-color: #ffffff; }
+tr.dark  { background-color: #fff8f8; }
+tr.light:hover { background-color: #f8e8e8; }
+tr.dark:hover  { background-color: #f8e8e8; }
+
+td.date, td.from {
+    font-family: monospace;
+}
+td.version {
+    text-align: center;
+}
+.commit {
+    width: 100%;
+    text-align: left;
+}

@@ -36,7 +36,7 @@ set -x
 # Set this to true on first run and after debugging
 initialize=false
 # Set this to true for continuous build
-loop=false
+loop=true
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -121,10 +121,14 @@ _EOF_
 
     # don't email on success, too noisy
     case $status in
-    success) return ;;
+    success) ;;
+    *) mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
+    ;;
     esac
 
-    mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
+    cd $PATCHES
+    perl $TOP/dashboard.pl > index.html
+    scp $patch $log index.html "$PATCHWATCHER_DEST"
 }
 
 # Return true if a patch was tried, false if no patches left to try
@@ -195,5 +199,9 @@ continuous_build()
 if $initialize
 then
     initialize_tree
+else
+    cd $PATCHES
+    perl $TOP/dashboard.pl > index.html
+    scp *.txt *.log index.html "$PATCHWATCHER_DEST" || true
 fi
 continuous_build

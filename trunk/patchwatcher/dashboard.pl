@@ -4,8 +4,13 @@
 # .txt files without matching .log files are in the queue to test.
 # .txt files with matching .log files are done.
 #
-# Output is a table with columns
-#  date  author  subject  status
+# You may need to do
+#  sudo apt-get install libdate-manip-perl
+# to get Date::Manip.
+
+use Date::Manip;
+
+binmode \*STDOUT, ":utf8";
 
 sub my_escape
 {
@@ -15,7 +20,16 @@ sub my_escape
    return $string;
 }
 
-print "<html><body><table border=1>";
+print "<html><head>\n";
+print "<title>Wine patch status</title>\n";
+print "<link rel=\"stylesheet\" href=\"winehq.css\" type=\"text/css\">\n";
+print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n";
+print "</head><body><table>\n";
+print "<tr>";
+print "<th>Date";
+print "<th>From";
+print "<th>Subject";
+print "<th>Status</tr>\n";
 
 open FILE, "ls *.txt | sort -n |";
 my @patches = <FILE>;
@@ -33,6 +47,7 @@ for $patch (@patches) {
        $status = "queued";
    }
    open FILE, $patch;
+   binmode FILE, ":utf8";
    my @patch = <FILE>;
    close FILE;
    # Grab date, author, and subject from patch
@@ -42,17 +57,28 @@ for $patch (@patches) {
    my @from = grep(/From:/, @patch);
    my $from = $from[0];
    $from =~ s/From:\s*//;
-   $from = my_escape($from);
    my @subject = grep(/Subject:/, @patch);
    my $subject = $subject[0];
    $subject =~ s/Subject:\s*//;
-   $subject = my_escape($subject);
    
+   my $parsedDate = ParseDate($date);
+   $date = UnixDate($parsedDate, "%d-%b-%Y %H:%m");
+
+   $from =~ s/.*<//;
+   $from =~ s/>.*//;
+
+   $subject = my_escape($subject);
+
    if ($status eq "queued") {
        $loglink = $status;
    } else {
        $loglink = "<a href=\"$log\">$status</a>";
    }
-   print "<tr><td>$date<td>$from<td><a href=\"$patch\">$subject</a><td>$loglink</tr>\n";
+   print "<tr>";
+   print "<td class=date>$date &nbsp;";
+   print "<td class=from>$from";
+   print "<td class=subject><a href=\"$patch\">$subject</a>";
+   print "<td class=status>$loglink";
+   print "</tr>\n";
 }
 print "</table></body></html>\n";
