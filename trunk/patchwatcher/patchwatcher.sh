@@ -44,6 +44,7 @@ WORK=$TOP/wine-continuous-workdir
 if $initialize
 then
     rm -rf $WORK
+    mkdir -p $WORK
 else
     # Recover from run aborted with ^C
     if test -d $WORK/golden
