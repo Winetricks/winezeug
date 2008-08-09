@@ -165,7 +165,7 @@ sub consume_series_patch
         for ($j=1; $j <= $series_num_patches; $j++) {
             #print "Outputting patch $j of $series_num_patches\n";
             output_message($series_headers[$j], $series_bodies[$j], undef);
-            #$pop->Delete( $series_indices[$j] );
+            $pop->Delete( $series_indices[$j] );
         }
         @series_headers = ();
         @series_bodies = ();
@@ -184,7 +184,7 @@ sub consume_patch
 
     if ($header->get('Subject') !~ /(\d+)\/(\d+)/) {
         output_message($header, $body, undef);
-        #$pop->Delete( $index );
+        $pop->Delete( $index );
     } else {
         # part of sequence 
         my $which_patch = $1;
@@ -192,7 +192,7 @@ sub consume_patch
         if ($which_patch == 0) {
             # Zeroth patch in series is supposed to be just explanation?
             output_message($header, $body, "patch zero of a series");
-            #$pop->Delete( $index );
+            $pop->Delete( $index );
         } else {
             # Patches that are part of a series get special treatment
             consume_series_patch($header, $body, $index, $which_patch, $num_patches);
@@ -210,21 +210,21 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
     if (!defined($body)) {
         output_message($head, $body, "No body");
         print "no body: $subject\n";
-        ; # $pop->Delete( $i );
+        $pop->Delete( $i );
         next;
     }
 
     if ($numpatches_in_msg == 0) {
         output_message($head, $body, "No patch detected");
         print "No patch: $curpatch, $from, $subject\n";
-        ; # $pop->Delete( $i );
+        $pop->Delete( $i );
         next;
     }
 
     if ($numpatches_in_msg > 1) {
         output_message($head, $body, "Multiple patches detected, ignoring");
         print "Multiple patches in one message not allowed (this is a wine-patches policy): $subject\n";
-        ; # $pop->Delete( $i );
+        $pop->Delete( $i );
         next;
     }
 
