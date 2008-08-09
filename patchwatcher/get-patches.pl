@@ -47,7 +47,6 @@ sub output_message
 
     open FILE, "> $curpatch.txt" || die "can't create $curpatch.txt";
     binmode FILE, ":utf8";
-    $curpatch++;
     $patches_written++;
 
     print FILE "From: ". decode('MIME-Header', $header->get('From'));
@@ -65,6 +64,7 @@ sub output_message
     
         close FILE;
     }
+    $curpatch++;
 }
 
 # Is a body string a patch?
@@ -203,6 +203,7 @@ sub consume_patch
 my $i;
 for ($i = 1; $i <= $pop->Count(); $i++) {
     my ($head, $body, $numpatches_in_msg) = retrieve_message($i);
+    my $from = $head->get('From');
     my $subject = $head->get('Subject');
 
     # Delete messages without body?
@@ -215,7 +216,7 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
 
     if ($numpatches_in_msg == 0) {
         output_message($head, $body, "No patch detected");
-        print "No patch: $subject\n";
+        print "No patch: $curpatch, $from, $subject\n";
         ; # $pop->Delete( $i );
         next;
     }

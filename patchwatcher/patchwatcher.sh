@@ -200,6 +200,7 @@ if $initialize
 then
     initialize_tree
 else
+    retrieve_patches
     cd $PATCHES
     perl $TOP/dashboard.pl > index.html
     scp *.txt *.log index.html "$PATCHWATCHER_DEST" || true
