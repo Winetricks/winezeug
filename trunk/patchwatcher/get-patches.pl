@@ -31,8 +31,8 @@ my $outputdir = "./mimemail";
 my $parser = new MIME::Parser;
 $parser->output_dir($outputdir);
 
-my $curpatch = $ARGV[0];
-if ($curpatch eq "") {
+my $curmsg = $ARGV[0];
+if ($curmsg eq "") {
     print "Usage: perl get-patches.pl starting-patch-number\n";
     exit(1);
 }
@@ -45,9 +45,8 @@ sub output_message
     my $body = $_[1];
     my $status = $_[2];
 
-    open FILE, "> $curpatch.txt" || die "can't create $curpatch.txt";
+    open FILE, "> $curmsg.txt" || die "can't create $curmsg.txt";
     binmode FILE, ":utf8";
-    $patches_written++;
 
     print FILE "From: ". decode('MIME-Header', $header->get('From'));
     print FILE "Subject: ".$header->get('Subject');
@@ -58,13 +57,16 @@ sub output_message
     close FILE;
 
     if (defined($status)) {
-        open FILE, "> $curpatch.log" || die "can't create $curpatch.log";
+        open FILE, "> $curmsg.log" || die "can't create $curmsg.log";
     
         print FILE $status;
     
         close FILE;
+    } else {
+        # Remember that we did output a real patch
+        $patches_written++;
     }
-    $curpatch++;
+    $curmsg++;
 }
 
 # Is a body string a patch?
@@ -216,7 +218,7 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
 
     if ($numpatches_in_msg == 0) {
         output_message($head, $body, "No patch detected");
-        print "No patch: $curpatch, $from, $subject\n";
+        print "No patch: $curmsg, $from, $subject\n";
         $pop->Delete( $i );
         next;
     }
