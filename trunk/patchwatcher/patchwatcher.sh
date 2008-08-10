@@ -157,34 +157,50 @@ try_one_patch()
            break
         fi
     done
-
+ 
     if test -z "$NEXT"
     then
         echo No patch to apply
         return 1
     fi
-    echo Processing patch $NEXT.txt:
-    cat $NEXT.txt
 
     cd $WORK
     rm -rf golden
     mv active golden
     cp -a golden active
-    cd active
-    if ! patch -p1 < $PATCHES/$NEXT.txt > $PATCHES/$NEXT.log 2>&1
-    then
-       report_results patch $NEXT.txt  $NEXT.log
-    else
-       # TODO: need to run configure?
-       # Note: don't use parallel build, we want to email a nice clean log
-       if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log || ! grep "^Wine build complete" $PATCHES/$NEXT.log 
-       then
-           report_results build $NEXT.txt  $NEXT.log
-       else
-           report_results success $NEXT.txt  $NEXT.log
-       fi
-       cat $PATCHES/$NEXT.log
-    fi
+
+    # Do one patch (or patch series).
+    # This loop assumes that get-patches.pl never outputs incomplete patch series
+    while true
+    do
+        echo Processing patch $NEXT.txt:
+        cat $NEXT.txt
+
+        cd $WORK/active
+        if ! patch -p1 < $PATCHES/$NEXT.txt > $PATCHES/$NEXT.log 2>&1
+        then
+           report_results patch $NEXT.txt  $NEXT.log
+        else
+           # TODO: need to run configure?
+           # Note: don't use parallel build, we want to email a nice clean log
+           if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log || ! grep "^Wine build complete" $PATCHES/$NEXT.log 
+           then
+               report_results build $NEXT.txt  $NEXT.log
+           else
+               report_results success $NEXT.txt  $NEXT.log
+           fi
+           cat $PATCHES/$NEXT.log
+        fi
+        # Use a regexp with a back reference to detect last patch in a series and break out
+        if egrep -q 'Subject:.*[0-9]+/[0-9]+' $PATCHES/$NEXT.txt && ! egrep -q 'Subject:.*([0-9]+)/\1' $PATCHES/$NEXT.txt
+        then
+            echo In middle of patch series, not wiping tree
+            NEXT=`expr $NEXT + 1`
+        else
+            break
+        fi
+    done
+
     cd $WORK
     rm -rf active
     mv golden active
