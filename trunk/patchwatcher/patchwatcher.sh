@@ -82,13 +82,15 @@ refresh_tree()
 retrieve_patches()
 {
     cd $PATCHES
-    LAST=`ls *.patch | tail -1 | sed 's/\.patch$//'`
+    LAST=`ls *.txt | sort -n | tail -1 | sed 's/\.txt$//'`
     NEXT=`expr $LAST + 1`
-    if ! perl $TOP/get-patches.pl $NEXT
-    then
-        echo "No patches to retrieve"
-        sleep 60
-    fi
+    perl $TOP/get-patches.pl $NEXT || true
+    # Handle immediate results
+    while test -f $NEXT.log
+    do
+        report_results patch $NEXT.txt  $NEXT.log
+        NEXT=`expr $NEXT + 1`
+    done
 }
 
 # Usage: report_results build|make|success patch log
@@ -97,6 +99,9 @@ report_results()
     status=$1
     patch=$2
     log=$3
+
+    cd $PATCHES
+
     # Retrieve sender and subject from patch file
     # Patch file is written by get-patches.pl in a specific format,
     # always starts with an email header.
@@ -108,7 +113,7 @@ report_results()
     success) status_long="applied and built successfully" ;;
     esac
 
-    cat - $patch $log > msg.txt <<_EOF_
+    cat - $patch $log > msg.dat <<_EOF_
 Hi!  This is Dan Kegel's experimental automated wine patchwatcher thingy.
 I patched the latest git sources with your patch
 "$patch_subject"
@@ -123,18 +128,17 @@ _EOF_
     # don't email on success, too noisy
     case $status in
     success) ;;
-    *) mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.txt
+    *) mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.dat
     ;;
     esac
 
-    cd $PATCHES
     perl $TOP/dashboard.pl > index.html
     ftp $PATCHWATCHER_DEST <<_EOF_
 cd results
 put $patch 
 put $log
 put index.html
-quite
+quit
 _EOF_
 }
 
@@ -145,7 +149,7 @@ try_one_patch()
 
     # Find first patch that doesn't have a .log
     NEXT=""
-    for p in `ls *.txt *.log | sed 's/\..*//' | sort -n | uniq -c | awk '$1 == 1 {print $2}'`
+    for p in `ls *.txt *.log | sort -n | sed 's/\..*//' | sort -n | uniq -c | awk '$1 == 1 {print $2}'`
     do
         if test -f $p.txt
         then
@@ -169,15 +173,15 @@ try_one_patch()
     cd active
     if ! patch -p1 < $PATCHES/$NEXT.txt > $PATCHES/$NEXT.log 2>&1
     then
-       report_results patch $PATCHES/$NEXT.txt  $PATCHES/$NEXT.log
+       report_results patch $NEXT.txt  $NEXT.log
     else
        # TODO: need to run configure?
        # Note: don't use parallel build, we want to email a nice clean log
        if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log || ! grep "^Wine build complete" $PATCHES/$NEXT.log 
        then
-           report_results build $PATCHES/$NEXT.txt  $PATCHES/$NEXT.log
+           report_results build $NEXT.txt  $NEXT.log
        else
-           report_results success $PATCHES/$NEXT.txt  $PATCHES/$NEXT.log
+           report_results success $NEXT.txt  $NEXT.log
        fi
        cat $PATCHES/$NEXT.log
     fi
@@ -199,6 +203,7 @@ continuous_build()
          sleep 1
          $loop || break
      done
+     sleep 60
      $loop || break
   done
 }
@@ -210,15 +215,13 @@ else
     retrieve_patches
     cd $PATCHES
     perl $TOP/dashboard.pl > index.html
-    touch dummy.txt
-    touch dummy.log
     ftp $PATCHWATCHER_DEST <<_EOF_
 cd results
 prompt
 mput *.txt
 mput *.log
 put index.html
-quite
+quit
 _EOF_
 fi
 continuous_build
