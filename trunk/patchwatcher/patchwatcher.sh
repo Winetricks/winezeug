@@ -129,7 +129,13 @@ _EOF_
 
     cd $PATCHES
     perl $TOP/dashboard.pl > index.html
-    scp $patch $log index.html "$PATCHWATCHER_DEST"
+    ftp $PATCHWATCHER_DEST <<_EOF_
+cd results
+put $patch 
+put $log
+put index.html
+quite
+_EOF_
 }
 
 # Return true if a patch was tried, false if no patches left to try
@@ -204,6 +210,15 @@ else
     retrieve_patches
     cd $PATCHES
     perl $TOP/dashboard.pl > index.html
-    scp *.txt *.log index.html "$PATCHWATCHER_DEST" || true
+    touch dummy.txt
+    touch dummy.log
+    ftp $PATCHWATCHER_DEST <<_EOF_
+cd results
+prompt
+mput *.txt
+mput *.log
+put index.html
+quite
+_EOF_
 fi
 continuous_build
