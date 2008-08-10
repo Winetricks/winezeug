@@ -55,6 +55,19 @@ else
 fi
 mkdir -p $PATCHES/mimemail
 
+baseline_tests()
+{
+    # Gather list of tests that fail
+    cd $WORK/active
+    for try in 1
+    do
+        make testclean
+        make -k test || true
+    done > flaky.log 2>&1
+
+    perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u > flaky.dat || true
+}
+
 initialize_tree()
 {
     cd $WORK
@@ -63,6 +76,8 @@ initialize_tree()
     ./configure
     make depend
     make -j3
+
+    baseline_tests
 }
 
 refresh_tree()
@@ -76,6 +91,7 @@ refresh_tree()
     if ! grep -q "Already up-to-date." < git.log
     then
        make -j3
+       baseline_tests
     fi
 }
 
@@ -93,7 +109,7 @@ retrieve_patches()
     done
 }
 
-# Usage: report_results build|make|success patch log
+# Usage: report_results build|make|test|success patch log
 report_results()
 {
     status=$1
@@ -110,6 +126,7 @@ report_results()
     case $status in
     patch)   status_long="failed to apply" ;;
     build)   status_long="failed to build" ;;
+    test)    status_long="failed regression tests" ;;
     success) status_long="applied and built successfully" ;;
     esac
 
@@ -187,7 +204,19 @@ try_one_patch()
            then
                report_results build $NEXT.txt  $NEXT.log
            else
-               report_results success $NEXT.txt  $NEXT.log
+               make testclean
+               make -k test > test.log 2>&1 || true
+               perl $TOP/get-dll.pl < test.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u > test.dat || true
+               cat test.log >> $PATCHES/$NEXT.log
+               echo "Regression test changes vs. baseline test runs:" >> $PATCHES/$NEXT.log
+               diff flaky.dat test.dat >> $PATCHES/$NEXT.log
+               # Report failure if any new errors
+               if ! diff flaky.dat test.dat | grep -q '^>'
+               then
+                   report_results test $NEXT.txt  $NEXT.log
+               else
+                   report_results success $NEXT.txt  $NEXT.log
+               fi
            fi
            cat $PATCHES/$NEXT.log
         fi
