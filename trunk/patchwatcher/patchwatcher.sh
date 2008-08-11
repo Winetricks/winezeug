@@ -1,9 +1,21 @@
 #!/bin/sh
 # Simple continuous build for Wine 
-# Dan Kegel 2008
+# Copyright 2008 Google (Dan Kegel)
+# License: LGPL
 #
-# Watches wine-patches, builds incoming patches against
-# current git, sends email out with results.
+# Watches the wine-patches mailing list, builds incoming patches against
+# current git, runs conformance tests.  
+# Results sent out via email and uploaded to a web site.
+
+# Warning:
+# This script executes source code sent in by anonymous users,
+# and is therefore very dangerous.  Run this in as isolated
+# and low-privilege environment as possible.
+# The ftp account you upload results to should also have as 
+# few permissions as possible, and should not be able to write
+# anything interesting.
+# TODO: merge chroot code, e.g. Ambroz's, see
+# http://www.winehq.org/pipermail/wine-devel/2008-August/068037.html
 
 # Prerequisites:
 # Must do
@@ -17,8 +29,14 @@
 #   PATCHWATCHER_USER=user@host.com
 #   PATCHWATCHER_HOST=mail.host.com
 #   PATCHWATCHER_PASSWORD=userpass 
-# before running.  All messages will slowly be deleted from the mailbox
-# as this script runs.
+# before running.  
+# All messages will slowly be deleted from the mailbox as this script runs.
+
+# Must set envionment vars to point to an ftp account:
+#   PATCHWATCHER_FTP=ftp.host.com
+# This script assumes that you have configured ftp (perhaps via ~/.netrc)
+# with the username and password to allow the script to upload to the
+# results directory at $PATCHWATCHER_FTP via ftp.
 
 # This script configures and builds wine in a directory called 'active'.
 # Then whenever it wants to try a new patch, it moves that directory
@@ -37,6 +55,9 @@ set -x
 initialize=false
 # Set this to true for continuous build
 loop=true
+
+# Regular expression matching known very flaky tests
+blacklist_regex="user32:msg.c|user32:input.c"
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -57,15 +78,16 @@ mkdir -p $PATCHES/mimemail
 
 baseline_tests()
 {
-    # Gather list of tests that fail
+    # Gather list of tests that fail at least once in three runs
+    # Once this script is debugged, crank up the number of runs a bit here
     cd $WORK/active
-    for try in 1
+    for try in 1 2 3 
     do
         make testclean
         make -k test || true
     done > flaky.log 2>&1
 
-    perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u > flaky.dat || true
+    perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
 }
 
 initialize_tree()
@@ -150,7 +172,7 @@ _EOF_
     esac
 
     perl $TOP/dashboard.pl > index.html
-    ftp $PATCHWATCHER_DEST <<_EOF_
+    ftp $PATCHWATCHER_FTP <<_EOF_
 cd results
 put $patch 
 put $log
@@ -206,15 +228,18 @@ try_one_patch()
            else
                make testclean
                make -k test > test.log 2>&1 || true
-               perl $TOP/get-dll.pl < test.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u > test.dat || true
+               perl $TOP/get-dll.pl < test.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > test.dat || true
                cat test.log >> $PATCHES/$NEXT.log
                echo "Regression test changes vs. baseline test runs:" >> $PATCHES/$NEXT.log
                diff flaky.dat test.dat >> $PATCHES/$NEXT.log
                # Report failure if any new errors
                if ! diff flaky.dat test.dat | grep -q '^>'
                then
+                   echo "Ditto, but just the new errors:" >> $PATCHES/$NEXT.log
+                   diff flaky.dat test.dat | grep '^>' | sed 's/^>//' >> $PATCHES/$NEXT.log
                    report_results test $NEXT.txt  $NEXT.log
                else
+                   echo "Conformance tests ok" >> $NEXT.log
                    report_results success $NEXT.txt  $NEXT.log
                fi
            fi
@@ -260,7 +285,7 @@ else
     retrieve_patches
     cd $PATCHES
     perl $TOP/dashboard.pl > index.html
-    ftp $PATCHWATCHER_DEST <<_EOF_
+    ftp $PATCHWATCHER_FTP <<_EOF_
 cd results
 prompt
 mput *.txt
