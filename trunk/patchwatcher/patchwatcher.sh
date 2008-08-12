@@ -38,6 +38,10 @@
 # with the username and password to allow the script to upload to the
 # results directory at $PATCHWATCHER_FTP via ftp.
 
+# Must set env vars to point to the web page results will appear:
+#   PATCHWATCHER_URL=http://www.host.com/patchwatcher/results
+# This should refer to the same directory as $PATCHWATCHER_FTP/results.
+
 # This script configures and builds wine in a directory called 'active'.
 # Then whenever it wants to try a new patch, it moves that directory
 # aside and replaces it with a copy.
@@ -52,7 +56,7 @@ set -e
 set -x
 
 # Set this to true on first run and after debugging
-initialize=true
+initialize=false
 # Set this to true for continuous build
 loop=true
 
@@ -62,7 +66,7 @@ loop=true
 # Annoyingly, no matter how many times I run the baseline tests,
 # these buggers still manage to fail in new ways when testing patches.
 # Grumble.
-blacklist_regex="user32:msg.c|user32:input.c|d3d9:visual.c|ddraw:visual.c|urlmon:protocol.c"
+blacklist_regex="user32:msg.c|user32:input.c|d3d9:visual.c|ddraw:visual.c|urlmon:protocol.c|kernel32:thread.c"
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -160,22 +164,22 @@ report_results()
     patch)   status_long="failed to apply" ;;
     build)   status_long="failed to build" ;;
     test)    status_long="failed regression tests" ;;
-    success) status_long="applied and built successfully" ;;
+    success) status_long="applied, built, and passed tests" ;;
     esac
 
     cat - > msg.dat <<_EOF_
-Hi!  This is Dan Kegel's experimental automated wine patchwatcher thingy.
-I patched the latest git sources with your patch
+Hi!  This is the experimental automated wine patchwatcher thingy.
+The latest git sources were built and tested with your patch
 "$patch_subject"
-The result: the patch $status_long.
+Result: the patch $status_long.
 
 You can retrieve the full build results at
-  http://kegel.com/wine/patchwatcher/results/$log
+  $PATCHWATCHER_URL/$log
 and see the patch as parsed at
-  http://kegel.com/wine/patchwatcher/results/$patch
-
-I hope this service is useful.  
-Please send comments, suggestions, and complaints to dank@kegel.com.
+  $PATCHWATCHER_URL/$patch
+See
+  $PATCHWATCHER_URL
+for more info.
 
 _EOF_
 
