@@ -14,6 +14,23 @@ a:hover             { color: #FF6666; text-decoration: underline; }
 a:active            { color: #FF0000; }
 a.hidden            { text-decoration: none; color: #000000; }
 
+.result {
+        border-left-width: thick;
+        border-left-style: solid;
+        border-right-width: thick;
+        border-right-style: solid;
+}
+.pass {
+        background-color: #60ff60;
+        border-left-color: #60ff60;
+        border-right-color: #60ff60;
+}
+.fail {
+        background-color: #ff5050;
+        border-left-color: #ff5050;
+        border-right-color: #ff5050;
+}
+
 table {
     margin-right: auto;
     text-spacing: 0;

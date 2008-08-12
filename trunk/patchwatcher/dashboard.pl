@@ -42,6 +42,7 @@ for $patch (@patches) {
    if (-f $log) {
        open FILE, "tail -1 $log |";
        $status = <FILE>;
+       chomp($status);
        close FILE;
    } else {
        $status = "queued";
@@ -71,8 +72,10 @@ for $patch (@patches) {
 
    if ($status eq "queued") {
        $loglink = $status;
+   } elsif ($status eq "Conformance tests ok") {
+       $loglink = "<a href=\"$log\" class=\"result, pass\">$status</a>";
    } else {
-       $loglink = "<a href=\"$log\">$status</a>";
+       $loglink = "<a href=\"$log\" class=\"result, fail\">$status</a>";
    }
    print "<tr>";
    print "<td class=date>$date &nbsp;";
