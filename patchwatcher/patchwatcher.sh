@@ -52,12 +52,17 @@ set -e
 set -x
 
 # Set this to true on first run and after debugging
-initialize=false
+initialize=true
 # Set this to true for continuous build
 loop=true
 
-# Regular expression matching known very flaky tests
-blacklist_regex="user32:msg.c|user32:input.c"
+# Regular expression matching known flaky tests
+# This list is built up by simply running patchwatcher for a while and
+# seeing what tests cause spurious failure reports.
+# Annoyingly, no matter how many times I run the baseline tests,
+# these buggers still manage to fail in new ways when testing patches.
+# Grumble.
+blacklist_regex="user32:msg.c|user32:input.c|d3d9:visual.c|ddraw:visual.c|urlmon:protocol.c"
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -76,14 +81,20 @@ else
 fi
 mkdir -p $PATCHES/mimemail
 
+WINE=$WORK/active/wine
+WINESERVER=$WORK/active/server/wineserver
+WINEPREFIX=$HOME/.wine
+
 baseline_tests()
 {
-    # Gather list of tests that fail at least once in three runs
+    # Gather list of tests that fail at least once in N runs
     # Once this script is debugged, crank up the number of runs a bit here
     cd $WORK/active
-    for try in 1 2 3 
+    for try in 1 2 3 4 5
     do
         make testclean
+        $WINESERVER -k || true
+        rm -rf $WINEPREFIX || true
         make -k test || true
     done > flaky.log 2>&1
 
@@ -112,8 +123,8 @@ refresh_tree()
     cat git.log
     if ! grep -q "Already up-to-date." < git.log
     then
-       make -j3
-       baseline_tests
+       time make -j3
+       time baseline_tests
     fi
 }
 
@@ -152,13 +163,17 @@ report_results()
     success) status_long="applied and built successfully" ;;
     esac
 
-    cat - $patch $log > msg.dat <<_EOF_
+    cat - > msg.dat <<_EOF_
 Hi!  This is Dan Kegel's experimental automated wine patchwatcher thingy.
 I patched the latest git sources with your patch
 "$patch_subject"
 The result: the patch $status_long.
 
-Here is the patch and the log.
+You can retrieve the full build results at
+  http://kegel.com/wine/patchwatcher/results/$log
+and see the patch as parsed at
+  http://kegel.com/wine/patchwatcher/results/$patch
+
 I hope this service is useful.  
 Please send comments, suggestions, and complaints to dank@kegel.com.
 
@@ -170,6 +185,7 @@ _EOF_
     *) mailx -s "Patchwatcher: ${status_long}: $patch_subject" dank@kegel.com  < msg.dat
     ;;
     esac
+    rm msg.dat
 
     perl $TOP/dashboard.pl > index.html
     ftp $PATCHWATCHER_FTP <<_EOF_
@@ -213,10 +229,21 @@ try_one_patch()
     while true
     do
         echo Processing patch $NEXT.txt:
-        cat $NEXT.txt
+        cat $PATCHES/$NEXT.txt
 
         cd $WORK/active
-        if ! patch -p1 < $PATCHES/$NEXT.txt > $PATCHES/$NEXT.log 2>&1
+        # Should we use -p1 or -p0?
+        # CVS patches need -p0, git patches need -p1
+        # For now, always use -p0 unless it's obvious patch was
+        # generated with cvs
+        if grep -q 'RCS file' < $PATCHES/$NEXT.txt
+        then
+            p=0
+        else
+            p=1
+        fi
+
+        if ! patch -p$p < $PATCHES/$NEXT.txt > $PATCHES/$NEXT.log 2>&1
         then
            report_results patch $NEXT.txt  $NEXT.log
         else
@@ -227,16 +254,19 @@ try_one_patch()
                report_results build $NEXT.txt  $NEXT.log
            else
                make testclean
-               make -k test > test.log 2>&1 || true
-               perl $TOP/get-dll.pl < test.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > test.dat || true
-               cat test.log >> $PATCHES/$NEXT.log
+               $WINESERVER -k || true
+               rm -rf $WINEPREFIX || true
+               time make -k test > $PATCHES/$NEXT.testlog 2>&1 || true
+               perl $TOP/get-dll.pl < $PATCHES/$NEXT.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > $PATCHES/$NEXT.testdat || true
+               cat $PATCHES/$NEXT.testlog >> $PATCHES/$NEXT.log
                echo "Regression test changes vs. baseline test runs:" >> $PATCHES/$NEXT.log
-               diff flaky.dat test.dat >> $PATCHES/$NEXT.log
+               diff flaky.dat $PATCHES/$NEXT.testdat >> $PATCHES/$NEXT.log
                # Report failure if any new errors
-               if ! diff flaky.dat test.dat | grep -q '^>'
+               diff flaky.dat $PATCHES/$NEXT.testdat > $PATCHES/$NEXT.testdiff || true
+               if grep -q '^> ' < $PATCHES/$NEXT.testdiff
                then
                    echo "Ditto, but just the new errors:" >> $PATCHES/$NEXT.log
-                   diff flaky.dat test.dat | grep '^>' | sed 's/^>//' >> $PATCHES/$NEXT.log
+                   grep '^> ' < $PATCHES/$NEXT.testdiff | sed 's/^>//' >> $PATCHES/$NEXT.log
                    report_results test $NEXT.txt  $NEXT.log
                else
                    echo "Conformance tests ok" >> $NEXT.log
