@@ -9,8 +9,8 @@ body {
 }
 
 a                   { color: #A50D0D; text-decoration: none; }
-a:visited           { color: #FF0000; }
-a:hover             { color: #FF6666; text-decoration: underline; }
+a:visited           { color: #600000; }
+a:hover             { color: #666666; text-decoration: underline; }
 a:active            { color: #FF0000; }
 a.hidden            { text-decoration: none; color: #000000; }
 
@@ -24,11 +24,13 @@ a.hidden            { text-decoration: none; color: #000000; }
         background-color: #60ff60;
         border-left-color: #60ff60;
         border-right-color: #60ff60;
+        color: black;
 }
 .fail {
         background-color: #ff5050;
         border-left-color: #ff5050;
         border-right-color: #ff5050;
+        color: black;
 }
 
 table {
