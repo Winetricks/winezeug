@@ -31,7 +31,7 @@ print "<th>From";
 print "<th>Subject";
 print "<th>Status</tr>\n";
 
-open FILE, "ls *.txt | sort -n |";
+open FILE, "ls *.txt | sort -rn |";
 my @patches = <FILE>;
 close FILE;
 my $patch;
