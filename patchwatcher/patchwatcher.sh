@@ -66,7 +66,7 @@ loop=true
 # Annoyingly, no matter how many times I run the baseline tests,
 # these buggers still manage to fail in new ways when testing patches.
 # Grumble.
-blacklist_regex="user32:msg.c|user32:input.c|d3d9:visual.c|ddraw:visual.c|urlmon:protocol.c|kernel32:thread.c"
+blacklist_regex="comctl32:tooltips.c|d3d9:visual.c|ddraw:visual.c|kernel32:thread.c|urlmon:protocol.c|urlmon:url.c|user32:msg.c|user32:input.c|wininet:http.c"
 
 TOP=`pwd`
 PATCHES=$TOP/patches
@@ -103,6 +103,9 @@ baseline_tests()
     done > flaky.log 2>&1
 
     perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
+    # Record for posterity
+    cp flaky.log $PATCHES/baseline.testlog
+    cp flaky.dat $PATCHES/baseline.testdat
 }
 
 initialize_tree()
@@ -264,16 +267,16 @@ try_one_patch()
                perl $TOP/get-dll.pl < $PATCHES/$NEXT.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > $PATCHES/$NEXT.testdat || true
                cat $PATCHES/$NEXT.testlog >> $PATCHES/$NEXT.log
                echo "Regression test changes vs. baseline test runs:" >> $PATCHES/$NEXT.log
-               diff flaky.dat $PATCHES/$NEXT.testdat >> $PATCHES/$NEXT.log
+               diff flaky.dat $PATCHES/$NEXT.testdat >> $PATCHES/$NEXT.log || true
                # Report failure if any new errors
                diff flaky.dat $PATCHES/$NEXT.testdat > $PATCHES/$NEXT.testdiff || true
                if grep -q '^> ' < $PATCHES/$NEXT.testdiff
                then
                    echo "Ditto, but just the new errors:" >> $PATCHES/$NEXT.log
-                   grep '^> ' < $PATCHES/$NEXT.testdiff | sed 's/^>//' >> $PATCHES/$NEXT.log
+                   grep '^> ' < $PATCHES/$NEXT.testdiff | sed 's/^>//' >> $PATCHES/$NEXT.log || true
                    report_results test $NEXT.txt  $NEXT.log
                else
-                   echo "Conformance tests ok" >> $NEXT.log
+                   echo "Conformance tests ok" >> $PATCHES/$NEXT.log
                    report_results success $NEXT.txt  $NEXT.log
                fi
            fi
