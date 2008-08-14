@@ -40,7 +40,7 @@ for $patch (@patches) {
    my $log = $patch;
    $log =~ s/\.txt$/.log/;
    if (-f $log) {
-       open FILE, "tail -1 $log |";
+       open FILE, "grep . < $log | tail -1 |";
        $status = <FILE>;
        chomp($status);
        close FILE;
