@@ -14,7 +14,7 @@ a:hover             { color: #666666; text-decoration: underline; }
 a:active            { color: #FF0000; }
 a.hidden            { text-decoration: none; color: #000000; }
 
-.result {
+td.result {
         border-left-width: thick;
         border-left-style: solid;
         border-right-width: thick;
@@ -62,6 +62,9 @@ tr.dark:hover  { background-color: #f8e8e8; }
 
 td.date, td.from {
     font-family: monospace;
+}
+th.result {
+    text-align: left;
 }
 td.version {
     text-align: center;

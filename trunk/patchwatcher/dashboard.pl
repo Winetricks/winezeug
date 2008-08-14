@@ -29,7 +29,7 @@ print "<tr>";
 print "<th>Date";
 print "<th>From";
 print "<th>Subject";
-print "<th>Status</tr>\n";
+print "<th class=result>Status</tr>\n";
 
 open FILE, "ls *.txt | sort -rn |";
 my @patches = <FILE>;
