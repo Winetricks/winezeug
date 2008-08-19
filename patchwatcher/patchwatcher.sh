@@ -66,7 +66,7 @@ loop=true
 # Annoyingly, no matter how many times I run the baseline tests,
 # these buggers still manage to fail in new ways when testing patches.
 # Grumble.
-blacklist_regex="comctl32:tooltips.c|d3d9:visual.c|ddraw:visual.c|kernel32:thread.c|urlmon:protocol.c|urlmon:url.c|user32:msg.c|user32:input.c|wininet:http.c"
+blacklist_regex="comctl32:tooltips.c|d3d9:visual.c|ddraw:visual.c|kernel32:thread.c|urlmon:protocol.c|urlmon:url.c|user32:msg.c|user32:input.c|user32:monitor.c|wininet:http.c"
 
 TOP=`pwd`
 PATCHES=$TOP/patches
