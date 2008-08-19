@@ -134,7 +134,7 @@ refresh_tree()
     if ! grep -q "Already up-to-date." < git.log
     then
        time make -j3
-       time baseline_tests
+       baseline_tests
     fi
 }
 
