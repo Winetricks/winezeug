@@ -147,7 +147,7 @@ sub consume_series_patch
        $series_num_patches = $num_patches;
     }
 
-    if ($series_sender ne $sender) {
+    if ($series_sender ne $sender || $series_num_patches != $num_patches) {
         #print "Ignoring series for now, will try later; sender $sender, num_patches $num_patches, subject ".$header->get('Subject')."\n";
         # can't handle multiple series at once just yet, let it sit
         return;
