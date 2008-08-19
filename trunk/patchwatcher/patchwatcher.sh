@@ -101,7 +101,7 @@ baseline_tests()
         make testclean
         $WINESERVER -k || true
         rm -rf $WINEPREFIX || true
-        sh ../winetricks gecko
+        sh $TOP/../winetricks gecko
         make -k test || true
     done > flaky.log 2>&1
 
@@ -245,8 +245,8 @@ try_one_patch()
         # Should we use -p1 or -p0?
         # CVS patches need -p0, git patches need -p1
         # For now, always use -p0 unless it's obvious patch was
-        # generated with cvs
-        if grep -q 'RCS file' < $PATCHES/$NEXT.txt
+        # generated with cvs or svn
+        if egrep -q 'RCS file|^+++.*working copy' < $PATCHES/$NEXT.txt
         then
             p=0
         else
@@ -266,7 +266,7 @@ try_one_patch()
                make testclean
                $WINESERVER -k || true
                rm -rf $WINEPREFIX || true
-               sh ../winetricks gecko
+               sh $TOP/../winetricks gecko
                time make -k test > $PATCHES/$NEXT.testlog 2>&1 || true
                perl $TOP/get-dll.pl < $PATCHES/$NEXT.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > $PATCHES/$NEXT.testdat || true
                cat $PATCHES/$NEXT.testlog >> $PATCHES/$NEXT.log
