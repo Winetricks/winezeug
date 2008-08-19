@@ -88,6 +88,8 @@ mkdir -p $PATCHES/mimemail
 WINE=$WORK/active/wine
 WINESERVER=$WORK/active/server/wineserver
 WINEPREFIX=$HOME/.wine
+# export so we can invoke winetricks
+export WINE WINEPREFIX
 
 baseline_tests()
 {
@@ -99,6 +101,7 @@ baseline_tests()
         make testclean
         $WINESERVER -k || true
         rm -rf $WINEPREFIX || true
+        sh ../winetricks gecko
         make -k test || true
     done > flaky.log 2>&1
 
@@ -263,6 +266,7 @@ try_one_patch()
                make testclean
                $WINESERVER -k || true
                rm -rf $WINEPREFIX || true
+               sh ../winetricks gecko
                time make -k test > $PATCHES/$NEXT.testlog 2>&1 || true
                perl $TOP/get-dll.pl < $PATCHES/$NEXT.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > $PATCHES/$NEXT.testdat || true
                cat $PATCHES/$NEXT.testlog >> $PATCHES/$NEXT.log
