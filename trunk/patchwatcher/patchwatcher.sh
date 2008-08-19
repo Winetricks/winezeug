@@ -287,7 +287,7 @@ try_one_patch()
            cat $PATCHES/$NEXT.log
         fi
         # Use a regexp with a back reference to detect last patch in a series and break out
-        if egrep -q 'Subject:.*[0-9]+/[0-9]+' $PATCHES/$NEXT.txt && ! egrep -q 'Subject:.*([0-9]+)/\1' $PATCHES/$NEXT.txt
+        if egrep -q 'Subject:.*[0-9]+/[0-9]+' $PATCHES/$NEXT.txt && ! egrep -q 'Subject:.*([0-9]+)/\1[^0-9]' $PATCHES/$NEXT.txt
         then
             echo In middle of patch series, not wiping tree
             NEXT=`expr $NEXT + 1`
