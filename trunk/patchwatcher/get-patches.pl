@@ -15,6 +15,7 @@
 
 use strict;
 use warnings;
+use Date::Manip;
 use Mail::POP3Client;
 use MIME::Parser;
 use Encode qw/decode/; 
@@ -148,7 +149,7 @@ sub consume_series_patch
     }
 
     if ($series_sender ne $sender || $series_num_patches != $num_patches) {
-        #print "Ignoring series for now, will try later; sender $sender, num_patches $num_patches, subject ".$header->get('Subject')."\n";
+        print "Not part of current series, deferring; sender $sender, num_patches $num_patches, subject ".$header->get('Subject')."\n";
         # can't handle multiple series at once just yet, let it sit
         return;
     }
@@ -208,6 +209,12 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
     my $from = $head->get('From');
     my $subject = $head->get('Subject');
 
+    if ($subject =~ /FOLDER INTERNAL DATA/) {
+        print "Ignoring webmail marker: $subject\n";
+        $pop->Delete( $i );
+        next;
+    }
+
     # Delete messages without body?
     if (!defined($body)) {
         output_message($head, $body, "No body");
@@ -231,12 +238,16 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
     }
 
     # TODO: delete patches older than three days
-    #my $date = $head->get('Date');
-    #if ($today - $date  > 3 days) {
-    #    output_message($head, $body, "Old message, ignoring");
-    #    $pop->Delete( $i );
-    #   next;
-    #}
+    my $date = $head->get('Date');
+    my $parsedDate = ParseDate($date);
+    my $dateDelta = DateCalc($parsedDate, ParseDate("today"));
+    my $ageHours = Delta_Format($dateDelta, 0, "%ht");
+    if ($ageHours > 48) {
+        print "Deleting stale message: subj $subject, date $date, ageHourse $ageHours\n";
+        output_message($head, $body, "Stale message (could be patchwatcher bug), ignoring");
+        $pop->Delete( $i );
+        next;
+    }
  
     consume_patch($head, $body, $i);
 }
