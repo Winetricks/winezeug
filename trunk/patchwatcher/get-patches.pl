@@ -19,6 +19,7 @@ use Date::Manip;
 use Mail::POP3Client;
 use MIME::Parser;
 use Encode qw/decode/; 
+use Encode qw/encode/; 
 
 my $pop = new Mail::POP3Client(
                  USER     => $ENV{"PATCHWATCHER_USER"},
@@ -45,14 +46,17 @@ sub output_message
     my $header = $_[0];
     my $body = $_[1];
     my $status = $_[2];
+    my $headertxt;
 
     open FILE, "> $curmsg.txt" || die "can't create $curmsg.txt";
-    binmode FILE, ":utf8";
+    binmode FILE, ":bytes";
 
-    print FILE "From: ". decode('MIME-Header', $header->get('From'));
-    print FILE "Subject: ".$header->get('Subject');
-    print FILE "Date: ".$header->get('Date');
-    print FILE "\n";
+    $headertxt = 
+        "From: ". decode('MIME-Header', $header->get('From')).
+        "Subject: ".decode('MIME-Header', $header->get('Subject')) .
+        "Date: ".$header->get('Date') . "\n";
+
+    print FILE encode('iso-8859-1', $headertxt);
     print FILE $body;
 
     close FILE;
@@ -149,7 +153,7 @@ sub consume_series_patch
     }
 
     if ($series_sender ne $sender || $series_num_patches != $num_patches) {
-        print "Not part of current series, deferring; sender $sender, num_patches $num_patches, subject ".$header->get('Subject')."\n";
+        print "Not part of current series (wanted $series_sender, $series_num_patches), deferring; sender $sender, num_patches $num_patches, subject ".$header->get('Subject')."\n";
         # can't handle multiple series at once just yet, let it sit
         return;
     }
