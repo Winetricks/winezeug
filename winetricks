@@ -897,11 +897,11 @@ load_jet40() {
 #----------------------------------------------------------------
 
 load_kde() {
-    download . http://winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.2-1.exe 504a05f3e47c429747a71bcc930c551ff4758d83
+    download . http://winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.3-1.exe 618f1c4987aa0725640ff331b14ff9a0d3e84f3a
     mkdir -p "$programfilesdir_unix/kde"
-    cp "$WINETRICKS_CACHE"/kdewin-installer-gui-0.9.2-1.exe "$programfilesdir_unix/kde"
+    cp "$WINETRICKS_CACHE"/kdewin-installer-gui-0.9.3-1.exe "$programfilesdir_unix/kde"
     cd "$programfilesdir_unix/kde"
-    try $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.2-1.exe"
+    try $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.3-1.exe"
     cd "$olddir"
 }
 
