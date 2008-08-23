@@ -250,6 +250,9 @@ test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%'
 programfilesdir_unix="`$WINE winepath -u "$programfilesdir_win"`"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 
+# (Fixme: get fonts path from SHGetFolderPath
+# See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
+#
 # Did the user rename Fonts to fonts?
 if ! test -d "$WINEPREFIX"/drive_c/windows/Fonts && test -d "$WINEPREFIX"/drive_c/windows/fonts 
 then
@@ -909,10 +912,8 @@ load_kde() {
 
 load_liberation() {
     # http://www.redhat.com/promo/fonts/ 				
-    download . http://www.redhat.com/f/fonts/liberation-fonts.tar.gz 38276ab5e4322e131217d26f193bfce396195c0a
-    # Fixme: get fonts path from SHGetFolderPath
-    # see also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
-    tar --wildcards -C "$winefontsdir" -xvzf "$WINETRICKS_CACHE"/liberation-fonts.tar.gz '*.ttf'
+    download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
+    tar --strip 1 --wildcards -C "$winefontsdir" -xvzf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz '*.ttf'
 }
 
 #----------------------------------------------------------------
