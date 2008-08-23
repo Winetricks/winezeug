@@ -627,9 +627,10 @@ load_divx() {
     # 6.8.2: e36bf87c1675d0cf9169839bc0cd8f866b9db026 as of 4 jun 2008 as http://download.divx.com/divx/DivXInstaller.exe
     # 6.8.3: f4f4387ef89316aea440a29f3e24c1f1945e14af as of 20 jun 2008 as http://download.divx.com/divx/abt/b1/DivXInstaller.exe
     # 6.8.4: c5fcb1465a1bb24d1c104c2588fdb6706d1e1476 as of 10 Jul 2008 as http://download.divx.com/divx/abt/b1/DivXInstaller.exe
-    download divx-6.8.4 http://download.divx.com/divx/abt/b1/DivXInstaller.exe c5fcb1465a1bb24d1c104c2588fdb6706d1e1476
+    # 6.8.4: d28a2b041f4af45d22c4dedfe7608f2958cf997d as of 23 Aug 2008 as http://download.divx.com/divx/DivXInstaller.exe
+    download divx-6.8.4-1 http://download.divx.com/divx/DivXInstaller.exe d28a2b041f4af45d22c4dedfe7608f2958cf997d
 
-    try $WINE "$WINETRICKS_CACHE"/divx-6.8.4/DivXInstaller $WINETRICKS_SILENT
+    try $WINE "$WINETRICKS_CACHE"/divx-6.8.4-1/DivXInstaller $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
