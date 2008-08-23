@@ -83,7 +83,7 @@ usage() {
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
-    echo " icodecs       Intel Codecs"
+    echo " icodecs       Intel Codecs (Indeo)"
     echo " jet40         MS Jet 4.0 Service Pack 8"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
     echo " mdac25        MS MDAC 2.5: Microsoft ODBC drivers, etc."
@@ -879,6 +879,10 @@ load_icodecs() {
     # http://downloadcenter.intel.com/Detail_Desc.aspx?strState=LIVE&ProductID=355&DwnldID=2846
     download . http://downloadmirror.intel.com/2846/eng/codinstl.exe 2c5d64f472abe3f601ce352dcca75b4f02996f8a
     try $WINE "$WINETRICKS_CACHE"/codinstl.exe
+    # Work around bug in codec's installer?
+    # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
+    try $WINE regsvr32 ir50_32.dll
 }
 
 #----------------------------------------------------------------
