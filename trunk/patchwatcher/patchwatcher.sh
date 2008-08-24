@@ -116,6 +116,9 @@ initialize_tree()
     cd $WORK
     git clone git://source.winehq.org/git/wine.git active
     cd active
+    # Regenerate configure now to track what we do when patches are applied
+    tools/make_makefiles
+    autoconf
     ./configure
     make depend
     make -j3
@@ -127,12 +130,17 @@ refresh_tree()
 {
     cd $WORK/active
     # Recover from any accidental damage
-    git diff > git.diff && patch -R -p1 < git.diff
+    git diff | grep -v '^diff --git' > git.diff && patch -R -p1 < git.diff
     # Grab latest source
     git pull > git.log 2>&1
     cat git.log
     if ! grep -q "Already up-to-date." < git.log
     then
+       # Regenerate everything in case patch adds a new dll or changes configure.ac
+       tools/make_makefiles
+       autoconf
+       ./configure
+       make depend
        time make -j3
        baseline_tests
     fi
@@ -257,12 +265,15 @@ try_one_patch()
         then
            report_results patch $NEXT.txt  $NEXT.log
         else
-           # TODO: need to run configure?
            # Note: don't use parallel build, we want to email a nice clean log
-           if ! make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log || ! grep "^Wine build complete" $PATCHES/$NEXT.log 
+           # Regenerate everything in case patch adds a new dll or changes configure.ac
+           if  tools/make_makefiles && 
+               autoconf && 
+               ./configure && 
+               make depend && 
+               make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log &&
+               grep "^Wine build complete" $PATCHES/$NEXT.log 
            then
-               report_results build $NEXT.txt  $NEXT.log
-           else
                make testclean
                $WINESERVER -k || true
                rm -rf $WINEPREFIX || true
@@ -283,6 +294,9 @@ try_one_patch()
                    echo "Conformance tests ok" >> $PATCHES/$NEXT.log
                    report_results success $NEXT.txt  $NEXT.log
                fi
+           else
+               # make failed
+               report_results build $NEXT.txt  $NEXT.log
            fi
            cat $PATCHES/$NEXT.log
         fi
