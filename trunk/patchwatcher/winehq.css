@@ -37,7 +37,6 @@ table {
     margin-right: auto;
     text-spacing: 0;
     border-spacing: 0;
-    white-space: nowrap;
 }
 
 table th {
@@ -53,6 +52,7 @@ table th {
 table td {
     padding: 1px 5px;
     font-size: small;
+    vertical-align: top;
 }
 
 tr.light { background-color: #ffffff; }
@@ -62,14 +62,16 @@ tr.dark:hover  { background-color: #f8e8e8; }
 
 td.date, td.from {
     font-family: monospace;
+    white-space: nowrap;
 }
-th.result {
+th.subject {
     text-align: left;
 }
-td.version {
-    text-align: center;
-}
-.commit {
-    width: 100%;
+td.result {
     text-align: left;
+    white-space: nowrap;
 }
+col.date { width: 7%; }
+col.from { width: 7%; }
+col.subject { width: 66%; }
+col.result { width: 20%; }

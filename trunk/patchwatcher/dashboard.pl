@@ -25,6 +25,8 @@ print "<title>Wine patch status</title>\n";
 print "<link rel=\"stylesheet\" href=\"winehq.css\" type=\"text/css\">\n";
 print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n";
 print "</head><body><table>\n";
+print "<col class=\"date\"><col class=\"from\"><col class=\"subject\"><col class=\"result\">
+\n";
 print "<tr>";
 print "<th>Date";
 print "<th>From";
