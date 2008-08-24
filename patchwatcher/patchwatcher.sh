@@ -172,8 +172,8 @@ report_results()
     # Retrieve sender and subject from patch file
     # Patch file is written by get-patches.pl in a specific format,
     # always starts with an email header.
-    patch_sender="`cat $patch | grep '^From:' | sed 's/^From: //;s/.*<//;s/>.*//'`"
-    patch_subject="`cat $patch | grep '^Subject:' | sed 's/^Subject: //'`"
+    patch_sender="`cat $patch | grep '^From:' | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`"
+    patch_subject="`cat $patch | grep '^Subject:' | head -n 1 | sed 's/^Subject: //'`"
     case $status in
     patch)   status_long="failed to apply" ;;
     build)   status_long="failed to build" ;;
@@ -197,11 +197,15 @@ for more info.
 
 _EOF_
 
-    # don't email on success, too noisy
     case $status in
-    success) ;;
-    *) mailx -s "Patchwatcher: ${status_long}: $patch_subject" "$patch_sender" dank@kegel.com  < msg.dat
-    ;;
+    success) 
+        # Send munged version of patch; it will show up as from the patchwatcher user, so
+        # put original sender in subject line, like wine-cvs does
+        mailx -s "${patch_sender}: $patch_subject" wine-patches-filtered@googlegroups.com < $patch 
+        ;;
+    *)   
+        mailx -s "Patchwatcher: ${status_long}: $patch_subject" "$patch_sender" dank@kegel.com  < msg.dat
+        ;;
     esac
     rm msg.dat
 
