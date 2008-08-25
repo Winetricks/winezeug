@@ -1,0 +1,9 @@
+#!/bin/sh
+export PATCHWATCHER_URL=XXXXX
+export PATCHWATCHER_USER=XXXXX
+export PATCHWATCHER_HOST=XXXXX
+export PATCHWATCHER_PASSWORD=XXXXX
+export PATCHWATCHER_FTP=XXXXX
+. ./libpatchwatcher.sh
+demo_shell $1 $2
+
