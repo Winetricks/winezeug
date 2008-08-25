@@ -16,14 +16,17 @@
 # In particular, it must contain the string "patchwatcher:OK" on success.
 #
 # Jobs are first created in the 'inbox' directory,
-# move to a directory named after the build slave while being built,
-# then move to the 'outbox' directory when complete.
+# move to a directory named 'slave*' while being built,
+# move to the 'outbox' directory when complete,
+# and finally move to the 'sent' directory after their results are uploaded.
 #
 # To prevent half-baked jobs from being processed, we use a few rules:
 # Jobs are named tmp.NNN during creation in inbox, then renamed atomically to NNN when ready to process
 # Jobs are not moved from inbox to a slave directory unless their name starts with a digit
 # Jobs are not moved from slave directories to outbox until they contain 
 # a file 'log.txt', and that file is created atomically.
+
+#----------------- Helper functions ------------------
 
 # Call this function once at start of your script
 # Assumes that $PWD/shared is the shared data directory for this patchwatcher
@@ -33,13 +36,14 @@ lpw_init()
     LPW_SHARED=$LPW_TOP/shared
     LPW_INBOX=$LPW_SHARED/inbox
     LPW_OUTBOX=$LPW_SHARED/outbox
+    LPW_SENT=$LPW_SHARED/sent
 
     if ! test -d $LPW_SHARED
     then
         echo error: directory $LPW_SHARED does not exist
         exit 1
     fi
-    mkdir -p $LPW_INBOX/mimemail $LPW_OUTBOX
+    mkdir -p $LPW_INBOX/mimemail $LPW_OUTBOX $LPW_SENT
 }
 
 # Retrieve the number of the highest job in the system
@@ -58,8 +62,9 @@ lpw_highest_job()
     done
 }
 
-# Retrieve the number of the next available job in the given directory, or "" if none available
+# Retrieve the number of the next available job in the given directory
 # Result is placed in LPW_JOB
+# On failure, LPW_JOB is set to "", and function returns nonzero status
 lpw_lowest_job()
 {
     dir=$1
@@ -77,60 +82,27 @@ lpw_lowest_job()
 
     job=`cd $dir; find . -maxdepth 2 -name '[0-9]*' -type d -print | sed 's/^\.\///' | sort -n | head -n 1`
     LPW_JOB=$job
+    test "$LPW_JOB" != ""
+    return $?
 }
 
-# Retrieve the number of the next finished job in the given directory, or "" if none available
-# Result is placed in LPW_JOB
-lpw_lowest_finished_job()
+#----------------- Action functions ------------------
+# In rough order of workflow
+
+# Find all finished jobs in inbox or slave*, and send to outbox
+lpw_move_finished_jobs_to_outbox()
 {
-    dir=$1
-    if test "$dir" = ""
+    finished=`find $LPW_SHARED/inbox "$LPW_SHARED/slave*" -name log.txt -print 2>/dev/null | sed 's/\/log.txt//'`
+    if test "$finished" != ""
     then
-        echo "lpw_lowest_finished_job: sourcedir argument missing"
-        exit 1
+        mv $finished $LPW_OUTBOX
     fi
-    dir=$LPW_SHARED/$dir
-    if ! test -d $dir 
-    then
-        echo "lpw_lowest_finished_job: no such directory $dir"
-        exit 1
-    fi
-
-    job=`ls $dir/[0-9]*/log.txt 2>/dev/null | sed 's/\/log.txt//;s/.*\///' | sort -n | head -n 1`
-    LPW_JOB=$job
-}
-
-# Call this to move a job from inbox to the given directory
-# On success, puts job number in $LPW_JOB, and returns with zero status
-# On failure, returns with nonzero status
-lpw_claim_job()
-{
-    dest=$1
-    if test "$dest" = ""
-    then
-        echo "lpw_claim_job: destdir argument missing"
-        exit 1
-    fi
-    dest=$LPW_SHARED/$dest
-    if ! test -d $dest 
-    then
-        echo "lpw_claim_job: no such directory $dest"
-        exit 1
-    fi
-
-    lpw_lowest_job inbox
-    if test "$LPW_JOB" = ""
-    then
-        return 1
-    fi
-
-    mv $LPW_INBOX/$LPW_JOB $dest/$LPW_JOB || return 1
-    return 0
 }
 
 # Call this to retrieve jobs from the pop3 mailbox specified in the
 # environment variables used by get-patches2.pl
 # Messages will be deleted from the mailbox as they are accepted for processing.
+# Stillborn jobs are moved straight to outbox.
 #
 # Prerequisites:
 # Must have Perl's Mail::POP3Client and MIME::Parser installed, e.g.
@@ -145,10 +117,42 @@ lpw_receive_jobs()
     lpw_highest_job
     LPW_JOB=`expr $LPW_JOB + 1`
     (cd $LPW_INBOX; perl $LPW_TOP/get-patches2.pl $LPW_JOB)
+    lpw_move_finished_jobs_to_outbox
 }
+
+# Call this to move a job from inbox to the given directory
+# On success, puts job number in $LPW_JOB, and returns with zero status
+# On failure, returns with nonzero status
+lpw_assign_job_to_slave()
+{
+    dest=$1
+    if test "$dest" = ""
+    then
+        echo "lpw_assign_job_to_slave: destdir argument missing"
+        exit 1
+    fi
+    dest=$LPW_SHARED/$dest
+    if ! test -d $dest 
+    then
+        echo "lpw_assign_job_to_slave: no such directory $dest"
+        exit 1
+    fi
+
+    lpw_lowest_job inbox
+    if test "$LPW_JOB" = ""
+    then
+        return 1
+    fi
+
+    mv $LPW_INBOX/$LPW_JOB $dest/$LPW_JOB || return 1
+    return 0
+}
+
+# MAGIC HAPPENS
 
 # Report the given job's results via email and web.
 # The job must be in outbox and must already have a log.txt.
+# Does not modify LPW_JOB or any other capitalized global.
 #
 # Prerequisites:
 # Must have mailx installed and working, e.g.
@@ -243,6 +247,18 @@ quit
 _EOF_
 }
 
+# Send all finished jobs in outbox, and move them to sent
+lpw_send_outbox()
+{
+    while lpw_lowest_job outbox
+    do
+        lpw_send_job $LPW_JOB
+        mv $LPW_OUTBOX/$LPW_JOB $LPW_SENT/$LPW_JOB
+    done
+}
+
+#----------------- Debugging functions ------------------
+
 # Debugging tool to let you try out functions interactively
 demo_shell()
 {
@@ -251,19 +267,31 @@ demo_shell()
     set -x
     case "$1" in
     "")
-       echo "usage: $0 cmd [arg]";  echo "cmds: lowest dir, lowest_finished dir, claim dir, highest, receive, send";;
-    highest) 
-       lpw_highest_job;    echo LPW_JOB is $LPW_JOB;;
+       set +x
+       echo "usage: $0 cmd [arg]";  
+       echo "helper cmds: lowest DIR, lowest_finished DIR, highest"
+       echo "action cmds: receive, assign_to DIR, move_finished, send, send_outbox";;
+
+    # Helper functions
     lowest)  
        lpw_lowest_job $2;  echo LPW_JOB is $LPW_JOB;;
-    lowest_finished)  
+    lowest_finished)
        lpw_lowest_finished_job $2;  echo LPW_JOB is $LPW_JOB;;
-    claim)   
-       lpw_claim_job $2;   echo LPW_JOB is $LPW_JOB;;
+    highest) 
+       lpw_highest_job;    echo LPW_JOB is $LPW_JOB;;
+
+    # Action functions
     receive) 
        lpw_highest_job; before=$LPW_JOB; lpw_receive_jobs; lpw_highest_job; echo LPW_JOB was $before, is $LPW_JOB;;
+    assign_to)   
+       lpw_assign_job_to_slave $2;   echo LPW_JOB is $LPW_JOB;;
+    move_finished)
+       lpw_move_finished_jobs_to_outbox;;
     send)
        lpw_send_job $2;;
+    send_outbox)
+       lpw_send_outbox;;
+
     esac
 }
 
