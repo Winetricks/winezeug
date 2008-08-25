@@ -10,7 +10,7 @@
 
 use Date::Manip;
 
-binmode \*STDOUT, ":utf8";
+binmode \*STDOUT, ":binary";
 
 sub my_escape
 {
@@ -33,7 +33,7 @@ print "<th>From";
 print "<th>Subject";
 print "<th class=result>Status</tr>\n";
 
-open FILE, "find outbox -name '[1-9]*' -type d | sort -rn |";
+open FILE, "find outbox sent slave* -name '[1-9]*' -type d | sort -t/ -k 1rn |";
 my @jobs = <FILE>;
 close FILE;
 my $job;
@@ -79,9 +79,8 @@ for $job (@jobs) {
 
    $subject = my_escape($subject);
 
-   # Kludge: until we handle more than one directory
-   $patch =~ s/outbox\///;
-   $log =~ s/outbox\///;
+   $patch =~ s/.*\///;
+   $log =~ s/.*\///;
 
    if ($status eq "queued") {
        $loglink = $status;
