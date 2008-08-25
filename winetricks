@@ -1280,10 +1280,8 @@ load_vcrun2003() {
 load_vcrun2005() {
     # Load the Visual C++ 2005 runtime libraries
     # See http://www.microsoft.com/downloads/details.aspx?familyid=32BC1BEE-A3F9-4C13-9C99-220B62A191EE
-    set_winver win2k
     download vcrun2005 http://download.microsoft.com/download/d/3/4/d342efa6-3266-4157-a2ec-5174867be706/vcredist_x86.exe 47fba37de95fa0e2328cf2e5c8ebb954c4b7b93c
     try $WINE "$WINETRICKS_CACHE"/vcrun2005/vcredist_x86.exe $WINETRICKS_QUIET
-    unset_winver
 }
 
 #----------------------------------------------------------------
