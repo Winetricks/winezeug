@@ -46,6 +46,15 @@ if ($curseries eq "") {
 
 my $patches_written = 0;
 
+my $curseries_length;
+my $curseries_nbad;
+
+sub output_series_start
+{
+    $curseries_length = 0;
+    $curseries_nbad = 0;
+}
+
 # Write a single message of a series to disk
 sub output_message
 {
@@ -77,19 +86,26 @@ sub output_message
 
     if (defined($status)) {
         open FILE, "> $logfile" || die "can't create $logfile";
-    
         print FILE $status;
-    
         close FILE;
+        $curseries_nbad++;
     } else {
         # Remember that we did output a real patch
         $patches_written++;
     }
+    $curseries_length++;
 }
 
 # Finish up the series, move on to the next one
 sub output_series_done
 {
+    # If all of the messages in the series are bad, create a final .log file right now
+    if ($curseries_nbad == $curseries_length) {
+        # FIXME: create a real log file by pulling in the individual .logs
+        open FILE, "> tmp.$curseries/log.txt" || die "can't open tmp.$curseries/log.txt\n";
+        print FILE "Some patch was malformed, see individual patch logs.\n";
+        close FILE;
+    }
     rename("tmp.$curseries", "$curseries") || die "can't rename tmp.$curseries to $curseries\n";
     $curseries++;
 }
@@ -100,6 +116,7 @@ sub output_standalone_message
     my $header = $_[0];
     my $body = $_[1];
     my $status = $_[2];
+    output_series_start();
     output_message($header, $body, $status, 1);
     output_series_done();
 }
@@ -199,6 +216,7 @@ sub consume_series_patch
     }
     if ($j == $series_num_patches+1) {
         # Yes!  Output them all.
+        output_series_start();
         for ($j=1; $j <= $series_num_patches; $j++) {
             #print "Outputting patch $j of $series_num_patches\n";
             output_series($series_headers[$j], $series_bodies[$j], undef, $j);
