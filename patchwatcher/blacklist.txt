@@ -1,0 +1,1 @@
+comctl32/tests/__test__|comctl32:tooltips.c|d3d8/tests/__test__|d3d9/tests/__test__|ddraw/tests/__test__|ddraw:visual.c|dsound:ds3d.c|kernel32/tests/__test__|kernel32:thread.c|riched20:editor.c|riched20/tests/__test__|user32:input.c|user32:msg.c|user32:win.c|wininet:http.c|wininet/tests/__test__
