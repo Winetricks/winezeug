@@ -55,35 +55,23 @@
 set -e
 set -x
 
+# This script is not yet internationalized properly, so set locale to
+# one that it can handle
+LANG=C
+
+# Work around xcb locking bug on recent xorg.  See also
+# https://bugs.launchpad.net/ubuntu/+source/libxcb/+bug/185311
+# http://lists.opensuse.org/opensuse-commit/2007-03/msg00176.html
+export LIBXCB_ALLOW_SLOPPY_LOCK=1
+
 # Set this to true on first run and after debugging
 initialize=false
 # Set this to true for continuous build
 loop=true
 
-# Regular expression matching known flaky tests
-# This list is built up by simply running patchwatcher for a while and
-# seeing what tests cause spurious failure reports.
-# Annoyingly, no matter how many times I run the baseline tests,
-# these buggers still manage to fail in new ways when testing patches.
-# Grumble.
-blacklist_regex="comctl32:tooltips.c|d3d9:device.c|d3d9:visual.c|ddraw:visual.c|kernel32:thread.c|urlmon:protocol.c|urlmon:url.c|user32:msg.c|user32:input.c|user32:monitor.c|wininet:http.c"
-
 TOP=`pwd`
 PATCHES=$TOP/patches
 WORK=$TOP/wine-continuous-workdir
-if $initialize
-then
-    rm -rf $WORK
-    mkdir -p $WORK
-else
-    # Recover from run aborted with ^C
-    if test -d $WORK/golden
-    then
-        rm -rf $WORK/active
-        mv $WORK/golden $WORK/active
-    fi
-fi
-mkdir -p $PATCHES/mimemail
 
 WINE=$WORK/active/wine
 WINESERVER=$WORK/active/server/wineserver
@@ -96,19 +84,20 @@ baseline_tests()
     # Gather list of tests that fail at least once in N runs
     # Once this script is debugged, crank up the number of runs a bit here
     cd $WORK/active
+    echo Running baseline test, output to $PWD/baseline.testlog
     for try in 1 2 3 4 5
     do
         make testclean
         $WINESERVER -k || true
         rm -rf $WINEPREFIX || true
         sh $TOP/../winetricks gecko
-        make -k test || true
-    done > flaky.log 2>&1
+        WINETEST_WRAPPER="$TOP/alarm 150" make -k test || true
+    done > baseline.testlog 2>&1
 
-    perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
+    perl $TOP/get-dll.pl < baseline.testlog | egrep ": Test failed: |: Test succeeded inside todo block: |^make\[.*\]: \*\*\* \[|wineserver crashed|Timeout!  Killing child" | sort -u > baseline.testdat || true
     # Record for posterity
-    cp flaky.log $PATCHES/baseline.testlog
-    cp flaky.dat $PATCHES/baseline.testdat
+    cp baseline.testlog $PATCHES/baseline.testlog
+    cp baseline.testdat $PATCHES/baseline.testdat
 }
 
 initialize_tree()
@@ -175,7 +164,17 @@ report_results()
     patch_sender="`cat $patch | grep '^From:' | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`"
     patch_subject="`cat $patch | grep '^Subject:' | head -n 1 | sed 's/^Subject: //'`"
     case $status in
-    patch)   status_long="failed to apply" ;;
+    patch)   
+        if egrep -q "can't find file to patch|hunk FAILED" $log 
+        then
+            status_long="failed to apply" 
+        elif egrep -q "Reversed \(or previously applied\) patch" $log 
+        then
+            status_long="already applied"
+            # inhibit email
+            status=success;
+        fi 
+        ;;
     build)   status_long="failed to build" ;;
     test)    status_long="failed regression tests" ;;
     success) status_long="applied, built, and passed tests" ;;
@@ -282,13 +281,19 @@ try_one_patch()
                $WINESERVER -k || true
                rm -rf $WINEPREFIX || true
                sh $TOP/../winetricks gecko
-               time make -k test > $PATCHES/$NEXT.testlog 2>&1 || true
-               perl $TOP/get-dll.pl < $PATCHES/$NEXT.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > $PATCHES/$NEXT.testdat || true
+               WINETEST_WRAPPER="$TOP/alarm 150" make -k test > $PATCHES/$NEXT.testlog 2>&1 || true
+               perl $TOP/get-dll.pl < $PATCHES/$NEXT.testlog | egrep ": Test failed: |: Test succeeded inside todo block: |^make\[.*\]: \*\*\* \[|wineserver crashed|Timeout!  Killing child" | sort -u > $PATCHES/$NEXT.testdat || true
+               # Regular expression matching known flaky tests
+               # This list is built up by simply running patchwatcher for a while,
+               # then doing "blacklist.sh > blacklist.txt"
+               # Annoyingly, no matter how many times I run the baseline tests,
+               # these buggers still manage to fail in new ways when testing patches.
+               egrep -v `cat $TOP/blacklist.txt` < $PATCHES/$NEXT.testdat > $PATCHES/$NEXT.testfilt
                cat $PATCHES/$NEXT.testlog >> $PATCHES/$NEXT.log
                echo "Regression test changes vs. baseline test runs:" >> $PATCHES/$NEXT.log
-               diff flaky.dat $PATCHES/$NEXT.testdat >> $PATCHES/$NEXT.log || true
-               # Report failure if any new errors
-               diff flaky.dat $PATCHES/$NEXT.testdat > $PATCHES/$NEXT.testdiff || true
+               diff baseline.testdat $PATCHES/$NEXT.testdat >> $PATCHES/$NEXT.log || true
+               # Report failure if any new nonblacklisted errors
+               diff baseline.testdat $PATCHES/$NEXT.testfilt > $PATCHES/$NEXT.testdiff || true
                if grep -q '^> ' < $PATCHES/$NEXT.testdiff
                then
                    echo "Ditto, but just the new errors:" >> $PATCHES/$NEXT.log
@@ -337,20 +342,20 @@ continuous_build()
   done
 }
 
+mkdir -p $PATCHES/mimemail
+
 if $initialize
 then
+    rm -rf $WORK
+    mkdir -p $WORK
     initialize_tree
 else
-    retrieve_patches
-    cd $PATCHES
-    perl $TOP/dashboard.pl > index.html
-    ftp $PATCHWATCHER_FTP <<_EOF_
-cd results
-prompt
-mput *.txt
-mput *.log
-put index.html
-quit
-_EOF_
+    # Recover from run aborted with ^C
+    if test -d $WORK/golden
+    then
+        rm -rf $WORK/active
+        mv $WORK/golden $WORK/active
+    fi
 fi
+
 continuous_build
