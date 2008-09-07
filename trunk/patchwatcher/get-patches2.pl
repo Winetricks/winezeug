@@ -11,7 +11,7 @@
 # Patches are output as $seriesnum/$patchnum.patch in utf-8 format.
 # If any problem is found with a patch, outputs the patch as usual,
 # then saves a description of the problem in a file next to it with suffix .log.
-# For instance, patches older than two days are considered stale
+# For instance, patches older than three days are considered stale
 # (as it's either a mail problem or a bug in our patch series handing).
 # Exception: webmail cookie messages are simply ignored and deleted,
 # since they aren't really messages.
@@ -219,7 +219,7 @@ sub consume_series_patch
         output_series_start();
         for ($j=1; $j <= $series_num_patches; $j++) {
             #print "Outputting patch $j of $series_num_patches\n";
-            output_series($series_headers[$j], $series_bodies[$j], undef, $j);
+            output_message($series_headers[$j], $series_bodies[$j], undef, $j);
             $pop->Delete( $series_indices[$j] );
         }
         output_series_done();
@@ -295,7 +295,7 @@ for ($i = 1; $i <= $pop->Count(); $i++) {
     my $parsedDate = ParseDate($date);
     my $dateDelta = DateCalc($parsedDate, ParseDate("today"));
     my $ageHours = Delta_Format($dateDelta, 0, "%ht");
-    if ($ageHours > 48) {
+    if ($ageHours > 72) {
         print "Deleting stale message: subj $subject, date $date, ageHourse $ageHours\n";
         output_standalone_message($head, $body, "Stale message (could be patchwatcher bug), ignoring");
         $pop->Delete( $i );
