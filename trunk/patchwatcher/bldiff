@@ -1,0 +1,5 @@
+#!/bin/sh
+# Script to compare two blacklists
+tr '|' '\012' < $1 | sort > /tmp/bl1
+tr '|' '\012' < $2 | sort > /tmp/bl2
+diff -u /tmp/bl1 /tmp/bl2
