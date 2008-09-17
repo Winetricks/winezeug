@@ -58,7 +58,7 @@ build_wine()
     # Regenerate everything in case patch adds a new dll or changes configure.ac
     tools/make_makefiles && 
     autoconf && 
-    ./configure CFlAGS=-Werror && 
+    ./configure && 
     make depend && 
     make $parallel 2>&1 | perl $LPW_TOP/trim-build-log.pl > $log &&
     grep -q "^Wine build complete" $log 
