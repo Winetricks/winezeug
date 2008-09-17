@@ -108,7 +108,7 @@ initialize_tree()
     # Regenerate configure now to track what we do when patches are applied
     tools/make_makefiles
     autoconf
-    ./configure
+    ./configure CFlAGS=-Werror
     make depend
     make -j3
 
@@ -128,7 +128,7 @@ refresh_tree()
        # Regenerate everything in case patch adds a new dll or changes configure.ac
        tools/make_makefiles
        autoconf
-       ./configure
+       ./configure CFlAGS=-Werror
        make depend
        time make -j3
        baseline_tests
@@ -272,7 +272,7 @@ try_one_patch()
            # Regenerate everything in case patch adds a new dll or changes configure.ac
            if  tools/make_makefiles && 
                autoconf && 
-               ./configure && 
+               ./configure CFlAGS=-Werror && 
                make depend && 
                make 2>&1 | perl $TOP/trim-build-log.pl >> $PATCHES/$NEXT.log &&
                grep "^Wine build complete" $PATCHES/$NEXT.log 
