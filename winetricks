@@ -30,7 +30,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20080825.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081012.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -802,7 +802,7 @@ load_fontfix() {
             download . http://apt.debian.org.tw/pool/t/ttf-arphic-ukai/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 46cc7b67b6117a7e161c1a573502c0bf2b09cbdc  
             cd "$WINETRICKS_TMP/"
 	    tar -xzf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
-	    try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir""
+	    try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
         fi
     fi
@@ -815,7 +815,7 @@ load_fontfix() {
             download . http://apt.debian.org.tw/pool/t/ttf-arphic-uming/ttf-arphic-uming_0.1.20060108.orig.tar.gz ec34aeb240fcce09d25fce2fbe5e5b6f358c2f24  
             cd "$WINETRICKS_TMP/"
 	    tar -xzf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
-	    try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir""
+	    try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
         fi
     fi
