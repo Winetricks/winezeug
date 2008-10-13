@@ -20,7 +20,7 @@
 # replaces it with the original, and goes back to wait for 
 # another patch.
 
-. ./libpatchatcher.sh
+. ./libpatchwatcher.sh
 lpw_init
 
 set -e
@@ -29,16 +29,7 @@ set -x
 # Set this to true on first run and after debugging
 initialize=false
 
-# Regular expression matching known flaky tests
-# This list is built up by simply running patchwatcher for a while and
-# seeing what tests cause spurious failure reports.
-# Annoyingly, no matter how many times I run the baseline tests,
-# these buggers still manage to fail in new ways when testing patches.
-# Grumble.
-blacklist_regex="comctl32:tooltips.c|d3d9:device.c|d3d9:visual.c|ddraw:visual.c|kernel32:thread.c|urlmon:protocol.c|urlmon:url.c|user32:msg.c|user32:input.c|user32:monitor.c|wininet:http.c"
-
 TOP=`pwd`
-PATCHES=$TOP/patches
 WORK=$TOP/wine-continuous-workdir
 
 WINE=$WORK/active/wine
@@ -69,19 +60,19 @@ baseline_tests()
 {
     # Once this script is debugged, crank up the number of runs a bit here
     cd $WORK/active
-    for try in 1 2 3 4 5
+    for try in 1 # 2 3 4 5
     do
         make testclean
         $WINESERVER -k || true
         rm -rf $WINEPREFIX || true
         sh $TOP/../winetricks gecko
-        make -k test || true
+        WINETEST_WRAPPER="$TOP/alarm 150" make -k test || true
     done > flaky.log 2>&1
 
     perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
     # Record for posterity
-    cp flaky.log $PATCHES/baseline.testlog
-    cp flaky.dat $PATCHES/baseline.testdat
+    cp flaky.log $WORK/baseline.testlog
+    cp flaky.dat $WORK/baseline.testdat
 }
 
 # Given an updated tree, run the tests again.
@@ -93,8 +84,8 @@ retest_wine()
     $WINESERVER -k > /dev/null || true
     rm -rf $WINEPREFIX || true
     sh $TOP/../winetricks gecko > /dev/null
-    time make -k test > $thepatch.testlog 2>&1 || true
-    perl $TOP/get-dll.pl < $thepatch.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > $thepatch.testdat || true
+    WINETEST_WRAPPER="$TOP/alarm 150" make -k test > $thepatch.testlog 2>&1 || true
+    perl $TOP/get-dll.pl < $thepatch.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v `cat $TOP/blacklist.txt` > $thepatch.testdat || true
     cat $thepatch.testlog
     echo "Regression test changes vs. baseline test runs:"
     diff flaky.dat $thepatch.testdat || true
@@ -111,6 +102,10 @@ retest_wine()
 
 initialize_tree()
 {
+    test -x $TOP/alarm || gcc $TOP/alarm.c -o $TOP/alarm
+
+    rm -rf $WORK
+    mkdir -p $WORK
     cd $WORK
     git clone git://source.winehq.org/git/wine.git active
     cd active
@@ -181,8 +176,6 @@ continuous_build_slave()
 {
     if $initialize
     then
-        rm -rf $WORK
-        mkdir -p $WORK
         initialize_tree
     else
         # Recover from run aborted with ^C
@@ -195,11 +188,32 @@ continuous_build_slave()
     while true
     do
        if lpw_lowest_job slave
-       do
+       then
            try_one_job $LPW_JOB
-       done
+       fi
        sleep 5
     done
 }
 
-continuous_build_slave
+main()
+{
+    set -x
+    case "$1" in
+    "")
+       set +x
+       echo "usage: $0 cmd [arg]"
+       echo "Commands: init, job NNN, run"
+       echo "Or any libpatchwatcher demo shell command"
+       ;;
+
+    init) initialize_tree ;;
+
+    job) LPW_JOB=$1; try_one_job ;;
+
+    run) continuous_build_slave ;;
+
+    *) demo_shell "$@" ;;
+    esac
+}
+
+main "$@"
