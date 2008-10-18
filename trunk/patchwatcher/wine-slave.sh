@@ -208,7 +208,7 @@ main()
 
     init) initialize_tree ;;
 
-    job) LPW_JOB=$1; try_one_job ;;
+    job) LPW_JOB=$2; try_one_job ;;
 
     run) continuous_build_slave ;;
 
