@@ -26,6 +26,11 @@ use MIME::Parser;
 use Encode qw/decode/; 
 use Encode qw/encode/; 
 
+my ($USER, $PASSWORD, $HOST);
+                 $USER     = $ENV{"PATCHWATCHER_USER"};
+                 $PASSWORD = $ENV{"PATCHWATCHER_PASSWORD"};
+                 $HOST     = $ENV{"PATCHWATCHER_HOST"};
+
 my $pop = new Mail::POP3Client(
                  USER     => $ENV{"PATCHWATCHER_USER"},
                  PASSWORD => $ENV{"PATCHWATCHER_PASSWORD"},
@@ -257,6 +262,7 @@ sub consume_patch
 }
 
 my $i;
+
 for ($i = 1; $i <= $pop->Count(); $i++) {
     my ($head, $body, $numpatches_in_msg) = retrieve_message($i);
     my $from = $head->get('From');
