@@ -13,7 +13,7 @@
 # The result of patching/building/testing %d.patch is saved in %d.log
 # The overall result of a job is saved in log.txt
 # The last line of %d.log (or log.txt) indicates success or failure for that patch (or job, respectively)
-# In particular, it must contain the string "patchwatcher:OK" on success.
+# In particular, it must contain the string "patchwatcher:ok" on success.
 #
 # Jobs are first created in the 'inbox' directory,
 # move to a directory named 'slave*' while being built,
@@ -26,23 +26,31 @@
 # Jobs are not moved from slave directories to outbox until they contain 
 # a file 'log.txt', and that file is created atomically.
 
+set -x
 #----------------- Helper functions ------------------
 
 # Call this function once at start of your script
-# Assumes that $PWD/shared is the shared data directory for this patchwatcher
+# Assumes that $1/shared is the shared data directory for this patchwatcher
 lpw_init()
 {
-    LPW_TOP=$PWD
-    LPW_SHARED=$LPW_TOP/shared
-    LPW_INBOX=$LPW_SHARED/inbox
-    LPW_OUTBOX=$LPW_SHARED/outbox
-    LPW_SENT=$LPW_SHARED/sent
+    LPW_BIN=$1
+    case "$LPW_BIN" in
+    /.*) ;;
+    *) LPW_BIN=`cd $LPW_BIN; pwd` ;;
+    esac
 
-    if ! test -d $LPW_SHARED
+    . "$LPW_BIN/pwconfig.sh"
+
+    if ! test -d "$LPW_SHARED"
     then
         echo error: directory $LPW_SHARED does not exist
         exit 1
     fi
+ 
+    LPW_INBOX="$LPW_SHARED/inbox"
+    LPW_OUTBOX="$LPW_SHARED/outbox"
+    LPW_SENT="$LPW_SHARED/sent"
+
     mkdir -p $LPW_INBOX/mimemail $LPW_OUTBOX $LPW_SENT
 }
 
@@ -56,10 +64,11 @@ lpw_highest_job()
     LPW_JOB=0
     for try in 1 2 
     do
-        job=`cd $dir; find . -maxdepth 2 -name '[0-9]*' -type d -print | sed 's/.*\///' | sort -rn | head -n 1`
+        job=`cd $dir; find . -name '[0-9]*' -type d -print | sed 's/.*\///' | sort -rn | head -n 1`
         test "$job" = "" && job=0
         test "$job" -gt "$LPW_JOB" && LPW_JOB=$job
     done
+    return 0
 }
 
 # Retrieve the number of the next available job in the given directory
@@ -80,7 +89,7 @@ lpw_lowest_job()
         exit 1
     fi
 
-    job=`cd $dir; find . -maxdepth 2 -name '[0-9]*' -type d -print | sed 's/^\.\///' | sort -n | head -n 1`
+    job=`cd $dir; find . -name '[0-9]*' -type d -print | sed 's/^\.\///' | sort -n | head -n 1`
     LPW_JOB=$job
     test "$LPW_JOB" != ""
     return $?
@@ -92,10 +101,11 @@ lpw_lowest_job()
 # Find all finished jobs in inbox or slave*, and send to outbox
 lpw_move_finished_jobs_to_outbox()
 {
-    finished=`find $LPW_SHARED/inbox "$LPW_SHARED/slave*" -name log.txt -print 2>/dev/null | sed 's/\/log.txt//'`
+    finished=`find $LPW_SHARED/inbox $LPW_SHARED/slave* -name log.txt -print 2>/dev/null | sed 's/\/log.txt//'`
     if test "$finished" != ""
     then
-        mv $finished $LPW_OUTBOX
+        $job_basename=`basename $finished`
+        mv "$finished" "$LPW_OUTBOX/`echo $job_basename | sed 's/done_//'`"
     fi
 }
 
@@ -116,7 +126,7 @@ lpw_receive_jobs()
 {
     lpw_highest_job
     LPW_JOB=`expr $LPW_JOB + 1`
-    (cd $LPW_INBOX; perl $LPW_TOP/get-patches2.pl $LPW_JOB)
+    (cd $LPW_INBOX; perl "$LPW_BIN/get-patches2.pl" $LPW_JOB) 
     lpw_move_finished_jobs_to_outbox
 }
 
@@ -148,6 +158,25 @@ lpw_assign_job_to_slave()
     return 0
 }
 
+# Summarize a completed job
+lpw_summarize_job()
+{
+    dir=$1
+    jobnum=$2
+    for log in $LPW_SHARED/$dir/$jobnum/*.log
+    do
+        # FIXME: should summarise results from log files at the end and strip
+        # "Patchwatcher:ok" lines here
+        cat "$log" >> "$LPW_SHARED/$dir/$jobnum/log_temp.txt"
+    done
+    # mark the directory as done by changing its name so that it doesn't get
+    # found by lpw_lowest_job any more
+    mv "$LPW_SHARED/$dir/$jobnum" "$LPW_SHARED/$dir/done_$jobnum"
+    # create the log.txt file after renaming the directory to avoid a race in
+    # finding log.txt in the old directory
+    mv "$LPW_SHARED/$dir/done_$jobnum/log_temp.txt" "$LPW_SHARED/$dir/done_$jobnum/log.txt"
+}
+
 # MAGIC HAPPENS
 
 # Report the given job's results via email and web.
@@ -174,7 +203,7 @@ lpw_send_job()
     jobnum=$1
     job=$LPW_OUTBOX/$jobnum
     patch=$job/1.patch
-    log=$job/log.txt
+    log=$job/1.log
 
     if test "$jobnum" = ""
     then
@@ -202,10 +231,10 @@ lpw_send_job()
     status=`tail -n 1 $log`
 
     case $status in
-    *patchwatcher:OK*) 
+    *patchwatcher:[Oo][Kk]*) 
         # The patch was successful, so email it to the filtered patch list.
         # TODO: parameterize destination
-        mailx -s "${patch_sender}: $patch_subject" wine-patches-filtered@googlegroups.com < $patch 
+        mailx -s "${patch_sender}: $patch_subject" $PATCHWATCHER_RESULT_EMAIL_ADDR < $patch 
         ;;
     *)   
         # The patch was unsuccessful, so send an error message to the user.
@@ -227,12 +256,12 @@ See
 for more info.
 
 _EOF_
-        mailx -s "Patchwatcher: ${status}: $patch_subject" "$patch_sender" dank@kegel.com  < /tmp/msg.dat.$$
+        mailx -s "Patchwatcher: ${status}: $patch_subject" "$patch_sender" $PATCHWATCHER_FAIL_EMAIL_ADDR  < /tmp/msg.dat.$$
         ;;
     esac
     rm /tmp/msg.dat.$$
 
-    (cd $LPW_SHARED; perl $LPW_TOP/dashboard2.pl) > index.html
+    (cd $LPW_SHARED; perl $LPW_BIN/dashboard2.pl) > index.html
     ftp $PATCHWATCHER_FTP <<_EOF_
 cd results2
 put index.html
@@ -262,7 +291,7 @@ lpw_send_outbox()
 # Debugging tool to let you try out functions interactively
 demo_shell()
 {
-    lpw_init
+    lpw_init `dirname $0`
 
     set -x
     case "$1" in

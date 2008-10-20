@@ -20,8 +20,8 @@
 # replaces it with the original, and goes back to wait for 
 # another patch.
 
-. ./libpatchwatcher.sh
-lpw_init
+. `dirname $0`/libpatchwatcher.sh
+lpw_init `dirname $0`
 
 set -e
 set -x
@@ -29,8 +29,7 @@ set -x
 # Set this to true on first run and after debugging
 initialize=false
 
-TOP=`pwd`
-WORK=$TOP/wine-continuous-workdir
+WORK="`pwd`/wine-continuous-workdir"
 
 WINE=$WORK/active/wine
 WINESERVER=$WORK/active/server/wineserver
@@ -51,7 +50,7 @@ build_wine()
     autoconf && 
     ./configure && 
     make depend && 
-    make $parallel 2>&1 | perl $LPW_TOP/trim-build-log.pl > $log &&
+    make $parallel 2>&1 | perl "$LPW_BIN/trim-build-log.pl" > $log &&
     grep -q "^Wine build complete" $log 
 }
 
@@ -65,11 +64,11 @@ baseline_tests()
         make testclean
         $WINESERVER -k || true
         rm -rf $WINEPREFIX || true
-        sh $TOP/../winetricks gecko
+        sh "$LPW_BIN/../winetricks" gecko
         WINETEST_WRAPPER="$TOP/alarm 150" make -k test || true
     done > flaky.log 2>&1
 
-    perl $TOP/get-dll.pl < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
+    perl "$LPW_BIN/get-dll.pl" < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
     # Record for posterity
     cp flaky.log $WORK/baseline.testlog
     cp flaky.dat $WORK/baseline.testdat
@@ -83,9 +82,9 @@ retest_wine()
     make testclean > /dev/null
     $WINESERVER -k > /dev/null || true
     rm -rf $WINEPREFIX || true
-    sh $TOP/../winetricks gecko > /dev/null
+    sh "$LPW_BIN/../winetricks" gecko > /dev/null
     WINETEST_WRAPPER="$TOP/alarm 150" make -k test > $thepatch.testlog 2>&1 || true
-    perl $TOP/get-dll.pl < $thepatch.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v `cat $TOP/blacklist.txt` > $thepatch.testdat || true
+    perl "$LPW_BIN/get-dll.pl" < $thepatch.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v `cat "$LPW_BIN/blacklist.txt"` > $thepatch.testdat || true
     cat $thepatch.testlog
     echo "Regression test changes vs. baseline test runs:"
     diff flaky.dat $thepatch.testdat || true
@@ -164,7 +163,7 @@ try_one_job()
         patchnum=`expr $patchnum + 1`
     done
 
-    lpw_summarize_job slave/$LPW_JOB
+    lpw_summarize_job slave $LPW_JOB
 
     cd $WORK
     rm -rf active
