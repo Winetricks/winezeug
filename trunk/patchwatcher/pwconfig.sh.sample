@@ -5,6 +5,7 @@ export PATCHWATCHER_FAIL_EMAIL_ADDR=dank@kegel.com
 export PATCHWATCHER_USER=xxx
 export PATCHWATCHER_PASSWORD=xxx
 export PATCHWATCHER_HOST=xxx
+export PATCHWATCHER_USESSL=0
 export PATCHWATCHER_FTP=xxxxxx
 # Note: ~/.netrc must be set up to allow this user to ftp to $PATCHWATCHER_FTP without password prompts
 
