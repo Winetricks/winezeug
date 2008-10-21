@@ -32,11 +32,14 @@ my ($USER, $PASSWORD, $HOST);
                  $HOST     = $ENV{"PATCHWATCHER_HOST"};
 
 my $pop = new Mail::POP3Client(
-                 USER     => $ENV{"PATCHWATCHER_USER"},
-                 PASSWORD => $ENV{"PATCHWATCHER_PASSWORD"},
-                 HOST     => $ENV{"PATCHWATCHER_HOST"}
+                 HOST     => $ENV{"PATCHWATCHER_HOST"},
+                 USESSL   => $ENV{"PATCHWATCHER_USESSL"}
 );
 
+$pop->User($ENV{"PATCHWATCHER_USER"});
+$pop->Pass($ENV{"PATCHWATCHER_PASSWORD"});
+$pop->Connect() >= 0 || die $pop->Message();
+                                 
 ## Initialize stuff for MIME::Parser;
 # TODO: stop using outputdir
 my $outputdir = "./mimemail";
