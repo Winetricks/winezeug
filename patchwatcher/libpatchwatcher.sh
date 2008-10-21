@@ -101,12 +101,11 @@ lpw_lowest_job()
 # Find all finished jobs in inbox or slave*, and send to outbox
 lpw_move_finished_jobs_to_outbox()
 {
-    finished=`find $LPW_SHARED/inbox $LPW_SHARED/slave* -name log.txt -print 2>/dev/null | sed 's/\/log.txt//'`
-    if test "$finished" != ""
-    then
-        $job_basename=`basename $finished`
-        mv "$finished" "$LPW_OUTBOX/`echo $job_basename | sed 's/done_//'`"
-    fi
+    for finished in `find $LPW_SHARED/inbox $LPW_SHARED/slave* -name log.txt -print 2>/dev/null | sed 's/\/log.txt//'`
+    do
+      job_basename=`basename $finished`
+      mv "$finished" "$LPW_OUTBOX/`echo $job_basename | sed 's/done_//'`"
+    done
 }
 
 # Call this to retrieve jobs from the pop3 mailbox specified in the
@@ -257,9 +256,9 @@ for more info.
 
 _EOF_
         mailx -s "Patchwatcher: ${status}: $patch_subject" "$patch_sender" $PATCHWATCHER_FAIL_EMAIL_ADDR  < /tmp/msg.dat.$$
+        rm /tmp/msg.dat.$$
         ;;
     esac
-    rm /tmp/msg.dat.$$
 
     (cd $LPW_SHARED; perl $LPW_BIN/dashboard2.pl) > index.html
     ftp $PATCHWATCHER_FTP <<_EOF_
