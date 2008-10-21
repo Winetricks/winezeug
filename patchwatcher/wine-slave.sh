@@ -59,7 +59,7 @@ baseline_tests()
 {
     # Once this script is debugged, crank up the number of runs a bit here
     cd $WORK/active
-    for try in 1 # 2 3 4 5
+    for try in 1 2 3 4 5
     do
         make testclean
         $WINESERVER -k || true
