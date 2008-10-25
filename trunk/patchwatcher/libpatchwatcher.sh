@@ -162,15 +162,41 @@ lpw_summarize_job()
 {
     dir=$1
     jobnum=$2
-    for log in $LPW_SHARED/$dir/$jobnum/*.log
-    do
-        # FIXME: should summarise results from log files at the end and strip
-        # "Patchwatcher:ok" lines here
-        cat "$log" >> "$LPW_SHARED/$dir/$jobnum/log_temp.txt"
-    done
+
+    # Create a log.txt file that just gives the most important details about what failed.
+
+    # Did all the patches succeed?
+    count=`ls $LPW_SHARED/$dir/$jobnum/*.log | wc -l`
+    okcount=`grep -i "^patchwatcher:ok" $LPW_SHARED/$dir/$jobnum/*.log 2>/dev/null | wc -l`
+    case $okcount in
+        $total) 
+            echo "Patchwatcher: OK, all $okcount patches in job built and passed regression test." 
+            ;;
+        *) 
+	    echo "Patchwatcher: job FAILED, only $okcount out of $count patches succeeded" 
+	    for err in $LPW_SHARED/$dir/$jobnum/*.err
+	    do
+                patch=`echo $err | sed 's/\.err/\.patch/'`
+                patch_subject="`cat $patch | grep '^Subject:' | head -n 1 | sed 's/^Subject: //'`"
+		file=`echo $err | sed 's,.*/,,;s,\..*,,'`
+		if ! grep -qi "^patchwatcher:ok" "$err" 
+		then
+		    echo "------------------------------------------------------"
+		    echo "Patchwatcher: patch $file of $count,"
+		    echo "  $patch_subject"
+                    echo "failed as follows:"
+		    cat $err
+		fi
+	    done 
+	    echo "------------------------------------------------------"
+	    echo "Patchwatcher: end of log"
+            ;;
+    esac > "$LPW_SHARED/$dir/$jobnum/log_temp.txt"
+
     # mark the directory as done by changing its name so that it doesn't get
     # found by lpw_lowest_job any more
     mv "$LPW_SHARED/$dir/$jobnum" "$LPW_SHARED/$dir/done_$jobnum"
+
     # create the log.txt file after renaming the directory to avoid a race in
     # finding log.txt in the old directory
     mv "$LPW_SHARED/$dir/done_$jobnum/log_temp.txt" "$LPW_SHARED/$dir/done_$jobnum/log.txt"
@@ -201,17 +227,11 @@ lpw_send_job()
 {
     jobnum=$1
     job=$LPW_OUTBOX/$jobnum
-    patch=$job/1.patch
-    log=$job/1.log
+    log=$job/log.txt
 
     if test "$jobnum" = ""
     then
         echo "lpw_send_job: jobnum argument missing"
-        exit 1
-    fi
-    if ! test -f $patch 
-    then
-        echo "lpw_send_job: no such file $patch"
         exit 1
     fi
     if ! test -f $log 
@@ -220,42 +240,52 @@ lpw_send_job()
         exit 1
     fi
 
-    # Retrieve sender and subject from patch file
+    # Retrieve sender from first patch file
     # Patch file is written by get-patches2.pl in a specific format,
     # always starts with an email header.
-    patch_sender="`cat $patch | grep '^From:' | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`"
-    patch_subject="`cat $patch | grep '^Subject:' | head -n 1 | sed 's/^Subject: //'`"
+    patch1=$job/1.patch
+    patch_sender="`cat $patch1 | grep '^From:' | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`"
+    patch1_subject="`cat $patch1 | grep '^Subject:' | head -n 1 | sed 's/^Subject: //'`"
 
     # Retrieve status from log file
-    status=`tail -n 1 $log`
+    status=`head -n 1 $log`
+
+    # Retrieve number of patches in series
+    patch_count=`ls $job/*.patch | wc -l`
 
     case $status in
-    *patchwatcher:[Oo][Kk]*) 
-        # The patch was successful, so email it to the filtered patch list.
+    *[Pp]atchwatcher:[Oo][Kk]*) 
+        # The patch series was successful, so email them to the filtered patch list.
         # TODO: parameterize destination
-        mailx -s "${patch_sender}: $patch_subject" $PATCHWATCHER_RESULT_EMAIL_ADDR < $patch 
+        i=1
+        while test $i -le $patch_count
+        do
+            patch=$job/$i.patch
+            patch_subject="`cat $patch | grep '^Subject:' | head -n 1 | sed 's/^Subject: //'`"
+            mailx -s "${patch_sender}: $patch1_subject" $PATCHWATCHER_RESULT_EMAIL_ADDR < $patch 
+            i=`expr $i + 1`
+        done
         ;;
     *)   
-        # The patch was unsuccessful, so send an error message to the user.
+        # The patch series was unsuccessful, so send an error message for each failed patch to the user.
         # TODO: parameterize destination better
         # TODO: parameterize message text better
-        cat - > /tmp/msg.dat.$$ <<_EOF_
+        cat - $job/log.txt > /tmp/msg.dat.$$ <<_EOF_
+EXPERIMENTAL VERSION 2 PLEASE IGNORE THIS MAIL
+
 Hi!  This is the experimental automated patchwatcher thingy.
 
-The latest sources were built and tested with your patch
-"$patch_subject"
-but it seems to have failed somehow.  The last line of the log is:
-$status
-
+The latest sources were built and tested with your patch,
+but it seems to have failed.
 You can view the patch(es) and build log(s) at
   $PATCHWATCHER_URL/$jobnum
 
-See
-  $PATCHWATCHER_URL
-for more info.
-
+Here are the patches and associated errors:
 _EOF_
-        mailx -s "Patchwatcher: ${status}: $patch_subject" "$patch_sender" $PATCHWATCHER_FAIL_EMAIL_ADDR  < /tmp/msg.dat.$$
+
+        # FIXME: make it configurable whether to send mail to author
+        #mailx -s "${status}: $patch1_subject" "$patch_sender" $PATCHWATCHER_FAIL_EMAIL_ADDR  < /tmp/msg.dat.$$
+        mailx -s "${status}: $patch1_subject" $PATCHWATCHER_FAIL_EMAIL_ADDR  < /tmp/msg.dat.$$
         rm /tmp/msg.dat.$$
         ;;
     esac
