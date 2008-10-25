@@ -79,8 +79,8 @@ for $job (@jobs) {
 
    $subject = my_escape($subject);
 
-   $patch =~ s/.*\///;
-   $log =~ s/.*\///;
+   $patch =~ s/[^\/]*\///;
+   $log =~ s/[^\/]*\///;
 
    if ($status eq "queued") {
        $loglink = $status;
