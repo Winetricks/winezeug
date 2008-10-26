@@ -51,25 +51,28 @@ e.g. by running http://kegel.com/wine/hardy.sh
 2. install the additional packages needed by Patchwatcher,
 e.g. by running patchwatcher/install-pkgs.sh.
 
-3. set up an area on a web site that you can
+3. Make sure you can send mail using 'mailx user@host'.
+You may need to do sudo dpkg-reconfigure exim4-config.
+
+4. set up an area on a web site that you can
 upload to via FTP
 
-4. create a .netrc that allows you to ftp results to the 
+5. create a .netrc that allows you to ftp results to the 
 web site without entering a password.
 
-5. Set up a pop3 mailbox somewhere dedicated to your
+6. Set up a pop3 mailbox somewhere dedicated to your
 patchwatcher instance, and subscribe it to wine-patches.
 
-6. Edit patchwatcher/pwconfig.sh to tell patchwatcher
+7. Edit patchwatcher/pwconfig.sh to tell patchwatcher
 about the ftp and pop3 accounts.
 
-7. Create a directory 'shared' in the patchwatcher directory.
+8. Create a directory 'shared' in the patchwatcher directory.
 (If you're running a distributed patchwatcher. you'll need
 to share this directory via nfs and/or cifs.)
 Inside it, create a 'slave' directory; this is where jobs
 that are queued for work will wait to be executed.
 
-7. Run
+9. Run
   sh wine-slave.sh init
 to prepare a wine tree for testing.
 
@@ -77,7 +80,7 @@ The next few steps will step you through
 the process normally done automatically by
 Patchwatcher so you can catch problems more easily.
 
-8.  Try fetching patches by running 
+10.  Try fetching patches by running 
   sh libpwdemo.sh receive
 This should fetch patches from the pop3 mailbox and put
 them in the shared/inbox directory.  Each patch series 
@@ -85,11 +88,11 @@ is called a job, and is placed in directories numbered
 1 for the first patch series, 2 for the second, etc.
 Verify that they contain good looking patches.
 
-9. Once you have received some patches, assign them
+11. Once you have received some patches, assign them
 to a build slave by running
   sh libpwdemo.sh assign_to slave
 
-10. Run
+12. Run
   sh wine-slave.sh job 1
 to test the first patch recieved above.
 This takes the patch series in directory shared/slave/1,
@@ -97,11 +100,11 @@ tests it, moves the directory shared/slave/1 to shared/slave/done_1,
 and creates a log in shared/slave/done_1/log.txt
 describing the result of the test.
 
-11. Run
+13. Run
   sh libpwdemo.sh move_finished
 to move the completed jobs to shared/outbox.
 
-12. Run
+14. Run
   sh libpwdemo.sh send_outbox
 to upload the results of the job and send email.
 
@@ -109,15 +112,15 @@ to upload the results of the job and send email.
 jobs between directories; that's often the easiest
 way to retry a step.)
 
-13. Verify that the first patch was properly
+15. Verify that the first patch was properly
 tested, email about it was sent to the
 author and to you, and a page of results is
 on the web site you told patchwatcher about.
 
-Repeat steps 8 through 12 until you've debugged
+Repeat steps 9 through 15 until you've debugged
 your configuration.
 
-14. Finally, in one window, run
+16. Finally, in one window, run
   sh master.sh
 and in another window, run
   sh wine-slave.sh run
