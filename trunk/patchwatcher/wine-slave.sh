@@ -87,7 +87,13 @@ retest_wine()
     $WINESERVER -k > /dev/null || true
     rm -rf $WINEPREFIX || true
     sh "$LPW_BIN/../winetricks" gecko > /dev/null
-    WINETEST_WRAPPER="$TOOLS/alarm 150" make -k test > $thepatch.testlog 2>&1 || true
+
+    #WINETEST_WRAPPER="$TOOLS/alarm 150" make -k test > $thepatch.testlog 2>&1 || true
+    # Kludge: only test ntdll
+    cd dlls/ntdll/tests
+    WINETEST_WRAPPER="$TOOLS/alarm 150" make -k test > ../../../$thepatch.testlog 2>&1 || true
+    cd ../../..
+
     perl "$LPW_BIN/get-dll.pl" < $thepatch.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v `cat "$LPW_BIN/blacklist.txt"` > $thepatch.testdat || true
     cat $thepatch.testlog
     # Report failure if any new errors
