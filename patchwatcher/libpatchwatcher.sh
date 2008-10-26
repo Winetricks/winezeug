@@ -169,7 +169,7 @@ lpw_summarize_job()
     count=`ls $LPW_SHARED/$dir/$jobnum/*.log | wc -l`
     okcount=`grep -i "^patchwatcher:ok" $LPW_SHARED/$dir/$jobnum/*.log 2>/dev/null | wc -l`
     case $okcount in
-        $total) 
+        $count) 
             echo "Patchwatcher: OK, all $okcount patches in job built and passed regression test." 
             ;;
         *) 

@@ -33,7 +33,7 @@ print "<th>From";
 print "<th>Subject";
 print "<th class=result>Status</tr>\n";
 
-open FILE, "find outbox sent slave* -name '[1-9]*' -type d | sort -t/ -k 1rn |";
+open FILE, "find outbox sent slave* -name '[1-9]*' -type d | sort -t/ -k 2rn |";
 my @jobs = <FILE>;
 close FILE;
 my $job;
