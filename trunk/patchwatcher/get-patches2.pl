@@ -16,6 +16,9 @@
 # Exception: webmail cookie messages are simply ignored and deleted,
 # since they aren't really messages.
 #
+# Prerequisites on Ubuntu:
+# sudo apt-get install libmail-pop3client-perl libmime-tools-perl
+#
 # Copyright 2008 Google (Dan Kegel)
 
 use strict;
