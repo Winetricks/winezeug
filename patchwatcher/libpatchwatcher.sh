@@ -254,7 +254,7 @@ lpw_send_job()
     patch_count=`ls $job/*.patch | wc -l`
 
     case $status in
-    *[Pp]atchwatcher:[Oo][Kk]*) 
+    *[Pp]atchwatcher:" "[Oo][Kk]*|*[Pp]atchwatcher:[Oo][Kk]*) 
         # The patch series was successful, so email them to the filtered patch list.
         # TODO: parameterize destination
         i=1
