@@ -1,6 +1,6 @@
 Patchwatcher - a distributed precommit testing system
 
-History
+=== History
 
 The Wine project has long suffered from a reputation
 for being hard to join, and from having lots of 
@@ -43,7 +43,7 @@ integrate it into Patchwatcher to give Wine
 developers early warning of portability problems
 or subtle bugs in their code.
 
-Design
+=== Design
 
 Patchwatcher calls a patch (or patch series) a 'job'.
 Each job has a sequentially numbered directory.  
@@ -103,7 +103,31 @@ finished.  (i.e. producing a single log.txt file saying how
 many errors there were on each platform, with the URL of each
 .log and .err file.)
 
-Configuration
+We might also have several build slaves of the same type,
+and a master.sh that balances the load across them.
+
+=== Security
+
+Essentially, there isn't any, so be very, very careful.
+You could hurt yourself badly running Patchwatcher, so only do it
+if you're sure you know what you're getting into.
+
+Applying patches blindly from the raw patches list is a very dangerous
+thing to do, since the patch could have malicious code in it.
+Therefore, patchwatcher should be run in as walled-off an
+environment as possible.  It should have its own user account,
+ideally on a machine booted daily from a read-only disk,
+and anything it touches should be considered suspect.
+You should not use the computer that runs patchwatcher for
+anything else, as it might be subverted, and install a 
+keylogger or worse.
+
+The FTP account for uploading results should also be as
+powerless as possible.  It should not have shell access,
+nor should it be able to write to any directory other than
+the one it's supposed to.
+
+=== Configuration
 
 1. install all the packages needed to build Wine,
 e.g. by running http://kegel.com/wine/hardy.sh
@@ -190,7 +214,7 @@ This repeats all those steps automatically.
 Now sit back, let patchwatcher do its thing, and
 be ready to catch it when it falls.
 
-Known Problems
+=== Known Problems
 
 - the script that retrieves patches from the pop mailbox
   can't handle more than one outstanding patch series,
@@ -199,4 +223,46 @@ Known Problems
   from the mailbox by hand
 
 - really poor documentation :-)
+
+=== Issue Tracking
+
+Patchwatcher bugs are tracked at http://code.google.com/p/winezeug/issues
+
+=== Related Applications
+
+This is an old idea; we're not breaking any new ground here, but
+better late than never!
+
+http://buildbot.net is the most popular automated build system around.
+It has some precommit test abilities, and Kai Blinn is working to
+extend them so it can do what Patchwatcher does.  It would be nice
+if we could drop Patchwatcher and just use Buildbot, but it'll
+probably be a while before Kai catches up.  I like to think
+of Patchwatcher as a rapid prototyping system for what Buildbot
+should be doing in this area... but really I'm just too lazy to
+work my way up the buildbot learning curve.
+
+Hadoop has something similar, see 
+http://developer.yahoo.net/blogs/hadoop/2007/12/if_it_hurts_automate_it_1.html
+
+Drupal has something similar, see 
+http://blog.boombatower.com/automated-patch-testing-(testing.drupal.org)-realized
+
+Microsoft was doing something like this as early as 2001.  See
+http://blogs.msdn.com/misampso/archive/2005/03/14/395374.aspx or
+http://blogs.msdn.com/vcblog/archive/2006/11/02/gauntlet-a-peek-into-visual-c-development-practices.aspx
+
+Many source code control systems have precommit hooks, and many
+groups use them to run smoke tests, but those are 
+usually very limited (e.g. < 30 seconds) because
+they force the developer to wait.  Aegis had this
+back in 1992.  See also
+http://blogs.codehaus.org/people/vmassol/archives/000937_unbreakable_builds.html
+
+gcc had a post-commit autotest back in 2000, see
+http://web.archive.org/web/20010803160549/http://www.cygnus.com/~geoffk/gcc-regression/
+
+Mozilla had a post-commit autotest called Tinderbox back in 1998.
+
+=== end
 
