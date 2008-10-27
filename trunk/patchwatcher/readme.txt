@@ -43,6 +43,66 @@ integrate it into Patchwatcher to give Wine
 developers early warning of portability problems
 or subtle bugs in their code.
 
+Design
+
+Patchwatcher calls a patch (or patch series) a 'job'.
+Each job has a sequentially numbered directory.  
+The first job received from the mailing list is 1, 
+the second job is 2, etc.    Inside a job, patches
+(if more than one) are also numbered sequentially.
+
+Job directories live in named work queues which are just 
+subdirectories of a directory called 'shared'.
+Job directories get moved around from queue to queue as they
+progress through their life cycle.
+
+The main work queues, in the order that jobs visit them, are:
+ 'inbox' (for jobs that have just been received),
+ 'slave' (for jobs that have been assigned to a build slave),
+ 'outbox' (for jobs that were just finished), and
+ 'sent' (for jobs whose results have been emailed and uploaded).
+
+(In the future, when we support multiple build slave computers,
+there will be more than one 'slave' directory; we'll probably
+name them 'slave1', 'slave2', etc. or something clever like
+that.)
+
+So if we receive a three-patch series followed by
+a single patch, we would see files shared/inbox/1/[123].patch
+and shared/inbox/2/1.patch.
+
+When a patch is done being applied / built / tested,
+even if it fails, a file 'log.txt' is created with
+a summary of the errors, and files 'XXX.log' and 'XXX.err' are
+created for each patch, showing the build/test log and
+just the error messages.  A successful job is one
+that has zero-length .err files and a log.txt that says
+"Patchwatcher: OK" on the first line.
+
+This architecture was chosen to make it as easy as
+possible to quickly throw together patchwatcher systems
+that use various kinds of build/test slaves.
+The fact that jobs are directories makes it easy to
+manually rerun jobs through whatever section of the
+pipeline you're debugging at the moment.
+
+An example patchwatcher system is provided, consisting
+of master.sh and wine-slave.sh.
+master.sh receives patches, assigns them
+to the single build slave, gathers the results when
+the build slave finishes them, and publishes the result.
+wine-slave.sh runs the standard Wine build and conformance test
+on each patch in the job, and resets its private build tree
+before each new job.
+
+More complex workflows are expected.  For instance, we might
+send jobs out to MacOSX, Windows, Linux, and Solaris build
+slaves simultanously; master.sh would then be responsible
+for merging the results of the builds together once all were
+finished.  (i.e. producing a single log.txt file saying how
+many errors there were on each platform, with the URL of each
+.log and .err file.)
+
 Configuration
 
 1. install all the packages needed to build Wine,
