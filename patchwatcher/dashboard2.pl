@@ -84,7 +84,7 @@ for $job (@jobs) {
 
    if ($status eq "queued") {
        $loglink = $status;
-   } elsif ($status =~ "Patchwatcher:OK") {
+   } elsif ($status =~ s/Patchwatcher:OK/OK/i) {
        $loglink = "<a href=\"$log\" class=\"result, pass\">$status</a>";
    } else {
        $loglink = "<a href=\"$log\" class=\"result, fail\">$status</a>";
