@@ -103,6 +103,7 @@ retest_wine()
         echo "Patchwatcher: new errors:"
         grep '^> ' < $thepatch.testdiff | sed 's/^>//' || true
     else
+        echo "Patchwatcher: no new errors!"
         echo "Patchwatcher:ok"
     fi
 }
