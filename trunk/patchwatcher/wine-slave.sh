@@ -72,7 +72,7 @@ baseline_tests()
         WINETEST_WRAPPER="$TOOLS/alarm 150" make -k test || true
     done > flaky.log 2>&1
 
-    perl "$LPW_BIN/get-dll.pl" < flaky.log | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v $blacklist_regex > flaky.dat || true
+    perl "$LPW_BIN/get-dll.pl" < flaky.log | egrep -f $LPW_BIN/error-regexp.txt | sort -u | egrep -v -f $LPW_BIN/blacklist.txt > flaky.dat || true
     # Record for posterity
     cp flaky.log $WORK/baseline.testlog
     cp flaky.dat $WORK/baseline.testdat
@@ -94,15 +94,18 @@ retest_wine()
     #WINETEST_WRAPPER="$TOOLS/alarm 150" make -k test > ../../../$thepatch.testlog 2>&1 || true
     #cd ../../..
 
-    perl "$LPW_BIN/get-dll.pl" < $thepatch.testlog | egrep ": Test failed: |: Test succeeded inside todo block: " | sort -u | egrep -v `cat "$LPW_BIN/blacklist.txt"` > $thepatch.testdat || true
+    perl "$LPW_BIN/get-dll.pl" < $thepatch.testlog | egrep -f $LPW_BIN/error-regexp.txt | sort -u | egrep -v -f $LPW_BIN/blacklist.txt > $thepatch.testdat || true
     cat $thepatch.testlog
     # Report failure if any new errors
-    diff flaky.dat $thepatch.testdat > $thepatch.testdiff || true
+    diff $WORK/baseline.testdat $thepatch.testdat > $thepatch.testdiff || true
     if grep -q '^> ' < $thepatch.testdiff
     then
         echo "Patchwatcher: new errors:"
         grep '^> ' < $thepatch.testdiff | sed 's/^>//' || true
+        return 1
     else
+        echo "Patchwatcher: difference versus baseline:"
+        cat $thepatch.testdiff 
         echo "Patchwatcher: no new errors!"
         echo "Patchwatcher:ok"
     fi
@@ -119,6 +122,11 @@ initialize_tree()
     cd active
     build_wine baseline.log -j3
     baseline_tests
+    if test ! -f $WORK/baseline.testdat
+    then
+        echo baseline tests failed
+        exit 1
+    fi
 }
 
 refresh_tree()
