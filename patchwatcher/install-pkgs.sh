@@ -7,7 +7,7 @@
 #  sh hardy.sh
 
 # wine-slave.sh
-apt-get install autoconf patch
+apt-get install autoconf patch cabextract
 
 # Dashboard2.pl
 apt-get install libdate-manip-perl
