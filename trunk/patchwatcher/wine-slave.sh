@@ -50,10 +50,10 @@ build_wine()
     parallel=$2
 
     # Regenerate everything in case patch adds a new dll or changes configure.ac
-    tools/make_makefiles && 
-    autoconf && 
-    ./configure && 
-    make depend && 
+    tools/make_makefiles  > $log 2>&1 && 
+    autoconf  > $log 2>&1 && 
+    ./configure  > $log 2>&1 && 
+    make depend  | perl "$LPW_BIN/trim-build-log.pl" > $log 2>&1 && 
     make $parallel 2>&1 | perl "$LPW_BIN/trim-build-log.pl" > $log &&
     grep -q "^Wine build complete" $log 
 }
@@ -98,14 +98,14 @@ retest_wine()
     cat $thepatch.testlog
     # Report failure if any new errors
     diff $WORK/baseline.testdat $thepatch.testdat > $thepatch.testdiff || true
+    echo "Patchwatcher: difference versus baseline:"
+    cat $thepatch.testdiff 
     if grep -q '^> ' < $thepatch.testdiff
     then
         echo "Patchwatcher: new errors:"
         grep '^> ' < $thepatch.testdiff | sed 's/^>//' || true
         return 1
     else
-        echo "Patchwatcher: difference versus baseline:"
-        cat $thepatch.testdiff 
         echo "Patchwatcher: no new errors!"
         echo "Patchwatcher:ok"
     fi
