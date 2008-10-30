@@ -33,7 +33,7 @@ print "<th>From";
 print "<th>Subject";
 print "<th class=result>Status</tr>\n";
 
-open FILE, "find outbox sent slave* -name '[1-9]*' -type d | sort -t/ -k 2rn |";
+open FILE, "find inbox outbox sent slave* -name '[1-9]*' -type d | sort -t/ -k 2rn |";
 my @jobs = <FILE>;
 close FILE;
 my $job;
@@ -48,7 +48,7 @@ for $job (@jobs) {
    chomp($patch);
    my $log = $patch;
    $log =~ s/.patch$/.log/;
-   if (-f $log) {
+   if (-s $log) {
        open FILE, "grep . < $log | tail -1 |";
        $status = <FILE>;
        chomp($status);
@@ -72,7 +72,7 @@ for $job (@jobs) {
    $subject =~ s/Subject:\s*//;
    
    my $parsedDate = ParseDate($date);
-   $date = UnixDate($parsedDate, "%d-%b-%Y %H:%m");
+   $date = UnixDate($parsedDate, "%d-%b-%Y %H:%M");
 
    $from =~ s/.*<//;
    $from =~ s/>.*//;
