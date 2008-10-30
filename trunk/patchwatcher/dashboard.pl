@@ -95,7 +95,7 @@ for $patch (@patches) {
    $subject =~ s/Subject:\s*//;
    
    my $parsedDate = ParseDate($date);
-   $date = UnixDate($parsedDate, "%d-%b-%Y %H:%m");
+   $date = UnixDate($parsedDate, "%d-%b-%Y %H:%M");
 
    $from =~ s/.*<//;
    $from =~ s/>.*//;
