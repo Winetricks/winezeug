@@ -1,2 +1,5 @@
 : Test failed: 
 : Test succeeded inside todo block: 
+^make\[.*\]: \*\*\* \[
+wineserver crashed
+Timeout!  Killing child
