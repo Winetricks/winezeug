@@ -220,11 +220,17 @@ continuous_build_slave()
             mv $WORK/golden $WORK/active
         fi
     fi
+    touch $WORK/git.timestamp
     while true
     do
        if lpw_lowest_job slave
        then
            try_one_job $LPW_JOB
+       fi
+       if test "`find $WORK/git.timestamp -cmin +5`" = $WORK/git.timestamp
+       then
+           refresh_tree
+           touch $WORK/git.timestamp
        fi
        sleep 5
     done
