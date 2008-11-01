@@ -135,8 +135,12 @@ refresh_tree()
     # Recover from any accidental damage
     git diff | grep -v '^diff --git' > git.diff && patch -R -p1 < git.diff
     # Grab latest source
-    git pull > git.log 2>&1
-    cat git.log
+    if ! git pull > git.log 2>&1
+    then
+       echo git failed, probably bad network.  Log:
+       cat git.log
+       return 0
+    fi
     if ! grep -q "Already up-to-date." < git.log
     then
        build_wine baseline.log -j3
