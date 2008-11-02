@@ -264,5 +264,116 @@ http://web.archive.org/web/20010803160549/http://www.cygnus.com/~geoffk/gcc-regr
 
 Mozilla had a post-commit autotest called Tinderbox back in 1998.
 
+=== Experimental Build Cluster
+
+We're just getting the distributed build part of Patchwatcher going.
+Here are some notes on how to set up a primitive cluster.
+This is just an example; there are many ways to do this.
+
+In these examples, the build master has hostname master, and
+the build slaves have hostnames slave1, slave2, etc.
+I will also assume that root login is not allowed, and that
+the main user's account is named 'admin'; substitute your username
+as needed.
+
+The build slave machines must be dedicated, i.e. must not be used for
+anything but running patchwatcher build slaves.  This is for your
+protection; these machines may become compromised over time, since 
+applying and testing incoming patches means running untrusted code.
+You should consider using ghost or the like to save a known good
+configuration and restore it periodically to wipe out any infection.
+
+0. Reformat each machine and do a fresh installation of Ubuntu 8.10.
+
+1. Arrange for stable IP addresses for all the machines in the cluster.
+e.g. set your DHCP server on your local router to reserve their addresses.
+I like to use a scheme where the master is .20, the first slave is .21, etc.
+
+2. Install openssh-server on each machine so you can administer them
+remotely via ssh/scp.  (This creates user sshd on each machine; you
+want to end up with the same UID for each user on all machines, so
+install packages in same order everywhere.)
+
+3. Set up shared hostname and password database.
+
+Since even Ubuntu 8.10 doesn't have an easy way
+to set up kerberos+ldap yet, the easiest way to
+achieve this is to cheat, and just set up identical
+config files on each computer.
+
+To do this, edit /etc/hosts by hand on master to have the
+IP addresses of all the hosts in the cluster, then scp it to
+each slave.  For instance, edit /etc/hosts to have a section
+like this:
+
+127.0.0.1	localhost.localdomain	localhost
+192.168.1.20	master
+192.168.1.21	slave1
+192.168.1.22	slave2
+
+Also create users patchmaster and patchslave, e.g.
+  $ sudo adduser patchmaster
+  $ sudo adduser patchslave
+
+Then copy these files to the slaves, e.g.
+  $ sudo bash
+  # cd /root
+  # umask 0077
+  # tar -C /etc -f config.tar -c hosts passwd shadow group
+  # scp config.tar admin@slave1:
+  # scp config.tar admin@slave2:
+  # exit
+Then on each slave, do
+  $ sudo tar -C /etc -f config-bak.tar -c hosts passwd shadow group
+  $ sudo tar -C /etc -f config.tar -x 
+  $ sudo mkdir /home/patchslave
+  $ sudo chown patchslave.patchslave /home/patchslave
+  $ rm config.tar
+and reboot the slaves to make sure the admin and patchslave can log in properly,
+then remove config-bak.tar.
+
+4. Set up file sharing
+
+Install NFS server on master, and NFS common on both slaves.
+(See https://help.ubuntu.com/community/SettingUpNFSHowTo )
+
+On the master, create a directory /home/pwshared owned by user patchmaster on all machines, e.g.
+
+  $ sudo mkdir /home/pwshared; sudo chown patchmaster.patchmaster /home/pwshared
+
+and create directories for each slave, e.g.
+
+  $ sudo mkdir /home/pwshared/slave{1,2}
+  $ sudo chown patchmaster.patchmaster /home/pwshared/slave{1,2}
+
+On the master, export the slave directories.  i.e. edit /etc/exports and add
+the lines
+
+  /home/pwshared/slave1 slave1(rw,sync)
+  /home/pwshared/slave2 slave2(rw,sync)
+
+On each slave, mount its slave directory.  i.e. edit /etc/fstab and add a line like
+  master:/home/pwshared/slave2 /home/pwshared/slave2 nfs
+Then test the mount by doing
+  $ sudo mount /home/pwshared/`hostname`
+and make sure user patchslave can create a file in that directory,
+and that it shows up in that directory on the master.
+
+TODO: show how to solve permissions problem
+
+4. Populate the patchmaster and patchslave accounts on the master
+
+On the master, in both patchmaster and patchslave accounts, get a copy of 
+the winezeug repository using the command
+
+$ svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
+
+Then copy ~patchslave to both slave machines:
+$ sudo su patchslave
+$ cd /home
+$ scp -a 
+
+TODO: finish
+
 === end
 
