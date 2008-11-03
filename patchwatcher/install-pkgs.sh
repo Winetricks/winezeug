@@ -16,4 +16,4 @@ apt-get install libdate-manip-perl
 apt-get install libmail-pop3client-perl libmime-tools-perl
 
 # libpatchwatcher.sh
-apt-get install mailx
+apt-get install mailutils
