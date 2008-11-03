@@ -372,14 +372,24 @@ and that it shows up in that directory on the master.
 4. Populate the patchmaster and patchslave accounts on the master
 
 On the master, in both patchmaster and patchslave accounts, get a copy of 
-the winezeug repository using the command
+the winezeug repository, and set up the shared directory
+e.g. using the commands
 
+$ ssh patchmaster@master
+$ svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
+$ ln -s /home/pwshared winezeug/patchwatcher/shared
+$ exit
+$ ssh patchslave@master
+s ln -s /home/pwshared winezeug/patchwatcher/shared
 $ svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
 
-Then copy ~patchslave to both slave machines:
-$ sudo su patchslave
-$ cd /home
-$ scp -a 
+Then, still as user patchslave, copy this directory to both slave machines:
+$ rsync -a winezeug slave1:
+$ rsync -a winezeug slave2:
+
+5. As patchmaster on master, go through the first seven steps of 
+patchwatcher setup described above, and verify you can 
+both send mail and retrieve patches from your mailbox.
 
 TODO: finish
 
