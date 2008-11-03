@@ -156,15 +156,11 @@ to share this directory via nfs and/or cifs.)
 Inside it, create a 'slave' directory; this is where jobs
 that are queued for work will wait to be executed.
 
-9. Run
-  sh wine-slave.sh init
-to prepare a wine tree for testing.
-
 The next few steps will step you through
 the process normally done automatically by
 Patchwatcher so you can catch problems more easily.
 
-10.  Try fetching patches by running 
+9.  Try fetching patches by running 
   sh libpwdemo.sh receive
 This should fetch patches from the pop3 mailbox and put
 them in the shared/inbox directory.  Each patch series 
@@ -172,9 +168,13 @@ is called a job, and is placed in directories numbered
 1 for the first patch series, 2 for the second, etc.
 Verify that they contain good looking patches.
 
-11. Once you have received some patches, assign them
-to a build slave by running
+10. Once you have received some patches, assign them
+to a build slave by running e.g.
   sh libpwdemo.sh assign_to slave
+
+11. Run
+  sh wine-slave.sh init
+to prepare a wine tree for testing.
 
 12. Run
   sh wine-slave.sh job 1
@@ -201,6 +201,9 @@ tested, email about it was sent to the
 author and to you, and a page of results is
 on the web site you told patchwatcher about.
 
+The web page will look funny until you upload the
+file winehq.css, so do that now.
+
 Repeat steps 9 through 15 until you've debugged
 your configuration.
 
@@ -213,56 +216,6 @@ This repeats all those steps automatically.
 
 Now sit back, let patchwatcher do its thing, and
 be ready to catch it when it falls.
-
-=== Known Problems
-
-- the script that retrieves patches from the pop mailbox
-  can't handle more than one outstanding patch series,
-  so it gets stuck if anybody sends a partial patch series;
-  until we fix this, you have to delete offending patches
-  from the mailbox by hand
-
-- really poor documentation :-)
-
-=== Issue Tracking
-
-Patchwatcher bugs are tracked at http://code.google.com/p/winezeug/issues
-
-=== Related Applications
-
-This is an old idea; we're not breaking any new ground here, but
-better late than never!
-
-http://buildbot.net is the most popular automated build system around.
-It has some precommit test abilities, and Kai Blinn is working to
-extend them so it can do what Patchwatcher does.  It would be nice
-if we could drop Patchwatcher and just use Buildbot, but it'll
-probably be a while before Kai catches up.  I like to think
-of Patchwatcher as a rapid prototyping system for what Buildbot
-should be doing in this area... but really I'm just too lazy to
-work my way up the buildbot learning curve.
-
-Hadoop has something similar, see 
-http://developer.yahoo.net/blogs/hadoop/2007/12/if_it_hurts_automate_it_1.html
-
-Drupal has something similar, see 
-http://blog.boombatower.com/automated-patch-testing-(testing.drupal.org)-realized
-
-Microsoft was doing something like this as early as 2001.  See
-http://blogs.msdn.com/misampso/archive/2005/03/14/395374.aspx or
-http://blogs.msdn.com/vcblog/archive/2006/11/02/gauntlet-a-peek-into-visual-c-development-practices.aspx
-
-Many source code control systems have precommit hooks, and many
-groups use them to run smoke tests, but those are 
-usually very limited (e.g. < 30 seconds) because
-they force the developer to wait.  Aegis had this
-back in 1992.  See also
-http://blogs.codehaus.org/people/vmassol/archives/000937_unbreakable_builds.html
-
-gcc had a post-commit autotest back in 2000, see
-http://web.archive.org/web/20010803160549/http://www.cygnus.com/~geoffk/gcc-regression/
-
-Mozilla had a post-commit autotest called Tinderbox back in 1998.
 
 === Experimental Build Cluster
 
@@ -347,6 +300,9 @@ On the master, create a directory /home/pwshared owned by user patchmaster on al
 
   $ sudo mkdir /home/pwshared; sudo chown patchmaster.patchmaster /home/pwshared
 
+add a symlink to it from the patchwatcher directory:
+  $ ln -s /home/pwshared winezeug/patchwatcher/shared
+
 and create group-writable directories for each slave, e.g.
 
   $ sudo mkdir /home/pwshared/slave{1,2}
@@ -387,11 +343,62 @@ Then, still as user patchslave, copy this directory to both slave machines:
 $ rsync -a winezeug slave1:
 $ rsync -a winezeug slave2:
 
-5. As patchmaster on master, go through the first seven steps of 
+5. As patchmaster on master, go through the first ten steps of 
 patchwatcher setup described above, and verify you can 
-both send mail and retrieve patches from your mailbox.
+send mail, retrieve patches from your mailbox, and assign them
+to slaves.
 
 TODO: finish
+
+=== Known Problems
+
+- the script that retrieves patches from the pop mailbox
+  can't handle more than one outstanding patch series,
+  so it gets stuck if anybody sends a partial patch series;
+  until we fix this, you have to delete offending patches
+  from the mailbox by hand
+
+- really poor documentation :-)
+
+=== Issue Tracking
+
+Patchwatcher bugs are tracked at http://code.google.com/p/winezeug/issues
+
+=== Related Applications
+
+This is an old idea; we're not breaking any new ground here, but
+better late than never!
+
+http://buildbot.net is the most popular automated build system around.
+It has some precommit test abilities, and Kai Blinn is working to
+extend them so it can do what Patchwatcher does.  It would be nice
+if we could drop Patchwatcher and just use Buildbot, but it'll
+probably be a while before Kai catches up.  I like to think
+of Patchwatcher as a rapid prototyping system for what Buildbot
+should be doing in this area... but really I'm just too lazy to
+work my way up the buildbot learning curve.
+
+Hadoop has something similar, see 
+http://developer.yahoo.net/blogs/hadoop/2007/12/if_it_hurts_automate_it_1.html
+
+Drupal has something similar, see 
+http://blog.boombatower.com/automated-patch-testing-(testing.drupal.org)-realized
+
+Microsoft was doing something like this as early as 2001.  See
+http://blogs.msdn.com/misampso/archive/2005/03/14/395374.aspx or
+http://blogs.msdn.com/vcblog/archive/2006/11/02/gauntlet-a-peek-into-visual-c-development-practices.aspx
+
+Many source code control systems have precommit hooks, and many
+groups use them to run smoke tests, but those are 
+usually very limited (e.g. < 30 seconds) because
+they force the developer to wait.  Aegis had this
+back in 1992.  See also
+http://blogs.codehaus.org/people/vmassol/archives/000937_unbreakable_builds.html
+
+gcc had a post-commit autotest back in 2000, see
+http://web.archive.org/web/20010803160549/http://www.cygnus.com/~geoffk/gcc-regression/
+
+Mozilla had a post-commit autotest called Tinderbox back in 1998.
 
 === end
 
