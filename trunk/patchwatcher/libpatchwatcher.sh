@@ -154,6 +154,10 @@ lpw_assign_job_to_slave()
     fi
 
     mv $LPW_INBOX/$LPW_JOB $dest/$LPW_JOB || return 1
+    # Until permissions get sorted out, make world writable(!)
+    # FIXME: sort out permissions; put both patchmaster and patchslave in a group
+    chmod 777 $dest/$LPW_JOB
+
     return 0
 }
 

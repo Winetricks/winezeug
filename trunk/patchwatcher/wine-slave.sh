@@ -32,6 +32,8 @@ LANG=C
 # Set this to true on first run and after debugging
 initialize=false
 
+SLAVE=`hostname`
+
 WORK="`pwd`/wine-continuous-workdir"
 TOOLS=`pwd`
 
@@ -196,14 +198,14 @@ try_one_job()
     cp -a $WORK/golden $WORK/active
 
     patchnum=1
-    jobdir=$LPW_SHARED/slave/$LPW_JOB
+    jobdir=$LPW_SHARED/$SLAVE/$LPW_JOB
     while test -f $jobdir/$patchnum.patch
     do
         try_one_patch $jobdir/$patchnum
         patchnum=`expr $patchnum + 1`
     done
 
-    lpw_summarize_job slave $LPW_JOB
+    lpw_summarize_job $SLAVE $LPW_JOB
 
     cd $WORK
     rm -rf active
@@ -227,7 +229,7 @@ continuous_build_slave()
     touch $WORK/git.timestamp
     while true
     do
-       if lpw_lowest_job slave
+       if lpw_lowest_job $SLAVE
        then
            try_one_job $LPW_JOB
        fi
