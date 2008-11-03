@@ -315,7 +315,11 @@ Also create users patchmaster and patchslave, e.g.
   $ sudo adduser patchmaster
   $ sudo adduser patchslave
 
-Then copy these files to the slaves, e.g.
+Put patchmaster into the patchslave group, e.g. edit /etc/group
+and append patchmaster to the patchslave line:
+  patchslave:x:1002:patchmaster
+
+Then copy all these files to the slaves, e.g.
   $ sudo bash
   # cd /root
   # umask 0077
@@ -336,15 +340,18 @@ then remove config-bak.tar.
 
 Install NFS server on master, and NFS common on both slaves.
 (See https://help.ubuntu.com/community/SettingUpNFSHowTo )
+e.g. on the slaves, do
+  sudo apt-get install nfs-common
 
 On the master, create a directory /home/pwshared owned by user patchmaster on all machines, e.g.
 
   $ sudo mkdir /home/pwshared; sudo chown patchmaster.patchmaster /home/pwshared
 
-and create directories for each slave, e.g.
+and create group-writable directories for each slave, e.g.
 
   $ sudo mkdir /home/pwshared/slave{1,2}
-  $ sudo chown patchmaster.patchmaster /home/pwshared/slave{1,2}
+  $ sudo chown patchslave.patchslave /home/pwshared/slave{1,2}
+  $ sudo chmod 775 /home/pwshared/slave{1,2}
 
 On the master, export the slave directories.  i.e. edit /etc/exports and add
 the lines
@@ -352,14 +359,15 @@ the lines
   /home/pwshared/slave1 slave1(rw,sync)
   /home/pwshared/slave2 slave2(rw,sync)
 
-On each slave, mount its slave directory.  i.e. edit /etc/fstab and add a line like
+On each slave, create its slave directory, and arrange for it to be mounted.
+i.e. do
+  $ sudo mkdir -p /home/pwshared/`hostname`
+then edit /etc/fstab and add a line like
   master:/home/pwshared/slave2 /home/pwshared/slave2 nfs
 Then test the mount by doing
   $ sudo mount /home/pwshared/`hostname`
 and make sure user patchslave can create a file in that directory,
 and that it shows up in that directory on the master.
-
-TODO: show how to solve permissions problem
 
 4. Populate the patchmaster and patchslave accounts on the master
 
