@@ -33,7 +33,7 @@ LANG=C
 initialize=false
 
 SLAVE=`hostname`
-
+SLAVEDIR="$LPW_SHARED/$SLAVE"
 WORK="`pwd`/wine-continuous-workdir"
 TOOLS=`pwd`
 
@@ -76,8 +76,8 @@ baseline_tests()
 
     perl "$LPW_BIN/get-dll.pl" < flaky.log | egrep -f $LPW_BIN/error-regexp.txt | sort -u | egrep -v -f $LPW_BIN/blacklist.txt > flaky.dat || true
     # Record for posterity
-    cp flaky.log $WORK/baseline.testlog
-    cp flaky.dat $WORK/baseline.testdat
+    cp flaky.log $SLAVEDIR/baseline.testlog
+    cp flaky.dat $SLAVEDIR/baseline.testdat
 }
 
 # Given an updated tree, run the tests again.
@@ -99,7 +99,7 @@ retest_wine()
     perl "$LPW_BIN/get-dll.pl" < $thepatch.testlog | egrep -f $LPW_BIN/error-regexp.txt | sort -u | egrep -v -f $LPW_BIN/blacklist.txt > $thepatch.testdat || true
     cat $thepatch.testlog
     # Report failure if any new errors
-    diff $WORK/baseline.testdat $thepatch.testdat > $thepatch.testdiff || true
+    diff $SLAVEDIR/baseline.testdat $thepatch.testdat > $thepatch.testdiff || true
     echo "Patchwatcher: difference versus baseline:"
     cat $thepatch.testdiff 
     if grep -q '^> ' < $thepatch.testdiff
@@ -124,7 +124,7 @@ initialize_tree()
     cd active
     build_wine baseline.log -j3
     baseline_tests
-    if test ! -f $WORK/baseline.testdat
+    if test ! -f $SLAVEDIR/baseline.testdat
     then
         echo baseline tests failed
         exit 1
@@ -169,7 +169,15 @@ try_one_patch()
     # Patch
     if ! patch -p$p < $thepatch.patch > $thepatch.log 2>&1
     then
-       echo "Patchwatcher: patch failed:" 
+       if egrep -q "can't find file to patch|hunk FAILED" $thepatch.log
+       then
+           echo "Patchwatcher: patch failed:" 
+       elif grep -q "Reversed .or previously applied. patch" $thepatch.log
+       then
+           echo "Patchwatcher: patch already in git:";	   
+       else
+           echo "Patchwatcher: patch failed, fixme:" 
+       fi
        cat $thepatch.log 
        return 0
     fi > $thepatch.err
@@ -242,9 +250,56 @@ continuous_build_slave()
     done
 }
 
+sys_info()
+{
+  (
+    echo "patchwatcher: hostname: "
+    hostname
+    echo ""
+    echo "patchwatcher: /etc/issue:"
+    test -f /etc/issue && cat /etc/issue
+    echo ""
+    echo "patchwatcher: gcc:"
+    gcc --version
+    echo ""
+    echo "patchwatcher: uname -a:"
+    uname -a
+    echo ""
+    echo "patchwatcher: libc:"
+    /lib/libc.so.6
+    echo ""
+    echo "patchwatcher: graphics card:"
+    lspci | grep VGA
+    echo ""
+    echo "patchwatcher: xorg.0.log loaded modules:"
+    grep -i load /var/log/Xorg.0.log
+
+    echo ""
+    echo "patchwatcher: running window manager(s):"
+    for pid in `ps -C metacity,xfwm4,fvwm -o pid= | sed 's/^[ \t]*//'`
+    do
+	/proc/$pid/exe --version || true
+    done
+    # kwin doesn't run well from /proc/$pid/exe?
+    kwin_pid=`ps -C kwin -o pid= | sed 's/^[ \t]*//'`
+    if [ -n "$kwin_pid" ] ; then
+	kwin --version || true
+    fi
+
+    echo ""
+    echo "patchwatcher: /proc/cpuinfo:"
+    test -f /proc/cpuinfo && cat /proc/cpuinfo
+
+  ) > $SLAVEDIR/sysinfo.txt
+
+}
+
 main()
 {
     set -x
+
+    sys_info
+
     case "$1" in
     "")
        set +x
