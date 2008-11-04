@@ -12,14 +12,19 @@ lpw_init `dirname $0`
 set -e
 set -x
 
+slaves=`cd shared; echo slave*`
+
 while true
 do
     lpw_receive_jobs
     lpw_send_outbox
-    while lpw_assign_job_to_slave slave
+    for slave in $slaves
     do
-        # Nothing to do
-        true
+        numjobs=`echo shared/$slave/[0-9]* 2>/dev/null | wc -l || true`
+        if test "$numjobs" = "" || test "$numjobs" -lt 2
+        then
+            lpw_assign_job_to_slave $slave || break
+	fi
     done
     sleep 30
 done
