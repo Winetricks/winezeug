@@ -14,17 +14,31 @@ set -x
 
 slaves=`cd shared; echo slave*`
 
-while true
-do
-    lpw_receive_jobs
-    lpw_send_outbox
+lpw_assign_jobs_to_slaves_fairly()
+{
+    # Hand a job to any slave that doesn't have one.
+    # Don't queue more than one job for any one slave,
+    # since we don't want to risk a small job getting
+    # stuck behind a huge one.
     for slave in $slaves
     do
-        numjobs=`echo shared/$slave/[0-9]* 2>/dev/null | wc -l || true`
-        if test "$numjobs" = "" || test "$numjobs" -lt 2
+        numjobs=`ls shared/$slave/[0-9]* 2>/dev/null | wc -l || true`
+        if test "$numjobs" = "" || test "$numjobs" -lt 1
         then
             lpw_assign_job_to_slave $slave || break
 	fi
     done
-    sleep 30
+}
+
+while true
+do
+    # It may be bad to hit the pop server every 15 seconds, so do it every 30.
+    lpw_receive_jobs
+
+    for i in 1 2
+    do
+        lpw_send_outbox
+        lpw_assign_jobs_to_slaves_fairly
+        sleep 15
+    done
 done
