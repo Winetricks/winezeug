@@ -51,7 +51,7 @@ lpw_init()
     LPW_OUTBOX="$LPW_SHARED/outbox"
     LPW_SENT="$LPW_SHARED/sent"
 
-    mkdir -p $LPW_INBOX/mimemail $LPW_OUTBOX $LPW_SENT
+    mkdir -p $LPW_INBOX/mimemail $LPW_OUTBOX $LPW_SENT || true
 }
 
 # Retrieve the number of the highest job in the system
@@ -319,6 +319,20 @@ lpw_send_outbox()
     done
 }
 
+# Redo the given jobs (presumably after updating the blacklist on all slaves)
+lpw_redo()
+{
+    cd $LPW_SENT
+    for job in $@
+    do
+       cd $job
+       rm -f *.{log,testlog,testdat,testdiff} log.txt
+       cd ..
+       mv $job ../inbox
+       echo Requeuing job $job
+    done
+}
+
 #----------------- Debugging functions ------------------
 
 # Debugging tool to let you try out functions interactively
@@ -332,7 +346,7 @@ demo_shell()
        set +x
        echo "usage: $0 cmd [arg]";  
        echo "helper cmds: lowest DIR, lowest_finished DIR, highest"
-       echo "action cmds: receive, assign_to DIR, move_finished, send, send_outbox";;
+       echo "action cmds: receive, assign_to DIR, move_finished, send, send_outbox, redo JOBS";;
 
     # Helper functions
     lowest)  
@@ -353,7 +367,8 @@ demo_shell()
        lpw_send_job $2;;
     send_outbox)
        lpw_send_outbox;;
-
+    redo)
+       shift; lpw_redo $@;;
     esac
 }
 
