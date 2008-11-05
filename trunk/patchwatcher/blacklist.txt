@@ -20,11 +20,12 @@ riched20/tests/__test__
 urlmon:protocol.c
 urlmon/tests/__test__
 urlmon:url.c
+urlmon:Timeout.  Killing child.
 user32:input.c
 user32:msg.c
 user32:win.c
 winhttp/tests/__test__
-winhttp:Timeout...Killing.child
+winhttp:Timeout.  Killing child.
 wininet:http.c
 wininet/tests/__test__
 wldap32:parse.c
