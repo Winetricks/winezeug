@@ -15,6 +15,7 @@ kernel32/tests/__test__
 kernel32:thread.c
 qmgr:qmgr.c
 qmgr/tests/__test__
+qmgr:Timeout.  Killing child.
 riched20:editor.c
 riched20/tests/__test__
 urlmon:protocol.c
