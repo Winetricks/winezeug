@@ -126,6 +126,24 @@ lpw_receive_jobs()
     lpw_highest_job
     LPW_JOB=`expr $LPW_JOB + 1`
     (cd $LPW_INBOX; perl "$LPW_BIN/get-patches2.pl" $LPW_JOB) 
+    # If we received any patches, upload a new status page now
+    # rather than waiting for a job to finish
+    if test -d $LPW_INBOX/$LPW_JOB
+    then
+        (cd $LPW_SHARED; perl $LPW_BIN/dashboard2.pl > index.html
+        # TODO: upload all the jobs received, not just the first
+        ftp $PATCHWATCHER_FTP <<_EOF_
+cd results2
+put index.html
+mkdir $LPW_JOB
+lcd inbox/$LPW_JOB
+cd $LPW_JOB
+prompt
+mput *.patch
+quit
+_EOF_
+)
+    fi
     lpw_move_finished_jobs_to_outbox
 }
 
