@@ -211,6 +211,9 @@ lpw_summarize_job()
 		fi
 	    done 
 	    echo "------------------------------------------------------"
+	    echo "Timestamps:"
+	    (cd $LPW_SHARED/$dir/$jobnum; ls -lt --full-time *.patch *.log | awk '{print $6, $7, $9}')
+	    echo "------------------------------------------------------"
 	    echo "Patchwatcher: end of log"
             ;;
     esac > "$LPW_SHARED/$dir/$jobnum/log_temp.txt"
