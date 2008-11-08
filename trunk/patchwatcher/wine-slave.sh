@@ -213,6 +213,7 @@ try_one_job()
         patchnum=`expr $patchnum + 1`
     done
 
+    cp $SLAVEDIR/sysinfo.txt $jobdir
     lpw_summarize_job $SLAVE $LPW_JOB
 
     cd $WORK
