@@ -26,6 +26,7 @@ user32:input.c
 user32:msg.c
 user32:win.c
 user32/tests/__test__
+winhttp:winhttp.c
 winhttp:notification.c
 winhttp/tests/__test__
 winhttp:Timeout.  Killing child.
