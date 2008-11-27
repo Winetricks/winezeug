@@ -30,7 +30,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081012.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081127-pre.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -776,14 +776,19 @@ load_flash() {
 
     # Active X plugin
     # http://blogs.adobe.com/psirt/2008/03/preparing_for_april_flash_play.html
+    # http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi 
     # 2008-04-01: old version sha1sum f4dd1c0c715b791db2c972aeba90d3b78372996a
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2  
-    try $WINE msiexec /i "$WINETRICKS_CACHE"/install_flash_player_active_x.msi $WINETRICKS_QUIET
+    # Version 10 http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe
+    # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd  
+
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 7f6850ae815e953311bb94a8aa9d226f97a646dd
+    try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe $WINETRICKS_S
 
     # Mozilla / Firefox plugin
     # 2008-07-22: sha1sum 1e6f7627784a5b791e99ae9ad63133dc11c7940b
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 1e6f7627784a5b791e99ae9ad63133dc11c7940b
+    # 2008-11-27: sha1sum 20ec0300a8cae19105c903a7ec6c0801e016beb0
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 20ec0300a8cae19105c903a7ec6c0801e016beb0
     try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
 
