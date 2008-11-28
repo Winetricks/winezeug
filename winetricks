@@ -93,6 +93,7 @@ usage() {
     echo " mono20        mono-2.0.1"
     echo " msi2          MS Installer 2.0"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
+    echo " msmask        MS Masked Edit Control"
     echo " msxml3        MS XML version 3"
     echo " msxml4        MS XML version 4"
     echo " msxml6        MS XML version 6" 
@@ -1036,6 +1037,15 @@ load_msls31() {
 
 #----------------------------------------------------------------
 
+load_msmask() {
+    # http://msdn.microsoft.com/en-us/library/11405hcf(VS.71).aspx
+    # http://bugs.winehq.org/show_bug.cgi?id=2934
+    download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB bdd2bb3a32d18926a048f302aff18b1e6d250d9d
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
+    try cp -f "$WINETRICKS_TMP"/MSMASK32.OCX "$WINEPREFIX"/drive_c/windows/system32
+}
+#----------------------------------------------------------------
+
 load_msxml3() {
     # Service Pack 5
     #download http://download.microsoft.com/download/a/5/e/a5e03798-2454-4d4b-89a3-4a47579891d8/msxml3.msi
@@ -1478,6 +1488,7 @@ do
     mpc) load_mpc;;
     msi2) load_msi2;;
     msls31) load_msls31;;
+    msmask) load_msmask;;
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
