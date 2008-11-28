@@ -46,8 +46,7 @@ die() {
   exit 1
 }
 
-which "$WINE" > /dev/null
-if test "$?" -ne "0"
+if [ ! -x "`which "$WINE"`" ]
 then
   die "Cannot find wine ($WINE)"
 fi
@@ -270,8 +269,7 @@ else
    SHA1SUM="openssl dgst -sha1"
 fi
 
-which cabextract > /dev/null
-if test "$?" -ne "0"
+if [ ! -x "`which "cabextract"`" ]
 then
   echo "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
 fi
