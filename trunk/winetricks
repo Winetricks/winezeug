@@ -98,6 +98,7 @@ usage() {
     echo " msxml4        MS XML version 4"
     echo " msxml6        MS XML version 6" 
     echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, schroedinger"
+    echo " ole2          MS 16 bit OLE"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
@@ -1094,6 +1095,20 @@ load_ogg() {
 
 #----------------------------------------------------------------
 
+load_ole2() {
+    # http://support.microsoft.com/kb/123087/EN-US/
+    download . http://download.microsoft.com/download/win31/update/2.03/win/en-us/ww1116.exe b803991c40f387464b61f606536b7c98a88245d2
+    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
+    set_winver win31
+    cd "$WINETRICKS_TMP"
+    try $WINE setup.exe $WINETRICKS_QUIET
+    cd "$olddir"
+    set_winver default
+    # TODO: Need to set native overrides for some dlls, like ole2disp?
+}
+
+#----------------------------------------------------------------
+
 load_pdh() {
     # http://support.microsoft.com/kb/284996
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
@@ -1468,6 +1483,7 @@ do
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
     ogg) load_ogg;;
+    ole2) load_ole2;;
     pdh) load_pdh;;
     quicktime72) load_gdiplus; load_quicktime72;;  # needs e.g. gdiplus.dll.GdipCloneImage
     riched20) load_riched20;;
