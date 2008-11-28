@@ -594,9 +594,9 @@ load_dirac() {
 #----------------------------------------------------------------
 
 load_directx9() {
-    # June 2008 DirectX 9c User Redistributable
-    # http://www.microsoft.com/downloads/details.aspx?familyid=740AC79A-5B72-447D-84F9-EE6407ED1A91
-    download . http://download.microsoft.com/download/c/1/f/c1fb09b0-8a8b-45ba-8bb0-64f60bd23175/directx_jun2008_redist.exe 9f6efe6f4a40ea3e1615cc70edad72aff95c737d
+    # Aug 2008 DirectX 9c User Redistributable
+    # http://www.microsoft.com/downloads/details.aspx?familyid=886ACB56-C91A-4A8E-8BB8-9F20F1244A8E&displaylang=en
+    download . http://download.microsoft.com/download/0/d/3/0d307649-9967-49fa-ab27-61f11024e97f/directx_nov2008_redist.exe 0cbe95cacd413208a9f38e31b602015408025019
     # Stefan suggested that, when installing, one should override as follows:
     # 1) use builtin wintrust (we don't run native properly somehow?)
     # 2) disable mscoree (else if it's present some module misbehaves?)
@@ -606,9 +606,10 @@ load_directx9() {
     # list down as soon as we can.  
     set_winver win2k
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
-       try $WINE "$WINETRICKS_CACHE"/directx_jun2008_redist.exe /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
+       try $WINE "$WINETRICKS_CACHE"/directx_nov2008_redist.exe /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
 
     # How many of these do we really need?
+    # We should probably remove most of these...?
     override_dlls native d3dim d3drm d3dx8 d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29
     override_dlls native d3dx9_30 d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dxof
     override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle 
@@ -1103,7 +1104,7 @@ load_ole2() {
     cd "$WINETRICKS_TMP"
     try $WINE setup.exe $WINETRICKS_QUIET
     cd "$olddir"
-    set_winver default
+    unset_winver 
     # TODO: Need to set native overrides for some dlls, like ole2disp?
 }
 
