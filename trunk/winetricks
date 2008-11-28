@@ -30,7 +30,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081127-pre.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081127.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -124,6 +124,7 @@ usage() {
     echo "Apps:"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
     echo " firefox3      Firefox Version 3"
+    echo " ie6           Microsoft Internet Explorer 6.0"
     echo " kde           KDE for Windows installer"
     echo " mpc           Media Player Classic"
     echo " vlc           VLC media player"
@@ -895,6 +896,45 @@ load_icodecs() {
     try $WINE regsvr32 ir50_32.dll
 }
 
+load_ie6() {
+    load_msls31
+
+    # Unregister Wine IE
+    try $WINE iexplore -unregserver
+
+    # Change the override to the native so we are sure we use and register them
+    override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+
+    # Remove the fake dlls from the existing WINEPREFIX 
+    mv $WINEPREFIX/drive_c/"$programfilesdir_unix"/"Internet Explorer"/iexplore.exe $WINEPREFIX/drive_c/"$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
+    for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    do
+        mv $WINEPREFIX/drive_c/windows/system32/$dll.dll $WINEPREFIX/drive_c/windows/system32/$dll.dll.bak
+    done
+
+    # fixes rendering issues in IE
+    #set_winver win2k
+
+    # Workaround a IE6 Installer bug, not Wine's fault
+    # See http://bugs.winehq.org/show_bug.cgi?id=5409
+    # Actual value downloaded doesn't matter
+    download . http://www.microsoft.com/windows/ie/ie6sp1/download/rtw/x86/ie6sites.dat
+
+    # Install
+    download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
+    $WINE "$WINETRICKS_CACHE"/ie6setup.exe
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: Make this case insensitive
+    cd $WINEPREFIX/drive_c/windows/system32/
+    for i in *.dll *.ocx *.DLL *.OCX
+    do
+        $WINE regsvr32 /i $i
+    done
+
+    # try $WINE "$programfilesdir_unix"/"Internet Explorer"/IEXPLORE.EXE http://www.winehq.org
+}
+
 #----------------------------------------------------------------
 
 load_jet40() {
@@ -1477,6 +1517,7 @@ do
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     icodecs) load_icodecs;;
+    ie6) load_ie6;;
     jet40) load_jet40;;
     kde) load_kde;;
     liberation) load_liberation;;
