@@ -70,6 +70,7 @@ usage() {
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
+    echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
     echo " dcom98        MS DCOM, override the Wine implementation"
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
@@ -79,6 +80,7 @@ usage() {
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
     echo " ffdshow       ffdshow video codecs"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
+    echo " fm20          MS Forms 2.0 Object Library"
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
@@ -134,6 +136,7 @@ usage() {
     echo " allcodecs     All listed codecs (xvid, ffdshow, icodecs)"
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
     echo " native_mdac   Override odbc32 and odbccp32"
+    echo " native_oleaut32 Override oleaut32"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
@@ -489,6 +492,18 @@ load_colorprofile() {
     try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
     mkdir -p "$WINEPREFIX"/drive_c/windows/system32/spool/drivers/color
     cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" "$WINEPREFIX"/drive_c/windows/system32/spool/drivers/color
+}
+
+#----------------------------------------------------------------
+
+load_controlpad() {
+    # http://msdn.microsoft.com/en-us/library/ms968493.aspx
+    # Fixes error "Failed to load UniText..."
+    download . http://download.microsoft.com/download/activexcontrolpad/install/4.0.0.950/win98mexp/en-us/setuppad.exe 8921e0f52507ca6a373c94d222777c750fb48af7
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/setuppad.exe
+    echo "If setup says 'Unable to start DDE ...', press Ignore"
+    echo "If setup says 'Requires IE 3.0', run 'winetricks wsh56'"
+    try $WINE "$WINETRICKS_TMP"/setup $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -1515,6 +1530,7 @@ do
     comctl32.ocx) load_comctl32ocx;;
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
+    controlpad|fm20) load_controlpad;;
     dcom98) load_dcom98;;
     dirac) load_dirac;;
     directx9) load_directx9;;
@@ -1581,6 +1597,7 @@ do
     vista|winver=vista) set_winver vista;;
     winver=) unset_winver;;
     native_mdac) set_native_mdac;;
+    native_oleaut32) override_dlls native,builtin oleaut32;;
     volnum) volnum;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
@@ -1591,9 +1608,8 @@ do
     *) echo "Install of $1 done" ;;
     esac
     shift
+    # cleanup
+    rm -rf "$WINETRICKS_TMP"/*
 done
-
-# cleanup
-rm -rf "$WINETRICKS_TMP"/*
 
 test "$WINETRICKS_QUIET" = "" && echo winetricks done. || true
