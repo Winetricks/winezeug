@@ -30,7 +30,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081129.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081130.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -117,6 +117,7 @@ usage() {
     echo " vcrun2005sp1  MS Visual C++ 2005 sp1 libraries"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
     echo " vjrun20       MS Visual J# 2.0 libraries (requires dotnet20)"
+    echo " wininet       MS wininet.dll (requires Windows license)"
     echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license)"
     echo " wsh51         MS Windows Scripting Host 5.1"
@@ -1417,6 +1418,18 @@ load_vlc() {
 
 #----------------------------------------------------------------
 
+load_wininet() {
+    # This is an updated wininet from IE 5.0.1.   
+    # (Good enough for Active Worlds browser.  Also helps "Avatar - Legends of the Arena" get to login screen.)
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
+    download . http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE/3725.exe"
+    try cp -f "$WINETRICKS_TMP"/Wininet.dll "$WINEPREFIX"/drive_c/windows/system32
+    override_dlls native,builtin wininet
+}
+
+#----------------------------------------------------------------
+
 load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
@@ -1579,6 +1592,7 @@ do
     vcrun2008) load_vcrun2008;;
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
+    wininet) load_wininet;;
     wmp9) load_vcrun6; load_wsh56; load_wmp9;;
     wmp10) load_vcrun6; load_wsh56; load_wmp10;;
     wsh51) load_wsh51;;
