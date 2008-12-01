@@ -30,7 +30,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081130.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081201.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -107,6 +107,7 @@ usage() {
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
+    echo " urlmon        MS urlmon.dll"
     echo " vb3run        MS Visual Basic 3 runtime"
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
@@ -1288,6 +1289,18 @@ load_tahoma() {
 
 #----------------------------------------------------------------
 
+load_urlmon() {
+    # This is an updated urlmon from IE 6.0
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=85BB441A-5BB1-4A82-86EC-A249AF287513
+    # (Works for Dolphin Smalltalk, see http://bugs.winehq.org/show_bug.cgi?id=8258)
+    download . http://download.microsoft.com/download/8/2/0/820faffc-3ea0-4914-bca3-584235964ded/Q837251.exe bcc79b92ac3c06c4de3692672c3d70bdd36be892
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE/Q837251.exe"
+    try cp -f "$WINETRICKS_TMP"/URLMON.DLL "$WINEPREFIX"/drive_c/windows/system32/urlmon.dll
+    override_dlls native,builtin urlmon
+}
+
+#----------------------------------------------------------------
+
 load_vb3run() {
     # See http://support.microsoft.com/kb/196285
     download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
@@ -1581,6 +1594,7 @@ do
     riched20) load_riched20;;
     riched30) load_riched30;;
     tahoma) load_tahoma;;
+    urlmon) load_urlmon;;
     vb3run) load_vb3run;;
     vb4run) load_vb4run;;
     vbvm50|vb5run) load_vbvm50;;
