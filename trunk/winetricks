@@ -225,9 +225,9 @@ dogui()
   detectDE
   if [ $DE = gnome ]
   then
-    echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > $WINETRICKS_TMP/zenity.sh
+    echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
     usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
-    export todo="`sh $WINETRICKS_TMP/zenity.sh | tr '|' ' '`"
+    export todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
   else
     packages=`usage | awk '/^ [a-z]/ {print $1}'`
     export todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
@@ -1279,7 +1279,7 @@ load_tahoma() {
     # The tahoma font is needed by e.g. Steam
     download . $SOURCEFORGE/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/wd97vwr32.exe
-    try cabextract --directory="$WINETRICKS_TMP" $WINETRICKS_TMP/Viewer1.cab
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_TMP"/Viewer1.cab
     # Fixme: get fonts path from SHGetFolderPath
     # see also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
     try cp -f "$WINETRICKS_TMP"/tahoma.ttf "$winefontsdir"/tahoma.ttf
