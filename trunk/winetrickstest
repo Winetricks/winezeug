@@ -31,7 +31,6 @@ for verb in \
     vcrun2008 \
     wmp9 \
     wmp10 \
-    wsh51 \
     wsh56 \
     wsh56js \
     wsh56vb \
@@ -41,8 +40,9 @@ for verb in \
     native_mdac \
     volnum 
 do
-    wineserver -k
+    wineserver -k || true
     rm -rf ~/.wine
+    #$WINE regedit ~/settings.reg
     sh winetricks  -q -v $verb
 done
 
@@ -50,8 +50,6 @@ done
 
 # Ignores -q
 sh winetricks -v \
-    allcodecs \
-    allvcodecs \
     art2kmin \
     cc580 \
     gdiplus \
@@ -59,7 +57,7 @@ sh winetricks -v \
     mdac25 \
     mdac27 \
     mdac28 \
-    mono19 \
+    mono20 \
     msls31 \
     pdh 
 
