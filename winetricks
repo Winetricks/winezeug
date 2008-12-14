@@ -32,7 +32,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081201.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081213.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -343,7 +343,7 @@ download() {
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
-           try curl -L -o $file -C - --header "Accept-Encoding: gzip,deflate" "$2"
+           try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
         fi
         cd "$olddir"
     fi
@@ -773,7 +773,7 @@ _EOF_
 
 load_firefox3() {
     # Firefox 3
-    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0/win32/en-US/Firefox Setup 3.0.exe" 91cf99edbc4eb1ef6af3179e6126abc659309265
+    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0/win32/en-US/Firefox%20Setup%203.0.exe" 91cf99edbc4eb1ef6af3179e6126abc659309265 "Firefox Setup 3.0.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
        try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.exe" 
@@ -928,7 +928,8 @@ load_ie6() {
     mv "$WINEPREFIX"/drive_c/"$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$WINEPREFIX"/drive_c/"$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
-        mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
+        test -f "$WINDIR"/system32/$dll.dll && 
+          mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
     done
 
     # fixes rendering issues in IE
@@ -937,6 +938,7 @@ load_ie6() {
     # Workaround a IE6 Installer bug, not Wine's fault
     # See http://bugs.winehq.org/show_bug.cgi?id=5409
     # Actual value downloaded doesn't matter
+    rm -f "$WINETRICKS_CACHE"/ie6sites.dat
     download . http://www.microsoft.com/windows/ie/ie6sp1/download/rtw/x86/ie6sites.dat
 
     # Install
@@ -944,11 +946,20 @@ load_ie6() {
     $WINE "$WINETRICKS_CACHE"/ie6setup.exe
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
-    # FIXME: Make this case insensitive
+    # FIXME: whittle down this list 
     cd "$WINDIR"/system32/
-    for i in *.dll *.ocx *.DLL *.OCX
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll mshtml.dll mshtmled.dll msi.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx webcheck.dll wshom.ocx
     do
-        $WINE regsvr32 /i $i
+        $WINE regsvr32 /i $i > /dev/null 2>&1
     done
 
     # try $WINE "$programfilesdir_unix"/"Internet Explorer"/IEXPLORE.EXE http://www.winehq.org
