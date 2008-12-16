@@ -9,6 +9,7 @@ set -x
 
 ubuntu_gutsy_pkgs="\
 bison \
+ccache \
 cogito \
 cvs \
 flex \
@@ -111,6 +112,7 @@ zlib1g-dev \
 
 ubuntu_hardy_pkgs="\
 bison \
+ccache \
 cvs \
 flex \
 fontforge \
@@ -211,6 +213,7 @@ zlib1g-dev \
 
 ubuntu_ibex_pkgs="\
 bison \
+ccache \
 cvs \
 flex \
 fontforge \
