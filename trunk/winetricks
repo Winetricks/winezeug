@@ -32,7 +32,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081213.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081217.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -263,7 +263,7 @@ test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win retu
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
 #
 # Did the user rename Fonts to fonts?
-if ! test -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts 
+if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts 
 then
     winefontsdir="$WINDIR"/fonts
 else
@@ -324,7 +324,7 @@ download() {
     fi
     cache="$WINETRICKS_CACHE/$1"
     mkdir -p "$cache"
-    if ! test -f "$cache/$file"
+    if test ! -f "$cache/$file"
     then
         cd "$cache"
         # Mac folks tend to have curl rather than wget
@@ -858,7 +858,7 @@ load_gecko() {
     # so we're adding a maintenance burden here.)
     GECKO_VERSION=0.1.0
 
-    if ! test -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION.cab
+    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION.cab
     then
        # FIXME: busted if using curl!
        download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION" c16f1072dc6b0ced20935662138dcf019a38cd56 wine_gecko-$GECKO_VERSION.cab
@@ -1140,13 +1140,13 @@ load_msxml3() {
 
 load_msxml4() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
-    if ! test -f "$WINETRICKS_CACHE"/msxml4.msi
+    if test ! -f "$WINETRICKS_CACHE"/msxml4.msi
     then
        download . http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
        rm -rf "$WINETRICKS_TMP"/*
 
        try $WINE "$WINETRICKS_CACHE"/msxml4-KB927978-enu.exe "/x:`$WINE winepath -w "$WINETRICKS_TMP"`" $WINETRICKS_QUIET
-       if ! test -f "$WINETRICKS_TMP"/msxml.msi
+       if test ! -f "$WINETRICKS_TMP"/msxml.msi
        then
           die msxml.msi not found
        fi
@@ -1245,7 +1245,7 @@ volnum() {
     # You may be able to work around this by using the installer's /x or /extract switch,
     # but renaming drive_c to "harddiskvolume0" lets you just run the installer as normal.
 
-    if ! test -d "$WINEPREFIX"/harddiskvolume0/
+    if test ! -d "$WINEPREFIX"/harddiskvolume0/
     then
 	ln -s drive_c "$WINEPREFIX"/harddiskvolume0
 	rm "$WINEPREFIX"/dosdevices/c:
@@ -1357,13 +1357,13 @@ load_vcrun6() {
         return
     fi
 
-    if ! test -f "$WINETRICKS_CACHE"/vcredist.exe
+    if test ! -f "$WINETRICKS_CACHE"/vcredist.exe
     then
        download . http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
        rm -rf "$WINETRICKS_TMP"/*
        
        try $WINE "$WINETRICKS_CACHE"/vc6redistsetup_enu.exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
-       if ! test -f "$WINETRICKS_TMP"/vcredist.exe
+       if test ! -f "$WINETRICKS_TMP"/vcredist.exe
        then
           die vcredist.exe not found
        fi
