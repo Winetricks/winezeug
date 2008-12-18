@@ -254,9 +254,9 @@ olddir=`pwd`
 rm -rf "$WINETRICKS_TMP"/*
 
 # The folder-name is localized!
-programfilesdir_win="`$WINE cmd.exe /c echo "%ProgramFiles%"`"
+programfilesdir_win="`unset WINEDEBUG; $WINE cmd.exe /c echo "%ProgramFiles%"`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
-programfilesdir_unix="`$WINE winepath -u "$programfilesdir_win"`"
+programfilesdir_unix="`unset WINEDEBUG; $WINE winepath -u "$programfilesdir_win"`"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 
 # (Fixme: get fonts path from SHGetFolderPath
@@ -605,7 +605,7 @@ load_corefonts() {
 
 #----------------------------------------------------------------
 
-load_dirac() {
+load_dirac08() {
     download . http://codecpack.nl/dirac_dsfilter_080.exe aacfcddf6b2636de5f0a50422ba9155e395318af
     try $WINE "$WINETRICKS_CACHE"/dirac_dsfilter_080.exe $WINETRICKS_SILENT
 }
@@ -1558,7 +1558,7 @@ do
     corefonts) load_corefonts;;
     controlpad|fm20) load_controlpad;;
     dcom98) load_dcom98;;
-    dirac) load_dirac;;
+    dirac|dirac0.8) load_dirac08;;
     directx9) load_directx9;;
     divx) load_divx;;
     dotnet11) load_dotnet11; load_fontfix;;
