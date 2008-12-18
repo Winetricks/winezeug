@@ -99,6 +99,7 @@ usage() {
     echo " mshflxgd      MS Hierarchical Flex Grid Control"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
     echo " msmask        MS Masked Edit Control"
+    echo " msscript      MS Script Control"
     echo " msxml3        MS XML version 3"
     echo " msxml4        MS XML version 4"
     echo " msxml6        MS XML version 6" 
@@ -1122,6 +1123,18 @@ load_msmask() {
     download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB bdd2bb3a32d18926a048f302aff18b1e6d250d9d
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
     try cp -f "$WINETRICKS_TMP"/MSMASK32.OCX "$WINDIR"/system32
+    try $WINE regsvr32 msmask32.ocx
+}
+
+#----------------------------------------------------------------
+
+load_msscript() {
+    # http://msdn.microsoft.com/scripting/scriptcontrol/x86/sct10en.exe
+    # http://www.microsoft.com/downloads/details.aspx?familyid=d7e31492-2595-49e6-8c02-1426fec693ac
+    download .  http://download.microsoft.com/download/d/2/a/d2a7430c-6d5b-48e9-96c4-3c751be7bffe/sct10en.exe fd9f2f23357ab11ae70682d6864f7e9f188adf2a
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/sct10en.exe
+    try cp -f "$WINETRICKS_TMP"/msscript.ocx "$WINDIR"/system32
+    try $WINE regsvr32 msscript.ocx
 }
 
 #----------------------------------------------------------------
@@ -1584,6 +1597,7 @@ do
     mshflxgd) load_mshflxgd;;
     msls31) load_msls31;;
     msmask) load_msmask;;
+    msscript) load_msscript;;
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
