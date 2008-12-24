@@ -1462,7 +1462,7 @@ load_wininet() {
     # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
     download . http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE/3725.exe"
-    try cp -f "$WINETRICKS_TMP"/Wininet.dll "$WINDIR"/system32
+    try cp -f "$WINETRICKS_TMP"/Wininet.dll "$WINDIR"/system32/wininet.dll
     override_dlls native,builtin wininet
 }
 
