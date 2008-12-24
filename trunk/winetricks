@@ -32,7 +32,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081217.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20081223.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -207,8 +207,8 @@ x_showmenu() {
         args="$args,$1"
         shift
     done
-    (echo "$title"; echo ""; echo "$text") > /tmp/x_showmenu.txt 
-    xmessage -print -file /tmp/x_showmenu.txt -buttons "Cancel,$args" | sed 's/Cancel//'
+    (echo "$title"; echo ""; echo "$text") | \
+    xmessage -print -file - -buttons "Cancel,$args" | sed 's/Cancel//'
 }
 
 showmenu()
@@ -216,8 +216,7 @@ showmenu()
     detectDE
     case $DE in
     kde) kde_showmenu "$@" ;;
-    #gnome) gnome_showmenu "$@" ;;
-    x) x_showmenu "$@" ;;
+    gnome|x) x_showmenu "$@" ;;
     none) usage 1>&2; exit 1;;
     esac
 }
