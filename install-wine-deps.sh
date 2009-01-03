@@ -5,7 +5,14 @@
 # Copyright 2006-2009 Dan Kegel
 # LGPL
 
-set -x
+if test ! -w /
+then
+    echo "Usage: sudo sh $0"
+    exit 1
+fi
+
+#----------------------------------------------------------------------------
+# Data
 
 ubuntu_common_pkgs="\
 bison ccache cvs flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
@@ -46,10 +53,62 @@ libltdl7 \
 libltdl7-dev \
 "
 
+ubuntu_64_ibex_usr_lib32_sos="\
+libcapi20.so.3 libcrypto.so.0.9.8 libcups.so.2 libfontconfig.so.1 libfreetype.so.6 \
+libGL.so.1 libGLU.so.1 libgnutls.so.26 libgphoto2_port.so.0 libgphoto2.so.2 \
+libhal.so.1 libjack.so.0 libjpeg.so.62 liblcms.so.1 \
+libodbc.so.1 libpng12.so.0 libsane.so.1 \
+libssl.so.0.9.8 libX11.so.6 libXcomposite.so.1 libXcursor.so.1 libXext.so.6 \
+libXinerama.so.1 libXi.so.6 libxml2.so.2 libXrandr.so.2 libXrender.so.1 \
+libxslt.so.1 libXxf86vm.so.1 libz.so.1"
+
+ubuntu_64_ibex_lib32_sos="libdbus-1.so.3"
+
+#----------------------------------------------------------------------------
+# Code
+
 distro=`lsb_release -i -r -s`
+
 case $distro in
 Ubuntu*7.10) apt-get install $ubuntu_common_pkgs $ubuntu_gutsy_pkgs;;
 Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
-*) echo distro $distro not supported; exit 1;;
+*) echo "distro $distro not supported"; exit 1;;
 esac
+
+if test `uname -m` = x86_64
+then
+
+# Provide plain old .so names for given libraries
+# Usage: linksos dir foo.so.x bar.so.y ...
+linksos()
+{
+    dir=$1
+    shift
+    for lib
+    do
+        barename=`echo $lib | sed 's/\.so\..*$/.so/' `
+        if test -f $dir/$lib && test ! -f $dir/$barename 
+        then
+            ln -s $dir/$lib $dir/$barename
+        fi
+    done
+}
+
+    case $distro in
+    Ubuntu*8.10) 
+	linksos /usr/lib32 $ubuntu_64_ibex_usr_lib32_sos
+	linksos /lib32 $ubuntu_64_ibex_lib32_sos
+	# Special cases
+	test -f /usr/lib32/libpng.so || ln -s /usr/lib32/libpng12.so /usr/lib32/libpng.so
+	test -f /usr/lib32/liblber.so || ln -s /usr/lib32/liblber-2.4.so /usr/lib32/liblber.so
+	test -f /usr/lib32/libldap.so || ln -s /usr/lib32/libldap-2.4.so /usr/lib32/libldap.so
+	test -f /usr/lib32/libldap_r.so || ln -s /usr/lib32/libldap_r-2.4.so /usr/lib32/libldap_r.so
+	# For some reason not installed by default
+	apt-get install lib32ncurses5-dev
+	;;
+    *) 
+        echo "I do not know how to install 32 bit libraries for distro $distro yet"
+        ;;
+    esac
+fi
