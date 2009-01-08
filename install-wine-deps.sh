@@ -41,14 +41,12 @@ x11proto-render-dev \
 "
 
 ubuntu_hardy_pkgs="\
-git \
 libltdl3 \
 libltdl3-dev \
 libopencdk10-dev \
 "
 
 ubuntu_ibex_pkgs="\
-git \
 libltdl7 \
 libltdl7-dev \
 "
