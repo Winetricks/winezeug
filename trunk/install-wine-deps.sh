@@ -29,7 +29,8 @@ libxmu-headers libxrandr-dev libxrender-dev libxslt1-dev libxt-dev libxv-dev \
 libxxf86vm-dev linux-libc-dev m4 make mesa-common-dev odbcinst1debian1 qt3-dev-tools \
 unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x11proto-fixes-dev  \
 x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11proto-xext-dev \
-x11proto-xf86vidmode-dev x11proto-xinerama-dev x-dev xtrans-dev zlib1g-dev"
+x11proto-xf86vidmode-dev x11proto-xinerama-dev x-dev xtrans-dev zlib1g-dev \
+libelfg0 libfreebob0 libgif-dev libhal-storage-dev libjack-dev"
 
 ubuntu_gutsy_pkgs="\
 cogito \
@@ -95,13 +96,14 @@ linksos()
 
     case $distro in
     Ubuntu*8.10) 
+        apt-get install ia32-libs lib32asound2-dev lib32z1-dev 
 	linksos /usr/lib32 $ubuntu_64_ibex_usr_lib32_sos
 	linksos /lib32 $ubuntu_64_ibex_lib32_sos
 	# Special cases
 	test -f /usr/lib32/libpng.so || ln -s /usr/lib32/libpng12.so /usr/lib32/libpng.so
-	test -f /usr/lib32/liblber.so || ln -s /usr/lib32/liblber-2.4.so /usr/lib32/liblber.so
 	test -f /usr/lib32/libldap.so || ln -s /usr/lib32/libldap-2.4.so /usr/lib32/libldap.so
-	test -f /usr/lib32/libldap_r.so || ln -s /usr/lib32/libldap_r-2.4.so /usr/lib32/libldap_r.so
+	test -f /usr/lib32/liblber.so || ln -s /usr/lib32/liblber-2.4.so.2 /usr/lib32/liblber.so
+	test -f /usr/lib32/libldap_r.so || ln -s /usr/lib32/libldap_r-2.4.so.2 /usr/lib32/libldap_r.so
 	# For some reason not installed by default
 	apt-get install lib32ncurses5-dev
 	;;
