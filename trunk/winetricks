@@ -705,8 +705,8 @@ load_dotnet11() {
 
     # Need native gdiplus until wine implements gdiplus.GdipGetFamily
     #load_gdiplus
-    cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINDIR/system32/"
-    override_dlls native gdiplus
+    #cp -f "$DOTNET_INSTALL_DIR/gdiplus.dll" "$WINDIR/system32/"
+    #override_dlls native gdiplus
 
     unset_winver
 } 
@@ -1123,9 +1123,12 @@ load_msi2() {
 
 load_mshflxgd() {
     # http://msdn.microsoft.com/en-us/library/aa240864(VS.60).aspx
-    download .  http://activex.microsoft.com/controls/vb6/MSHFLXGD.CAB 5f9c7a81022949bfe39b50f2bbd799c448bb7377
+    # orig: 5f9c7a81022949bfe39b50f2bbd799c448bb7377
+    # Jan 2009: 7ad74e589d5eefcee67fa14e65417281d237a6b6
+    download .  http://activex.microsoft.com/controls/vb6/MSHFLXGD.CAB 7ad74e589d5eefcee67fa14e65417281d237a6b6
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSHFLXGD.CAB
-    try cp -f "$WINETRICKS_TMP"/MSHFLXGD.OCX "$WINDIR"/system32
+    #try cp -f "$WINETRICKS_TMP"/MSHFLXGD.OCX "$WINDIR"/system32
+    try cp -f "$WINETRICKS_TMP"/mshflxgd.ocx "$WINDIR"/system32
 }
 
 #----------------------------------------------------------------
