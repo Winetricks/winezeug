@@ -1301,6 +1301,8 @@ load_riched30() {
 
 load_tahoma() {
     # The tahoma font is needed by e.g. Steam
+    # Better choice for URL?
+    #http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe
     download . $SOURCEFORGE/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/wd97vwr32.exe
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_TMP"/Viewer1.cab
