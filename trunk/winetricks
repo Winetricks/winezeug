@@ -86,6 +86,7 @@ usage() {
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
+    echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Codecs (Indeo)"
     echo " jet40         MS Jet 4.0 Service Pack 8"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
@@ -914,6 +915,19 @@ load_gdiplus() {
 
 #----------------------------------------------------------------
 
+load_hosts() {
+    # Create fake system32\drivers\etc\hosts and system32\drivers\etc\services files.
+    # The hosts file is used to map network names to IP addresses without DNS.
+    # The services file is used map service names to network ports.
+    # Some apps depend on these files, but they're not implemented in wine.
+    # Fortunately, empty files in the correct location satisfy those apps. 
+    # See http://bugs.winehq.org/show_bug.cgi?id=12076
+    mkdir -p "$WINDIR"/system32/drivers/etc
+    touch "$WINDIR"/system32/drivers/etc/hosts
+    touch "$WINDIR"/system32/drivers/etc/services
+}
+
+#----------------------------------------------------------------
 load_icodecs() {
     # http://downloadcenter.intel.com/Detail_Desc.aspx?strState=LIVE&ProductID=355&DwnldID=2846
     download . http://downloadmirror.intel.com/2846/eng/codinstl.exe 2c5d64f472abe3f601ce352dcca75b4f02996f8a
@@ -1592,6 +1606,7 @@ do
     fontfix) load_fontfix;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
+    hosts) load_hosts;;
     icodecs) load_icodecs;;
     ie6) load_ie6;;
     jet40) load_jet40;;
