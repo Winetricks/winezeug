@@ -856,12 +856,21 @@ load_gecko() {
     # (e.g. we hardcode gecko's url here, but it's normally
     # only hardcoded in wine.inf, and fetched from the registry thereafter,
     # so we're adding a maintenance burden here.)
-    GECKO_VERSION=0.1.0
+    case `$WINE --version` in
+    wine-0*|wine-1.0*|wine-1.1|wine-1.1.?|wine-1.1.11)
+        GECKO_VERSION=0.1.0 
+        GECKO_SHA1SUM=c16f1072dc6b0ced20935662138dcf019a38cd56 
+        ;;
+    *)
+        GECKO_VERSION=0.9.0 
+        GECKO_SHA1SUM=5cf410ff7fdd3f9d625f481f9d409968728d3d09
+        ;;
+    esac
 
     if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION.cab
     then
        # FIXME: busted if using curl!
-       download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION" c16f1072dc6b0ced20935662138dcf019a38cd56 wine_gecko-$GECKO_VERSION.cab
+       download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION.cab
     fi
 
     cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
