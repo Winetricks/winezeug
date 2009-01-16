@@ -32,7 +32,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20081223.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20090116.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -96,6 +96,7 @@ usage() {
     echo " mfc40         MS mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
     echo " mfc42         MS mfc42 (see vcrun6 below)"
     echo " mono20        mono-2.0.1"
+    echo " mono22        mono-2.2"
     echo " msi2          MS Installer 2.0"
     echo " mshflxgd      MS Hierarchical Flex Grid Control"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
@@ -1089,6 +1090,29 @@ _EOF_
 
 #----------------------------------------------------------------
 
+load_mono22() {
+    # Load Mono, have it handle all .net requests
+    download .  ftp://ftp.novell.com/pub/mono/archive/2.2/windows-installer/5/mono-2.2-gtksharp-2.12.7-win32-5.exe be977dfa9c49deea1be02ba4a2228e343f1e5840
+    # Anyone know how to get it to do a silent install?
+    try $WINE "$WINETRICKS_CACHE"/mono-2.2-gtksharp-2.12.7-win32-5.exe
+
+    # FIXME: what should this be for mono 2.2?
+    cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
+"Install"=dword:00000001
+"SP"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
+"4322"="3706-4322"
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    rm -f "$WINETRICKS_TMP"/mono_2.0.reg
+}
+
+#----------------------------------------------------------------
+
 load_mpc() {
     download . $SOURCEFORGE/guliverkli2/mplayerc_20080414.zip bc9f922d7151e7cc7fef429b085cf208ef989bab
     cd "$WINEPREFIX"/drive_c 
@@ -1620,6 +1644,7 @@ do
     mdac28) load_mdac28;;
     mfc40) load_mfc40;;
     mono19|mono20) load_mono20;;
+    mono22) load_mono22;;
     mpc) load_mpc;;
     msi2) load_msi2;;
     mshflxgd) load_mshflxgd;;
