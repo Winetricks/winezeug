@@ -6,6 +6,7 @@ for verb in \
     dcom98 \
     dotnet20 \
     ffdshow \
+    firefox \
     flash \
     fontfix \
     gecko \
@@ -20,9 +21,7 @@ for verb in \
     tahoma \
     vb3run \
     vb4run \
-    vbvm50 \
     vb5run \
-    vbrun60 \
     vb6run \
     vcrun6 \
     vcrun2003 \
@@ -60,6 +59,9 @@ sh winetricks -v \
     mono20 \
     msls31 \
     pdh 
+
+wineserver -k || true
+rm -rf ~/.wine
 
 # Fail on -q
 sh winetricks -v \
