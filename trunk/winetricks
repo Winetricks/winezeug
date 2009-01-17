@@ -32,7 +32,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20090116.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20090117.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -765,12 +765,12 @@ _EOF_
 
 load_firefox3() {
     # Firefox 3
-    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0/win32/en-US/Firefox%20Setup%203.0.exe" 91cf99edbc4eb1ef6af3179e6126abc659309265 "Firefox Setup 3.0.exe"
+    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0.5/win32/en-US/Firefox%20Setup%203.0.5.exe" a3bc99e32fa07fc5db3d2dfcddbfdc05400ec3a0 "Firefox Setup 3.0.5.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.exe" 
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.5.exe" 
     else
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.exe" -ms
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.5.exe" -ms
     fi
 }
 
