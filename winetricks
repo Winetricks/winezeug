@@ -32,7 +32,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20090117.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version 20090121.  (C) Dan Kegel.  LGPL."
   exit 0
   ;;
 esac
@@ -1340,16 +1340,13 @@ load_riched30() {
 #----------------------------------------------------------------
 
 load_tahoma() {
-    # The tahoma font is needed by e.g. Steam
-    # Better choice for URL?
-    #http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe
-    download . $SOURCEFORGE/corefonts/wd97vwr32.exe 8edf758f92513094a94e50b7826cd6f2b7696b8c
-    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/wd97vwr32.exe
-    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_TMP"/Viewer1.cab
-    # Fixme: get fonts path from SHGetFolderPath
-    # see also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
-    try cp -f "$WINETRICKS_TMP"/tahoma.ttf "$winefontsdir"/tahoma.ttf
-    chmod +w "$winefontsdir"/tahoma.ttf
+    # The tahoma and tahomabd fonts are needed by e.g. Steam
+    
+    download . http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe 888ce7b7ab5fd41f9802f3a65fd0622eb651a068
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/tahoma32.exe
+    try cp -f "$WINETRICKS_TMP"/Tahoma.TTF "$winefontsdir"/tahoma.ttf
+    try cp -f "$WINETRICKS_TMP"/Tahomabd.TTF "$winefontsdir"/tahomabd.ttf
+    chmod +w "$winefontsdir"/tahoma*.ttf
     rm -rf "$WINETRICKS_TMP"/*
 }
 
