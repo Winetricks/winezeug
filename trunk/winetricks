@@ -2,9 +2,14 @@
 # Quick and dirty script to download and install various 
 # redistributable runtime libraries
 #
-# Copyright 2007, 2008 Google (Dan Kegel, dank@kegel.com)
+# Copyright 2007, 2008, 2009 Google (Dan Kegel, dank@kegel.com)
 # Thanks to Detlef Riekenberg for lots of updates
 # Thanks to Saulius Krasuckas for corrections and suggestions
+# Please report problems at http://code.google.com/p/winezeug/issues
+# See also http://wiki.winehq.org/winetricks
+
+# Name of this version of winetricks (YYYYMMDD)
+VERSION=20090209
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -32,7 +37,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version 20090121.  (C) Dan Kegel.  LGPL."
+  echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel, Google.  LGPL."
   exit 0
   ;;
 esac
@@ -230,10 +235,10 @@ dogui()
   then
     echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
     usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
-    export todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
+    todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
   else
     packages=`usage | awk '/^ [a-z]/ {print $1}'`
-    export todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
+    todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
   fi
 
   if test "$todo"x = x
@@ -1259,7 +1264,10 @@ load_pdh() {
 
 #----------------------------------------------------------------
 
-load_quicktime72() {
+load_quicktime72() { 
+    echo "Quicktime needs gdiplus..."
+    load_gdiplus
+
     # http://www.apple.com/support/downloads/quicktime72forwindows.html
     download quicktime72 'http://wsidecar.apple.com/cgi-bin/nph-reg3rdpty2.pl/product=14402&cat=59&platform=osx&method=sa/QuickTimeInstaller.exe' bb89981f10cf21de57b9453e53cf81b9194271a9
     unset QUICKTIME_QUIET
@@ -1269,11 +1277,11 @@ load_quicktime72() {
     fi
     # set vista mode to inhibit directdraw overlay use that blacks the screen
     set_winver vista
-    try $WINE "$WINETRICKS_CACHE"/quicktime72/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET
+    try $WINE "$WINETRICKS_CACHE"/quicktime72/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET > /dev/null 2>&1
     if test "$WINETRICKS_QUIET"x = x
     then
         echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
-        try $WINE control ${programfilesdir_win}'\QuickTime\QTSystem\QuickTime.cpl'
+        try $WINE control "$programfilesdir_win\\QuickTime\\QTSystem\\QuickTime.cpl"
     fi
     
     unset_winver 
@@ -1644,7 +1652,7 @@ do
     ogg) load_ogg;;
     ole2) load_ole2;;
     pdh) load_pdh;;
-    quicktime72) load_gdiplus; load_quicktime72;;  # needs e.g. gdiplus.dll.GdipCloneImage
+    quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
     tahoma) load_tahoma;;
