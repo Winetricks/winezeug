@@ -9,7 +9,7 @@
 # See also http://wiki.winehq.org/winetricks
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090209
+VERSION=20090214
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -129,6 +129,7 @@ usage() {
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
     echo " vjrun20       MS Visual J# 2.0 libraries (requires dotnet20)"
     echo " wininet       MS wininet.dll (requires Windows license)"
+    echo " wme9          MS Windows Media Encoder 9 (requires Windows license)"
     echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license)"
     echo " wsh56         MS Windows Scripting Host 5.6"
@@ -858,9 +859,13 @@ load_gecko() {
         GECKO_VERSION=0.1.0 
         GECKO_SHA1SUM=c16f1072dc6b0ced20935662138dcf019a38cd56 
         ;;
-    *)
+    wine-1.1.1[234]*)
         GECKO_VERSION=0.9.0 
         GECKO_SHA1SUM=5cf410ff7fdd3f9d625f481f9d409968728d3d09
+        ;;
+    *)
+        GECKO_VERSION=0.9.1
+        GECKO_SHA1SUM=9a49fc691740596517e381b47096a4bdf19a87d8
         ;;
     esac
 
@@ -1514,6 +1519,15 @@ load_wininet() {
 
 #----------------------------------------------------------------
 
+load_wme9() {
+    # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=5691ba02-e496-465a-bba9-b2f1182cdf24
+    download wme9 http://download.microsoft.com/download/8/1/f/81f9402f-efdd-439d-b2a4-089563199d47/WMEncoder.exe 7a3f8781f3e5705651992ef0150ee30bc1295116
+
+    try $WINE "$WINETRICKS_CACHE"/wme9/WMEncoder.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
@@ -1669,6 +1683,7 @@ do
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
     wininet) load_wininet;;
+    wme9) load_wme9;;
     wmp9) load_vcrun6; load_wsh56; load_wmp9;;
     wmp10) load_vcrun6; load_wsh56; load_wmp10;;
     wsh56) load_vcrun6; load_wsh56;;
