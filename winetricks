@@ -99,7 +99,7 @@ usage() {
     echo " mdac27        MS MDAC 2.7"
     echo " mdac28        MS MDAC 2.8"
     echo " mfc40         MS mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
-    echo " mfc42         MS mfc42 (see vcrun6 below)"
+    echo " mfc42         MS mfc42 (same as vcrun6 below)"
     echo " mono20        mono-2.0.1"
     echo " mono22        mono-2.2"
     echo " msi2          MS Installer 2.0"
