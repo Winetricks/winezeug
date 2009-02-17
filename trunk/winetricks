@@ -73,13 +73,13 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"    
-    echo " art2kmin      MS Access 2000 runtime.  License required!"
+    echo " art2kmin      MS Access 2000 runtime.  Requires Access 2000 Dev license!"
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
-    echo " dcom98        MS DCOM, override the Wine implementation"
+    echo " dcom98        MS DCOM (ole32, oleaut32); requires Win98 license!"
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
     echo " directx9      MS DirectX 9 user redistributable"
     echo " divx          divx video codec"
@@ -455,6 +455,7 @@ _EOF_
 #----- One function per package, in alphabetical order ----------
 
 load_art2kmin() {
+    # See http://support.microsoft.com/kb/243957
     download . http://download.microsoft.com/download/office2000dev/art2kmin/1/win98/en-us/art2kmin.exe 73be2622254d1f857a204a03f068787542b985e9
     try $WINE "$WINETRICKS_CACHE"/art2kmin.exe
     cd "$WINEPREFIX/drive_c/ART2KMin Setup"
@@ -667,6 +668,7 @@ load_divx() {
 load_dcom98() {
     # Install native dcom per http://wiki.winehq.org/NativeDcom
     # to avoid http://bugs.winehq.org/show_bug.cgi?id=4228
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=08b1ac1b-7a11-43e8-b59d-0867f9bdda66
     download . http://download.microsoft.com/download/d/1/3/d13cd456-f0cf-4fb2-a17f-20afc79f8a51/DCOM98.EXE aff002bd03f17340b2bef2e6b9ea8e3798e9ccc1
 
     # Pick win98 so we can install native dcom
