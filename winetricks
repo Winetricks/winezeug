@@ -689,6 +689,8 @@ load_dcom98() {
     override_dlls native,builtin ole32 oleaut32 rpcrt4
 
     # but not for a few builtin apps that don't like it
+    override_app_dlls explorer.exe builtin ole32 oleaut32 rpcrt4
+    override_app_dlls iexplore.exe builtin ole32 oleaut32 rpcrt4
     override_app_dlls services.exe builtin ole32 oleaut32 rpcrt4
     override_app_dlls wineboot.exe builtin ole32 oleaut32 rpcrt4
     override_app_dlls winedevice.exe builtin ole32 oleaut32 rpcrt4
