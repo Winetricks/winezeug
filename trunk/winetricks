@@ -9,7 +9,7 @@
 # See also http://wiki.winehq.org/winetricks
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090214
+VERSION=20090227
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -804,14 +804,16 @@ load_flash() {
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
     # Version 10 http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe
     # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd  
+    # 2009-02-27: shasum 86745020a25edc9695a1a6a4d59eae375665a0b3
 
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 7f6850ae815e953311bb94a8aa9d226f97a646dd
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 86745020a25edc9695a1a6a4d59eae375665a0b3
     try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe $WINETRICKS_S
 
     # Mozilla / Firefox plugin
     # 2008-07-22: sha1sum 1e6f7627784a5b791e99ae9ad63133dc11c7940b
     # 2008-11-27: sha1sum 20ec0300a8cae19105c903a7ec6c0801e016beb0
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 20ec0300a8cae19105c903a7ec6c0801e016beb0
+    # 2009-02-27: sha1sum 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
     try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
 
