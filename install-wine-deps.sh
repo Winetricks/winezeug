@@ -95,7 +95,7 @@ linksos()
 }
 
     case $distro in
-    Ubuntu*8.10) 
+    Ubuntu*8.04|Ubuntu*8.10) 
         apt-get install ia32-libs lib32asound2-dev lib32z1-dev 
 	linksos /usr/lib32 $ubuntu_64_ibex_usr_lib32_sos
 	linksos /lib32 $ubuntu_64_ibex_lib32_sos
