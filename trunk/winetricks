@@ -9,7 +9,7 @@
 # See also http://wiki.winehq.org/winetricks
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090227
+VERSION=20090312
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -1506,8 +1506,7 @@ load_vjrun20() {
 #----------------------------------------------------------------
 
 load_vlc() {
-    # want http://www.videolan.org/mirror.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe but it doesn't redirect?
-    download . http://mirrors.optralan.com/videolan/vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
+    download . http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
     try $WINE "$WINETRICKS_CACHE"/vlc-0.8.6f-win32.exe $WINETRICKS_S
 }
 
