@@ -3,7 +3,33 @@
 # If your distro isn't supported here, please add it.
 # Home page (until accepted into wine tree): http://winezeug.googlecode.com
 # Copyright 2006-2009 Dan Kegel
+# Copyright 2009 Austin English
 # LGPL
+
+# OpenSolaris stuff...
+
+if test `uname -o` = Solaris
+then
+
+    if test ! -w /
+    then
+        echo "Usage: pfexec sh $0"
+        exit 1
+    fi
+
+    if test ! `which pkg`
+    then
+        echo "Only OpenSolaris is supported at this time."    
+        exit 1
+    fi
+
+    pkg install SUNWaconf SUNWaudh SUNWbison SUNWcups SUNWflexlex SUNWgcc SUNWGlib \
+    SUNWgmake SUNWgnome-common-devel SUNWsane-backend SUNWxorg-headers SUNWxwinc
+    exit
+
+fi
+
+# Regular Linux distros. Currently just Ubuntu :-/.
 
 if test ! -w /
 then
