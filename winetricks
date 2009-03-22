@@ -138,6 +138,7 @@ usage() {
     echo " wsh56         MS Windows Scripting Host 5.6"
     echo " wsh56js       MS Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb       MS Windows scripting 5.6, vbscript only, no cscript"
+    echo " xact          MS XACT Engine (x3daudio?_?.dll, xactengine?_?.dll)"
     echo " xvid          xvid video codec"
     echo "Apps:"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
@@ -1656,6 +1657,24 @@ load_wsh56vb() {
 
 #----------------------------------------------------------------
 
+load_xact() {
+    helper_directx_dl ;
+
+    # xactengine?_?.dll and X3DAudio?_?.dll - extract
+    cabextract -d "$WINETRICKS_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    cabextract -d "$WINETRICKS_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in `ls "$WINETRICKS_TMP"/*.cab`; do
+      cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
+    done
+
+    # xactengine?_?.dll - register
+    for x in `ls "$WINDIR"/system32/xactengine*`; do
+      try $WINE regsvr32 `basename $x`
+    done
+}
+
+#----------------------------------------------------------------
+
 load_xvid() {
     # xvid
     test -f "$WINDIR"/system32/[Mm][Ff][Cc]42.[Dd][Ll][Ll] || load_vcrun6
@@ -1747,6 +1766,7 @@ do
     wsh56) load_vcrun6; load_wsh56;;
     wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
+    xact|xactengine|x3daudio) load_xact;;
     xvid) load_xvid;;
 
     fakeie6) set_fakeie6;;
