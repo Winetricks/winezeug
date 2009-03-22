@@ -79,9 +79,10 @@ usage() {
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
+    echo " d3dx9         MS d3dx9_??.dll (from DirectX 9 user redistributable)"
     echo " dcom98        MS DCOM (ole32, oleaut32); requires Win98 license!"
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
-    echo " directx9      MS DirectX 9 user redistributable"
+    echo " directx9      MS DirectX 9 user redistributable (not recommended! use d3dx9 instead)"
     echo " divx          divx video codec"
     echo " dotnet11      MS .NET 1.1 (requires Windows license)"
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
@@ -610,6 +611,24 @@ load_corefonts() {
     try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/webdin32.exe
     try cp -f "$WINETRICKS_TMP"/Webdings.TTF "$winefontsdir"
     register_font Webdings.TTF "Webdings (TrueType)"
+}
+
+#----------------------------------------------------------------
+
+load_d3dx9() {
+    # Nov 2008 DirectX 9c User Redistributable
+    # http://www.microsoft.com/downloads/details.aspx?familyid=886ACB56-C91A-4A8E-8BB8-9F20F1244A8E&displaylang=en
+    download . http://download.microsoft.com/download/0/d/3/0d307649-9967-49fa-ab27-61f11024e97f/directx_nov2008_redist.exe 0cbe95cacd413208a9f38e31b602015408025019
+
+    # Kinder, less invasive directx - only extract and override d3dx9_??.dll
+    cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx9*x86*' "$WINETRICKS_CACHE"/directx_nov2008_redist.exe
+    for x in `ls "$WINETRICKS_TMP"/*.cab`; do
+      cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
+    done
+
+    # For now, not needed, but if Wine adds placeholder dlls, they might be needed. Added as a preventative measure.
+    override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
+    override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36
 }
 
 #----------------------------------------------------------------
@@ -1638,6 +1657,7 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     controlpad|fm20) load_controlpad;;
+    d3dx9) load_d3dx9;;
     dcom98) load_dcom98;;
     dirac|dirac0.8) load_dirac08;;
     directx9) load_directx9;;
