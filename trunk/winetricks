@@ -1205,9 +1205,10 @@ load_msls31() {
 load_msmask() {
     # http://msdn.microsoft.com/en-us/library/11405hcf(VS.71).aspx
     # http://bugs.winehq.org/show_bug.cgi?id=2934
-    download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB bdd2bb3a32d18926a048f302aff18b1e6d250d9d
+    download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 3c6b26f68053364ea2e09414b615dbebafb9d5c3
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
-    try cp -f "$WINETRICKS_TMP"/MSMASK32.OCX "$WINDIR"/system32
+    cp -f "$WINETRICKS_TMP"/MSMASK32.OCX "$WINDIR"/system32/msmask32.ocx
+    cp -f "$WINETRICKS_TMP"/msmask32.ocx "$WINDIR"/system32/msmask32.ocx
     try $WINE regsvr32 msmask32.ocx
 }
 
