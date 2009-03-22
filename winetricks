@@ -128,6 +128,7 @@ usage() {
     echo " vcrun2005     MS Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2005sp1  MS Visual C++ 2005 sp1 libraries"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
+    echo " vcrun2008sp1  MS Visual C++ 2008 sp1 libraries"
     echo " vjrun20       MS Visual J# 2.0 libraries (requires dotnet20)"
     echo " wininet       MS wininet.dll (requires Windows license)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license)"
@@ -1520,6 +1521,15 @@ load_vcrun2008() {
 
 #----------------------------------------------------------------
 
+load_vcrun2008sp1() {
+    # Load the Visual C++ 2008 SP1 runtime libraries
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a5c84275-3b97-4ab7-a40d-3802b2af5fc2
+    download vcrun2008sp1 http://download.microsoft.com/download/d/d/9/dd9a82d0-52ef-40db-8dab-795376989c03/vcredist_x86.exe 6939100e397cef26ec22e95e53fcd9fc979b7bc9
+    try $WINE "$WINETRICKS_CACHE"/vcrun2008sp1/vcredist_x86.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_vjrun20() {
     download vjrun20 http://download.microsoft.com/download/9/2/3/92338cd0-759f-4815-8981-24b437be74ef/vjredist.exe 80a098e36b90d159da915aebfbfbacf35f302bd8
     try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe $WINETRICKS_QUIET
@@ -1708,6 +1718,7 @@ do
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
     vcrun2008) load_vcrun2008;;
+    vcrun2008sp1) load_vcrun2008sp1;;
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
     wininet) load_wininet;;
