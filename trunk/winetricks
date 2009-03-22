@@ -90,6 +90,10 @@ usage() {
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
     echo " fm20          MS Forms 2.0 Object Library"
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
+    echo " fontsmooth-disable    Disables font smoothing"
+    echo " fontsmooth-gray       Enables grayscale font smoothing"
+    echo " fontsmooth-rgb        Enables subpixel smoothing RGB"
+    echo " fontsmooth-bgr        Enables subpixel smoothing BGR"
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
@@ -881,6 +885,65 @@ load_fontfix() {
     fi
 }
 
+#----------------------------------------------------------------
+load_fs_disable() {
+    cat > "$WINETRICKS_TMP"/fs_disable.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"FontSmoothing"="0"
+"FontSmoothingGamma"=dword:00000578
+"FontSmoothingOrientation"=dword:00000001
+"FontSmoothingType"=dword:00000000
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/fs_disable.reg
+}
+#----------------------------------------------------------------
+load_fs_grayscale() {
+    cat > "$WINETRICKS_TMP"/fs_grayscale.reg <<_EOF_
+
+REGEDIT4
+
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"FontSmoothing"="2"
+"FontSmoothingGamma"=dword:00000578
+"FontSmoothingOrientation"=dword:00000001
+"FontSmoothingType"=dword:00000001
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/fs_grayscale.reg
+}
+#----------------------------------------------------------------
+load_fs_bgr() {
+    cat > "$WINETRICKS_TMP"/fs_bgr.reg <<_EOF_
+
+REGEDIT4
+
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"FontSmoothing"="2"
+"FontSmoothingGamma"=dword:00000578
+"FontSmoothingOrientation"=dword:00000000
+"FontSmoothingType"=dword:00000002
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/fs_bgr.reg
+}
+#----------------------------------------------------------------
+load_fs_rgb() {
+    cat > "$WINETRICKS_TMP"/fs_rgb.reg <<_EOF_
+
+REGEDIT4
+
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"FontSmoothing"="2"
+"FontSmoothingGamma"=dword:00000578
+"FontSmoothingOrientation"=dword:00000001
+"FontSmoothingType"=dword:00000002
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/fs_rgb.reg
+}
 #----------------------------------------------------------------
 
 load_gecko() {
@@ -1718,6 +1781,10 @@ do
     ffdshow) load_ffdshow;;
     flash) load_flash;;
     fontfix) load_fontfix;;
+    fontsmooth-disable|fs-disable) load_fs_disable;;
+    fontsmooth-gray|fontsmooth-grayscale|fontsmooth-enable|fs-enable) load_fs_grayscale;;
+    fontsmooth-rgb|fs-rgb|fs-cleartype) load_fs_rgb;;
+    fontsmooth-bgr|fs-bgr) load_fs_bgr;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     hosts) load_hosts;;
