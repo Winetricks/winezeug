@@ -1698,7 +1698,7 @@ do
         ;;
     -v) set -x;;
     art2kmin) load_art2kmin;;
-    autohotkey) load_autohotkey;;
+    ahk|autohotkey) load_autohotkey;;
     cc580|comctl32) load_cc580;;
     comctl32.ocx) load_comctl32ocx;;
     colorprofile) load_colorprofile;;
@@ -1709,8 +1709,8 @@ do
     dirac|dirac0.8) load_dirac08;;
     directx9) load_directx9;;
     divx) load_divx;;
-    dotnet11) load_dotnet11; load_fontfix;;
-    dotnet20) load_dotnet20; load_fontfix;;
+    dotnet1|dotnet11) load_dotnet11; load_fontfix;;
+    dotnet2|dotnet20) load_dotnet20; load_fontfix;;
     firefox|firefox3) load_firefox3;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
@@ -1747,11 +1747,11 @@ do
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
     vbrun200|vb2run) load_vb2run;;
-    vb3run) load_vb3run;;
-    vb4run) load_vb4run;;
-    vbvm50|vb5run) load_vbvm50;;
-    vbrun60|vb6run) load_vbrun60;;
-    vcrun6|mfc42) load_vcrun6;;
+    vbrun300|vb3run) load_vb3run;;
+    vbrun400|vb4run) load_vb4run;;
+    vbrun500|vbvm50|vb5run) load_vbvm50;;
+    vbrun600|vbrun60|vb6run) load_vbrun60;;
+    vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005) load_vcrun2005;;
     vcrun2005sp1) load_vcrun2005sp1;;
