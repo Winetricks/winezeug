@@ -119,6 +119,7 @@ usage() {
     echo " riched30      MS riched30"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
+    echo " vb2run        MS Visual Basic 2 runtime"
     echo " vb3run        MS Visual Basic 3 runtime"
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
@@ -1403,6 +1404,17 @@ load_urlmon() {
 
 #----------------------------------------------------------------
 
+load_vb2run() {
+    # Not referenced on MS web anymore. But the old Microsoft Software Library FTP still has it.
+    # See ftp://ftp.microsoft.com/Softlib/index.txt
+    download . ftp://ftp.microsoft.com/Softlib/MSLFILES/VBRUN200.EXE ac0568b73ee375408778e9b505df995f79ab907e
+    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
+    try cp -f "$WINETRICKS_TMP/VBRUN200.DLL" "$WINDIR"/system32/
+
+}
+
+#----------------------------------------------------------------
+
 load_vb3run() {
     # See http://support.microsoft.com/kb/196285
     download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
@@ -1709,6 +1721,7 @@ do
     riched30) load_riched30;;
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
+    vbrun200|vb2run) load_vb2run;;
     vb3run) load_vb3run;;
     vb4run) load_vb4run;;
     vbvm50|vb5run) load_vbvm50;;
