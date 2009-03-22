@@ -1453,6 +1453,9 @@ load_vcrun6() {
     try cabextract "$WINETRICKS_CACHE"/vcredist.exe
     mv mfc42u.dll "$WINDIR"/system32/
     cd "$olddir"
+
+    override_dlls native,builtin msvcrt
+
 }
 
 #----------------------------------------------------------------
