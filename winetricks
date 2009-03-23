@@ -3,8 +3,10 @@
 # redistributable runtime libraries
 #
 # Copyright 2007, 2008, 2009 Google (Dan Kegel, dank@kegel.com)
+# Copyright 2008, 2009 Austin English (austinenglish@gmail.com) - current maintainer
 # Thanks to Detlef Riekenberg for lots of updates
 # Thanks to Saulius Krasuckas for corrections and suggestions
+# Thanks to Erik Inge Bolsø for several patches
 # Please report problems at http://code.google.com/p/winezeug/issues
 # See also http://wiki.winehq.org/winetricks
 
@@ -1341,6 +1343,7 @@ load_ogg() {
     # Requires wine-1.1.1
     download . http://cross-lfs.org/~mlankhorst/direct-schro.dll
     cp "$WINETRICKS_CACHE"/direct-schro.dll "$WINDIR"/system32/direct-schro.dll
+    # This is currently broken. Maarten's not sure why.
     try $WINE regsvr32 direct-schro.dll
 }
 
@@ -1352,7 +1355,7 @@ load_ole2() {
     try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
     set_winver win31
     cd "$WINETRICKS_TMP"
-    try $WINE setup.exe $WINETRICKS_QUIET
+    try $WINE setup.exe
     cd "$olddir"
     unset_winver 
 
