@@ -109,6 +109,11 @@ do
 done
 
 # Fail on -q
-sh winetricks -v \
+for verb in \
     dotnet11 \
     msxml4 
+do
+    wineserver -k || true
+    rm -rf ~/.wine
+    sh winetricks -v $verb
+done
