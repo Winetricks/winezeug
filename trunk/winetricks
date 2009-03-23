@@ -1616,6 +1616,7 @@ load_vcrun2008sp1() {
 #----------------------------------------------------------------
 
 load_vjrun20() {
+    load_dotnet20
     download vjrun20 http://download.microsoft.com/download/9/2/3/92338cd0-759f-4815-8981-24b437be74ef/vjredist.exe 80a098e36b90d159da915aebfbfbacf35f302bd8
     try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe $WINETRICKS_QUIET
 }
