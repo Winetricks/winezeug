@@ -1355,7 +1355,9 @@ load_ole2() {
     try $WINE setup.exe $WINETRICKS_QUIET
     cd "$olddir"
     unset_winver 
-    # TODO: Need to set native overrides for some dlls, like ole2disp?
+
+    override_dlls native,builtin COMPOBJ.DLL OLE2CONV.DLL OLE2DISP.DLL OLE2.DLL 
+    override_dlls native,builtin OLE2NLS.DLL OLE2PROX.DLL STORAGE.DLL TYPELIB.DLL
 }
 
 #----------------------------------------------------------------
