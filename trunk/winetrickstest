@@ -1,24 +1,47 @@
 #!/bin/sh
+# There's a lot of stuff here that probably doesn't need to be tested, e.g., 
+# setting dlls to native, and different windows versions. It doesn't hurt to test
+# and may find weird problems. Plus, that way we can test every function.
+# Currently not tested:
+# ogg - broken
+
 set -ex
 for verb in \
+    ahk \
     colorprofile \
+    comctl32.ocx \
     corefonts \
+    d3dx9 \
     dcom98 \
+    dirac \
     dotnet20 \
     ffdshow \
     firefox \
     flash \
     fontfix \
+    fontsmooth-bgr \
+    fontsmooth-disable \
+    fontsmooth-gray \
+    fontsmooth-rgb \
     gecko \
+    hosts \
     jet40 \
     liberation \
     mfc40 \
+    mpc \
+    mshflxgd \
     msi2 \
+    msls31 \
+    msmask \
+    msscript \
     msxml3 \
     msxml6 \
+    quicktime72 \
     riched20 \
     riched30 \
     tahoma \
+    urlmon \
+    vb2run \
     vb3run \
     vb4run \
     vb5run \
@@ -28,40 +51,62 @@ for verb in \
     vcrun2005 \
     vcrun2005sp1 \
     vcrun2008 \
+    vcrun2008sp1 \
+    vlc \
+    wininet \
+    wme9 \
     wmp9 \
     wmp10 \
     wsh56 \
     wsh56js \
     wsh56vb \
+    xact \
     xvid \
     fakeie6 \
     allfonts \
     native_mdac \
-    volnum 
+    volnum \
+    nt40 \
+    win98 \
+    win2k \
+    winxp \
+    vista \
+    native_oleaut32 \
+
 do
     wineserver -k || true
     rm -rf ~/.wine
-    #$WINE regedit ~/settings.reg
     sh winetricks  -q -v $verb
 done
 
 # Known to have problems
 
 # Ignores -q
-sh winetricks -v \
+for verb in \
+    allcodecs \
     art2kmin \
     cc580 \
+    controlpad \
+    directx9 \
+    divx \
     gdiplus \
     icodecs \
+    ie6 \
+    kde \
     mdac25 \
     mdac27 \
     mdac28 \
     mono20 \
+    mono22 \
     msls31 \
-    pdh 
-
-wineserver -k || true
-rm -rf ~/.wine
+    ole2 \
+    pdh \
+    vjrun20
+do
+    wineserver -k || true
+    rm -rf ~/.wine
+    sh winetricks -v $verb
+done
 
 # Fail on -q
 sh winetricks -v \
