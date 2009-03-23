@@ -11,7 +11,7 @@
 # See also http://wiki.winehq.org/winetricks
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090312
+VERSION=20090322
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
