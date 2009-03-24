@@ -108,7 +108,7 @@ while [ $TREESTATUS = "0" ]
 do
   echo "Attempting to fetch updated tree." && git fetch ;
   echo "Applying new patches." ;
-  git rebase origin 2>&1 | grep "Current branch HEAD is up to date" || TREESTATUS=1
+  git rebase origin 2>&1 | grep "Current branch HEAD is up to date" || break
   sleep $WAITTIME
 done
 }
