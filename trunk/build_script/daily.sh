@@ -54,7 +54,10 @@ TAG="$NAME-$MACHINE-$TEST"
 set -ex
 
 # First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script
-OS=`uname -o`
+# need to find something more portable... `uname -o fails on FreeBSD, possibly others. Does -s work on Solaris?
+
+OS=`uname -o` || OS=`uname -s`
+echo $OS
 
 # TODO: Differentiate between Solaris and OpenSolaris here...not sure how though :-/
 if [ $OS = 'Solaris' ]
@@ -74,7 +77,7 @@ elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
         echo "If not, please notifiy the maintainer to add your build script here."
 elif [ $OS = 'FreeBSD' ]
     then
-        echo "This is untested...going from memory"
+        CC="ccache gcc"
         CPPFLAGS="-I/usr/local/include"
         LDFLAGS="-L/usr/local/lib"
 elif [ $OS = 'NetBSD' ]
