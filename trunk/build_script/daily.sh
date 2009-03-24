@@ -49,7 +49,7 @@ MACHINE=${MACHINE:-`uname -n`}
 WAITTIME=1800
 
 # You probably don't want to touch this, as it's a combo of several other variables.
-TAG="$NAME-$MACHINE-$TEST"
+TAG="$NAME-$MACHINE-$TESTNAME"
 
 set -ex
 
@@ -170,56 +170,63 @@ runtests() {
 
 all_test() {
 WINEDEBUG="+all"
-TEST=all
+TESTNAME="-all"
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
 
 heap_test() {
 WINEDEBUG="warn+heap"
-TEST=heap
+TESTNAME="-heap"
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
 
 message_test() {
 WINEDEBUG="+message"
-TEST=message
+TESTNAME="-message"
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
 
 regular_test() {
 WINEDEBUG=""
-TEST=""
+TESTNAME=""
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
 
 relay_test() {
 WINEDEBUG="+relay"
-TEST=relay
+TESTNAME="-relay"
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
 
 seh_test() {
 WINEDEBUG="+seh"
-TEST=seh
+TESTNAME="-seh"
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
 
 virtual_desktop_test() {
 WINEDEBUG=""
-TEST=virtdesktop
+TESTNAME="-virtdesktop"
 export WINEDEBUG
+export TESTNAME
 preptests
 enable_virtual_desktop
 runtests
@@ -227,8 +234,9 @@ runtests
 
 werror_test() {
 WINEDEBUG=""
-TEST=werror
+TESTNAME="-werror"
 export WINEDEBUG
+export TESTNAME
 preptests
 runtests
 }
