@@ -30,7 +30,7 @@
 # make sure script is portable
 # add more Linux distro support
 # OS X support
-# account for lack of winetricks
+# account for lack of winetricks (download it and run it directly from source directory, a la dotests)
 
 # Now some common definitions:
 
@@ -49,7 +49,9 @@ MACHINE=${MACHINE:-`uname -n`}
 WAITTIME=1800
 
 # You probably don't want to touch this, as it's a combo of several other variables.
-TAG="$NAME-$MACHINE-$TESTNAME"
+# For some reason, I can't get this to work right..it keeps leaving off the testname.
+# Is this possible to do, since the testname changes?
+#TAG="$NAME-$MACHINE-$TESTNAME"
 
 set -ex
 
