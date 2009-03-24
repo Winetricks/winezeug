@@ -115,7 +115,7 @@ done
 
 # If our build fails
 build_failed() {
-echo "$BUILD build failed for some reason...Investigate manually you lazy bastard!"
+echo "$BUILDNAME build failed for some reason...Investigate manually you lazy bastard!"
 exit 1
 }
 
@@ -123,12 +123,12 @@ exit 1
 # From there, we can store $WARNINGS_PREDICTED in each OS above, and complain if it doesn't match
 # TODO: determine if logs are wanted, and if so, store in distclean-date, configure-date, etc.
 build() {
-echo "Starting $BUILD build." && 
+echo "Starting $BUILDNAME build." && 
 echo "Running make distclean." && make distclean 1>/dev/null 2>&1 ;
 echo "Running configure." && ./configure $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
 echo "Running make depend." && make depend 1>/dev/null 2>&1 &&
 echo "Running make." && make 1>/dev/null 2>&1 &&
-echo "Vanilla build was fine. Coolio"
+echo "$BUILDNAME build was fine. Coolio"
 }
 
 # Test functions here...
@@ -255,9 +255,9 @@ newtree
 #werror_test
 
 # Now compile without -Werror, since it screws some things up
-BUILD=regular
+BUILDNAME=regular
 build || build_failed
-echo "$BUILD build compiled fine. Now for the conformance tests."
+echo "$BUILDNAME build compiled fine. Now for the conformance tests."
 
 # Get updated winetest
 gettests
