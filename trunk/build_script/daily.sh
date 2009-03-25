@@ -48,11 +48,6 @@ MACHINE=${MACHINE:-`uname -n`}
 # Be sure you put it in seconds. Not all OS's support the d/h/m options (OpenSolaris, I'm looking at you!)
 WAITTIME=1800
 
-# You probably don't want to touch this, as it's a combo of several other variables.
-# For some reason, I can't get this to work right..it keeps leaving off the testname.
-# Is this possible to do, since the testname changes?
-#TAG="$NAME-$MACHINE-$TESTNAME"
-
 set -ex
 
 # First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script
@@ -157,7 +152,6 @@ gettests() {
 }
 
 preptests() {
-    echo "Beginning $TAG test nao" &&
     wineserver -k ;
     rm -rf $WINEPREFIX ;
     winetricks gecko 1>/dev/null 2>&1
@@ -165,8 +159,8 @@ preptests() {
 
 # TODO: fix to use the SHA1SUM as well.
 runtests() {
-    echo "About to start $TAG test run. Expect no output for a while..." &&
-    ./wine winetest-latest.exe -c -t $TAG 1>/dev/null 2>&1 &&
+    echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
+    ./wine winetest-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
     rm -rf $WINEPREFIX
 }
 
