@@ -985,9 +985,9 @@ _EOF_
     #The registry-entry does not support an environment-variable
     # note: echo's behavior with backslashes and options is nonportable,
     # see http://www.opengroup.org/onlinepubs/009695399/utilities/echo.html
-    echo -n '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
-    echo -n 'c:\\windows\\gecko\\'$GECKO_VERSION | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
-    echo '\\\\wine_gecko"' >>"$WINETRICKS_TMP"/geckopath.reg
+    printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
+    printf 'c:\\windows\\gecko\\'$GECKO_VERSION | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
+    printf '\\\\wine_gecko"' >>"$WINETRICKS_TMP"/geckopath.reg
 
     # extract the files
     mkdir -p "$WINDIR"/gecko/$GECKO_VERSION
