@@ -154,7 +154,8 @@ gettests() {
 preptests() {
     wineserver -k ;
     rm -rf $WINEPREFIX ;
-    winetricks gecko 1>/dev/null 2>&1
+    wget -c http://winezeug.googlecode.com/svn/trunk/winetricks &&
+    sh winetricks gecko 1>/dev/null 2>&1 &&
 }
 
 # TODO: fix to use the SHA1SUM as well.
