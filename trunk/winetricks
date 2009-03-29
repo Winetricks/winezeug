@@ -464,11 +464,11 @@ _EOF_
 
 #----- common download for several verbs
 helper_directx_dl() {
-    # Nov 2008 DirectX 9c User Redistributable
-    # http://www.microsoft.com/downloads/details.aspx?familyid=886ACB56-C91A-4A8E-8BB8-9F20F1244A8E&displaylang=en
-    download . http://download.microsoft.com/download/0/d/3/0d307649-9967-49fa-ab27-61f11024e97f/directx_nov2008_redist.exe 0cbe95cacd413208a9f38e31b602015408025019
+    # Mar 2009 DirectX 9c User Redistributable
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=0cf368e5-5ce1-4032-a207-c693d210f616&displaylang=en
+    download . http://download.microsoft.com/download/3/C/4/3C46A69A-CB0F-4CCA-B1E8-248D43270D5F/directx_mar2009_redist.exe 29957ee0d29b95019b082a47da5eab52f50cde0d
 
-    DIRECTX_NAME=directx_nov2008_redist.exe
+    DIRECTX_NAME=directx_mar2009_redist.exe
 }
 
 #----- One function per package, in alphabetical order ----------
