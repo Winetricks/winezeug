@@ -642,7 +642,7 @@ load_d3dx9() {
       cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
-    # For now, not needed, but if Wine adds placeholder dlls, they might be needed. Added as a preventative measure.
+    # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
     override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
     override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36
 }
@@ -666,6 +666,8 @@ load_directx9() {
     # For #3, I have no idea which DLLs don't register themselves well yet,
     # so I'm just listing a few of the basic ones.  Let's whittle that
     # list down as soon as we can.  
+    echo "You probably shouldn't be using this. It's VERY invasive."
+    echo "Use 'winetricks d3dx9' instead."
     set_winver win2k
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
        try $WINE "$WINETRICKS_CACHE"/$DIRECTX_NAME /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
