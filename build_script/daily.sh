@@ -94,6 +94,17 @@ else
     exit 1
 fi
 
+# Make sure wget is available:
+if [ `which wget` ]
+    then
+        get="wget -c"
+# If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, probably others. The only reason
+# to use this is for machines that don't have wget. The only one I've seen that on is the BSD's, and this works fine there.
+elif [ `which ftp` ]
+    then
+        get="ftp"
+fi
+
 # Fetch an updated tree
 newtree() {
 #TODO: don't force a hard reset for those that don't want it. 'git checkout -f origin' should be just as effective 
@@ -147,13 +158,13 @@ echo "sleeping for 10 seconds...regedit bug?" && sleep 10s
 # TODO: get winetest-SHA1SUM. Wait if not available?
 gettests() {
     rm -rf winetest*.exe ;
-    wget http://test.winehq.org/builds/winetest-latest.exe
+    $get http://test.winehq.org/builds/winetest-latest.exe
 }
 
 preptests() {
     wineserver -k ;
     rm -rf $WINEPREFIX ;
-    wget -c http://winezeug.googlecode.com/svn/trunk/winetricks &&
+    $get http://winezeug.googlecode.com/svn/trunk/winetricks &&
     sh winetricks gecko 1>/dev/null 2>&1
 }
 
