@@ -85,9 +85,8 @@ elif [ $OS = 'NetBSD' ]
         LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/lib -Wl,-R/usr/lib -L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib"
 elif [ $OS = 'OpenBSD' ]
     then
-        echo "This is untested...going from memory"
-        CFLAGS="-I$/usr/local/include -I$/usr/local/include/libpng"
-        LDFLAGS="-lm -lz -lcrypto -liconv -L$/usr/local/lib"
+        CFLAGS="-I/usr/local/include -I/usr/local/include/libpng"
+        LDFLAGS="-lm -lz -lcrypto -L/usr/local/lib"
         X_EXTRA_LIBS="-lXau -lXdmcp"
         CPPFLAGS="-I/usr/local/include"
 else
