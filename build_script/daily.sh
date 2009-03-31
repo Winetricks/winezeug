@@ -48,6 +48,9 @@ MACHINE=${MACHINE:-`uname -n`}
 # Be sure you put it in seconds. Not all OS's support the d/h/m options (OpenSolaris, I'm looking at you!)
 WAITTIME=1800
 
+# This is simply a placeholder function to workaround the lack of wget on some OS's.
+get=${GET:"wget -c"}
+
 set -ex
 
 # First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script
