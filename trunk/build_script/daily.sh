@@ -261,14 +261,6 @@ runtests
 # Get new tree
 newtree
 
-# Compile with -Werror to make sure nothing regresses there.
-# Disbled for now, because of those damn returned value errors...need to tweak something.
-#BUILD=strict
-#build_strict || build_failed
-#echo "Strict build compiled fine. Running -Werror_test."
-
-#werror_test
-
 # Now compile without -Werror, since it screws some things up
 BUILDNAME=regular
 build || build_failed
@@ -278,6 +270,5 @@ echo "$BUILDNAME build compiled fine. Now for the conformance tests."
 gettests
 
 regular_test &&
-heap_test &&
 
 exit
