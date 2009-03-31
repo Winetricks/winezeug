@@ -10,6 +10,14 @@
 # Please report problems at http://code.google.com/p/winezeug/issues
 # See also http://wiki.winehq.org/winetricks
 
+# Prevent running with sudo/root. This would create a .winetrickscache as root 
+# in the user's home directory!
+if ! test -O $HOME
+    then
+        echo "Don't run winetricks with sudo!"
+        exit 1
+fi
+
 # Name of this version of winetricks (YYYYMMDD)
 VERSION=20090322
 
