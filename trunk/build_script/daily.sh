@@ -220,6 +220,15 @@ preptests
 runtests
 }
 
+nowin16_test() {
+WINEDEBUG=""
+TESTNAME="-nowin16"
+export WINEDEBUG
+export TESTNAME
+preptests
+runtests
+}
+
 regular_test() {
 WINEDEBUG=""
 TESTNAME=""
@@ -279,14 +288,24 @@ runtests
 # Get new tree
 newtree
 
+# Get updated winetest
+gettests
+
+# Get any needed hacks
 gethacks
-# Now compile without -Werror, since it screws some things up
-BUILDNAME=regular
+
+# Start off with a disabled win16 compile:
+BUILDNAME=nowin16
+CONFIGUREFLAGS="--disable-win16"
 build || build_failed
 echo "$BUILDNAME build compiled fine. Now for the conformance tests."
 
-# Get updated winetest
-gettests
+nowin16_test &&
+
+# A plain vanilla compile.
+BUILDNAME=regular
+build || build_failed
+echo "$BUILDNAME build compiled fine. Now for the conformance tests."
 
 regular_test &&
 
