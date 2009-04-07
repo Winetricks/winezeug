@@ -206,6 +206,10 @@ runtests
 }
 
 nowin16_test() {
+BUILDNAME=nowin16
+CONFIGUREFLAGS="--disable-win16"
+build || build_failed
+echo "$BUILDNAME build compiled fine. Now for the conformance tests."
 WINEDEBUG=""
 TESTNAME="-nowin16"
 export WINEDEBUG
@@ -275,14 +279,6 @@ newtree
 
 # Get updated winetest
 gettests
-
-# Start off with a disabled win16 compile:
-BUILDNAME=nowin16
-CONFIGUREFLAGS="--disable-win16"
-build || build_failed
-echo "$BUILDNAME build compiled fine. Now for the conformance tests."
-
-nowin16_test &&
 
 # A plain vanilla compile.
 BUILDNAME=regular
