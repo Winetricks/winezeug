@@ -190,6 +190,24 @@ preptests
 runtests
 }
 
+build_regular() {
+BUILDNAME=regular
+CONFIGUREFLAGS=""
+build || build_failed
+}
+
+build_nowin16() {
+BUILDNAME=nowin16
+CONFIGUREFLAGS="--disable-win16"
+build || build_failed
+}
+
+build_win64() {
+BUILDNAME=win64
+CONFIGUREFLAGS="--enable-win64"
+build || build_failed
+}
+
 heap_test() {
 WINEDEBUG="warn+heap"
 TESTNAME="-heap"
@@ -209,10 +227,6 @@ runtests
 }
 
 nowin16_test() {
-BUILDNAME=nowin16
-CONFIGUREFLAGS="--disable-win16"
-build || build_failed
-echo "$BUILDNAME build compiled fine. Now for the conformance tests."
 WINEDEBUG=""
 TESTNAME="-nowin16"
 export WINEDEBUG
@@ -277,11 +291,9 @@ newtree
 # Get updated winetest
 gettests
 
-# A plain vanilla compile.
-BUILDNAME=regular
-build || build_failed
-echo "$BUILDNAME build compiled fine. Now for the conformance tests."
+# Build Wine
+build_regular &&
 
-regular_test &&
+regular_test || exit 1
 
 exit
