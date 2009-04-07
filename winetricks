@@ -877,10 +877,10 @@ load_fontfix() {
         # FIXME: do all affected versions of the font have same sha1sum as Gutsy?  Seems unlikely.
         if [ "$gotsum"x = "96e1121f89953e5169d3e2e7811569148f573985"x ]
         then
-            download . http://apt.debian.org.tw/pool/t/ttf-arphic-ukai/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 46cc7b67b6117a7e161c1a573502c0bf2b09cbdc  
+            download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
             cd "$WINETRICKS_TMP/"
-	    tar -xzf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
-	    try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
+            tar -xzf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
+            try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
         fi
     fi
@@ -890,13 +890,23 @@ load_fontfix() {
         gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/uming.ttf | sed 's/ .*//'`
         if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
         then
-            download . http://apt.debian.org.tw/pool/t/ttf-arphic-uming/ttf-arphic-uming_0.1.20060108.orig.tar.gz ec34aeb240fcce09d25fce2fbe5e5b6f358c2f24  
+            download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
             cd "$WINETRICKS_TMP/"
-	    tar -xzf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
-	    try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
+            tar -xzf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
+            try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
         fi
     fi
+
+    # The heterogeneity of SHA-1 checksums and paths for "bad" Samyak-Oriya.ttf
+    # fonts make checking impractical, so we'll substitute in a good version
+    # regardless of the installed version, if any.
+
+    download . http://cvs.fedora.redhat.com/repo/pkgs/samyak-fonts/samyak-fonts-1.2.0.tar.gz/a57339ba2b4279938a2d792ebdf70377/samyak-fonts-1.2.0.tar.gz f06d0eaac201a3ec79418d69d46807a52150f047
+    cd "$WINETRICKS_TMP/"
+    tar -xzf "$WINETRICKS_CACHE/samyak-fonts-1.2.0.tar.gz"
+    try mv samyak-fonts-1.2.0/oriya/Samyak-Oriya.ttf "$winefontsdir"
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
