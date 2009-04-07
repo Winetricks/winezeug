@@ -123,21 +123,6 @@ do
 done
 }
 
-# Some builds need a few hacks to get going...
-gethacks() {
-if [ $OS = 'OpenBSD' ]
-    then
-    # bug 16660
-    get "http://bugs.winehq.org/attachment.cgi?id=20221" && patch -p1 < "attachment.cgi?id=20221"
-    # bug 16662
-    get "http://bugs.winehq.org/attachment.cgi?id=20222" && patch -p1 < "attachment.cgi?id=20222"
-    # bug 16663
-    get "http://bugs.winehq.org/attachment.cgi?id=20223" && patch -p1 < "attachment.cgi?id=20223"
-    # bug 17907
-    get "http://bugs.winehq.org/attachment.cgi?id=20225" && patch -p1 < "attachment.cgi?id=20225"
-fi
-}
-
 # If our build fails
 build_failed() {
 echo "$BUILDNAME build failed for some reason...Investigate manually you lazy bastard!"
@@ -290,9 +275,6 @@ newtree
 
 # Get updated winetest
 gettests
-
-# Get any needed hacks
-gethacks
 
 # Start off with a disabled win16 compile:
 BUILDNAME=nowin16
