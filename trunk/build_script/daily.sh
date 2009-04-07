@@ -162,9 +162,14 @@ echo "sleeping for 10 seconds...regedit bug?" && sleep 10s
 }
 
 # TODO: get winetest-SHA1SUM. If not available, wait 30 minutes?
-gettests() {
-    rm -rf winetest*.exe ;
+get_tests_32() {
+    rm -rf winetest-*.exe ;
     $GET http://test.winehq.org/builds/winetest-latest.exe
+}
+
+get_tests_64() {
+    rm -rf winetest64-*.exe ;
+    $GET http://test.winehq.org/builds/winetest64-latest.exe
 }
 
 preptests() {
@@ -289,7 +294,7 @@ runtests
 newtree
 
 # Get updated winetest
-gettests
+get_tests_32
 
 # Build Wine
 build_regular &&
