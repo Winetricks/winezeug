@@ -157,7 +157,7 @@ REGEDIT4
 "Default"="800x600"
 _EOF_
 echo "Importing registry key" &&
-wine regedit /tmp/virtualdesktop.reg &&
+./wine regedit /tmp/virtualdesktop.reg &&
 echo "sleeping for 10 seconds...regedit bug?" && sleep 10s
 }
 
@@ -168,7 +168,7 @@ gettests() {
 }
 
 preptests() {
-    wineserver -k ;
+    ./server/wineserver -k ;
     rm -rf $WINEPREFIX ;
     $GET http://winezeug.googlecode.com/svn/trunk/winetricks &&
     sh winetricks gecko 1>/dev/null 2>&1
