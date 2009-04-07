@@ -1,0 +1,25 @@
+#!/bin/sh
+# This script is meant to be used as a wrapper script. Place it in /usr/local/bin,
+# mark it +x, then you can use `daily` to run the script from any directory.
+
+# Where your wine-git directory is located. We need to 'cd' there. Most people
+# have it in $HOME/wine-git, but I know some cranky bastard is going to put it
+# elsewhere...
+WINEGIT=${WINEGIT:-$HOME/wine-git}
+
+# NAME is used when submitting your test results.
+# Remember, 20 characters max, total. Most people use their initials.
+# If you don't put anything here, daily.sh defaults to your username.
+
+export NAME="yournamegoeshere"
+
+# This should describe your particular machine, in case you have multiple computers.
+# Typically, put your distribution/architecture. If blank, your hostname is used.
+export MACHINE="machinename"
+
+# Kill Wine. We obviously don't care if it passes/fails.
+$WINEGIT/server/wineserver -k ;
+
+cd $WINEGIT &&
+./daily.sh &&
+exit
