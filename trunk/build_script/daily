@@ -21,5 +21,7 @@ export MACHINE="machinename"
 $WINEGIT/server/wineserver -k ;
 
 cd $WINEGIT &&
-./daily.sh &&
+rm daily.sh
+wget http://winezeug.googlecode.com/svn/trunk/build_script/daily.sh
+sh daily.sh &&
 exit
