@@ -30,7 +30,8 @@
 # make sure script is portable
 # add more Linux distro support
 # OS X support
-# account for lack of winetricks (download it and run it directly from source directory, a la dotests)
+# Allow $1 arguments. E.g., with no arguments, fetch newtree/build/get winetest/run regular test
+# With $1, allow nowin16, win64, +heap, +all, +relay, +message, nogecko, etc.
 
 # Now some common definitions:
 
@@ -48,13 +49,13 @@ MACHINE=${MACHINE:-`uname -n`}
 # Be sure you put it in seconds. Not all OS's support the d/h/m options (OpenSolaris, I'm looking at you!)
 WAITTIME=1800
 
-# This is simply a placeholder function to workaround the lack of wget on some OS's.
+# This is simply a placeholder function to workaround the lack of wget on some OS's (the BSD's)
 GET=${GET:-`wget -c`}
 
 set -ex
 
-# First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script
-# need to find something more portable... `uname -o fails on FreeBSD, possibly others. Does -s work on Solaris?
+# First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script.
+# TODO: Find something more portable... `uname -o` fails on FreeBSD, possibly others. Does -s work on Solaris?
 
 OS=`uname -o` || OS=`uname -s`
 echo $OS
@@ -93,7 +94,7 @@ elif [ $OS = 'OpenBSD' ]
         X_EXTRA_LIBS="-lXau -lXdmcp"
         CPPFLAGS="-I/usr/local/include"
 else
-    echo "Your OS is not supported by this build script. E-mail the maintainer if you can add support."
+    echo "Your OS is not supported by this build script. Please e-mail the maintainer if you get this message."
     exit 1
 fi
 
@@ -101,8 +102,8 @@ fi
 if [ `which wget` ]
     then
         GET="wget -c"
-# If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, probably others. The only reason
-# to use this is for machines that don't have wget. The only one I've seen that on is the BSD's, and this works fine there.
+# If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
+# to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
 elif [ `which ftp` ]
     then
         GET="ftp"
@@ -110,27 +111,29 @@ fi
 
 # Fetch an updated tree
 newtree() {
-#TODO: don't force a hard reset for those that don't want it. 'git checkout -f origin' should be just as effective 
+# TODO: don't force a hard reset for those that don't want it. 'git checkout -f origin' should be just as effective 
 echo "Resetting git tree to origin." && git reset --hard origin &&
-# This is used for our loop to check for updated git tree. Is there a cleaner way to do this?
+# This is used for our loop to check for updated git tree. TODO: Is there a cleaner way to do this?
 TREESTATUS=0
 while [ $TREESTATUS = "0" ]
 do
   echo "Attempting to fetch updated tree." && git fetch ;
   echo "Applying new patches." ;
+# TODO: This fails if the the git site can't be reached. Need to adjust appropriately.
   git rebase origin 2>&1 | grep "Current branch HEAD is up to date" || break
   sleep $WAITTIME
 done
 }
 
-# If our build fails
+# If our build fails :'(
 build_failed() {
 echo "$BUILDNAME build failed for some reason...Investigate manually you lazy bastard!"
 exit 1
 }
 
 # TODO: sed/grep -v out visibility attribute/ignored return value errors, then wc -l error/warnings lines.
-# From there, we can store $WARNINGS_PREDICTED in each OS above, and complain if it doesn't match
+# From there, we can store $WARNINGS_PREDICTED in each OS above, and complain if it doesn't match.
+# This shouldn't be used on Ubuntu right now, until the "ignoring return value" problem is fixed.
 # TODO: determine if logs are wanted, and if so, store in distclean-date, configure-date, etc.
 build() {
 echo "Starting $BUILDNAME build." && 
@@ -158,7 +161,7 @@ wine regedit /tmp/virtualdesktop.reg &&
 echo "sleeping for 10 seconds...regedit bug?" && sleep 10s
 }
 
-# TODO: get winetest-SHA1SUM. Wait if not available?
+# TODO: get winetest-SHA1SUM. If not available, wait 30 minutes?
 gettests() {
     rm -rf winetest*.exe ;
     $GET http://test.winehq.org/builds/winetest-latest.exe
@@ -264,13 +267,7 @@ preptests
 runtests
 }
 #######################################################
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-#######################################################
-#######################################################
+##    Now to use the functions :-)
 #######################################################
 
 # Now for the script to actually do something:
