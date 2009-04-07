@@ -49,7 +49,7 @@ MACHINE=${MACHINE:-`uname -n`}
 WAITTIME=1800
 
 # This is simply a placeholder function to workaround the lack of wget on some OS's.
-get=${GET:"wget -c"}
+GET=${GET:-`wget -c`}
 
 set -ex
 
@@ -100,12 +100,12 @@ fi
 # Make sure wget is available:
 if [ `which wget` ]
     then
-        get="wget -c"
+        GET="wget -c"
 # If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, probably others. The only reason
 # to use this is for machines that don't have wget. The only one I've seen that on is the BSD's, and this works fine there.
 elif [ `which ftp` ]
     then
-        get="ftp"
+        GET="ftp"
 fi
 
 # Fetch an updated tree
@@ -161,13 +161,13 @@ echo "sleeping for 10 seconds...regedit bug?" && sleep 10s
 # TODO: get winetest-SHA1SUM. Wait if not available?
 gettests() {
     rm -rf winetest*.exe ;
-    $get http://test.winehq.org/builds/winetest-latest.exe
+    $GET http://test.winehq.org/builds/winetest-latest.exe
 }
 
 preptests() {
     wineserver -k ;
     rm -rf $WINEPREFIX ;
-    $get http://winezeug.googlecode.com/svn/trunk/winetricks &&
+    $GET http://winezeug.googlecode.com/svn/trunk/winetricks &&
     sh winetricks gecko 1>/dev/null 2>&1
 }
 
