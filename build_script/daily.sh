@@ -101,7 +101,7 @@ fi
 # Make sure wget is available:
 if [ `which wget` ]
     then
-        GET="wget -c"
+        GET="wget"
 # If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
 # to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
 elif [ `which ftp` ]
@@ -173,10 +173,10 @@ get_tests_64() {
 }
 
 preptests() {
-    ./server/wineserver -k ;
-    rm -rf $WINEPREFIX ;
-    $GET http://winezeug.googlecode.com/svn/trunk/winetricks &&
-    sh winetricks gecko 1>/dev/null 2>&1
+    ./server/wineserver -k || true
+    rm -rf $WINEPREFIX winetricks || true
+    $GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
+    sh winetricks gecko > /dev/null 2>&1 || exit 1
 }
 
 # TODO: fix to use the SHA1SUM as well.
