@@ -1775,6 +1775,11 @@ load_xvid() {
 
 #----------------------------------------------------------------
 
+print_version() {
+    echo "You are using winetricks $VERSION."
+}
+
+#----------------------------------------------------------------
 
 while test "$1" != ""
 do
@@ -1875,6 +1880,7 @@ do
     winver=) unset_winver;;
     native_mdac) set_native_mdac;;
     native_oleaut32) override_dlls native,builtin oleaut32;;
+    version) print_version;;
     volnum) volnum;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
