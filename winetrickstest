@@ -24,6 +24,7 @@ for verb in \
     fontsmooth-gray \
     fontsmooth-rgb \
     gecko \
+    gecko-dbg \
     hosts \
     jet40 \
     liberation \
@@ -71,6 +72,7 @@ for verb in \
     win2k \
     winxp \
     vista \
+    version \
     native_oleaut32 \
 
 do
