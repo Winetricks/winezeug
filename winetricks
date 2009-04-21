@@ -106,6 +106,7 @@ usage() {
     echo " fontsmooth-bgr        Enables subpixel smoothing BGR"
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
+    echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Codecs (Indeo)"
     echo " jet40         MS Jet 4.0 Service Pack 8"
@@ -1020,6 +1021,56 @@ _EOF_
 
 #----------------------------------------------------------------
 
+load_gecko_dbg() {
+    # Load the HTML rendering Engine (Gecko), with debugging symbols
+    # FIXME: shouldn't this code be in some script installed 
+    # as part of Wine instead of in winetricks?
+    # (e.g. we hardcode gecko's url here, but it's normally
+    # only hardcoded in wine.inf, and fetched from the registry thereafter,
+    # so we're adding a maintenance burden here.)
+    case `$WINE --version` in
+    wine-0*|wine-1.0*|wine-1.1|wine-1.1.?|wine-1.1.11)
+        echo "There isn't a gecko debug build for your Wine version."
+        exit 1
+        ;;
+    wine-1.1.1[234]*)
+        GECKO_VERSION=0.9.0 
+        GECKO_SHA1SUM=23e354a82d7b7e61a6abe0384cc44669fbf92f86
+        ;;
+    *)
+        GECKO_VERSION=0.9.1
+        GECKO_SHA1SUM=a9b58d3330f8c78524fe4683f348302bfce96ff4
+        ;;
+    esac
+
+    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION-dbg.cab
+    then
+       # FIXME: busted if using curl!
+       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION-dbg.cab" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION-dbg.cab
+    fi
+
+    cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\\Software\\Wine\\MSHTML\\$GECKO_VERSION]
+_EOF_
+
+    #The registry-entry does not support an environment-variable
+    printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
+    printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
+
+    # extract the files
+    mkdir -p "$WINDIR"/gecko/$GECKO_VERSION
+    cd "$WINDIR"/gecko/$GECKO_VERSION
+    try cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION-dbg.cab
+    cd "$olddir"
+
+    # set install-path
+    try $WINE regedit "$WINETRICKS_TMP"/geckopath.reg
+}
+
+#----------------------------------------------------------------
+
 load_gdiplus() {
     # gdiplus is documented here as a redistributable:
     # http://msdn.microsoft.com/library/en-us/gdicpp/GDIPlus/GDIPlus.asp
@@ -1817,6 +1868,7 @@ do
     fontsmooth-bgr|fs-bgr) load_fs_bgr;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
+    gecko-dbg|geckodbg|gecko_dbg|geckodebug|gecko_debug|gecko-debug) load_gecko_dbg;;
     hosts) load_hosts;;
     icodecs) load_icodecs;;
     ie6) load_ie6;;
