@@ -32,6 +32,7 @@
 # OS X support
 # Allow $1 arguments. E.g., with no arguments, fetch newtree/build/get winetest/run regular test
 # With $1, allow nowin16, win64, +heap, +all, +relay, +message, nogecko, etc.
+# Add support for first time git initialization.
 
 # Now some common definitions:
 
@@ -51,6 +52,11 @@ WAITTIME=1800
 
 # This is simply a placeholder function to workaround the lack of wget on some OS's (the BSD's)
 GET=${GET:-`wget -c`}
+
+die() {
+  echo "$@"
+  exit 1
+}
 
 export WINE='`pwd`/wine'
 
@@ -116,6 +122,8 @@ fi
 
 # Fetch an updated tree
 newtree() {
+# make sure we're in a git tree to start with:
+git show > /dev/null 2>&1 || die "Not in a git tree! Initializing a fresh git tree isn't yet supported."
 # TODO: don't force a hard reset for those that don't want it. 'git checkout -f origin' should be just as effective 
 echo "Resetting git tree to origin." && git reset --hard origin &&
 # This is used for our loop to check for updated git tree. TODO: Is there a cleaner way to do this?
