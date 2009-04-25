@@ -109,6 +109,9 @@ if [ `which wget` ]
 elif [ `which ftp` ]
     then
         GET="ftp"
+else
+    echo "You don't have wget or ftp installed. I can't download needed files. Please report this as a bug."
+    exit 1
 fi
 
 # Fetch an updated tree
