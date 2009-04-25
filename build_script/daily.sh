@@ -52,6 +52,8 @@ WAITTIME=1800
 # This is simply a placeholder function to workaround the lack of wget on some OS's (the BSD's)
 GET=${GET:-`wget -c`}
 
+export WINE='`pwd`/wine'
+
 set -ex
 
 # First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script.
