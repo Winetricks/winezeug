@@ -58,7 +58,7 @@ die() {
   exit 1
 }
 
-export WINE='`pwd`/wine'
+export WINE=`pwd`/wine
 
 set -ex
 
