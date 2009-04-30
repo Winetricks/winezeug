@@ -78,6 +78,11 @@ libltdl7 \
 libltdl7-dev \
 "
 
+ubuntu_jaunty_pkgs="\
+libltdl7 \
+libltdl7-dev \
+"
+
 ubuntu_64_ibex_usr_lib32_sos="\
 libcapi20.so.3 libcrypto.so.0.9.8 libcups.so.2 libfontconfig.so.1 libfreetype.so.6 \
 libGL.so.1 libGLU.so.1 libgnutls.so.26 libgphoto2_port.so.0 libgphoto2.so.2 \
@@ -98,6 +103,7 @@ case $distro in
 Ubuntu*7.10) apt-get install $ubuntu_common_pkgs $ubuntu_gutsy_pkgs;;
 Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
+Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
 *) echo "distro $distro not supported"; exit 1;;
 esac
 
