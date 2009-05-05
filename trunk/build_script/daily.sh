@@ -60,15 +60,14 @@ die() {
 
 export WINE=`pwd`/wine
 
-set -ex
+set -e
 
 # First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script.
-# TODO: Find something more portable... `uname -o` fails on FreeBSD, possibly others. Does -s work on Solaris?
 
-OS=`uname -o` || OS=`uname -s`
+OS=`uname -s`
 
 # TODO: Differentiate between Solaris and OpenSolaris here...not sure how though :-/
-if [ $OS = 'Solaris' ]
+if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
     then
         export CFLAGS="-I/usr/sfw/include -I/usr/X11/include -g" 
         export CPPFLAGS="-I/usr/sfw/include" 
