@@ -38,7 +38,7 @@
 
 # This WINEPREFIX is for running the conformance tests. If you want to use a
 # different one, change it here or override the environmental variable.
-WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+WINEPREFIX=${WINEPREFIX:-$HOME/.winetest}
 
 # Set your name here. It will be used to submit test data. If none is given, your username will be used.
 NAME=${NAME:-`whoami`}
