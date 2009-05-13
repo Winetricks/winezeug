@@ -164,55 +164,50 @@ echo "$BUILDNAME build was fine. Coolio"
 # Test functions here...
 
 disable_gecko() {
-echo "Disabling gecko..."
 cat > /tmp/disable_gecko.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\MSHTML]
 "GeckoUrl"=-
 _EOF_
-echo "Importing registry key"
+
 ./wine regedit /tmp/disable_gecko.reg
-echo "sleeping for 10 seconds...regedit bug?"
 sleep 10s
 }
 
 disable_glsl() {
-echo "Disabling glsl..."
 cat > /tmp/disable_glsl.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"UseGLSL"="disabled"_EOF_
-echo "Importing registry key"
+"UseGLSL"="disabled"
+_EOF_
+
 ./wine regedit /tmp/disable_glsl.reg
-echo "sleeping for 10 seconds...regedit bug?"
 sleep 10s
 }
 
 enable_fbo() {
-echo "Enabling fbo..."
 cat > /tmp/enable_fbo.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"OffscreenRenderingMode"="fbo"_EOF_
-echo "Importing registry key"
+"OffscreenRenderingMode"="fbo"
+_EOF_
+
 ./wine regedit /tmp/enable_fbo.reg
-echo "sleeping for 10 seconds...regedit bug?"
 sleep 10s
 }
 
 enable_pbuffer() {
-echo "Enabling pbuffer.."
 cat > /tmp/enable_pbuffer.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"OffscreenRenderingMode"="pbuffer"_EOF_
-echo "Importing registry key"
+"OffscreenRenderingMode"="pbuffer"
+_EOF_
+
 ./wine regedit /tmp/enable_pbuffer.reg
-echo "sleeping for 10 seconds...regedit bug?"
 sleep 10s
 }
 
@@ -599,7 +594,7 @@ if [ $SEH_TEST = 1 ]
         seh_test
 fi
 
-if [ $VIRTUALDESKTOP_TEST = 1 ]
+if [ $VD_TEST = 1 ]
     then
         virtual_desktop_test
 fi
