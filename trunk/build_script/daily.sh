@@ -308,16 +308,6 @@ enable_fbo
 runtests
 }
 
-glsl_test() {
-WINEDEBUG=""
-TESTNAME="-noglsl"
-export WINEDEBUG
-export TESTNAME
-preptests
-disable_glsl
-runtests
-}
-
 heap_test() {
 WINEDEBUG="warn+heap"
 TESTNAME="-heap"
@@ -343,6 +333,16 @@ export WINEDEBUG
 export TESTNAME
 preptests_nogecko
 disable_gecko
+runtests
+}
+
+noglsl_test() {
+WINEDEBUG=""
+TESTNAME="-noglsl"
+export WINEDEBUG
+export TESTNAME
+preptests
+disable_glsl
 runtests
 }
 
