@@ -26,12 +26,8 @@
 #
 # To do:
 # handle errors gracefully with proper exits and error messages
-# test on other OS's
-# make sure script is portable
 # add more Linux distro support
 # OS X support
-# Allow $1 arguments. E.g., with no arguments, fetch newtree/build/get winetest/run regular test
-# With $1, allow nowin16, win64, +heap, +all, +relay, +message, nogecko, etc.
 # Add support for first time git initialization.
 
 # Now some common definitions:
@@ -60,12 +56,18 @@ die() {
 
 export WINE=`pwd`/wine
 
+if [ `which ccache` ]
+    then
+        export CC="ccache gcc"
+else
+        export CC="gcc"
+fi
+
 set -e
 
-# First, find out the OS we're on. This way, we can have on monolithic, yet portable, build script.
+# First, find out the OS we're on. This way, we can have a single portable, build script.
 
 OS=`uname -s`
-
 # TODO: Differentiate between Solaris and OpenSolaris here...not sure how though :-/
 if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
     then
@@ -84,7 +86,6 @@ elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
         echo "If not, please notifiy the maintainer to add your build script here."
 elif [ $OS = 'FreeBSD' ]
     then
-        export CC="ccache gcc"
         export CPPFLAGS="-I/usr/local/include"
         export LDFLAGS="-L/usr/local/lib"
 elif [ $OS = 'NetBSD' ]
@@ -110,6 +111,9 @@ if [ `which wget` ]
         GET="wget"
 # If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
 # to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
+elif [ `which curl` ]
+    then
+        GET="curl"
 elif [ `which ftp` ]
     then
         GET="ftp"
@@ -119,18 +123,21 @@ else
 fi
 
 # Fetch an updated tree
+
 newtree() {
+
 # make sure we're in a git tree to start with:
 git show > /dev/null 2>&1 || die "Not in a git tree! Initializing a fresh git tree isn't yet supported."
+
 # TODO: don't force a hard reset for those that don't want it. 'git checkout -f origin' should be just as effective 
 echo "Resetting git tree to origin." && git reset --hard origin &&
+
 # This is used for our loop to check for updated git tree. TODO: Is there a cleaner way to do this?
 TREESTATUS=0
 while [ $TREESTATUS = "0" ]
 do
-  echo "Attempting to fetch updated tree." && git fetch ;
-  echo "Applying new patches." ;
 # TODO: This fails if the the git site can't be reached. Need to adjust appropriately.
+  echo "Attempting to fetch updated tree." && git fetch ;
   git rebase origin 2>&1 | grep "Current branch HEAD is up to date" || break
   sleep $WAITTIME
 done
@@ -145,10 +152,9 @@ exit 1
 # TODO: sed/grep -v out visibility attribute/ignored return value errors, then wc -l error/warnings lines.
 # From there, we can store $WARNINGS_PREDICTED in each OS above, and complain if it doesn't match.
 # This shouldn't be used on Ubuntu right now, until the "ignoring return value" problem is fixed.
-# TODO: determine if logs are wanted, and if so, store in distclean-date, configure-date, etc.
+# TODO: determine if logs are wanted, and if so, store in buildlog-date.txt
 build() {
 echo "Starting $BUILDNAME build." && 
-echo "Running make distclean." && make distclean 1>/dev/null 2>&1 ;
 echo "Running configure." && ./configure $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
 echo "Running make depend." && make depend 1>/dev/null 2>&1 &&
 echo "Running make." && make 1>/dev/null 2>&1 &&
@@ -156,8 +162,62 @@ echo "$BUILDNAME build was fine. Coolio"
 }
 
 # Test functions here...
+
+disable_gecko() {
+echo "Disabling gecko..."
+cat > /tmp/disable_gecko.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\MSHTML]
+"GeckoUrl"=-
+_EOF_
+echo "Importing registry key"
+./wine regedit /tmp/disable_gecko.reg
+echo "sleeping for 10 seconds...regedit bug?"
+sleep 10s
+}
+
+disable_glsl() {
+echo "Disabling glsl..."
+cat > /tmp/disable_glsl.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"UseGLSL"="disabled"_EOF_
+echo "Importing registry key"
+./wine regedit /tmp/disable_glsl.reg
+echo "sleeping for 10 seconds...regedit bug?"
+sleep 10s
+}
+
+enable_fbo() {
+echo "Enabling fbo..."
+cat > /tmp/enable_fbo.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"OffscreenRenderingMode"="fbo"_EOF_
+echo "Importing registry key"
+./wine regedit /tmp/enable_fbo.reg
+echo "sleeping for 10 seconds...regedit bug?"
+sleep 10s
+}
+
+enable_pbuffer() {
+echo "Enabling pbuffer.."
+cat > /tmp/enable_pbuffer.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"OffscreenRenderingMode"="pbuffer"_EOF_
+echo "Importing registry key"
+./wine regedit /tmp/enable_pbuffer.reg
+echo "sleeping for 10 seconds...regedit bug?"
+sleep 10s
+}
+
 enable_virtual_desktop() {
-echo "Enabling virtual desktop" && 
+echo "Enabling virtual desktop"
 cat > /tmp/virtualdesktop.reg <<_EOF_
 REGEDIT4
 
@@ -167,12 +227,13 @@ REGEDIT4
 [HKEY_CURRENT_USER\Software\Wine\Explorer\Desktops]
 "Default"="800x600"
 _EOF_
-echo "Importing registry key" &&
-./wine regedit /tmp/virtualdesktop.reg &&
-echo "sleeping for 10 seconds...regedit bug?" && sleep 10s
+echo "Importing registry key"
+./wine regedit /tmp/virtualdesktop.reg
+echo "sleeping for 10 seconds...regedit bug?"
+sleep 10s
 }
 
-# TODO: get winetest-SHA1SUM. If not available, wait 30 minutes?
+# TODO: get winetest-SHA1SUM. If not available, wait/exit?
 get_tests_32() {
     rm -rf winetest-*.exe ;
     $GET http://test.winehq.org/builds/winetest-latest.exe
@@ -190,10 +251,22 @@ preptests() {
     sh winetricks gecko > /dev/null 2>&1 || exit 1
 }
 
+preptests_nogecko() {
+    ./server/wineserver -k || true
+    rm -rf $WINEPREFIX || true
+    disable_gecko
+}
+
 # TODO: fix to use the SHA1SUM as well.
 runtests() {
     echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
     ./wine winetest-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
+    rm -rf $WINEPREFIX
+}
+
+runtests64() {
+    echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
+    ./wine winetest64-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
     rm -rf $WINEPREFIX
 }
 
@@ -218,10 +291,36 @@ CONFIGUREFLAGS="--disable-win16"
 build || build_failed
 }
 
+build_werror() {
+BUILDNAME=werror
+export CFLAGS="-Werror -g"
+build || build_failed
+}
+
 build_win64() {
 BUILDNAME=win64
 CONFIGUREFLAGS="--enable-win64"
 build || build_failed
+}
+
+fbo_test() {
+WINEDEBUG=""
+TESTNAME="-fbo"
+export WINEDEBUG
+export TESTNAME
+preptests
+enable_fbo
+runtests
+}
+
+glsl_test() {
+WINEDEBUG=""
+TESTNAME="-noglsl"
+export WINEDEBUG
+export TESTNAME
+preptests
+disable_glsl
+runtests
 }
 
 heap_test() {
@@ -242,12 +341,33 @@ preptests
 runtests
 }
 
+nogecko_test() {
+WINEDEBUG=""
+TESTNAME="-nogecko"
+export WINEDEBUG
+export TESTNAME
+preptests_nogecko
+disable_gecko
+runtests
+}
+
 nowin16_test() {
 WINEDEBUG=""
 TESTNAME="-nowin16"
 export WINEDEBUG
 export TESTNAME
+build_nowin16
 preptests
+runtests
+}
+
+pbuffer_test() {
+WINEDEBUG=""
+TESTNAME="-pbuffer"
+export WINEDEBUG
+export TESTNAME
+preptests
+enable_pbuffer
 runtests
 }
 
@@ -293,23 +413,198 @@ WINEDEBUG=""
 TESTNAME="-werror"
 export WINEDEBUG
 export TESTNAME
+build_werror
 preptests
 runtests
 }
+
+win64_test() {
+WINEDEBUG=""
+TESTNAME="-x64-nogecko"
+export WINEDEBUG
+export TESTNAME
+build_win64
+preptests_nogecko
+runtests64
+}
+
 #######################################################
 ##    Now to use the functions :-)
 #######################################################
 
-# Now for the script to actually do something:
-# Get new tree
-newtree
+usage() {
+echo "This script is used for Wine testing. By default, it will:"
+echo "1) update your git tree"
+echo "2) Build (32-bit) Wine"
+echo "3) Download winetest.exe"
+echo "4) Runs winetest.exe, without any special options, and submits the results"
+echo ""
+echo "The script, however, has many more options:"
+echo "--no-newtree - Disables updating your git tree."
+echo "--no-build - Disables (re)building Wine"
+echo "--no-tests - Disables downloading/running winetest.exe"
+echo "--no-regular - Skip running winetest.exe without special options"
+echo "--alldebug - Runs winetest.exe with WINEDEBUG=+all"
+echo "--fbo - Runs winetest.exe with offscreen rendering mode set to FBO"
+echo "--heap - Runs winetest.exe with WINEDEBUG=+heap"
+echo "--message - Runs winetest.exe with WINEDEBUG=+message"
+echo "--no-gecko - Runs winetest.exe without gecko installed"
+echo "--no-glsl - Runs winetest.exe with glsl disabled"
+echo "--no-win16 - Builds Wine without win16 support and runs winetest.exe"
+echo "--pbuffer - Runs winetest.exe with offscreen rendering mode set to pbuffer"
+echo "--seh - Runs winetest.exe with WINEDEBUG=+seh"
+echo "--virtual-desktop - Runs winetest.exe in a virtual desktop"
+echo "--werror - Builds Wine with -Werror and runs winetest.exe"
+echo "--win64 - Builds 64-bit Wine and runs winetest64.exe"
+echo "You probably don't need any of the special options, though"
+echo "The exception is --no-newtree/--no-build in case you want to run tests again without rebuilding Wine."
+}
 
-# Get updated winetest
-get_tests_32
+# There's probably a cleaner way to do this, but I'm lazy and I'll do it how I know
+# Setting the variables here, to avoid errors below.
+NEWTREE=0
+NOBUILD=0
+NODOWNLOAD=0
+NOTESTS=0
+NOREGULAR_TEST=0
+ALLDEBUG_TEST=0
+FBO_TEST=0
+HEAP_TEST=0
+MESSAGE_TEST=0
+NOGECKO_TEST=0
+NOGLSL_TEST=0
+NOWIN16_TEST=0
+PBUFFER_TEST=0
+SEH_TEST=0
+VD_TEST=0
+WERROR_TEST=0
+WIN64_TEST=0
+
+while test "$1" != ""
+do
+    case $1 in
+    -v) set -x;;
+    --no-newtree) export NEWTREE=1;;
+    --no-build) export NOBUILD=1;;
+    --no-download) export NODOWNLOAD=1;;
+    --no-tests) export NOTESTS=1;;
+    --no-regular) export NOREGULAR_TEST=1;;
+    --alldebug) export ALLDEBUG_TEST=1;;
+    --fbo) export FBO_TEST=1;;
+    --heap) export HEAP_TEST=1;;
+    --message) export MESSAGE_TEST=1;;
+    --no-gecko) export NOGECKO_TEST=1;;
+    --no-glsl) export NOGLSL_TEST=1;;
+    --no-win16) export NOWIN16_TEST=1;;
+    --pbuffer) export PBUFFER_TEST=1;;
+    --seh) export SEH_TEST=1;;
+    --virtual-desktop) export VD_TEST=1;;
+    --werror) export WERROR_TEST=1;;
+    --win-64) export WIN64_TEST=1;;
+    *) echo Unknown arg $1; usage; exit 1;;
+    esac
+    shift
+done
+
+# Get new tree, if it wasn't disabled.
+if [ $NEWTREE = 1 ]
+    then 
+        echo "not updating git tree"
+else
+    newtree
+fi
+
+# Anything requiring a special build goes here, that way when we recompile for
+# For the regular tests, the tree is left is a 'vanilla' state.
+# Currently, just win16/win64. But could be used for other things, e.g., disabling dlls.
+
+if [ $NOWIN16_TEST = 1 ]
+    then 
+        nowin16_test
+fi
+
+if [ $WERROR_TEST = 1 ]
+    then
+        werror_test
+fi
+
+if [ $WIN64_TEST = 1 ]
+    then 
+        get_tests_64
+        win64_test
+fi
 
 # Build Wine
-build_regular &&
+if [ $NOBUILD != 1 ]
+    then
+        build_regular
+fi
 
-regular_test || exit 1
+# Exit early, if tests aren't to be run:
+if [ $NOTESTS = 1 ]
+    then
+        echo "tests aren't running, exiting"; exit
+fi
+
+if [ $NODOWNLOAD = 1 ]
+    then
+        echo "not downloading tests...I assume you have a good reason?"
+else
+    get_tests_32
+fi
+
+if [ $NOREGULAR_TEST = 1 ]
+    then
+        echo "Not running regular test."
+else
+    regular_test
+fi
+
+if [ $ALLDEBUG_TEST = 1 ]
+    then
+        all_test
+fi
+
+if [ $FBO_TEST = 1 ]
+    then
+        fbo_test
+fi
+
+if [ $HEAP_TEST = 1 ]
+    then
+        heap_test
+fi
+
+if [ $MESSAGE_TEST = 1 ]
+    then message_test
+fi
+
+if [ $NOGECKO_TEST = 1 ]
+    then
+        nogecko_test
+fi
+
+if [ $NOGLSL_TEST = 1 ]
+    then
+        noglsl_test
+fi
+
+if [ $PBUFFER_TEST = 1 ]
+    then
+        pbuffer_test
+fi
+
+if [ $SEH_TEST = 1 ]
+    then
+        seh_test
+fi
+
+if [ $VIRTUALDESKTOP_TEST = 1 ]
+    then
+        virtual_desktop_test
+fi
+
+# Cleanup
+rm -rf /tmp/*.reg $WINEPREFIX
 
 exit
