@@ -274,6 +274,15 @@ preptests
 runtests
 }
 
+build_dib() {
+BUILDNAME=dib
+CONFIGUREFLAGS=""
+$GET http://bugs.winehq.org/attachment.cgi?id=21159
+rm -rf dlls/winedib.drv
+patch -p1 < attachment.cgi\?id\=21159
+build || build_failed
+}
+
 build_regular() {
 BUILDNAME=regular
 CONFIGUREFLAGS=""
@@ -296,6 +305,20 @@ build_win64() {
 BUILDNAME=win64
 CONFIGUREFLAGS="--enable-win64"
 build || build_failed
+}
+
+dib_test() {
+WINEDEBUG=""
+TESTNAME="-dib"
+WINEDIB=ON
+export WINEDEBUG
+export TESTNAME
+export WINEDIB
+build_dib
+preptests
+runtests
+git reset --hard origin
+rm -rf dlls/winedib.drv
 }
 
 fbo_test() {
@@ -440,6 +463,7 @@ echo "--no-build - Disables (re)building Wine"
 echo "--no-tests - Disables downloading/running winetest.exe"
 echo "--no-regular - Skip running winetest.exe without special options"
 echo "--alldebug - Runs winetest.exe with WINEDEBUG=+all"
+echo "--dib - Runs winetest.exe with DIB engine enabled."
 echo "--fbo - Runs winetest.exe with offscreen rendering mode set to FBO"
 echo "--heap - Runs winetest.exe with WINEDEBUG=+heap"
 echo "--message - Runs winetest.exe with WINEDEBUG=+message"
@@ -463,6 +487,7 @@ NODOWNLOAD=0
 NOTESTS=0
 NOREGULAR_TEST=0
 ALLDEBUG_TEST=0
+DIB_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
 MESSAGE_TEST=0
@@ -485,6 +510,7 @@ do
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
+    --dib) export DIB_TEST=1;;
     --fbo) export FBO_TEST=1;;
     --heap) export HEAP_TEST=1;;
     --message) export MESSAGE_TEST=1;;
@@ -512,6 +538,11 @@ fi
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
 # Currently, just win16/win64. But could be used for other things, e.g., disabling dlls.
+
+if [ $DIB_TEST = 1 ]
+    then 
+        dib_test
+fi
 
 if [ $NOWIN16_TEST = 1 ]
     then 
