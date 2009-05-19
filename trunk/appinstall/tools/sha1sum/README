@@ -1,0 +1,11 @@
+This is a sha1sum binary for the Microsoft Windows platform. Originally written 
+by Werner Koch <wk at gnupg.org> (http://lists.gnupg.org/pipermail/gnupg-announce/2004q4/000184.html).
+It is available from ftp.gnupg.org:
+ftp://ftp.gnupg.org/gcrypt/binary/sha1sum.exe
+ftp://ftp.gnupg.org/gcrypt/binary/sha1sum.c
+
+The binary here is unmodified from their original.
+Mirroring it here, to lessen the burden on their servers.
+
+SHA1SUM:
+4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9  sha1sum.exe
