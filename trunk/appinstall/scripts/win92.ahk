@@ -18,6 +18,8 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
+#Include helper_functions
+
 ; Test info:
 ; Tests for bug 18574.
 ; Note: This (along with the other tests) is normally ran from a shell script wrapper.
@@ -48,69 +50,6 @@ IfExist, %OUTPUT%
     FileDelete, %OUTPUT%
 }
 
-; Helper functions
-DOWNLOAD(url, filename, sha1sum)
-{
-    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
-    IfNotExist, %filename%
-    {
-        UrlDownloadToFile, %url%, %filename%
-    }
-    FileAppend, %filename% already present. Not downloading.`n, %OUTPUT%
-
-    If GetLastError
-    {
-        FileAppend, Downloading %filename% failed. Error 2. Test failed.`n, %OUTPUT%
-        exit 2
-    }
-    
-    TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
-    FileDelete, %TEMPFILE%
-    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe %filename% >> %TEMPFILE%
-    FileReadLine, checksum, %TEMPFILE%, 1
-    FileDelete, %TEMPFILE%
-
-    sha1sumgood = %sha1sum%  %filename%
-    
-    If (checksum != sha1sumgood)
-    {
-    FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
-    exit 3
-    }
-}
-
-SHA1(target)
-{
-    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
-    Filename=%APPINSTALL_TEMP%\sha1sum.txt
-    FileDelete, %filename%
-    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe %target% >> %filename%
-    FileReadLine, checksum, %filename%, 1
-    FileDelete, %filename%
-    return %checksum%
-}
-
-WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
-{
-    global OUTPUT
-    WinWait, %WINDOWNAME%, %windowtext%, %wintimeout%
-    if ErrorLevel
-    {
-        FileAppend, Launching %WINDOWNAME% failed. Test failed.`n, %OUTPUT%
-        exit 1
-    }
-    IfWinNotActive, %WINDOWNAME%, %windowtext%
-        {
-        WinActivate, %WINDOWNAME%, %windowtext%
-        }
-}
-; Test functions
-CLEANUP()
-{
-    global APPINSTALL_TEMP
-    FileRemoveDir, %APPINSTALL_TEMP%\win92, 1
-}
-
 ; Download win92, unzip it, run it, verify the window exist, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
@@ -118,93 +57,54 @@ DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.
 DOWNLOAD("http://www.starrsoft.com/freeware/win92/apps/Win92.zip", "win92.zip", "dc6d226fe20c949076eb6adb98fc851ca7157d04")
 
 FileDelete, %APPINSTALL_TEMP%\win92\*
-If ErrorLevel
-{
-    FileAppend, Removing old temp files failed. Test failed.`n, %OUTPUT%
-    exit 1
-}
+ERROR_TEST("Removing old temp files failed.", "Removed old temp files.")
 
 Run, unzip.exe -d %APPINSTALL_TEMP%\win92 win92.zip
 
-If ErrorLevel
-{
-    FileAppend, Unzipping had some error. Test failed.`n, %OUTPUT%
-    CLEANUP()
-    exit 1
-}
-Else
-{
-    FileAppend, Unzipping went okay. Test passed.`n, %OUTPUT%
-}
+ERROR_TEST("Unzipping had some error.", "Unzipping went okay.")
 
 ; Sleep for a second to make sure a race condition in the unzip process doesn't break the test
 Sleep 500
 
 SetWorkingDir, %APPINSTALL_TEMP%\win92
-If ErrorLevel
-{
-    FileAppend, %A_WorkingDir%`n, %OUTPUT%
-    Msgbox workingdir failed
-    FileAppend, Setting work directory failed. Test failed.`n, %OUTPUT%
-    CLEANUP()
-    exit 1
-}
-Else
-{
-    FileAppend, Setting work directory worked fine. Test passed.`n, %OUTPUT%
-}
+ERROR_TEST("Setting work directory failed.", "Setting work directory went fine.")
 
-SHA1("Win92.exe")
-If (checksum = "bbe8956460b1084b42305df8286a4cb7119b52b5  Win92.exe")
-{
-    FileAppend, Checksum of Win92.exe did not pass. Corrupted extraction or new version of file? Test failed.`n, %OUTPUT%
-    CLEANUP()
-    exit 1
-}
-FileAppend, Checksum of Win92.exe is correct. Test passed.`n, %OUTPUT%
-
-SHA1("WinXXCommon.dll")
-If (checksum = "85e10417e6a814e44b2f09610d02d7c527db87bd  WinXXCommon.dll")
-{
-    FileAppend, Checksum of WinXXCommon.dll did not pass. Corrupted extraction or new version of file? Test failed.`n, %OUTPUT%
-    CLEANUP()
-    exit 1
-}
-FileAppend, Checksum of WinXXCommon.dll is correct. Test passed.`n, %OUTPUT%
+SHA1("Win92.exe", "bbe8956460b1084b42305df8286a4cb7119b52b5")
+SHA1("WinXXCommon.dll", "85e10417e6a814e44b2f09610d02d7c527db87bd")
 
 Run, Win92.exe
 
+; Workaround for the GUI debugger on wine. The crash is bug 18574.
+; If the GUI debugger is disabled, the test will still fail below, but with a
+; different error message. I don't think the tests need to account for both cases (yet anyway).
     WinWait, Program Error, , 5
     {
-        IfWinNotActive, Program Error
-        {
-        WinActivate, Program Error
+        IfWinExist, Program Error
+        {    
+            IfWinNotActive, Program Error
+            {
+                WinActivate, Program Error
+            }
+            ControlClick, Button1
+            FileAppend, Win92 failed to launch. TODO_FAIL.`n, %OUTPUT%
+            exit 0
         }
-        ControlClick, Button1
     }
 
 ; Probably should test ErrorLevel here, but in my test on windows, it keeps
 ; exiting even if there is no lasterror or I set it to NULL
 
 Window_wait("Win92 V00.46", "Preprogrammed Search Bands", 5)
-If ErrorLevel
-{
-    FileAppend, Win92 window never appeared. Error 1. Test failed.`n, %OUTPUT%
-    CLEANUP()
-    exit 1
-}
+
+ERROR_TEST("Win92 window never appeared.", "Win92 launched fine.")
+
 IfWinExist, Win92 V00.46
 {
 FileAppend, Win92 launched successfully. Check bug 18574. TODO_FIXED.`n, %OUTPUT%
 }
 WinClose, Win92 V00.46
 
-If ErrorLevel
-{
-    FileAppend, Exiting Win92 failed. Error 1. Test failed.`n, %OUTPUT%
-    CLEANUP()
-    exit 1
-}
+ERROR_TEST("Exiting Win92 gave an error.", "Win92 claimed to exit fine.")
 
 IfWinExist, Win92 V00.46
 {
@@ -214,5 +114,6 @@ IfWinNotExist, Win92 V00.46
 {
 FileAppend, Win92 exited successfully. Test passed.`n, %OUTPUT%
 }
+
 CLEANUP()
 exit 0

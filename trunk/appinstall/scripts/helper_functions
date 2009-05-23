@@ -1,0 +1,127 @@
+;
+; AutoHotKey helper functions
+;
+; Copyright (C) 2009 Austin English
+;
+; This library is free software; you can redistribute it and/or
+; modify it under the terms of the GNU Lesser General Public
+; License as published by the Free Software Foundation; either
+; version 2.1 of the License, or (at your option) any later version.
+;
+; This library is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+; Lesser General Public License for more details.
+;
+; You should have received a copy of the GNU Lesser General Public
+; License along with this library; if not, write to the Free Software
+; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+;
+
+; Even though AutoHotKey comes with a ton of builtin functions, many are omitted
+; due to space/speed concerns. Others aren't popular enough.
+
+; Removes the temporary directory and all files, recursively
+CLEANUP()
+{
+    global APPINSTALL_TEMP
+    FileRemoveDir, %APPINSTALL_TEMP%, 1
+}
+
+; This function simplifies file retrieval. It tests for the files' existence (skipping
+; the download), downloads it, sha1sum's it, and compares it against the known good
+; sha1sum. To use, call 'DOWNLOAD("url", "filename", "sha1sum")' where url is the http url
+; of the download (currently doesn't support ftp, will be changed later), filename is the
+; filname you want to save as, and sha1sum is the 40 character sha1sum. Double-quotes must
+; be used around all strings.
+DOWNLOAD(url, filename, sha1sum)
+{
+    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
+    IfNotExist, %filename%
+    {
+        UrlDownloadToFile, %url%, %filename%
+    }
+    FileAppend, %filename% already present. Not downloading.`n, %OUTPUT%
+
+    If GetLastError
+    {
+        FileAppend, Downloading %filename% failed. Error 2. Test failed.`n, %OUTPUT%
+        exit 2
+    }
+    
+    TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
+    FileDelete, %TEMPFILE%
+    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe %filename% >> %TEMPFILE%
+    FileReadLine, checksum, %TEMPFILE%, 1
+    FileDelete, %TEMPFILE%
+
+    sha1sumgood = %sha1sum%  %filename%
+    
+    If (checksum != sha1sumgood)
+    {
+    FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
+    exit 3
+    }
+}
+
+; Check for 'If GetLastError', and if it exists, print a line in the output file,
+; remove the temporary directory, then exit with the assigned error code. Otherwise,
+; print a message in the log that the test passed.
+ERROR_TEST(fail_message, pass_message, errorcode=1)
+{
+    global APPINSTALL_TEMP, OUTPUT
+    If GetLastError
+    {
+        FileAppend, %FAIL_MESSAGE% Error %ERRORCODE%. Test failed.`n, %OUTPUT%
+        FileRemoveDir, %APPINSTALL_TEMP%, 1
+        exit %errorcode%
+    }
+    Else
+    {
+        FileAppend, %PASS_MESSAGE% Test passed.`n, %OUTPUT%
+    }
+}
+
+; Sha1sum a file, and compare it to a known good sha1sum. Similar to the download
+; function above, but should be used for files not specifically downloaded, e.g.,
+; to sha1sum a file from a zip directory after extraction.
+; Feed it a filename and sha1sum, it will compare them, print good or bad, and if bad,
+; delete the file. Be sure to quote strings! 
+SHA1(filename, sha1sum)
+{
+    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
+    TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
+    FileDelete, %TEMPFILE%
+    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe %filename% >> %TEMPFILE%
+    FileReadLine, checksum, %TEMPFILE%, 1
+    FileDelete, %TEMPFILE%
+    sha1sumgood = %sha1sum%  %filename%
+    If (checksum != sha1sumgood)
+    {
+        FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
+        FileDelete, %filename%
+        exit 3
+    }
+    Else
+    {
+        FileAppend, %filename% checksum passed. Test passed.`n, %OUTPUT%
+    }
+}
+
+; Some applications don't take focus when started, or have a delay. Work around this. 
+; Windowname is required, but you can optionally supply a string of text in the window,
+; or override the time to wait for the window to show before reporting failure (default, 10s).
+WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
+{
+    global OUTPUT
+    WinWait, %WINDOWNAME%, %windowtext%, %wintimeout%
+    if ErrorLevel
+    {
+        FileAppend, Launching %WINDOWNAME% failed. Test failed.`n, %OUTPUT%
+        exit 1
+    }
+    IfWinNotActive, %WINDOWNAME%, %windowtext%
+        {
+        WinActivate, %WINDOWNAME%, %windowtext%
+        }
+}
