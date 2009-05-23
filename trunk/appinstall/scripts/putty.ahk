@@ -72,6 +72,7 @@ DOWNLOAD(url, filename, sha1sum)
     FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
     exit 3
     }
+    FileAppend, %filename% checksum good. Test passed.`n, %OUTPUT%
 }
 
 WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
@@ -94,13 +95,15 @@ WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe", "putty.exe", "ae7734e7a54353ab13ecba780ed62344332fbc6f")
 
-Run, putty.exe
+ErrorLevel=
+Run, putty.exe, UseErrorLevel
 If ErrorLevel
 {
-    FileAppend, PuTTY failed to run. Error 1. Test failed.`n, %OUTPUT%
-    exit 1}
+    FileAppend, PuTTY failed to run. Error %A_LastError%. Test failed.`n, %OUTPUT%
+    exit 1
+}
 
-Window_wait("PuTTY Configuration", "Basic options for your PuTTY session")
+Window_wait("PuTTY Configuration","Specify the destination you want to connect to")
 If ErrorLevel
 {
     FileAppend, PuTTY window never appeared. Error 1. Test failed.`n, %OUTPUT%
