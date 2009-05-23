@@ -1,7 +1,7 @@
 ;
 ; AutoHotKey Test Script for PuTTY
 ;
-; Copyright (C) 200 Austin English
+; Copyright (C) 2009 Austin English
 ;
 ; This library is free software; you can redistribute it and/or
 ; modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 ; Currently, only downloads PuTTY, verifies the download, runs it, verifies the
 ; window exists, and exits. Eventually, add more tests, for, e.g., treeview controls.
 ; If a public ssh server could be found, that would be great to test as well.
+testname=putty
 
 ; Global variables
 APPINSTALLDIR=%SYSTEMDRIVE%\appinstall
@@ -36,7 +37,7 @@ IfNotExist, %APPINSTALL_TEMP%
 }
 SetWorkingDir, %APPINSTALLDIR%
 
-OUTPUT=%APPINSTALLDIR%\putty-result.txt
+OUTPUT=%APPINSTALLDIR%\%testname%-result.txt
 ; Start with a fresh log
 IfExist, %OUTPUT%
 {
