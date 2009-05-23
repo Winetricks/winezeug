@@ -18,6 +18,8 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
+#Include helper_functions
+
 ; Test info:
 ; Currently, only downloads PuTTY, verifies the download, runs it, verifies the
 ; window exists, and exits. Eventually, add more tests, for, e.g., treeview controls.
@@ -25,67 +27,23 @@
 testname=putty
 
 ; Global variables
-APPINSTALLDIR=%SYSTEMDRIVE%\appinstall
+APPINSTALL=%SYSTEMDRIVE%\appinstall
 APPINTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALLDIR%
+IfNotExist, %APPINSTALL%
 {
-    FileCreateDir, %APPINSTALLDIR%
+    FileCreateDir, %APPINSTALL%
 }
 IfNotExist, %APPINSTALL_TEMP%
 {
     FileCreateDir, %APPINSTALL_TEMP%
 }
-SetWorkingDir, %APPINSTALLDIR%
+SetWorkingDir, %APPINSTALL%
 
-OUTPUT=%APPINSTALLDIR%\%testname%-result.txt
+OUTPUT=%APPINSTALL%\%testname%-result.txt
 ; Start with a fresh log
 IfExist, %OUTPUT%
 {
     FileDelete, %OUTPUT%
-}
-
-; Helper functions
-DOWNLOAD(url, filename, sha1sum)
-{
-    IfNotExist, %filename%
-    {
-        UrlDownloadToFile, %url%, %filename%
-    }
-    FileAppend, %filename% already present. Not downloading.`n, %OUTPUT%
-
-    If GetLastError
-    {
-        FileAppend, Downloading %filename% failed. Error 2. Test failed.`n, %OUTPUT%
-        exit 2
-    }
-    
-    TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
-    FileDelete, %TEMPFILE%
-    RunWait, %comspec% /c sha1sum.exe %filename% >> %TEMPFILE%
-    FileReadLine, checksum, %TEMPFILE%, 1
-    FileDelete, %TEMPFILE%
-
-    sha1sumgood = %sha1sum%  %filename%
-    
-    If (checksum != sha1sumgood)
-    {
-    FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
-    exit 3
-    }
-    FileAppend, %filename% checksum good. Test passed.`n, %OUTPUT%
-}
-
-WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
-{
-    WinWait, %WINDOWNAME%, %windowtext%, %wintimeout%
-    if ErrorLevel
-    {
-    FileAppend, Launching %WINDOWNAME% failed. Test failed.`n, %OUTPUT%
-    }
-    IfWinNotActive, %WINDOWNAME%, %windowtext%
-    {
-    WinActivate, %WINDOWNAME%, %windowtext%
-    }
 }
 
 ; Download putty, run it, verify the window exist, and exit.
@@ -96,28 +54,16 @@ DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1
 DOWNLOAD("http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe", "putty.exe", "ae7734e7a54353ab13ecba780ed62344332fbc6f")
 
 ErrorLevel=
-Run, putty.exe, UseErrorLevel
-If ErrorLevel
-{
-    FileAppend, PuTTY failed to run. Error %A_LastError%. Test failed.`n, %OUTPUT%
-    exit 1
-}
+Run, putty.exe,
+ERROR_TEST("PuTTY failed to run.", "PuTTY claimed to start up fine.")
 
 Window_wait("PuTTY Configuration","Specify the destination you want to connect to")
-If ErrorLevel
-{
-    FileAppend, PuTTY window never appeared. Error 1. Test failed.`n, %OUTPUT%
-    exit 1
-}
+ERROR_TEST("PuTTY window never appeared.", "PuTTY window appeared.")
 
-FileAppend, PuTTY launched successfully.`n, %OUTPUT%
 ; Exit now. Will probably add more tests in between here. PuTTY's got a lot of comctl32 stuff that may be useful for testing.
 ControlClick, Button2, PuTTY Configuration
-If ErrorLevel
-{
-    FileAppend, Exiting PuTTY failed. Error 1. Test failed.`n, %OUTPUT%
-    exit 1
-}
+
+ERROR_TEST("Exiting PuTTY failed.", "PuTTY claimed to exit.")
 
 If Winexist, PuTTY Configuration
 {
