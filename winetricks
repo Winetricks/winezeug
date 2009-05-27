@@ -1120,7 +1120,7 @@ load_ie6() {
     override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
 
     # Remove the fake dlls from the existing WINEPREFIX 
-    mv "$WINEPREFIX"/drive_c/"$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$WINEPREFIX"/drive_c/"$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
+    mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
         test -f "$WINDIR"/system32/$dll.dll && 
