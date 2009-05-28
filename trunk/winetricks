@@ -1188,7 +1188,12 @@ load_kde() {
 load_liberation() {
     # http://www.redhat.com/promo/fonts/ 				
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
-    tar --strip 1 --wildcards -C "$winefontsdir" -xvzf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz '*.ttf'
+    if [ -x "`which pax`" && -x "`which gunzip`" ]; then
+        cd "$winefontsdir" && 
+        gunzip -dc "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz | pax -rvs _liberation-fonts-1.04/__ 'liberation-fonts-1.04/*ttf'
+    else
+        tar --strip 1 --wildcards -C "$winefontsdir" -xvzf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz '*.ttf'
+    fi
 }
 
 #----------------------------------------------------------------
