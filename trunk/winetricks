@@ -1127,8 +1127,8 @@ load_ie6() {
           mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
     done
 
-    # fixes rendering issues in IE
-    #set_winver win2k
+    # The installer doesn't want to install iexplore.exe in XP mode.
+    set_winver win2k
 
     # Workaround a IE6 Installer bug, not Wine's fault
     # See http://bugs.winehq.org/show_bug.cgi?id=5409
@@ -1156,6 +1156,9 @@ load_ie6() {
     do
         $WINE regsvr32 /i $i > /dev/null 2>&1
     done
+
+    # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
+    unset_winver
 
     # try $WINE "$programfilesdir_unix"/"Internet Explorer"/IEXPLORE.EXE http://www.winehq.org
 }
