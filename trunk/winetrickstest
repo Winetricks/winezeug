@@ -5,6 +5,9 @@
 # Currently not tested:
 # ogg - broken
 
+rm -rf $HOME/winetrickscache ;
+rm -rf $HOME/.winetrickscache ;
+
 set -ex
 for verb in \
     ahk \
@@ -77,7 +80,7 @@ for verb in \
 
 do
     wineserver -k || true
-    rm -rf ~/.wine
+    rm -rf $HOME/.wine
     sh winetricks  -q -v $verb
 done
 
@@ -106,7 +109,7 @@ for verb in \
     vjrun20
 do
     wineserver -k || true
-    rm -rf ~/.wine
+    rm -rf $HOME/.wine
     sh winetricks -v $verb
 done
 
@@ -116,6 +119,6 @@ for verb in \
     msxml4 
 do
     wineserver -k || true
-    rm -rf ~/.wine
+    rm -rf $HOME/.wine
     sh winetricks -v $verb
 done
