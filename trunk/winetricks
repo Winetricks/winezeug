@@ -1747,6 +1747,10 @@ load_wmp9() {
     download . http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
     try $WINE "$WINETRICKS_CACHE"/WM9Codecs9x.exe $WINETRICKS_QUIET
 
+    # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
+    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+
     unset_winver
 }
 
@@ -1767,6 +1771,11 @@ load_wmp10() {
     download . http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
     set_winver win2k
     try $WINE "$WINETRICKS_CACHE"/WM9Codecs9x.exe $WINETRICKS_QUIET
+
+    # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
+    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+
     unset_winver
 }
 
