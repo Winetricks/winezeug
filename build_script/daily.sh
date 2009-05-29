@@ -211,6 +211,18 @@ _EOF_
 sleep 10s
 }
 
+enable_multisampling() {
+cat > /tmp/enable_multisampling.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"Multisampling"="enabled"
+_EOF_
+
+./wine regedit /tmp/enable_multisampling.reg
+sleep 10s
+}
+
 enable_virtual_desktop() {
 echo "Enabling virtual desktop"
 cat > /tmp/virtualdesktop.reg <<_EOF_
@@ -346,6 +358,16 @@ TESTNAME="-message"
 export WINEDEBUG
 export TESTNAME
 preptests
+runtests
+}
+
+multisampling_test() {
+WINEDEBUG=""
+TESTNAME="-mltsmp"
+export WINEDEBUG
+export TESTNAME
+preptests
+enable_multisampling
 runtests
 }
 
@@ -491,6 +513,7 @@ DIB_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
 MESSAGE_TEST=0
+MULTISAMPLING_TEST=0
 NOGECKO_TEST=0
 NOGLSL_TEST=0
 NOWIN16_TEST=0
@@ -514,6 +537,7 @@ do
     --fbo) export FBO_TEST=1;;
     --heap) export HEAP_TEST=1;;
     --message) export MESSAGE_TEST=1;;
+    --multisampling) export MULTISAMPLING_TEST=1;;
     --no-gecko) export NOGECKO_TEST=1;;
     --no-glsl) export NOGLSL_TEST=1;;
     --no-win16) export NOWIN16_TEST=1;;
@@ -603,6 +627,11 @@ fi
 
 if [ $MESSAGE_TEST = 1 ]
     then message_test
+fi
+
+if [ $MULTISAMPLING_TEST = 1 ]
+    then
+        multisampling_test
 fi
 
 if [ $NOGECKO_TEST = 1 ]
