@@ -187,6 +187,18 @@ _EOF_
 sleep 10s
 }
 
+enable_ddr_opengl() {
+cat > /tmp/enable_ddr_opengl.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"DirectDrawRenderer"="opengl"
+_EOF_
+
+./wine regedit /tmp/enable_ddr_opengl.reg
+sleep 10s
+}
+
 enable_fbo() {
 cat > /tmp/enable_fbo.reg <<_EOF_
 REGEDIT4
@@ -317,6 +329,16 @@ build_win64() {
 BUILDNAME=win64
 CONFIGUREFLAGS="--enable-win64"
 build || build_failed
+}
+
+ddr_opengl_test() {
+WINEDEBUG=""
+TESTNAME="-ddr-opengl"
+export WINEDEBUG
+export TESTNAME
+preptests
+enable_ddr_opengl
+runtests
 }
 
 dib_test() {
@@ -509,6 +531,7 @@ NODOWNLOAD=0
 NOTESTS=0
 NOREGULAR_TEST=0
 ALLDEBUG_TEST=0
+DDR_OPENGL_TEST=0
 DIB_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
@@ -533,6 +556,7 @@ do
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
+    --ddr-opengl) export DDR_OPENGL_TEST=1;;
     --dib) export DIB_TEST=1;;
     --fbo) export FBO_TEST=1;;
     --heap) export HEAP_TEST=1;;
@@ -613,6 +637,11 @@ fi
 if [ $ALLDEBUG_TEST = 1 ]
     then
         all_test
+fi
+
+if [ $DDR_OPENGL_TEST = 1 ]
+    then
+        ddr_opengl_test
 fi
 
 if [ $FBO_TEST = 1 ]
