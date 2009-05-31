@@ -1181,7 +1181,8 @@ load_kde() {
     mkdir -p "$programfilesdir_unix/kde"
     cp "$WINETRICKS_CACHE"/kdewin-installer-gui-0.9.5-0.exe "$programfilesdir_unix/kde"
     cd "$programfilesdir_unix/kde"
-    try $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.5-0.exe"
+    # This reports an errorlevel of 1, even for success. See https://bugs.kde.org/show_bug.cgi?id=194796
+    $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.5-0.exe" || true
     cd "$olddir"
 }
 
