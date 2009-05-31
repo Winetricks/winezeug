@@ -1111,6 +1111,7 @@ load_icodecs() {
     try $WINE regsvr32 ir50_32.dll
 }
 
+#----------------------------------------------------------------
 load_ie6() {
     load_msls31
 
@@ -1139,7 +1140,7 @@ load_ie6() {
 
     # Install
     download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
-    $WINE "$WINETRICKS_CACHE"/ie6setup.exe
+    try $WINE "$WINETRICKS_CACHE"/ie6setup.exe
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list 
