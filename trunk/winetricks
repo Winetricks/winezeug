@@ -1688,7 +1688,9 @@ load_vcrun2005sp1() {
 #----------------------------------------------------------------
 
 load_vcrun2008() {
-    # This should be fixed in recent Wine, but for those using 1.0.1, fails.
+    # Work around bug 5351 (http://bugs.winehq.org/show_bug.cgi?id=5351). In recent
+    # wine (>= 1.1.7) the bug is fixed. The workaround doesn't hurt anything, and lets
+    # installer work on older Wine (e.g., the stabe 1.0.1).
     volnum
 
     # Load the Visual C++ 2008 runtime libraries
