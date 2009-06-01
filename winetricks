@@ -507,7 +507,7 @@ load_cc580() {
     try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
     try $WINE "$WINETRICKS_TMP"/comctl32.exe
     try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
-    cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
+    try cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
 
     override_dlls native,builtin comctl32
 }
@@ -519,8 +519,8 @@ load_comctl32ocx() {
     download . http://download.microsoft.com/download/3/a/5/3a5925ac-e779-4b1c-bb01-af67dc2f96fc/VisualBasic6-KB896559-v1-ENU.exe f52cf2034488235b37a1da837d1c40eb2a1bad84
 
     try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
-    cp "$WINETRICKS_TMP"/mscomctl.ocx "$WINDIR"/system32/mscomctl.ocx
-    cp "$WINETRICKS_TMP"/comctl32.ocx "$WINDIR"/system32/comctl32.ocx
+    try cp "$WINETRICKS_TMP"/mscomctl.ocx "$WINDIR"/system32/mscomctl.ocx
+    try cp "$WINETRICKS_TMP"/comctl32.ocx "$WINDIR"/system32/comctl32.ocx
     try $WINE regsvr32 comctl32.ocx
     try $WINE regsvr32 mscomctl.ocx
 }
@@ -531,7 +531,7 @@ load_colorprofile() {
     download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
     try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
     mkdir -p "$WINDIR"/system32/spool/drivers/color
-    cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
+    try cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
 }
 
 #----------------------------------------------------------------
@@ -1179,7 +1179,7 @@ load_jet40() {
 load_kde() {
     download . http://www.winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.5-0.exe c2a95102312ca859fce5190307748da51fae644e
     mkdir -p "$programfilesdir_unix/kde"
-    cp "$WINETRICKS_CACHE"/kdewin-installer-gui-0.9.5-0.exe "$programfilesdir_unix/kde"
+    try cp "$WINETRICKS_CACHE"/kdewin-installer-gui-0.9.5-0.exe "$programfilesdir_unix/kde"
     cd "$programfilesdir_unix/kde"
     # This reports an errorlevel of 1, even for success. See https://bugs.kde.org/show_bug.cgi?id=194796
     $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.5-0.exe" || true
@@ -1340,8 +1340,7 @@ load_mshflxgd() {
     # May 2009: bd8aa796e16e5f213414af78931e0379d9cbe292
     download .  http://activex.microsoft.com/controls/vb6/MSHFLXGD.CAB bd8aa796e16e5f213414af78931e0379d9cbe292
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSHFLXGD.CAB
-    #try cp -f "$WINETRICKS_TMP"/MSHFLXGD.OCX "$WINDIR"/system32
-    try cp -f "$WINETRICKS_TMP"/mshflxgd.ocx "$WINDIR"/system32
+    try cp -f "$WINETRICKS_TMP"/[Mm][Ss][Hh][Ff][Ll][Xx][Gg][Dd].[Oo][Cc][Xx] "$WINDIR"/system32
 }
 
 #----------------------------------------------------------------
@@ -1362,8 +1361,7 @@ load_msmask() {
     # May 2009: 30e55679e4a13fe4d9620404476f215f93239292 
     download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292 
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
-    cp -f "$WINETRICKS_TMP"/MSMASK32.OCX "$WINDIR"/system32/msmask32.ocx
-    cp -f "$WINETRICKS_TMP"/msmask32.ocx "$WINDIR"/system32/msmask32.ocx
+    try cp -f "$WINETRICKS_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$WINDIR"/system32/msmask32.ocx
     try $WINE regsvr32 msmask32.ocx
 }
 
@@ -1432,7 +1430,7 @@ load_ogg() {
     # http://www.diracvideo.org/git?p=direct-schro.git;a=summary
     # Requires wine-1.1.1
     download . http://cross-lfs.org/~mlankhorst/direct-schro.dll
-    cp "$WINETRICKS_CACHE"/direct-schro.dll "$WINDIR"/system32/direct-schro.dll
+    try cp "$WINETRICKS_CACHE"/direct-schro.dll "$WINDIR"/system32/direct-schro.dll
     # This is currently broken. Maarten's not sure why.
     try $WINE regsvr32 direct-schro.dll
 }
@@ -1666,7 +1664,7 @@ load_vcrun2003() {
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     download . $SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
     try $WINE "$WINETRICKS_CACHE"/BZEditW32_1.6.5_Installer.exe $WINETRICKS_S
-    cp "$programfilesdir_unix/BZEdit1.6.5"/m*71* "$WINDIR"/system32/
+    try cp "$programfilesdir_unix/BZEdit1.6.5"/m*71* "$WINDIR"/system32/
 }
 
 #----------------------------------------------------------------
