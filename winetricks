@@ -1190,9 +1190,13 @@ load_kde() {
 
 load_liberation() {
     # http://www.redhat.com/promo/fonts/
+    if [ `uname -s` = 'SunOS' ] || [ `uname -s` = 'Solaris' ]; then
     echo "If you get 'ERROR: Certificate verification error for fedorahosted.org: unable to get local issuer certificate':"
     echo "Then you need to add Verisign root certificates to your local keystore."
     echo "OpenSolaris users, see: http://www.linuxtopia.org/online_books/opensolaris_2008/SYSADV1/html/swmgrpatchtasks-14.html"
+    echo "Or edit winetricks' download function, and add '--no-check-certificate' to the command."
+    fi
+    
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     if [ -x "`which pax`" ]; then
         ( cd "$winefontsdir" && gunzip -dc "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz | pax -rvs _liberation-fonts-1.04/__ 'liberation-fonts-1.04/*ttf' )
