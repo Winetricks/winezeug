@@ -1,0 +1,13 @@
+This is the binary for AutoHotKey. It doesn't have any dependencies to run, so
+rather than download and install it repeatedly, I'm just mirroring the binary and
+getting that.
+
+It is available from http://www.autohotkey.com/download/:
+http://www.autohotkey.com/download/AutoHotkeyInstall.exe
+http://www.autohotkey.com/download/AutoHotkey.zip
+
+The binary here is unmodified from their original.
+Mirroring it here, to lessen the burden on their servers.
+
+SHA1SUM:
+fffefd345879f190e4c58ccd6977c81e414c355c  autohotkey.exe
