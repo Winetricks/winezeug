@@ -187,6 +187,18 @@ _EOF_
 sleep 10s
 }
 
+enable_backbuffer() {
+cat > /tmp/enable_backbuffer.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"OffscreenRenderingMode"="backbuffer"
+_EOF_
+
+./wine regedit /tmp/enable_backbuffer.reg
+sleep 10s
+}
+
 enable_ddr_opengl() {
 cat > /tmp/enable_ddr_opengl.reg <<_EOF_
 REGEDIT4
@@ -329,6 +341,16 @@ build_win64() {
 BUILDNAME=win64
 CONFIGUREFLAGS="--enable-win64"
 build || build_failed
+}
+
+backbuffer_test() {
+WINEDEBUG=""
+TESTNAME="-bckbuf"
+export WINEDEBUG
+export TESTNAME
+preptests
+enable_backbuffer
+runtests
 }
 
 ddr_opengl_test() {
@@ -507,6 +529,7 @@ echo "--no-build - Disables (re)building Wine"
 echo "--no-tests - Disables downloading/running winetest.exe"
 echo "--no-regular - Skip running winetest.exe without special options"
 echo "--alldebug - Runs winetest.exe with WINEDEBUG=+all"
+echo "--backbuffer - Runs winetest.exe with offscreen rendering mode set to backbuffer"
 echo "--dib - Runs winetest.exe with DIB engine enabled."
 echo "--fbo - Runs winetest.exe with offscreen rendering mode set to FBO"
 echo "--heap - Runs winetest.exe with WINEDEBUG=+heap"
@@ -531,6 +554,7 @@ NODOWNLOAD=0
 NOTESTS=0
 NOREGULAR_TEST=0
 ALLDEBUG_TEST=0
+BACKBUFFER_TEST=0
 DDR_OPENGL_TEST=0
 DIB_TEST=0
 FBO_TEST=0
@@ -556,6 +580,7 @@ do
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
+    --backbuffer) export BACKBUFFER_TEST=1;;
     --ddr-opengl) export DDR_OPENGL_TEST=1;;
     --dib) export DIB_TEST=1;;
     --fbo) export FBO_TEST=1;;
@@ -637,6 +662,11 @@ fi
 if [ $ALLDEBUG_TEST = 1 ]
     then
         all_test
+fi
+
+if [ $BACKBUFFER_TEST = 1 ]
+    then
+        backbuffer_test
 fi
 
 if [ $DDR_OPENGL_TEST = 1 ]
