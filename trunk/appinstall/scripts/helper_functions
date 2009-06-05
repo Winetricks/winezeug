@@ -87,7 +87,7 @@ ERROR_TEST(fail_message, pass_message, errorcode=1)
 ; to sha1sum a file from a zip directory after extraction.
 ; Feed it a filename and sha1sum, it will compare them, print good or bad, and if bad,
 ; delete the file. Be sure to quote strings! 
-SHA1(filename, sha1sum)
+SHA1(sha1sum, filename)
 {
     global OUTPUT, APPINSTALL_TEMP, APPINSTALL
     TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
