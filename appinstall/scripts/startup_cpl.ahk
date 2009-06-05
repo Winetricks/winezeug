@@ -61,7 +61,7 @@ Sleep 500
 SetWorkingDir, %APPINSTALL_TEMP%\startup_cpl
 ERROR_TEST("Setting work directory failed.", "Setting work directory went fine.")
 
-SHA1("Startup.exe", "7e799eec8a6dbc3688b1f2fb073b96b6931e9e5c")
+SHA1("7e799eec8a6dbc3688b1f2fb073b96b6931e9e5c", "Startup.exe")
 
 Run, Startup.exe
 

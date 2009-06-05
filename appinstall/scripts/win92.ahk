@@ -69,8 +69,8 @@ Sleep 500
 SetWorkingDir, %APPINSTALL_TEMP%\win92
 ERROR_TEST("Setting work directory failed.", "Setting work directory went fine.")
 
-SHA1("Win92.exe", "bbe8956460b1084b42305df8286a4cb7119b52b5")
-SHA1("WinXXCommon.dll", "85e10417e6a814e44b2f09610d02d7c527db87bd")
+SHA1("bbe8956460b1084b42305df8286a4cb7119b52b5", "Win92.exe")
+SHA1("85e10417e6a814e44b2f09610d02d7c527db87bd", "WinXXCommon.dll")
 
 Run, Win92.exe
 
