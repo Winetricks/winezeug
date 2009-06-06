@@ -92,13 +92,13 @@ SHA1(sha1sum, filename)
     global OUTPUT, APPINSTALL_TEMP, APPINSTALL
     TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
     FileDelete, %TEMPFILE%
-    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe %filename% >> %TEMPFILE%
+    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
     FileReadLine, checksum, %TEMPFILE%, 1
     FileDelete, %TEMPFILE%
     sha1sumgood = %sha1sum%  %filename%
     If (checksum != sha1sumgood)
     {
-        FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
+        FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sumgood%. Error 3. Test failed.`n, %OUTPUT%
         FileDelete, %filename%
         exit 3
     }
@@ -114,14 +114,14 @@ SHA1(sha1sum, filename)
 WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
 {
     global OUTPUT
-    WinWait, %WINDOWNAME%, %windowtext%, %wintimeout%
+    WinWait, %windowname%, %windowtext%, %wintimeout%
     if ErrorLevel
     {
-        FileAppend, Launching %WINDOWNAME% failed. Test failed.`n, %OUTPUT%
+        FileAppend, Launching %windowname% failed. Test failed.`n, %OUTPUT%
         exit 1
     }
-    IfWinNotActive, %WINDOWNAME%, %windowtext%
+    IfWinNotActive, %windowname%, %windowtext%
         {
-        WinActivate, %WINDOWNAME%, %windowtext%
+        WinActivate, %windowname%, %windowtext%
         }
 }
