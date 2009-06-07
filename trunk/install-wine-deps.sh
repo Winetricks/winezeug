@@ -38,8 +38,7 @@ then
 fi
 
 #----------------------------------------------------------------------------
-# Data
-
+# Ubuntu data
 ubuntu_common_pkgs="\
 bison ccache cvs flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
 libcapi20-3 libcapi20-dev libcupsys2-dev libdbus-1-dev libesd0-dev libexif-dev \
@@ -95,15 +94,36 @@ libxslt.so.1 libXxf86vm.so.1 libz.so.1"
 ubuntu_64_ibex_lib32_sos="libdbus-1.so.3"
 
 #----------------------------------------------------------------------------
+# rpm-based distros
+
+fedora_pkgs="\
+bison cups-devel flex fontconfig-devel freeglut-devel freetype-devel gcc git \
+gnutls-devel hal-devel isdn4k-utils-devel lcms-devel libgphoto2-devel libjpeg-devel \
+libpng-devel libX11-devel libXcomposite-devel libXcursor-devel libXext-devel \
+libXi-devel libXinerama-devel libxml2-devel libXrandr-devel libXrender-devel \
+libxslt-devel libXt-devel libXxf86vm-devel make ncurses-devel openldap-devel \
+openssl-devel patch sane-backends-devel"
+
+#----------------------------------------------------------------------------
 # Code
 
-distro=`lsb_release -i -r -s`
+lsb_release_path=`which lsb_release 2>/dev/null`
+if test "$lsb_release_path" != ""
+then
+  distro=`lsb_release -i -r -s`
+elif test -f /etc/issue
+  then
+    distro=`head -n 1 /etc/issue`
+else
+  echo "Don't know how to identify your OS."
+fi
 
 case $distro in
 Ubuntu*7.10) apt-get install $ubuntu_common_pkgs $ubuntu_gutsy_pkgs;;
 Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
+Fedora*release*10*\(Cambridge\)) yum install $fedora_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
 esac
 
