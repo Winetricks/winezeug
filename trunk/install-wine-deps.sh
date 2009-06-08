@@ -104,6 +104,14 @@ libXi-devel libXinerama-devel libxml2-devel libXrandr-devel libXrender-devel \
 libxslt-devel libXt-devel libXxf86vm-devel make ncurses-devel openldap-devel \
 openssl-devel patch sane-backends-devel"
 
+suse_pkgs="\
+alsa-devel audiofile bison capi4linux-devel cups-devel desktop-file-utils flex \
+fontconfig-devel freeglut-devel freetype2-devel gcc giflib-devel git-core glibc-devel \
+gnutls-devel hal-devel jack-devel libgphoto2-devel libjpeg-devel liblcms-devel \
+libpng-devel libxml2-devel libxslt-devel make Mesa-devel ncurses-devel openldap2-devel \
+openssl-devel pkgconfig unixODBC-devel update-desktop-files xorg-x11-devel zlib-devel"
+
+
 #----------------------------------------------------------------------------
 # Code
 
@@ -124,6 +132,7 @@ Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
 Fedora*release*10*\(Cambridge\)) yum install $fedora_pkgs ;;
+SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
 esac
 
