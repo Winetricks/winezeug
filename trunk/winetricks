@@ -2,13 +2,18 @@
 # Quick and dirty script to download and install various 
 # redistributable runtime libraries
 #
+# Current maintainers: Austin English, Dan Kegel
 # Copyright 2007, 2008, 2009 Google (Dan Kegel, dank@kegel.com)
-# Copyright 2008, 2009 Austin English (austinenglish@gmail.com) - current maintainer
+# Copyright 2008, 2009 Austin English (austinenglish@gmail.com)
 # Thanks to Detlef Riekenberg for lots of updates
 # Thanks to Saulius Krasuckas for corrections and suggestions
 # Thanks to Erik Inge Bolsø for several patches
 # Please report problems at http://code.google.com/p/winezeug/issues
 # See also http://wiki.winehq.org/winetricks
+#
+# Note to contributors: please avoid gnu extensions in this shell script,
+# as it has to run on MacOSX and Solaris, too.  A good book on the topic is
+# "Portable Shell Programming" by Bruce Blinn
 
 # Prevent running with sudo/root. This would create a .winetrickscache as root 
 # in the user's home directory!
@@ -19,7 +24,7 @@ if ! test -O $HOME
 fi
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090528
+VERSION=20090607
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -47,7 +52,7 @@ esac
 
 case "$1" in
 -V|--version) 
-  echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel, Google.  LGPL."
+  echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
   exit 0
   ;;
 esac
