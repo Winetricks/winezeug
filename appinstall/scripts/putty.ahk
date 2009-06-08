@@ -60,18 +60,41 @@ ERROR_TEST("PuTTY failed to run.", "PuTTY claimed to start up fine.")
 Window_wait("PuTTY Configuration","Specify the destination you want to connect to")
 ERROR_TEST("PuTTY window never appeared.", "PuTTY window appeared.")
 
-; Exit now. Will probably add more tests in between here. PuTTY's got a lot of comctl32 stuff that may be useful for testing.
-ControlClick, Button2, PuTTY Configuration
+; Connect to www.winehq.org
+ControlSend, Edit1, www.winehq.org{Enter}, PuTTY Configuration
+ 
+; The server is untrusted.
+Window_wait("PuTTY Security Alert","The server's host key is not cached in the registry.")
+ 
+; Test for bug 13249
+ControlSend, Static1, {Left}{Enter}, PuTTY Security Alert
+Sleep 200
 
-ERROR_TEST("Exiting PuTTY failed.", "PuTTY claimed to exit.")
-
-If Winexist, PuTTY Configuration
+IfWinExist, Microsoft Visual C++ Runtime Library
 {
-    FileAppend, PuTTY didn't exit for some reason. Test failed.`n, %OUTPUT%
+    FileAppend, PuTTY Security Alert didn't exit`, exception occured. TODO_FAIL.`n, %OUTPUT%
+    ControlSend, Static2, {Enter}, Microsoft Visual C++ Runtime Library
+    exit 0
 }
 Else
 {
-FileAppend, PuTTY exited successfully. Test passed.`n, %OUTPUT%
+FileAppend, PuTTY Security Alert exited properly. Bug 13249 TODO_FIXED.`n, %OUTPUT%
+}
+ERROR_TEST("Closing PuTTY Security Alert gave an error.", "PuTTY claimed to exit.")
+ 
+Window_wait("www.winehq.org - PuTTY","")
+ERROR_TEST("PuTTY SSH login had an error.", "PuTTY SSH login appeared fine.")
+
+PostMessage, 0x112, 0xF060,,, www.winehq.org - PuTTY
+ERROR_TEST("Closing PuTTY gave an error.", "PuTTY claimed to exit.")
+Sleep 200
+IfWinExist, www.winehq.org - PuTTY
+{
+    FileAppend, PuTTY didn't exit. Test failed.`n, %OUTPUT%
+}
+Else
+{
+FileAppend, PuTTY exited properly. Test passed.`n, %OUTPUT%
 }
 
 exit 0
