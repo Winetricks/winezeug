@@ -265,7 +265,7 @@ ERROR_TEST("Thunderbird's main window reported an error.", "Thunderbird appeared
 ; Prevent race condition
 Sleep 500
 
-PostMessage, 0x112, 0xF060,,, Mozilla Thunderbird
+FORCE_CLOSE(Mozilla Thunderbird)
 ERROR_TEST("Exiting Thunderbird gave an error.", "Thunderbird claimed to exit fine.")
 
 ; Prevent race condition

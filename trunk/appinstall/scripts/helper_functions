@@ -82,6 +82,17 @@ ERROR_TEST(fail_message, pass_message, errorcode=1)
     }
 }
 
+; Force a window to close. AutoHotKey comes with the 'WinClose' function, which sends WM_CLOSE and asks
+; the program to close nicely. 'WinKill' is an extended version, which is supposed to send WM_CLOSE, and if it fails,
+; terminates the program's process. I found it to be inconsistent, on both Windows and Wine. As a backup, the AHK FAQ
+; offers a workaround, which I greatly prefer. For reference, 0x112 = WM_SYSCOMMAND, 0xF060 = SC_CLOSE. This is equivalent
+; to clicking on the system menu and choosing 'Close', or roughly equivalent to 'ALT+F4'. It is much more consistent.
+
+FORCE_CLOSE(windowname)
+{
+PostMessage, 0x112, 0xF060,,, %windowname%
+}
+
 ; Sha1sum a file, and compare it to a known good sha1sum. Similar to the download
 ; function above, but should be used for files not specifically downloaded, e.g.,
 ; to sha1sum a file from a zip directory after extraction.

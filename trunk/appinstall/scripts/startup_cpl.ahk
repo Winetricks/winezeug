@@ -73,7 +73,7 @@ ERROR_TEST("Startup Control Panel window never appeared.", "Startup Control Pane
 Sleep 500
 
 ; Similar to Winclose(), but more forceful. I like forceful.
-PostMessage, 0x112, 0xF060,,, Startup Control Panel 2.8 by Mike Lin
+FORCE_CLOSE(Startup Control Panel 2.8 by Mike Lin)
 
 ERROR_TEST("Exiting Startup Control Panel gave an error.", "Startup Control Panel claimed to exit fine.")
 
