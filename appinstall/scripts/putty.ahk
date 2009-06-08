@@ -85,7 +85,7 @@ ERROR_TEST("Closing PuTTY Security Alert gave an error.", "PuTTY claimed to exit
 Window_wait("www.winehq.org - PuTTY","")
 ERROR_TEST("PuTTY SSH login had an error.", "PuTTY SSH login appeared fine.")
 
-PostMessage, 0x112, 0xF060,,, www.winehq.org - PuTTY
+FORCE_CLOSE(www.winehq.org - PuTTY)
 ERROR_TEST("Closing PuTTY gave an error.", "PuTTY claimed to exit.")
 Sleep 200
 IfWinExist, www.winehq.org - PuTTY

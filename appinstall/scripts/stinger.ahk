@@ -53,8 +53,7 @@ Window_wait("Stinger", "Directories to scan:", 5)
 
 ERROR_TEST("Stinger window never appeared.", "Stinger launched fine.")
 
-; Similar to Winclose(), but more forceful. I like forceful.
-PostMessage, 0x112, 0xF060,,, Stinger
+FORCE_CLOSE(Stinger)
 
 ERROR_TEST("Exiting Stinger gave an error.", "Stinger claimed to exit fine.")
 
