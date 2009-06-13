@@ -119,6 +119,37 @@ SHA1(sha1sum, filename)
     }
 }
 
+; Similar to the SHA1 function above, but for todo's. Takes the 'bad'/expected sha1um,
+; as well as the good sha1sum, and the file to test. Sha1sum's the file, and if 
+; it matches the 'bad'/expected sha1sum, consider it a TODO_FAIL. If it matches
+; the good sha1sum, consider it a TODO_FIXED. If it matches neither, consider it
+; a test failure and exit.
+TODO_SHA1(badsha1, todosha1, filename)
+{
+    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
+    TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
+    FileDelete, %TEMPFILE%
+    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
+    FileReadLine, checksum, %TEMPFILE%, 1
+    FileDelete, %TEMPFILE%
+    badsha1sum = %badsha1%  %filename%
+    todosha1sum = %todosha1%  %filename%
+    If (checksum = badsha1sum)
+    {
+        FileAppend, %filename% checksum failed. This was expected. TODO_FAILED.`n, %OUTPUT%
+    }
+    else if (checksum = todosha1sum)
+    {
+        FileAppend, %filename% checksum passed. This was not expected. TODO_FIXED.`n, %OUTPUT%
+    }
+    Else
+    {
+        FileAppend, %filename% checksum failed. Got %checksum%`, expected %badsha1um% or %todosha1sum%. Error 3. Test failed.`n, %OUTPUT%
+        FileDelete, %filename%
+        exit 3
+    }
+}
+
 ; Some applications don't take focus when started, or have a delay. Work around this. 
 ; Windowname is required, but you can optionally supply a string of text in the window,
 ; or override the time to wait for the window to show before reporting failure (default, 10s).
