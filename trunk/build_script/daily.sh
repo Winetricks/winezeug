@@ -27,7 +27,6 @@
 # To do:
 # handle errors gracefully with proper exits and error messages
 # add more Linux distro support
-# OS X support
 # Add support for first time git initialization.
 
 # Now some common definitions:
@@ -88,6 +87,17 @@ elif [ $OS = 'FreeBSD' ]
     then
         export CPPFLAGS="-I/usr/local/include"
         export LDFLAGS="-L/usr/local/lib"
+elif [ $OS = 'Darwin' ]
+    then
+        # DEP_DIRECTORY is the directory where you've built and installed wine's dependencies...OS X's built in one's are
+        # very broken for wine. I'll add a script to build this stuff soonish.
+        export DEP_DIRECTORY=$HOME/wine-deps
+        export CPPFLAGS="-I$DEP_DIRECTORY/usr/include -I$DEP_DIRECTORY/usr/include/libxml2 -I$DEP_DIRECTORY/usr/include/libxslt -I$DEP_DIRECTORY/usr/include/libpng12 -I$DEP_DIRECTORY/usr/include/gphoto2 -I$DEP_DIRECTORY/usr/include/sane"
+        export CFLAGS="-I$DEP_DIRECTORY/usr/include"
+        export LDFLAGS="-L$DEP_DIRECTORY/usr/lib"
+        export PATH=$PATH:"$DEP_DIRECTORY/usr/bin"
+        export PKG_CONFIG_PATH="$DEP_DIRECTORY/usr/lib/pkgconfig"
+        export CONFIGUREFLAGS='--without-hal --without-gnutls --without-capi'
 elif [ $OS = 'NetBSD' ]
     then
         echo "This is untested...going from memory"
