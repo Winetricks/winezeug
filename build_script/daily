@@ -19,9 +19,13 @@ export MACHINE="machinename"
 
 # Kill Wine. We obviously don't care if it passes/fails.
 $WINEGIT/server/wineserver -k ;
-
 cd $WINEGIT &&
-rm daily.sh
-wget http://winezeug.googlecode.com/svn/trunk/build_script/daily.sh
+rm daily.sh || true
+if [ -x "`which wget`" ]
+    then
+        wget "http://winezeug.googlecode.com/svn/trunk/build_script/daily.sh"
+    else
+        curl -o daily.sh "http://winezeug.googlecode.com/svn/trunk/build_script/daily.sh"
+fi
 sh daily.sh &&
 exit
