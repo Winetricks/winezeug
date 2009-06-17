@@ -45,9 +45,6 @@ MACHINE=${MACHINE:-`uname -n`}
 # Be sure you put it in seconds. Not all OS's support the d/h/m options (OpenSolaris, I'm looking at you!)
 WAITTIME=1800
 
-# This is simply a placeholder function to workaround the lack of wget on some OS's (the BSD's)
-GET=${GET:-`wget -c`}
-
 die() {
   echo "$@"
   exit 1
@@ -118,17 +115,17 @@ fi
 # Make sure wget is available:
 if [ `which wget` ]
     then
-        GET="wget"
+        GET='wget "$1"'
 # If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
 # to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
 elif [ `which curl` ]
     then
-        GET="curl"
+        GET='curl -o `basename "$1"` $1'
 elif [ `which ftp` ]
     then
-        GET="ftp"
+        GET='ftp "$1"'
 else
-    echo "You don't have wget or ftp installed. I can't download needed files. Please report this as a bug."
+    echo "You don't have wget, curl or ftp installed. I can't download needed files. Please report this as a bug."
     exit 1
 fi
 
@@ -323,7 +320,7 @@ runtests
 build_dib() {
 BUILDNAME=dib
 CONFIGUREFLAGS=""
-$GET http://bugs.winehq.org/attachment.cgi?id=21159
+$GET "http://bugs.winehq.org/attachment.cgi?id=21159"
 rm -rf dlls/winedib.drv
 patch -p1 < attachment.cgi\?id\=21159
 build || build_failed
