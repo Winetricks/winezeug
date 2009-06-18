@@ -54,23 +54,7 @@ SHA1("bbe8956460b1084b42305df8286a4cb7119b52b5", "Win92.exe")
 SHA1("85e10417e6a814e44b2f09610d02d7c527db87bd", "WinXXCommon.dll")
 
 Run, Win92.exe
-
-; Workaround for the GUI debugger on wine. The crash is bug 18574.
-; If the GUI debugger is disabled, the test will still fail below, but with a
-; different error message. I don't think the tests need to account for both cases (yet anyway).
-    WinWait, Program Error, , 5
-    {
-        IfWinExist, Program Error
-        {    
-            IfWinNotActive, Program Error
-            {
-                WinActivate, Program Error
-            }
-            ControlClick, Button1
-            FileAppend, Win92 failed to launch. TODO_FAIL.`n, %OUTPUT%
-            exit 0
-        }
-    }
+WAIT_CRASH_FATAL("Win92.exe", 18574)
 
 ; Probably should test ErrorLevel here, but in my test on windows, it keeps
 ; exiting even if there is no lasterror or I set it to NULL
