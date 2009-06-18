@@ -18,32 +18,13 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
-#Include helper_functions
-
 testname=ccleaner-220
 
-; Global variables
-APPINSTALL=%SYSTEMDRIVE%\appinstall
-APPINSTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALL%
-{
-    FileCreateDir, %APPINSTALL%
-}
-IfNotExist, %APPINSTALL_TEMP%
-{
-    FileCreateDir, %APPINSTALL_TEMP%
-}
-SetWorkingDir, %APPINSTALL%
-
-OUTPUT=%APPINSTALL%\%testname%-result.txt
-; Start with a fresh log
-IfExist, %OUTPUT%
-{
-    FileDelete, %OUTPUT%
-}
+#Include helper_functions
+#Include init_test
 
 ; Download CCleaner, install it, sha1sum installed files, run it, verify the window exists, and exit.
-/*
+
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://download.piriform.com/ccsetup220.exe", "ccsetup220.exe", "488761c2509785013cd2df8375ceb1856f7d88ed")
@@ -71,9 +52,9 @@ WINDOW_WAIT("CCleaner v2.20 Setup", "Completing the CCleaner v2.20 Setup Wizard"
 ControlClick, Button2, CCleaner v2.20 Setup
 
 ; Not going to bother testing shortcut installation. They're spread all over, and not critical at all. We test them elsewhere anyway.
-*/
+
 Setworkingdir, %ProgramFiles%\CCleaner
-/*SHA1("41d61372f93fd81c3921b8fda1a568287d56af84","CCleaner.exe")
+SHA1("41d61372f93fd81c3921b8fda1a568287d56af84","CCleaner.exe")
 SHA1("20449fee36626dc0c3130dd5e6f5e057d2b83484","uninst.exe")
 SHA1("e88124ef31b37fee52b9c06e3360677fa8c9fb29","Lang\lang-1025.dll")
 SHA1("21bd88c0407eb7e0e059b9252239289a1c7a8a80","Lang\lang-1026.dll")
@@ -114,7 +95,7 @@ SHA1("ec2b302f8aa5cf1a14a0f63b9b4bf403ef0b7da3","Lang\lang-2070.dll")
 SHA1("3cecfb59600f6a4023424f78f9a919bfb9fd6a29","Lang\lang-2074.dll")
 SHA1("26a7a5b66db8f80c9c7cb6d8e8fe6dd4c627b338","Lang\lang-3098.dll")
 SHA1("bf5a9ddd9f0c4b9aa27431dd6fccad663c4b7cbc","Lang\lang-5146.dll")
-*/
+
 Run, CCleaner.exe
 ERROR_TEST("Running CCleaner failed.", "Running CCleaner went okay.")
 

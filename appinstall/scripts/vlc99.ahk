@@ -18,29 +18,10 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
-#Include helper_functions
-
 testname=vlc99
 
-; Global variables
-APPINSTALL=%SYSTEMDRIVE%\appinstall
-APPINSTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALL%
-{
-    FileCreateDir, %APPINSTALL%
-}
-IfNotExist, %APPINSTALL_TEMP%
-{
-    FileCreateDir, %APPINSTALL_TEMP%
-}
-SetWorkingDir, %APPINSTALL%
-
-OUTPUT=%APPINSTALL%\%testname%-result.txt
-; Start with a fresh log
-IfExist, %OUTPUT%
-{
-    FileDelete, %OUTPUT%
-}
+#Include helper_functions
+#Include init_test
 
 ; Download VLC, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
