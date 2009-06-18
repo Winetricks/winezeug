@@ -1,0 +1,51 @@
+;
+; AutoHotKey test initialization
+;
+; Copyright (C) 2009 Austin English
+;
+; This library is free software; you can redistribute it and/or
+; modify it under the terms of the GNU Lesser General Public
+; License as published by the Free Software Foundation; either
+; version 2.1 of the License, or (at your option) any later version.
+;
+; This library is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+; Lesser General Public License for more details.
+;
+; You should have received a copy of the GNU Lesser General Public
+; License along with this library; if not, write to the Free Software
+; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+;
+; Since there's already a helper_function file, might as well have a couple more files
+; to reduce overall code clutter.
+; 
+; This file is included after the helper_function file, and takes care of prepping a WINEPREFIX
+; (or windows install) or AutoHotKey tests. Really, all it does it create the %APPINSTALL%
+; directories and remove old temp stuff, as a precaution. Later, it may be extended to disable
+; user input during the tests, or do other pre test stuff, if the need arises.
+
+; Global variables
+APPINSTALL=%SYSTEMDRIVE%\appinstall
+APPINSTALL_TEMP=%TEMP%\appinstall
+
+; Remove temp directory
+CLEANUP()
+
+; Create directories
+IfNotExist, %APPINSTALL%
+{
+    FileCreateDir, %APPINSTALL%
+}
+IfNotExist, %APPINSTALL_TEMP%
+{
+    FileCreateDir, %APPINSTALL_TEMP%
+}
+SetWorkingDir, %APPINSTALL%
+
+OUTPUT=%APPINSTALL%\%testname%-result.txt
+; Start with a fresh log
+IfExist, %OUTPUT%
+{
+    FileDelete, %OUTPUT%
+}

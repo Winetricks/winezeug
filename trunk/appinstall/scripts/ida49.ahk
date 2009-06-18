@@ -19,28 +19,10 @@
 ;
 ; Note: The IDA software license forbids commercial use.
 
-#Include helper_functions
-
 testname=idapro
-; Global variables
-APPINSTALL=%SYSTEMDRIVE%\appinstall
-APPINSTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALL%
-{
-    FileCreateDir, %APPINSTALL%
-}
-IfNotExist, %APPINSTALL_TEMP%
-{
-    FileCreateDir, %APPINSTALL_TEMP%
-}
-SetWorkingDir, %APPINSTALL%
 
-OUTPUT=%APPINSTALL%\%testname%-result.txt
-; Start with a fresh log
-IfExist, %OUTPUT%
-{
-    FileDelete, %OUTPUT%
-}
+#Include helper_functions
+#Include init_test
 
 ; Download IDA, install it, sha1sum installed files, run it, verify the window exists, and exit.
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")

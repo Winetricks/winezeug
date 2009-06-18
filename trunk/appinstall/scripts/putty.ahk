@@ -17,29 +17,10 @@
 ; License along with this library; if not, write to the Free Software
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
-
-#Include helper_functions
 testname=putty
 
-; Global variables
-APPINSTALL=%SYSTEMDRIVE%\appinstall
-APPINTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALL%
-{
-    FileCreateDir, %APPINSTALL%
-}
-IfNotExist, %APPINSTALL_TEMP%
-{
-    FileCreateDir, %APPINSTALL_TEMP%
-}
-SetWorkingDir, %APPINSTALL%
-
-OUTPUT=%APPINSTALL%\%testname%-result.txt
-; Start with a fresh log
-IfExist, %OUTPUT%
-{
-    FileDelete, %OUTPUT%
-}
+#Include helper_functions
+#Include init_test
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe", "putty.exe", "ae7734e7a54353ab13ecba780ed62344332fbc6f")

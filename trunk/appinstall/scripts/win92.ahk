@@ -18,40 +18,21 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
-#Include helper_functions
-
 ; Test info:
 ; Tests for bug 18574.
 ; Note: This (along with the other tests) is normally ran from a shell script wrapper.
 ; While normally this shouldn't make a difference, this application is one of the ones
 ; that needs winetricks. So if you run it independently, be sure to account for that.
-testname=win92
 
 ; Winetricks dependencies:
 ; 'winetricks mfc42' - application requirement
 
-; Global variables
-APPINSTALL=%SYSTEMDRIVE%\appinstall
-APPINSTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALL%
-{
-    FileCreateDir, %APPINSTALL%
-}
-IfNotExist, %APPINSTALL_TEMP%
-{
-    FileCreateDir, %APPINSTALL_TEMP%
-}
-SetWorkingDir, %APPINSTALL%
+testname=win92
 
-OUTPUT=%APPINSTALL%\%testname%-result.txt
-; Start with a fresh log
-IfExist, %OUTPUT%
-{
-    FileDelete, %OUTPUT%
-}
+#Include helper_functions
+#Include init_test
 
 ; Download win92, unzip it, run it, verify the window exist, and exit.
-
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
 DOWNLOAD("http://www.starrsoft.com/freeware/win92/apps/Win92.zip", "win92.zip", "dc6d226fe20c949076eb6adb98fc851ca7157d04")
