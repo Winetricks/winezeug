@@ -541,22 +541,7 @@ SHA1("b611a8ad65c7bb771bd94594f8642afacff00760", "chrome\newsfox.manifest")
 Run, k-meleon.exe
 ERROR_TEST("Running K-Meleon failed.", "Running K-Meleon went okay.")
 
-; Crashes in Wine. See bug 17524.
-WinWait, Program Error, The program k-meleon.exe has encountered a serious problem and needs to close., 10
-    if ErrorLevel
-    {
-        FileAppend, K-Meleon didn't crash. Bug 17524 TODO_FIXED.`n, %OUTPUT%
-    }
-    else
-    {
-    IfWinNotActive, %windowname%, %windowtext%
-        {
-        WinActivate, %windowname%, %windowtext%
-        }
-    FileAppend, K-Meleon crashed. Bug 17524 TODO_FAILED.`n, %OUTPUT%
-    ControlClick, Button1, Program Error
-    exit 0
-    }
+WAIT_CRASH_FATAL("k-meleon.exe", 17524)
 
 WINDOW_WAIT("", "A new version of K-Meleon was released. Do you want to download it now?")
 

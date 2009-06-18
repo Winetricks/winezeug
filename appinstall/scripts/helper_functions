@@ -150,6 +150,31 @@ TODO_SHA1(badsha1, todosha1, filename)
     }
 }
 
+; Crash handler for programs that crash on wine (but not windows). Give it the program name (as a string!),
+; and the bug number (no quotes needed), and optionally a timeout period to wait (10 second default). 
+; The function waits (until the timeout) for the gui debugger to pop up. If it does, it clicks 'Ok' and exits
+; the test (since the program fatally crashed). If not, it outputs a message to the log files letting you know
+; that the bug is likely fixed.
+WAIT_CRASH_FATAL(program, bug, timeout=10)
+{
+WinWait, Program Error, The program %program% has encountered a serious problem and needs to close, %timeout%
+    global OUTPUT
+    if ErrorLevel
+    {
+        FileAppend, %program% didn't crash. Bug %bug% TODO_FIXED.`n, %OUTPUT%
+    }
+    else
+    {
+    IfWinNotActive, Program Error, The program %program% has encountered a serious problem and needs to close
+        {
+        WinActivate, Program Error, The program %program% has encountered a serious problem and needs to close
+        }
+    FileAppend, %program% crashed. Bug %bug% TODO_FAILED.`n, %OUTPUT%
+    ControlClick, Button1, Program Error
+    exit 0
+    }
+}
+
 ; Some applications don't take focus when started, or have a delay. Work around this. 
 ; Windowname is required, but you can optionally supply a string of text in the window,
 ; or override the time to wait for the window to show before reporting failure (default, 10s).
