@@ -45,7 +45,7 @@ libcapi20-3 libcapi20-dev libcupsys2-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib1.2-dev libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
 libgphoto2-2-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
-libldap2-dev liblzo-dev libmad0 libmad0-dev libmng-dev libncurses5-dev libodbcinstq1c2 \
+libldap2-dev libmad0 libmad0-dev libmng-dev libncurses5-dev libodbcinstq1c2 \
 libogg-dev libpng12-dev libpopt-dev libqt3-headers libqt3-mt libqt3-mt-dev libsane-dev \
 libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
 libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
@@ -61,6 +61,7 @@ ubuntu_gutsy_pkgs="\
 cogito \
 libltdl3 \
 libltdl3-dev \
+liblzo-dev \
 libopencdk8-dev \
 render-dev \
 x11proto-render-dev \
@@ -69,15 +70,24 @@ x11proto-render-dev \
 ubuntu_hardy_pkgs="\
 libltdl3 \
 libltdl3-dev \
+liblzo-dev \
 libopencdk10-dev \
 "
 
 ubuntu_ibex_pkgs="\
+liblzo-dev \
 libltdl7 \
 libltdl7-dev \
 "
 
 ubuntu_jaunty_pkgs="\
+liblzo-dev \
+libltdl7 \
+libltdl7-dev \
+"
+
+ubuntu_karmic_pkgs="\
+liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 "
@@ -131,6 +141,7 @@ Ubuntu*7.10) apt-get install $ubuntu_common_pkgs $ubuntu_gutsy_pkgs;;
 Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
+Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Fedora*release*10*\(Cambridge\)) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
@@ -156,7 +167,7 @@ linksos()
 }
 
     case $distro in
-    Ubuntu*8.04|Ubuntu*8.10) 
+    Ubuntu*8.04|Ubuntu*8.10|Ubuntu*9.10) 
         apt-get install ia32-libs lib32asound2-dev lib32z1-dev 
 	linksos /usr/lib32 $ubuntu_64_ibex_usr_lib32_sos
 	linksos /lib32 $ubuntu_64_ibex_lib32_sos
