@@ -46,4 +46,6 @@ FORCE_CLOSE("Media Player Classic")
 ERROR_TEST("Closing Media Player Classic reported an error.", "Media Player Classic closed fine.")
 
 FileDelete, mplayerc.exe
+ERROR_TEST("Deleting mplayerc.exe failed", "Deleting mplayerc.exe went fine.")
+
 exit 0
