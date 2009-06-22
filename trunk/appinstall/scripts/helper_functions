@@ -113,10 +113,6 @@ SHA1(sha1sum, filename)
         FileDelete, %filename%
         exit 3
     }
-    Else
-    {
-        FileAppend, %filename% checksum passed. Test passed.`n, %OUTPUT%
-    }
 }
 
 ; Similar to the SHA1 function above, but for todo's. Takes the 'bad'/expected sha1um,
