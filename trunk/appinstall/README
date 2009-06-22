@@ -1,0 +1,12 @@
+This is the source code for Appinstall, an automated test framework for Wine (http://www.winehq.org),
+using AutoHotKey (http://www.autohotkey.com).
+
+If you're just looking to run the test, simply get appinstall.sh from the root directory, save it to your
+computer, and run it with 'sh appinstall.sh'. The rest is automatic.
+
+If you're wanting to contribute more tests to Wine, then great! Look in examples/ for example scripts, adjust
+it to your program, and send a patch. Be sure to add your test to appinstall.sh!
+
+It's still very much a work in progress, so be sure to check back often for updates.
+
+Appinstall is copyrighted by Austin English and released under the LGPL version 2.1.
