@@ -91,6 +91,10 @@ ERROR_TEST(fail_message, pass_message, errorcode=1)
 FORCE_CLOSE(windowname)
 {
 PostMessage, 0x112, 0xF060,,, %windowname%
+    IfWinExist, %windowname%
+    {
+        WinKill, %windowname%
+    }
 }
 
 ; Sha1sum a file, and compare it to a known good sha1sum. Similar to the download
