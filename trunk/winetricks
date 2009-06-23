@@ -306,8 +306,11 @@ fi
 if [ -x "`which sha1sum`" ]
 then
    SHA1SUM="sha1sum"
-else
+elif [ -x "`which openssl`" ]
+then
    SHA1SUM="openssl dgst -sha1"
+else
+   die "No sha1sum utility available."
 fi
 
 if [ ! -x "`which "cabextract"`" ]
