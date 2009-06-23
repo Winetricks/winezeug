@@ -652,7 +652,8 @@ load_d3dx9() {
 
     # Kinder, less invasive directx - only extract and override d3dx9_??.dll
     cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx9*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in `ls "$WINETRICKS_TMP"/*.cab`; do
+    for x in `ls "$WINETRICKS_TMP"/*.cab`
+    do
       cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
@@ -817,9 +818,11 @@ _EOF_
 
     # On old wineprefixes iexplore.exe is not created. Create a fake dll using
     # shdocvw.dll that should have similar VERSIONINFO.
-    if [ ! -f "$programfilesdir_unix/Internet Explorer/iexplore.exe" ]; then
+    if [ ! -f "$programfilesdir_unix/Internet Explorer/iexplore.exe" ]
+    then
         echo "You have an old wineprefix without iexplore.exe. Will create a fake now"
-        if [ ! -d "$programfilesdir_unix/Internet Explorer/iexplore.exe" ]; then
+        if [ ! -d "$programfilesdir_unix/Internet Explorer/iexplore.exe" ]
+        then
             try mkdir "$programfilesdir_unix/Internet Explorer";
         fi
         try cp -f "$WINDIR/system32/shdocvw.dll" "$programfilesdir_unix/Internet Explorer/iexplore.exe"
@@ -1195,12 +1198,14 @@ load_kde() {
 
 load_liberation() {
     # http://www.redhat.com/promo/fonts/
-    if [ `uname -s` = 'SunOS' ] || [ `uname -s` = 'Solaris' ]; then
-    echo "If you get 'ERROR: Certificate verification error for fedorahosted.org: unable to get local issuer certificate':"
-    echo "Then you need to add Verisign root certificates to your local keystore."
-    echo "OpenSolaris users, see: http://www.linuxtopia.org/online_books/opensolaris_2008/SYSADV1/html/swmgrpatchtasks-14.html"
-    echo "Or edit winetricks' download function, and add '--no-check-certificate' to the command."
-    fi
+    case `uname -s` in
+    SunOS|Solaris)
+      echo "If you get 'ERROR: Certificate verification error for fedorahosted.org: unable to get local issuer certificate':"
+      echo "Then you need to add Verisign root certificates to your local keystore."
+      echo "OpenSolaris users, see: http://www.linuxtopia.org/online_books/opensolaris_2008/SYSADV1/html/swmgrpatchtasks-14.html"
+      echo "Or edit winetricks' download function, and add '--no-check-certificate' to the command."
+      ;;
+    esac
     
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     cd "$WINETRICKS_TMP"
@@ -1842,12 +1847,14 @@ load_xact() {
     # xactengine?_?.dll and X3DAudio?_?.dll - extract
     cabextract -d "$WINETRICKS_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
     cabextract -d "$WINETRICKS_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in `ls "$WINETRICKS_TMP"/*.cab`; do
+    for x in `ls "$WINETRICKS_TMP"/*.cab`
+    do
       cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
     # xactengine?_?.dll - register
-    for x in `ls "$WINDIR"/system32/xactengine*`; do
+    for x in `ls "$WINDIR"/system32/xactengine*`
+    do
       try $WINE regsvr32 `basename $x`
     done
 }
