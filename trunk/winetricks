@@ -1867,7 +1867,7 @@ load_xact() {
 load_xvid() {
     # xvid
     test -f "$WINDIR"/system32/[Mm][Ff][Cc]42.[Dd][Ll][Ll] || load_vcrun6
-    download . http://download2.videohelp.com/download/Xvid-1.1.3-27042008.exe f1008a11037c0b9368aa4979e62d0963d05d8007
+    download . http://www.videohelp.com/download/Xvid-1.1.3-27042008.exe f1008a11037c0b9368aa4979e62d0963d05d8007
     try $WINE "$WINETRICKS_CACHE"/Xvid-1.1.3-27042008.exe $WINETRICKS_SILENT
 }
 
