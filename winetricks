@@ -374,7 +374,7 @@ download() {
            # [*] --read-timeout is useful on the adobe server that doesn't
            # close the connection unless you tell it to (control-C or closing
            # the socket)
-           try wget -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" "$2"
+           try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" "$2"
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
