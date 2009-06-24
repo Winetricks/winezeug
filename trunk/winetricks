@@ -1152,7 +1152,13 @@ load_ie6() {
 
     # Install
     download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
-    try $WINE "$WINETRICKS_CACHE"/ie6setup.exe
+    $WINE "$WINETRICKS_CACHE"/ie6setup.exe
+    # IE6 exits with 194 to signal a reboot
+    status=$?
+    if [ $status -ne 0 ] && [ $status -ne 194 ]
+    then
+        die "ie6 installation failed."
+    fi
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list 
