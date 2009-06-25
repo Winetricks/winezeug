@@ -1155,10 +1155,10 @@ load_ie6() {
     $WINE "$WINETRICKS_CACHE"/ie6setup.exe
     # IE6 exits with 194 to signal a reboot
     status=$?
-    if [ $status -ne 0 ] && [ $status -ne 194 ]
-    then
-        die "ie6 installation failed."
-    fi
+    case $status in
+    0|194) ;;
+    *) die ie6 installation failed
+    esac
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list 
