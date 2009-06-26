@@ -123,6 +123,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ccleaner-220.ah
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ida49.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-152.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-153.ahk
+wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/lockdown.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/mpc.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/putty.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/sbw.ahk
@@ -173,7 +174,17 @@ for x in \
 
     do
         prep_prefix
-        sh winetricks mfc42
+        sh winetricks -q mfc42
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
+done
+
+# gecko + mfc42:
+for x in \
+    lockdown.ahk
+
+    do
+        prep_prefix
+        sh winetricks -q gecko mfc42
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
