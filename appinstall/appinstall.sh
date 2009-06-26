@@ -27,6 +27,7 @@
 # we'd have to test Wine/these tests on all those platforms. Because of wine/OS bugs,
 # Wine doesn't work as well on, e.g., OS X as it does on, e.g., Ubuntu.
 # Testing those various OS's is not in the scope of Appinstall, but more the area of winetest.
+set -x
 
 WINE=${WINE:-wine}
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine-appinstall}
@@ -147,7 +148,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/init_test
 
 # Winetricks not needed:
 for x in \
-    builtin-gui
+    builtin-gui.ahk \
     ccleaner-220.ahk \
     ida49.ahk \
     kmeleon-152.ahk \
@@ -177,6 +178,7 @@ for x in \
     do
         prep_prefix
         sh winetricks -q mfc42
+        cd "$WINEPREFIX"/drive_c/appinstall
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
@@ -187,6 +189,7 @@ for x in \
     do
         prep_prefix
         sh winetricks -q gecko mfc42
+        cd "$WINEPREFIX"/drive_c/appinstall
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
