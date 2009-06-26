@@ -400,6 +400,21 @@ _EOF_
     try $WINE regedit "$WINETRICKS_TMP"/set-winver.reg
 }
 
+set_app_winver() {
+    app="$1"
+    version="$2"
+    echo "Setting $app to $version mode"
+    ( 
+    echo REGEDIT4 
+    echo "" 
+    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app]"
+    echo "\"Version\"=\"$version\""
+    ) > "$WINETRICKS_TMP"/set-winver.reg
+
+    try $WINE regedit "$WINETRICKS_TMP"/set-winver.reg
+    rm "$WINETRICKS_TMP"/set-winver.reg
+}
+
 unset_winver() {
     echo "Clearing Windows version back to default"
     cat > "$WINETRICKS_TMP"/unset-winver.reg <<_EOF_
