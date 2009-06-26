@@ -118,6 +118,7 @@ rm -rf *.ahk
 rm -rf *.txt
 
 # Get the tests:
+wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/builtin-gui.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ccleaner-220.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ida49.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-152.ahk
@@ -144,6 +145,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/init_test
 
 # Winetricks not needed:
 for x in \
+    builtin-gui
     ccleaner-220.ahk \
     ida49.ahk \
     kmeleon-152.ahk \
