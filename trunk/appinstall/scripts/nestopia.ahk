@@ -51,7 +51,6 @@ SHA1("ad761c61e7c9b6bdfc889912c178b649672c9c54", "7zxa.dll")
 SHA1("f0e3790f0a867f656ee614dc4e4a216515276cba", "kailleraclient.dll")
 
 Run, nestopia.exe
-WAIT_CRASH_FATAL("nestopia.exe", 19609)
 
 WINDOW_WAIT("Nestopia")
 PostMessage, 0x112, 0xF060,,, Nestopia
