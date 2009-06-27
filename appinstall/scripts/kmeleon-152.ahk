@@ -541,8 +541,6 @@ SHA1("b611a8ad65c7bb771bd94594f8642afacff00760", "chrome\newsfox.manifest")
 Run, k-meleon.exe
 ERROR_TEST("Running K-Meleon failed.", "Running K-Meleon went okay.")
 
-WAIT_CRASH_FATAL("k-meleon.exe", 17524)
-
 WINDOW_WAIT("", "A new version of K-Meleon was released. Do you want to download it now?")
 
 WINDOW_WAIT("New Release!", "A new version of K-Meleon was released. Do you want to download it now?")
