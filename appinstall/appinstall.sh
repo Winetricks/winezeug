@@ -117,6 +117,8 @@ fi
 # Make sure there's no old stuff, just in case:
 rm -rf *.ahk
 rm -rf *.txt
+rm -rf helper_functions
+rm -rf init_tests
 
 # Get the tests:
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/builtin-gui.ahk
@@ -205,7 +207,7 @@ if [ $status -eq 2 ] ; then
     echo "No result files found...wtf mate?" >> summary.txt
     exit 2
 elif [ $status -eq 1 ] ; then
-    echo "All tests passsed" >> summary.txt
+    echo "All tests passed" >> summary.txt
 elif [ $status -eq 0 ] ; then
     echo "Some tests failed...investigate!" >> summary.txt
 else
