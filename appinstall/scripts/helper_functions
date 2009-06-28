@@ -91,8 +91,22 @@ ERROR_TEST(fail_message, pass_message, errorcode=1)
 FORCE_CLOSE(windowname)
 {
 PostMessage, 0x112, 0xF060,,, %windowname%
+; Give the app 5 seconds to close on its own, to prevent race conditions. Thanks to Focht for pointing it out.
+    Loop, 5
+    {
+        IfWinExist, %windowname%
+        {
+            Sleep, 1000
+        }
+        Else
+        {
+            FileAppend, %windowname% exited on its own.`n, %OUTPUT%
+            break ; The app exited on its own, so break loop.
+        }
+    }
     IfWinExist, %windowname%
     {
+        FileAppend, %windowname% didn't exit on its own. Terminating with extreme prejudice.`n, %OUTPUT%
         WinKill, %windowname%
     }
 }
