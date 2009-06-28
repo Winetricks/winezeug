@@ -121,6 +121,7 @@ rm -rf helper_functions
 rm -rf init_tests
 
 # Get the tests:
+wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/autohotkey.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/builtin-gui.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ccleaner-220.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ida49.ahk
@@ -150,6 +151,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/init_test
 
 # Winetricks not needed:
 for x in \
+    autohotkey.ahk \
     builtin-gui.ahk \
     ccleaner-220.ahk \
     ida49.ahk \
