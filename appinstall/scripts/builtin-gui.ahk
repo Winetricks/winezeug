@@ -90,7 +90,7 @@ Run, winevdm winhelp.exe
 ERROR_TEST("Running 16bit winhelp reported an error.", "16bit winhelp launched fine.")
 WINDOW_WAIT("Wine Help")
 FORCE_CLOSE("Wine Help") ; Force closing winhelp
-    WinWait, ERROR, , 5
+    WinWait, ERROR, , 10
     if ErrorLevel
     {
         FileAppend, Error window didn't appear. Bug 19081 fixed. TODO_FIXED.`n, %OUTPUT%
@@ -100,6 +100,8 @@ FORCE_CLOSE("Wine Help") ; Force closing winhelp
         FileAppend, Error window appeared. Bug 19081 TODO_FAILED.`n, %OUTPUT%
         FORCE_CLOSE("ERROR")
     }
+
+Sleep 500
 
 Run, winhlp32
 ERROR_TEST("Running winhelp32 reported an error.", "Winhlp32 launched fine.")
