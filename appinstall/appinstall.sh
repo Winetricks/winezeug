@@ -131,6 +131,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-153.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/lockdown.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/mpc.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/nestopia.ahk
+wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/pex.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/putty.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/sbw.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/startup_cpl.ahk
@@ -195,6 +196,17 @@ for x in \
     do
         prep_prefix
         sh winetricks -q gecko mfc42
+        cd "$WINEPREFIX"/drive_c/appinstall
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
+done
+
+# gecko:
+for x in \
+    pex.ahk
+
+    do
+        prep_prefix
+        sh winetricks -q gecko
         cd "$WINEPREFIX"/drive_c/appinstall
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
