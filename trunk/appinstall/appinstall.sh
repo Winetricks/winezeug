@@ -124,6 +124,7 @@ rm -rf init_tests
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/autohotkey.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/builtin-gui.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ccleaner-220.ahk
+wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/dirac.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ida49.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-152.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-153.ahk
@@ -154,6 +155,7 @@ for x in \
     autohotkey.ahk \
     builtin-gui.ahk \
     ccleaner-220.ahk \
+    dirac.ahk \
     ida49.ahk \
     kmeleon-152.ahk \
     kmeleon-153.ahk \
