@@ -30,7 +30,7 @@ DOWNLOAD("http://downloads.sourceforge.net/nestopia/Nestopia140bin.zip", "Nestop
 FileRemoveDir, %APPINSTALL_TEMP%\nestopia140, 1
 ERROR_TEST("Removing old temp files failed.", "Removed old temp files.")
 
-Run, unzip.exe -d %APPINSTALL_TEMP%\nestopia140 Nestopia140bin.zip
+Runwait, unzip.exe -d %APPINSTALL_TEMP%\nestopia140 Nestopia140bin.zip
 ERROR_TEST("Unzipping had some error.", "Unzipping went okay.")
 
 ; Sleep for a second to make sure a race condition in the unzip process doesn't break the test
