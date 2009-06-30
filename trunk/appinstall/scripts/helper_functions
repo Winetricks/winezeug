@@ -28,6 +28,12 @@ CLEANUP()
     FileRemoveDir, %APPINSTALL_TEMP%, 1
 }
 
+; Similar to FORCE_CLOSE below, without the forced killing. Just sends the close message.
+CLOSE(windowname)
+{
+PostMessage, 0x112, 0xF060,,, %windowname%
+}
+
 ; This function simplifies file retrieval. It tests for the files' existence (skipping
 ; the download), downloads it, sha1sum's it, and compares it against the known good
 ; sha1sum. To use, call 'DOWNLOAD("url", "filename", "sha1sum")' where url is the http url
