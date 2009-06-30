@@ -17,8 +17,6 @@
 ; License along with this library; if not, write to the Free Software
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 
-; TODO: view (doesn't build an exe?) , winoldap.mod16 (what is it?)
-
 ; This script is a bit of a special case...it tests all of wine's built in programs.
 ; Some of these don't follow their window's counterparts perfectly, or at all, so
 ; 'bug for bug' compatability is not extremely important here. What _IS_ important,
@@ -90,33 +88,44 @@ Run, winevdm winhelp.exe
 ERROR_TEST("Running 16bit winhelp reported an error.", "16bit winhelp launched fine.")
 WINDOW_WAIT("Wine Help")
 FORCE_CLOSE("Wine Help") ; Force closing winhelp
-    WinWait, ERROR, , 10
-    if ErrorLevel
+Sleep 500 ; Prevent race condition
+IfWinExist, Open ; Should've closed with winhelp itself. 
     {
-        FileAppend, Error window didn't appear. Bug 19081 fixed. TODO_FIXED.`n, %OUTPUT%
+        FileAppend, Open dialog didn't close. Bug 19081 TODO_FAILED.`n, %OUTPUT%
+        CLOSE("Open")
     }
     Else
     {
-        FileAppend, Error window appeared. Bug 19081 TODO_FAILED.`n, %OUTPUT%
-        FORCE_CLOSE("ERROR")
+        FileAppend, Open dialog doesn't exist. Check Bug 19081. TODO_FIXED.`n, %OUTPUT%
     }
 
 Sleep 500
 
 Run, winhlp32
-ERROR_TEST("Running winhelp32 reported an error.", "Winhlp32 launched fine.")
+ERROR_TEST("Running 16bit winhelp reported an error.", "16bit winhelp launched fine.")
 WINDOW_WAIT("Wine Help")
-FORCE_CLOSE("Wine Help")
-
-    WinWait, ERROR, , 5
-    if ErrorLevel
+FORCE_CLOSE("Wine Help") ; Force closing winhelp
+Sleep 500
+IfWinExist, Open ; Should've closed with winhelp itself. 
     {
-        FileAppend, Error window didn't appear. Bug 19081 fixed. TODO_FIXED.`n, %OUTPUT%
+        FileAppend, Open dialog didn't close. Bug 19081 TODO_FAILED.`n, %OUTPUT%
+        CLOSE("Open")
     }
     Else
     {
-        FileAppend, Error window appeared. Bug 19081 TODO_FAILED.`n, %OUTPUT%
-        FORCE_CLOSE("ERROR")
+        FileAppend, Open dialog doesn't exist. Check Bug 19081. TODO_FIXED.`n, %OUTPUT%
     }
+
+; AJ won't accept installing these globally, so we have to run them from the tree.
+; If someone doesn't have $HOME/wine-git they'll be skipped.
+IfNotExist, C:\users\%A_UserName%\My` Documents\wine-git
+    {
+        FileAppend, wine-git tree not found. Skipping view and cmdlgtst tests.`n, %OUTPUT%
+        exit 0
+    }
+SetWorkingDir, C:\users\%A_UserName%\My Documents\wine-git
+ERROR_TEST("Setting work directory to git tree failed.", "Set work directory to git tree successfully.")
+BUILTIN_TEST("programs\view\view.exe.so","Regular Metafile Viewer")
+BUILTIN_TEST("programs\cmdlgtst\cmdlgtst.exe.so","Cmdlgtst Window")
 
 exit 0
