@@ -21,6 +21,17 @@
 ; Even though AutoHotKey comes with a ton of builtin functions, many are omitted
 ; due to space/speed concerns. Others aren't popular enough.
 
+; Check to see that a file exists. On success, print nothing. On failure, 'test failed' (non fatal).
+; Used in place of SHA1 for things like .log or that otherwise change, but we want to make sure where installed.
+CHECK_FILE(filename)
+{
+    global OUTPUT
+    IfNotExist, %filename%
+    {
+        FileAppend, File %filename% does not exist. Test failed.`n, %OUTPUT%
+    }
+}
+
 ; Removes the temporary directory and all files, recursively
 CLEANUP()
 {
