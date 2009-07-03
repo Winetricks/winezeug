@@ -134,6 +134,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/mpc.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/msxml4.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/nestopia.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/pex.ahk
+wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ppviewer.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/putty.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/sbw.ahk
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/startup_cpl.ahk
@@ -165,6 +166,7 @@ for x in \
     kmeleon-153.ahk \
     mpc.ahk \
     nestopia.ahk \
+    ppviewer.ahk \
     putty.ahk \
     sbw.ahk \
     startup_cpl.ahk \
