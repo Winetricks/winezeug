@@ -106,6 +106,7 @@ for verb in \
     msls31 \
     ole2 \
     pdh \
+    shockwave \
     vjrun20
 do
     wineserver -k || true
