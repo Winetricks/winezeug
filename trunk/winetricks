@@ -518,8 +518,8 @@ load_art2kmin() {
 #----------------------------------------------------------------
 
 load_autohotkey() {
-    download . http://www.autohotkey.net/programs/AutoHotkey104706_Install.exe 3d3d8845473dea477d6983d063f0afc9999d880f
-    try $WINE "$WINETRICKS_CACHE"/AutoHotkey104706_Install.exe $WINETRICKS_S
+    download . http://www.autohotkey.net/programs/AutoHotkey104803_Install.exe 5cf0f16e9aa2f2e96a3b08e0d938602aff39a33e
+    try $WINE "$WINETRICKS_CACHE"/AutoHotkey104803_Install.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
