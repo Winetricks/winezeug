@@ -24,7 +24,7 @@ if ! test -O $HOME
 fi
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090607
+VERSION=20090705
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -137,6 +137,7 @@ usage() {
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
+    echo " shockwave     Adobe Shockwave Player"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
     echo " vb2run        MS Visual Basic 2 runtime"
@@ -162,7 +163,7 @@ usage() {
     echo " xvid          xvid video codec"
     echo "Apps:"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
-    echo " firefox3      Firefox Version 3"
+    echo " firefox       Firefox"
     echo " ie6           Microsoft Internet Explorer 6.0"
     echo " kde           KDE for Windows installer"
     echo " mpc           Media Player Classic"
@@ -850,14 +851,13 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_firefox3() {
-    # Firefox 3
-    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.0.10/win32/en-US/Firefox%20Setup%203.0.10.exe" ef719c1fc82b7a716a54b5ad03b3b633ddbd6193 "Firefox Setup 3.0.10.exe"
+load_firefox() {
+    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.5/win32/en-US/Firefox%20Setup%203.5.exe" a9ef21ba8173a5d850b408fc448a7bc889eb68cb "Firefox Setup 3.5.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.10.exe" 
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe" 
     else
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.0.10.exe" -ms
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe" -ms
     fi
 }
 
@@ -1580,6 +1580,17 @@ load_riched30() {
 
 #----------------------------------------------------------------
 
+load_shockwave() {
+    # Not silent enough, use msi instead
+    #download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
+    #try $WINE "$WINETRICKS_CACHE"/Shockwave_Installer_Full.exe $WINETRICKS_S
+
+    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
+    try $WINE "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_tahoma() {
     # The tahoma and tahomabd fonts are needed by e.g. Steam
     
@@ -1889,8 +1900,8 @@ load_xact() {
 load_xvid() {
     # xvid
     test -f "$WINDIR"/system32/[Mm][Ff][Cc]42.[Dd][Ll][Ll] || load_vcrun6
-    download . http://www.videohelp.com/download/Xvid-1.1.3-27042008.exe f1008a11037c0b9368aa4979e62d0963d05d8007
-    try $WINE "$WINETRICKS_CACHE"/Xvid-1.1.3-27042008.exe $WINETRICKS_SILENT
+    download . http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
+    try $WINE "$WINETRICKS_CACHE"/Xvid-1.2.2-07062009.exe $WINETRICKS_SILENT
 }
 
 #----------------------------------------------------------------
@@ -1927,7 +1938,7 @@ do
     divx) load_divx;;
     dotnet1|dotnet11) load_dotnet11; load_fontfix;;
     dotnet2|dotnet20) load_dotnet20; load_fontfix;;
-    firefox|firefox3) load_firefox3;;
+    firefox|firefox3) load_firefox;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
     fontfix) load_fontfix;;
@@ -1965,6 +1976,7 @@ do
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
+    shockwave) load_shockwave;;
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
     vbrun200|vb2run) load_vb2run;;
