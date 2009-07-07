@@ -252,14 +252,7 @@ ERROR_TEST("Exiting Thunderbird gave an error.", "Thunderbird claimed to exit fi
 ; Prevent race condition
 Sleep 500
 
-IfWinExist, Mozilla Thunderbird
-{
-    FileAppend, Thunderbird didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Mozilla Thunderbird
-{
-FileAppend, Thunderbird exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("Mozilla Thunderbird")
 
 CLEANUP()
 exit 0

@@ -448,13 +448,6 @@ ERROR_TEST("Exiting VLC gave an error.", "VLC claimed to exit fine.")
 ; Prevent race condition
 Sleep 500
 
-IfWinExist, VLC media player
-{
-    FileAppend, VLC didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, VLC media player
-{
-FileAppend, VLC exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("VLC media player")
 
 exit 0

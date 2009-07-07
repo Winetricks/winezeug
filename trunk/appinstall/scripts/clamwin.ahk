@@ -136,13 +136,6 @@ FORCE_CLOSE("ClamWin Free Antivirus")
 
 Sleep 500
 
-IfWinExist, ClamWin Free Antivirus
-{
-    FileAppend, ClamWin didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, ClamWin Free Antivirus
-{
-    FileAppend, ClamWin exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("ClamWin Free Antivirus")
 
 exit 0

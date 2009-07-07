@@ -61,14 +61,7 @@ ControlClick, &Yes, Exit Nestopia, Are you sure
 
 Sleep 500
 
-IfWinExist, Nestopia
-{
-    FileAppend, Nestopia didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Nestopia
-{
-    FileAppend, Nestopia exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("Nestopia")
 
 CLEANUP()
 exit 0

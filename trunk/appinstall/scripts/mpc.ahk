@@ -45,6 +45,8 @@ Sleep 500 ; Prevent race condition
 FORCE_CLOSE("Media Player Classic")
 ERROR_TEST("Closing Media Player Classic reported an error.", "Media Player Classic closed fine.")
 
+WIN_EXIST_TEST("Media Player Classic")
+
 FileDelete, mplayerc.exe
 ERROR_TEST("Deleting mplayerc.exe failed", "Deleting mplayerc.exe went fine.")
 

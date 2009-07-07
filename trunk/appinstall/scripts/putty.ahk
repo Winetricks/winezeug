@@ -60,7 +60,7 @@ WinWait, PuTTY Fatal Error, Network error: Connection timed out, 150
 
 ; Run putty a second time, this time connecting to a valid SSH server (no valid credentials though)
 Run, putty.exe,
-ERROR_TEST("PuTTY (run 1) failed to run.", "PuTTY (run 2) claimed to start up fine.")
+ERROR_TEST("PuTTY (run 2) failed to run.", "PuTTY (run 2) claimed to start up fine.")
 
 Window_wait("PuTTY Configuration","Specify the destination you want to connect to")
 ERROR_TEST("PuTTY (run 2) window never appeared.", "PuTTY (run 2) window appeared.")
@@ -96,13 +96,7 @@ ERROR_TEST("PuTTY SSH login had an error.", "PuTTY SSH login appeared fine.")
 FORCE_CLOSE("www.winehq.org - PuTTY")
 ERROR_TEST("Closing PuTTY gave an error.", "PuTTY claimed to exit.")
 Sleep 200
-IfWinExist, www.winehq.org - PuTTY
-{
-    FileAppend, PuTTY didn't exit. Test failed.`n, %OUTPUT%
-}
-Else
-{
-FileAppend, PuTTY exited properly. Test passed.`n, %OUTPUT%
-}
+
+WIN_EXIST_TEST("www.winehq.org - PuTTY")
 
 exit 0

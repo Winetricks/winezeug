@@ -23,7 +23,7 @@ testname=dirac
 #Include helper_functions
 #Include init_test
 
-; Download Dirac, run it, verify the window exists, and exit.
+; Download Dirac, install it, sha1sum installed files, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 ERROR_TEST("Downloading sha1sum.exe had an error.", "Downloading sha1sum.exe went fine.")

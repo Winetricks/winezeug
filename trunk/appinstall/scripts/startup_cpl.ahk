@@ -53,24 +53,13 @@ ERROR_TEST("Startup Control Panel window never appeared.", "Startup Control Pane
 Sleep 500
 
 ; Similar to Winclose(), but more forceful. I like forceful.
-FORCE_CLOSE(Startup Control Panel 2.8 by Mike Lin)
+FORCE_CLOSE("Startup Control Panel 2.8 by Mike Lin")
 ERROR_TEST("Exiting Startup Control Panel gave an error.", "Startup Control Panel claimed to exit fine.")
 
 ; Prevent race condition
 Sleep 500
 
-; While we should test if the window still exists, this test sporadically fails, even on windows.
-; Disabling until I can make it consistent.
-/*
-IfWinExist, Startup Control Panel 2.8 by Mike Lin
-{
-    FileAppend, Startup Control Panel didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Startup Control Panel 2.8 by Mike Lin
-{
-FileAppend, Startup Control Panel 2.8 exited successfully. Test passed.`n, %OUTPUT%
-}
-*/
+WIN_EXIST_TEST("Startup Control Panel 2.8 by Mike Lin")
 
 CLEANUP()
 exit 0

@@ -600,13 +600,6 @@ ERROR_TEST("Exiting IDA gave an error.", "IDA claimed to exit fine.")
 
 Sleep 500 ; Prevent race condition
 
-IfWinExist, The interactive disassembler
-{
-    FileAppend, IDA didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, The interactive disassembler
-{
-FileAppend, IDA exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("The interactive disassembler")
 
 exit 0
