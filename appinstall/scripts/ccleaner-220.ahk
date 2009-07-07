@@ -127,14 +127,7 @@ ERROR_TEST("Exiting CCleaner gave an error.", "CCleaner claimed to exit fine.")
 ; Prevent race condition
 Sleep 500
 
-IfWinExist, Piriform CCleaner
-{
-    FileAppend, CCleaner didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Piriform CCleaner
-{
-FileAppend, CCleaner exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("Piriform CCleaner")
 
 CLEANUP()
 exit 0

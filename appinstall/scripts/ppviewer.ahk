@@ -95,13 +95,6 @@ ControlClick, paneClassDC1, PowerPoint Viewer Slide Show - [winetest.ppt]
 
 Sleep 500
 
-IfWinExist, PowerPoint Viewer Slide Show - [winetest.ppt]
-{
-    FileAppend, PowerPoint viewer slide show didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, PowerPoint Viewer Slide Show - [winetest.ppt]
-{
-    FileAppend, PowerPoint viewer slide show exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("PowerPoint Viewer Slide Show - [winetest.ppt]")
 
-exit
+exit 0

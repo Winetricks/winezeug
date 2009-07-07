@@ -206,6 +206,20 @@ WinWait, Program Error, The program %program% has encountered a serious problem 
     }
 }
 
+; Test to see that a window doesn't exist. If so, issue a test failed. Otherwise, report success.
+WIN_EXIST_TEST(windowname, windowtext="")
+{
+    global OUTPUT
+    IfWinExist, %windowname%, %windowtext%
+    {
+        FileAppend, %windowname% didn't exit for some reason. Test failed.`n, %OUTPUT%
+    }
+    IfWinNotExist, %windowname%, %windowtext%
+    {
+        FileAppend, %windowname% exited successfully. Test passed.`n, %OUTPUT%
+    }
+}
+
 ; Some applications don't take focus when started, or have a delay. Work around this. 
 ; Windowname is required, but you can optionally supply a string of text in the window,
 ; or override the time to wait for the window to show before reporting failure (default, 10s).

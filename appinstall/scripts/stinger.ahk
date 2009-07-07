@@ -41,14 +41,7 @@ ERROR_TEST("Exiting Stinger gave an error.", "Stinger claimed to exit fine.")
 ; Prevent race condition
 Sleep 500
 
-IfWinExist, Stinger
-{
-    FileAppend, Stinger didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Stinger
-{
-FileAppend, Stinger exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("Stinger")
 
 FileDelete, Stinger*opt
 

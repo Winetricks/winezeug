@@ -97,13 +97,7 @@ ERROR_TEST("Closing AHK reported an error.", "Closing AHK went okay.")
 
 ; Prevent race condition
 Sleep 500
-IfWinExist, AutoHotKey.ahk
-{
-    FileAppend, AHK didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-Else
-{
-FileAppend, AHK exited successfully. Test passed.`n, %OUTPUT%
-}
+
+WIN_EXIST_TEST("AutoHotKey.ahk")
 
 exit 0

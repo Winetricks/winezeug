@@ -71,14 +71,7 @@ WinClose, Win92 V00.46
 
 ERROR_TEST("Exiting Win92 gave an error.", "Win92 claimed to exit fine.")
 
-IfWinExist, Win92 V00.46
-{
-    FileAppend, Win92 didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Win92 V00.46
-{
-FileAppend, Win92 exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("Win92 V00.46")
 
 CLEANUP()
 exit 0

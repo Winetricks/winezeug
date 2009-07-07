@@ -556,13 +556,6 @@ ERROR_TEST("Exiting K-Meleon gave an error.", "K-Meleon claimed to exit fine.")
 ; Prevent race condition
 Sleep 500
 
-IfWinExist, K-Meleon 1.5.2 (K-Meleon)
-{
-    FileAppend, K-Meleon didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, K-Meleon 1.5.2 (K-Meleon)
-{
-FileAppend, K-Meleon exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("K-Meleon 1.5.2 (K-Meleon)")
 
 exit 0

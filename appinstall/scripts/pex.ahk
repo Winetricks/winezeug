@@ -88,13 +88,6 @@ ERROR_TEST("Closing PE Explorer gave an error.", "Closing PE Explorer gave no er
 ; Prevent race condition
 Sleep 500
 
-IfWinExist, PE Explorer - 30 day evaluation version
-{
-    FileAppend, PE Explorer didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, PE Explorer - 30 day evaluation version
-{
-FileAppend, PE Explorer exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("PE Explorer - 30 day evaluation version")
 
 exit 0

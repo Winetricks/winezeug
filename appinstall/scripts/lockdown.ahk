@@ -91,12 +91,6 @@ ERROR_TEST("Running Lockdown reported an error.", "Lockdown launched fine.")
 ; But since we don't test on Windows often, it's a non-issue.
     Process, Close, %lockpid%
     Sleep 500
-    IfWinExist, Respondus LockDown Browser
-        {
-        FileAppend, Respondus LockDown Browser didn't exit for some reason. Test failed.`n, %OUTPUT%
-        }
-    IfWinNotExist, Respondus LockDown Browser
-        {
-        FileAppend, Respondus LockDown Browser exited successfully. Test passed.`n, %OUTPUT%
-        }
+    WIN_EXIST_TEST("Respondus LockDown Browser")
+
 exit 0

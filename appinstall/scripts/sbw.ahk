@@ -78,14 +78,6 @@ ERROR_TEST("Exiting Savings Bond Wizard gave an error.", "Savings Bond Wizard cl
 
 Sleep 500
 
-IfWinExist, Savings Bond Wizard - Untitled 1
-{
-    FileAppend, Savings Bond Wizard didn't exit for some reason. Test failed.`n, %OUTPUT%
-}
-IfWinNotExist, Savings Bond Wizard - Untitled 1
-{
-FileAppend, Savings Bond Wizard exited successfully. Test passed.`n, %OUTPUT%
-}
+WIN_EXIST_TEST("Savings Bond Wizard - Untitled 1")
 
-; Exit and report success
 exit 0
