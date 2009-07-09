@@ -21,6 +21,18 @@
 ; Even though AutoHotKey comes with a ton of builtin functions, many are omitted
 ; due to space/speed concerns. Others aren't popular enough.
 
+; Check to see if a directory exists. Useful for making sure installers create empty directories.
+CHECK_DIR(directory)
+{
+if InStr(FileExist("%directory%"), "D")
+    {
+    FileAppend, %directory% exists. Test passed.`n, %OUTPUT%
+    }
+Else
+    {
+    FileAppend, %directory% doesn't exist. Test failed.`n, %OUTPUT%
+    }
+}
 ; Check to see that a file exists. On success, print nothing. On failure, 'test failed' (non fatal).
 ; Used in place of SHA1 for things like .log or that otherwise change, but we want to make sure where installed.
 CHECK_FILE(filename)
