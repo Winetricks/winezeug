@@ -88,6 +88,15 @@ SHA1("6ed5b1de7979fd3779e17df843a2042fa14aaace","AutoHotkey` Website.url")
 SHA1("3d436ffdd69f7187b85e0cf8f075bd6154123623","license.txt")
 SHA1("82d7a111724595fa77f5f59916c885d20c23473f","uninst.exe")
 
+; If for some reason AutoHotKey has been run before on this machine, it may create a sample file.
+; If that file exists, the below test fails. So, if that file exists, delete it.
+
+IfExist, %A_MyDocuments%\AutoHotKey.ahk
+{
+    FileAppend, %A_MyDocuments%\AutoHotKey.ahk exists, deleting it.`n, %OUTPUT%
+    FileDelete, %A_MyDocuments%\AutoHotKey.ahk
+    ERROR_TEST("Deleting sample ahk file reported an error.", "Deleting AutoHotKey.ahk sample file went okay.")
+}
 Run, AutoHotKey.exe
 ERROR_TEST("Running AHK failed.", "Running AHK went okay.")
 
