@@ -144,6 +144,7 @@ for x in \
     kmeleon-153.ahk \
     mpc.ahk \
     nestopia.ahk \
+    notepadpp.ahk \
     ppviewer.ahk \
     putty.ahk \
     sbw.ahk \
