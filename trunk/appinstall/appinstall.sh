@@ -120,31 +120,6 @@ rm -rf *.txt
 rm -rf helper_functions
 rm -rf init_tests
 
-# Get the tests:
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/autohotkey.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/builtin-console.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/builtin-gui.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ccleaner-220.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/clamwin.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/dirac.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ida49.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-152.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/kmeleon-153.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/lockdown.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/mpc.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/msxml4.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/nestopia.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/pex.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ppviewer.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/putty.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/sbw.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/startup_cpl.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/stinger.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/thunderbird.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/vlc86f.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/vlc99.ahk
-wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/win92.ahk
-
 #Don't forget their helper files!
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/helper_functions
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/init_test
@@ -180,6 +155,7 @@ for x in \
     do
         prep_prefix
         cd "$WINEPREFIX"/drive_c/appinstall
+        wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         # FIXME: the path names are getting botched massively...perhaps a problem with wine/symlinks?
         $WINE "C:\appinstall\autohotkey.exe" $x
         # Should we cd to an existing dir here?
@@ -193,6 +169,7 @@ for x in \
         prep_prefix
         sh winetricks -q mfc42
         cd "$WINEPREFIX"/drive_c/appinstall
+        wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
@@ -204,6 +181,7 @@ for x in \
         prep_prefix
         sh winetricks -q gecko mfc42
         cd "$WINEPREFIX"/drive_c/appinstall
+        wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
@@ -215,6 +193,7 @@ for x in \
         prep_prefix
         sh winetricks -q gecko
         cd "$WINEPREFIX"/drive_c/appinstall
+        wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
