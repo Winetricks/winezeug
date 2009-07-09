@@ -138,7 +138,7 @@ for x in \
     ccleaner-220.ahk \
     clamwin.ahk \
     dirac.ahk \
-    firefox.ahk \
+    firefox35.ahk \
     ida49.ahk \
     kmeleon-152.ahk \
     kmeleon-153.ahk \
