@@ -49,6 +49,8 @@ Else
 }
 */
 
+; Apparently there's a race here (ScheduledScans is created by ClamTray.exe)
+Sleep 2000
 ; FIXME: Depends on wine's folder structure, so fails on XP...Is there a portable way to get to All Users's folder?
 SetWorkingDir, C:\Users\Public\.clamwin\
 CHECK_FILE("db\daily.cvd")
