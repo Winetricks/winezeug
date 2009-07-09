@@ -30,21 +30,7 @@ DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/testfiles/winetest
 Run, ppviewer.exe /q
 ERROR_TEST("Installing ppviewer had a problem.", "Installing ppviewer went okay.")
 
-; This window doesn't show up on wine. Can't use WINDOW_WAIT, since it makes errors fatal. The long timeout is to give the installer time to complete.
-WinWait, Microsoft Office PowerPoint Viewer 2003, Microsoft Office PowerPoint Viewer 2003 Setup completed successfully, 60
-    if ErrorLevel
-    {
-        FileAppend, Installer complete window didn't show up. Bug 19170 TODO_FAIL.`n, %OUTPUT%
-    }
-    Else
-    {
-        FileAppend, Installer complete window showed up. Bug 19170 TODO_FIXED.`n, %OUTPUT%
-        IfWinNotActive, %windowname%, %windowtext%
-        {
-            WinActivate, %windowname%, %windowtext%
-        }
-        ControlClick, OK, Microsoft Office PowerPoint Viewer 2003,Microsoft Office PowerPoint Viewer 2003 Setup completed successfully
-    }
+TODO_WINDOW_WAIT(Microsoft Office PowerPoint Viewer 2003, 19170, Microsoft Office PowerPoint Viewer 2003 Setup completed successfully, 60)
 
 Sleep 2000
 
@@ -63,7 +49,7 @@ Else ifexist %A_AppData%\Microsoft\Installer\{90AF0409-6000-11D3-8CFE-0150048383
 {
     SetWorkingDir, %A_AppData%\Microsoft\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}
     SHA1("d3d868146e59ef956922fb11a3ceb94c0991da1b","ppvwicon.exe")
-    FileAppend, ppvwicon.exe found in %A_AppData%\Microsoft\Installer. Bug 19172 TODO_FAIL.`n, %OUTPUT%
+    FileAppend, ppvwicon.exe found in %A_AppData%\Microsoft\Installer. Bug 19172 TODO_FAILED.`n, %OUTPUT%
 }
 Else
 {

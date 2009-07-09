@@ -181,6 +181,26 @@ TODO_SHA1(badsha1, todosha1, filename)
     }
 }
 
+; Similar to WINDOW_WAIT below, except, instead of erroring out if the window doesn't appear, consider it a test failure.
+; Should be used for windows that appear on Windows, but not on Wine, e.g., the Import Wizard for Mozilla Firefox
+TODO_WINDOW_WAIT(windowname, bug, windowtext="", wintimeout=10)
+{
+    global OUTPUT
+    WinWait, %windowname%, %windowtext%, %wintimeout%
+    if ErrorLevel
+    {
+        FileAppend, %windowname% didn't appear. Bug %bug% TODO_FAILED.`n, %OUTPUT%
+    }
+    Else
+    {
+    FileAppend, %windowname% appeared. Bug %bug% TODO_FIXED.`n, %OUTPUT%
+    IfWinNotActive, %windowname%, %windowtext%
+        {
+        WinActivate, %windowname%, %windowtext%
+        }
+    }
+}
+
 ; Crash handler for programs that crash on wine (but not windows). Give it the program name (as a string!),
 ; and the bug number (no quotes needed), and optionally a timeout period to wait (10 second default). 
 ; The function waits (until the timeout) for the gui debugger to pop up. If it does, it clicks 'Ok' and exits
