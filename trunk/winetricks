@@ -96,6 +96,7 @@ usage() {
     echo " corefonts     MS Arial, Courier, Times fonts"
     echo " d3dx9         MS d3dx9_??.dll (from DirectX 9 user redistributable)"
     echo " dcom98        MS DCOM (ole32, oleaut32); requires Win98 license!"
+    echo " dinput8       MS dinput8.dll (from DirectX 9 user redistributable)"
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
     echo " directx9      MS DirectX 9 user redistributable (not recommended! use d3dx9 instead)"
     echo " divx          divx video codec"
@@ -680,6 +681,19 @@ load_d3dx9() {
     override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
     override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
     override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41
+}
+
+#----------------------------------------------------------------
+
+load_dinput8() {
+    helper_directx_dl
+
+    cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    cabextract -d "$WINDIR"/system32 -L -F 'dinput8.dll' "$WINETRICKS_TMP/dxnt.cab"
+
+    try $WINE regsvr32 dinput8
+
+    override_dlls native dinput8
 }
 
 #----------------------------------------------------------------
@@ -1933,6 +1947,7 @@ do
     controlpad|fm20) load_controlpad;;
     d3dx9) load_d3dx9;;
     dcom98) load_dcom98;;
+    dinput8) load_dinput8;;
     dirac|dirac0.8) load_dirac08;;
     directx9) load_directx9;;
     divx) load_divx;;
