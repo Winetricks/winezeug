@@ -145,6 +145,7 @@ for x in \
     mpc.ahk \
     nestopia.ahk \
     notepadpp.ahk \
+    pidgin.ahk \
     ppviewer.ahk \
     putty.ahk \
     sbw.ahk \
