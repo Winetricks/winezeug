@@ -31,6 +31,8 @@ DOWNLOAD("http://softlayer.dl.sourceforge.net/sourceforge/pidgin/pidgin-2.5.8.ex
 Runwait, pidgin-2.5.8.exe /S
 ERROR_TEST("Installing pidgin had some error.", "Installing pidgin went okay.")
 
+Sleep 500
+
 ; Check shortcuts. Broken on Windows, since the path is different.
 CHECK_FILE("C:\users\Public\Start Menu\Programs\Pidgin.lnk")
 CHECK_FILE("C:\users\Public\Start Menu\Programs\Gtk+\Theme Selector.lnk")
@@ -1209,5 +1211,7 @@ ERROR_TEST("Closing 'Accounts' window had some error.", "Closing 'Accounts' wind
 
 Process, Close, pidgin.exe
 ERROR_TEST("Killing pidgin's process reported an error.", "Killing pidgin's process went fine.")
+
+WIN_EXIST_TEST("Accounts")
 
 exit 0
