@@ -102,7 +102,7 @@ IfWinExist, Open ; Should've closed with winhelp itself.
 Sleep 500
 
 Run, winhlp32
-ERROR_TEST("Running 16bit winhelp reported an error.", "16bit winhelp launched fine.")
+ERROR_TEST("Running 32bit winhelp reported an error.", "32bit winhelp launched fine.")
 WINDOW_WAIT("Wine Help")
 FORCE_CLOSE("Wine Help") ; Force closing winhelp
 Sleep 500
@@ -127,5 +127,17 @@ SetWorkingDir, C:\users\%A_UserName%\My Documents\wine-git
 ERROR_TEST("Setting work directory to git tree failed.", "Set work directory to git tree successfully.")
 BUILTIN_TEST("programs\view\view.exe.so","Regular Metafile Viewer")
 BUILTIN_TEST("programs\cmdlgtst\cmdlgtst.exe.so","Cmdlgtst Window")
+
+; Test for bug 15367. Put at the end because WAIT_CRASH_FATAL exits the script
+Run, winhlp32
+ERROR_TEST("Running 32bit winhelp reported an error.", "32bit winhelp launched fine.")
+WINDOW_WAIT("Wine Help")
+WINDOW_WAIT("Open")
+CLOSE("Open") ; Just close the 'Open' dialog
+Sleep 500
+WIN_EXIST_TEST("Open")
+WINDOW_WAIT("Wine Help") ; Not really needed, but it reactivates the window. And it's less code :-).
+Send, {ALT}Ho ; Activates, 'Help', 'Help on Help'
+WAIT_CRASH_FATAL("winhlp32.exe", 15367)
 
 exit 0
