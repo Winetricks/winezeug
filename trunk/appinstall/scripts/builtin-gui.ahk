@@ -44,8 +44,7 @@ Run, %program%
     {
         FileAppend, %program% launched fine. Test passed.`n, %OUTPUT%
     }
-    
-WinWait, %windowname%
+WinWait, %windowname%, , 15  ; Give programs up to 15 seconds to run
     if ErrorLevel
     {
         FileAppend, Launching %windowname% failed. Test failed.`n, %OUTPUT%
