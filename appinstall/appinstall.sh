@@ -139,6 +139,7 @@ for x in \
     clamwin.ahk \
     dirac.ahk \
     firefox35.ahk \
+    gimp.ahk \
     ida49.ahk \
     kmeleon-152.ahk \
     kmeleon-153.ahk \
