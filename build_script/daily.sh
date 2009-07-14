@@ -86,15 +86,15 @@ elif [ $OS = 'FreeBSD' ]
         export LDFLAGS="-L/usr/local/lib"
 elif [ $OS = 'Darwin' ]
     then
-        # DEP_DIRECTORY is the directory where you've built and installed wine's dependencies...OS X's built in one's are
-        # very broken for wine. I'll add a script to build this stuff soonish.
-        export DEP_DIRECTORY=$HOME/wine-deps
-        export CPPFLAGS="-I$DEP_DIRECTORY/usr/include -I$DEP_DIRECTORY/usr/include/libxml2 -I$DEP_DIRECTORY/usr/include/libxslt -I$DEP_DIRECTORY/usr/include/libpng12 -I$DEP_DIRECTORY/usr/include/gphoto2 -I$DEP_DIRECTORY/usr/include/sane"
-        export CFLAGS="-I$DEP_DIRECTORY/usr/include"
-        export LDFLAGS="-L$DEP_DIRECTORY/usr/lib"
-        export PATH=$PATH:"$DEP_DIRECTORY/usr/bin"
-        export PKG_CONFIG_PATH="$DEP_DIRECTORY/usr/lib/pkgconfig"
-        export CONFIGUREFLAGS='--without-hal --without-gnutls --without-capi'
+        # BUILD_DIR is the directory where you've built and installed wine's dependencies...OS X's built in one's are
+        # very broken for wine. Use install-osx-deps.sh from Winezeug to install this stuff in the right place.
+        export BUILD_DIR=$HOME/.winedeps
+        export CPPFLAGS="-I$BUILD_DIR/usr/include"
+        export CFLAGS="-I$BUILD_DIR/usr/include"
+        export LDFLAGS="-L$BUILD_DIR/usr/lib"
+        export PATH=$PATH:"$BUILD_DIR/usr/bin"
+        export PKG_CONFIG_PATH="$BUILD_DIR/usr/lib/pkgconfig"
+        export CONFIGUREFLAGS='--disable-win16 --without-hal --without-capi'
 elif [ $OS = 'NetBSD' ]
     then
         echo "This is untested...going from memory"
