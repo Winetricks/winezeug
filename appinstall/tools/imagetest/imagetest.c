@@ -23,8 +23,9 @@
 */
 
 /* To build:
+* Run 'make crosstest' in your wine tree, then:
 * i586-mingw32msvc-gcc -Wall -I/path/to/wine/source/include -c test.c
-* /path/to/wine/source/wine/tools/winegcc/winegcc -b i586-mingw32msvc -B/path/to/wine/source/tools/winebuild --sysroot=/path/to/wine/source test.o -o imagetest.exe -lgdiplus -lole32 -luser32 -lgdi32 -lkernel32
+* /path/to/wine/source/tools/winegcc/winegcc -b i586-mingw32msvc -B/path/to/wine/source/tools/winebuild --sysroot=/path/to/wine/source test.o -o imagetest.exe -lgdiplus -lole32 -luser32 -lgdi32 -lkernel32
 */
 
 #include "windows.h"
@@ -89,13 +90,13 @@ static void register_testwindow_class(void)
     RegisterClassExA(&cls);
 }
 
-static HWND create_window(void)
+static HWND create_window(LPSTR title)
 {
-    register_testwindow_class();
-    
-    return CreateWindowExA(0, "testwindow", "test window", WS_OVERLAPPEDWINDOW|WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+   register_testwindow_class();
+   
+   return CreateWindowExA(0, "testwindow", title, WS_OVERLAPPEDWINDOW|WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
 }
-
+ 
 int main(int argc, char* argv[])
 {
     struct GdiplusStartupInput input;
@@ -129,7 +130,7 @@ int main(int argc, char* argv[])
         return 3;
     }
 
-    create_window();
+    create_window(argv[1]);
     
     loop();
 
