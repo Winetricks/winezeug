@@ -142,6 +142,7 @@ for x in \
     firefox35.ahk \
     gimp.ahk \
     ida49.ahk \
+    imagetest.ahk \
     kmeleon-152.ahk \
     kmeleon-153.ahk \
     mpc.ahk \
