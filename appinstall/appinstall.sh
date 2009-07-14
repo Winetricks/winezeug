@@ -154,7 +154,8 @@ for x in \
     stinger.ahk \
     thunderbird.ahk \
     vlc86f.ahk \
-    vlc99.ahk
+    vlc99.ahk \
+    wordviewer03.ahk
 
     do
         prep_prefix
