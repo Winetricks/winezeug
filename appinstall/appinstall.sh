@@ -138,6 +138,7 @@ for x in \
     ccleaner-220.ahk \
     clamwin.ahk \
     dirac.ahk \
+    excelviewer03.ahk \
     firefox35.ahk \
     gimp.ahk \
     ida49.ahk \
