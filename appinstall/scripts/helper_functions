@@ -24,6 +24,7 @@
 ; Check to see if a directory exists. Useful for making sure installers create empty directories.
 CHECK_DIR(directory)
 {
+global 
 if InStr(FileExist("%directory%"), "D")
     {
     FileAppend, %directory% exists. Test passed.`n, %OUTPUT%
@@ -37,7 +38,7 @@ Else
 ; Used in place of SHA1 for things like .log or that otherwise change, but we want to make sure where installed.
 CHECK_FILE(filename)
 {
-    global OUTPUT
+    global 
     IfNotExist, %filename%
     {
         FileAppend, File %filename% does not exist. Test failed.`n, %OUTPUT%
@@ -47,13 +48,14 @@ CHECK_FILE(filename)
 ; Removes the temporary directory and all files, recursively
 CLEANUP()
 {
-    global APPINSTALL_TEMP
+    global 
     FileRemoveDir, %APPINSTALL_TEMP%, 1
 }
 
 ; Similar to FORCE_CLOSE below, without the forced killing. Just sends the close message.
 CLOSE(windowname)
 {
+global 
 PostMessage, 0x112, 0xF060,,, %windowname%
 }
 
@@ -65,7 +67,7 @@ PostMessage, 0x112, 0xF060,,, %windowname%
 ; be used around all strings.
 DOWNLOAD(url, filename, sha1sum)
 {
-    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
+    global 
     IfNotExist, %filename%
     {
         UrlDownloadToFile, %url%, %filename%
@@ -98,7 +100,7 @@ DOWNLOAD(url, filename, sha1sum)
 ; print a message in the log that the test passed.
 ERROR_TEST(fail_message, pass_message, errorcode=1)
 {
-    global APPINSTALL_TEMP, OUTPUT
+    global 
     If GetLastError
     {
         FileAppend, %FAIL_MESSAGE% Error %ERRORCODE%. Test failed.`n, %OUTPUT%
@@ -119,6 +121,7 @@ ERROR_TEST(fail_message, pass_message, errorcode=1)
 
 FORCE_CLOSE(windowname)
 {
+global 
 PostMessage, 0x112, 0xF060,,, %windowname%
 ; Give the app 5 seconds to close on its own, to prevent race conditions. Thanks to Focht for pointing it out.
     Loop, 5
@@ -147,7 +150,7 @@ PostMessage, 0x112, 0xF060,,, %windowname%
 ; delete the file. Be sure to quote strings! 
 SHA1(sha1sum, filename)
 {
-    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
+    global 
     TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
     FileDelete, %TEMPFILE%
     RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
@@ -169,7 +172,7 @@ SHA1(sha1sum, filename)
 ; a test failure and exit.
 TODO_SHA1(badsha1, todosha1, filename)
 {
-    global OUTPUT, APPINSTALL_TEMP, APPINSTALL
+    global 
     TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
     FileDelete, %TEMPFILE%
     RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
@@ -197,7 +200,7 @@ TODO_SHA1(badsha1, todosha1, filename)
 ; Should be used for windows that appear on Windows, but not on Wine, e.g., the Import Wizard for Mozilla Firefox
 TODO_WINDOW_WAIT(windowname, bug, windowtext="", wintimeout=10)
 {
-    global OUTPUT
+    global 
     WinWait, %windowname%, %windowtext%, %wintimeout%
     if ErrorLevel
     {
@@ -220,8 +223,9 @@ TODO_WINDOW_WAIT(windowname, bug, windowtext="", wintimeout=10)
 ; that the bug is likely fixed.
 WAIT_CRASH_FATAL(program, bug, timeout=10)
 {
+global 
+
 WinWait, Program Error, The program %program% has encountered a serious problem and needs to close, %timeout%
-    global OUTPUT
     if ErrorLevel
     {
         FileAppend, %program% didn't crash. Bug %bug% TODO_FIXED.`n, %OUTPUT%
@@ -241,7 +245,7 @@ WinWait, Program Error, The program %program% has encountered a serious problem 
 ; Test to see that a window doesn't exist. If so, issue a test failed. Otherwise, report success.
 WIN_EXIST_TEST(windowname, windowtext="")
 {
-    global OUTPUT
+    global 
     IfWinExist, %windowname%, %windowtext%
     {
         FileAppend, %windowname% didn't exit for some reason. Test failed.`n, %OUTPUT%
@@ -257,7 +261,7 @@ WIN_EXIST_TEST(windowname, windowtext="")
 ; or override the time to wait for the window to show before reporting failure (default, 10s).
 WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
 {
-    global OUTPUT
+    global 
     WinWait, %windowname%, %windowtext%, %wintimeout%
     if ErrorLevel
     {
