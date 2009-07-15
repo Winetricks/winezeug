@@ -1601,7 +1601,7 @@ load_shockwave() {
     #try $WINE "$WINETRICKS_CACHE"/Shockwave_Installer_Full.exe $WINETRICKS_S
 
     download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
-    try $WINE "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
+    try $WINE msiexec /i "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
