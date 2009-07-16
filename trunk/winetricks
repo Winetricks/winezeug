@@ -102,6 +102,7 @@ usage() {
     echo " divx          divx video codec"
     echo " dotnet11      MS .NET 1.1 (requires Windows license)"
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
+    echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " ffdshow       ffdshow video codecs"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
     echo " fm20          MS Forms 2.0 Object Library"
@@ -342,7 +343,7 @@ try() {
 verify_sha1sum() {
     wantsum=$1
     file=$2
-   
+
     gotsum=`$SHA1SUM < $file | sed 's/ .*//'`
     if [ "$gotsum"x != "$wantsum"x ]
     then
@@ -826,6 +827,29 @@ load_dotnet20() {
 
 #----------------------------------------------------------------
 
+do_droid() {
+    download . ${DROID_URL}$1';hb=HEAD'   $3  $1
+    try cp -f "$WINETRICKS_CACHE"/$1 "$winefontsdir"
+    register_font $1 "$2"
+}
+
+load_droid() {
+    # See http://en.wikipedia.org/wiki/Droid_(font)
+    DROID_URL='http://android.git.kernel.org/?p=platform/frameworks/base.git;a=blob_plain;f=data/fonts/'
+
+    do_droid DroidSans-Bold.ttf        "Droid Sans Bold"         ada4e79c592f3c54546b7587b48f2b232d95ce2f
+    do_droid DroidSansFallback.ttf     "Droid Sans Fallback"     2f8a266389a8e22f68f402b775731eec6b760334
+    do_droid DroidSansJapanese.ttf     "Droid Sans Japanese"     d2db187953a457d7791f03a50ceda4aecc389dcd
+    do_droid DroidSansMono.ttf         "Droid Sans Mono"         f0815c6f36c72be1d0f2f5e2b82fa85c8bf95655
+    do_droid DroidSans.ttf             "Droid Sans"              de95860690f2b1d72f567b01a5ee18dd0f1f1c1f
+    do_droid DroidSerif-BoldItalic.ttf "Droid Serif Bold Italic" c1602dc11bf0f7131aec21c7c3888195ad78e486
+    do_droid DroidSerif-Bold.ttf       "Droid Serif Bold"        d7896b9c0723299553e95a00d27cbe52f7515c8c
+    do_droid DroidSerif-Italic.ttf     "Droid Serif Italic"      117941be102c8f38a86a70ebccaecb8078f7027e
+    do_droid DroidSerif-Regular.ttf    "Droid Serif"             7f243858e496ed1bb1faca9f3a7bbe52defcbb5d
+}
+
+#----------------------------------------------------------------
+
 # Fake IE per workaround in http://bugs.winehq.org/show_bug.cgi?id=3453
 # Just the first registry key works for most apps.
 # The App Paths part is required by a few apps, like Quickbooks Pro;
@@ -1249,7 +1273,7 @@ load_liberation() {
     
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     cd "$WINETRICKS_TMP"
-    tar -xzvf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz
+    tar -xzf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz
     mv liberation-fonts-1.04/*.ttf "$winefontsdir"
     rm -rf "$WINETRICKS_TMP"/*
     cd "$olddir"
@@ -1869,6 +1893,7 @@ load_wenquanyi() {
     cd "$WINETRICKS_TMP/"
     tar -xzf "$WINETRICKS_CACHE/wqy-microhei-0.2.0-beta.tar.gz"
     try mv wqy-microhei/wqy-microhei.ttc "$winefontsdir"
+    register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
     cd "$olddir"
 }
 
@@ -1966,6 +1991,7 @@ do
     divx) load_divx;;
     dotnet1|dotnet11) load_dotnet11; load_fontfix;;
     dotnet2|dotnet20) load_dotnet20; load_fontfix;;
+    droid) load_droid;;
     firefox|firefox3) load_firefox;;
     ffdshow) load_ffdshow;;
     flash) load_flash;;
@@ -2032,7 +2058,7 @@ do
     xvid) load_xvid;;
 
     fakeie6) set_fakeie6;;
-    allfonts) load_corefonts; load_tahoma; load_liberation; load_wenquanyi;;
+    allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
     allvcodecs|allcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
     nt40|winver=nt40) set_winver nt40;;
     win98|winver=win98) set_winver win98;;
