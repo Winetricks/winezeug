@@ -143,7 +143,7 @@ export LIBGPHOTO2_VERSION="2.4.2"
 export LIBGNUTLS_VERSION="2.8.0"
 export LIBGPG_ERROR_VERSION="1.7" 
 export LIBJPEG_VERSION="7"
-export LIBPNG_VERSION="1.2.37"
+export LIBPNG_VERSION="1.2.38"
 export LIBSANE_VERSION="1.0.18"
 export LIBUSB_VERSION="0.1.12"
 export LIBXML2_VERSION="2.7.3"
@@ -207,7 +207,7 @@ install_libgphoto() {
 }
 
 install_libpng() {
-    download_extract "ftp://ftp.simplesystems.org/pub/png/src/libpng-"$LIBPNG_VERSION".tar.bz2" 4e2a967a24db88e9a2f6a8bab3fa1fd94bc68c00 .
+    download_extract "ftp://ftp.simplesystems.org/pub/png/src/libpng-"$LIBPNG_VERSION".tar.bz2" fc3fe99a672d9c430673cbeb30e545f603b874f9 .
     build "libpng-$LIBPNG_VERSION" "--silent --enable-shared --prefix=$BUILD_DIR/usr"
 }
 
