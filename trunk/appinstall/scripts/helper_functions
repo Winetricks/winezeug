@@ -18,6 +18,13 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
+; Work around lack of some builtin variables:
+; FIXME: Evenually need to get all the %164XX% values replaced. Using B_* to differentiate from AHK's builtin variables (A_*).
+; http://msdn.microsoft.com/en-us/library/ms933062(WinEmbedded.5).aspx
+
+; %16430%
+RegRead, B_CommonDocs, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Common Documents
+
 ; Even though AutoHotKey comes with a ton of builtin functions, many are omitted
 ; due to space/speed concerns. Others aren't popular enough.
 

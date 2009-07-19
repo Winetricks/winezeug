@@ -168,6 +168,18 @@ for x in \
         # Should we cd to an existing dir here?
 done
 
+# corefonts + gecko
+for x in \
+    photoshopcs2.ahk
+
+    do
+        prep_prefix
+        sh winetricks -q corefonts gecko
+        cd "$WINEPREFIX"/drive_c/appinstall
+        wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
+done
+
 # mfc42:
 for x in \
     win92.ahk
