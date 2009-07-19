@@ -151,6 +151,7 @@ for x in \
     pidgin.ahk \
     ppviewer.ahk \
     putty.ahk \
+    reshacker.ahk \
     sbw.ahk \
     startup_cpl.ahk \
     stinger.ahk \
