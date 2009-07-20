@@ -32,15 +32,24 @@ RegRead, B_CommonDocs, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVer
 CHECK_DIR(directory)
 {
 global 
-if InStr(FileExist("%directory%"), "D")
+IfNotExist, %directory%
     {
-    FileAppend, %directory% exists. Test passed.`n, %OUTPUT%
+        FileAppend, %directory% doesn't exist. Test failed.`n, %OUTPUT%
     }
 Else
     {
-    FileAppend, %directory% doesn't exist. Test failed.`n, %OUTPUT%
+    FileGetAttrib, Attributes, %directory%
+    IfInString, Attributes, D
+        {
+            FileAppend, %directory% exists and is a directory. Test passed.`n, %OUTPUT%
+        }
+    Else
+        {
+            FileAppend, %directory% exists`, but isn't a directory. Test failed.`n, %OUTPUT%
+        }
     }
 }
+
 ; Check to see that a file exists. On success, print nothing. On failure, 'test failed' (non fatal).
 ; Used in place of SHA1 for things like .log or that otherwise change, but we want to make sure where installed.
 CHECK_FILE(filename)
