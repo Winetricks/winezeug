@@ -149,7 +149,7 @@ for x in \
     nestopia.ahk \
     notepadpp.ahk \
     pidgin.ahk \
-    ppviewer.ahk \
+    ppviewer03.ahk \
     putty.ahk \
     reshacker.ahk \
     sbw.ahk \
