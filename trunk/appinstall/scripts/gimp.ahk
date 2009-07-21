@@ -31,12 +31,13 @@ ERROR_TEST("Installing gimp had some error.", "Installing gimp went okay.")
 
 Sleep 500
 
-; Broken on windows
-CHECK_FILE("C:\users\Public\Desktop\GIMP 2.lnk")
-CHECK_FILE("C:\users\Public\Start Menu\Programs\GIMP\GIMP 2.lnk")
-CHECK_FILE("C:\users\Public\Start Menu\Programs\GIMP\Uninstall.lnk")
+SetWorkingDir, %A_DesktopCommon%
+CHECK_FILE("GIMP 2.lnk")
+SetWorkingDir, %A_ProgramsCommon%\GIMP
+CHECK_FILE("GIMP 2.lnk")
+CHECK_FILE("Uninstall.lnk")
 
-Setworkingdir, %A_ProgramFiles%\GIMP-2.0
+SetWorkingDir, %A_ProgramFiles%\GIMP-2.0
 SHA1("4ecddbcceddbd90a3a654d3788ec3aef8c197a8a", "share\themes\Raleigh\gtk-2.0\gtkrc")
 SHA1("72ede372fcb34b29754f20ad44f49bc8605cf22c", "share\themes\MS-Windows\gtk-2.0\gtkrc")
 SHA1("d1da549c070d74aa9f9456c4c1e0ccbdde5256c8", "share\themes\Emacs\gtk-2.0-key\gtkrc")
@@ -1784,7 +1785,7 @@ Run, gimp-2.6.exe
 ERROR_TEST("Launching gimp reported an error", "Gimp launched fine.")
 
 WINDOW_WAIT("GIMP Startup", "GNU Image Manipulation Program")
-; Wait for the startup window to close. Give it 2 minutes maximum.
+; Wait for the startup window to close. Give it to up 2 minutes (it checks files on startup, and can be slow).
 WinWaitClose, GIMP Startup, GNU Image Manipulation Program, 120
 ERROR_TEST("GIMP Startup timed out.", "GIMP startup closed on its own.")
 

@@ -26,14 +26,12 @@ testname=vlc99
 ; Download VLC, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.9.9/win32/vlc-0.9.9-win32.exe", "vlc-0.9.9-win32.exe", "5e8532ce38a52d8747e6343682f35f9f6187d1bf")
-ERROR_TEST("Downloading VLC had some error.", "Downloading VLC went okay.")
 
 Runwait, vlc-0.9.9-win32.exe /S
 ERROR_TEST("Installing VLC had some error.", "Installing VLC went okay.")
 
-Setworkingdir, %ProgramFiles%\VideoLAN\VLC
+SetWorkingDir, %A_ProgramFiles%\VideoLAN\VLC
 SHA1("9e11792d573b270d4f1b26d39991b07554f682a4", "AUTHORS.txt")
 SHA1("86b1c36a699a826c76e4c82c805142693aea5c79", "axvlc.dll")
 SHA1("e564ddb31f242e221b4c6c3e0334c4831f52ddaa", "axvlc.dll.manifest")
@@ -607,6 +605,7 @@ SHA1("c95f833c2c968053bd148736fb390722f43ebcf0", "http\dialogs\mosaic")
 SHA1("506ad01c06833ec23d2dbb342c96faf29688aa21", "http\dialogs\playlist")
 SHA1("fcfbf8cc4bc0c08f6e4ac796eccc536479acf24c", "http\dialogs\sout")
 SHA1("73284625b01adbd2c47654b547ec53781e1b9a73", "http\dialogs\vlm")
+
 Run, vlc.exe
 ERROR_TEST("Running VLC failed.", "Running VLC went okay.")
 

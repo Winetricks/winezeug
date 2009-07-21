@@ -29,6 +29,7 @@ DOWNLOAD("http://downloads.sourceforge.net/clamwin/clamwin-0.95.2-setup.exe", "c
 Runwait, clamwin-0.95.2-setup.exe /silent
 ERROR_TEST("Installing clamwin had some error.", "Installing clamwin went okay.")
 
+; Need a slightly long sleep, otherwise ScheduledScans sometimes doesn't get created.
 Sleep 2000
 
 ; Kill the tray process here, apparently it starts itself on its own...
@@ -49,10 +50,10 @@ Else
 }
 */
 
-; Apparently there's a race here (ScheduledScans is created by ClamTray.exe)
+; FIXME: Not sure if the race for ScheduledScans is above or here.
 Sleep 2000
-; FIXME: Depends on wine's folder structure, so fails on XP...Is there a portable way to get to All Users's folder?
-SetWorkingDir, C:\Users\Public\.clamwin\
+
+SetWorkingDir, %B_AllUsersProfile%
 CHECK_FILE("db\daily.cvd")
 CHECK_FILE("db\main.cvd")
 CHECK_FILE("db\mirrors.dat")
@@ -63,7 +64,7 @@ SetWorkingDir, %A_AppData%\.clamwin
 CHECK_FILE("ClamWin.conf")
 CHECK_FILE("ScheduledScans")
 
-Setworkingdir, %A_programfiles%\Clamwin
+SetWorkingDir, %A_ProgramFiles%\Clamwin
 CHECK_FILE("unins000.dat")
 SHA1("b83214557efe0540d390759f0af13bf25916635b", "unins000.exe")
 SHA1("236f96c7a07a6c752b5ae74a55955fc3bf2466dd", "bin\clamscan.exe")

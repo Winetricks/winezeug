@@ -60,5 +60,8 @@ CLOSE("Resource Hacker")
 Sleep 500
 WIN_EXIST_TEST("Resource Hacker")
 
+; Removing the directory when we're in it isn't the best of plans...
+SetWorkingDir, %APPINSTALL%
+
 CLEANUP()
 exit 0

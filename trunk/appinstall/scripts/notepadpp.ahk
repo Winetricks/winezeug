@@ -202,7 +202,7 @@ Else
     exit 1
 }
 
-; On windows, the text is automatically selected
+; On Windows, the text is automatically selected
 clipboard =
 Send, ^c
 if clipboard = new 1

@@ -26,9 +26,7 @@ testname=thunderbird
 ; Download thunderbird, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://releases.mozilla.org/pub/mozilla.org/thunderbird/releases/2.0.0.21/win32/en-US/Thunderbird%20Setup%202.0.0.21.exe", "thunderbird-2.0.0.21.exe", "fd31056d4feb673747b3d4387243206840f57681")
-ERROR_TEST("Downloading Thunderbird had some error.", "Downloading Thunderbird went okay.")
 
 Runwait, thunderbird-2.0.0.21.exe -ms
 ERROR_TEST("Installing Thunderbird had some error.", "Installing Thunderbird went okay.")
@@ -70,7 +68,7 @@ Else
     FileAppend, Common programs shorcut present. Test passed.`n, %OUTPUT%
 }
 
-Setworkingdir, %ProgramFiles%\Mozilla Thunderbird
+SetWorkingDir, %A_ProgramFiles%\Mozilla Thunderbird
 SHA1("6f203e132f3e147378ce586e2abc5cac6fa3f306", "chrome\icons\default\abcardWindow.ico")
 SHA1("3cb338ad9d6346c0410d9a0bef0c163656ecc046", "chrome\icons\default\addressbookWindow.ico")
 SHA1("0259e5ab91a6f0981f3d567b0cdcce9b44b913ce", "chrome\icons\default\messengerWindow.ico")

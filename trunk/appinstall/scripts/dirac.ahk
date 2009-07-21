@@ -26,15 +26,13 @@ testname=dirac
 ; Download Dirac, install it, sha1sum installed files, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum.exe had an error.", "Downloading sha1sum.exe went fine.")
 DOWNLOAD("http://codecpack.nl/dirac_dsfilter_080.exe", "dirac_dsfilter_080.exe", "aacfcddf6b2636de5f0a50422ba9155e395318af")
-ERROR_TEST("Downloading dirac had an error.", "Downloading dirac went fine.")
 
 Runwait, dirac_dsfilter_080.exe /silent
 ERROR_TEST("Running dirac had an error.", "Running dirac went fine.")
 
 Sleep 500
-Setworkingdir, %A_Programfiles%\Dirac
+SetWorkingDir, %A_ProgramFiles%\Dirac
 SHA1("15d20b6f9b10b1b36386abea5f06c590ab57302f", "DiracDecoder.dll")
 SHA1("3a772f932ddceba5cddd93c3139606ad613449b9", "DiracSplitter.ax")
 SHA1("6445e123a684448ae7a48dddd9c4f1d30faf915b", "unins000.exe")

@@ -26,14 +26,12 @@ testname=vlc86f
 ; Download VLC, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe", "vlc-0.8.6f-win32.exe", "b83558e4232c47a385dbc93ebdc2e6b942fbcfbf")
-ERROR_TEST("Downloading VLC had some error.", "Downloading VLC went okay.")
 
 Runwait, vlc-0.8.6f-win32.exe /S
 ERROR_TEST("Installing VLC had some error.", "Installing VLC went okay.")
 
-Setworkingdir, %ProgramFiles%\VideoLAN\VLC
+SetWorkingDir, %A_ProgramFiles%\VideoLAN\VLC
 SHA1("e2b6ecfe3ce14c7819530a1a8679b26f9d04cf98", "AUTHORS.txt")
 SHA1("2bcd537e03d4bb9248b98447d23914e4799eaa4d", "axvlc.dll")
 SHA1("b9e28040de9d8773c5b0cc8108869e8f3f287798", "COPYING.txt")
@@ -435,13 +433,16 @@ SHA1("c95f833c2c968053bd148736fb390722f43ebcf0", "http\dialogs\mosaic")
 SHA1("506ad01c06833ec23d2dbb342c96faf29688aa21", "http\dialogs\playlist")
 SHA1("4893fad56106f0a5746dca438e7c18a62c1e88c1", "http\dialogs\sout")
 SHA1("73284625b01adbd2c47654b547ec53781e1b9a73", "http\dialogs\vlm")
+
 Run, vlc.exe
 ERROR_TEST("Running VLC failed.", "Running VLC went okay.")
 
 WINDOW_WAIT("VLC media player")
 ERROR_TEST("VLC media player reported an error.", "VLC media player ran fine.")
+
 ; Prevent race condition
 Sleep 500
+
 FORCE_CLOSE(VLC media player)
 ERROR_TEST("Exiting VLC gave an error.", "VLC claimed to exit fine.")
 

@@ -27,9 +27,7 @@ testname=msxml4
 ; FIXME: How can we verify it works?
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe", "msxml4-KB927978-enu.exe", "d364f9fe80c3965e79f6f64609fc253dfeb69c25")
-ERROR_TEST("Downloading msxml4 had some error.", "Downloading msxml4 went okay.")
 
 Runwait, msxml4-KB927978-enu.exe /q
 ERROR_TEST("Installing msxml4 had some error.", "Installing msxml4 went okay.")
@@ -46,7 +44,7 @@ Else
 }
 
 ; Sha1sum - fc20b297edd27a66d68e399b8acbaef4a1c11d37
-IfExist, %A_windir%\Installer\{37477865-A3F1-4772-AD43-AAFC6BCFF99F\icon.exe
+IfExist, %A_WinDir%\Installer\{37477865-A3F1-4772-AD43-AAFC6BCFF99F\icon.exe
 {
     FileAppend, icon.exe was installed. Bug 19116 TODO_FIXED.`n, %OUTPUT%
 }
@@ -55,7 +53,7 @@ Else
     FileAppend, icon.exe wasn't installed. Bug 19116 TODO_FAILED.`n, %OUTPUT%
 }
 
-Setworkingdir, %A_Windir%
+SetWorkingDir, %A_Windir%
 SHA1("e5f81585e4c25fea88b1e06948bf143116d1b279", "system32\msxml4.dll")
 SHA1("b360c17666f748e424e1802e79b9c8fc827d754e", "system32\msxml4r.dll")
 SHA1("d7e9207fb3fb5053da2dc5a06da3974e7a3018f0", "winsxs\manifests\x86_Microsoft.MSXML2_6bd6b9abf345378f_4.20.9841.0_x-ww_18171213.cat")

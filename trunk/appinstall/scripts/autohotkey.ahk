@@ -27,17 +27,15 @@ testname=ahk
 ; Download ahk, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://www.autohotkey.net/programs/AutoHotkey104803_Install.exe", "AutoHotkey_Install.exe", "5cf0f16e9aa2f2e96a3b08e0d938602aff39a33e")
-ERROR_TEST("Downloading AHK had some error.", "Downloading AHK went okay.")
 
 Runwait, AutoHotkey_Install.exe /S
 ERROR_TEST("Installing AHK had some error.", "Installing AHK went okay.")
 
-Setworkingdir, %windir%
+SetWorkingDir, %A_WinDir%
 SHA1("238c8aebc479a92a1c043f44d2ee363b0dce66ce","ShellNew\Template.ahk")
 
-Setworkingdir, %ProgramFiles%\AutoHotKey
+SetWorkingDir, %A_ProgramFiles%\AutoHotKey
 SHA1("80a26d11df3b223fdfab2c5e667a7d9e4a1f4126","AutoScriptWriter\ASWHook.dll")
 SHA1("cf3480ea6174e1201f09585187bbcab0d4aa1a9b","AutoScriptWriter\AutoScriptWriter.exe")
 SHA1("ed293ecb1b9fc5a17340ce85598429b235d4ec07","Compiler\Ahk2Exe.exe")

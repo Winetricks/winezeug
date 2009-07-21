@@ -26,9 +26,7 @@ testname=kmeleon-152
 ; Download K-meleon, install it, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://prdownloads.sourceforge.net/kmeleon/K-Meleon1.5.2en-US.exe", "K-Meleon1.5.2en-US.exe", "ff280b90cab48c8980e00fec7ff6370dc71f2bfa")
-ERROR_TEST("Downloading K-Meleon had some error.", "Downloading K-Meleon went okay.")
 
 Run, K-Meleon1.5.2en-US.exe
 ERROR_TEST("Launching K-Meleon had some error.", "Launching K-Meleon went okay.")
@@ -53,7 +51,7 @@ ControlClick, Button4, K-Meleon 1.5.2 en-US Setup
 ControlClick, Button2, K-Meleon 1.5.2 en-US Setup
 
 ; Not going to bother testing shortcut installation. They're spread all over, and not critical at all. We test them elsewhere anyway.
-Setworkingdir, %ProgramFiles%\K-Meleon
+SetWorkingDir, %A_ProgramFiles%\K-Meleon
 SHA1("bfb6c41cbb0bccb39b27afdfc258bf23e88e650d", "AccessibleMarshal.dll")
 SHA1("f025795c25f1606ca54fc2211002b20e7fd797e7", "freebl3.chk")
 SHA1("3535288415fc58a99dd14cd7f7f37224009d695d", "freebl3.dll")
@@ -553,7 +551,6 @@ ERROR_TEST("K-Meleon browser window reported an error.", "K-Meleon browser appea
 FORCE_CLOSE("K-Meleon 1.5.2 (K-Meleon)")
 ERROR_TEST("Exiting K-Meleon gave an error.", "K-Meleon claimed to exit fine.")
 
-; Prevent race condition
 Sleep 500
 
 WIN_EXIST_TEST("K-Meleon 1.5.2 (K-Meleon)")

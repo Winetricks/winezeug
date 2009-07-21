@@ -117,12 +117,12 @@ IfWinExist, Open ; Should've closed with winhelp itself.
 
 ; AJ won't accept installing these globally, so we have to run them from the tree.
 ; If someone doesn't have $HOME/wine-git they'll be skipped.
-IfNotExist, C:\users\%A_UserName%\My` Documents\wine-git
+IfNotExist, %A_MyDocuments%\wine-git
     {
         FileAppend, wine-git tree not found. Skipping view and cmdlgtst tests.`n, %OUTPUT%
         exit 0
     }
-SetWorkingDir, C:\users\%A_UserName%\My Documents\wine-git
+SetWorkingDir, %A_MyDocuments%\wine-git
 ERROR_TEST("Setting work directory to git tree failed.", "Set work directory to git tree successfully.")
 BUILTIN_TEST("programs\view\view.exe.so","Regular Metafile Viewer")
 BUILTIN_TEST("programs\cmdlgtst\cmdlgtst.exe.so","Cmdlgtst Window")

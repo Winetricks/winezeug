@@ -26,9 +26,7 @@ testname=ccleaner-220
 ; Download CCleaner, install it, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://download.piriform.com/ccsetup220.exe", "ccsetup220.exe", "488761c2509785013cd2df8375ceb1856f7d88ed")
-ERROR_TEST("Downloading CCleaner had some error.", "Downloading CCleaner went okay.")
 
 Run, ccsetup220.exe
 ERROR_TEST("Launching CCleaner had some error.", "Launching CCleaner went okay.")
@@ -53,7 +51,7 @@ ControlClick, Button2, CCleaner v2.20 Setup
 
 ; Not going to bother testing shortcut installation. They're spread all over, and not critical at all. We test them elsewhere anyway.
 
-Setworkingdir, %ProgramFiles%\CCleaner
+SetWorkingDir, %A_ProgramFiles%\CCleaner
 SHA1("41d61372f93fd81c3921b8fda1a568287d56af84","CCleaner.exe")
 SHA1("20449fee36626dc0c3130dd5e6f5e057d2b83484","uninst.exe")
 SHA1("e88124ef31b37fee52b9c06e3360677fa8c9fb29","Lang\lang-1025.dll")
@@ -106,8 +104,7 @@ ERROR_TEST("CCleaner window reported an error.", "CCleaner window appears to be 
 ControlClick, Button1, Piriform CCleaner
 ERROR_TEST("CCleaner's analyze failed.", "CCleaner's analyze appeared to run fine.")
 
-; Sleep for a bit. FIXME: Not sure how long this should take. Adjust if necessary.
-Sleep 5000
+Sleep 500
 
 ; Run cleanup
 ControlClick, Button2, Piriform CCleaner
@@ -118,13 +115,11 @@ WINDOW_WAIT("", "Do not show me this message again")
 ControlClick, Button1, , Do not show me this message again
 ERROR_TEST("Confirming cleanup reported an error.", "Confirming cleanup appeared to be fine.")
 
-; Prevent race condition
 Sleep 500
 
 FORCE_CLOSE("Piriform CCleaner")
 ERROR_TEST("Exiting CCleaner gave an error.", "CCleaner claimed to exit fine.")
 
-; Prevent race condition
 Sleep 500
 
 WIN_EXIST_TEST("Piriform CCleaner")

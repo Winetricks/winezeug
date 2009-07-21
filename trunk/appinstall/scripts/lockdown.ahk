@@ -27,9 +27,7 @@ testname=lockdown
 ; Fortunately, my university has their version available for public download, so let's use that.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://hdc.tamu.edu/files/book/6/425/LockDownSetup_1.0.3.exe", "LockDownSetup_1.0.3.exe", "4f94b13c44324bb795020c09502ec87bfe0106c5")
-ERROR_TEST("Downloading Lockdown had some error.", "Downloading Lockdown went okay.")
 
 Run, LockDownSetup_1.0.3.exe
 ERROR_TEST("Launching Lockdown had some error.", "Launching Lockdown went okay.")
@@ -58,11 +56,11 @@ WINDOW_WAIT("Respondus LockDown Browser - InstallShield Wizard", "Click Finish t
 ControlClick, Button4, Respondus LockDown Browser - InstallShield Wizard, Click Finish to exit the wizard
 
 ; It installs a couple files in system32
-Setworkingdir, %A_WinDir%\system32
+SetWorkingDir, %B_SystemRoot%
 SHA1("97d1590e893eaef2c03b786174ed32d51e3b646f", "fpimage.dll")
 SHA1("6c6e962c42ecb0cecdad7f5d340b78f801e9f335", "FPSPR70.ocx")
 
-Setworkingdir, %ProgramFiles%\Respondus LockDown Browser
+SetWorkingDir, %A_ProgramFiles%\Respondus LockDown Browser
 SHA1("11e9d4211cbefcf195adcfef8b23bb32a752f909", "LDBD.exe")
 SHA1("97750c2dd1b8f7e1e103d11f9003df6a58810ca5", "LockDown.exe")
 SHA1("2ba7be0ab0fcdc93f7e2b9ec4d338f25151f5aa2", "RPUPDATE.exe")

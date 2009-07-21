@@ -34,8 +34,9 @@ ERROR_TEST("Installing pidgin had some error.", "Installing pidgin went okay.")
 Sleep 500
 
 ; Check shortcuts. Broken on Windows, since the path is different.
-CHECK_FILE("C:\users\Public\Start Menu\Programs\Pidgin.lnk")
-CHECK_FILE("C:\users\Public\Start Menu\Programs\Gtk+\Theme Selector.lnk")
+SetWorkingDir, %A_ProgramsCommon%
+CHECK_FILE("Pidgin.lnk")
+CHECK_FILE("Gtk+\Theme Selector.lnk")
 
 SetWorkingDir, %A_ProgramFiles%\Common Files\GTK\2.0
 SHA1("bf50bac24e7ec325dbb09c6b6c4dcc88a7d79e8f", "COPYING.LIB-2")

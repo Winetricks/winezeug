@@ -26,9 +26,7 @@ testname=idapro
 
 ; Download IDA, install it, sha1sum installed files, run it, verify the window exists, and exit.
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://85.17.92.154/files/idafree49.exe", "idafree49.exe", "c42b4c5553aaa87dd20b48df8390eafd7c5db3a5")
-ERROR_TEST("Downloading IDA had some error.", "Downloading IDA went okay.")
 
 Run, idafree49.exe
 ERROR_TEST("Launching IDA installer had some error.", "Launching IDA installer went okay.")
@@ -53,7 +51,7 @@ WINDOW_WAIT("Setup - IDA Pro Free v4.9", "Setup has finished installing IDA Pro 
 ControlSend, TNewCheckListBox1, {Space}, Setup - IDA Pro Free v4.9
 ControlClick, TButton3, Setup - IDA Pro Free v4.9
 
-SetWorkingDir, %ProgramFiles%\IDA Free
+SetWorkingDir, %A_ProgramFiles%\IDA Free
 SHA1("c37c32c391c509d0bfc8522ac7018a3c4b2a1940", "dbghelp.dll")
 SHA1("ddd83319da344d2afdcacc70492dffde533d7cf6", "ida.hlp")
 SHA1("8bd524f432a423a17660bf4bc3255abfa139b86b", "ida.int")
@@ -576,7 +574,7 @@ SHA1("67cbe43f300db2c6506c32796c9a1da236181b44", "cfg\templates.xml")
 SHA1("88909e932b6d1bf3c3faf63333037feef7283503", "cfg\tms32054.xml")
 SHA1("2c645539dd92159b4635f91c68cd4602fd143b79", "cfg\tms32055.xml")
 
-Sleep 500 ; Prevent race condition
+Sleep 500
 
 Run, idag.exe
 ERROR_TEST("Running IDA failed.", "Running IDA went okay.")
@@ -594,7 +592,7 @@ ControlSend, TButton1, {Escape}, Welcome to IDA!
 ERROR_TEST("Dismissing welcome screen failed.", "Dismissing welcome screen went okay.")
 
 WINDOW_WAIT("The interactive disassembler", "Drag a file here to disassemble")
-Sleep 500 ; Prevent race condition
+Sleep 500
 FORCE_CLOSE(The interactive disassembler)
 ERROR_TEST("Exiting IDA gave an error.", "IDA claimed to exit fine.")
 

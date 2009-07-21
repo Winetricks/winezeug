@@ -31,10 +31,9 @@ DOWNLOAD("http://entropymine.com/jason/bmpsuite/bmpsuite.zip", "bmpsuite.zip", "
 FileRemoveDir, %APPINSTALL_TEMP%\*, 1
 ERROR_TEST("Removing old temp files failed.", "Removed old temp files.")
 
-Runwait, unzip.exe bmpsuite.zip -d %APPINSTALL_TEMP%
+Runwait, unzip.exe -d %APPINSTALL_TEMP% bmpsuite.zip
 ERROR_TEST("Unzipping had some error.", "Unzipping went okay.")
 
-; Sleep for a second to make sure a race condition in the unzip process doesn't break the test
 Sleep 500
 
 FileCopy, %APPINSTALL%\imagetest.exe, %APPINSTALL_TEMP%, 1

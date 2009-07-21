@@ -50,7 +50,6 @@ Sleep 2000
 
 CHECK_DIR("C:\MSOCACHE")
 
-; On windows, it installs in All users, not the current user. Want to check a few other installs before filing a bug
 SetWorkingDir, %A_Programs%
 ERROR_TEST("Setting work directory gave an error.", "Setting work directory went okay.")
 CHECK_FILE("Microsoft Office Excel Viewer 2003.lnk")
