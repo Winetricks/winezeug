@@ -17,13 +17,71 @@
 ; License along with this library; if not, write to the Free Software
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
+;
+; Most of these are archaic and unlikely to be used, e.g., %24% = Apps
+; See also http://msdn.microsoft.com/en-us/library/ms933062(WinEmbedded.5).aspx
+; If the n/a variables end up being needed, I'll implement later.
+;
+; Embedded variable - Replacement - Example
+; %10 - A_WinDir - C:\Windows
+; %11% - B_SysDir - C:\Windows\system32
+; %12% - n/a - C:\Windows\system32\drivers
+; %17% - n/a - C:\Windows\inf
+; %18% - n/a - C:\Windows\Help
+; %20% - n/a - C:\Windows\Fonts
+; %21% - n/a - C:\Windows\system32\viewers
+; %23% - n/a - C:\Windows\system32\spool\drivers\color
+; %24% - n/a - C:\
+; %25% - n/a - C:\Windows
+; %30% - n/a - C:\
+; %50% - n/a - C:\Windows\system
+; %51% - n/a - C:\Windows\system32\spool
+; %52% - n/a - C:\Windows\system32\spool\drivers\w32x86
+; %53% - n/a - C:\Documents and Settings\username
+; %54% - n/a - C:\
+; %55% - n/a - C:\Windows\system32\spool\Prtprocs\w32x86
+; %16406% - A_StartMenuCommon - C:\Documents and Settings\All Users\Start Menu
+; %16407% - A_ProgramsCommon - C:\Documents and Settings\All Users\Start Menu\Programs
+; %16408% - A_StartupCommon - C:\Documents and Settings\All Users\Start Menu\Programs\Startup
+; %16409% - A_DesktopCommon - C:\Documents and Settings\All Users\Desktop
+; %16415% - B_CommonFavs - C:\Documents and Settings\All Users\Favorites
+; %16419% - A_AppDataCommon - C:\Documents and Settings\All Users\Application Data
+; %16422% - A_ProgramFiles - C:\Program Files
+; %16425% - n/a - C:\Windows\system32 (for RISC)
+; %16426% - n/a - C:\Program Files (for RISC)
+; %16427% - B_CommonFiles - C:\Program Files\Common
+; %16428% - n/a - C:\Program Files\Common (for RISC)
+; %16429% - B_CommonTemplates - C:\Documents and Settings\All Users\Templates
+; %16430% - B_CommonDocs - C:\Documents and Settings\All Users\Documents
+; %16437% - B_CommonMusic - C:\Documents and Settings\All Users\Documents\My Music
+; %16438% - B_CommonPictures - C:\Documents and Settings\All Users\Documents\My Pictures
 
-; Work around lack of some builtin variables:
-; FIXME: Evenually need to get all the %164XX% values replaced. Using B_* to differentiate from AHK's builtin variables (A_*).
-; http://msdn.microsoft.com/en-us/library/ms933062(WinEmbedded.5).aspx
+; %11%
+EnvGet, B_SystemRoot, SystemRoot
+
+; %16415%
+RegRead, B_CommonFavs, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Common Favorites
+
+; %16427%
+RegRead, B_CommonFiles, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion, CommonFilesDir
+
+; %16429%
+RegRead, B_CommonTemplates, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Common Templates
 
 ; %16430%
 RegRead, B_CommonDocs, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Common Documents
+
+; %16437%
+RegRead, B_CommonMusic, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, CommonMusic
+
+; %16438%
+RegRead, B_CommonPictures, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, CommonPictures
+
+; %AllUsersProfile%
+EnvGet, B_AllUsersProfile, AllUsersProfile
+
+; %SystemDrive%
+EnvGet, B_SystemDrive, SystemDrive
 
 ; Even though AutoHotKey comes with a ton of builtin functions, many are omitted
 ; due to space/speed concerns. Others aren't popular enough.
