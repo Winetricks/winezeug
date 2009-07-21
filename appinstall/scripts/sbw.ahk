@@ -20,13 +20,10 @@
 
 testname=sbw
 
-; Don't mess with these includes. 'helper_functions' includes the helper functions used by the tests,
-; and 'init_test' sets up the folders, removes old temp files, etc.
 #Include helper_functions
 #Include init_test
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-; Update the below info for your program. Be sure to leave the quotes!
 DOWNLOAD("http://www.treasurydirect.gov/indiv/tools/sbwsetup.exe", "sbwsetup.exe", "119abc5b5a2738357d661f26285f16b18d1edc75")
 
 Run, sbwsetup.exe
@@ -47,10 +44,10 @@ ControlClick, Button1, Ready To Install, Setup now has enough information to sta
 WINDOW_WAIT("Finished", "Setup is complete and Savings Bond Wizard is now installed!")
 ControlClick, Button1, Finished, Setup is complete and Savings Bond Wizard is now installed!
 
-Setworkingdir, %a_windir%
+SetWorkingDir, %A_WinDir%
 SHA1("a707632c8abdf6116c2afe425439c48671fcdf35", "unvise32.exe")
 
-Setworkingdir, %programfiles%\Savings Bond Wizard
+SetWorkingDir, %A_ProgramFiles%\Savings Bond Wizard
 SHA1("ea6c886f83d92d22d57488402854f16ca5a9e0f9", "about.exe")
 SHA1("53969c0fa94cfce455d91694df6b96b25864466e", "crv_e.txt")
 SHA1("665b89577f610860572d21b39ee0b12d9c031f30", "crv_ee.txt")

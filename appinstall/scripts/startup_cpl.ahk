@@ -19,6 +19,7 @@
 ;
 
 testname=startup_cpl
+
 #Include helper_functions
 #Include init_test
 
@@ -35,7 +36,6 @@ Run, unzip.exe -d %APPINSTALL_TEMP%\startup_cpl StartupCPL_EXE.zip
 
 ERROR_TEST("Unzipping had some error.", "Unzipping went okay.")
 
-; Prevent race condition
 Sleep 500
 
 SetWorkingDir, %APPINSTALL_TEMP%\startup_cpl

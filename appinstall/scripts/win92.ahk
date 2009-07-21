@@ -18,15 +18,6 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
-; Test info:
-; Tests for bug 18574.
-; Note: This (along with the other tests) is normally ran from a shell script wrapper.
-; While normally this shouldn't make a difference, this application is one of the ones
-; that needs winetricks. So if you run it independently, be sure to account for that.
-
-; Winetricks dependencies:
-; 'winetricks mfc42' - application requirement
-
 testname=win92
 
 #Include helper_functions

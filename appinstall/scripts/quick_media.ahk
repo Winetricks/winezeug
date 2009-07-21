@@ -17,48 +17,22 @@
 ; License along with this library; if not, write to the Free Software
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
-
-#Include helper_functions
-
 testname=quickmedia
 
-; Global variables
-APPINSTALL=%SYSTEMDRIVE%\appinstall
-APPINSTALL_TEMP=%TEMP%\appinstall
-IfNotExist, %APPINSTALL%
-{
-    FileCreateDir, %APPINSTALL%
-}
-IfNotExist, %APPINSTALL_TEMP%
-{
-    FileCreateDir, %APPINSTALL_TEMP%
-}
-SetWorkingDir, %APPINSTALL%
-
-OUTPUT=%APPINSTALL%\%testname%-result.txt
-; Start with a fresh log
-IfExist, %OUTPUT%
-{
-    FileDelete, %OUTPUT%
-}
+#Include helper_functions
+#Include init_test
 
 ; Download Quick Media, unzip it, install it, let it automatically run itself, verify the window exists, close it, then sha1sum files and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
-ERROR_TEST("Downloading unzip had some error.", "Downloading unzip went okay.")
 DOWNLOAD("http://www.cocoonsoftware.com/download/INSTALL.zip", "quick_media_3_6_5.zip", "8200cbfcc94910d216932f1bfeb54e22a795c5c4")
-ERROR_TEST("Downloading Quick Media had some error.", "Downloading Quick Media went okay.")
 
 Run, unzip.exe -d %APPINSTALL_TEMP% quick_media_3_6_5.zip
 ERROR_TEST("Unzipping Quick Media some error.", "Launching Quick Media went okay.")
 
 SetWorkingDir, %APPINSTALL_TEMP%
 ERROR_TEST("Setting work directory failed.", "Setting work directory went okay.")
-
-; Prevent race condition
-Sleep 500
 
 SHA1("5fd7a3cf50daf9dbdf7d7da02c921f3ff570f2d3", "Install.EXE")
 Run, Install.EXE
@@ -126,7 +100,7 @@ FileAppend, Quick Media exited successfully. Test passed.`n, %OUTPUT%
 }
 
 ; Not going to bother testing shortcut installation. They're spread all over, and not critical at all. We test them elsewhere anyway.
-Setworkingdir, %ProgramFiles%\QuickMediaConverter
+SetWorkingDir, %A_ProgramFiles%\QuickMediaConverter
 SHA1("b70fada848262919c290a592d4d8de91a4b0f495","button_green_24x24.png")
 SHA1("d211586314b6935b0988f10af8693038619277ae","button_play_16x16.png")
 SHA1("b9cf3922e9fe6560a05204c3f6bdc9c2a6af6039","button_play_32x32.png")

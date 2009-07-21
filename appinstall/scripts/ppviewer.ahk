@@ -34,9 +34,6 @@ TODO_WINDOW_WAIT(Microsoft Office PowerPoint Viewer 2003, 19170, Microsoft Offic
 
 Sleep 2000
 
-; Need to verify on windows.
-; CHECK_FILE("%A_WINDIR%\Installer\*.msi")
-
 ; On Wine, this installs to the wrong place. So, let's test for it in both places, and if it's present, SHA1SUM it. Else, failure.
 ;SetWorkingDir, %A_AppData%\Microsoft\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}
 IfExist %A_WINDIR%\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}\ppvwicon.exe
@@ -45,7 +42,7 @@ IfExist %A_WINDIR%\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}\ppvwicon.exe
     SHA1("d3d868146e59ef956922fb11a3ceb94c0991da1b","ppvwicon.exe")
     FileAppend, ppvwicon.exe found in %A_WINDIR%\Installer. Bug 19172 TODO_FIXED.`n, %OUTPUT%
 }
-Else ifexist %A_AppData%\Microsoft\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}\ppvwicon.exe
+Else IfExist %A_AppData%\Microsoft\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}\ppvwicon.exe
 {
     SetWorkingDir, %A_AppData%\Microsoft\Installer\{90AF0409-6000-11D3-8CFE-0150048383C9}
     SHA1("d3d868146e59ef956922fb11a3ceb94c0991da1b","ppvwicon.exe")

@@ -23,7 +23,7 @@ testname=firefox35
 #Include helper_functions
 #Include init_test
 
-; Download firefox, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
+; Download Firefox, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.5/win32/en-US/Firefox%20Setup%203.5.exe", "firefox_3.5.exe", "a9ef21ba8173a5d850b408fc448a7bc889eb68cb")

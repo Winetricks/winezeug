@@ -26,9 +26,7 @@ testname=pex
 ; Download PE Explorer, silently install it, sha1sum installed files, run it, verify the window exists, and exit.
 
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
-ERROR_TEST("Downloading sha1sum had an error.", "Downloading sha1sum went okay.")
 DOWNLOAD("http://www.heaventools.com/download/pexsetup.exe", "pexsetup.exe", "508ace125dd5fea1174b19354de18b4ed1c72a5f")
-ERROR_TEST("Downloading PE Explorer had some error.", "Downloading PE Explorer went okay.")
 
 Runwait, pexsetup.exe /silent
 
@@ -37,7 +35,7 @@ FORCE_CLOSE("PE Explorer Help")
 ERROR_TEST("Closing PE Explorer Help reported an error.", "Closing PE Explorer Help went okay.")
 
 ; Not going to bother testing shortcut installation. They're spread all over, and not critical at all. We test them elsewhere anyway.
-Setworkingdir, %ProgramFiles%\PE Explorer
+SetWorkingDir, %A_ProgramFiles%\PE Explorer
 SHA1("73d07aea06e640060437011f6d362eb5495e09ce", "history.txt")
 SHA1("eecb23d82c21fdde25f528edb35a96ede773459c", "license.txt")
 SHA1("ef14f0ae618753446d79688631f435c1cf66cddc", "pexdll.dll")
