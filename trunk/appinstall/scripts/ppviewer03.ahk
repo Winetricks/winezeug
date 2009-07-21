@@ -1,5 +1,5 @@
 ;
-; AutoHotKey Test Script for Microsoft PowerPoint Viewer
+; AutoHotKey Test Script for Microsoft PowerPoint Viewer 2003
 ;
 ; Copyright (C) 2009 Austin English
 ;
