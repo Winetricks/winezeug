@@ -29,7 +29,7 @@ DOWNLOAD("http://downloads.sourceforge.net/clamwin/clamwin-0.95.2-setup.exe", "c
 Runwait, clamwin-0.95.2-setup.exe /silent
 ERROR_TEST("Installing clamwin had some error.", "Installing clamwin went okay.")
 
-Sleep 500
+Sleep 2000
 
 ; Kill the tray process here, apparently it starts itself on its own...
 Process, Close, ClamTray.exe
