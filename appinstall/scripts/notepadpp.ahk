@@ -31,9 +31,8 @@ ERROR_TEST("Installing Notepad++ had some error.", "Installing Notepad++ went ok
 
 Sleep 1000
 
-CHECK_DIR("%A_AppData%\Notepad++\plugins\config")
-
 SetWorkingDir, %A_AppData%\Notepad++
+CHECK_DIR("plugins\config")
 SHA1("cae0efb29e81ecb9c58360a68416e584d12fe8b3","contextMenu.xml")
 
 SetWorkingDir, %A_ProgramFiles%\Notepad++
