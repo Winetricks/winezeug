@@ -53,7 +53,7 @@ Else
 ; FIXME: Not sure if the race for ScheduledScans is above or here.
 Sleep 2000
 
-SetWorkingDir, %B_AllUsersProfile%
+SetWorkingDir, %B_AllUsersProfile%\.clamwin
 CHECK_FILE("db\daily.cvd")
 CHECK_FILE("db\main.cvd")
 CHECK_FILE("db\mirrors.dat")

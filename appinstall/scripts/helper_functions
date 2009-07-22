@@ -24,7 +24,7 @@
 ;
 ; Embedded variable - Replacement - Example
 ; %10 - A_WinDir - C:\Windows
-; %11% - B_SysDir - C:\Windows\system32
+; %11% - B_SystemRoot - C:\Windows\system32
 ; %12% - n/a - C:\Windows\system32\drivers
 ; %17% - n/a - C:\Windows\inf
 ; %18% - n/a - C:\Windows\Help
@@ -57,7 +57,7 @@
 ; %16438% - B_CommonPictures - C:\Documents and Settings\All Users\Documents\My Pictures
 
 ; %11%
-EnvGet, B_SystemRoot, SystemRoot
+B_SystemRoot=%A_WinDir%\system32
 
 ; %16415%
 RegRead, B_CommonFavs, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders, Common Favorites
