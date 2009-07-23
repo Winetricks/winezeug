@@ -147,6 +147,7 @@ for x in \
     kmeleon-153.ahk \
     mpc.ahk \
     nestopia.ahk \
+    notepad.ahk \
     notepadpp.ahk \
     pidgin.ahk \
     ppviewer03.ahk \
