@@ -70,7 +70,6 @@ If GetLastError
 
 BUILTIN_TEST("clock","Clock")
 BUILTIN_TEST("control","Wine Control Panel")
-BUILTIN_TEST("notepad","Untitled - Notepad")
 BUILTIN_TEST("oleview","OleView")
 BUILTIN_TEST("progman","Program Manager")
 BUILTIN_TEST("regedit","Registry Editor")
