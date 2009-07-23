@@ -60,8 +60,18 @@ WINDOW_WAIT("not_a_real_file_yes.txt - Notepad")
 CLOSE("not_a_real_file_yes.txt - Notepad")
 Sleep 500
 WIN_EXIST_TEST("not_a_real_file_yes.txt - Notepad")
-FileDelete, not_a_real_file_yes.txt
-ERROR_TEST("File not_a_real_file_yes.txt failed to be deleted.", "File not_a_real_file_yes.txt deleted fine.")
+
+; Bug 19425
+IfExist, not_a_real_file_yes.txt
+{
+    FileAppend, not_a_real_file_yes.txt exists. Bug 19425 TODO_FIXED.`n, %OUTPUT%
+    FileDelete, not_a_real_file_yes.txt
+    ERROR_TEST("File not_a_real_file_yes.txt failed to be deleted.", "File not_a_real_file_yes.txt deleted fine.")
+}
+Else
+{
+    FileAppend, not_a_real_file_yes.txt does not exist. Bug 19425 TODO_FAILED.`n, %OUTPUT%
+}
 
 ; Try with a non-existing text file, choosing 'no' to not create a new file.
 IfExist, not_a_real_file_no.txt
