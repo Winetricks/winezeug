@@ -27,13 +27,17 @@
 # we'd have to test Wine/these tests on all those platforms. Because of wine/OS bugs,
 # Wine doesn't work as well on, e.g., OS X as it does on, e.g., Ubuntu.
 # Testing those various OS's is not in the scope of Appinstall, but more the area of winetest.
+# Need a timeout for the tests. If a test hangs, fails in a weird way, depends on manual intervention.
+# Need a way to detect complete tests, so that we can see if a test didn't complete. Perhaps a 
+# "TEST COMPLETE" at the end of the file, then grep to make sure all tests have it?
+
 set -x
 
 WINE=${WINE:-wine}
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine-appinstall}
 APPINSTALL_CACHE=${APPINSTALL_CACHE:-$HOME/.appinstallcache}
 WORKDIR=`pwd`
-DATE=`date -u +%Y-%m-%d`
+TAG=${1:-`date -u +%Y-%m-%d`}
 # Ensure those variables are used by later subcommands, e.g., winetricks
 export WINE
 export WINEPREFIX
@@ -77,7 +81,7 @@ prep_prefix() {
 }
 
 verifyahk() {
-    if [ ! "`sha1sum autohotkey.exe`" = "fffefd345879f190e4c58ccd6977c81e414c355c  autohotkey.exe" ] ; then
+    if [ ! "`sha1sum autohotkey.exe`" = "10aae5e538327d5bdb54e4d9bc0c8971b2a831a3  autohotkey.exe" ] ; then
     die "AutoHotkey sha1sum failed."
     fi
 }
@@ -251,8 +255,8 @@ else
 fi
 
 chmod 644 *.txt
-ssh $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER mkdir -p logs/appinstall-$DATE
-scp *.txt $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER:~/logs/appinstall-$DATE
+ssh $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER mkdir -p logs/appinstall-$TAG
+scp *.txt $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER:~/logs/appinstall-$TAG
 
 cleanup
 
