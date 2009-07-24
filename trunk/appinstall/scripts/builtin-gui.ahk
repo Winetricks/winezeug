@@ -126,7 +126,7 @@ ERROR_TEST("Setting work directory to git tree failed.", "Set work directory to 
 BUILTIN_TEST("programs\view\view.exe.so","Regular Metafile Viewer")
 BUILTIN_TEST("programs\cmdlgtst\cmdlgtst.exe.so","Cmdlgtst Window")
 
-; Test for bug 15367. Put at the end because WAIT_CRASH_FATAL exits the script
+; Make sure bug 15367 doesn't regress.
 Run, winhlp32
 ERROR_TEST("Running 32bit winhelp reported an error.", "32bit winhelp launched fine.")
 WINDOW_WAIT("Wine Help")
@@ -136,6 +136,10 @@ Sleep 500
 WIN_EXIST_TEST("Open")
 WINDOW_WAIT("Wine Help") ; Not really needed, but it reactivates the window. And it's less code :-).
 Send, {ALT}Ho ; Activates, 'Help', 'Help on Help'
-WAIT_CRASH_FATAL("winhlp32.exe", 15367)
+WINDOW_WAIT("ERROR","Cannot find 'winhelp.hlp'. Do you want to find this file yourself?")
+ControlClick, &No, ERROR, Cannot find 'winhelp.hlp'. Do you want to find this file yourself?
+CLOSE("Wine Help")
+Sleep 500
+WIN_EXIST_TEST("Wine Help")
 
 exit 0
