@@ -170,7 +170,7 @@ for x in \
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         # FIXME: the path names are getting botched massively...perhaps a problem with wine/symlinks?
-        $WINE "C:\appinstall\autohotkey.exe" $x
+        $WINE "C:\appinstall\autohotkey.exe" $x > $x-run.log 2>&1
         # Should we cd to an existing dir here?
 done
 
@@ -183,7 +183,7 @@ for x in \
         sh winetricks -q corefonts gecko
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
 done
 
 # mfc42:
@@ -195,7 +195,7 @@ for x in \
         sh winetricks -q mfc42
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
 done
 
 # gecko + mfc42:
@@ -207,7 +207,7 @@ for x in \
         sh winetricks -q gecko mfc42
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
 done
 
 # gecko:
@@ -219,7 +219,7 @@ for x in \
         sh winetricks -q gecko
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
 done
 
 # Take a break, just in case the last tests takes a while to exit
