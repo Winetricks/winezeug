@@ -25,7 +25,6 @@ testname=thunderbird
 
 ; Download thunderbird, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://releases.mozilla.org/pub/mozilla.org/thunderbird/releases/2.0.0.21/win32/en-US/Thunderbird%20Setup%202.0.0.21.exe", "thunderbird-2.0.0.21.exe", "fd31056d4feb673747b3d4387243206840f57681")
 
 Runwait, thunderbird-2.0.0.21.exe -ms

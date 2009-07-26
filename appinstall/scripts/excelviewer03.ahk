@@ -23,7 +23,6 @@ testname=excelviewer03
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://download.microsoft.com/download/9/e/f/9ef13e5d-2116-40de-ab97-310811f0f3ca/xlviewer.exe", "xlviewer.exe", "b113bf9fbd646d49e584bd526825aee045f9c972")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/testfiles/winetest.xls","winetest.xls","0467a3f5367ca95e9004c6fabab3a1b7e49fd526")
 

@@ -22,7 +22,6 @@ testname=putty
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe", "putty.exe", "ae7734e7a54353ab13ecba780ed62344332fbc6f")
 
 ; We're going to run putty a few different times, to test certain things. Leaving the bug 13249 test for last, since it causes a crash.

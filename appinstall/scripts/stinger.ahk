@@ -25,7 +25,6 @@ testname=stinger
 
 ; Download Stinger, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://download.nai.com/products/mcafee-avert/stinger1001546.exe", "stinger.exe", "998a745f3258a432a5bc2047825995aa9e6cb7d6")
 
 Run, stinger.exe

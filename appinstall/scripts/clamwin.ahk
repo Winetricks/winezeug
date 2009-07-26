@@ -23,7 +23,6 @@ testname=clamwin
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://downloads.sourceforge.net/clamwin/clamwin-0.95.2-setup.exe", "clamwin-0.95.2-setup.exe", "f6af6e572043e2b3856ae683d0bf95e470de3f3f")
 
 Runwait, clamwin-0.95.2-setup.exe /silent

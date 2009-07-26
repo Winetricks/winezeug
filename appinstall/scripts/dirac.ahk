@@ -25,7 +25,6 @@ testname=dirac
 
 ; Download Dirac, install it, sha1sum installed files, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://codecpack.nl/dirac_dsfilter_080.exe", "dirac_dsfilter_080.exe", "aacfcddf6b2636de5f0a50422ba9155e395318af")
 
 Runwait, dirac_dsfilter_080.exe /silent

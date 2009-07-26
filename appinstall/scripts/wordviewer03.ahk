@@ -23,7 +23,6 @@ testname=wordviewer03
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://download.microsoft.com/download/6/a/6/6a689355-b155-4fa7-ad8a-dfe150fe7ac6/wordview_en-us.exe", "wordview_en-us.exe", "e6dfdc8a1545d45ef5840ba513a5c4036bf154bc")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/testfiles/winetest.doc","winetest.doc","ec3feb84f2ac6e52e616c17fbd18fde5f2f39f33")
 

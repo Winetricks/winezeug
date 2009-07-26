@@ -25,7 +25,6 @@ testname=kmeleon-152
 
 ; Download K-meleon, install it, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://prdownloads.sourceforge.net/kmeleon/K-Meleon1.5.2en-US.exe", "K-Meleon1.5.2en-US.exe", "ff280b90cab48c8980e00fec7ff6370dc71f2bfa")
 
 Run, K-Meleon1.5.2en-US.exe

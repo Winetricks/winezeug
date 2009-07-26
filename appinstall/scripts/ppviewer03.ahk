@@ -23,7 +23,6 @@ testname=ppviewer
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://download.microsoft.com/download/a/1/a/a1adc39b-9827-4c7a-890b-91396aed2b86/ppviewer.exe", "ppviewer.exe", "4d13ca85d1d366167b6247ac7340b7736b1bff87")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/testfiles/winetest.ppt","winetest.ppt","fe41eeb108e7255f94b91cb02d6f5b1285740bf3")
 

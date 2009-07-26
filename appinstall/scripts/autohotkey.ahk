@@ -26,7 +26,6 @@ testname=ahk
 
 ; Download ahk, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://www.autohotkey.net/programs/AutoHotkey104803_Install.exe", "AutoHotkey_Install.exe", "5cf0f16e9aa2f2e96a3b08e0d938602aff39a33e")
 
 Runwait, AutoHotkey_Install.exe /S

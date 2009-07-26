@@ -23,7 +23,6 @@ testname=gimp
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://downloads.sourceforge.net/gimp-win/gimp-2.6.6-i686-setup.exe", "gimp-2.6.6-i686-setup.exe", "5a563111638433bc535510b95b1e2ae65a2ef31c")
 
 Runwait, gimp-2.6.6-i686-setup.exe /silent

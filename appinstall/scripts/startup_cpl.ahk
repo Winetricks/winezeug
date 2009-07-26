@@ -25,7 +25,6 @@ testname=startup_cpl
 
 ; Download Startup CPL, unzip it, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
 DOWNLOAD("http://www.mlin.net/files/StartupCPL_EXE.zip", "StartupCPL_EXE.zip", "9ecc5e6800862dac6deefaa8ffa9cde9be1e00b7")
 

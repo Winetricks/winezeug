@@ -25,7 +25,6 @@ testname=pidgin
 
 ; Download pidgin, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://softlayer.dl.sourceforge.net/sourceforge/pidgin/pidgin-2.5.8.exe", "pidgin-2.5.8.exe", "0dfc02ca1f573d1b3e83bfca64af9c698c9ba37b")
 
 Runwait, pidgin-2.5.8.exe /S
