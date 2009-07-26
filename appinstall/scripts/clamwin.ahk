@@ -18,8 +18,6 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
-testname=clamwin
-
 #Include helper_functions
 #Include init_test
 

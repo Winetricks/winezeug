@@ -18,8 +18,6 @@
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 ;
 
-testname=vlc86f
-
 #Include helper_functions
 #Include init_test
 
