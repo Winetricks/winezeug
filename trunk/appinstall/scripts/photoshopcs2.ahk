@@ -23,7 +23,6 @@ testname=photoshopcs2
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
 DOWNLOAD("http://download.adobe.com/pub/adobe/photoshop/win/cs2/Photoshop_CS2.exe", "Photoshop_CS2.exe", "88ee09b7a2030d82c9154dd3419252cd6e2db165")
 

@@ -25,7 +25,6 @@ testname=pex
 
 ; Download PE Explorer, silently install it, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://www.heaventools.com/download/pexsetup.exe", "pexsetup.exe", "508ace125dd5fea1174b19354de18b4ed1c72a5f")
 
 Runwait, pexsetup.exe /silent

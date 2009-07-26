@@ -23,7 +23,6 @@ testname=imagetest
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/imagetest/imagetest.exe", "imagetest.exe", "5f1cbf9f60a2a6b73070e20843c7f92b4daf27ad")
 DOWNLOAD("http://entropymine.com/jason/bmpsuite/bmpsuite.zip", "bmpsuite.zip", "2e43ec4d8e6f628f71a554c327433914000db7ba")

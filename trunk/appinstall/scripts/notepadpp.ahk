@@ -23,7 +23,6 @@ testname=notepadpp
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://downloads.sourceforge.net/sourceforge/notepad-plus/npp.5.4.4.Installer.exe", "npp.5.4.4.Installer.exe", "37f94931cc1cb61d5d531eca1137765a992358ad")
 
 Runwait, npp.5.4.4.Installer.exe /S

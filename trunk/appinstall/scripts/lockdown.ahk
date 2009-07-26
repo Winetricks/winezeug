@@ -26,7 +26,6 @@ testname=lockdown
 ; Should be http://www.respondus.com/LDB2/LockDownBrowser.php?instid=451214388, but doing so gives inconsistent sha1sum's (custum version for each download?)
 ; Fortunately, my university has their version available for public download, so let's use that.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://hdc.tamu.edu/files/book/6/425/LockDownSetup_1.0.3.exe", "LockDownSetup_1.0.3.exe", "4f94b13c44324bb795020c09502ec87bfe0106c5")
 
 Run, LockDownSetup_1.0.3.exe

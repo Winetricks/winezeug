@@ -25,7 +25,6 @@ testname=mpc
 
 ; Download Media Player Classic, unzip it, run it, verify the window exist, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
 DOWNLOAD("http://prdownloads.sourceforge.net/guliverkli/mpc2kxp6490.zip", "mpc2kxp6490.zip", "a9a3a6204a4d99568320da50f18929073b52ee3a")
 

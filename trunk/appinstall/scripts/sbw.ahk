@@ -23,7 +23,6 @@ testname=sbw
 #Include helper_functions
 #Include init_test
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://www.treasurydirect.gov/indiv/tools/sbwsetup.exe", "sbwsetup.exe", "119abc5b5a2738357d661f26285f16b18d1edc75")
 
 Run, sbwsetup.exe

@@ -25,7 +25,6 @@ testname=vlc86f
 
 ; Download VLC, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe", "vlc-0.8.6f-win32.exe", "b83558e4232c47a385dbc93ebdc2e6b942fbcfbf")
 
 Runwait, vlc-0.8.6f-win32.exe /S

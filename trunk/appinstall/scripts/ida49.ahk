@@ -25,7 +25,6 @@ testname=idapro
 #Include init_test
 
 ; Download IDA, install it, sha1sum installed files, run it, verify the window exists, and exit.
-DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
 DOWNLOAD("http://85.17.92.154/files/idafree49.exe", "idafree49.exe", "c42b4c5553aaa87dd20b48df8390eafd7c5db3a5")
 
 Run, idafree49.exe
