@@ -19,8 +19,6 @@
 ;
 ; Note: The IDA software license forbids commercial use.
 
-testname=idapro
-
 #Include helper_functions
 #Include init_test
 

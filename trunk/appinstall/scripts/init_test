@@ -25,6 +25,11 @@
 ; directories and remove old temp stuff, as a precaution. Later, it may be extended to disable
 ; user input during the tests, or do other pre test stuff, if the need arises.
 
+; This takes the name of the ahk script that includes init_test (e.g., notepad.ahk), then trims 
+; off the last 4 characters (.ahk), and stores the result in the variable 'testname'.
+; This way, we don't have to set 'testname' in each script, it's automatically determined by the filename.
+StringTrimRight, testname, A_ScriptName, 4
+
 ; Global variables
 APPINSTALL=%SYSTEMDRIVE%\appinstall
 APPINSTALL_TEMP=%TEMP%\appinstall

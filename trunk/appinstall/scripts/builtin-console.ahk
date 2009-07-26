@@ -22,8 +22,6 @@
 ; 'bug for bug' compatability is not extremely important here. What _IS_ important,
 ; is that what works in wine now keeps working in the future, and to catch any TODO_FIXED bugs.
 
-testname=builtin-console
-
 #Include helper_functions
 #Include init_test
 

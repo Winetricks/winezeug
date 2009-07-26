@@ -25,8 +25,6 @@
 ; Note: May end up splitting notepad/wordpad/winhelp.exe off into their own
 ; scripts for more extensive tests in the future.
 
-testname=builtin-gui
-
 #Include helper_functions
 #Include init_test
 
