@@ -59,4 +59,7 @@ Sleep 500
 WIN_EXIST_TEST("Startup Control Panel 2.8 by Mike Lin")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

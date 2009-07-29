@@ -597,4 +597,6 @@ Sleep 500 ; Prevent race condition
 
 WIN_EXIST_TEST("The interactive disassembler")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

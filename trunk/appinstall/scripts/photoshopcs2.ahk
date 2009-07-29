@@ -4256,4 +4256,7 @@ SHA1("b6301a159895c5280c9084b146251794008344f4","Adobe\Adobe` Bridge\Activation\
 SHA1("55c186032dc901ec1fd241964447aa22cce68b6a","Adobe\Adobe` Bridge\Activation\en_US\tw12216.dat")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

@@ -36,4 +36,6 @@ SHA1("6445e123a684448ae7a48dddd9c4f1d30faf915b", "unins000.exe")
 
 FileAppend, All files sha1sum's matched. Test passed.`n, %OUTPUT%
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

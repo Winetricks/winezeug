@@ -28,8 +28,6 @@
 # Wine doesn't work as well on, e.g., OS X as it does on, e.g., Ubuntu.
 # Testing those various OS's is not in the scope of Appinstall, but more the area of winetest.
 # Need a timeout for the tests. If a test hangs, fails in a weird way, depends on manual intervention.
-# Need a way to detect complete tests, so that we can see if a test didn't complete. Perhaps a 
-# "TEST COMPLETE" at the end of the file, then grep to make sure all tests have it?
 
 set -x
 
@@ -121,8 +119,9 @@ fi
 # Make sure there's no old stuff, just in case:
 rm -rf *.ahk
 rm -rf *.txt
-rm -rf helper_functions
-rm -rf init_tests
+rm -rf helper_functions*
+rm -rf init_tests*
+rm -rf test_list*
 
 #Don't forget their helper files!
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/helper_functions
@@ -169,9 +168,8 @@ for x in \
         prep_prefix
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        # FIXME: the path names are getting botched massively...perhaps a problem with wine/symlinks?
-        $WINE "C:\appinstall\autohotkey.exe" $x > $x-run.log 2>&1
-        # Should we cd to an existing dir here?
+        echo $x >> test_list
+        $WINE "C:\appinstall\autohotkey.exe" $x
 done
 
 # corefonts + gecko
@@ -183,7 +181,8 @@ for x in \
         sh winetricks -q corefonts gecko
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
+        echo $x >> test_list
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # mfc42:
@@ -195,7 +194,8 @@ for x in \
         sh winetricks -q mfc42
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
+        echo $x >> test_list
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # gecko + mfc42:
@@ -207,7 +207,8 @@ for x in \
         sh winetricks -q gecko mfc42
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
+        echo $x >> test_list
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # gecko:
@@ -219,7 +220,8 @@ for x in \
         sh winetricks -q gecko
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
-        $WINE "C:\appinstall\autohotkey.exe" "$x" > $x-run.log 2>&1
+        echo $x >> test_list
+        $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # Take a break, just in case the last tests takes a while to exit
@@ -253,6 +255,24 @@ elif [ $status -eq 0 ] ; then
 else
     echo "Unknown error when grepping result files. Exiting." >> summary.txt
 fi
+
+# Make sure all tests completed:
+while read LINE
+do
+testname=`basename $LINE .ahk`
+grep "TEST COMPLETE" "$testname-result.txt"
+status=$?
+if [ $status -eq 2 ] ; then
+    echo "$testname result file not found...wtf mate? Test failed." >> summary.txt
+    exit 2
+elif [ $status -eq 0 ] ; then
+    echo "$testname test completed. Test passed." >> summary.txt
+elif [ $status -eq 1 ] ; then
+    echo "$testname test did not complete. Test failed." >> summary.txt
+else
+    echo "Unknown error when checking test completions. Test failed." >> summary.txt
+fi
+done < test_list
 
 chmod 644 *.txt
 ssh $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER mkdir -p logs/appinstall-$TAG

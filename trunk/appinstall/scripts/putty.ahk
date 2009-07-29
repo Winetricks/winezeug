@@ -97,4 +97,6 @@ Sleep 200
 
 WIN_EXIST_TEST("www.winehq.org - PuTTY")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

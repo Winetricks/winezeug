@@ -61,4 +61,7 @@ WIN_EXIST_TEST("Resource Hacker")
 SetWorkingDir, %APPINSTALL%
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

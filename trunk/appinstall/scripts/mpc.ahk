@@ -47,4 +47,6 @@ WIN_EXIST_TEST("Media Player Classic")
 FileDelete, mplayerc.exe
 ERROR_TEST("Deleting mplayerc.exe failed", "Deleting mplayerc.exe went fine.")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

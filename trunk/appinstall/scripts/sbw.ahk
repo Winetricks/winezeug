@@ -74,4 +74,6 @@ Sleep 500
 
 WIN_EXIST_TEST("Savings Bond Wizard - Untitled 1")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

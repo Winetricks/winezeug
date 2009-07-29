@@ -122,4 +122,7 @@ Sleep 500
 WIN_EXIST_TEST("Piriform CCleaner")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0
