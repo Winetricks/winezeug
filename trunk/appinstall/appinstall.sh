@@ -63,8 +63,11 @@ try() {
 # Helper functions
 cleanup() {
     rm -rf "$WINEPREFIX"
-    rm -rf "$APPINSTALL_CACHE"/.ahk
+    rm -rf "$APPINSTALL_CACHE"/*.ahk
     rm -rf "$APPINSTALL_CACHE"/*.txt
+    rm -rf "$APPINSTALL_CACHE"/helper_functions*
+    rm -rf "$APPINSTALL_CACHE"/init_tests*
+    rm -rf "$APPINSTALL_CACHE"/test_list*
 }
 
 prep_prefix() {
@@ -117,11 +120,7 @@ else
 fi
 
 # Make sure there's no old stuff, just in case:
-rm -rf *.ahk
-rm -rf *.txt
-rm -rf helper_functions*
-rm -rf init_tests*
-rm -rf test_list*
+cleanup
 
 #Don't forget their helper files!
 wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/helper_functions
@@ -229,6 +228,24 @@ sleep 1m
 
 cd "$APPINSTALL_CACHE"
 
+# Make sure all tests completed:
+while read LINE
+do
+testname=`basename $LINE .ahk`
+grep "TEST COMPLETE" "$testname-result.txt"
+status=$?
+if [ $status -eq 2 ] ; then
+    echo "$testname result file not found...wtf mate? Test failed." >> complete-result.txt
+    exit 2
+elif [ $status -eq 0 ] ; then
+    echo "$testname test completed. Test passed." >> complete-result.txt
+elif [ $status -eq 1 ] ; then
+    echo "$testname test did not complete. Test failed." >> complete-result.txt
+else
+    echo "Unknown error when checking test completions. Test failed." >> complete-result.txt
+fi
+done < test_list
+
 # Grep through logs...
 grep "Test failed" *-result.txt >> summary.txt 2>&1
 status=$?
@@ -255,24 +272,6 @@ elif [ $status -eq 0 ] ; then
 else
     echo "Unknown error when grepping result files. Exiting." >> summary.txt
 fi
-
-# Make sure all tests completed:
-while read LINE
-do
-testname=`basename $LINE .ahk`
-grep "TEST COMPLETE" "$testname-result.txt"
-status=$?
-if [ $status -eq 2 ] ; then
-    echo "$testname result file not found...wtf mate? Test failed." >> summary.txt
-    exit 2
-elif [ $status -eq 0 ] ; then
-    echo "$testname test completed. Test passed." >> summary.txt
-elif [ $status -eq 1 ] ; then
-    echo "$testname test did not complete. Test failed." >> summary.txt
-else
-    echo "Unknown error when checking test completions. Test failed." >> summary.txt
-fi
-done < test_list
 
 chmod 644 *.txt
 ssh $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER mkdir -p logs/appinstall-$TAG
