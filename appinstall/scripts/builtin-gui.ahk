@@ -140,4 +140,6 @@ CLOSE("Wine Help")
 Sleep 500
 WIN_EXIST_TEST("Wine Help")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

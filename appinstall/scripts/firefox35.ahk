@@ -339,4 +339,6 @@ CLOSE("Welcome to Firefox 3.5 Preview - Mozilla Firefox")
 Sleep 500
 WIN_EXIST_TEST("Welcome to Firefox 3.5 Preview - Mozilla Firefox")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

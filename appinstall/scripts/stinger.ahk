@@ -43,4 +43,7 @@ WIN_EXIST_TEST("Stinger")
 FileDelete, Stinger*opt
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

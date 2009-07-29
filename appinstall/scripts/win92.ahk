@@ -63,4 +63,7 @@ ERROR_TEST("Exiting Win92 gave an error.", "Win92 claimed to exit fine.")
 WIN_EXIST_TEST("Win92 V00.46")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

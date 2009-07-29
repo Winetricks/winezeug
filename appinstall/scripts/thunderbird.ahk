@@ -250,4 +250,7 @@ Sleep 500
 WIN_EXIST_TEST("Mozilla Thunderbird")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

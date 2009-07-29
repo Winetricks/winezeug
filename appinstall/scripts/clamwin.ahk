@@ -138,4 +138,6 @@ Sleep 500
 
 WIN_EXIST_TEST("ClamWin Free Antivirus")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

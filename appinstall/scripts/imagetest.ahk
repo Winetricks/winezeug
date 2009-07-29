@@ -149,4 +149,7 @@ Loop, parse, FileList, `n
 }
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

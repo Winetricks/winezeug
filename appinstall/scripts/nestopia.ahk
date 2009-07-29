@@ -61,4 +61,7 @@ Sleep 500
 WIN_EXIST_TEST("Nestopia")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

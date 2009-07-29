@@ -95,4 +95,6 @@ Sleep 500
 
 WIN_EXIST_TEST("winetest.doc - Microsoft Word Viewer")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

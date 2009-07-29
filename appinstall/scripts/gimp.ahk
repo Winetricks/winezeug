@@ -1817,4 +1817,6 @@ ERROR_TEST("Closing GIMP issued an error.", "Closing GIMP went fine.")
 Sleep 2000
 WIN_EXIST_TEST("GNU Image Manipulation Program")
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

@@ -40,3 +40,7 @@ Loop, parse, consoleprogs, `,
         FileAppend, Running %A_LoopField% succeeded. Test passed.`n, %OUTPUT%
     }
 }
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
+exit 0

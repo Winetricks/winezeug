@@ -451,4 +451,7 @@ Sleep 500
 WIN_EXIST_TEST("K-Meleon 1.5.3 (K-Meleon)")
 
 CLEANUP()
+
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0

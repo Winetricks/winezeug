@@ -152,4 +152,6 @@ ERROR_TEST("File large_file.txt failed to be deleted.", "File large_file.txt del
 ; FIXME: Add tests for files that exceed notepad's limit...I don't know what that limit is though.
 ; On Windows, used to be 45K, but as seen above, 55k works fine. I've opened files up to 300M with no problems.
 
+FileAppend, TEST COMPLETE.`n, %OUTPUT%
+
 exit 0
