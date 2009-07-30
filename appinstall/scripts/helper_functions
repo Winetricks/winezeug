@@ -256,7 +256,7 @@ TODO_CHECK_FILE(filename, bug)
 
 ; Similar to the SHA1 function above, but for todo's. Takes the 'bad'/expected sha1um,
 ; as well as the good sha1sum, and the file to test. Sha1sum's the file, and if 
-; it matches the 'bad'/expected sha1sum, consider it a TODO_FAIL. If it matches
+; it matches the 'bad'/expected sha1sum, consider it a TODO_FAILED. If it matches
 ; the good sha1sum, consider it a TODO_FIXED. If it matches neither, consider it
 ; a test failure and exit.
 TODO_SHA1(badsha1, todosha1, filename)
