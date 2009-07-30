@@ -38,7 +38,7 @@ ERROR_TEST("PuTTY (run 1) window never appeared.", "PuTTY (run 1) window appeare
 WinWait, PuTTY Fatal Error, Network error: Connection timed out, 150
     if ErrorLevel
     {
-        FileAppend, PuTTY never timed out. TODO_FAIL.`n, %OUTPUT%
+        FileAppend, PuTTY never timed out. TODO_FAILED.`n, %OUTPUT%
         FORCE_CLOSE("www.l.google.com - PuTTY")
         Window_wait("PuTTY Exit Confirmation")
         ControlSend, Button1, {Enter}
@@ -75,7 +75,7 @@ Sleep 200
 
 IfWinExist, Microsoft Visual C++ Runtime Library
 {
-    FileAppend, PuTTY Security Alert didn't exit`, exception occured. TODO_FAIL.`n, %OUTPUT%
+    FileAppend, PuTTY Security Alert didn't exit`, exception occured. TODO_FAILED.`n, %OUTPUT%
     ControlSend, Static2, {Enter}, Microsoft Visual C++ Runtime Library
     exit 0
 }

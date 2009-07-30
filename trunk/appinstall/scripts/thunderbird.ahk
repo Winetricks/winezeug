@@ -31,7 +31,7 @@ ERROR_TEST("Installing Thunderbird had some error.", "Installing Thunderbird wen
 ; Bug 18812
 IfNotExist, %A_AppData%\Microsoft\Internet Explorer\Quick Launch\Mozilla Thunderbird.lnk
 {
-    FileAppend, Quick Launch shortcut wasn't created. Bug 18812 still present. TODO_FAIL.`n, %OUTPUT%
+    FileAppend, Quick Launch shortcut wasn't created. Bug 18812 still present. TODO_FAILED.`n, %OUTPUT%
 }
 Else
 {
