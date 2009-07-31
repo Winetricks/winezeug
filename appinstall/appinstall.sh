@@ -154,6 +154,7 @@ for x in \
     pidgin.ahk \
     ppviewer03.ahk \
     putty.ahk \
+    reg.ahk \
     regedit.ahk \
     reshacker.ahk \
     sbw.ahk \

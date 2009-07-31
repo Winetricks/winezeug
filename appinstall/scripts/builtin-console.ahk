@@ -27,7 +27,7 @@
 
 ; Fixme: hh/rpcss (never exit), winevdm/start (returns 1 for license), services (how to call?), termsv
 
-consoleprogs = icinfo,lodctr,msiexec /h,net help,reg /h,regsvr32,rundll32,secedit,wineconsole,winedbg --help,winepath,xcopy /?
+consoleprogs = icinfo,lodctr,msiexec /h,net help,regsvr32,rundll32,secedit,wineconsole,winedbg --help,winepath,xcopy /?
 Loop, parse, consoleprogs, `,
 {
     Runwait, %A_LoopField%, , UseErrorLevel
