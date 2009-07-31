@@ -58,26 +58,26 @@ Loop, parse, todofunc0, `,
     Runwait, %A_LoopField%
     if ErrorLevel
     {
-        FileAppend, Running %A_LoopField% failed. Test failed.`n, %OUTPUT%
+        FileAppend, Running %A_LoopField% failed. Bug 19533 TODO_FAILED.`n, %OUTPUT%
     }
     else
     {
-        FileAppend, Running %A_LoopField% succeeded. Test passed.`n, %OUTPUT%
+        FileAppend, Running %A_LoopField% succeeded. Bug 19533 TODO_FIXED.`n, %OUTPUT%
     }
 }
 
-; These return an error. Passes in Windows, Wine bug 19533:
+; These return an error. Passes in Windows. They fail on wine as well, since it returns an error for 'invalid' options.
 todofunc1 = reg.exe copy,reg.exe save,reg.exe restore,reg.exe load,reg.exe unload,reg.exe compare,reg.exe export
 Loop, parse, todofunc1, `,
 {
     Runwait, %A_LoopField%
     if ErrorLevel = 1
     {
-        FileAppend, Running %A_LoopField% returned an error. Bug 19533 TODO_FIXED.`n, %OUTPUT%
+        FileAppend, Running %A_LoopField% returned an error. Test passed.`n, %OUTPUT%
     }
     else
     {
-        FileAppend, Running %A_LoopField% worked? Bug 19533 TODO_FAILED.`n, %OUTPUT%
+        FileAppend, Running %A_LoopField% worked? Test failed.`n, %OUTPUT%
     }
 }
 
