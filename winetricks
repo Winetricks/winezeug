@@ -839,9 +839,9 @@ load_droid() {
 
     do_droid DroidSans-Bold.ttf        "Droid Sans Bold"         ada4e79c592f3c54546b7587b48f2b232d95ce2f
     do_droid DroidSansFallback.ttf     "Droid Sans Fallback"     2f8a266389a8e22f68f402b775731eec6b760334
-    do_droid DroidSansJapanese.ttf     "Droid Sans Japanese"     d2db187953a457d7791f03a50ceda4aecc389dcd
+    do_droid DroidSansJapanese.ttf     "Droid Sans Japanese"     b3a248c11692aa88a30eb25df425b8910fe05dc5
     do_droid DroidSansMono.ttf         "Droid Sans Mono"         f0815c6f36c72be1d0f2f5e2b82fa85c8bf95655
-    do_droid DroidSans.ttf             "Droid Sans"              de95860690f2b1d72f567b01a5ee18dd0f1f1c1f
+    do_droid DroidSans.ttf             "Droid Sans"              da5b3c7758a2c8fbc4775beb69d7150493c7d312
     do_droid DroidSerif-BoldItalic.ttf "Droid Serif Bold Italic" c1602dc11bf0f7131aec21c7c3888195ad78e486
     do_droid DroidSerif-Bold.ttf       "Droid Serif Bold"        d7896b9c0723299553e95a00d27cbe52f7515c8c
     do_droid DroidSerif-Italic.ttf     "Droid Serif Italic"      117941be102c8f38a86a70ebccaecb8078f7027e
@@ -920,16 +920,19 @@ load_flash() {
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
     # Version 10 http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe
     # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd  
-    # 2009-02-27: shasum 86745020a25edc9695a1a6a4d59eae375665a0b3
+    # 2009-02-27: sha1sum 86745020a25edc9695a1a6a4d59eae375665a0b3
+    # 2009-07-31: sha1sum 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
 
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 86745020a25edc9695a1a6a4d59eae375665a0b3
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
     try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe $WINETRICKS_S
 
     # Mozilla / Firefox plugin
     # 2008-07-22: sha1sum 1e6f7627784a5b791e99ae9ad63133dc11c7940b
     # 2008-11-27: sha1sum 20ec0300a8cae19105c903a7ec6c0801e016beb0
     # 2009-02-27: sha1sum 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
+    # 2009-07-31: sha1sum 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
+    
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
     try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
 
@@ -1249,7 +1252,7 @@ load_jet40() {
 #----------------------------------------------------------------
 
 load_kde() {
-    download . http://www.winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.5-0.exe c2a95102312ca859fce5190307748da51fae644e
+    download . http://www.winkde.org/pub/kde/ports/win32/installer/old/kdewin-installer-gui-0.9.5-0.exe c2a95102312ca859fce5190307748da51fae644e
     mkdir -p "$programfilesdir_unix/kde"
     try cp "$WINETRICKS_CACHE"/kdewin-installer-gui-0.9.5-0.exe "$programfilesdir_unix/kde"
     cd "$programfilesdir_unix/kde"
@@ -1623,8 +1626,10 @@ load_shockwave() {
     # Not silent enough, use msi instead
     #download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
     #try $WINE "$WINETRICKS_CACHE"/Shockwave_Installer_Full.exe $WINETRICKS_S
-
-    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
+    # old sha1sum: 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
+    # 2009-07-31 sha1sum: 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
+    
+    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
     try $WINE msiexec /i "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
 }
 
