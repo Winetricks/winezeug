@@ -27,7 +27,6 @@
 # we'd have to test Wine/these tests on all those platforms. Because of wine/OS bugs,
 # Wine doesn't work as well on, e.g., OS X as it does on, e.g., Ubuntu.
 # Testing those various OS's is not in the scope of Appinstall, but more the area of winetest.
-# Need a timeout for the tests. If a test hangs, fails in a weird way, depends on manual intervention.
 
 set -x
 
@@ -79,6 +78,32 @@ prep_prefix() {
     # rm -f "$WINEPREFIX"/dosdevices/z\:
     ln -s "$APPINSTALL_CACHE" "$WINEPREFIX"/drive_c/appinstall
     ls  "$WINEPREFIX"/drive_c/appinstall
+}
+
+runwait() {
+    # Inspired by http://www.bashcookbook.com/bashinfo/source/bash-4.0/examples/scripts/timeout3
+
+    timeout=1800 # Total timeout time
+    interval=5 # time between checks
+
+    $@ &
+    cmdpid=$!
+    (
+        t=$timeout
+        while [ $t -gt 0 ]
+        do
+            if [ ! "`ps | grep $cmdpid`" ] # Yes, this is ugly. Should be `ps $cmdpid`, which returns 0 if the process exists, and 1 otherwise, but that fails for some reason...this should be fine.
+            then
+                echo "process doesn't exist"
+                break 2
+            fi
+        sleep $interval
+        t=`expr $t - 1`
+        done
+        
+        kill -9 $cmdpid && echo "$@ Process killed!" >> processes.txt || echo "$@ exited normally." >> processes.txt
+    ) 2> /dev/null
+
 }
 
 verifyahk() {
@@ -170,7 +195,7 @@ for x in \
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         echo $x >> test_list
-        $WINE "C:\appinstall\autohotkey.exe" $x
+        runwait $WINE "C:\appinstall\autohotkey.exe" $x
 done
 
 # corefonts + gecko
@@ -183,7 +208,7 @@ for x in \
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         echo $x >> test_list
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        runwait $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # mfc42:
@@ -196,7 +221,7 @@ for x in \
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         echo $x >> test_list
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        runwait $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # gecko + mfc42:
@@ -209,7 +234,7 @@ for x in \
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         echo $x >> test_list
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        runwait $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # gecko:
@@ -222,7 +247,7 @@ for x in \
         cd "$WINEPREFIX"/drive_c/appinstall
         wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/$x"
         echo $x >> test_list
-        $WINE "C:\appinstall\autohotkey.exe" "$x"
+        runwait $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
 
 # Take a break, just in case the last tests takes a while to exit
@@ -271,6 +296,19 @@ elif [ $status -eq 1 ] ; then
     echo "All TODO's failed." >> summary.txt
 elif [ $status -eq 0 ] ; then
     echo "Some TODO_FIXED...investigate!" >> summary.txt
+else
+    echo "Unknown error when grepping result files. Exiting." >> summary.txt
+fi
+
+grep "Process killed" processes.txt >> summary.txt 2>&1
+status=$?
+if [ $status -eq 2 ] ; then
+    echo "Process status file not found...wtf mate?" >> summary.txt
+    exit 2
+elif [ $status -eq 1 ] ; then
+    echo "No runaway processes." >> summary.txt
+elif [ $status -eq 0 ] ; then
+    echo "Some processes had to be executed with extreme prejudice. INVESTIGATE!" >> summary.txt
 else
     echo "Unknown error when grepping result files. Exiting." >> summary.txt
 fi
