@@ -447,8 +447,17 @@ ControlClick, Button1, Adobe Photoshop CS2, ScreenImg
 WINDOW_WAIT("Adobe Photoshop CS2 - License Agreement","License Agreement")
 ControlClick, Button5, Adobe Photoshop CS2 - License Agreement, License Agreement
 
-WINDOW_WAIT("Adobe Photoshop CS2","ShowAutoplayButton")
-ControlClick, Button4, Adobe Photoshop CS2, ShowAutoplayButton
+; This window sometimes doesn't appear on Wine. No bug yet, waiting for more test results.
+WinWait, Adobe Photoshop CS2, ShowAutoplayButton, 5
+    if ErrorLevel
+    {
+        FileAppend, Adobe Photoshop CS2 - ShowAutoplayButton didn't appear. Race condition reappeared. Test failed.`n, %OUTPUT%
+    }
+    Else
+    {
+    FileAppend, Adobe Photoshop CS2 - ShowAutoplayButton appeared. Race condition not present. Test passed.`n, %OUTPUT%
+    ControlClick, Button4, Adobe Photoshop CS2, ShowAutoplayButton
+    }
 
 WINDOW_WAIT("Adobe Photoshop CS2 - Setup","WARNING: This program is protected by copyright law and international treaties.")
 ControlClick, Button1, Adobe Photoshop CS2 - Setup, WARNING: This program is protected by copyright law and international treaties.
