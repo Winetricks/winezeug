@@ -217,6 +217,10 @@ PostMessage, 0x112, 0xF060,,, %windowname%
     }
 }
 
+
+; If NOSHA1 is set to non-zero, disable sha1's, instead, just return success.
+EnvGet, NOSHA1, NOSHA1
+
 ; Sha1sum a file, and compare it to a known good sha1sum. Similar to the download
 ; function above, but should be used for files not specifically downloaded, e.g.,
 ; to sha1sum a file from a zip directory after extraction.
@@ -225,17 +229,24 @@ PostMessage, 0x112, 0xF060,,, %windowname%
 SHA1(sha1sum, filename)
 {
     global 
-    TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
-    FileDelete, %TEMPFILE%
-    RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
-    FileReadLine, checksum, %TEMPFILE%, 1
-    FileDelete, %TEMPFILE%
-    sha1sumgood = %sha1sum%  %filename%
-    If (checksum != sha1sumgood)
+    if NOSHA1
     {
-        FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sumgood%. Error 3. Test failed.`n, %OUTPUT%
-        FileDelete, %filename%
-        exit 3
+        return
+    }
+    else
+    {
+        TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
+        FileDelete, %TEMPFILE%
+        RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
+        FileReadLine, checksum, %TEMPFILE%, 1
+        FileDelete, %TEMPFILE%
+        sha1sumgood = %sha1sum%  %filename%
+        If (checksum != sha1sumgood)
+        {
+            FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sumgood%. Error 3. Test failed.`n, %OUTPUT%
+            FileDelete, %filename%
+            exit 3
+        }
     }
 }
 
