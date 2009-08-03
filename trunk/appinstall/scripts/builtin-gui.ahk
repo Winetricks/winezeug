@@ -84,14 +84,15 @@ ERROR_TEST("Running 16bit winhelp reported an error.", "16bit winhelp launched f
 WINDOW_WAIT("Wine Help")
 FORCE_CLOSE("Wine Help") ; Force closing winhelp
 Sleep 500 ; Prevent race condition
-IfWinExist, Open ; Should've closed with winhelp itself. 
+WIN_EXIST_TEST("Open")
+IfWinExist, ERROR ; Doesn't appear on Windows
     {
-        FileAppend, Open dialog didn't close. Bug 19081 TODO_FAILED.`n, %OUTPUT%
-        CLOSE("Open")
+        FileAppend, ERROR dialog appeared. Bug 19081 TODO_FAILED.`n, %OUTPUT%
+        CLOSE("ERROR")
     }
     Else
     {
-        FileAppend, Open dialog doesn't exist. Check Bug 19081. TODO_FIXED.`n, %OUTPUT%
+        FileAppend, ERROR dialog didn't appear. Bug 19081 TODO_FIXED.`n, %OUTPUT%
     }
 
 Sleep 500
@@ -101,14 +102,15 @@ ERROR_TEST("Running 32bit winhelp reported an error.", "32bit winhelp launched f
 WINDOW_WAIT("Wine Help")
 FORCE_CLOSE("Wine Help") ; Force closing winhelp
 Sleep 500
-IfWinExist, Open ; Should've closed with winhelp itself. 
+WIN_EXIST_TEST("Open")
+IfWinExist, ERROR ; Doesn't appear on Windows
     {
-        FileAppend, Open dialog didn't close. Bug 19081 TODO_FAILED.`n, %OUTPUT%
-        CLOSE("Open")
+        FileAppend, ERROR dialog appeared. Bug 19081 TODO_FAILED.`n, %OUTPUT%
+        CLOSE("ERROR")
     }
     Else
     {
-        FileAppend, Open dialog doesn't exist. Check Bug 19081. TODO_FIXED.`n, %OUTPUT%
+        FileAppend, ERROR dialog didn't appear. Bug 19081 TODO_FIXED.`n, %OUTPUT%
     }
 
 ; AJ won't accept installing these globally, so we have to run them from the tree.
@@ -124,20 +126,17 @@ BUILTIN_TEST("programs\view\view.exe.so","Regular Metafile Viewer")
 BUILTIN_TEST("programs\cmdlgtst\cmdlgtst.exe.so","Cmdlgtst Window")
 
 ; Make sure bug 15367 doesn't regress.
-Run, winhlp32
-ERROR_TEST("Running 32bit winhelp reported an error.", "32bit winhelp launched fine.")
-WINDOW_WAIT("Wine Help")
-WINDOW_WAIT("Open")
-CLOSE("Open") ; Just close the 'Open' dialog
-Sleep 500
-WIN_EXIST_TEST("Open")
-WINDOW_WAIT("Wine Help") ; Not really needed, but it reactivates the window. And it's less code :-).
-Send, {ALT}Ho ; Activates, 'Help', 'Help on Help'
+Run, notepad
+ERROR_TEST("Running notepad reported an error.", "Notepad launched fine.")
+WINDOW_WAIT("Untitled - Notepad")
+Send, {ALT}Hh ; Activates, 'Help', 'Help on Help'
 WINDOW_WAIT("ERROR","Cannot find 'winhelp.hlp'. Do you want to find this file yourself?")
+FileAppend, Using 'help on help' didn't crash notepad/winhlp32. Test passed.`n, %OUTPUT%
 ControlClick, &No, ERROR, Cannot find 'winhelp.hlp'. Do you want to find this file yourself?
-CLOSE("Wine Help")
+CLOSE("Untitled - Notepad")
 Sleep 500
-WIN_EXIST_TEST("Wine Help")
+WIN_EXIST_TEST("Untitled - Notepad")
+WIN_EXIST_TEST("ERROR")
 
 FileAppend, TEST COMPLETE.`n, %OUTPUT%
 
