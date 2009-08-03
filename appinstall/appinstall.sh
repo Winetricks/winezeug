@@ -83,8 +83,8 @@ prep_prefix() {
 runwait() {
     # Inspired by http://www.bashcookbook.com/bashinfo/source/bash-4.0/examples/scripts/timeout3
 
-    timeout=1800 # Total timeout time
-    interval=5 # time between checks
+    timeout=1800 # Total timeout time, in seconds
+    interval=5 # time between checks, in seconds
 
     $@ &
     cmdpid=$!
@@ -94,14 +94,14 @@ runwait() {
         do
             if [ ! "`ps | grep $cmdpid`" ] # Yes, this is ugly. Should be `ps $cmdpid`, which returns 0 if the process exists, and 1 otherwise, but that fails for some reason...this should be fine.
             then
-                echo "process doesn't exist"
+                echo "process doesn't exist" >> "$APPINSTALL_CACHE"/processes.txt
                 break 2
             fi
-        sleep $interval
-        t=`expr $t - 1`
+        sleep $interval\s
+        t=`expr $t - $interval`
         done
         
-        kill -9 $cmdpid && echo "$@ Process killed!" >> processes.txt || echo "$@ exited normally." >> processes.txt
+        kill -9 $cmdpid && echo "$@ Process killed!" >> "$APPINSTALL_CACHE"/processes.txt || echo "$@ exited normally." >> "$APPINSTALL_CACHE"/processes.txt
     ) 2> /dev/null
 
 }
