@@ -217,6 +217,13 @@ PostMessage, 0x112, 0xF060,,, %windowname%
     }
 }
 
+; Used to print a message to the result log. Newlines are done automatically by printf.
+; Usage printf("This is a line in the debug log.")
+PRINTF(string)
+{
+global
+FileAppend, %string%`n, %OUTPUT%
+}
 
 ; If NOSHA1 is set to non-zero, disable sha1's, instead, just return success.
 EnvGet, NOSHA1, NOSHA1
