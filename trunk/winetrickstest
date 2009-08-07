@@ -12,12 +12,16 @@ WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 for verb in \
     ahk \
+    art2kmin \
+    cc580 \
     colorprofile \
     comctl32.ocx \
+    controlpad \
     corefonts \
     d3dx9 \
     dcom98 \
     dirac \
+    dotnet11 \
     dotnet20 \
     droid \
     ffdshow \
@@ -28,23 +32,30 @@ for verb in \
     fontsmooth-disable \
     fontsmooth-gray \
     fontsmooth-rgb \
+    gdiplus \
     gecko \
     gecko-dbg \
     hosts \
     jet40 \
     liberation \
+    mdac25 \
+    mdac27 \
+    mdac28 \
     mfc40 \
-    mpc \
+    mono20 \
+    mono22 \
     mshflxgd \
     msi2 \
     msls31 \
     msmask \
     msscript \
     msxml3 \
+    msxml4 \
     msxml6 \
     quicktime72 \
     riched20 \
     riched30 \
+    shockwave \
     tahoma \
     urlmon \
     vb2run \
@@ -58,6 +69,7 @@ for verb in \
     vcrun2005sp1 \
     vcrun2008 \
     vcrun2008sp1 \
+    vjrun20 \
     vlc \
     wenquanyi \
     wininet \
@@ -92,37 +104,16 @@ done
 # Ignores -q
 for verb in \
     allcodecs \
-    art2kmin \
-    cc580 \
-    controlpad \
     directx9 \
     divx \
-    gdiplus \
     icodecs \
     ie6 \
     kde \
-    mdac25 \
-    mdac27 \
-    mdac28 \
-    mono20 \
-    mono22 \
-    msls31 \
-    ole2 \
-    pdh \
-    shockwave \
-    vjrun20
+    ole2
 do
     wineserver -k || true
     rm -rf $WINEPREFIX
     sh winetricks -v $verb
 done
 
-# Fail on -q
-for verb in \
-    dotnet11 \
-    msxml4 
-do
-    wineserver -k || true
-    rm -rf $WINEPREFIX
-    sh winetricks -v $verb
-done
+exit 0

@@ -317,9 +317,14 @@ else
    die "No sha1sum utility available."
 fi
 
-if [ ! -x "`which "cabextract"`" ]
+if [ ! -x "`which cabextract`" ]
 then
   echo "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+fi
+
+if [ ! -x "`which unzip`" ]
+then
+  echo "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
 fi
 
 #-----  Helpers  ------------------------------------------------
@@ -512,8 +517,8 @@ helper_directx_dl() {
 load_art2kmin() {
     # See http://support.microsoft.com/kb/243957
     download . http://download.microsoft.com/download/office2000dev/art2kmin/1/win98/en-us/art2kmin.exe 73be2622254d1f857a204a03f068787542b985e9
-    try $WINE "$WINETRICKS_CACHE"/art2kmin.exe
-    cd "$WINEPREFIX/drive_c/ART2KMin Setup"
+    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/art2kmin.exe
+    cd "$WINETRICKS_TMP"
     try $WINE Setup.exe INSTALLPFILES=1 /wait $WINETRICKS_QUIET
     cd "$olddir"
 }
@@ -532,7 +537,7 @@ load_cc580() {
     download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
     try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
-    try $WINE "$WINETRICKS_TMP"/comctl32.exe
+    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
     try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
     try cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
 
@@ -570,7 +575,7 @@ load_controlpad() {
     download . http://download.microsoft.com/download/activexcontrolpad/install/4.0.0.950/win98mexp/en-us/setuppad.exe 8921e0f52507ca6a373c94d222777c750fb48af7
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/setuppad.exe
     echo "If setup says 'Unable to start DDE ...', press Ignore"
-    try $WINE "$WINETRICKS_TMP"/setup $WINETRICKS_QUIET
+    try $WINE "$WINETRICKS_TMP"/setup $WINETRICKS_QUIET_T
 }
 
 #----------------------------------------------------------------
@@ -733,6 +738,14 @@ load_directx9() {
     override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
     override_dlls builtin d3d8 d3d9 dinput dinput8 dsound
     
+    # Should be below, but fails on Wine when used silently.
+    #if [ $WINETRICKS_QUIET ]
+    #then
+    #    try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe /silent
+    #else
+    #    try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe
+    #fi
+
     try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe
 
     unset_winver
@@ -801,7 +814,12 @@ load_dotnet11() {
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
-    try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe $WINETRICKS_QUIET
+    if [ $WINETRICKS_QUIET ]
+    then
+        try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe /q /C:"install /q"
+    else
+        try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe
+    fi
 } 
 
 #----------------------------------------------------------------
@@ -1296,7 +1314,12 @@ load_mdac25() {
     download mdac25 http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
     set_native_mdac
     set_winver nt40
-    try $WINE "$WINETRICKS_CACHE"/mdac25/mdac_typ.exe
+    if [ $WINETRICKS_QUIET ]
+    then
+        try $WINE "$WINETRICKS_CACHE"/mdac25/mdac_typ.exe /q /C:"setup /QNT"
+    else
+        try $WINE "$WINETRICKS_CACHE"/mdac25/mdac_typ.exe
+    fi
     unset_winver
 }
 
@@ -1306,7 +1329,12 @@ load_mdac27() {
     download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
     set_native_mdac
     set_winver win2k
-    try $WINE "$WINETRICKS_CACHE"/mdac27/mdac_typ.exe
+    if [ $WINETRICKS_QUIET ]
+    then
+        try $WINE "$WINETRICKS_CACHE"/mdac27/mdac_typ.exe /q /C:"setup /QNT"
+    else
+        try $WINE "$WINETRICKS_CACHE"/mdac27/mdac_typ.exe
+    fi
     unset_winver
 }
 
@@ -1316,7 +1344,12 @@ load_mdac28() {
     download mdac28 http://download.microsoft.com/download/c/d/f/cdfd58f1-3973-4c51-8851-49ae3777586f/MDAC_TYP.EXE 91bd59f0b02b67f3845105b15a0f3502b9a2216a
     set_native_mdac
     set_winver win98
-    try $WINE "$WINETRICKS_CACHE"/mdac28/MDAC_TYP.EXE
+    if [ $WINETRICKS_QUIET ]
+    then
+        try $WINE "$WINETRICKS_CACHE"/mdac28/mdac_typ.exe /q /C:"setup /QNT"
+    else
+        try $WINE "$WINETRICKS_CACHE"/mdac28/mdac_typ.exe
+    fi    
     unset_winver
 }
 
@@ -1337,7 +1370,7 @@ load_mono20() {
     # Load Mono, have it handle all .net requests
     download .  ftp://ftp.novell.com/pub/mono/archive/2.0.1/windows-installer/1/mono-2.0.1-gtksharp-2.10.4-win32-1.exe ccb67ac41b59522846e47d0c423836b9d334c088
     # Anyone know how to get it to do a silent install?
-    try $WINE "$WINETRICKS_CACHE"/mono-2.0.1-gtksharp-2.10.4-win32-1.exe
+    try $WINE "$WINETRICKS_CACHE"/mono-2.0.1-gtksharp-2.10.4-win32-1.exe $WINETRICKS_SILENT
 
     cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
 REGEDIT4
@@ -1359,7 +1392,7 @@ load_mono22() {
     # Load Mono, have it handle all .net requests
     download .  ftp://ftp.novell.com/pub/mono/archive/2.2/windows-installer/5/mono-2.2-gtksharp-2.12.7-win32-5.exe be977dfa9c49deea1be02ba4a2228e343f1e5840
     # Anyone know how to get it to do a silent install?
-    try $WINE "$WINETRICKS_CACHE"/mono-2.2-gtksharp-2.12.7-win32-5.exe
+    try $WINE "$WINETRICKS_CACHE"/mono-2.2-gtksharp-2.12.7-win32-5.exe $WINETRICKS_SILENT
 
     # FIXME: what should this be for mono 2.2?
     cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
@@ -1533,8 +1566,9 @@ load_ole2() {
 load_pdh() {
     # http://support.microsoft.com/kb/284996
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
-    try $WINE "$WINETRICKS_CACHE"/pdhinst.exe
-    try cp -f "$WINDIR"/temp/x86/Pdh.Dll "$WINDIR"/system32/pdh.dll
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/pdhinst.exe
+    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/pdh.exe
+    try cp -f "$WINETRICKS_TMP"/x86/Pdh.Dll "$WINDIR"/system32/pdh.dll
 }
 
 #----------------------------------------------------------------
@@ -1806,7 +1840,12 @@ load_vcrun2008sp1() {
 load_vjrun20() {
     load_dotnet20
     download vjrun20 http://download.microsoft.com/download/9/2/3/92338cd0-759f-4815-8981-24b437be74ef/vjredist.exe 80a098e36b90d159da915aebfbfbacf35f302bd8
-    try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe $WINETRICKS_QUIET
+    if [ $WINETRICKS_QUIET ]
+    then
+        try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe /q /C:"install /QNT"
+    else
+        try $WINE vjrun20/vjredist.exe
+    fi
 }
 
 #----------------------------------------------------------------
@@ -1974,6 +2013,7 @@ do
     PACKAGE=$1
     case $1 in
     -q) WINETRICKS_QUIET="/q"
+        WINETRICKS_QUIET_T="/qt" # Microsoft Control Pad
         WINETRICKS_UNIXQUIET="-q"
         WINETRICKS_SILENT="/silent"
         WINETRICKS_S="/S"                 # for NSIS installers
