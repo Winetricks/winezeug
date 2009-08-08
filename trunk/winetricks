@@ -1,5 +1,5 @@
 #!/bin/sh
-# Quick and dirty script to download and install various 
+# Quick and dirty script to download and install various
 # redistributable runtime libraries
 #
 # Current maintainers: Austin English, Dan Kegel
@@ -15,7 +15,7 @@
 # as it has to run on MacOSX and Solaris, too.  A good book on the topic is
 # "Portable Shell Programming" by Bruce Blinn
 
-# Prevent running with sudo/root. This would create a .winetrickscache as root 
+# Prevent running with sudo/root. This would create a .winetrickscache as root
 # in the user's home directory!
 if ! test -O $HOME
     then
@@ -41,7 +41,7 @@ WINETRICKS_TMP_WIN='c:\winetrickstmp'
 
 WINDIR="$WINEPREFIX/drive_c/windows"
 
-# Which sourceforge mirror to use.  Rotate based on time, since 
+# Which sourceforge mirror to use.  Rotate based on time, since
 # their mirror picker sometimes persistantly sends you to a broken
 # mirror.
 case `date +%S` in
@@ -51,7 +51,7 @@ case `date +%S` in
 esac
 
 case "$1" in
--V|--version) 
+-V|--version)
   echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
   exit 0
   ;;
@@ -91,7 +91,7 @@ usage() {
     echo " -q         quiet.  You must have already agreed to the EULAs."
     echo " -v         verbose"
     echo " -V         display Version"
-    echo "Packages:"    
+    echo "Packages:"
     echo " art2kmin      MS Access 2000 runtime.  Requires Access 2000 Dev license!"
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
@@ -137,7 +137,7 @@ usage() {
     echo " msscript      MS Script Control"
     echo " msxml3        MS XML version 3"
     echo " msxml4        MS XML version 4"
-    echo " msxml6        MS XML version 6" 
+    echo " msxml6        MS XML version 6"
     echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, schroedinger"
     echo " ole2          MS 16 bit OLE"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
@@ -199,7 +199,7 @@ usage() {
 
 detectDE() {
     if [ x"$KDE_FULL_SESSION" = x"true" ]
-    then 
+    then
         DE=kde
     elif [ x"$GNOME_DESKTOP_SESSION_ID" != x"" ]
     then
@@ -207,7 +207,7 @@ detectDE() {
     elif [ x"$DISPLAY" != x"" ]
     then
         DE=x
-    else 
+    else
         DE=none
     fi
 }
@@ -261,7 +261,7 @@ showmenu()
     none) usage 1>&2; exit 1;;
     esac
 }
- 
+
 dogui()
 {
   detectDE
@@ -304,7 +304,7 @@ test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win retu
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
 #
 # Did the user rename Fonts to fonts?
-if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts 
+if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts
 then
     winefontsdir="$WINDIR"/fonts
 else
@@ -398,7 +398,7 @@ download() {
     fi
     if [ "$3"x != ""x ]
     then
-	verify_sha1sum $3  "$cache/$file"
+        verify_sha1sum $3  "$cache/$file"
     fi
 }
 
@@ -418,9 +418,9 @@ set_app_winver() {
     app="$1"
     version="$2"
     echo "Setting $app to $version mode"
-    ( 
-    echo REGEDIT4 
-    echo "" 
+    (
+    echo REGEDIT4
+    echo ""
     echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app]"
     echo "\"Version\"=\"$version\""
     ) > "$WINETRICKS_TMP"/set-winver.reg
@@ -458,7 +458,7 @@ _EOF_
            ;;
         esac
         echo "\"$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
-	shift
+        shift
     done
 
     try $WINE regedit "$WINETRICKS_TMP"/override-dll.reg
@@ -471,11 +471,11 @@ override_app_dlls() {
     mode=$1
     shift
     echo Using $mode override for following DLLs when running $app: $@
-    ( 
-    echo REGEDIT4 
-    echo "" 
-    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app\\DllOverrides]" 
-    ) > "$WINETRICKS_TMP"/override-dll.reg 
+    (
+    echo REGEDIT4
+    echo ""
+    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app\\DllOverrides]"
+    ) > "$WINETRICKS_TMP"/override-dll.reg
 
     while test "$1" != ""
     do
@@ -485,7 +485,7 @@ override_app_dlls() {
            ;;
         esac
         echo "\"$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
-	shift
+        shift
     done
 
     try $WINE regedit "$WINETRICKS_TMP"/override-dll.reg
@@ -590,10 +590,10 @@ load_corefonts() {
     # TODO: let user pick mirror,
     # see http://corefonts.sourceforge.net/msttcorefonts-2.0-1.spec for how
     # TODO: add more fonts
-    
+
     # Added More Fonts (see msttcorefonts)
     # [*] Pointed download locations to sites that actually contained the
-    # fonts to download (as of 04-03-2008)			    
+    # fonts to download (as of 04-03-2008)
     #download . $SOURCEFORGE/corefonts/andale32.exe c4db8cbe42c566d12468f5fdad38c43721844c69
     download . $SOURCEFORGE/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
     download . $SOURCEFORGE/corefonts/arialb32.exe d45cdab84b7f4c1efd6d1b369f50ed0390e3d344
@@ -726,7 +726,7 @@ load_directx9() {
     # 3) override native any directx DLL whose Wine version doesn't register itself well yet
     # For #3, I have no idea which DLLs don't register themselves well yet,
     # so I'm just listing a few of the basic ones.  Let's whittle that
-    # list down as soon as we can.  
+    # list down as soon as we can.
     echo "You probably shouldn't be using this. It's VERY invasive."
     echo "Use 'winetricks d3dx9' instead."
     set_winver win2k
@@ -738,11 +738,11 @@ load_directx9() {
     override_dlls native d3dim d3drm d3dx8 d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29
     override_dlls native d3dx9_30 d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
     override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dxof
-    override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle 
-    override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby 
+    override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle
+    override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby
     override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
     override_dlls builtin d3d8 d3d9 dinput dinput8 dsound
-    
+
     # Should be below, but fails on Wine when used silently.
     #if [ $WINETRICKS_QUIET ]
     #then
@@ -767,7 +767,7 @@ load_divx() {
 
     # 7.? 4d91ef90ae26a6088851560c4263ef0cdbf09123 as of 22 Mar 2009 as http://download.divx.com/divx/DivXInstaller.exe
     # 7.0.? 19c9ba3104025d1fab335e405e7f411dfbbcb477 as of 28 May 2009 as http://download.divx.com/divx/DivXInstaller.exe
-    # 7.0.? 786aef0f421df5e7358d2d740d9911f9afd055de as of 24 June 2009 as http://download.divx.com/divx/DivXInstaller.exe 
+    # 7.0.? 786aef0f421df5e7358d2d740d9911f9afd055de as of 24 June 2009 as http://download.divx.com/divx/DivXInstaller.exe
     download divx-7 http://download.divx.com/divx/DivXInstaller.exe 786aef0f421df5e7358d2d740d9911f9afd055de
 
     try $WINE "$WINETRICKS_CACHE"/divx-7/DivXInstaller $WINETRICKS_SILENT
@@ -812,7 +812,7 @@ load_dcom98() {
 #----------------------------------------------------------------
 
 load_dotnet11() {
-    DOTNET_INSTALL_DIR="$WINDIR/Microsoft.NET/Framework/v1.1.4322" 
+    DOTNET_INSTALL_DIR="$WINDIR/Microsoft.NET/Framework/v1.1.4322"
 
     # need corefonts, else installer crashes
     load_corefonts
@@ -825,7 +825,7 @@ load_dotnet11() {
     else
         try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe
     fi
-} 
+}
 
 #----------------------------------------------------------------
 
@@ -841,12 +841,12 @@ load_dotnet20() {
     download dotnet20 http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe a3625c59d7a2995fb60877b5f5324892a1693b2a
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/dotnet20/dotnetfx.exe 
+       try $WINE "$WINETRICKS_CACHE"/dotnet20/dotnetfx.exe
     else
        try $WINE "$WINETRICKS_CACHE"/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
     fi
     unset_winver
-} 
+}
 
 #----------------------------------------------------------------
 
@@ -860,11 +860,11 @@ load_dotnet30() {
     export _SFX_CAB_SHUTDOWN_REQUEST=1
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/dotnet30/dotnetfx3.exe 
+       try $WINE "$WINETRICKS_CACHE"/dotnet30/dotnetfx3.exe
     else
        try $WINE "$WINETRICKS_CACHE"/dotnet30/dotnetfx3.exe /q /c:"install.exe /q"
     fi
-} 
+}
 
 #----------------------------------------------------------------
 
@@ -935,7 +935,7 @@ load_firefox() {
     download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.5/win32/en-US/Firefox%20Setup%203.5.exe" a9ef21ba8173a5d850b408fc448a7bc889eb68cb "Firefox Setup 3.5.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe" 
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe"
     else
        try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe" -ms
     fi
@@ -956,11 +956,11 @@ load_flash() {
 
     # Active X plugin
     # http://blogs.adobe.com/psirt/2008/03/preparing_for_april_flash_play.html
-    # http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi 
+    # http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi
     # 2008-04-01: old version sha1sum f4dd1c0c715b791db2c972aeba90d3b78372996a
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
     # Version 10 http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe
-    # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd  
+    # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd
     # 2009-02-27: sha1sum 86745020a25edc9695a1a6a4d59eae375665a0b3
     # 2009-07-31: sha1sum 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
 
@@ -972,7 +972,7 @@ load_flash() {
     # 2008-11-27: sha1sum 20ec0300a8cae19105c903a7ec6c0801e016beb0
     # 2009-02-27: sha1sum 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
     # 2009-07-31: sha1sum 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
-    
+
     download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
     try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
@@ -983,7 +983,7 @@ load_fontfix() {
     # some versions of ukai.ttf and uming.ttf crash .net and picasa
     # See http://bugs.winehq.org/show_bug.cgi?id=7098#c9
     # Could fix globally, but that needs root, so just fix for wine
-    if test -f /usr/share/fonts/truetype/arphic/ukai.ttf 
+    if test -f /usr/share/fonts/truetype/arphic/ukai.ttf
     then
         gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/ukai.ttf | sed 's/ .*//'`
         # FIXME: do all affected versions of the font have same sha1sum as Gutsy?  Seems unlikely.
@@ -997,7 +997,7 @@ load_fontfix() {
         fi
     fi
 
-    if test -f /usr/share/fonts/truetype/arphic/uming.ttf 
+    if test -f /usr/share/fonts/truetype/arphic/uming.ttf
     then
         gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/uming.ttf | sed 's/ .*//'`
         if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
@@ -1080,7 +1080,7 @@ _EOF_
 
 load_gecko() {
     # Load the HTML rendering Engine (Gecko)
-    # FIXME: shouldn't this code be in some script installed 
+    # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
     # (e.g. we hardcode gecko's url here, but it's normally
     # only hardcoded in wine.inf, and fetched from the registry thereafter,
@@ -1106,7 +1106,7 @@ load_gecko() {
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
         GECKO_SHA1SUM=afa22c52bca4ca77dcb9edb3c9936eb23793de01
-        ;;    
+        ;;
     esac
 
     if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
@@ -1125,15 +1125,15 @@ _EOF_
     printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
     case $GECKO_VERSION in
     0.*)
-        printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | 
+        printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' |
            sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
         ;;
     1.*)
-        printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | 
+        printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' |
            sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
         ;;
     esac
-    
+
     # extract the files
     mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
@@ -1148,7 +1148,7 @@ _EOF_
 
 load_gecko_dbg() {
     # Load the HTML rendering Engine (Gecko), with debugging symbols
-    # FIXME: shouldn't this code be in some script installed 
+    # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
     # (e.g. we hardcode gecko's url here, but it's normally
     # only hardcoded in wine.inf, and fetched from the registry thereafter,
@@ -1172,7 +1172,7 @@ load_gecko_dbg() {
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
         GECKO_SHA1SUM=2de16b443826295f646cd5d54313ca421fd71210
-        ;;    
+        ;;
     esac
 
     if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
@@ -1194,7 +1194,7 @@ _EOF_
     else
         printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
     fi
-    
+
     # extract the files
     mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
@@ -1228,7 +1228,7 @@ load_hosts() {
     # The hosts file is used to map network names to IP addresses without DNS.
     # The services file is used map service names to network ports.
     # Some apps depend on these files, but they're not implemented in wine.
-    # Fortunately, empty files in the correct location satisfy those apps. 
+    # Fortunately, empty files in the correct location satisfy those apps.
     # See http://bugs.winehq.org/show_bug.cgi?id=12076
     mkdir -p "$WINDIR"/system32/drivers/etc
     touch "$WINDIR"/system32/drivers/etc/hosts
@@ -1256,11 +1256,11 @@ load_ie6() {
     # Change the override to the native so we are sure we use and register them
     override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
 
-    # Remove the fake dlls from the existing WINEPREFIX 
+    # Remove the fake dlls from the existing WINEPREFIX
     mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
-        test -f "$WINDIR"/system32/$dll.dll && 
+        test -f "$WINDIR"/system32/$dll.dll &&
           mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
     done
 
@@ -1284,7 +1284,7 @@ load_ie6() {
     esac
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
-    # FIXME: whittle down this list 
+    # FIXME: whittle down this list
     cd "$WINDIR"/system32/
     for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
       dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
@@ -1339,7 +1339,7 @@ load_liberation() {
       echo "Or edit winetricks' download function, and add '--no-check-certificate' to the command."
       ;;
     esac
-    
+
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     cd "$WINETRICKS_TMP"
     tar -xzf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz
@@ -1397,7 +1397,7 @@ load_mdac28() {
         try $WINE "$WINETRICKS_CACHE"/mdac28/mdac_typ.exe /q /C:"setup /QNT"
     else
         try $WINE "$WINETRICKS_CACHE"/mdac28/mdac_typ.exe
-    fi    
+    fi
     unset_winver
 }
 
@@ -1461,7 +1461,7 @@ _EOF_
 
 load_mpc() {
     download . $SOURCEFORGE/guliverkli2/mplayerc_20080414.zip bc9f922d7151e7cc7fef429b085cf208ef989bab
-    cd "$WINEPREFIX"/drive_c 
+    cd "$WINEPREFIX"/drive_c
     try unzip "$WINETRICKS_CACHE"/mplayerc_20080414.zip
     cd "$olddir"
     echo MPC now available as c:/mplayerc.exe
@@ -1516,8 +1516,8 @@ load_msmask() {
     # http://msdn.microsoft.com/en-us/library/11405hcf(VS.71).aspx
     # http://bugs.winehq.org/show_bug.cgi?id=2934
     # old: 3c6b26f68053364ea2e09414b615dbebafb9d5c3
-    # May 2009: 30e55679e4a13fe4d9620404476f215f93239292 
-    download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292 
+    # May 2009: 30e55679e4a13fe4d9620404476f215f93239292
+    download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
     try cp -f "$WINETRICKS_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$WINDIR"/system32/msmask32.ocx
     try $WINE regsvr32 msmask32.ocx
@@ -1603,9 +1603,9 @@ load_ole2() {
     cd "$WINETRICKS_TMP"
     try $WINE setup.exe
     cd "$olddir"
-    unset_winver 
+    unset_winver
 
-    override_dlls native,builtin COMPOBJ.DLL OLE2CONV.DLL OLE2DISP.DLL OLE2.DLL 
+    override_dlls native,builtin COMPOBJ.DLL OLE2CONV.DLL OLE2DISP.DLL OLE2.DLL
     override_dlls native,builtin OLE2NLS.DLL OLE2PROX.DLL STORAGE.DLL TYPELIB.DLL
 }
 
@@ -1621,7 +1621,7 @@ load_pdh() {
 
 #----------------------------------------------------------------
 
-load_quicktime72() { 
+load_quicktime72() {
     echo "Quicktime needs gdiplus..."
     load_gdiplus
 
@@ -1640,8 +1640,8 @@ load_quicktime72() {
         echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
         try $WINE control "$programfilesdir_win\\QuickTime\\QTSystem\\QuickTime.cpl"
     fi
-    
-    unset_winver 
+
+    unset_winver
     # user might want to set vista mode himself, or run
     #  wine control ".wine/drive_c/Program Files/QuickTime/QTSystem/QuickTime.cpl"
     # and pick Advanced / Safe Mode (gdi only).
@@ -1658,15 +1658,15 @@ volnum() {
     # http://www.microsoft.com/technet/prodtechnol/windowsserver2003/deployment/winupdte.mspx
     # These installers check the drive name, and if it doesn't start with 'harddisk',
     # they complain "Unable to find a volume for file extraction", see
-    # http://bugs.winehq.org/show_bug.cgi?id=5351 
+    # http://bugs.winehq.org/show_bug.cgi?id=5351
     # You may be able to work around this by using the installer's /x or /extract switch,
     # but renaming drive_c to "harddiskvolume0" lets you just run the installer as normal.
 
     if test ! -d "$WINEPREFIX"/harddiskvolume0/
     then
-	ln -s drive_c "$WINEPREFIX"/harddiskvolume0
-	rm "$WINEPREFIX"/dosdevices/c:
-	ln -s ../harddiskvolume0 "$WINEPREFIX"/dosdevices/c: 
+        ln -s drive_c "$WINEPREFIX"/harddiskvolume0
+        rm "$WINEPREFIX"/dosdevices/c:
+        ln -s ../harddiskvolume0 "$WINEPREFIX"/dosdevices/c:
         echo "Renamed drive_c to harddiskvolume0"
     else
         echo "drive_c already named harddiskvolume0"
@@ -1681,7 +1681,7 @@ load_riched20() {
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/Q249973i.EXE
     try cp -f "$WINETRICKS_TMP"/riched??.dll "$WINDIR"/system32
     override_dlls native,builtin riched20 riched32
-    
+
     rm -rf "$WINETRICKS_TMP"/*
 }
 
@@ -1690,15 +1690,15 @@ load_riched20() {
 load_riched30() {
     # http://www.novell.com/documentation/nm1/readmeen_web/readmeen_web.html#Akx3j64
     # claims that Groupwise Messenger's View / Text Size command
-    # only works with riched30, and recommends getting it by installing 
+    # only works with riched30, and recommends getting it by installing
     # msi 2, which just happens to come with riched30 version of riched20
     # (though not with a corresponding riched32, which might be a problem)
     # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
     try cp -f "$WINETRICKS_TMP"/riched20.dll "$WINDIR"/system32
-    override_dlls native,builtin riched20 
-    
+    override_dlls native,builtin riched20
+
     rm -rf "$WINETRICKS_TMP"/*
 }
 
@@ -1710,7 +1710,7 @@ load_shockwave() {
     #try $WINE "$WINETRICKS_CACHE"/Shockwave_Installer_Full.exe $WINETRICKS_S
     # old sha1sum: 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
     # 2009-07-31 sha1sum: 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
-    
+
     download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
     try $WINE msiexec /i "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
 }
@@ -1719,7 +1719,7 @@ load_shockwave() {
 
 load_tahoma() {
     # The tahoma and tahomabd fonts are needed by e.g. Steam
-    
+
     download . http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe 888ce7b7ab5fd41f9802f3a65fd0622eb651a068
     try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/tahoma32.exe
     try cp -f "$WINETRICKS_TMP"/Tahoma.TTF "$winefontsdir"/tahoma.ttf
@@ -1801,7 +1801,7 @@ load_vcrun6() {
     then
        download . http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
        rm -rf "$WINETRICKS_TMP"/*
-       
+
        try $WINE "$WINETRICKS_CACHE"/vc6redistsetup_enu.exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
        if test ! -f "$WINETRICKS_TMP"/vcredist.exe
        then
@@ -1853,7 +1853,7 @@ load_vcrun2005() {
 load_vcrun2005sp1() {
     # Load the Visual C++ 2005 SP1 runtime libraries
     # See http://www.microsoft.com/downloads/details.aspx?familyid=200b2fd9-ae1a-4a14-984d-389c36f85647
-    download vcrun2005sp1 http://download.microsoft.com/download/e/1/c/e1c773de-73ba-494a-a5ba-f24906ecf088/vcredist_x86.exe 7dfa98be78249921dd0eedb9a3dd809e7d215c8d 
+    download vcrun2005sp1 http://download.microsoft.com/download/e/1/c/e1c773de-73ba-494a-a5ba-f24906ecf088/vcredist_x86.exe 7dfa98be78249921dd0eedb9a3dd809e7d215c8d
     try $WINE "$WINETRICKS_CACHE"/vcrun2005sp1/vcredist_x86.exe $WINETRICKS_QUIET
 }
 
@@ -1867,7 +1867,7 @@ load_vcrun2008() {
 
     # Load the Visual C++ 2008 runtime libraries
     # See http://www.microsoft.com/downloads/details.aspx?familyid=9b2da534-3e03-4391-8a4d-074b9f2bc1bf
-    download vcrun2008 http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe 56719288ab6514c07ac2088119d8a87056eeb94a 
+    download vcrun2008 http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe 56719288ab6514c07ac2088119d8a87056eeb94a
     try $WINE "$WINETRICKS_CACHE"/vcrun2008/vcredist_x86.exe $WINETRICKS_QUIET
 }
 
@@ -1906,7 +1906,7 @@ load_vlc() {
 #----------------------------------------------------------------
 
 load_wininet() {
-    # This is an updated wininet from IE 5.0.1.   
+    # This is an updated wininet from IE 5.0.1.
     # (Good enough for Active Worlds browser.  Also helps "Avatar - Legends of the Arena" get to login screen.)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
     download . http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
@@ -2167,7 +2167,7 @@ do
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
-    test "$WINETRICKS_QUIET" = "" && case $1 in 
+    test "$WINETRICKS_QUIET" = "" && case $1 in
     -q) echo Setting quiet mode;;
     -v) echo Setting verbose mode;;
     *) echo "Install of $1 done" ;;
