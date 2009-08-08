@@ -827,7 +827,7 @@ load_dotnet11() {
 
 load_dotnet20() {
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
-    test -d "$WINDIR/gecko" || load_gecko
+    test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || load_gecko
     set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     download dotnet20 http://kegel.com/wine/l_intl.nls
@@ -1087,23 +1087,33 @@ load_gecko() {
     # so we're adding a maintenance burden here.)
     case `$WINE --version` in
     wine-0*|wine-1.0*|wine-1.1|wine-1.1.?|wine-1.1.11)
-        GECKO_VERSION=0.1.0 
-        GECKO_SHA1SUM=c16f1072dc6b0ced20935662138dcf019a38cd56 
+        GECKO_DIR="$WINDIR"
+        GECKO_VERSION=0.1.0
+        GECKO_SHA1SUM=c16f1072dc6b0ced20935662138dcf019a38cd56
         ;;
     wine-1.1.1[234]*)
-        GECKO_VERSION=0.9.0 
+        GECKO_DIR="$WINDIR"
+        GECKO_VERSION=0.9.0
         GECKO_SHA1SUM=5cf410ff7fdd3f9d625f481f9d409968728d3d09
         ;;
-    *)
+    wine-1.1.1[56789]*|wine-1.1.2[0123456]*)
+        GECKO_DIR="$WINDIR"
         GECKO_VERSION=0.9.1
         GECKO_SHA1SUM=9a49fc691740596517e381b47096a4bdf19a87d8
         ;;
+    *)
+        GECKO_DIR="$WINDIR/system32"
+        GECKO_VERSION=1.0.0
+        GECKO_ARCH=-x86
+        GECKO_SHA1SUM=afa22c52bca4ca77dcb9edb3c9936eb23793de01
+        ;;    
     esac
 
-    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION.cab
+    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
     then
        # FIXME: busted if using curl!
-       download . "http://source.winehq.org/winegecko.php?v=$GECKO_VERSION" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION.cab
+       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab" \
+                $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
     fi
 
     cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
@@ -1112,14 +1122,22 @@ REGEDIT4
 [HKEY_CURRENT_USER\\Software\\Wine\\MSHTML\\$GECKO_VERSION]
 _EOF_
 
-    #The registry-entry does not support an environment-variable
     printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
-    printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
-
+    case $GECKO_VERSION in
+    0.*)
+        printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | 
+           sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
+        ;;
+    1.*)
+        printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | 
+           sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
+        ;;
+    esac
+    
     # extract the files
-    mkdir -p "$WINDIR"/gecko/$GECKO_VERSION
-    cd "$WINDIR"/gecko/$GECKO_VERSION
-    try cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION.cab
+    mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
+    cd "$GECKO_DIR/gecko/$GECKO_VERSION"
+    try cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
     cd "$olddir"
 
     # set install-path
@@ -1137,23 +1155,30 @@ load_gecko_dbg() {
     # so we're adding a maintenance burden here.)
     case `$WINE --version` in
     wine-0*|wine-1.0*|wine-1.1|wine-1.1.?|wine-1.1.11)
-        echo "There isn't a gecko debug build for your Wine version."
-        exit 1
+        die "There isn't a gecko debug build for your Wine version."
         ;;
     wine-1.1.1[234]*)
-        GECKO_VERSION=0.9.0 
+        GECKO_DIR="$WINDIR"
+        GECKO_VERSION=0.9.0
         GECKO_SHA1SUM=23e354a82d7b7e61a6abe0384cc44669fbf92f86
         ;;
-    *)
+    wine-1.1.1[56789]*|wine-1.1.2[0123456]*)
+        GECKO_DIR="$WINDIR"
         GECKO_VERSION=0.9.1
         GECKO_SHA1SUM=a9b58d3330f8c78524fe4683f348302bfce96ff4
         ;;
+    *)
+        GECKO_DIR="$WINDIR/system32"
+        GECKO_VERSION=1.0.0
+        GECKO_ARCH=-x86
+        GECKO_SHA1SUM=2de16b443826295f646cd5d54313ca421fd71210
+        ;;    
     esac
 
-    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION-dbg.cab
+    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
     then
        # FIXME: busted if using curl!
-       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION-dbg.cab" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION-dbg.cab
+       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
     fi
 
     cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
@@ -1162,14 +1187,18 @@ REGEDIT4
 [HKEY_CURRENT_USER\\Software\\Wine\\MSHTML\\$GECKO_VERSION]
 _EOF_
 
-    #The registry-entry does not support an environment-variable
     printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
-    printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
-
+    if [ ! "$GECKO_VERSION" = "1.0.0" ]
+    then
+        printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
+    else
+        printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' | sed "s/\\\\/\\\\\\\\/g" >>"$WINETRICKS_TMP"/geckopath.reg
+    fi
+    
     # extract the files
-    mkdir -p "$WINDIR"/gecko/$GECKO_VERSION
-    cd "$WINDIR"/gecko/$GECKO_VERSION
-    try cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION-dbg.cab
+    mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
+    cd "$GECKO_DIR/gecko/$GECKO_VERSION"
+    try cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
     cd "$olddir"
 
     # set install-path
