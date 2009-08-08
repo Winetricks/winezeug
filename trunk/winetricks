@@ -24,7 +24,7 @@ if ! test -O $HOME
 fi
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090716
+VERSION=20090808
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
