@@ -57,13 +57,17 @@ case "$1" in
   ;;
 esac
 
-die() {
+warn() {
   echo "$@"
 
   case x"$GUI" in
   x1) xmessage -center "               Winetricks error: $@                 " ;;
   *) ;;
   esac
+}
+
+die() {
+  warn "$@"
 
   exit 1
 }
@@ -1006,15 +1010,11 @@ load_fontfix() {
         fi
     fi
 
-    # The heterogeneity of SHA-1 checksums and paths for "bad" Samyak-Oriya.ttf
-    # fonts make checking impractical, so we'll substitute in a good version
-    # regardless of the installed version, if any.
-
-    download . http://cvs.fedora.redhat.com/repo/pkgs/samyak-fonts/samyak-fonts-1.2.0.tar.gz/a57339ba2b4279938a2d792ebdf70377/samyak-fonts-1.2.0.tar.gz f06d0eaac201a3ec79418d69d46807a52150f047
-    cd "$WINETRICKS_TMP/"
-    tar -xzf "$WINETRICKS_CACHE/samyak-fonts-1.2.0.tar.gz"
-    try mv samyak-fonts-1.2.0/oriya/Samyak-Oriya.ttf "$winefontsdir"
-    cd "$olddir"
+    # Focht says Samyak is bad news, and font substitution isn't a good workaround.
+    if xlsfonts | grep -i samyak
+    then
+        warn "Please uninstall the Samyak font.  It has been known to cause problems."
+    fi
 }
 
 #----------------------------------------------------------------
