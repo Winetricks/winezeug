@@ -23,6 +23,7 @@ for verb in \
     dirac \
     dotnet11 \
     dotnet20 \
+    dotnet30 \
     droid \
     ffdshow \
     firefox \
