@@ -445,7 +445,21 @@ WINDOW_WAIT("Adobe Photoshop CS2","ScreenImg")
 ControlClick, Button1, Adobe Photoshop CS2, ScreenImg
 
 WINDOW_WAIT("Adobe Photoshop CS2 - License Agreement","License Agreement")
-ControlClick, Button5, Adobe Photoshop CS2 - License Agreement, License Agreement
+ControlClick, &Accept, Adobe Photoshop CS2 - License Agreement, License Agreement 
+; Sometimes, the click doesn't register...Loop a few times to prevent this from failing the test.
+    Loop, 5
+    {
+        IfWinExist, Adobe Photoshop CS2 - License Agreement,License Agreement
+        {
+            FileAppend, Trying to click 'Accept' again...`n, %OUTPUT%
+            ControlClick, &Accept, Adobe Photoshop CS2 - License Agreement, License Agreement
+        }
+        Else
+        {
+            FileAppend, Accept finally worked.`n, %OUTPUT%
+            break
+        }
+    }
 
 ; This window sometimes doesn't appear on Wine. No bug yet, waiting for more test results.
 WinWait, Adobe Photoshop CS2, ShowAutoplayButton, 5
@@ -4263,6 +4277,48 @@ SHA1("c36bb40bf226012c1c5c498796984fdde1c0aa24","Adobe\Adobe` Bridge\Activation\
 SHA1("6378c1b9b51f475684c972e12490a09f117ed4c1","Adobe\Adobe` Bridge\Activation\productLabel.bmp")
 SHA1("b6301a159895c5280c9084b146251794008344f4","Adobe\Adobe` Bridge\Activation\en_US\almuirsc.dll")
 SHA1("55c186032dc901ec1fd241964447aa22cce68b6a","Adobe\Adobe` Bridge\Activation\en_US\tw12216.dat")
+
+SetWorkingDir, C:\Program Files\Adobe\Adobe Photoshop CS2\
+Sleep 500
+Run, Photoshop.exe
+WINDOW_WAIT("Adobe Activation","Activate with My Serial Number",30)
+ControlClick, &Continue Trial, Adobe Activation, Activate with My Serial Number
+
+WINDOW_WAIT("Welcome Screen", "Show this dialog at startup")
+ControlClick, Button1, Welcome Screen, Show this dialog at startup ; Don't show on startup
+ControlClick, Button2, Welcome Screen, Show this dialog at startup ; Close
+
+WINDOW_WAIT("Adobe Updater") ; Fixme: Need window text here.
+ControlClick, Button10, Adobe Updater
+
+WINDOW_WAIT("Adobe Updater", "Updates are available for your Adobe applications.")
+ControlClick, Button4, Adobe Updater, Updates are available for your Adobe applications.
+
+
+; Test making a new image
+IfExist %A_MyDocuments%\Untitled-1.psd
+    FileDelete, %A_MyDocuments%\Untitled-1.psd
+
+WinActivate, Adobe Photoshop
+Send, ^n
+WINDOW_WAIT("New","Image Size:")
+Send, {Enter}
+WINDOW_WAIT("Untitled-1 @ 100% (RGB/8)")
+
+; Save the empty file
+Send, ^+s
+WINDOW_WAIT("Save As","Use Adobe Dialog")
+Send, {Enter}
+
+Send, ^{F4} ; Close the picture file
+CLOSE("Adobe Photoshop")
+WIN_EXIST_TEST("Adobe Photoshop")
+
+; Make sure that file exist:
+CHECK_FILE("%A_MyDocuments%\Untitled-1.psd")
+
+FileDelete, %A_MyDocuments%\Untitled-1.psd
+ERROR_TEST("%A_MyDocuments%\Untitled-1.psd failed to be deleted.","Deleting %A_MyDocuments%\Untitled-1.psd worked fine.")
 
 CLEANUP()
 
