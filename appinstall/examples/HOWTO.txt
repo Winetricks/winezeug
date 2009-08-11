@@ -1,0 +1,219 @@
+Also on the Wine Wiki (http://wiki.winehq.org/Appinstall_Testing
+
+Appinstall testing:
+
+Appinstall is a testing framework using AutoHotKey to perform 'real world' gui testing. While Wine's conformance tests cover a huge range of possible tests, many things real world applications do are not tested. This may be because what the application is doing at a low level may not be known, or the test hasn't been written, or may not be easy to write. By testing applications themselves, this is eliminated. You don't need to know what API calls the application is using, you only have to verify that the application does the same thing on Wine as on Windows. Autohotkey has a ton of built-in functions that allow you test applications. Be sure to read them before writing a test. There are also several helper functions included in Appinstall to make many common tasks easier.
+
+Writing a basic test:
+
+Here's a basic guide to writing a simple Appinstall test. We're going to write a simple test to make sure Reshacker launches in Wine (e.g., doesn't crash on load).
+
+Start, by finding the link to your program. http://www.angusj.com/resourcehacker/ shows that it can be downloaded here. There are a few sample scripts in the Appinstall source directory. For this test, let's use the standalone script (Reshacker has no installer).
+
+First things first, you need to set the testname. This is used to determine the name of the log file.
+
+testname=reshacker
+
+The #init_test file included here handles the creation of the appinstall/appinstall_temp folders automatically.
+
+Adjust the download functions to download Reshacker and unzip:
+
+DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
+DOWNLOAD("http://www.angusj.com/resourcehacker/reshack.zip", "reshack.zip", "5f531b97591d3fab85cabd161642af8050927852")
+
+This will place reshack.zip and unzip.exe in C:\appinstall (or whatever the system drive is).
+
+Next, you'll want to unzip reshack.zip somewhere. Use:
+
+Runwait, unzip.exe -d %APPINSTALL_TEMP%\reshack reshack.zip
+ERROR_TEST("Unzipping reshack.zip had an error.","Unzipping reshack.zip went okay.")
+
+Runwait will run the following command and wait until it is completed before running the next command. This allows the unzip process to complete before attempting to run it. ERROR_TEST() checks to see if LastError was set. If so, give the failure message and exit. ERROR_TEST() should be used after any command that doesn't handle errors on its own.
+
+Next up, change directories to that directory:
+
+Sleep 500
+SetWorkingDir, %APPINSTALL_TEMP%\reshack ERROR_TEST("Setting work directory had an error.","Setting work directory reshack.zip went okay.")
+
+The 'sleep 500' will pause the script for a half second, to prevent a race between unzipping and setting the work directory.
+
+Sha1sum all the extracted files. This makes sure that no files were corrupted:
+
+SHA1("f1b1197a4e04a580258d2dd9a21c99438b7e27d3","Dialogs.def")
+SHA1("3d16fc3f59280628bf685fd7cee18e676720b9bd","ReadMe.txt")
+SHA1("92854e8fdb152034e148de9175184ec71c643639","ResHacker.cnt")
+SHA1("0284fd320f99f62aca800fb1251eff4c31ec4ed7","ResHacker.exe")
+SHA1("1a91b366ecf64a7d8e62f2d44519277be80d36d9","ResHacker.hlp")
+SHA1("a1a12f97a7cbe383421a8438a9fc04d231e251fa","Version_History.txt")
+
+The SHA1 function will verify the file against the expected sha1sum. On failure, it will exit the script, since it can't guarantee the result with (possibly) corrupted files.
+
+Now that we've verified all files are present and uncorrupted, try to run the program:
+
+Run, ResHacker.exe
+ERROR_TEST("Running ResHacker had an error.","Running ResHacker went okay.")
+
+Now, verify that the window appears:
+
+WINDOW_WAIT("Resource Hacker")
+
+The WINDOW_WAIT() function will wait for a specified amount of time (default is 10 seconds) for a window to appear. Specify the window title in arg1, and optionally, the window text in arg2 and the timeout in arg3. The window title/text can be determined using the window spy utility from AutoHotKey. See helper_functions for more details.
+
+If the window does not appear in 10 seconds, or if an error is given, WINDOW_WAIT will exit automatically. If not, close the application yourself:
+
+CLOSE("Resource Hacker")
+
+This sends the ALT+F4 message to the application window. Depending on the application, it may prompt you to save, etc. If so, be sure to handle that case in your test.
+
+Now, verify that the window was indeed closed:
+
+Sleep 500
+WIN_EXIST_TEST("Resource Hacker")
+
+The sleep 500 prevents a race between closing the window and making sure it closed. WIN_EXIST_TEST checks to see if that window is still around, and if so, reports an error.
+
+Lastly, cleanup after yourself and exit gracefully:
+
+CLEANUP()
+exit 0
+
+Which will remove %APPINSTALL_TEMP% and any temp files.
+
+Lastly, add your test to appinstall.sh. The groups of tests are arranged by their winetricks requirements. If your application needs, e.g. vcrun6 or art2kmin, you can install it first with winetricks. If no extra stuff is required, add it in the no override needed list:
+
+# Winetricks not needed:
+for x in \
+...
+    putty.ahk \
++    reshacker.ahk \
+    sbw.ahk \
+...
+    do
+
+That will ensure it is run with the rest of the tests on a daily basis.
+
+For reference, the complete test should look something like this:
+
+;
+; AutoHotKey test script for ResHacker
+;
+; Copyright (C) 2009 Austin English
+;
+; This library is free software; you can redistribute it and/or
+; modify it under the terms of the GNU Lesser General Public
+; License as published by the Free Software Foundation; either
+; version 2.1 of the License, or (at your option) any later version.
+;
+; This library is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+; Lesser General Public License for more details.
+;
+; You should have received a copy of the GNU Lesser General Public
+; License along with this library; if not, write to the Free Software
+; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+;
+testname=reshacker
+#Include helper_functions
+#Include init_test
+DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/sha1sum/sha1sum.exe", "sha1sum.exe", "4a578ecd09a2d0c8431bdd8cf3d5c5f3ddcddfc9")
+DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/tools/unzip/unzip.exe", "unzip.exe", "ebfd20263e0a448e857967d4f32a2e85b2728923")
+DOWNLOAD("http://www.angusj.com/resourcehacker/reshack.zip", "reshack.zip", "5f531b97591d3fab85cabd161642af8050927852")
+Runwait, unzip.exe -d %APPINSTALL_TEMP%\reshack reshack.zip
+ERROR_TEST("Unzipping reshack.zip had an error.","Unzipping reshack.zip went okay.")
+Sleep 500
+SetWorkingDir, %APPINSTALL_TEMP%\reshack
+ERROR_TEST("Setting work directory had an error.","Setting work directory reshack.zip went okay.")
+SHA1("f1b1197a4e04a580258d2dd9a21c99438b7e27d3","Dialogs.def")
+SHA1("3d16fc3f59280628bf685fd7cee18e676720b9bd","ReadMe.txt")
+SHA1("92854e8fdb152034e148de9175184ec71c643639","ResHacker.cnt")
+SHA1("0284fd320f99f62aca800fb1251eff4c31ec4ed7","ResHacker.exe")
+SHA1("1a91b366ecf64a7d8e62f2d44519277be80d36d9","ResHacker.hlp")
+SHA1("a1a12f97a7cbe383421a8438a9fc04d231e251fa","Version_History.txt")
+Run, ResHacker.exe
+ERROR_TEST("Running ResHacker had an error.","Running ResHacker went okay.")
+WINDOW_WAIT("Resource Hacker")
+CLOSE("Resource Hacker")
+Sleep 500
+WIN_EXIST_TEST("Resource Hacker")
+CLEANUP()
+exit 0
+
+Installer testing tips:
+
+Testing installers is similar to testing a standalone program. Look in the tree for example scripts. There are a few things to keep in mind with installers though...
+
+    * Most installers have a silent option (/S, -ms, /silent, /q, /quiet, etc.). If possible, use it to reduce the scripts complexity.
+    * Sojme installers on Wine don't install files in the proper location. Be sure to test against Windows (see below for some ways to make this easier) and file a bug if there's not on already.
+    * Some files (.lnk, .log, etc.) are not consistent on Windows, either. They may depend on the username, the install time, etc. SHA1SUM'ing these files will fail, so use CHECK_FILE() instead. 
+
+Some helpful commands: On Windows:
+
+dir /S C:\ > file
+
+Will recursively search and list the directories for the C:\ drive. Use this before and after installing a program to compare the installed file list. E.g.,:
+
+dir /S C:\ > 1
+# Install foobar
+dir /S C:\ > 2
+copy 1 2 Z:\ # where Z: is your samba shared folder to a unix machine
+
+Then, on Unix:
+
+$ diff -u 1 2 > 3
+
+Then manually review 3 and make sure the installer didn't put files in a weird location. Write the AHK test accordingly, to check for all files (you can ignore temp files). Unix: To sha1sum a directory full of a bunch of files, use sha1dir.sh. Usage:
+
+$ sha1dir.sh directory_to_sha1sum output_file
+
+This will recursively sha1sum all files in directory_to_sha1sum, and output a file with the sha1sums/filenames in the format expected by Appinstall.
+
+Useful Functions:
+
+There are a ton of useful functions in AutoHotKey. For a more full explanation, check AHK's documentation. The most commonly used ones are:
+
+    * If / Else If / Else - Check if a specific condition is true.
+    *
+
+      IfExist / IfNotExist - Detect if a file exists/doesn't exist
+    *
+
+      FileAppend - Write some text to a file.
+    *
+
+      IfWinExist/IfWineNotExist - Check if a specific window exists/doesn't exist.
+    *
+
+      RegRead - Read a value from the registry.
+    * Run/Runwait - Run a command. Runwait waits until the command returns before executing the next statement.
+    * Send - Send keystrokes to the active window.
+    *
+
+      ControlClick - Click a specific mouse button on a specific button/control.
+    *
+
+      WinActivate - Activate a window.
+    *
+
+      WinWait/WinWaitClose - Wait until a specific window exist/is closed. 
+
+There are also several helper functions that aren't built into AutoHotKey, but implemented in #helper_functions, which should be included in all Appinstall tests:
+
+    * CHECK_DIR - Check if the directory exists (and is a directory, not a file)
+    * CHECK_FILE - Check if a file exists. Useful for checking files like install logs that don't have a consistent sha1sum.
+    * CLOSE - Closes a window nicely, by sending it an ALT+F4.
+    * DOWNLOAD - Download a file. Supports http/https. Optional: supports ftp if you include wget in your test.
+    *
+
+      ERROR_TEST - Check if LastError is set. Used after any command that doesn't have it's own error checking.
+    * FORCE_CLOSE - Forcefully close a window. Sends an ALT+F4, then gives the app up to five seconds to close. If it doesn't, kills the process.
+    * PRINTF - Append a message to the test log.
+    * SHA1 - Sha1sum a file and compare to the known good checksum.
+    * TODO_CHECK_FILE - Similar to CHECK_FILE, but for files that don't install properly on Wine. If the file does exist, is considered a TODO_FIXED.
+    * TODO_SHA1 - Sha1sum a file, and compare the known good and expected sha1sum. There a few installers that always install the right file on Windows, but a different file on Wine (also consistent). TODO_SHA1 checks against the file's sha1sum against the known good (Windows), and the expected (Wine). If it matches known good, it's a TODO_FIXED. If it matches the expected, it's a TODO_FAILED, if it matches neither, it's a 'Test failed'.
+    * TODO_WINDOW_WAIT - Similar to WINDOW_WAIT (below), but for windows that don't appear on Wine (Photoshop's CS 2 license, etc.). If the window does appear on Wine, considered a TODO_FIXED.
+    * WAIT_CRASH_FATAL - Used to work around apps that crash on Wine. Detects the crash dialog, and closes it. If the crash dialog doesn't appear after the timeout period, it assumes the crash is fixed, and a TODO_FIXED is written to the log.
+    * WIN_EXIST_TEST - Checks to see if a window exists, and if so, issues a 'Test failed'. Used at the end of tests after an application is closed, to make sure the window really did close.
+    * WINDOW_WAIT - Waits for a window to exist, up until the timeout. Once it exists, if it's not active, it is made active. 
+
+With the combination of these commands, lots of programs can be tested for basic features/tests. For more complex tests, consult AutoHotKey's documentation for other functions that can test what you need. 
