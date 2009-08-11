@@ -16,8 +16,10 @@
 ; You should have received a copy of the GNU Lesser General Public
 ; License along with this library; if not, write to the Free Software
 ; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-;
-;
+
+#NoEnv  ; Disables environemntal variables unless EnvGet is used. Increases performance.
+        ; Since this file is included everywhere else, it affects all other tests.
+
 ; Most of these are archaic and unlikely to be used, e.g., %24% = Apps
 ; See also http://msdn.microsoft.com/en-us/library/ms933062(WinEmbedded.5).aspx
 ; If the n/a variables end up being needed, I'll implement later.
