@@ -1011,7 +1011,7 @@ load_fontfix() {
         then
             download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
             cd "$WINETRICKS_TMP/"
-            tar -xzf "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz"
+            gunzip -dc "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | tar -xf -
             try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
         fi
@@ -1024,7 +1024,7 @@ load_fontfix() {
         then
             download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
             cd "$WINETRICKS_TMP/"
-            tar -xzf "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz"
+            gunzip -dc "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | tar -xf -
             try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
         fi
@@ -1362,7 +1362,7 @@ load_liberation() {
 
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     cd "$WINETRICKS_TMP"
-    tar -xzf "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz
+    gunzip -dc "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz | tar -xf -
     mv liberation-fonts-1.04/*.ttf "$winefontsdir"
     rm -rf "$WINETRICKS_TMP"/*
     cd "$olddir"
@@ -2003,7 +2003,7 @@ load_wenquanyi() {
     # Donate at http://wenq.org/enindex.cgi?Download(en)#MicroHei_Beta if you want to help support free CJK font development
     download . $SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
     cd "$WINETRICKS_TMP/"
-    tar -xzf "$WINETRICKS_CACHE/wqy-microhei-0.2.0-beta.tar.gz"
+    gunzip -dc "$WINETRICKS_CACHE/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
     try mv wqy-microhei/wqy-microhei.ttc "$winefontsdir"
     register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
     cd "$olddir"
