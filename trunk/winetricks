@@ -16,12 +16,25 @@
 # as it has to run on MacOSX and Solaris, too.  A good book on the topic is
 # "Portable Shell Programming" by Bruce Blinn
 
-# Prevent running with sudo/root. This would create a .winetrickscache as root
-# in the user's home directory!
-if ! test -O $HOME
-    then
-        echo "Don't run winetricks with sudo!"
-        exit 1
+# On Solaris, choose more modern commands (needed for id -u).
+case `uname -s` in
+SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
+      ;;
+esac
+
+# Portable function to test whether user owns their own home directory
+user_not_homeowner() {
+  nuser=`id -u`
+  nowner=`ls -l -n -d $HOME | awk '{print $3}'`
+  test x$nuser != x$nowner
+}
+
+# Prevent running with wrong user id. 
+# It's bad to create files as wrong user in $HOME!
+if user_not_homeowner
+then
+  echo "Don't run winetricks as another user (i.e. don't run it with sudo or pfexec)!"
+  exit 1
 fi
 
 # Name of this version of winetricks (YYYYMMDD)
