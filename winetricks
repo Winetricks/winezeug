@@ -22,21 +22,6 @@ SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
       ;;
 esac
 
-# Portable function to test whether user owns their own home directory
-user_not_homeowner() {
-  nuser=`id -u`
-  nowner=`ls -l -n -d $HOME | awk '{print $3}'`
-  test x$nuser != x$nowner
-}
-
-# Prevent running with wrong user id. 
-# It's bad to create files as wrong user in $HOME!
-if user_not_homeowner
-then
-  echo "Don't run winetricks as another user (i.e. don't run it with sudo or pfexec)!"
-  exit 1
-fi
-
 # Name of this version of winetricks (YYYYMMDD)
 VERSION=20090809
 
@@ -50,7 +35,6 @@ WINETRICKS_CACHE=$HOME/winetrickscache
 # Default to hiding the directory, by popular demand
 test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_TMP="$WINEPREFIX"/drive_c/winetrickstmp
-mkdir -p "$WINETRICKS_TMP"
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
 
 WINDIR="$WINEPREFIX/drive_c/windows"
@@ -75,7 +59,7 @@ warn() {
   echo "$@"
 
   case x"$GUI" in
-  x1) xmessage -center "               Winetricks error: $@                 " ;;
+  x1) xmessage -center "  Winetricks error: $@  " ;;
   *) ;;
   esac
 }
@@ -86,10 +70,18 @@ die() {
   exit 1
 }
 
-if [ ! -x "`which "$WINE"`" ]
-then
-  die "Cannot find wine ($WINE)"
-fi
+# Portable function to test whether user owns WINEPREFIX (or its parent, if it doesn't exist yet)
+user_not_prefixowner() {
+  if test -d "$WINEPREFIX"
+  then
+      checkdir="$WINEPREFIX"
+  else
+      checkdir="`dirname $WINEPREFIX`"
+  fi
+  nuser=`id -u`
+  nowner=`ls -l -n -d "$checkdir" | awk '{print $3}'`
+  test x$nuser != x$nowner
+}
 
 #----------------------------------------------------------------
 
@@ -206,6 +198,19 @@ usage() {
     echo " volnum        Rename drive_c to harddiskvolume0 (needed by some installers)"
 }
 
+GUI=0
+case x"$1" in
+x) GUI=1 ;;
+x-h|x--help|xhelp) usage ; exit 1 ;;
+esac
+
+# Prevent running with wrong user id. 
+# It's bad to create files as wrong user in $HOME!
+if user_not_prefixowner
+then
+  die "You don't own $WINEPREFIX.  Don't run winetricks as another user!"
+fi
+
 #----------------------------------------------------------------
 # Trivial GUI just to handle case where user tries running without commandline
 
@@ -298,11 +303,17 @@ dogui()
 
 #----------------------------------------------------------------
 
-GUI=0
-case x"$1" in
-x) GUI=1; dogui ; set $todo ;;
-x-h|x--help|xhelp) usage ; exit 1 ;;
+case $GUI in
+1) dogui ; set $todo ;;
 esac
+
+if [ ! -x "`which "$WINE"`" ]
+then
+  die "Cannot find wine ($WINE)"
+fi
+
+mkdir -p "$WINETRICKS_TMP"
+
 test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
 mkdir -p "$WINETRICKS_CACHE"
 olddir=`pwd`
