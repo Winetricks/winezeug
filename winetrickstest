@@ -37,6 +37,7 @@ for verb in \
     gecko \
     gecko-dbg \
     hosts \
+    ie6 \
     jet40 \
     liberation \
     mdac25 \
@@ -108,7 +109,6 @@ for verb in \
     directx9 \
     divx \
     icodecs \
-    ie6 \
     kde \
     ole2
 do

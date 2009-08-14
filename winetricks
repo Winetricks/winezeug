@@ -1319,7 +1319,15 @@ load_ie6() {
 
     # Install
     download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
-    $WINE "$WINETRICKS_CACHE"/ie6setup.exe
+    
+    # Silent install recipe from:
+    # http://www.axonpro.sk/japo/info/MS/SILENT%20INSTALL/Unattended-Silent%20Installation%20Switches%20for%20Windows%20Apps.htm
+    if [ $WINETRICKS_QUIET ]
+    then
+        $WINE "$WINETRICKS_CACHE"/ie6setup.exe /q:a /r:n /c:"ie6wzd /S:""#e"" /q:a /r:n"
+    else
+        $WINE "$WINETRICKS_CACHE"/ie6setup.exe
+    fi
     # IE6 exits with 194 to signal a reboot
     status=$?
     case $status in
