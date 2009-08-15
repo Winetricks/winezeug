@@ -55,32 +55,57 @@ case "$1" in
   ;;
 esac
 
-warn() {
-  echo "$@"
+#----------------------------------------------------------------
 
-  case x"$GUI" in
-  x1) xmessage -center "  Winetricks error: $@  " ;;
-  *) ;;
-  esac
+# Check for known desktop environments
+# Set variable DE to the desktop environment's name, lowercase
+detectDE() {
+    if [ x"$KDE_FULL_SESSION" = x"true" ]
+    then
+        DE=kde
+    elif [ x"$GNOME_DESKTOP_SESSION_ID" != x"" ]
+    then
+        DE=gnome
+    elif [ x"$DISPLAY" != x"" ]
+    then
+        DE=x
+    else
+        DE=none
+    fi
+}
+detectDE
+
+warn() {
+    # Show errors both as GUI dialog and on stdout, for emphasis
+    echo "$@"
+    case $DE in
+    gnome) zenity --error --title=Winetricks --text="$@" --no-wrap ;;
+    kde) kdialog --title Winetricks --error "$@" ;;
+    x) xmessage -title Winetricks -center "  Error: $@  " ;;
+    esac
 }
 
 die() {
-  warn "$@"
+    warn "$@"
 
-  exit 1
+    exit 1
 }
 
-# Portable function to test whether user owns WINEPREFIX (or its parent, if it doesn't exist yet)
-user_not_prefixowner() {
-  if test -d "$WINEPREFIX"
-  then
-      checkdir="$WINEPREFIX"
-  else
-      checkdir="`dirname $WINEPREFIX`"
-  fi
-  nuser=`id -u`
-  nowner=`ls -l -n -d "$checkdir" | awk '{print $3}'`
-  test x$nuser != x$nowner
+# Abort if user doesn't own the given directory (or its parent, if it doesn't exist yet)
+die_if_user_not_dirowner() {
+    if test -d "$1"
+    then
+        checkdir="$1"
+    else
+        # fixme: quoting problem?
+        checkdir=`dirname "$1"`
+    fi
+    nuser=`id -u`
+    nowner=`ls -l -n -d "$checkdir" | awk '{print $3}'`
+    if test x$nuser != x$nowner
+    then
+        die "You (`id -un`) don't own $checkdir. Don't run winetricks as another user!"
+    fi
 }
 
 #----------------------------------------------------------------
@@ -205,33 +230,13 @@ x) GUI=1 ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
 esac
 
-# Prevent running with wrong user id. 
-# It's bad to create files as wrong user in $HOME!
-if user_not_prefixowner
-then
-  die "You don't own $WINEPREFIX.  Don't run winetricks as another user!"
-fi
+# Prevent running with wrong user id.
+# It's bad to create files as the wrong user!
+die_if_user_not_dirowner "$WINEPREFIX"
+die_if_user_not_dirowner "$WINETRICKS_CACHE"
 
 #----------------------------------------------------------------
 # Trivial GUI just to handle case where user tries running without commandline
-
-# Checks for known desktop environments
-# set variable DE to the desktop environments name, lowercase
-
-detectDE() {
-    if [ x"$KDE_FULL_SESSION" = x"true" ]
-    then
-        DE=kde
-    elif [ x"$GNOME_DESKTOP_SESSION_ID" != x"" ]
-    then
-        DE=gnome
-    elif [ x"$DISPLAY" != x"" ]
-    then
-        DE=x
-    else
-        DE=none
-    fi
-}
 
 kde_showmenu() {
     title="$1"
@@ -275,7 +280,6 @@ x_showmenu() {
 
 showmenu()
 {
-    detectDE
     case $DE in
     kde) kde_showmenu "$@" ;;
     gnome|x) x_showmenu "$@" ;;
@@ -285,7 +289,6 @@ showmenu()
 
 dogui()
 {
-  detectDE
   if [ $DE = gnome ]
   then
     echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
@@ -304,6 +307,8 @@ dogui()
 
 #----------------------------------------------------------------
 
+mkdir -p "$WINETRICKS_TMP"
+
 case $GUI in
 1) dogui ; set $todo ;;
 esac
@@ -312,8 +317,6 @@ if [ ! -x "`which "$WINE"`" ]
 then
   die "Cannot find wine ($WINE)"
 fi
-
-mkdir -p "$WINETRICKS_TMP"
 
 test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
 mkdir -p "$WINETRICKS_CACHE"
@@ -351,12 +354,12 @@ fi
 
 if [ ! -x "`which cabextract`" ]
 then
-  echo "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+    die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
 fi
 
 if [ ! -x "`which unzip`" ]
 then
-  echo "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
+    die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
 fi
 
 #-----  Helpers  ------------------------------------------------
@@ -1317,10 +1320,10 @@ load_ie6() {
     # Actual value downloaded doesn't matter
     rm -f "$WINETRICKS_CACHE"/ie6sites.dat
     download . http://www.microsoft.com/windows/ie/ie6sp1/download/rtw/x86/ie6sites.dat
-
+    
     # Install
     download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
-    
+
     # Silent install recipe from:
     # http://www.axonpro.sk/japo/info/MS/SILENT%20INSTALL/Unattended-Silent%20Installation%20Switches%20for%20Windows%20Apps.htm
     if [ $WINETRICKS_QUIET ]
