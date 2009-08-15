@@ -50,9 +50,9 @@ esac
 
 case "$1" in
 -V|--version)
-  echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
-  exit 0
-  ;;
+    echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
+    exit 0
+    ;;
 esac
 
 #----------------------------------------------------------------
@@ -172,7 +172,7 @@ usage() {
     echo " msxml6        MS XML version 6"
     echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, schroedinger"
     echo " ole2          MS 16 bit OLE"
-    echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)" 
+    echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
@@ -289,20 +289,20 @@ showmenu()
 
 dogui()
 {
-  if [ $DE = gnome ]
-  then
-    echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
-    usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
-    todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
-  else
-    packages=`usage | awk '/^ [a-z]/ {print $1}'`
-    todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
-  fi
+    if [ $DE = gnome ]
+    then
+        echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
+        usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
+        todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
+    else
+        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
+    fi
 
-  if test "$todo"x = x
-  then
-     exit 0
-  fi
+    if test "$todo"x = x
+    then
+       exit 0
+    fi
 }
 
 #----------------------------------------------------------------
@@ -315,7 +315,7 @@ esac
 
 if [ ! -x "`which "$WINE"`" ]
 then
-  die "Cannot find wine ($WINE)"
+    die "Cannot find wine ($WINE)"
 fi
 
 test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
@@ -1320,7 +1320,7 @@ load_ie6() {
     # Actual value downloaded doesn't matter
     rm -f "$WINETRICKS_CACHE"/ie6sites.dat
     download . http://www.microsoft.com/windows/ie/ie6sp1/download/rtw/x86/ie6sites.dat
-    
+
     # Install
     download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
 
