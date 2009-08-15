@@ -957,7 +957,7 @@ load_fontfix() {
         # FIXME: do all affected versions of the font have same sha1sum as Gutsy?  Seems unlikely.
         if [ "$gotsum"x = "96e1121f89953e5169d3e2e7811569148f573985"x ]
         then
-            download . http://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
+            download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
             cd "$WINETRICKS_TMP/"
             gunzip -dc "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | tar -xf -
             try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
@@ -970,7 +970,7 @@ load_fontfix() {
         gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/uming.ttf | sed 's/ .*//'`
         if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
         then
-            download . http://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
+            download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
             cd "$WINETRICKS_TMP/"
             gunzip -dc "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | tar -xf -
             try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
@@ -1316,7 +1316,7 @@ load_liberation() {
       ;;
     esac
 
-    download . http://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
+    download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     cd "$WINETRICKS_TMP"
     gunzip -dc "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz | tar -xf -
     mv liberation-fonts-1.04/*.ttf "$winefontsdir"
