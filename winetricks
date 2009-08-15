@@ -19,7 +19,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090809
+VERSION=20090815
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
