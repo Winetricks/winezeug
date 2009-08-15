@@ -16,11 +16,7 @@
 # as it has to run on MacOSX and Solaris, too.  A good book on the topic is
 # "Portable Shell Programming" by Bruce Blinn
 
-# On Solaris, choose more modern commands (needed for id -u).
-case `uname -s` in
-SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
-      ;;
-esac
+#---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
 VERSION=20090809
@@ -48,14 +44,7 @@ case `date +%S` in
 *)     SOURCEFORGE=http://downloads.sourceforge.net;;
 esac
 
-case "$1" in
--V|--version)
-    echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
-    exit 0
-    ;;
-esac
-
-#----------------------------------------------------------------
+#---- Functions -------------------------------------------------
 
 # Check for known desktop environments
 # Set variable DE to the desktop environment's name, lowercase
@@ -73,7 +62,6 @@ detectDE() {
         DE=none
     fi
 }
-detectDE
 
 warn() {
     # Show errors both as GUI dialog and on stdout, for emphasis
@@ -224,17 +212,6 @@ usage() {
     echo " volnum        Rename drive_c to harddiskvolume0 (needed by some installers)"
 }
 
-GUI=0
-case x"$1" in
-x) GUI=1 ;;
-x-h|x--help|xhelp) usage ; exit 1 ;;
-esac
-
-# Prevent running with wrong user id.
-# It's bad to create files as the wrong user!
-die_if_user_not_dirowner "$WINEPREFIX"
-die_if_user_not_dirowner "$WINETRICKS_CACHE"
-
 #----------------------------------------------------------------
 # Trivial GUI just to handle case where user tries running without commandline
 
@@ -304,63 +281,6 @@ dogui()
        exit 0
     fi
 }
-
-#----------------------------------------------------------------
-
-mkdir -p "$WINETRICKS_TMP"
-
-case $GUI in
-1) dogui ; set $todo ;;
-esac
-
-if [ ! -x "`which "$WINE"`" ]
-then
-    die "Cannot find wine ($WINE)"
-fi
-
-test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
-mkdir -p "$WINETRICKS_CACHE"
-olddir=`pwd`
-# Clean up after failed runs, if needed
-rm -rf "$WINETRICKS_TMP"/*
-
-# The folder-name is localized!
-programfilesdir_win="`unset WINEDEBUG; $WINE cmd.exe /c echo "%ProgramFiles%"`"
-test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
-programfilesdir_unix="`unset WINEDEBUG; $WINE winepath -u "$programfilesdir_win"`"
-test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
-
-# (Fixme: get fonts path from SHGetFolderPath
-# See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
-#
-# Did the user rename Fonts to fonts?
-if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts
-then
-    winefontsdir="$WINDIR"/fonts
-else
-    winefontsdir="$WINDIR"/Fonts
-fi
-
-# Mac folks tend to not have sha1sum, but we can make do with openssl
-if [ -x "`which sha1sum`" ]
-then
-   SHA1SUM="sha1sum"
-elif [ -x "`which openssl`" ]
-then
-   SHA1SUM="openssl dgst -sha1"
-else
-   die "No sha1sum utility available."
-fi
-
-if [ ! -x "`which cabextract`" ]
-then
-    die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
-fi
-
-if [ ! -x "`which unzip`" ]
-then
-    die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
-fi
 
 #-----  Helpers  ------------------------------------------------
 
@@ -2119,7 +2039,88 @@ print_version() {
     echo "$VERSION"
 }
 
-#----------------------------------------------------------------
+#--------- Main program -----------------------------------------
+
+# On Solaris, choose more modern commands (needed for id -u).
+case `uname -s` in
+SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
+      ;;
+esac
+
+case "$1" in
+-V|--version)
+    echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
+    exit 0
+    ;;
+esac
+
+detectDE
+
+GUI=0
+case x"$1" in
+x) GUI=1 ;;
+x-h|x--help|xhelp) usage ; exit 1 ;;
+esac
+
+# Prevent running with wrong user id.
+# It's bad to create files as the wrong user!
+die_if_user_not_dirowner "$WINEPREFIX"
+die_if_user_not_dirowner "$WINETRICKS_CACHE"
+
+mkdir -p "$WINETRICKS_TMP"
+
+case $GUI in
+1) dogui ; set $todo ;;
+esac
+
+if [ ! -x "`which "$WINE"`" ]
+then
+    die "Cannot find wine ($WINE)"
+fi
+
+test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
+mkdir -p "$WINETRICKS_CACHE"
+olddir=`pwd`
+# Clean up after failed runs, if needed
+rm -rf "$WINETRICKS_TMP"/*
+
+# The folder-name is localized!
+programfilesdir_win="`unset WINEDEBUG; $WINE cmd.exe /c echo "%ProgramFiles%"`"
+test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+programfilesdir_unix="`unset WINEDEBUG; $WINE winepath -u "$programfilesdir_win"`"
+test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
+
+# (Fixme: get fonts path from SHGetFolderPath
+# See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
+#
+# Did the user rename Fonts to fonts?
+if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts
+then
+    winefontsdir="$WINDIR"/fonts
+else
+    winefontsdir="$WINDIR"/Fonts
+fi
+
+# Mac folks tend to not have sha1sum, but we can make do with openssl
+if [ -x "`which sha1sum`" ]
+then
+   SHA1SUM="sha1sum"
+elif [ -x "`which openssl`" ]
+then
+   SHA1SUM="openssl dgst -sha1"
+else
+   die "No sha1sum utility available."
+fi
+
+if [ ! -x "`which cabextract`" ]
+then
+    die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+fi
+
+if [ ! -x "`which unzip`" ]
+then
+    die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
+fi
 
 while test "$1" != ""
 do
