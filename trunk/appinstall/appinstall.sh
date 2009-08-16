@@ -274,6 +274,19 @@ fi
 done < test_list
 
 # Grep through logs...
+grep "TEST ABORTED" *-result.txt >> summary.txt 2>&1
+status=$?
+if [ $status -eq 2 ] ; then
+    echo "No result files found...wtf mate?" >> summary.txt
+    exit 2
+elif [ $status -eq 1 ] ; then
+    echo "No tests aborted early." >> summary.txt
+elif [ $status -eq 0 ] ; then
+    echo "Some test aborted early! Investigate." >> summary.txt
+else
+    echo "Unknown error when grepping result files. Exiting." >> summary.txt
+fi
+
 grep "Test failed" *-result.txt >> summary.txt 2>&1
 status=$?
 if [ $status -eq 2 ] ; then
