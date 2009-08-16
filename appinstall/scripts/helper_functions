@@ -174,6 +174,7 @@ DOWNLOAD(url, filename, sha1sum)
             IfNotExist, %APPINSTALL%\wget.exe
             {
                 FileAppend, Dependency wget.exe not found but needed for download link. Error 4. Test failed.`n, %OUTPUT%
+                FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
                 exit 4
             }
             RunWait, %APPINSTALL%\wget.exe -T 60 -q %url% --output-document=%filename%
@@ -181,12 +182,14 @@ DOWNLOAD(url, filename, sha1sum)
         Else
         {
             FileAppend, %url% uses a protocol which is currently not supported. Error 5. Test failed.`n, %OUTPUT%
+            FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
             exit 5
         }
         
         If GetLastError
         {
             FileAppend, Downloading %filename% failed. Error 2. Test failed.`n, %OUTPUT%
+            FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
             exit 2
         }
         Else
@@ -210,6 +213,7 @@ DOWNLOAD(url, filename, sha1sum)
     If (checksum != sha1sumgood)
     {
         FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
+        FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
         exit 3
     }
 }
@@ -297,6 +301,7 @@ SHA1(sha1sum, filename)
         {
             FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sumgood%. Error 3. Test failed.`n, %OUTPUT%
             FileDelete, %filename%
+            FileAppend, SHA1 exits run. TEST ABORTED.`n, %OUTPUT%
             exit 3
         }
     }
@@ -327,6 +332,12 @@ TODO_SHA1(badsha1, todosha1, filename)
     global 
     TEMPFILE=%APPINSTALL_TEMP%\sha1sum.txt
     FileDelete, %TEMPFILE%
+    IfNotExist, %APPINSTALL%\sha1sum.exe
+    {
+        FileAppend, Dependency sha1sum.exe not found but needed for download verification. Error 6. Test failed.`n, %OUTPUT%
+        FileAppend, TODO_SHA1 exits run. TEST ABORTED.`n, %OUTPUT%
+        exit 6
+    }
     RunWait, %comspec% /c %APPINSTALL%\sha1sum.exe "%filename%" >> %TEMPFILE%
     FileReadLine, checksum, %TEMPFILE%, 1
     FileDelete, %TEMPFILE%
@@ -344,6 +355,7 @@ TODO_SHA1(badsha1, todosha1, filename)
     {
         FileAppend, %filename% checksum failed. Got %checksum%`, expected %badsha1um% or %todosha1sum%. Error 3. Test failed.`n, %OUTPUT%
         FileDelete, %filename%
+        FileAppend, TODO_SHA1 exits run. TEST ABORTED.`n, %OUTPUT%
         exit 3
     }
 }
@@ -396,7 +408,7 @@ WinWait, Program Error, The program %program% has encountered a serious problem 
     }
 }
 
-; Test to see that a window doesn't exist. If so, issue a test failed. Otherwise, report success.
+; Test to see that a window doesn't exist. If it exists, issue a test failed and abort the test. Otherwise, report success.
 WIN_EXIST_TEST(windowname, windowtext="")
 {
     global 
@@ -419,11 +431,12 @@ WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
     WinWait, %windowname%, %windowtext%, %wintimeout%
     if ErrorLevel
     {
-        FileAppend, Launching %windowname% failed. Test failed.`n, %OUTPUT%
+        FileAppend, Launching %windowname%`, %windowtext% failed. Test failed.`n, %OUTPUT%
+        FileAppend, WINDOW_WAIT exits run. TEST ABORTED.`n, %OUTPUT%
         exit 1
     }
     IfWinNotActive, %windowname%, %windowtext%
-        {
+    {
         WinActivate, %windowname%, %windowtext%
-        }
+    }
 }
