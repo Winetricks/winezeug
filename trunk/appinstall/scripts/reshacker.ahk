@@ -62,6 +62,6 @@ SetWorkingDir, %APPINSTALL%
 
 CLEANUP()
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

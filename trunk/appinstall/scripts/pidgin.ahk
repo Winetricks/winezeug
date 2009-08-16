@@ -1212,6 +1212,6 @@ ERROR_TEST("Killing pidgin's process reported an error.", "Killing pidgin's proc
 
 WIN_EXIST_TEST("Accounts")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

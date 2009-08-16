@@ -138,6 +138,6 @@ Sleep 500
 WIN_EXIST_TEST("Untitled - Notepad")
 WIN_EXIST_TEST("ERROR")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

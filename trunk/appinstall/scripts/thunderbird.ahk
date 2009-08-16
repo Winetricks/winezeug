@@ -251,6 +251,6 @@ WIN_EXIST_TEST("Mozilla Thunderbird")
 
 CLEANUP()
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

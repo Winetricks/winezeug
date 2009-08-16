@@ -4322,6 +4322,6 @@ ERROR_TEST("%A_MyDocuments%\Untitled-1.psd failed to be deleted.","Deleting %A_M
 
 CLEANUP()
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

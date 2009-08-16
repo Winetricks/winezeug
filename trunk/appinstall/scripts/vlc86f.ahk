@@ -448,6 +448,6 @@ Sleep 500
 
 WIN_EXIST_TEST("VLC media player")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

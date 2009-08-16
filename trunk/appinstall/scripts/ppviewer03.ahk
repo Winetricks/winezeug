@@ -77,6 +77,6 @@ Sleep 500
 
 WIN_EXIST_TEST("PowerPoint Viewer Slide Show - [winetest.ppt]")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

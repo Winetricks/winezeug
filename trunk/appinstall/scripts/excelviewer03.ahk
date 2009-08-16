@@ -83,6 +83,6 @@ Sleep 500
 
 WIN_EXIST_TEST("Microsoft Excel Viewer - winetest.xls")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

@@ -60,6 +60,6 @@ WIN_EXIST_TEST("Startup Control Panel 2.8 by Mike Lin")
 
 CLEANUP()
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

@@ -110,6 +110,6 @@ IfWinExist, Registry Editor
     ControlClick, OK, Registry Editor
 }
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

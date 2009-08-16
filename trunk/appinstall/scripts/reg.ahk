@@ -94,6 +94,6 @@ if ErrorLevel
 
 ; FIXME: add tests for actually importing/exporting/comparing registry keys, then verify the change(s).
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0
