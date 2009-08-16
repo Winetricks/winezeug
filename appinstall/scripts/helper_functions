@@ -307,6 +307,14 @@ SHA1(sha1sum, filename)
     }
 }
 
+TEST_COMPLETED()
+{
+    global
+    FileAppend,TEST COMPLETE.`n, %OUTPUT%
+    CLEANUP()
+    exit 0
+}
+
 ; Print a string at the beginning of a test section which describes the following test.
 TESTNAME(string)
 {
@@ -410,7 +418,7 @@ WinWait, Program Error, The program %program% has encountered a serious problem 
     FileAppend, %program% crashed. Bug %bug% TODO_FAILED.`n, %OUTPUT%
     ControlClick, Button1, Program Error
     ; Test isn't really complete, but it's expected to exit here. So just pretend it's complete.
-    FileAppend, TEST COMPLETE.`n, %OUTPUT%
+    TEST_COMPLETED()
     exit 0
     }
 }

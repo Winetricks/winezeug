@@ -85,6 +85,6 @@ Sleep 500
 
 WIN_EXIST_TEST("PE Explorer - 30 day evaluation version")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

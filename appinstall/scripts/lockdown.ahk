@@ -88,6 +88,6 @@ ERROR_TEST("Running Lockdown reported an error.", "Lockdown launched fine.")
     Sleep 500
     WIN_EXIST_TEST("Respondus LockDown Browser")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

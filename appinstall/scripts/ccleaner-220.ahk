@@ -123,6 +123,6 @@ WIN_EXIST_TEST("Piriform CCleaner")
 
 CLEANUP()
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

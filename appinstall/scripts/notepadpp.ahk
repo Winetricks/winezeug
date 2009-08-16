@@ -282,6 +282,6 @@ ERROR_TEST("Opening new 1.txt reported an error", "Opening new 1.txt went fine."
 FileDelete, new 1.txt
 ERROR_TEST("Deleting new 1.txt reported an error", "Deleting new 1.txt went fine.")
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0

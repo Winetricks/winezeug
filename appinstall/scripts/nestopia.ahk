@@ -62,6 +62,6 @@ WIN_EXIST_TEST("Nestopia")
 
 CLEANUP()
 
-FileAppend, TEST COMPLETE.`n, %OUTPUT%
+TEST_COMPLETED()
 
 exit 0
