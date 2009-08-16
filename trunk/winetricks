@@ -64,8 +64,10 @@ detectDE() {
 }
 
 warn() {
-    # Show errors both as GUI dialog and on stdout, for emphasis
     echo "$@"
+
+    test "$GUI" = 1 || return
+
     case $DE in
     gnome) zenity --error --title=Winetricks --text="$@" --no-wrap ;;
     kde) kdialog --title Winetricks --error "$@" ;;
