@@ -307,6 +307,13 @@ SHA1(sha1sum, filename)
     }
 }
 
+; Print a string at the beginning of a test section which describes the following test.
+TESTNAME(string)
+{
+	global
+	FileAppend,`nTEST SECTION: %string%`n`n, %OUTPUT%
+}
+
 ; Similar to CHECK_FILE() above, but uses TODO_FIXED/TODO_FAILED. Also, requires a bug number.
 ; You did file a bug for the incomplete installation, didn't you ;-)?
 TODO_CHECK_FILE(filename, bug)
