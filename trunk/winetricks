@@ -119,6 +119,7 @@ usage() {
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
+    echo " cygwin        Unix apps for Windows (needed by some build scripts)"
     echo " d3dx9         MS d3dx9_??.dll (from DirectX 9 user redistributable)"
     echo " dcom98        MS DCOM (ole32, oleaut32); requires Win98 license!"
     echo " dinput8       MS dinput8.dll (from DirectX 9 user redistributable)"
@@ -628,6 +629,17 @@ load_corefonts() {
     try cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/webdin32.exe
     try cp -f "$WINETRICKS_TMP"/Webdings.TTF "$winefontsdir"
     register_font Webdings.TTF "Webdings (TrueType)"
+}
+
+#----------------------------------------------------------------
+
+load_cygwin() {
+    download cygwin http://cygwin.com/setup.exe
+    mkdir "$WINEPREFIX"/drive_c/cygpkgs
+    cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$WINEPREFIX"/drive_c/cygpkgs
+    cd "$WINEPREFIX"/drive_c/cygpkgs
+    try $WINE setup.exe
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -2166,6 +2178,7 @@ do
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
     controlpad|fm20) load_controlpad;;
+    cygwin) load_cygwin;;
     d3dx9) load_d3dx9;;
     dcom98) load_dcom98;;
     dinput8) load_dinput8;;
