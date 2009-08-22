@@ -1625,9 +1625,9 @@ load_ole2() {
 
 load_openwatcom() {
     # http://www.openwatcom.org
-
+    # Should use $WINETRICKS_SILENT, but that doesn't do a full install. Need to file a bug with OpenWatcom...
     download . "http://ftp.openwatcom.org/ftp/open-watcom-c-win32-1.8.exe" 44afd1fabfdf0374f614f054824e60ac560f9dc0
-    try $WINE "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe $WINETRICKS_SILENT
+    try $WINE "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe
 }
 
 #----------------------------------------------------------------
