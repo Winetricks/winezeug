@@ -65,6 +65,7 @@ for verb in \
     vb4run \
     vb5run \
     vb6run \
+    vc2005express \
     vcrun6 \
     vcrun2003 \
     vcrun2005 \
@@ -111,7 +112,8 @@ for verb in \
     icodecs \
     kde \
     ole2 \
-    openwatcom
+    openwatcom \
+    psdk2003
 do
     wineserver -k || true
     rm -rf $WINEPREFIX
