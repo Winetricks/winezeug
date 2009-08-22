@@ -166,6 +166,8 @@ usage() {
     echo " ole2          MS 16 bit OLE"
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
+    echo " psdk2003      MS Platform SDK 2003 (crashes at end, but seems to work)"
+    echo " psdkvista     MS Vista SDK (doesn't work yet)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
@@ -177,6 +179,7 @@ usage() {
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
     echo " vb6run        MS Visual Basic 6 runtime"
+    echo " vc2005express MS Visual C++ 2005 Express IDE (install dotnet20 and msxml6 first!)"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
@@ -636,7 +639,7 @@ load_corefonts() {
 load_cygwin() {
     download cygwin http://cygwin.com/setup.exe
     mkdir "$WINEPREFIX"/drive_c/cygpkgs
-    cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$WINEPREFIX"/drive_c/cygpkgs
+    test -f  "$WINEPREFIX"/drive_c/cygpkgs/setup.exe || cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$WINEPREFIX"/drive_c/cygpkgs
     cd "$WINEPREFIX"/drive_c/cygpkgs
     try $WINE setup.exe
     cd "$olddir"
@@ -1642,6 +1645,30 @@ load_pdh() {
 
 #----------------------------------------------------------------
 
+load_psdk2003()
+{
+  # Note: aborts on 64 bit windows with dialog saying "don't run on WoW"
+  # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
+  download psdk2003 http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe 5c7dc2e1eb902b376d7797cc383fefdfc64ff9c9
+  echo "This takes about an hour, and fails at the end, but enough is installed to be useful, I hope.  See http://bugs.winehq.org/show_bug.cgi?id=19673"
+  chmod +x "$WINETRICKS_CACHE"/psdk2003/PSDK-x86
+  try $WINE "$WINETRICKS_CACHE"/psdk2003/PSDK-x86
+}
+
+#----------------------------------------------------------------
+
+load_psdkvista()
+{
+  # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
+  download vistasdk download.microsoft.com/download/c/a/1/ca145d10-e254-475c-85f9-1439f4cd2a9e/Setup.exe
+  chmod +x "$WINETRICKS_CACHE"/vistasdk/Setup.exe
+  cd "$WINETRICKS_CACHE"/vistasdk
+  try $WINE Setup.exe
+  cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 load_quicktime72() {
     echo "Quicktime needs gdiplus..."
     load_gdiplus
@@ -1915,6 +1942,44 @@ load_vjrun20() {
     else
         try $WINE vjrun20/vjredist.exe
     fi
+}
+
+#----------------------------------------------------------------
+
+load_vc2005express()
+{
+    # Thanks to http://blogs.msdn.com/astebner/articles/551674.aspx for the recipe
+    # Assumes you already have .net 2 and msxml6 installed
+
+    # http://go.microsoft.com/fwlink/?LinkId=51410
+    download vc2005express http://download.microsoft.com/download/8/3/a/83aad8f9-38ba-4503-b3cd-ba28c360c27b/ENU/vcsetup.exe 0292ae1d576edd8ee5350a27113c94c9f9958d5c
+
+    if [ $WINETRICKS_QUIET ]
+    then
+        # Thanks to Aaron Stebner's unattended install recipe
+        # http://blogs.msdn.com/astebner/archive/2006/03/19/555326.aspx
+
+        # "http://go.microsoft.com/fwlink/?LinkId=51417"
+        download vc2005express http://download.microsoft.com/download/0/5/A/05AA45B9-A4BE-4872-8D57-733DF5297284/Ixpvc.exe ce0da62b5649f33c7a150de276d799fb2d68d12a
+
+        cd "$WINETRICKS_TMP"
+        rm -rf vc2005express.tmp || true
+        mkdir vc2005express.tmp
+        cd vc2005express.tmp
+        cabextract "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
+        cp "$WINETRICKS_CACHE"/vc2005express/Ixpvc.exe .
+        chmod +x Ixpvc.exe
+        # Add /qn after ReallySuppress for a really silent install (but then you won't see any errors)
+
+        try $WINE Ixpvc /t:"$WINETRICKS_TMP_WIN\\\\vc2005express.tmp" /q:a /c:"msiexec /i vcsetup.msi VSEXTUI=1 ADDLOCAL=ALL REBOOT=ReallySuppress"
+
+        cd ..
+        rm -rf vc2005express.tmp || true
+    else
+        try $WINE "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
+        # FIXME: wait until it's done somehow
+    fi
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -2227,6 +2292,8 @@ do
     ole2) load_ole2;;
     openwatcom|watcom) load_openwatcom;;
     pdh) load_pdh;;
+    psdk2003) load_psdk2003;;
+    psdkvista) load_psdkvista;;
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
@@ -2238,6 +2305,7 @@ do
     vbrun400|vb4run) load_vb4run;;
     vbrun500|vbvm50|vb5run) load_vbvm50;;
     vbrun600|vbrun60|vb6run) load_vbrun60;;
+    vc2005express) load_vc2005express;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005) load_vcrun2005;;
