@@ -25,7 +25,6 @@ DOWNLOAD("http://download.microsoft.com/download/6/a/6/6a689355-b155-4fa7-ad8a-d
 DOWNLOAD("http://winezeug.googlecode.com/svn/trunk/appinstall/testfiles/winetest.doc","winetest.doc","ec3feb84f2ac6e52e616c17fbd18fde5f2f39f33")
 
 Run, wordview_en-us.exe /q
-WAIT_CRASH_FATAL("wordview_en-us.exe", 19185, 30)
 ERROR_TEST("Installing wordviewer had a problem.", "Installing wordviewer went okay.")
 
 Sleep 2000
@@ -33,15 +32,6 @@ Sleep 2000
 SetWorkingDir, %A_Programs%
 ERROR_TEST("Setting work directory gave an error.", "Setting work directory went okay.")
 CHECK_FILE("Microsoft Office Word Viewer 2003.lnk")
-
-if InStr(FileExist("%A_AppData%\Microsoft\Installer\{90850409-6000-11D3-8CFE-0150048383C9}"), "D")
-    {
-    FileAppend, %A_AppData%\Microsoft\Installer\{90850409-6000-11D3-8CFE-0150048383C9} exists. Bug 19318 TODO_FAILED.`n, %OUTPUT%
-    }
-Else
-    {
-    FileAppend, %A_AppData%\Microsoft\Installer\{90850409-6000-11D3-8CFE-0150048383C9} doesn't exist. Bug 19318 TODO_FIXED.`n, %OUTPUT%
-    }
 
 SetWorkingDir, %A_AppData%\Microsoft\Installer\{90850409-6000-11D3-8CFE-0150048383C9}
 ERROR_TEST("Setting work directory gave an error.", "Setting work directory went okay.")
