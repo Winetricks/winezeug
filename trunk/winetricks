@@ -167,7 +167,7 @@ usage() {
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " psdk2003      MS Platform SDK 2003 (crashes at end, but seems to work)"
-    echo " psdkvista     MS Vista SDK (doesn't work yet)"
+    echo " psdkvista     MS Vista SDK (does not work yet)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
@@ -1976,10 +1976,17 @@ load_vc2005express()
         cd ..
         rm -rf vc2005express.tmp || true
     else
+        warn "Don't forget to install the IDE, or mt.exe won't be installed"
         try $WINE "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
-        # FIXME: wait until it's done somehow
     fi
     cd "$olddir"
+
+    # The interactive installer seems to be asynchronous, so wait until its log file directory is created
+    while test ! -d "$programfilesdir_unix/Microsoft Visual Studio 8/Microsoft Visual C++ 2005 Express Edition - ENU/Logs"
+    do
+      echo "Waiting for install to finish..."
+      sleep 10
+    done
 }
 
 #----------------------------------------------------------------
