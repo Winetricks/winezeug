@@ -129,7 +129,7 @@ usage() {
     echo " divx          divx video codec"
     echo " dotnet11      MS .NET 1.1 (requires Windows license)"
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
-    echo " dotnet30      MS .NET 3.0 (requires Windows license)"
+    echo " dotnet30      MS .NET 3.0 (requires Windows license, does not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " ffdshow       ffdshow video codecs"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
@@ -167,7 +167,7 @@ usage() {
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " psdk2003      MS Platform SDK 2003 (crashes at end, but seems to work)"
-    echo " psdkvista     MS Vista SDK (does not work yet)"
+    echo " psdkvista     MS Vista SDK (does not install yet)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
@@ -179,7 +179,7 @@ usage() {
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
     echo " vb6run        MS Visual Basic 6 runtime"
-    echo " vc2005express MS Visual C++ 2005 Express IDE (install dotnet20 and msxml6 first!)"
+    echo " vc2005express MS Visual C++ 2005 Express"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
@@ -637,7 +637,7 @@ load_corefonts() {
 #----------------------------------------------------------------
 
 load_cygwin() {
-    download cygwin http://cygwin.com/setup.exe
+    download cygwin http://cygwin.com/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
     mkdir "$WINEPREFIX"/drive_c/cygpkgs
     test -f  "$WINEPREFIX"/drive_c/cygpkgs/setup.exe || cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$WINEPREFIX"/drive_c/cygpkgs
     cd "$WINEPREFIX"/drive_c/cygpkgs
@@ -1454,7 +1454,7 @@ _EOF_
 
 load_mono24() {
     # Load Mono, have it handle all .net requests
-    download .  http://ftp.novell.com/pub/mono/archive/2.4.2.3/windows-installer/3/mono-2.4.2.3-gtksharp-2.12.9-win32-3.exe
+    download .  http://ftp.novell.com/pub/mono/archive/2.4.2.3/windows-installer/3/mono-2.4.2.3-gtksharp-2.12.9-win32-3.exe 4f0d051bcedd7668e63c12903310be0ea38f9654
     try $WINE "$WINETRICKS_CACHE"/mono-2.4.2.3-gtksharp-2.12.9-win32-3.exe $WINETRICKS_SILENT
 
     # FIXME: what should this be for mono 2.4?
@@ -1660,7 +1660,8 @@ load_psdk2003()
 load_psdkvista()
 {
   # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
-  download vistasdk download.microsoft.com/download/c/a/1/ca145d10-e254-475c-85f9-1439f4cd2a9e/Setup.exe
+  warn "Vista SDK doesn't work yet as of wine-1.1.28"
+  download psdkvista download.microsoft.com/download/c/a/1/ca145d10-e254-475c-85f9-1439f4cd2a9e/Setup.exe 756c21a7fc9b831f7200f3f44ae55cc7689e8063
   chmod +x "$WINETRICKS_CACHE"/vistasdk/Setup.exe
   cd "$WINETRICKS_CACHE"/vistasdk
   try $WINE Setup.exe
@@ -1949,7 +1950,9 @@ load_vjrun20() {
 load_vc2005express()
 {
     # Thanks to http://blogs.msdn.com/astebner/articles/551674.aspx for the recipe
-    # Assumes you already have .net 2 and msxml6 installed
+    # FIXME: make these smart so they don't do anything if already installed
+    load_dotnet20
+    load_msxml6
 
     # http://go.microsoft.com/fwlink/?LinkId=51410
     download vc2005express http://download.microsoft.com/download/8/3/a/83aad8f9-38ba-4503-b3cd-ba28c360c27b/ENU/vcsetup.exe 0292ae1d576edd8ee5350a27113c94c9f9958d5c
@@ -1978,15 +1981,14 @@ load_vc2005express()
     else
         warn "Don't forget to install the IDE, or mt.exe won't be installed"
         try $WINE "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
+        # The interactive installer seems to be asynchronous, so wait until its log file directory is created
+        while test ! -d "$programfilesdir_unix/Microsoft Visual Studio 8/Microsoft Visual C++ 2005 Express Edition - ENU/Logs"
+        do
+          echo "Waiting for install to finish..."
+          sleep 10
+        done
     fi
     cd "$olddir"
-
-    # The interactive installer seems to be asynchronous, so wait until its log file directory is created
-    while test ! -d "$programfilesdir_unix/Microsoft Visual Studio 8/Microsoft Visual C++ 2005 Express Edition - ENU/Logs"
-    do
-      echo "Waiting for install to finish..."
-      sleep 10
-    done
 }
 
 #----------------------------------------------------------------
