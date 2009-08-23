@@ -23,7 +23,6 @@ for verb in \
     dirac \
     dotnet11 \
     dotnet20 \
-    dotnet30 \
     droid \
     ffdshow \
     firefox \
@@ -46,6 +45,7 @@ for verb in \
     mfc40 \
     mono20 \
     mono22 \
+    mono24 \
     mshflxgd \
     msi2 \
     msls31 \
@@ -107,6 +107,7 @@ done
 # Ignores -q
 for verb in \
     allcodecs \
+    cygwin \
     directx9 \
     divx \
     icodecs \
@@ -119,5 +120,9 @@ do
     rm -rf $WINEPREFIX
     sh winetricks -v $verb
 done
+
+# Broken
+#    dotnet30 
+#    psdkvista
 
 exit 0
