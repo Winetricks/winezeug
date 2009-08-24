@@ -1628,9 +1628,26 @@ load_ole2() {
 
 load_openwatcom() {
     # http://www.openwatcom.org
-    # Should use $WINETRICKS_SILENT, but that doesn't do a full install. See http://bugzilla.openwatcom.org/show_bug.cgi?id=898
     download . "http://ftp.openwatcom.org/ftp/open-watcom-c-win32-1.8.exe" 44afd1fabfdf0374f614f054824e60ac560f9dc0
-    try $WINE "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe
+    if [ $WINETRICKS_QUIET ]
+    then
+        # Options documented at http://bugzilla.openwatcom.org/show_bug.cgi?id=898
+        # But they don't seem to work on wine, so jam them into setup.inf
+        # Pick smallest installation that supports 16 bit C and C++
+        cd "$WINETRICKS_TMP"
+        cp "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe .
+        unzip open-watcom-c-win32-1.8.exe setup.inf
+        sed -i 's/tools16=.*/tools16=true/' setup.inf
+        zip -f open-watcom-c-win32-1.8.exe
+        try $WINE open-watcom-c-win32-1.8.exe -s
+        cd "$olddir"
+    else
+        try $WINE "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe
+    fi
+    if test ! -f "$WINEPREFIX"/drive_c/WATCOM/binnt/wcc.exe
+    then
+        warn "c:/watcom/binnt/wcc.exe not found; you probably didn't select 16 bit tools, and won't be able to buld win16test"
+    fi
 }
 
 #----------------------------------------------------------------
