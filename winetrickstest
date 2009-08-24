@@ -54,6 +54,7 @@ for verb in \
     msxml3 \
     msxml4 \
     msxml6 \
+    openwatcom \
     quicktime72 \
     riched20 \
     riched30 \
@@ -113,7 +114,6 @@ for verb in \
     icodecs \
     kde \
     ole2 \
-    openwatcom \
     psdk2003
 do
     wineserver -k || true
