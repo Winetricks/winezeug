@@ -45,7 +45,7 @@ libcapi20-3 libcapi20-dev libcupsys2-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib1.2-dev libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
 libgphoto2-2-dev libgsm1-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
-libldap2-dev libmad0 libmad0-dev libmng-dev libncurses5-dev libodbcinstq1c2 \
+libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
 libogg-dev libpng12-dev libpopt-dev libqt3-headers libqt3-mt libqt3-mt-dev libsane-dev \
 libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
 libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
