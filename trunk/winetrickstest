@@ -3,7 +3,6 @@
 # setting dlls to native, and different windows versions. It doesn't hurt to test
 # and may find weird problems. Plus, that way we can test every function.
 # Currently not tested:
-# ogg - broken
 
 set -ex
 
@@ -105,24 +104,28 @@ done
 
 # Known to have problems
 
-# Ignores -q
-for verb in \
-    allcodecs \
-    cygwin \
-    directx9 \
-    divx \
-    icodecs \
-    kde \
-    ole2 \
-    psdk2003
-do
-    wineserver -k || true
-    rm -rf $WINEPREFIX
-    sh winetricks -v $verb
-done
+if [ "$1" = "--all" ]
+then
+    # Ignores -q
+    for verb in \
+        allcodecs \
+        cygwin \
+        directx9 \
+        divx \
+        icodecs \
+        kde \
+        ole2 \
+        psdk2003
+    do
+        wineserver -k || true
+        rm -rf $WINEPREFIX
+        sh winetricks -v $verb
+    done
+fi
 
 # Broken
 #    dotnet30 
+#    ogg
 #    psdkvista
 
 exit 0
