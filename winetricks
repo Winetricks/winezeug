@@ -179,6 +179,7 @@ usage() {
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
     echo " vb6run        MS Visual Basic 6 runtime"
+    echo " vc2005trial   MS Visual C++ 2005 Trial"
     echo " vc2005express MS Visual C++ 2005 Express"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
@@ -2010,6 +2011,53 @@ load_vc2005express()
 
 #----------------------------------------------------------------
 
+load_vc2005trial()
+{
+    # FIXME: make these smart so they don't do anything if already installed
+    load_vcrun6
+    load_dotnet20
+    load_msxml6
+
+    echo "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
+    download vc2005trial http://download.microsoft.com/download/6/f/5/6f5f7a01-50bb-422d-8742-c099c8896969/En_vs_2005_vsts_180_Trial.img 0204bce1dacfa15b45052647139b35e31e9e36ee
+
+    # FIXME: linux-specific
+    IMG="$WINETRICKS_CACHE"/vc2005trial/En_vs_2005_vsts_180_Trial.img
+    warn "Mounting Visual Studio 2005 Trial disk image..."
+    case "$GUI-$DE" in
+    gnome) 
+      1-gksudo "mkdir -p /mnt/winetricks/vc2005trial"
+      1-gksudo "mount -o ro,loop $IMG /mnt/winetricks/vc2005trial"
+      ;;
+    *)
+      sudo mkdir -p /mnt/winetricks/vc2005trial
+      sudo mount -o ro,loop $IMG /mnt/winetricks/vc2005trial
+      ;;
+    esac
+
+    if false && [ $WINETRICKS_QUIET ]
+    then
+      # Thanks to http://blogs.msdn.com/astebner/archive/2005/05/24/421314.aspx for unattended install method
+      # See also http://support.microsoft.com/?kbid=913445
+      die "not implemented yet"
+    else
+      try $WINE /mnt/winetricks/vc2005trial/vs/setup.exe
+    fi
+
+    case "$GUI-$DE" in
+    gnome) 
+      1-gksudo "umount /mnt/winetricks/vc2005trial"
+      1-gksudo "rm -rf /mnt/winetricks"
+      ;;
+    *)
+      sudo umount /mnt/winetricks/vc2005trial
+      sudo rm -rf /mnt/winetricks
+      ;;
+    esac
+}
+
+#----------------------------------------------------------------
+
 load_vlc() {
     download . http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
     try $WINE "$WINETRICKS_CACHE"/vlc-0.8.6f-win32.exe $WINETRICKS_S
@@ -2332,6 +2380,7 @@ do
     vbrun500|vbvm50|vb5run) load_vbvm50;;
     vbrun600|vbrun60|vb6run) load_vbrun60;;
     vc2005express) load_vc2005express;;
+    vc2005trial) load_vc2005trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005) load_vcrun2005;;
