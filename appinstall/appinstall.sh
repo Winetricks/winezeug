@@ -159,6 +159,7 @@ wget http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/init_test
 
 # Winetricks not needed:
 for x in \
+    7-zip.ahk \
     autohotkey.ahk \
     builtin-console.ahk \
     builtin-gui.ahk \
