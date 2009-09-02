@@ -1669,7 +1669,6 @@ load_psdk2003()
   # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
   download psdk2003 http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe 5c7dc2e1eb902b376d7797cc383fefdfc64ff9c9
   echo "This takes about an hour, and fails at the end, but enough is installed to be useful, I hope.  See http://bugs.winehq.org/show_bug.cgi?id=19673"
-  chmod +x "$WINETRICKS_CACHE"/psdk2003/PSDK-x86
   try $WINE "$WINETRICKS_CACHE"/psdk2003/PSDK-x86
 }
 
@@ -2041,7 +2040,12 @@ load_vc2005trial()
       # See also http://support.microsoft.com/?kbid=913445
       die "not implemented yet"
     else
-      try $WINE /mnt/winetricks/vc2005trial/vs/setup.exe
+      try $WINE /mnt/winetricks/vc2005trial/vs/setup/setup.exe
+      while ps | grep -q setup.exe
+      do
+          sleep 10
+          echo waiting for setup to finish
+      done
     fi
 
     case "$GUI-$DE" in
