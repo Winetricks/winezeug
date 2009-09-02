@@ -115,7 +115,9 @@ then
         icodecs \
         kde \
         ole2 \
-        psdk2003
+        psdk2003 \
+        python \
+        vc2005trial
     do
         wineserver -k || true
         rm -rf $WINEPREFIX
