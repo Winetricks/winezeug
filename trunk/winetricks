@@ -168,6 +168,7 @@ usage() {
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " psdk2003      MS Platform SDK 2003 (crashes at end, but seems to work)"
     echo " psdkvista     MS Vista SDK (does not install yet)"
+    echo " python        Python 2.6.2 (and pywin32)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
@@ -1687,6 +1688,18 @@ load_psdkvista()
 
 #----------------------------------------------------------------
 
+load_python() {
+    download . http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi 2d1503b0e8b7e4c72a276d4d9027cf4856b208b8
+    download . $SOURCEFORGE/project/pywin32/pywin32/Build%20214/pywin32-214.win32-py2.6.exe eca58f29b810d8e3e7951277ebb3e35ac35794a3
+    cd "$WINETRICKS_CACHE"
+    try $WINE msiexec /i python-2.6.2.msi ALLUSERS=1 $WINETRICKS_QUIET
+    # FIXME: unzip this instead of running it if quiet install?
+    try $WINE pywin32-214.win32-py2.6.exe
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 load_quicktime72() {
     echo "Quicktime needs gdiplus..."
     load_gdiplus
@@ -2372,6 +2385,7 @@ do
     pdh) load_pdh;;
     psdk2003) load_psdk2003;;
     psdkvista) load_psdkvista;;
+    python) load_python;;
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
