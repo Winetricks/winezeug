@@ -2121,6 +2121,8 @@ load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
 
+    load_wsh56
+
     set_winver win2k
 
     # See also http://www.microsoft.com/windows/windowsmedia/player/9series/default.aspx
@@ -2146,6 +2148,8 @@ load_wmp9() {
 
 load_wmp10() {
     # See http://appdb.winehq.org/appview.php?iVersionId=3212
+
+    load_wsh56
 
     # See also http://www.microsoft.com/windows/windowsmedia/player/10
     download . http://download.microsoft.com/download/1/2/A/12A31F29-2FA9-4F50-B95D-E45EF7013F87/MP10Setup.exe 69862273a5d9d97b4a2e5a3bd93898d259e86657
@@ -2184,7 +2188,7 @@ load_wenquanyi() {
 
 load_wsh56() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != dotnet20 && test -f "$WINDIR"/system32/wscript.exe
+    if test $PACKAGE != wsh56 && test -f "$WINDIR"/system32/wscript.exe
     then
         echo "prerequisite wsh56 already installed, skipping"
         return
@@ -2242,7 +2246,7 @@ load_xact() {
 
 load_xvid() {
     # xvid
-    test -f "$WINDIR"/system32/[Mm][Ff][Cc]42.[Dd][Ll][Ll] || load_vcrun6
+    load_vcrun6
     download . http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
     try $WINE "$WINETRICKS_CACHE"/Xvid-1.2.2-07062009.exe $WINETRICKS_SILENT
 }
@@ -2431,8 +2435,8 @@ do
     vlc) load_vlc;;
     wininet) load_wininet;;
     wme9) load_wme9;;
-    wmp9) load_wsh56; load_wmp9;;
-    wmp10) load_wsh56; load_wmp10;;
+    wmp9) load_wmp9;;
+    wmp10) load_wmp10;;
     wenquanyi) load_wenquanyi;;
     wsh56) load_wsh56;;
     wsh56js) load_wsh56js;;
