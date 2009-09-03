@@ -818,6 +818,13 @@ load_dotnet11() {
 #----------------------------------------------------------------
 
 load_dotnet20() {
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != dotnet20 && test -f "$WINDIR"/system32/l_intl.nls
+    then
+        echo "prerequisite dotnet20 already installed, skipping"
+        return
+    fi
+
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
     test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || load_gecko
     set_winver win2k
@@ -1586,6 +1593,13 @@ load_msxml4() {
 #----------------------------------------------------------------
 
 load_msxml6() {
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != msxml6 && test -f "$WINDIR"/system32/msxml6.dll
+    then
+        echo "prerequisite msxml6 already installed, skipping"
+        return
+    fi
+
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=993c0bcf-3bcf-4009-be21-27e85e1857b1
     download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6.msi 2308743ddb4cb56ae910e461eeb3eab0a9e58058
 
@@ -1870,9 +1884,11 @@ load_vbrun60() {
 
 load_vcrun6() {
     # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
-    if test -f "$WINDIR"/system32/mfc42u.dll
+
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != vcrun6 && test -f "$WINDIR"/system32/mfc42u.dll
     then
-        echo "vcrun6 already installed, skipping"
+        echo "prerequisite vcrun6 already installed, skipping"
         return
     fi
 
@@ -1980,7 +1996,6 @@ load_vjrun20() {
 load_vc2005express()
 {
     # Thanks to http://blogs.msdn.com/astebner/articles/551674.aspx for the recipe
-    # FIXME: make these smart so they don't do anything if already installed
     load_dotnet20
     load_msxml6
 
@@ -2025,7 +2040,6 @@ load_vc2005express()
 
 load_vc2005trial()
 {
-    # FIXME: make these smart so they don't do anything if already installed
     load_vcrun6
     load_dotnet20
     load_msxml6
@@ -2169,8 +2183,16 @@ load_wenquanyi() {
 #----------------------------------------------------------------
 
 load_wsh56() {
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != dotnet20 && test -f "$WINDIR"/system32/wscript.exe
+    then
+        echo "prerequisite wsh56 already installed, skipping"
+        return
+    fi
+
+    load_vcrun6
+
     # See also http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=C717D943-7E4B-4622-86EB-95A22B832CAA
-    # FIXME: depends on vcrun6, should we install that automatically?
     download . http://download.microsoft.com/download/2/8/a/28a5a346-1be1-4049-b554-3bc5f3174353/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe f4692766caa3ee9b38d4166845486c6199a33457
 
     try $WINE "$WINETRICKS_CACHE"/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe $WINETRICKS_QUIET
@@ -2409,10 +2431,10 @@ do
     vlc) load_vlc;;
     wininet) load_wininet;;
     wme9) load_wme9;;
-    wmp9) load_vcrun6; load_wsh56; load_wmp9;;
-    wmp10) load_vcrun6; load_wsh56; load_wmp10;;
+    wmp9) load_wsh56; load_wmp9;;
+    wmp10) load_wsh56; load_wmp10;;
     wenquanyi) load_wenquanyi;;
-    wsh56) load_vcrun6; load_wsh56;;
+    wsh56) load_wsh56;;
     wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
     xact|xactengine|x3daudio) load_xact;;
