@@ -12,6 +12,7 @@ WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 for verb in \
     ahk \
     art2kmin \
+    atmlib \
     cc580 \
     colorprofile \
     comctl32.ocx \
