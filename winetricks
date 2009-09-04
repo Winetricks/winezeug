@@ -114,6 +114,7 @@ usage() {
     echo " -V         display Version"
     echo "Packages:"
     echo " art2kmin      MS Access 2000 runtime.  Requires Access 2000 Dev license!"
+    echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
@@ -484,6 +485,19 @@ load_art2kmin() {
     try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/art2kmin.exe
     cd "$WINETRICKS_TMP"
     try $WINE Setup.exe INSTALLPFILES=1 /wait $WINETRICKS_QUIET
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_atmlib() {
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
+    # FIXME: This is a huge download for a single dll. There's talk of Adobe possibly providing a download of it for Wine.
+    download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
+    cd "$WINETRICKS_TMP"
+    try cabextract "$WINETRICKS_CACHE"/W2KSP4_EN.EXE i386/atmlib.dl_
+    try cp atmlib.dll "$WINDIR"/system32
+    try rm -rf i386
     cd "$olddir"
 }
 
@@ -2354,6 +2368,7 @@ do
         ;;
     -v) set -x;;
     art2kmin) load_art2kmin;;
+    atmlib) load_atmlib;;
     ahk|autohotkey) load_autohotkey;;
     cc580|comctl32) load_cc580;;
     comctl32.ocx) load_comctl32ocx;;
