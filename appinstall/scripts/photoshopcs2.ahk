@@ -444,22 +444,7 @@ Run, Setup.exe
 WINDOW_WAIT("Adobe Photoshop CS2","ScreenImg")
 ControlClick, Button1, Adobe Photoshop CS2, ScreenImg
 
-WINDOW_WAIT("Adobe Photoshop CS2 - License Agreement","License Agreement")
-ControlClick, &Accept, Adobe Photoshop CS2 - License Agreement, License Agreement 
-; Sometimes, the click doesn't register...Loop a few times to prevent this from failing the test.
-    Loop, 5
-    {
-        IfWinExist, Adobe Photoshop CS2 - License Agreement,License Agreement
-        {
-            FileAppend, Trying to click 'Accept' again...`n, %OUTPUT%
-            ControlClick, &Accept, Adobe Photoshop CS2 - License Agreement, License Agreement
-        }
-        Else
-        {
-            FileAppend, Accept finally worked.`n, %OUTPUT%
-            break
-        }
-    }
+WINDOW_CLICK_LOOP("Adobe Photoshop CS2 - License Agreement","&Accept","License Agreement")
 
 ; This window sometimes doesn't appear on Wine. No bug yet, waiting for more test results.
 WinWait, Adobe Photoshop CS2, ShowAutoplayButton, 5
@@ -473,8 +458,7 @@ WinWait, Adobe Photoshop CS2, ShowAutoplayButton, 5
     ControlClick, Button4, Adobe Photoshop CS2, ShowAutoplayButton
     }
 
-WINDOW_WAIT("Adobe Photoshop CS2 - Setup","WARNING: This program is protected by copyright law and international treaties.")
-ControlClick, Button1, Adobe Photoshop CS2 - Setup, WARNING: This program is protected by copyright law and international treaties.
+WINDOW_CLICK_LOOP("Adobe Photoshop CS2 - Setup","Button1","WARNING: This program is protected by copyright law and international treaties.")
 
 ; This window doesn't appear on Wine. Bug 19342.
 WinWait, Adobe Photoshop CS2 - License Agreement, License Agreement, 3
@@ -4281,28 +4265,8 @@ SHA1("55c186032dc901ec1fd241964447aa22cce68b6a","Adobe\Adobe` Bridge\Activation\
 SetWorkingDir, C:\Program Files\Adobe\Adobe Photoshop CS2\
 Sleep 500
 Run, Photoshop.exe
-WINDOW_WAIT("Adobe Activation","Activate with My Serial Number",30)
-ControlClick, &Continue Trial, Adobe Activation, Activate with My Serial Number
 
-; Sometimes, that click doen't register. Make sure it does:
-Loop, 5
-    {
-        IfWinExist, Adobe Activation, Activate with My Serial Number
-        {
-            FileAppend, Trying to click 'Continue Trial' again...`n, %OUTPUT%
-            ControlClick, &Continue Trial, Adobe Activation, Activate with My Serial Number
-        }
-        Else
-        {
-            FileAppend, 'Continue Trial' finally worked.`n, %OUTPUT%
-            break
-        }
-    }
-IfWinExist, Adobe Activation, Activate with My Serial Number
-{
-	PRINTF("Couldn't active trial. TEST ABORTED.")
-	exit 0
-}	
+WINDOW_CLICK_LOOP("Adobe Activation","&Continue Trial","Activate with My Serial Number",10,30)
 
 WINDOW_WAIT("Welcome Screen", "Show this dialog at startup")
 ControlClick, Button1, Welcome Screen, Show this dialog at startup ; Don't show on startup

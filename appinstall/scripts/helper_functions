@@ -455,3 +455,40 @@ WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
         WinActivate, %windowname%, %windowtext%
     }
 }
+
+; Similar to WINDOW_WAIT() above, but loops a few times for stubborn installers
+; that don't always accept a click like they should (Adobe Photoshop, I'm looking at you!)
+; Also requires a button to click, for obvious reasons.
+; Wintimeout is the time for the original window to appear. Loops is how many attempts to click.
+WINDOW_CLICK_LOOP(windowname, button, windowtext="", loops=10, wintimeout=10)
+{
+    global 
+
+    WinWait, %windowname%, %windowtext%, %wintimeout%
+    if ErrorLevel
+    {
+        FileAppend, Launching %windowname%`, %windowtext% failed. Test failed.`n, %OUTPUT%
+        FileAppend, WINDOW_WAIT exits run. TEST ABORTED.`n, %OUTPUT%
+        exit 1
+    }
+    IfWinNotActive, %windowname%, %windowtext%
+    {
+        WinActivate, %windowname%, %windowtext%
+    }
+
+    Loop, %loops%
+    {
+        IfWinExist, %windowname%, %windowtext%
+        {
+            FileAppend, Trying to click '%button%' again...`n, %OUTPUT%
+            ControlClick, %button%, %windowname%, %windowtext%
+        }
+        Else
+        {
+            FileAppend, '%button%' finally worked.`n, %OUTPUT%
+            break
+        }
+        sleep 1000
+    }
+
+}
