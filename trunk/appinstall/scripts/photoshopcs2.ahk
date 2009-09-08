@@ -4284,6 +4284,26 @@ Run, Photoshop.exe
 WINDOW_WAIT("Adobe Activation","Activate with My Serial Number",30)
 ControlClick, &Continue Trial, Adobe Activation, Activate with My Serial Number
 
+; Sometimes, that click doen't register. Make sure it does:
+Loop, 5
+    {
+        IfWinExist, Adobe Activation, Activate with My Serial Number
+        {
+            FileAppend, Trying to click 'Continue Trial' again...`n, %OUTPUT%
+            ControlClick, &Continue Trial, Adobe Activation, Activate with My Serial Number
+        }
+        Else
+        {
+            FileAppend, 'Continue Trial' finally worked.`n, %OUTPUT%
+            break
+        }
+    }
+IfWinExist, Adobe Activation, Activate with My Serial Number
+{
+	PRINTF("Couldn't active trial. TEST ABORTED.")
+	exit 0
+}	
+
 WINDOW_WAIT("Welcome Screen", "Show this dialog at startup")
 ControlClick, Button1, Welcome Screen, Show this dialog at startup ; Don't show on startup
 ControlClick, Button2, Welcome Screen, Show this dialog at startup ; Close
@@ -4301,21 +4321,31 @@ IfExist %A_MyDocuments%\Untitled-1.psd
 
 WinActivate, Adobe Photoshop
 Send, ^n
-WINDOW_WAIT("New","Image Size:")
+WINDOW_WAIT("New ahk_class PSFloatC")
 Send, {Enter}
 WINDOW_WAIT("Untitled-1 @ 100% (RGB/8)")
 
-; Save the empty file
-Send, ^+s
+Send, P ; Activates the pen
+; Draw a short line. While mouse move is unreliable on different sizes, this is small enough that it should work on most resolutions
+SendEvent {Click 100, 100, down}{Click 200, 200, up}
+Send, ^+s ; Save the file
 WINDOW_WAIT("Save As","Use Adobe Dialog")
 Send, {Enter}
 
-Send, ^{F4} ; Close the picture file
+WINDOW_WAIT("Photoshop Format Options ahk_class PSFloatC","&Maximize compatibility")
+Send, {Enter}
+Sleep 2000
 CLOSE("Adobe Photoshop")
+Sleep 2000 ; Photoshop is big and slow
 WIN_EXIST_TEST("Adobe Photoshop")
 
-; Make sure that file exist:
-CHECK_FILE("%A_MyDocuments%\Untitled-1.psd")
+; There's a race due to file caching. Give it a couple seconds.
+Sleep 2000
+; Make sure that file exist. This should be CHECK_FILE(), but apparently it doesn't like the mydoc variable:
+IfNotExist, %A_MyDocuments%\Untitled-1.psd
+{
+    FileAppend, File %A_MyDocuments%\Untitled-1.psd does not exist. Test failed.`n, %OUTPUT%
+}
 
 FileDelete, %A_MyDocuments%\Untitled-1.psd
 ERROR_TEST("%A_MyDocuments%\Untitled-1.psd failed to be deleted.","Deleting %A_MyDocuments%\Untitled-1.psd worked fine.")
