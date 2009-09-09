@@ -185,8 +185,7 @@ usage() {
     echo " vc2005express MS Visual C++ 2005 Express"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
-    echo " vcrun2005     MS Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)"
-    echo " vcrun2005sp1  MS Visual C++ 2005 sp1 libraries"
+    echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
     echo " vcrun2008sp1  MS Visual C++ 2008 sp1 libraries"
     echo " vjrun20       MS Visual J# 2.0 libraries (requires dotnet20)"
@@ -1951,19 +1950,18 @@ load_vcrun2003() {
 #----------------------------------------------------------------
 
 load_vcrun2005() {
-    # Load the Visual C++ 2005 runtime libraries
-    # See http://www.microsoft.com/downloads/details.aspx?familyid=32BC1BEE-A3F9-4C13-9C99-220B62A191EE
-    download vcrun2005 http://download.microsoft.com/download/d/3/4/d342efa6-3266-4157-a2ec-5174867be706/vcredist_x86.exe 47fba37de95fa0e2328cf2e5c8ebb954c4b7b93c
-    try $WINE "$WINETRICKS_CACHE"/vcrun2005/vcredist_x86.exe $WINETRICKS_QUIET
-}
+    # Load the latest Visual C++ 2005 runtime libraries
+    # If this is just a dependency check, don't re-install
 
-#----------------------------------------------------------------
-
-load_vcrun2005sp1() {
-    # Load the Visual C++ 2005 SP1 runtime libraries
-    # See http://www.microsoft.com/downloads/details.aspx?familyid=200b2fd9-ae1a-4a14-984d-389c36f85647
-    download vcrun2005sp1 http://download.microsoft.com/download/e/1/c/e1c773de-73ba-494a-a5ba-f24906ecf088/vcredist_x86.exe 7dfa98be78249921dd0eedb9a3dd809e7d215c8d
-    try $WINE "$WINETRICKS_CACHE"/vcrun2005sp1/vcredist_x86.exe $WINETRICKS_QUIET
+    # SP1 + ATL security fix build 4053 (MS09-035)
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
+    if test $PACKAGE != vcrun2005 && test -d "$WINEPREFIX"/drive_c/windows/winsxs/x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_e6967989
+    then
+        echo "prerequisite vcrun2005 already installed, skipping"
+        return
+    fi
+    download vcrun2005-ms09-035 http://download.microsoft.com/download/6/B/B/6BB661D6-A8AE-4819-B79F-236472F6070C/vcredist_x86.exe e052789ebad7dc8d6f8505a9295b0576babd125e
+    try $WINE "$WINETRICKS_CACHE"/vcrun2005-ms09-035/vcredist_x86.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -2442,8 +2440,7 @@ do
     vc2005trial) load_vc2005trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
-    vcrun2005) load_vcrun2005;;
-    vcrun2005sp1) load_vcrun2005sp1;;
+    vcrun2005|vcrun2005sp1) load_vcrun2005;;
     vcrun2008) load_vcrun2008;;
     vcrun2008sp1) load_vcrun2008sp1;;
     vjrun20) load_vjrun20;;
