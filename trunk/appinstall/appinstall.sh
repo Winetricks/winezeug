@@ -180,6 +180,7 @@ for x in \
     pidgin.ahk \
     ppviewer03.ahk \
     putty.ahk \
+    python.ahk \
     reg.ahk \
     regedit.ahk \
     reshacker.ahk \
