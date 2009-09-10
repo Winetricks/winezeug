@@ -2245,16 +2245,17 @@ load_wsh56vb() {
 load_xact() {
     helper_directx_dl ;
 
-    # xactengine?_?.dll and X3DAudio?_?.dll - extract
+    # xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll - extract
     cabextract -d "$WINETRICKS_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
     cabextract -d "$WINETRICKS_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    cabextract -d "$WINETRICKS_TMP" -L -F '*_xaudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
     for x in `ls "$WINETRICKS_TMP"/*.cab`
     do
       cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
-    # xactengine?_?.dll - register
-    for x in `ls "$WINDIR"/system32/xactengine*`
+    # xactengine?_?.dll, xaudio?_?.dll - register
+    for x in `ls "$WINDIR"/system32/xactengine* "$WINDIR"/system32/xaudio*`
     do
       try $WINE regsvr32 `basename $x`
     done
