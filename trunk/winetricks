@@ -1586,18 +1586,20 @@ load_msxml3() {
 #----------------------------------------------------------------
 
 load_msxml4() {
-    # http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
     if test ! -f "$WINETRICKS_CACHE"/msxml4.msi
     then
-       download . http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
-       rm -rf "$WINETRICKS_TMP"/*
+        # MS06-071: http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
+        #download . http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
+        # MS07-042: http://www.microsoft.com/downloads/details.aspx?FamilyId=021E12F5-CB46-43DF-A2B8-185639BA2807
+        download . http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
+        rm -rf "$WINETRICKS_TMP"/*
 
-       try $WINE "$WINETRICKS_CACHE"/msxml4-KB927978-enu.exe "/x:`$WINE winepath -w "$WINETRICKS_TMP"`" $WINETRICKS_QUIET
-       if test ! -f "$WINETRICKS_TMP"/msxml.msi
-       then
+        try $WINE "$WINETRICKS_CACHE"/msxml4-KB936181-enu.exe "/x:`$WINE winepath -w "$WINETRICKS_TMP"`" $WINETRICKS_QUIET
+        if test ! -f "$WINETRICKS_TMP"/msxml.msi
+        then
           die msxml.msi not found
-       fi
-       mv "$WINETRICKS_TMP"/msxml.msi "$WINETRICKS_CACHE"/msxml4.msi
+        fi
+        mv "$WINETRICKS_TMP"/msxml.msi "$WINETRICKS_CACHE"/msxml4.msi
     fi
 
     try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml4.msi $WINETRICKS_QUIET
