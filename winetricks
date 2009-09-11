@@ -1960,7 +1960,7 @@ load_vcrun2005() {
 
     # SP1 + ATL security fix build 4053 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
-    if test $PACKAGE != vcrun2005 && test -d "$WINEPREFIX"/drive_c/windows/winsxs/x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_e6967989
+    if test $PACKAGE != vcrun2005 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
     then
         echo "prerequisite vcrun2005 already installed, skipping"
         return
