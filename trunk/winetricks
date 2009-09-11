@@ -469,11 +469,11 @@ _EOF_
 
 #----- common download for several verbs
 helper_directx_dl() {
-    # Mar 2009 DirectX 9c User Redistributable
-    # http://www.microsoft.com/downloads/details.aspx?FamilyID=0cf368e5-5ce1-4032-a207-c693d210f616&displaylang=en
-    download . http://download.microsoft.com/download/3/C/4/3C46A69A-CB0F-4CCA-B1E8-248D43270D5F/directx_mar2009_redist.exe 29957ee0d29b95019b082a47da5eab52f50cde0d
+    # Aug 2009 DirectX 9c User Redistributable
+    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=04ac064b-00d1-474e-b7b1-442d8712d553
+    download . http://download.microsoft.com/download/B/7/9/B79FC9D7-47B8-48B7-A75E-101DEBEB5AB4/directx_aug2009_redist.exe 563b96a3d78d6038d10428f23954f083320b4019
 
-    DIRECTX_NAME=directx_mar2009_redist.exe
+    DIRECTX_NAME=directx_aug2009_redist.exe
 }
 
 #----- One function per package, in alphabetical order ----------
@@ -675,7 +675,7 @@ load_d3dx9() {
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
     override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
     override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
-    override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41
+    override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42
 }
 
 #----------------------------------------------------------------
@@ -738,7 +738,7 @@ load_directx9() {
     # We should probably remove most of these...?
     override_dlls native d3dim d3drm d3dx8 d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29
     override_dlls native d3dx9_30 d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
-    override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dxof
+    override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42 d3dxof
     override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle
     override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby
     override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
