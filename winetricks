@@ -187,7 +187,6 @@ usage() {
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
-    echo " vcrun2008sp1  MS Visual C++ 2008 sp1 libraries"
     echo " vjrun20       MS Visual J# 2.0 SE libraries (requires dotnet20)"
     echo " wininet       MS wininet.dll (requires Windows license)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license)"
@@ -1977,22 +1976,18 @@ load_vcrun2008() {
     # installer work on older Wine (e.g., the stabe 1.0.1).
     volnum
 
-    # Load the Visual C++ 2008 runtime libraries
-    # See http://www.microsoft.com/downloads/details.aspx?familyid=9b2da534-3e03-4391-8a4d-074b9f2bc1bf
-    download vcrun2008 http://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe 56719288ab6514c07ac2088119d8a87056eeb94a
-    try $WINE "$WINETRICKS_CACHE"/vcrun2008/vcredist_x86.exe $WINETRICKS_QUIET
-}
+    # Load the latest Visual C++ 2008 runtime libraries
+    # If this is just a dependency check, don't re-install
+    # SP1 + ATL security fix build 4148 (MS09-035)
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=2051a0c1-c9b5-4b0a-a8f5-770a549fd78c
+    if test $PACKAGE != vcrun2008 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
+    then
+        echo "prerequisite vcrun2008 already installed, skipping"
+        return
+    fi
+    download vcrun2008-ms09-035 http://download.microsoft.com/download/9/7/7/977B481A-7BA6-4E30-AC40-ED51EB2028F2/vcredist_x86.exe bd18409cfe75b88c2a9432d36d96f4bf125a3237
+    try $WINE "$WINETRICKS_CACHE"/vcrun2008-ms09-035/vcredist_x86.exe $WINETRICKS_QUIET
 
-#----------------------------------------------------------------
-
-load_vcrun2008sp1() {
-    # This should be fixed in recent Wine, but for those using 1.0.1, fails.
-    volnum
-
-    # Load the Visual C++ 2008 SP1 runtime libraries
-    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a5c84275-3b97-4ab7-a40d-3802b2af5fc2
-    download vcrun2008sp1 http://download.microsoft.com/download/d/d/9/dd9a82d0-52ef-40db-8dab-795376989c03/vcredist_x86.exe 6939100e397cef26ec22e95e53fcd9fc979b7bc9
-    try $WINE "$WINETRICKS_CACHE"/vcrun2008sp1/vcredist_x86.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
@@ -2448,8 +2443,7 @@ do
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005|vcrun2005sp1) load_vcrun2005;;
-    vcrun2008) load_vcrun2008;;
-    vcrun2008sp1) load_vcrun2008sp1;;
+    vcrun2008|vcrun2008sp1) load_vcrun2008;;
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
     wininet) load_wininet;;
