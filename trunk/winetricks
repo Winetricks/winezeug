@@ -19,7 +19,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090902
+VERSION=20090913
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -169,6 +169,7 @@ usage() {
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " psdk2003      MS Platform SDK 2003 (crashes at end, but seems to work)"
     echo " psdkvista     MS Vista SDK (does not install yet)"
+    echo " psdkwin7      MS Windows 7 SDK (does not install yet)"
     echo " python26      Python 2.6.2 (and pywin32)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
@@ -1710,10 +1711,25 @@ load_psdkvista()
 {
   # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
   warn "Vista SDK doesn't work yet as of wine-1.1.28"
+  load_dotnet20
   download psdkvista download.microsoft.com/download/c/a/1/ca145d10-e254-475c-85f9-1439f4cd2a9e/Setup.exe 756c21a7fc9b831f7200f3f44ae55cc7689e8063
-  chmod +x "$WINETRICKS_CACHE"/vistasdk/Setup.exe
-  cd "$WINETRICKS_CACHE"/vistasdk
+  #chmod +x "$WINETRICKS_CACHE"/psdkvista/Setup.exe
+  cd "$WINETRICKS_CACHE"/psdkvista
   try $WINE Setup.exe
+  cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_psdkwin7()
+{
+  # http://www.microsoft.com/downloads/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
+  warn "Windows 7 SDK doesn't work yet as of wine-1.1.28"
+  load_vcrun2008 load_dotnet20
+  download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
+  #chmod +x "$WINETRICKS_CACHE"/psdkwin7/winsdk_web.exe
+  cd "$WINETRICKS_CACHE"/psdkwin7
+  try $WINE winsdk_web.exe
   cd "$olddir"
 }
 
@@ -2426,6 +2442,7 @@ do
     pdh) load_pdh;;
     psdk2003) load_psdk2003;;
     psdkvista) load_psdkvista;;
+    psdkwin7) load_psdkwin7;;
     python|python26) load_python26;;
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
