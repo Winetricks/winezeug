@@ -129,5 +129,5 @@ fi
 #    dotnet30 
 #    ogg
 #    psdkvista
-
+#    psdkwin7
 exit 0
