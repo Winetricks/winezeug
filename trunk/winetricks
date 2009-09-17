@@ -167,7 +167,7 @@ usage() {
     echo " ole2          MS 16 bit OLE"
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
-    echo " psdk2003      MS Platform SDK 2003 (crashes at end, but seems to work)"
+    echo " psdk2003      MS Platform SDK 2003"
     echo " psdkvista     MS Vista SDK (does not install yet)"
     echo " psdkwin7      MS Windows 7 SDK (does not install yet)"
     echo " python26      Python 2.6.2 (and pywin32)"
@@ -1698,10 +1698,12 @@ load_pdh() {
 
 load_psdk2003()
 {
+  load_vcrun6
+
   # Note: aborts on 64 bit windows with dialog saying "don't run on WoW"
   # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
   download psdk2003 http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe 5c7dc2e1eb902b376d7797cc383fefdfc64ff9c9
-  echo "This takes about an hour, and fails at the end, but enough is installed to be useful, I hope.  See http://bugs.winehq.org/show_bug.cgi?id=19673"
+  echo "This can take up to an hour."
   try $WINE "$WINETRICKS_CACHE"/psdk2003/PSDK-x86
 }
 
