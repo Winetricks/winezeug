@@ -169,7 +169,7 @@ usage() {
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " psdk2003      MS Platform SDK 2003"
     echo " psdkvista     MS Vista SDK (does not install yet)"
-    echo " psdkwin7      MS Windows 7 SDK (does not install yet)"
+    echo " psdkwin7      MS Windows 7 SDK (installing just headers and c++ compiler works)"
     echo " python26      Python 2.6.2 (and pywin32)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
@@ -1726,8 +1726,10 @@ load_psdkvista()
 load_psdkwin7()
 {
   # http://www.microsoft.com/downloads/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
-  warn "Windows 7 SDK doesn't work yet as of wine-1.1.28"
-  load_vcrun2008 load_dotnet20
+  warn "When given a choice, select only C++ compilers and headers, the other options don't work yet."
+  load_vcrun6
+  load_vcrun2008
+  load_dotnet20
   download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
   #chmod +x "$WINETRICKS_CACHE"/psdkwin7/winsdk_web.exe
   cd "$WINETRICKS_CACHE"/psdkwin7
