@@ -116,6 +116,7 @@ then
         kde \
         ole2 \
         psdk2003 \
+        psdkwin7 \
         python \
         vc2005trial
     do
@@ -129,5 +130,4 @@ fi
 #    dotnet30 
 #    ogg
 #    psdkvista
-#    psdkwin7
 exit 0
