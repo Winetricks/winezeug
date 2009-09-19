@@ -23,17 +23,34 @@ VERSION=20090913
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
-WINE=${WINE:-wine}
-WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+case "$OS" in
+ "Windows_NT")
+    # Cheezy fix for getting rid of double slashes when running cygwin in wine
+    case $HOME in
+      /) HOME="" ;;
+    esac
+    WINE=""
+    WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+    DRIVE_C="C:/"
+    XXXPATH=cygpath
+    ;;
+ *)
+    WINE=${WINE:-wine}
+    WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+    DRIVE_C="$WINEPREFIX/drive_c"
+    XXXPATH="$WINE winepath"
+    ;;
+esac
 
 # Internal variables; these locations are not too important
 WINETRICKS_CACHE=$HOME/winetrickscache
 # Default to hiding the directory, by popular demand
 test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
-WINETRICKS_TMP="$WINEPREFIX"/drive_c/winetrickstmp
+WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE`"
+WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
 
-WINDIR="$WINEPREFIX/drive_c/windows"
+WINDIR="$DRIVE_C/windows"
 
 # Which sourceforge mirror to use.  Rotate based on time, since
 # their mirror picker sometimes persistantly sends you to a broken
@@ -300,6 +317,13 @@ try() {
     # Adding this explicit export works around it.
     export WINEDLLOVERRIDES
     echo Executing "$@"
+    # Mark executable - needed if running on windows vista
+    case "$1" in
+    *.exe) chmod +x "$1" || true
+      ;;
+    *)
+      ;;
+    esac
     "$@"
     status=$?
     if test $status -ne 0
@@ -513,9 +537,9 @@ load_cc580() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=6f94d31a-d1e0-4658-a566-93af0d8d4a1e
     download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
-    try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
+    try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
     try unzip -o $WINETRICKS_UNIXQUIET -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
-    try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
+    try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
     try cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
 
     override_dlls native,builtin comctl32
@@ -653,9 +677,9 @@ load_corefonts() {
 
 load_cygwin() {
     download cygwin http://cygwin.com/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
-    mkdir "$WINEPREFIX"/drive_c/cygpkgs
-    test -f  "$WINEPREFIX"/drive_c/cygpkgs/setup.exe || cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$WINEPREFIX"/drive_c/cygpkgs
-    cd "$WINEPREFIX"/drive_c/cygpkgs
+    mkdir "$DRIVE_C"/cygpkgs
+    test -f  "$DRIVE_C"/cygpkgs/setup.exe || cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$DRIVE_C"/cygpkgs
+    cd "$DRIVE_C"/cygpkgs
     try $WINE setup.exe
     cd "$olddir"
 }
@@ -940,12 +964,12 @@ _EOF_
 #----------------------------------------------------------------
 
 load_firefox() {
-    download . "http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.5/win32/en-US/Firefox%20Setup%203.5.exe" a9ef21ba8173a5d850b408fc448a7bc889eb68cb "Firefox Setup 3.5.exe"
+    download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.5.3/win32/en-US/Firefox%20Setup%203.5.3.exe" cb16fe95292f519172fef7182337a5af5875d0c3 "Firefox Setup 3.5.3.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe"
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.3.exe"
     else
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.exe" -ms
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.5.3.exe" -ms
     fi
 }
 
@@ -1264,7 +1288,7 @@ load_ie6() {
     # Change the override to the native so we are sure we use and register them
     override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
 
-    # Remove the fake dlls from the existing WINEPREFIX
+    # Remove the fake dlls, if any
     mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
@@ -1498,7 +1522,7 @@ _EOF_
 
 load_mpc() {
     download . $SOURCEFORGE/guliverkli2/mplayerc_20080414.zip bc9f922d7151e7cc7fef429b085cf208ef989bab
-    cd "$WINEPREFIX"/drive_c
+    cd "$DRIVE_C"
     try unzip "$WINETRICKS_CACHE"/mplayerc_20080414.zip
     cd "$olddir"
     echo MPC now available as c:/mplayerc.exe
@@ -1594,7 +1618,7 @@ load_msxml4() {
         download . http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
         rm -rf "$WINETRICKS_TMP"/*
 
-        try $WINE "$WINETRICKS_CACHE"/msxml4-KB936181-enu.exe "/x:`$WINE winepath -w "$WINETRICKS_TMP"`" $WINETRICKS_QUIET
+        try $WINE "$WINETRICKS_CACHE"/msxml4-KB936181-enu.exe "/x:$winetricks_tmp_win" $WINETRICKS_QUIET
         if test ! -f "$WINETRICKS_TMP"/msxml.msi
         then
           die msxml.msi not found
@@ -1678,7 +1702,7 @@ load_openwatcom() {
     else
         try $WINE "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe
     fi
-    if test ! -f "$WINEPREFIX"/drive_c/WATCOM/binnt/wcc.exe
+    if test ! -f "$DRIVE_C"/WATCOM/binnt/wcc.exe
     then
         warn "c:/watcom/binnt/wcc.exe not found; you probably didn't select 16 bit tools, and won't be able to buld win16test"
     fi
@@ -1733,7 +1757,17 @@ load_psdkwin7_helper() {
   do
     download psdkwin7/$dir $base/$dir/$file
   done
-  try $WINE msiexec /i "$WINETRICKS_CACHE"/psdkwin7/$dir/*.msi
+  msi=`echo "$WINETRICKS_CACHE"/psdkwin7/$dir/$dir*.msi`
+  msi_win=`$XXXPATH -w "$msi"`
+  case "$OS" in
+  "Windows_NT")
+    # Run via cmd /c to avoid UAC on Vista.  (Would start work, too?)
+    try cmd /c msiexec /i "$msi_win"
+    ;;
+  *)
+    try $WINE msiexec /i "$msi_win"
+    ;;
+  esac
 }
 
 load_psdkwin7()
@@ -1808,6 +1842,12 @@ load_quicktime72() {
 #----------------------------------------------------------------
 
 volnum() {
+    case "$OS" in
+    "Windows_NT")
+      return
+      ;;
+    esac
+
     # Recent Microsoft installers are often based on "windows package manager", see
     # http://support.microsoft.com/kb/262841 and
     # http://www.microsoft.com/technet/prodtechnol/windowsserver2003/deployment/winupdte.mspx
@@ -1959,7 +1999,7 @@ load_vcrun6() {
        download . http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
        rm -rf "$WINETRICKS_TMP"/*
 
-       try $WINE "$WINETRICKS_CACHE"/vc6redistsetup_enu.exe "/T:`$WINE winepath -w "$WINETRICKS_TMP"`" /c $WINETRICKS_QUIET
+       try $WINE "$WINETRICKS_CACHE"/vc6redistsetup_enu.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
        if test ! -f "$WINETRICKS_TMP"/vcredist.exe
        then
           die vcredist.exe not found
@@ -2016,6 +2056,13 @@ load_vcrun2005() {
 #----------------------------------------------------------------
 
 load_vcrun2008() {
+    # For the moment, assume windows already has this.
+    case "$OS" in
+    "Windows_NT")
+      return
+      ;;
+    esac
+
     # Work around bug 5351 (http://bugs.winehq.org/show_bug.cgi?id=5351). In recent
     # wine (>= 1.1.7) the bug is fixed. The workaround doesn't hurt anything, and lets
     # installer work on older Wine (e.g., the stabe 1.0.1).
@@ -2339,10 +2386,24 @@ x) GUI=1 ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
 esac
 
-# Prevent running with wrong user id.
-# It's bad to create files as the wrong user!
-die_if_user_not_dirowner "$WINEPREFIX"
-die_if_user_not_dirowner "$WINETRICKS_CACHE"
+case "$OS" in
+ "Windows_NT")
+  ;;
+ *)
+  # Prevent running with wrong user id.
+  # It's bad to create files as the wrong user!
+  die_if_user_not_dirowner "$WINEPREFIX"
+  die_if_user_not_dirowner "$WINETRICKS_CACHE"
+
+  if [ ! -x "`which "$WINE"`" ]
+  then
+      die "Cannot find wine ($WINE)"
+  fi
+
+  # Create wineprefix if not already there
+  test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
+  ;;
+esac
 
 mkdir -p "$WINETRICKS_TMP"
 
@@ -2350,12 +2411,6 @@ case $GUI in
 1) dogui ; set $todo ;;
 esac
 
-if [ ! -x "`which "$WINE"`" ]
-then
-    die "Cannot find wine ($WINE)"
-fi
-
-test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
 mkdir -p "$WINETRICKS_CACHE"
 olddir=`pwd`
 # Clean up after failed runs, if needed
@@ -2364,8 +2419,9 @@ rm -rf "$WINETRICKS_TMP"/*
 # The folder-name is localized!
 programfilesdir_win="`unset WINEDEBUG; $WINE cmd.exe /c echo "%ProgramFiles%"`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
-programfilesdir_unix="`unset WINEDEBUG; $WINE winepath -u "$programfilesdir_win"`"
+programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win"`"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
+winetricks_tmp_win="`$XXXPATH -w "$WINETRICKS_TMP"`"
 
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
