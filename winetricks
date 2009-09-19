@@ -320,11 +320,12 @@ try() {
     # Mark executable - needed if running on windows vista
     case "$1" in
     *.exe) chmod +x "$1" || true
+      cmd /c "$@"
       ;;
     *)
+      "$@"
       ;;
     esac
-    "$@"
     status=$?
     if test $status -ne 0
     then
@@ -1762,7 +1763,11 @@ load_psdkwin7_helper() {
   case "$OS" in
   "Windows_NT")
     # Run via cmd /c to avoid UAC on Vista.  (Would start work, too?)
-    try cmd /c msiexec /i "$msi_win"
+    try cmd /c msiexec /i "$msi_win" /passive
+
+    # If you can't remove "Microsoft Windows SDK for Windows 7" via
+    # control panel, maybe you can do it using msiexec /x like this:
+    #cmd /c msiexec /x "$msi_win" /passive
     ;;
   *)
     try $WINE msiexec /i "$msi_win"
@@ -1787,12 +1792,12 @@ load_psdkwin7()
         cd "$olddir"
     else
         # isn't there a way to have the outer installer do this for us?
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup vc_stdx86 vc_stdx86.cab vc_stdx86.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKBuild cab1.cab cab2.cab cab3.cab cab4.cab WinSDKBuild_x86.msi
         load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDK cab1.cab WinSDK_x86.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup winsdk_intellidocs winsdk_intellidocs.cab winsdk_intellidocs.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKIntellisenseRefAssys cab1.cab WinSDKIntellisenseRefAssys_x86.msi
+        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKBuild cab1.cab cab2.cab cab3.cab cab4.cab WinSDKBuild_x86.msi
         load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKInterop cab1.cab WinSDKInterop_x86.msi
+        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKIntellisenseRefAssys cab1.cab WinSDKIntellisenseRefAssys_x86.msi
+        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup winsdk_intellidocs winsdk_intellidocs.cab winsdk_intellidocs.msi
+        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup vc_stdx86 vc_stdx86.cab vc_stdx86.msi
     fi
 }
 
