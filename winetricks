@@ -1611,23 +1611,20 @@ load_msxml3() {
 #----------------------------------------------------------------
 
 load_msxml4() {
-    if test ! -f "$WINETRICKS_CACHE"/msxml4.msi
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != msxml4 && test -f "$WINDIR"/system32/msxml4.dll
     then
-        # MS06-071: http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
-        # download . http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
-        # MS07-042: http://www.microsoft.com/downloads/details.aspx?FamilyId=021E12F5-CB46-43DF-A2B8-185639BA2807
-        download . http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
-        rm -rf "$WINETRICKS_TMP"/*
-
-        try $WINE "$WINETRICKS_CACHE"/msxml4-KB936181-enu.exe "/x:$winetricks_tmp_win" $WINETRICKS_QUIET
-        if test ! -f "$WINETRICKS_TMP"/msxml.msi
-        then
-          die msxml.msi not found
-        fi
-        mv "$WINETRICKS_TMP"/msxml.msi "$WINETRICKS_CACHE"/msxml4.msi
+        echo "prerequisite msxml4 already installed, skipping"
+        return
     fi
+    # MS06-071: http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
+    # download . http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
+    # MS07-042: http://www.microsoft.com/downloads/details.aspx?FamilyId=021E12F5-CB46-43DF-A2B8-185639BA2807
+    # download . http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
+    # SP3 (2009): http://www.microsoft.com/downloads/details.aspx?familyid=7F6C0CB4-7A5E-4790-A7CF-9E139E6819C0
+    download msxml4sp3 http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi aa70c5c1a7a069af824947bcda1d9893a895318b
 
-    try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml4.msi $WINETRICKS_QUIET
+    try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml4sp3/msxml.msi $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
