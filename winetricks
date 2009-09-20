@@ -229,6 +229,7 @@ usage() {
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
     echo " native_mdac   Override odbc32 and odbccp32"
     echo " native_oleaut32 Override oleaut32"
+    echo " nocrashdialog Disable the graphical crash dialog"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
@@ -411,6 +412,18 @@ set_app_winver() {
 
     try $WINE regedit "$WINETRICKS_TMP"/set-winver.reg
     rm "$WINETRICKS_TMP"/set-winver.reg
+}
+
+disable_crashdialog() {
+    echo "Disabling graphical crash dialog"
+    cat > "$WINETRICKS_TMP"/crashdialog.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\WineDbg]
+"ShowCrashDialog"=dword:00000000
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/crashdialog.reg
 }
 
 unset_winver() {
@@ -2536,6 +2549,7 @@ do
     winver=) unset_winver;;
     native_mdac) set_native_mdac;;
     native_oleaut32) override_dlls native,builtin oleaut32;;
+    nocrashdialog) disable_crashdialog;;
     version) print_version;;
     volnum) volnum;;
     *) echo Unknown arg $1; usage ; exit 1;;
