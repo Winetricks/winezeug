@@ -172,6 +172,7 @@ usage() {
     echo " mono20        mono-2.0.1"
     echo " mono22        mono-2.2"
     echo " mono24        mono-2.4"
+    echo " mozillabuild  Mozilla build environment"
     echo " msi2          MS Installer 2.0"
     echo " mshflxgd      MS Hierarchical Flex Grid Control"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
@@ -201,6 +202,7 @@ usage() {
     echo " vb6run        MS Visual Basic 6 runtime"
     echo " vc2005trial   MS Visual C++ 2005 Trial"
     echo " vc2005express MS Visual C++ 2005 Express"
+    echo " vc2005expresssp1 MS Visual C++ 2005 Express SP1 (does not work yet)"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
@@ -1550,6 +1552,13 @@ _EOF_
 
 #----------------------------------------------------------------
 
+load_mozillabuild() {
+    download . http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/win32/MozillaBuildSetup-1.4.exe
+    try $WINE "$WINETRICKS_CACHE"/MozillaBuildSetup-1.4.exe $WINETRICKS_S
+}
+
+#----------------------------------------------------------------
+
 load_mpc() {
     download . $SOURCEFORGE/guliverkli2/mplayerc_20080414.zip bc9f922d7151e7cc7fef429b085cf208ef989bab
     cd "$DRIVE_C"
@@ -2138,6 +2147,21 @@ load_vc2005express()
 
 #----------------------------------------------------------------
 
+load_vc2005expresssp1()
+{
+    warn "$PACKAGE does not work yet"
+    if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+    then
+        die "install vc2005express first (this verb will be merged into that once it's debugged)"
+    fi
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyId=7B0B0339-613A-46E6-AB4D-080D4D4A8C4E
+    download vc2005express download.microsoft.com/download/7/7/3/7737290f-98e8-45bf-9075-85cc6ae34bf1/VS80sp1-KB926748-X86-INTL.exe 8b9a0172efad64774aa122f29e093ad2043b308d
+    try $WINE "$WINETRICKS_CACHE"/vc2005express/VS80sp1-KB926748-X86-INTL.exe
+}
+
+#----------------------------------------------------------------
+
 load_vc2005trial()
 {
     load_vcrun6
@@ -2507,6 +2531,7 @@ do
     mono19|mono20) load_mono20;;
     mono22) load_mono22;;
     mono24) load_mono24;;
+    mozillabuild) load_mozillabuild;;
     mpc) load_mpc;;
     msi2) load_msi2;;
     mshflxgd) load_mshflxgd;;
@@ -2536,6 +2561,7 @@ do
     vbrun500|vbvm50|vb5run) load_vbvm50;;
     vbrun600|vbrun60|vb6run) load_vbrun60;;
     vc2005express) load_vc2005express;;
+    vc2005expresssp1) load_vc2005expresssp1;;
     vc2005trial) load_vc2005trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
