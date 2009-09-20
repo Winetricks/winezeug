@@ -1748,33 +1748,6 @@ load_psdkvista()
 
 #----------------------------------------------------------------
 
-load_psdkwin7_helper() {
-  base=$1
-  shift
-  dir=$1
-  shift
-
-  for file in $*
-  do
-    download psdkwin7/$dir $base/$dir/$file
-  done
-  msi=`echo "$WINETRICKS_CACHE"/psdkwin7/$dir/$dir*.msi`
-  msi_win=`$XXXPATH -w "$msi"`
-  case "$OS" in
-  "Windows_NT")
-    # Run via cmd /c to avoid UAC on Vista.  (Would start work, too?)
-    try cmd /c msiexec /i "$msi_win" /passive
-
-    # If you can't remove "Microsoft Windows SDK for Windows 7" via
-    # control panel, maybe you can do it using msiexec /x like this:
-    #cmd /c msiexec /x "$msi_win" /passive
-    ;;
-  *)
-    try $WINE msiexec /i "$msi_win"
-    ;;
-  esac
-}
-
 load_psdkwin7()
 {
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
@@ -1783,22 +1756,13 @@ load_psdkwin7()
     load_vcrun2008
     load_dotnet20
 
-    if test "$WINETRICKS_QUIET"x = x
-    then
-        download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
-        #chmod +x "$WINETRICKS_CACHE"/psdkwin7/winsdk_web.exe
-        cd "$WINETRICKS_CACHE"/psdkwin7
-        try $WINE winsdk_web.exe
-        cd "$olddir"
-    else
-        # isn't there a way to have the outer installer do this for us?
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDK cab1.cab WinSDK_x86.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKBuild cab1.cab cab2.cab cab3.cab cab4.cab WinSDKBuild_x86.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKInterop cab1.cab WinSDKInterop_x86.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup WinSDKIntellisenseRefAssys cab1.cab WinSDKIntellisenseRefAssys_x86.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup winsdk_intellidocs winsdk_intellidocs.cab winsdk_intellidocs.msi
-        load_psdkwin7_helper http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/setup vc_stdx86 vc_stdx86.cab vc_stdx86.msi
-    fi
+    # don't have a working unattended recipe.  Maybe we'll have to
+    # do an autohotkey script until msft gets its act together:
+    # http://social.msdn.microsoft.com/Forums/en-US/windowssdk/thread/c053b616-7d5b-405d-9841-ec465a8e21d5
+    download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
+    cd "$WINETRICKS_CACHE"/psdkwin7
+    try $WINE winsdk_web.exe
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
