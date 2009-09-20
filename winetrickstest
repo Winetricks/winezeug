@@ -55,7 +55,6 @@ for verb in \
     msxml4 \
     msxml6 \
     openwatcom \
-    psdkwin7 \
     quicktime72 \
     riched20 \
     riched30 \
@@ -117,6 +116,7 @@ then
         kde \
         ole2 \
         psdk2003 \
+        psdkwin7 \
         python \
         vc2005trial
     do
