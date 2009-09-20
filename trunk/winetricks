@@ -230,6 +230,7 @@ usage() {
     echo " native_mdac   Override odbc32 and odbccp32"
     echo " native_oleaut32 Override oleaut32"
     echo " nocrashdialog Disable the graphical crash dialog"
+    echo " sandbox       Sandbox the wineprefix - remove links to ~"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
@@ -424,6 +425,21 @@ REGEDIT4
 
 _EOF_
     try $WINE regedit "$WINETRICKS_TMP"/crashdialog.reg
+}
+
+sandbox() {
+    # remove symlinks
+    try rm "$WINEPREFIX/drive_c/users/$USER/Desktop"
+    try rm "$WINEPREFIX/drive_c/users/$USER/My Documents"
+    try rm "$WINEPREFIX/drive_c/users/$USER/My Music"
+    try rm "$WINEPREFIX/drive_c/users/$USER/My Pictures"
+    try rm "$WINEPREFIX/drive_c/users/$USER/My Videos"
+    # create replacement directories
+    try mkdir "$WINEPREFIX/drive_c/users/$USER/Desktop"
+    try mkdir "$WINEPREFIX/drive_c/users/$USER/My Documents"
+    try mkdir "$WINEPREFIX/drive_c/users/$USER/My Music"
+    try mkdir "$WINEPREFIX/drive_c/users/$USER/My Pictures"
+    try mkdir "$WINEPREFIX/drive_c/users/$USER/My Videos"
 }
 
 unset_winver() {
@@ -2550,6 +2566,7 @@ do
     native_mdac) set_native_mdac;;
     native_oleaut32) override_dlls native,builtin oleaut32;;
     nocrashdialog) disable_crashdialog;;
+    sandbox) sandbox;;
     version) print_version;;
     volnum) volnum;;
     *) echo Unknown arg $1; usage ; exit 1;;
