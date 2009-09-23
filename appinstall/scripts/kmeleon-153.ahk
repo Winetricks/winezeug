@@ -56,7 +56,8 @@ SHA1("4432b7439df26747d1a560febf4b616e9aa998aa", "gkgfx.dll")
 SHA1("8557040163a14ee0b8108000401618d9bcd397dd", "js3250.dll")
 SHA1("3cefeaab32bcda7627724a508403e7e318b88500", "jsj3250.dll")
 
-; Wine bug 18922. Apparently on wine, installs the Win9x exe, not 2k+.
+; Wine bug 18922. Apparently on wine, installs the Win9x exe, not 2k+. 
+; Apparently a K-Melon bug/hack, working around Wine not running the XP version...
 TODO_SHA1("d492f8e77b9b6dd90efbb04b3955db4f3e65500e", "5092d2185645fc23b775a43ee42cec3d48cb82bc", "k-meleon.exe")
 
 SHA1("4ec3d9e2ea6c17a5310e070d23eb31a1f679a38d", "k-meleon.exe.manifest")
