@@ -329,9 +329,17 @@ else
 fi
 
 chmod 644 *.txt
-ssh $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER mkdir -p logs/appinstall-$TAG
-scp *.txt $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER:~/logs/appinstall-$TAG
 
-cleanup
+# If the ssh info is provided, scp the files. If not, leave the files around, so
+# they can be manually reviewed.
+if [ $APPINSTALL_SSH_USER ] ; then
+    ssh $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER mkdir -p logs/appinstall-$TAG
+    scp *.txt $APPINSTALL_SSH_USER@$APPINSTALL_SSH_SERVER:~/logs/appinstall-$TAG
+    cleanup
+else
+    mkdir -p $WORKDIR/appinstall-$TAG
+    cp *.txt $WORKDIR/appinstall-$TAG
+    cleanup
+fi
 
 exit 0
