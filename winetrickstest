@@ -2,7 +2,6 @@
 # There's a lot of stuff here that probably doesn't need to be tested, e.g., 
 # setting dlls to native, and different windows versions. It doesn't hurt to test
 # and may find weird problems. Plus, that way we can test every function.
-# Currently not tested:
 
 set -ex
 
@@ -16,7 +15,6 @@ for verb in \
     cc580 \
     colorprofile \
     comctl32.ocx \
-    controlpad \
     corefonts \
     d3dx9 \
     dcom98 \
@@ -127,6 +125,7 @@ then
 fi
 
 # Broken
+#    controlpad #Broken on 64-bit karmic
 #    dotnet30 
 #    ogg
 #    psdkvista
