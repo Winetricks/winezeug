@@ -31,6 +31,7 @@
 set -x
 
 WINE=${WINE:-wine}
+WINESERVER=${WINESERVER:-wineserver}
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine-appinstall}
 APPINSTALL_CACHE=${APPINSTALL_CACHE:-$HOME/.appinstallcache}
 WORKDIR=`pwd`
@@ -70,8 +71,7 @@ cleanup() {
 }
 
 prep_prefix() {
-    # FIXME: This shouldn't depend on an installed wine.
-    wineserver -k || true
+    $WINESERVER -k || true
     rm -rf "$WINEPREFIX"
     $WINE wineboot
     # We want to remove Z:\, but it's foobaring up when I do...for now, ignore.
@@ -117,6 +117,11 @@ if [ ! -x "`which "$WINE"`" ]
 then	
   echo "Cannot find wine: '($WINE)'!"
   exit 1
+fi
+
+if [ ! -x "`which "$WINESERVER"`" ]
+  then
+      die "Cannot find wineserver ($WINESERVER)"
 fi
 
 if [ ! -x "`which sha1sum`" ]
