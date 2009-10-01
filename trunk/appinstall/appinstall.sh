@@ -107,7 +107,7 @@ runwait() {
 }
 
 verifyahk() {
-    if [ ! "`sha1sum autohotkey.exe`" = "10aae5e538327d5bdb54e4d9bc0c8971b2a831a3  autohotkey.exe" ] ; then
+    if [ ! "`sha1sum autohotkey.exe`" = "7af551a851da5ccb8a98ba980b6b19ec5892884d  autohotkey.exe" ] ; then
     die "AutoHotkey sha1sum failed."
     fi
 }
