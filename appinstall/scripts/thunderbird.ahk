@@ -23,7 +23,7 @@
 
 ; Download thunderbird, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://releases.mozilla.org/pub/mozilla.org/thunderbird/releases/2.0.0.21/win32/en-US/Thunderbird%20Setup%202.0.0.21.exe", "thunderbird-2.0.0.21.exe", "fd31056d4feb673747b3d4387243206840f57681")
+DOWNLOAD("http://www.filehippo.com/download/file/3005e5bfda948c9509ace80a3294ef2db91f9de37b752a366d94bfe7facc1c47/", "thunderbird-2.0.0.21.exe", "fd31056d4feb673747b3d4387243206840f57681")
 
 Runwait, thunderbird-2.0.0.21.exe -ms
 ERROR_TEST("Installing Thunderbird had some error.", "Installing Thunderbird went okay.")

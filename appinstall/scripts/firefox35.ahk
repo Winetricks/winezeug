@@ -23,7 +23,7 @@
 
 ; Download Firefox, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://releases.mozilla.org/pub/mozilla.org/firefox/releases/3.5/win32/en-US/Firefox%20Setup%203.5.exe", "firefox_3.5.exe", "a9ef21ba8173a5d850b408fc448a7bc889eb68cb")
+DOWNLOAD("http://www.filehippo.com/download/file/f4fa77e33db2d29bbc49f84a997b31295ef2f7794a94db16d254d1b3d159da80/", "firefox_3.5.exe", "a9ef21ba8173a5d850b408fc448a7bc889eb68cb")
 
 Runwait, firefox_3.5.exe -ms
 ERROR_TEST("Installing Firefox had some error.", "Installing Firefox went okay.")

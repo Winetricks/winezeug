@@ -24,7 +24,7 @@
 
 ; Download ahk, silently run the installer, sha1sum installed files, run it, verify the window exists, and exit.
 
-DOWNLOAD("http://www.autohotkey.net/programs/AutoHotkey104803_Install.exe", "AutoHotkey_Install.exe", "5cf0f16e9aa2f2e96a3b08e0d938602aff39a33e")
+DOWNLOAD("http://www.autohotkey.com/download/AutoHotkey104803_Install.exe", "AutoHotkey_Install.exe", "5cf0f16e9aa2f2e96a3b08e0d938602aff39a33e")
 
 Runwait, AutoHotkey_Install.exe /S
 ERROR_TEST("Installing AHK had some error.", "Installing AHK went okay.")
