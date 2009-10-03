@@ -77,7 +77,7 @@ prep_prefix() {
     # We want to remove Z:\, but it's foobaring up when I do...for now, ignore.
     # rm -f "$WINEPREFIX"/dosdevices/z\:
     ln -s "$APPINSTALL_CACHE" "$WINEPREFIX"/drive_c/appinstall
-    ls  "$WINEPREFIX"/drive_c/appinstall
+    ls "$WINEPREFIX"/drive_c/appinstall
 }
 
 runwait() {
@@ -183,7 +183,6 @@ for x in \
     notepad.ahk \
     notepadpp.ahk \
     pidgin.ahk \
-    ppviewer03.ahk \
     putty.ahk \
     python26.ahk \
     reg.ahk \
@@ -256,6 +255,24 @@ for x in \
         echo $x >> test_list
         runwait $WINE "C:\appinstall\autohotkey.exe" "$x"
 done
+
+# Broken downloads. If the file isn't in $APPINSTALL_CACHE, don't even bother to
+# get the ahk script:
+cd $APPINSTALL_CACHE
+
+# FIXME: If there gets to be a lot of these, should do a for loop...
+# Powerpoint Viewer 2003
+if [ -e ppviewer.exe -a "`sha1sum ppviewer.exe`"x = "4d13ca85d1d366167b6247ac7340b7736b1bff87  ppviewer.exe"x ]
+then
+    prep_prefix
+    cd "$WINEPREFIX"/drive_c/appinstall
+    wget "http://winezeug.googlecode.com/svn/trunk/appinstall/scripts/ppviewer03.ahk"
+    echo ppviewer03.ahk >> test_list
+    runwait $WINE "C:\appinstall\autohotkey.exe" "ppviewer03.ahk"
+else
+    return
+fi
+
 
 # Take a break, just in case the last tests takes a while to exit
 sleep 1m
