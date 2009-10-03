@@ -148,51 +148,24 @@ PostMessage, 0x112, 0xF060,,, %windowname%
 ;   and sha1sum is the 40 character sha1sum. Double-quotes must be used around all strings.
 ;
 ; Supported protocols:
-;   HTTP, HTTPS, FTP
+;   HTTP, HTTPS, FTP, Gopher
 ;
 ; Precautions:
-;   Function needs sha1sum downloaded into %APPINSTALL% before it could be used further.
-;   Function needs wget downloaded via HTTP into %APPINSTALL% before it could be used for FTP
-;   and other connection types.
+;   Function needs sha1sum downloaded into %APPINSTALL% before it could be used
+;   further...'init_test' does this for you
 DOWNLOAD(url, filename, sha1sum)
 {
     global
     local TEMPFILE
     local checksum
     local sha1sumgood
-    local url_lower
 
     IfNotExist, %filename%
     {
-        ; UrlDownloadToFile can only download from HTTP sources 
-        ; wget can download from ftp sources too, but is an external dependency
-        ; --> wget is needed to be downloaded before used for other protocols!
-        StringLower, url_lower, url
-        If url_lower contains http://,https://
-        {
-            UrlDownloadToFile, %url%, %filename%
-        }
-        Else If url_lower contains ftp://
-        {
-            IfNotExist, %APPINSTALL%\wget.exe
-            {
-                FileAppend, Dependency wget.exe not found but needed for download link. Error 4. Test failed.`n, %OUTPUT%
-                FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
-                exit 4
-            }
-            RunWait, %APPINSTALL%\wget.exe -T 60 -q %url% --output-document=%filename%
-        }
-        Else
-        {
-            FileAppend, %url% uses a protocol which is currently not supported. Error 5. Test failed.`n, %OUTPUT%
-            FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
-            exit 5
-        }
-        
+        UrlDownloadToFile, %url%, %filename%
         If GetLastError
         {
-            FileAppend, Downloading %filename% failed. Error 2. Test failed.`n, %OUTPUT%
-            FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
+            FileAppend, Downloading %filename% failed. Error 2. TEST SKIPPED.`n, %OUTPUT%
             exit 2
         }
         Else
@@ -215,8 +188,7 @@ DOWNLOAD(url, filename, sha1sum)
     
     If (checksum != sha1sumgood)
     {
-        FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. Test failed.`n, %OUTPUT%
-        FileAppend, DOWNLOAD exits run. TEST ABORTED.`n, %OUTPUT%
+        FileAppend, %filename% checksum failed. Got %checksum%`, expected %sha1sum%. Error 3. TEST SKIPPED.`n, %OUTPUT%
         exit 3
     }
 }

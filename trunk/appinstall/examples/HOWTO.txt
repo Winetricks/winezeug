@@ -202,7 +202,7 @@ There are also several helper functions that aren't built into AutoHotKey, but i
     * CHECK_DIR - Check if the directory exists (and is a directory, not a file)
     * CHECK_FILE - Check if a file exists. Useful for checking files like install logs that don't have a consistent sha1sum.
     * CLOSE - Closes a window nicely, by sending it an ALT+F4.
-    * DOWNLOAD - Download a file. Supports http/https. Optional: supports ftp if you include wget in your test.
+    * DOWNLOAD - Download a file. Supports http/https/ftp/gopher
     *
 
       ERROR_TEST - Check if LastError is set. Used after any command that doesn't have it's own error checking.
