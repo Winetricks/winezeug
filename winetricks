@@ -1273,14 +1273,10 @@ _EOF_
 #----------------------------------------------------------------
 
 load_gdiplus() {
-    # gdiplus is documented here as a redistributable:
-    # http://msdn.microsoft.com/library/en-us/gdicpp/GDIPlus/GDIPlus.asp
-    # however, there's no standalone installer.  So install a random
-    # app that happens to bundle it.
-    download . http://download.microsoft.com/download/a/1/a/a1adc39b-9827-4c7a-890b-91396aed2b86/ppviewer.exe 4d13ca85d1d366167b6247ac7340b7736b1bff87
-    try $WINE "$WINETRICKS_CACHE"/ppviewer.exe $WINETRICKS_QUIET
+    download . http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB957096-x86-ENU.exe d8c1d333ee52f0152e67c1420727cd413b1eed32
+    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB957096-x86-ENU.exe /extract:$WINETRICKS_TMP_WIN $WINETRICKS_QUIET
     # And then make it globally available.
-    try cp "$programfilesdir_unix/Microsoft Office/PowerPoint Viewer/GDIPLUS.DLL" "$WINDIR"/system32/
+    try cp "$WINETRICKS_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$WINDIR"/system32/
 
     # For some reason, native,builtin isn't good enough...?
     override_dlls native gdiplus
