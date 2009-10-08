@@ -385,6 +385,17 @@ download() {
            # fortunately, we know it
            try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
         fi
+        # Need to decompress .exe's that are compressed, else cygwin fails
+        echo Is $file an .exe ?
+        case $file in
+        *.exe)
+            echo Is $file compressed?
+            file $file
+            case `file $file` in
+            *gzip*) mv $file $file.gz; gunzip < $file.gz > $file;;
+            esac
+        esac
+           
         cd "$olddir"
     fi
     if [ "$3"x != ""x ]
@@ -712,8 +723,8 @@ load_corefonts() {
 
 load_cygwin() {
     download cygwin http://cygwin.com/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
-    mkdir "$DRIVE_C"/cygpkgs
-    test -f  "$DRIVE_C"/cygpkgs/setup.exe || cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$DRIVE_C"/cygpkgs
+    mkdir -p "$DRIVE_C"/cygpkgs
+    cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$DRIVE_C"/cygpkgs
     cd "$DRIVE_C"/cygpkgs
     try $WINE setup.exe
     cd "$olddir"
