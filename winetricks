@@ -19,7 +19,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20090913 
+VERSION=20091007
 
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
@@ -49,6 +49,9 @@ test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE`"
 WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
+
+# Overridden for windows
+ISO_MOUNT_ROOT=/mnt/winetricks
 
 WINDIR="$DRIVE_C/windows"
 
@@ -2201,7 +2204,6 @@ iso_mount()
         done
     else 
         # Linux
-        ISO_MOUNT_ROOT=/mnt/winetricks
         case "$GUI-$DE" in
         gnome) 
           1-gksudo "mkdir -p $ISO_MOUNT_ROOT"
@@ -2259,7 +2261,7 @@ load_vc2005trial()
       # See also http://support.microsoft.com/?kbid=913445
       die "not implemented yet"
     else
-      cd $ISO_MOUNT_ROOT/vs/setup
+      cd $ISO_MOUNT_ROOT/vs/Setup
       try $WINE setup.exe
 
       # FIXME: unify these and make the windows one right
