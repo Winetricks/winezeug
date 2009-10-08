@@ -203,6 +203,7 @@ usage() {
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
     echo " vb6run        MS Visual Basic 6 runtime"
+    echo " vc2005sp1     MS Visual C++ 2005 Service Pack 1 (install trial 1st)"
     echo " vc2005trial   MS Visual C++ 2005 Trial"
     echo " vc2005express MS Visual C++ 2005 Express"
     echo " vc2005expresssp1 MS Visual C++ 2005 Express SP1 (does not work yet)"
@@ -386,11 +387,10 @@ download() {
            try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
         fi
         # Need to decompress .exe's that are compressed, else cygwin fails
-        echo Is $file an .exe ?
-        case $file in
-        *.exe)
-            echo Is $file compressed?
-            file $file
+        # Only affects cygwin, so don't barf if 'file' not installed
+        FILE=`which file`
+        case $FILE-$file in
+        /*-*.exe)
             case `file $file` in
             *gzip*) mv $file $file.gz; gunzip < $file.gz > $file;;
             esac
@@ -2298,6 +2298,22 @@ load_vc2005trial()
 
 #----------------------------------------------------------------
 
+load_vc2005sp1()
+{
+    if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+    then
+        die "install vc2005trial first (this verb will be merged into that once it's debugged)"
+    fi
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=bb4a75ab-e2d4-4c96-b39d-37baf6b5b1dc
+    download vc2005sp1 http://download.microsoft.com/download/6/3/c/63c69e5d-74c9-48ea-b905-30ac3831f288/VS80sp1-KB926601-X86-ENU.exe d4b5c73253a7a4f5b4b389f41b94fea4a7247b57
+    cd "$WINETRICKS_CACHE"/vc2005sp1
+    try $WINE VS80sp1-KB926601-X86-ENU.exe
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 load_vlc() {
     download . http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
     try $WINE "$WINETRICKS_CACHE"/vlc-0.8.6f-win32.exe $WINETRICKS_S
@@ -2647,6 +2663,7 @@ do
     vbrun600|vbrun60|vb6run) load_vbrun60;;
     vc2005express) load_vc2005express;;
     vc2005expresssp1) load_vc2005expresssp1;;
+    vc2005sp1) load_vc2005sp1;;
     vc2005trial) load_vc2005trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
