@@ -53,6 +53,7 @@ for verb in \
     msxml4 \
     msxml6 \
     openwatcom \
+    physx \
     quicktime72 \
     riched20 \
     riched30 \

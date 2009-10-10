@@ -188,6 +188,7 @@ usage() {
     echo " ole2          MS 16 bit OLE"
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
+    echo " physx         NVIDIA/AGEIA PhysX runtime"
     echo " psdk2003      MS Platform SDK 2003"
     echo " psdkvista     MS Vista SDK (does not install yet)"
     echo " psdkwin7      MS Windows 7 SDK (installing just headers and c++ compiler works)"
@@ -1799,6 +1800,15 @@ load_pdh() {
 
 #----------------------------------------------------------------
 
+load_physx()
+{
+    # http://www.nvidia.com/object/physx_9.09.0814.html
+    download . http://us.download.nvidia.com/Windows/9.09.0814/PhysX_9.09.0814_SystemSoftware.exe e19f7c3385a4a68e7acb85301bb4d2d0d1eaa1e2
+    try $WINE "$WINETRICKS_CACHE"/PhysX_9.09.0814_SystemSoftware.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_psdk2003()
 {
     load_vcrun6
@@ -2696,6 +2706,7 @@ do
     ole2) load_ole2;;
     openwatcom|watcom) load_openwatcom;;
     pdh) load_pdh;;
+    physx) load_physx;;
     psdk2003) load_psdk2003;;
     psdkvista) load_psdkvista;;
     psdkwin7) load_psdkwin7;;
