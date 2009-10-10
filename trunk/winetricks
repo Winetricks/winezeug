@@ -934,7 +934,7 @@ load_dotnet20() {
     test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || load_gecko
     set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
-    download dotnet20 http://kegel.com/wine/l_intl.nls
+    download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     try cp -f "$WINETRICKS_CACHE"/dotnet20/l_intl.nls "$WINDIR/system32/"
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5
