@@ -6,6 +6,8 @@ set -e
 
 export WINEPREFIX=$HOME/.wine-test
 
+mkdir -p logs
+
 if true
 then
     ./configure CFLAGS="-g -O0" --prefix=/usr/local/wine
@@ -18,12 +20,11 @@ rm -rf $WINEPREFIX
 server/wineserver -k || true
 
 # Following section could use some cleanup, we're just trying to install gecko
-tools/wineprefixcreate
 server/wineserver -w
 set -e
 export WINE=$HOME/wine-git/wine
 export WINEPREFIXCREATE=$HOME/wine-git/tools/wineprefixcreate
-sh winetricks gecko
+sh winetricks gecko nocrashdialog
 set +e
 
 # keep a notepad up to avoid repeated startup penalty
@@ -37,12 +38,12 @@ DATE=`date +%F-%H.%M`
 git log -n 1 > logs/$DATE.log
 
 # Choose the version of valgrind
-PATH=/usr/local/valgrind-svn/bin:$PATH
+PATH=/usr/local/valgrind-10896/bin:$PATH
 
 # Finally run the test
-export VALGRIND_OPTS="--trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$PWD/tools/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes"
+export VALGRIND_OPTS="--trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$PWD/tools/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes --show-possible=no"
 export WINETEST_WRAPPER=valgrind
-time make -j2 -k test >> logs/$DATE.log 2>&1
+time make -k test >> logs/$DATE.log 2>&1
 
 # Kill off our notepad and any stragglers
 server/wineserver -k || true
