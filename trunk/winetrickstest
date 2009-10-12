@@ -33,6 +33,8 @@ for verb in \
     gdiplus \
     gecko \
     gecko-dbg \
+    glsl-enable \
+    glsl-disable \
     hosts \
     ie6 \
     jet40 \

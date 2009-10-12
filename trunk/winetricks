@@ -163,6 +163,8 @@ usage() {
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
+    echo " glsl-disable  Disable GLSL use by Wine's Direct3D"
+    echo " glsl-enable   Enable GLSL use by Wine's Direct3D (default)"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Codecs (Indeo)"
     echo " jet40         MS Jet 4.0 Service Pack 8"
@@ -1327,6 +1329,34 @@ load_gdiplus() {
 
     # For some reason, native,builtin isn't good enough...?
     override_dlls native gdiplus
+}
+
+#----------------------------------------------------------------
+
+load_glsl_disable() {
+    echo "Disabling GLSL"
+    cat > "$WINETRICKS_TMP"/disableglsl.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"UseGLSL"="disabled"
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/disableglsl.reg
+}
+
+#----------------------------------------------------------------
+
+load_glsl_enable() {
+    echo "Enabling GLSL"
+    cat > "$WINETRICKS_TMP"/enableglsl.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"UseGLSL"="enabled"
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/enableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -2679,6 +2709,8 @@ do
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     gecko-dbg|geckodbg|gecko_dbg|geckodebug|gecko_debug|gecko-debug) load_gecko_dbg;;
+    glsl-disable) load_glsl_disable;;
+    glsl-enable) load_glsl_enable;;
     hosts) load_hosts;;
     icodecs) load_icodecs;;
     ie6) load_ie6;;
