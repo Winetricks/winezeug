@@ -2261,6 +2261,11 @@ load_vc2005expresssp1()
 
 load_vcdmount()
 {
+    if test "$WINE" != ""
+    then
+        return
+    fi
+
     # Call only on real Windows.
     # Sets VCDMOUNT and ISO_MOUNT_ROOT
 
@@ -2275,16 +2280,26 @@ load_vcdmount()
         test -d "$PROGRAMFILES" && break
     done
     VCDMOUNT="$PROGRAMFILES/Elaborate Bytes/VirtualCloneDrive/vcdmount.exe"
-    test -x "$VCDMOUNT" || die "Please install Virtual CloneDrive"
+    if test ! -x "$VCDMOUNT" 
+    then
+        warn "Installing Virtual CloneDrive"
+        download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
+        # have to use cmd else vista won't let cygwin run .exe's?
+        chmod +x "$WINETRICKS_CACHE"/SetupVirtualCloneDrive.exe
+        cmd /c "$WINETRICKS_CACHE_WIN"\\SetupVirtualCloneDrive.exe
+    fi
 
-    # Find a drive letter (really, VCD has a few in mind, on my system
-    # it starts at f.  FIXME: figure out more portable way to do this.)
-    for letter in f g h i j k l m n o p q r s t u v w x y
+    # FIXME: Use WMI to locate the drive named
+    # "ELBY CLONEDRIVE..." using WMI as described in
+    # http://delphihaven.wordpress.com/2009/07/05/using-wmi-to-get-a-drive-friendly-name/
+    # For now, you just have to hardcode it for your system :-(
+    warn "You probably need to edit the script to tell it which drive VirtualCloneDrive picked"
+    for letter in e f g h
     do
         ISO_MOUNT_ROOT=/cygdrive/$letter
         test -d $ISO_MOUNT_ROOT || break
     done
-    test -d $ISO_MOUNT_ROOT && die "cannot find a free drive letter"
+    test -d $ISO_MOUNT_ROOT && die "cannot find the VirtualCloneDrive"
 }
 
 iso_mount()
@@ -2344,8 +2359,9 @@ load_vc2005trial()
     load_vcrun6
     load_dotnet20
     load_msxml6
+    load_vcdmount
 
-    echo "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
+    warn "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
     download vc2005trial http://download.microsoft.com/download/6/f/5/6f5f7a01-50bb-422d-8742-c099c8896969/En_vs_2005_vsts_180_Trial.img f66ae07618d67e693ca0524d3582208c20e07823
 
     iso_umount
@@ -2398,6 +2414,52 @@ load_vc2005sp1()
     cd "$WINETRICKS_CACHE"/vc2005sp1
     try $WINE VS80sp1-KB926601-X86-ENU.exe
     cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_vc2008trial()
+{
+    load_vcrun6
+    load_dotnet20
+    load_msxml6
+    load_vcdmount
+
+    warn "Visual C++ 2008 Trial does not yet work in Wine, and this recipe isn't quite debugged even in windows yet."
+    warn "Downloading/checksumming Visual C++ 2008 Trial.  This will take some time!"
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=83c3a1ec-ed72-4a79-8961-25635db0192b
+    download vc2008trial http://download.microsoft.com/download/8/1/d/81d3f35e-fa03-485b-953b-ff952e402520/VS2008ProEdition90dayTrialENUX1435622.iso dfb601096f62fd75af6ad62b277be79793f53b56
+
+    iso_umount
+    iso_mount "$WINETRICKS_CACHE"/vc2008trial/VS2008ProEdition90dayTrialENUX1435622.iso
+
+    # FIXME: do this right
+    rm -f /cygdrive/c/Users/$USER/AppData/local/temp/dd_vsinstall80.txt
+
+    if true
+    then
+      cd $ISO_MOUNT_ROOT/Setup
+      try $WINE setup.exe
+
+      # FIXME: unify these and make the windows one right
+      if test "$WINE" = ""
+      then
+          while ! tr -d '\000' < /cygdrive/c/Users/$USER/AppData/local/temp/dd_vsinstall80.txt | grep End_Session
+          do
+              sleep 10
+              echo waiting for setup to finish
+          done
+      else
+          while ps $psargs | grep -q setup.exe
+          do
+              sleep 10
+              echo waiting for setup to finish
+          done
+      fi
+      cd "$olddir"
+    fi
+
+    iso_umount
 }
 
 #----------------------------------------------------------------
@@ -2759,6 +2821,7 @@ do
     vc2005expresssp1) load_vc2005expresssp1;;
     vc2005sp1) load_vc2005sp1;;
     vc2005trial) load_vc2005trial;;
+    vc2008trial) load_vc2008trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005|vcrun2005sp1) load_vcrun2005;;
