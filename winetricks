@@ -122,6 +122,7 @@ die_if_user_not_dirowner() {
 
 usage() {
     set +x
+    # WARNING: do not use single quote in any package description; that breaks the gui menu.
     echo "Usage: $0 [options] package [package] ..."
     echo "This script can help you prepare your system for Windows applications"
     echo "that mistakenly assume all users' systems have all the needed"
@@ -163,8 +164,8 @@ usage() {
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
-    echo " glsl-disable  Disable GLSL use by Wine's Direct3D"
-    echo " glsl-enable   Enable GLSL use by Wine's Direct3D (default)"
+    echo " glsl-disable  Disable GLSL use by Wine Direct3D"
+    echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Codecs (Indeo)"
     echo " jet40         MS Jet 4.0 Service Pack 8"
