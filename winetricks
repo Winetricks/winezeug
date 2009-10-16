@@ -1323,8 +1323,9 @@ _EOF_
 #----------------------------------------------------------------
 
 load_gdiplus() {
-    download . http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB957096-x86-ENU.exe d8c1d333ee52f0152e67c1420727cd413b1eed32
-    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB957096-x86-ENU.exe /extract:$WINETRICKS_TMP_WIN $WINETRICKS_QUIET
+    # http://www.microsoft.com/downloads/details.aspx?familyid=6A63AB9C-DF12-4D41-933C-BE590FEAA05A&displaylang=en
+    download . http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
+    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$WINETRICKS_TMP_WIN $WINETRICKS_QUIET
     # And then make it globally available.
     try cp "$WINETRICKS_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$WINDIR"/system32/
 
