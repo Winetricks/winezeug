@@ -2465,6 +2465,26 @@ load_vc2008trial()
 
 #----------------------------------------------------------------
 
+load_vc2008sp1()
+{
+    echo pfdu is ${programfilesdir_unix}
+    echo setting FOO
+    FOO="${programfilesdir_unix}/Microsoft Visual Studio 9.0/Microsoft Visual Studio 2008 Professional Edition - ENU"
+    echo FOO set to $FOO
+    if test ! -d "$FOO"
+    then
+        die "install vc2008trial first (this verb will be merged into that once it's debugged)"
+    fi
+
+    # http://www.microsoft.com/downloads/details.aspx?familyid=FBEE1648-7106-44A7-9649-6D9F6D58056E
+    download vc2008sp1 http://download.microsoft.com/download/f/6/7/f67fdf05-0586-413f-8231-affbe12f80a8/VS90sp1-KB945140-ENU.exe 91c146dffa96c6d8f9ceb2b5235b04349cf93ed9
+    cd "$WINETRICKS_CACHE"/vc2008sp1
+    try $WINE VS90sp1-KB945140-ENU.exe
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 load_vlc() {
     download . http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
     try $WINE "$WINETRICKS_CACHE"/vlc-0.8.6f-win32.exe $WINETRICKS_S
@@ -2690,7 +2710,7 @@ rm -rf "$WINETRICKS_TMP"/*
 # The folder-name is localized!
 programfilesdir_win="`unset WINEDEBUG; $WINE cmd.exe /c echo "%ProgramFiles%"`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
-programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win"`"
+programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 winetricks_tmp_win="`$XXXPATH -w "$WINETRICKS_TMP"`"
 
@@ -2821,6 +2841,7 @@ do
     vc2005express) load_vc2005express;;
     vc2005expresssp1) load_vc2005expresssp1;;
     vc2005sp1) load_vc2005sp1;;
+    vc2008sp1) load_vc2008sp1;;
     vc2005trial) load_vc2005trial;;
     vc2008trial) load_vc2008trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
