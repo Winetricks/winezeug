@@ -136,6 +136,7 @@ usage() {
     echo "Packages:"
     echo " art2kmin      MS Access 2000 runtime.  Requires Access 2000 Dev license!"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
+    echo " cmake         CMake, the cross-platform, open-source build system"
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
@@ -593,6 +594,13 @@ load_cc580() {
     try cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
 
     override_dlls native,builtin comctl32
+}
+
+#----------------------------------------------------------------
+
+load_cmake() {
+    download . http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.exe 00bd502423546b8bce19ffc180ea78e0e2f396cf
+    try $WINE "$WINETRICKS_CACHE"/cmake-2.6.4-win32-x86.exe
 }
 
 #----------------------------------------------------------------
@@ -2764,6 +2772,7 @@ do
     atmlib) load_atmlib;;
     ahk|autohotkey) load_autohotkey;;
     cc580|comctl32) load_cc580;;
+    cmake) load_cmake;;
     comctl32.ocx) load_comctl32ocx;;
     colorprofile) load_colorprofile;;
     corefonts) load_corefonts;;
