@@ -110,6 +110,7 @@ then
     # Ignores -q
     for verb in \
         allcodecs \
+        cmake \
         cygwin \
         directx9 \
         divx \
