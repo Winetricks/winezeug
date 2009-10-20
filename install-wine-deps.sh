@@ -43,10 +43,10 @@ ubuntu_common_pkgs="\
 bison ccache cvs flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
 libcapi20-3 libcapi20-dev libcupsys2-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
-libglib1.2-dev libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
+libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
 libgphoto2-2-dev libgsm1-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
 libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
-libogg-dev libpng12-dev libpopt-dev libqt3-headers libqt3-mt libqt3-mt-dev libsane-dev \
+libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libqt3-headers libqt3-mt libqt3-mt-dev libsane-dev \
 libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
 libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
 libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
@@ -59,6 +59,7 @@ libelfg0 libfreebob0 libgif-dev libhal-storage-dev libjack-dev"
 
 ubuntu_gutsy_pkgs="\
 cogito \
+libglib1.2-dev \
 libltdl3 \
 libltdl3-dev \
 liblzo-dev \
@@ -68,6 +69,7 @@ x11proto-render-dev \
 "
 
 ubuntu_hardy_pkgs="\
+libglib1.2-dev \
 libltdl3 \
 libltdl3-dev \
 liblzo-dev \
@@ -75,12 +77,14 @@ libopencdk10-dev \
 "
 
 ubuntu_ibex_pkgs="\
+libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
 libltdl7-dev \
 "
 
 ubuntu_jaunty_pkgs="\
+libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
 libltdl7-dev \
