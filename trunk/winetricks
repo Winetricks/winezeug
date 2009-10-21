@@ -1616,7 +1616,6 @@ _EOF_
 load_mono20() {
     # Load Mono, have it handle all .net requests
     download .  ftp://ftp.novell.com/pub/mono/archive/2.0.1/windows-installer/1/mono-2.0.1-gtksharp-2.10.4-win32-1.exe ccb67ac41b59522846e47d0c423836b9d334c088
-    # Anyone know how to get it to do a silent install?
     try $WINE "$WINETRICKS_CACHE"/mono-2.0.1-gtksharp-2.10.4-win32-1.exe $WINETRICKS_SILENT
 
     cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
