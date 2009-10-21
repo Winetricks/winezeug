@@ -177,6 +177,7 @@ usage() {
     echo " mfc40         MS mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
     echo " mfc42         MS mfc42 (same as vcrun6 below)"
     echo " mingw         Minimalist GNU for Windows, including GCC for Windows!"
+    echo " mingw-gdb     GDB for MinGW"
     echo " mono20        mono-2.0.1"
     echo " mono22        mono-2.2"
     echo " mono24        mono-2.4"
@@ -1572,6 +1573,13 @@ load_mfc40() {
 #----------------------------------------------------------------
 
 load_mingw_min() {
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != mingw_min && test -f "$DRIVE_C"/MinGW/bin/gcc.exe
+    then
+        echo "prerequisite mingw_min already installed, skipping"
+        return
+    fi
+
     # See http://mingw.org/wiki/Getting_Started
     download . http://sourceforge.net/projects/mingw/files/GNU%20Binutils/binutils-2.19.1-mingw32-bin.tar.gz 1ab72f3af3fe96d08c3c9bff60c47913704d5774
     download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gcc-core-4.4.0-mingw32-bin.tar.gz b88b8f3644ca0cdf2c41cd03f820bf7823a8eabb
@@ -1609,6 +1617,18 @@ _EOF_
 
     try $WINE regedit "$WINETRICKS_TMP"/mingw_min.reg
     rm -f "$WINETRICKS_TMP"/mingw_min.reg
+}
+
+#----------------------------------------------------------------
+
+load_mingw_gdb() {
+    # See http://mingw.org/wiki/Getting_Started
+    load_mingw_min
+
+    download . http://sourceforge.net/projects/mingw/files/GNU%20Source-Level%20Debugger/GDB-7.0/gdb-7.0-2-mingw32-bin.tar.gz a560cb0e3980d0ed853994c84038260212f58925
+
+    cd "$DRIVE_C"/MinGW
+    gzip -d -c "$WINETRICKS_CACHE"/gdb-7.0-2-mingw32-bin.tar.gz | tar x
 }
 
 #----------------------------------------------------------------
@@ -2860,6 +2880,7 @@ do
     mdac28) load_mdac28;;
     mfc40) load_mfc40;;
     mingw|mingw-min|mingw_min) load_mingw_min;;
+    mingw-gdb|mingw_gdb) load_mingw_gdb;;
     mono19|mono20) load_mono20;;
     mono22) load_mono22;;
     mono24) load_mono24;;
