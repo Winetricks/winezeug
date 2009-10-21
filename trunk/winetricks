@@ -176,6 +176,7 @@ usage() {
     echo " mdac28        MS MDAC 2.8"
     echo " mfc40         MS mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
     echo " mfc42         MS mfc42 (same as vcrun6 below)"
+    echo " mingw         Minimalist GNU for Windows, including GCC for Windows!"
     echo " mono20        mono-2.0.1"
     echo " mono22        mono-2.2"
     echo " mono24        mono-2.4"
@@ -1570,6 +1571,48 @@ load_mfc40() {
 
 #----------------------------------------------------------------
 
+load_mingw_min() {
+    # See http://mingw.org/wiki/Getting_Started
+    download . http://sourceforge.net/projects/mingw/files/GNU%20Binutils/binutils-2.19.1-mingw32-bin.tar.gz 1ab72f3af3fe96d08c3c9bff60c47913704d5774
+    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gcc-core-4.4.0-mingw32-bin.tar.gz b88b8f3644ca0cdf2c41cd03f820bf7823a8eabb
+    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gcc-core-4.4.0-mingw32-dll.tar.gz 0372ecf4caf75d0d9fe4a7739ca234f1a3de831b
+    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gmp-4.2.4-mingw32-dll.tar.gz a14dd928382f093f67cb3cd57c140625b1b265bb
+    download . http://sourceforge.net/projects/mingw/files/MinGW%20libiconv/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma 5b60ce4d9ec9cf91aee437915a2469b915e1235f
+    download . http://sourceforge.net/projects/mingw/files/MinGW%20Runtime/mingwrt-3.16-mingw32-dev.tar.gz 770ff5001989d8a9a1ec4f3621d8f264a24e178f
+    download . http://sourceforge.net/projects/mingw/files/MinGW%20Runtime/mingwrt-3.16-mingw32-dll.tar.gz b8032e97c79e16a3c540043f0f39821df1531ae9
+    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/mpfr-2.4.1-mingw32-dll.tar.gz 43b7ecb2c0c785c44321ff6c4376f51375713a7b
+    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/pthreads-w32-2.8.0-mingw32-dll.tar.gz f922f8c0c42921fd4482a3d2e6f779d6384040c1
+    download . http://sourceforge.net/projects/mingw/files/MinGW%20API%20for%20MS-Windows/w32api-3.13-mingw32-dev.tar.gz 5eb7d8ec0fe032a92bea3a2c8282a78df2f1793c
+
+    mkdir "$DRIVE_C"/MinGW
+    cd "$DRIVE_C"/MinGW
+    gzip -d -c "$WINETRICKS_CACHE"/binutils-2.19.1-mingw32-bin.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/mingwrt-3.16-mingw32-dev.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/mingwrt-3.16-mingw32-dll.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/w32api-3.13-mingw32-dev.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/gmp-4.2.4-mingw32-dll.tar.gz | tar x
+    lzma -d -c "$WINETRICKS_CACHE"/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/mpfr-2.4.1-mingw32-dll.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/pthreads-w32-2.8.0-mingw32-dll.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/gcc-core-4.4.0-mingw32-bin.tar.gz | tar x
+    gzip -d -c "$WINETRICKS_CACHE"/gcc-core-4.4.0-mingw32-dll.tar.gz | tar x
+
+    # Set the path. Make sure to not remove any other variables in %PATH% set by the user/other programs:
+    cat > "$WINETRICKS_TMP"/mingw_min.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Environment]
+_EOF_
+
+    printf '"PATH"="' >>"$WINETRICKS_TMP"/mingw_min.reg
+    printf 'C:\\MinGW\\bin;'$WIN_PATH'\"' | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/mingw_min.reg
+
+    try $WINE regedit "$WINETRICKS_TMP"/mingw_min.reg
+    rm -f "$WINETRICKS_TMP"/mingw_min.reg
+}
+
+#----------------------------------------------------------------
+
 load_mono20() {
     # Load Mono, have it handle all .net requests
     download .  ftp://ftp.novell.com/pub/mono/archive/2.0.1/windows-installer/1/mono-2.0.1-gtksharp-2.10.4-win32-1.exe ccb67ac41b59522846e47d0c423836b9d334c088
@@ -2723,6 +2766,9 @@ programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr 
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 winetricks_tmp_win="`$XXXPATH -w "$WINETRICKS_TMP"`"
 
+# Get the %PATH%, needed by MinGW, possibly others:
+WIN_PATH="`$WINE cmd.exe /c echo "%PATH%"`"
+
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
 #
@@ -2814,6 +2860,7 @@ do
     mdac27) load_mdac27;;
     mdac28) load_mdac28;;
     mfc40) load_mfc40;;
+    mingw|mingw-min|mingw_min) load_mingw_min;;
     mono19|mono20) load_mono20;;
     mono22) load_mono22;;
     mono24) load_mono24;;
