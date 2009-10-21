@@ -49,6 +49,7 @@ for verb in \
     mfc40 \
     mfc42 \
     mingw \
+    mingw-gdb \
     mono20 \
     mono22 \
     mono24 \
