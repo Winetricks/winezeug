@@ -1625,7 +1625,7 @@ load_mingw_gdb() {
     # See http://mingw.org/wiki/Getting_Started
     load_mingw_min
 
-    download . http://sourceforge.net/projects/mingw/files/GNU%20Source-Level%20Debugger/GDB-7.0/gdb-7.0-2-mingw32-bin.tar.gz a560cb0e3980d0ed853994c84038260212f58925
+    download . http://sourceforge.net/projects/mingw/files/GNU%20Source-Level%20Debugger/GDB-7.0/gdb-7.0-2-mingw32-bin.tar.gz 696a44bb102a9ec06a4a977906e9465eb4adfd9b
 
     cd "$DRIVE_C"/MinGW
     gzip -d -c "$WINETRICKS_CACHE"/gdb-7.0-2-mingw32-bin.tar.gz | tar x
