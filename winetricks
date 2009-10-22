@@ -2305,7 +2305,8 @@ load_vc2005express()
         rm -rf vc2005express.tmp || true
     else
         warn "Don't forget to install the IDE, or mt.exe won't be installed"
-        try $WINE "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
+        cd "$WINETRICKS_CACHE"/vc2005express
+        try $WINE vcsetup.exe
         # The interactive installer seems to be asynchronous, so wait until its log file directory is created
         while test ! -d "$programfilesdir_unix/Microsoft Visual Studio 8/Microsoft Visual C++ 2005 Express Edition - ENU/Logs"
         do
