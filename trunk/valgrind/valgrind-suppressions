@@ -110,6 +110,18 @@
    obj:/usr/lib*/libGLcore.so.169.12 
 }
 {
+   suppress_ioctl_libglcore_18044
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   obj:/usr/lib32/libGLcore.so.180.44
+}
+{
+   suppress_cond_libglcore_18044
+   Memcheck:Cond
+   obj:/usr/lib32/libGLcore.so.180.44
+}
+{
    bogus_addr4_libgl_109631
    Memcheck:Addr4
    obj:/usr/lib*/libGL.so.1.0.9631
@@ -119,12 +131,17 @@
    Memcheck:Addr4
    obj:/usr/lib*/libGL.so.1.0.9639
 }
-
 {
    suppress_leak_libgl_109631
    Memcheck:Leak
    fun:malloc
    obj:/usr/lib*/libGL.so.1.0.9631
+}
+{
+   suppress_leak_libgl_18044
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib32/libGL.so.180.44
 }
 {
    bogus_X11_1
@@ -386,6 +403,22 @@
 # If we think it's solid:
 # suppress_wine_dirname__functionname[_moreifneeded]
 # If we aren't sure, change suppress to todo
+{
+   # intentionally frees an invalid pointer.
+   # It would be nice if that were in a different
+   # function, so we could suppress it specifically,
+   # and not other possible warnings in the heap tests.
+   suppress_wine_dlls_kernel32_tests__test_heap_invalid_free
+   Memcheck:Free
+   fun:notify_free
+   fun:RtlFreeHeap
+   fun:HeapFree
+   fun:GlobalFree
+   fun:test_heap
+   fun:func_heap
+   fun:run_test
+   fun:main
+}
 {   
    suppress_wine_dlls_kernel32_tests__CreateThread_basic_badaccess
    Memcheck:Addr1
