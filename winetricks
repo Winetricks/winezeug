@@ -1919,7 +1919,9 @@ load_psdk2003()
     # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
     download psdk2003 http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe 5c7dc2e1eb902b376d7797cc383fefdfc64ff9c9
     echo "This can take up to an hour."
-    try $WINE "$WINETRICKS_CACHE"/psdk2003/PSDK-x86
+    cd "$WINETRICKS_CACHE"/psdk2003
+    try $WINE PSDK-x86.exe
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
