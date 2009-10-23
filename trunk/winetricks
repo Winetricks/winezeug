@@ -2270,7 +2270,9 @@ load_vc2003toolkit()
     # (Plus the sha1sum, which I still have from a copy straight from microsoft, 
     #  protects us somewhat against corrupted copies.)
     download . http://npg.dl.ac.uk/MIDAS/MIDAS_Release/VCToolkitSetup.exe 956c81c3106b97042c4126b23c81885c4b5211f4
-    try $WINE "$WINETRICKS_CACHE"/VCToolkitSetup.exe
+    cd "$WINETRICKS_CACHE"
+    try $WINE VCToolkitSetup.exe
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
