@@ -2968,7 +2968,7 @@ do
     esac
     shift
     # cleanup
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$WINETRICKS_TMP"
 done
 
 test "$WINETRICKS_QUIET" = "" && echo winetricks done. || true
