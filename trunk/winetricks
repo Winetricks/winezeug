@@ -1712,11 +1712,15 @@ load_mozillabuild() {
 #----------------------------------------------------------------
 
 load_mpc() {
-    download . $SOURCEFORGE/guliverkli2/mplayerc_20080414.zip bc9f922d7151e7cc7fef429b085cf208ef989bab
-    cd "$DRIVE_C"
-    try unzip "$WINETRICKS_CACHE"/mplayerc_20080414.zip
+    download . $SOURCEFORGE/guliverkli2/Media%20Player%20Classic/6.4.9.1/mplayerc_20090706.zip 9b8e06a3997a786dccfb5739e0cc1a34f17905b6
+    mkdir -p "$programfilesdir_unix/Media Player Classic"
+    cd "$programfilesdir_unix/Media Player Classic"
+    try unzip "$WINETRICKS_CACHE"/mplayerc_20090706.zip
+
+    append_path "$programfilesdir_win\Media Player Classic"
+
     cd "$olddir"
-    echo MPC now available as c:/mplayerc.exe
+    warn "MPC now available as $programfilesdir_win\Media Player Classic\mplayerc.exe"
 }
 
 #----------------------------------------------------------------
