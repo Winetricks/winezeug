@@ -244,6 +244,9 @@ usage() {
     echo " native_mdac   Override odbc32 and odbccp32"
     echo " native_oleaut32 Override oleaut32"
     echo " nocrashdialog Disable the graphical crash dialog"
+    echo " orm=backbuffer Registry tweak: OffscreenRenderingMode=backbuffer"
+    echo " orm=fbo        Registry tweak: OffscreenRenderingMode=fbo (default)"
+    echo " orm=pbuffer    Registry tweak: OffscreenRenderingMode=pbuffer"
     echo " sandbox       Sandbox the wineprefix - remove links to ~"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
@@ -437,6 +440,18 @@ set_app_winver() {
 
     try $WINE regedit "$WINETRICKS_TMP"/set-winver.reg
     rm "$WINETRICKS_TMP"/set-winver.reg
+}
+
+set_orm() {
+    echo "Setting OffscreenRenderingMode to $1"
+    cat > "$WINETRICKS_TMP"/set-orm.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"OffscreenRenderingMode"="$1"
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/set-orm.reg
 }
 
 disable_crashdialog() {
@@ -2956,6 +2971,9 @@ do
     fakeie6) set_fakeie6;;
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
     allvcodecs|allcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
+    fbo|orm=fbo) set_orm fbo;;
+    backbuffer|orm=backbuffer) set_orm backbuffer;;
+    pbuffer|orm=pbuffer) set_orm pbuffer;;
     nt40|winver=nt40) set_winver nt40;;
     win98|winver=win98) set_winver win98;;
     win2k|winver=win2k) set_winver win2k;;
