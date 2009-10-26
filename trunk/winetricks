@@ -49,6 +49,7 @@ test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE`"
 WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
+mkdir -p $WINETRICKS_TMP
 
 # Overridden for windows
 ISO_MOUNT_ROOT=/mnt/winetricks
@@ -544,6 +545,22 @@ _EOF_
     $WINE regedit "$WINETRICKS_TMP"/register-font.reg
 }
 
+append_path() {
+# Set the path. Make sure to not remove any other variables in %PATH% set by the user/other programs:
+    NEW_PATH="$1"
+    cat > "$WINETRICKS_TMP"/path.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Environment]
+_EOF_
+
+    printf '"PATH"="' >>"$WINETRICKS_TMP"/path.reg
+    printf "$NEW_PATH;$WIN_PATH"'\"' | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/path.reg
+
+    try $WINE regedit "$WINETRICKS_TMP"/path.reg
+    rm -f "$WINETRICKS_TMP"/path.reg
+
+}
 #----- common download for several verbs
 helper_directx_dl() {
     # Aug 2009 DirectX 9c User Redistributable
@@ -1605,18 +1622,7 @@ load_mingw_min() {
     gzip -d -c "$WINETRICKS_CACHE"/gcc-core-4.4.0-mingw32-bin.tar.gz | tar x
     gzip -d -c "$WINETRICKS_CACHE"/gcc-core-4.4.0-mingw32-dll.tar.gz | tar x
 
-    # Set the path. Make sure to not remove any other variables in %PATH% set by the user/other programs:
-    cat > "$WINETRICKS_TMP"/mingw_min.reg <<_EOF_
-REGEDIT4
-
-[HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Environment]
-_EOF_
-
-    printf '"PATH"="' >>"$WINETRICKS_TMP"/mingw_min.reg
-    printf 'C:\\MinGW\\bin;'$WIN_PATH'\"' | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/mingw_min.reg
-
-    try $WINE regedit "$WINETRICKS_TMP"/mingw_min.reg
-    rm -f "$WINETRICKS_TMP"/mingw_min.reg
+    append_path C:\\MinGW\\bin
 }
 
 #----------------------------------------------------------------
@@ -2968,7 +2974,10 @@ do
     esac
     shift
     # cleanup
-    rm -rf "$WINETRICKS_TMP"
+    rm -rf "$WINETRICKS_TMP"/*
 done
+
+    # remove the temp directory
+    rm -rf "$WINETRICKS_TMP"
 
 test "$WINETRICKS_QUIET" = "" && echo winetricks done. || true
