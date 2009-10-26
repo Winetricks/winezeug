@@ -1591,7 +1591,7 @@ load_mfc40() {
 
 load_mingw_min() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != mingw_min && test -f "$DRIVE_C"/MinGW/bin/gcc.exe
+    if test $PACKAGE != mingw_min && test $PACKAGE != mingw && test $PACKAGE != mingw-min && test -f "$DRIVE_C"/MinGW/bin/gcc.exe
     then
         echo "prerequisite mingw_min already installed, skipping"
         return
