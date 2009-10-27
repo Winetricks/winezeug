@@ -2,6 +2,9 @@
 set -e
 set -x
 
+# We grep error messages, so make them all English
+LANG=C
+
 setup()
 {
    # Unapply local patches before sync
