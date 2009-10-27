@@ -9,7 +9,7 @@ cd logs
 DATE=`ls -d ????-??-??-??.?? | tail -1`
 PREV=`ls -d ????-??-??-??.?? | tail -2 | head -1`
 
-PATTERN="are definitely|uninitialised|Unhandled exception|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86|impossible|Assertion|INTERNAL ERROR"
+PATTERN="are definitely|uninitialised|Unhandled exception|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86|impossible|Assertion|INTERNAL ERROR|Terminated"
 
 # Generate histogram of errors
 cat $DATE.log |
@@ -48,11 +48,14 @@ cat $DATE-diff.txt | egrep '^[-+].*('"$PATTERN"')|diff' >  $DATE-summary.txt || 
 
 set +e
 
-# Generate individual diffs for each test.
+# Generate brutally minimalist diffs for each test.
 cd $DATE
 for file in `ls vg*.txt | grep -v .-diff.txt`
 do
     out=`echo $file | sed 's/vg-/diff-/'`
+    # Prepare a cleaned-up version of each file, removing
+    # parts that change rapidly and don't help identify valgrind
+    # warnings.
     for foo in $file ../$PREV/$file
     do
       sed "\
@@ -61,9 +64,14 @@ s/0x[0-9a-f]*/0xNNNN/g;\
 s/^ELF.*/ELF/;\
 s/\\-PE.*//;\
 s/\.c:[0-9]*/.c/;\
+s/[,0-9]* bytes in /NNN bytes in /;\
 s/(thread [0-9a-f]*)/(thread XX)/\
 " < $foo | perl ../../tools/valgrind/skip-backtrace.pl > $foo.x || touch $foo.x
     done
-    diff -Nu ../$PREV/$file.x $file.x > $out && rm $out
+    # Ignore empty diffs or diffs that do not contain a valgrind warning
+    if diff -Nu ../$PREV/$file.x $file.x > $out || ! egrep '^[-+].*('"$PATTERN"')' $out
+    then
+       rm $out
+    fi
     rm ../$PREV/$file.x $file.x
 done
