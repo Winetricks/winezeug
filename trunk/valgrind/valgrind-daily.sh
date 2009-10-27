@@ -17,6 +17,9 @@ then
     exit 1
 fi
 
+# We grep error messages, so make them all English
+LANG=C
+
 # Choose the version of valgrind
 PATH=/usr/local/valgrind-10903/bin:$PATH
 
