@@ -71,18 +71,21 @@ cd src/chrome/Debug
 # or which fail in a way we don't care about on Wine
 #
 # The following tests fail on Wine, but we don't care much:
+# Chrome doesn't really use WMI (maybe in the uninstaller):
+#  WMIUtilTest.*
 # Probably just because wine doesn't do file creation times yet:
 #  base_unittests: FileUtilTest.CountFilesCreatedAfter,
 #  FileUtilTest.GetFileCreationLocalTime, DirectoryWatcherTest.*
-#  
 # The following test fails on Wine because of a trivial message difference:
 #  base_unittests: BaseWinUtilTest.FormatMessageW
-# Tests that we want to work on wine, but which currently hang or crash:
-#  ipc_tests: IPCSyncChannelTest.*
-# Tests that fail because Dan hasn't installed the cert yet :-)
-#  net_unittests: SSLClientSocketTest.*
 # Tests that hang on Wine, probably due to a bug in chrome:
 #  net_unittests: DiskCacheEntryTest.CancelSparseIO (test hangs if disk I/O never blocks)
+#  
+# Tests that we want to work on wine, but which currently hang or crash:
+#  ipc_tests: IPCSyncChannelTest.*
+#  net_unittests: SSLClientSocketTest.*
+#  unit_tests: SafeBrowsingProtocolParsingTest.TestGetHashWithMac
+
 get_gtest_filter()
 {
    case $1 in
@@ -95,7 +98,8 @@ IconUtilTest.TestCreateIconFile ;;
 BaseWinUtilTest.FormatMessageW:\
 DirectoryWatcherTest.*:\
 FileUtilTest.CountFilesCreatedAfter:\
-FileUtilTest.GetFileCreationLocalTime ;;
+FileUtilTest.GetFileCreationLocalTime:\
+WMIUtilTest.* ;;
 
    courgette_unittests) echo --gtest_filter=-\
 ImageInfoTest.All ;;
@@ -121,6 +125,7 @@ X509CertificateTest.PaypalNullCertParsing ;;
 ChromePluginTest.*:\
 HistoryProfileTest.TypicalProfileVersion:\
 ProfileManagerTest.CopyProfileData:\
+SafeBrowsingProtocolParsingTest.TestGetHashWithMac:\
 SpellCheckTest.GetAutoCorrectionWord_EN_US:\
 SpellCheckTest.SpellCheckStrings_EN_US:\
 SpellCheckTest.SpellCheckSuggestions_EN_US:\
