@@ -11,20 +11,14 @@
 # In particular, you can run a single test with --gtest_filter=Foo.Bar,
 # and get a full list of tests in each exe with --gtest_list_tests.
 #
-# Until you follow the instructions at 
+# Before running the tests, regardless of operating system:
+# 1) Make sure your system has at least one printer installed,
+# or printing_unittests and unit_tests' PrintJobTest.SimplePrint
+# will fail.  A fake printer is fine, nothing will be printed.
+# 2) Install the test cert as described at
 # http://bugs.winehq.org/show_bug.cgi?id=20370
-# to install the test cert, the following tests will fail
-# even on windows:
-#  HTTPSRequestTest.HTTPSExpiredTest
-#  HTTPSRequestTest.HTTPSGetTest
-#  HTTPSRequestTest.HTTPSMismatchedTest
-#  SSLClientSocketTest.Connect
-#  SSLClientSocketTest.ConnectExpired
-#  SSLClientSocketTest.ConnectMismatched
-#  SSLClientSocketTest.Read
-#  SSLClientSocketTest.Read_Interrupted
-#  SSLClientSocketTest.Read_SmallChunks
-#  URLFetcherBadHTTPSTest.BadHTTPSTest
+# or net_unittests' HTTPSRequestTest.*, SSLClientSocketTest.*
+# and others may fail.
 #
 # Chrome doesn't start without the --no-sandbox
 # option in wine, so skip test suites that invoke it directly until I
