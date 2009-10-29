@@ -628,6 +628,11 @@ load_cc580() {
     try cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
 
     override_dlls native,builtin comctl32
+
+    # some builtin apps don't like native comctl32
+    override_app_dlls winecfg.exe builtin comctl32
+    override_app_dlls explorer.exe builtin comctl32
+    override_app_dlls iexplore.exe builtin comctl32
 }
 
 #----------------------------------------------------------------
