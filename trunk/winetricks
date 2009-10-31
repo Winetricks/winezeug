@@ -153,7 +153,7 @@ usage() {
     echo " divx          divx video codec"
     echo " dotnet11      MS .NET 1.1 (requires Windows license)"
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
-    echo " dotnet30      MS .NET 3.0 (requires Windows license, does not work yet)"
+    echo " dotnet30      MS .NET 3.0 (requires Windows license, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " ffdshow       ffdshow video codecs"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
@@ -979,6 +979,7 @@ load_dotnet20() {
         echo "prerequisite dotnet20 already installed, skipping"
         return
     fi
+    warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
     test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || load_gecko
@@ -1013,7 +1014,14 @@ load_dotnet20sdk() {
 #----------------------------------------------------------------
 
 load_dotnet30() {
-    echo "Have to install dotnet20 before installing dotnet30... please be patient..."
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != dotnet30 && test -d "$WINDIR/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0"
+    then
+        echo "prerequisite dotnet30 already installed, skipping"
+        return
+    fi
+
+    warn "Instaling .net 3.0 runtime.  Can take 15-30 minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
     load_dotnet20
 
     # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
@@ -1025,6 +1033,25 @@ load_dotnet30() {
        try $WINE "$WINETRICKS_CACHE"/dotnet30/dotnetfx3.exe
     else
        try $WINE "$WINETRICKS_CACHE"/dotnet30/dotnetfx3.exe /q /c:"install.exe /q"
+    fi
+}
+
+#----------------------------------------------------------------
+
+load_dotnet35() {
+    warn "This does not work yet"
+
+    # According to AF's recipe, installing dotnet30 first works around msi bugs
+    load_dotnet30
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6
+    download dotnet35 http://download.microsoft.com/download/6/0/f/60fc5854-3cb8-4892-b6db-bd4f42510f28/dotnetfx35.exe 
+
+    if [ "$WINETRICKS_QUIET"x = ""x ]
+    then
+       try $WINE "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe
+    else
+       try $WINE "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe /q /c:"install.exe /q"
     fi
 }
 
@@ -2890,6 +2917,7 @@ do
     dotnet2|dotnet20) load_dotnet20; load_fontfix;;
     dotnet20sdk) load_dotnet20sdk;;
     dotnet3|dotnet30) load_dotnet30; load_fontfix;;
+    dotnet35) load_dotnet35; load_fontfix;;
     droid) load_droid;;
     firefox|firefox3) load_firefox;;
     ffdshow) load_ffdshow;;
