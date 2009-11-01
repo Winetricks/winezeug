@@ -83,25 +83,25 @@ cd src/chrome/Debug
 get_gtest_filter()
 {
    case $1 in
-   app_unittests) echo --gtest_filter=-\
+   app_unittests) echo \
 IconUtilTest.TestIconToBitmapInvalidParameters:\
 IconUtilTest.TestCreateSkBitmapFromHICON:\
 IconUtilTest.TestCreateIconFile ;;
 
-   base_unittests) echo --gtest_filter=-\
+   base_unittests) echo \
 BaseWinUtilTest.FormatMessageW:\
 DirectoryWatcherTest.*:\
 FileUtilTest.CountFilesCreatedAfter:\
 FileUtilTest.GetFileCreationLocalTime:\
 WMIUtilTest.* ;;
 
-   courgette_unittests) echo --gtest_filter=-\
+   courgette_unittests) echo \
 ImageInfoTest.All ;;
 
-   ipc_tests) echo --gtest_filter=-\
+   ipc_tests) echo \
 IPCSyncChannelTest.* ;;
 
-   media_unittests) echo --gtest_filter=-\
+   media_unittests) echo \
 YUVConvertTest.YV12:\
 YUVConvertTest.YV16:\
 YUVScaleTest.YV12:\
@@ -110,12 +110,12 @@ FileDataSourceTest.OpenFile:\
 FileDataSourceTest.ReadData:\
 WinAudioTest.PushSourceFile16KHz ;;
 
-   net_unittests) echo --gtest_filter=-\
+   net_unittests) echo \
 DiskCacheEntryTest.CancelSparseIO:\
 SSLClientSocketTest.*:\
 X509CertificateTest.PaypalNullCertParsing ;;
 
-   unit_tests) echo --gtest_filter=-\
+   unit_tests) echo \
 ChromePluginTest.*:\
 HistoryProfileTest.TypicalProfileVersion:\
 ProfileManagerTest.CopyProfileData:\
@@ -141,16 +141,16 @@ do
    if true
    then
      # Run the whole suite at once
-     $WINE ./$suite.exe `get_gtest_filter $suite` > ../../../logs/$suite-$i.log 2>&1 || true
+     $WINE ./$suite.exe --gtest_filter=-`get_gtest_filter $suite` > ../../../logs/$suite-$i.log 2>&1 || true
    else
-     # Run tests in small groups (this gets more useful with valgrind)
+     # Run tests in small groups with valgrind
      mkdir -p ../../../logs/$suite
      mkdir -p ../../../logs/$suite/run$i
      $WINE ./$suite.exe --gtest_list_tests | tr -d '\015' | grep '\.$' | tr -d . > $suite.txt
      for test in `cat $suite.txt`
      do
         # todo: use get_gtest_filter here
-        $WINE ./$suite.exe --gtest_filter="$test.*" > ../../../logs/$suite/run$i/$test.log 2>&1 || true
+        /usr/local/valgrind-10903/bin/valgrind  --show-possible=no --workaround-gcc296-bugs=yes --num-callers=25 --trace-children=yes --track-origins=yes --suppressions=../../../valgrind-suppressions --gen-suppressions=all --leak-check=full $WINE ./$suite.exe --gtest_filter="$test.*"-`get_gtest_filter $suite` > ../../../logs/$suite/run$i/$test.log 2>&1 || true
      done
    fi
   done
