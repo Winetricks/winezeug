@@ -99,7 +99,7 @@ libltdl7-dev \
 ubuntu_64_ibex_usr_lib32_sos="\
 libcapi20.so.3 libcrypto.so.0.9.8 libcups.so.2 libfontconfig.so.1 libfreetype.so.6 \
 libGL.so.1 libGLU.so.1 libgnutls.so.26 libgphoto2_port.so.0 libgphoto2.so.2 \
-libhal.so.1 libjack.so.0 libjpeg.so.62 liblcms.so.1 \
+libhal.so.1 libjack.so.0 libjpeg.so.62 libmpg123.so.0.2.4 liblcms.so.1 \
 libodbc.so.1 libpng12.so.0 libsane.so.1 \
 libssl.so.0.9.8 libX11.so.6 libXcomposite.so.1 libXcursor.so.1 libXext.so.6 \
 libXinerama.so.1 libXi.so.6 libxml2.so.2 libXrandr.so.2 libXrender.so.1 \
@@ -151,6 +151,7 @@ SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
 esac
 
+set -x
 if test `uname -m` = x86_64
 then
 
