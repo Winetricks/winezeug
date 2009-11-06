@@ -74,10 +74,12 @@ cd src/chrome/Debug
 #  base_unittests: BaseWinUtilTest.FormatMessageW
 # Tests that hang on Wine, probably due to a bug in chrome:
 #  net_unittests: DiskCacheEntryTest.CancelSparseIO (test hangs if disk I/O never blocks)
+# Test data too big to copy:
+#  unit_tests: ImporterTest.*
 #  
 # Tests that we want to work on wine, but which currently hang or crash:
 #  ipc_tests: IPCSyncChannelTest.*
-#  net_unittests: SSLClientSocketTest.*
+#  net_unittests: SSLClientSocketTest.*, HTTPSRequestTest.*
 #  unit_tests: SafeBrowsingProtocolParsingTest.TestGetHashWithMac
 
 get_gtest_filter()
@@ -112,12 +114,14 @@ WinAudioTest.PushSourceFile16KHz ;;
 
    net_unittests) echo \
 DiskCacheEntryTest.CancelSparseIO:\
+HTTPSRequestTest.*:\
 SSLClientSocketTest.*:\
 X509CertificateTest.PaypalNullCertParsing ;;
 
    unit_tests) echo \
 ChromePluginTest.*:\
 HistoryProfileTest.TypicalProfileVersion:\
+ImporterTest.*:\
 ProfileManagerTest.CopyProfileData:\
 SafeBrowsingProtocolParsingTest.TestGetHashWithMac:\
 SpellCheckTest.GetAutoCorrectionWord_EN_US:\
