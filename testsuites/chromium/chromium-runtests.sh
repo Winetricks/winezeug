@@ -219,6 +219,7 @@ do
   --just-flaky) fail_filter="flaky"; want_fails=yes;;
   --just-hangs) fail_filter="hang"; want_fails=yes;;
   --list-failures) list_known_failures; exit 0;;
+  --list-failures-html) list_known_failures | sed 's,http://\(.*\),<a href="http://\1">\1</a>,;s/$/<br>/' ; exit 0;;
   --loops) loops=$2; shift;;
   -n) dry_run=true; announce=echo ;;
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
