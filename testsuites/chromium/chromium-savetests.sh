@@ -1,8 +1,12 @@
 #!/bin/sh
 # chromium-savetests.sh
+# Run from parent of chromium's src directory.
 # Cygwin sh script to save a respectable subset of chromium's test suite
-# from a windows build so they can be run later by chromium-runtests.sh.
-# Run from parent of src directory.
+# from a windows build.
+#
+# To run the saved tests, grab a copy of the winezeug repository,
+# cd into winezeug/testsuites/chromium,
+# unpack this tarball there, and run chromium-runtests.sh.
 
 set -x
 
@@ -16,8 +20,6 @@ cd ..
 
 FILES="
  src/svninfo.txt \
- chromium-runtests.sh \
- chromium-savetests.sh \
  src/base/data \
  src/chrome/Debug/icudt42.dll \
  src/chrome/Debug/crash_service.exe \
@@ -27,10 +29,11 @@ FILES="
  src/chrome/Debug/themes/default.dll \
  src/chrome/test/data \
  src/chrome/test/unit \
+ src/courgette/testdata \
  src/ipc/data \
  src/net/data \
  src/net/tools \
- src/third_party/{pyftpdlib,python_24,tlslite} \
+ src/third_party/{pyftpdlib,python_24,tlslite,hunspell/dictionaries/en-US*.bdic} \
 "
 
 # Skip chrome itself for the moment, it makes the download huge.
