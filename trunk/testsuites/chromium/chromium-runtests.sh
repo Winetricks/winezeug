@@ -59,6 +59,7 @@ SUITES=
 VALGRIND_CMD=
 want_fails=no
 loops=1
+winedebug=
 
 while test "$1" != ""
 do
@@ -69,6 +70,7 @@ do
   --just-hangs) fail_filter="hang"; want_fails=yes;;
   --list-failures) list_known_failures; exit 0;;
   --loops) loops=$2; shift;;
+  --winedebug) winedebug=$2; shift;;
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
   -n) dry_run=true; announce=echo ;;
   -*) echo bad arg; exit 1;;
@@ -241,13 +243,15 @@ do
     case $do_individual in
     no)
       $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 
-      $dry_run  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec > ../../../logs/$suite-$i.log 2>&1 || true
+      WINEDEBUG=$winedebug $dry_run  \
+                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec > ../../../logs/$suite-$i.log 2>&1 || true
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 
-        $dry_run  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$i-$test.log 2>&1 || true
+        WINEDEBUG=$winedebug $dry_run  \
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
       ;;
     esac
