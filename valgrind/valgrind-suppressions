@@ -39,6 +39,19 @@
    fun:NtFsControlFile
    fun:WaitNamedPipeW
 }
+{
+   # See http://www.winehq.org/pipermail/wine-devel/2008-November/070539.html
+   # We might want to add an annotationto WriteConsoleInputW
+   # for the hole someday.
+   wine_struct_hole_WriteConsoleInput
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   fun:send_request
+   fun:wine_server_call
+   fun:wine_server_call_err
+   fun:WriteConsoleInputW
+}
 # We sure got a lot of these in the logs when I first started.
 # I suppressed them to avoid dispair.  
 {
@@ -469,6 +482,13 @@
    obj:/lib*/ld-2.3.*.so
    fun:if_nameindex
 }
+{
+   # See also http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=553016
+   # and http://bbs.archlinux.org/viewtopic.php?pid=273718
+   suppress_glibc_dl_relocate_object
+   Memcheck:Cond
+   fun:_dl_relocate_object
+}
 # Naming convention for Wine suppressions:
 # If we think it's solid:
 # suppress_wine_dirname__functionname[_moreifneeded]
@@ -568,6 +588,12 @@
   fun:func_thread
   fun:run_test
   fun:main
+}
+{
+   ignore_rsaenh_test_expected_bad_access
+   Memcheck:Addr4
+   fun:CryptReleaseContext
+   fun:clean_up_base_environment
 }
 
 # Back to system suppressions that aren't wine's fault
