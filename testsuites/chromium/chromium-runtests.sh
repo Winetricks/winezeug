@@ -24,8 +24,30 @@
 # option in wine, so skip test suites that invoke it directly until I
 # figure out how to jam that in there.
 
-set -x
-set -e
+usage() {
+  cat <<_EOF_
+Usage: sh chromium-runtests.sh [--options] [suite ...]
+Runs chromium tests on Windows or Wine, optionally with valgrind.
+Stdout/stderr saved to logs/ directory.  (The tests themselves
+may save logs next to their executables in src/Debug.)
+Options:
+  --individual     - run tests individually 
+  --just-fails     - run only tests epected to fail
+  --just-flaky     - run only tests epected to fail sometimes
+  --just-hangs     - run only tests epected to hang
+  --list-failures  - show list of expected failures
+  --loops N        - run tests N times
+  -n               - dry run, only show what will be done
+  --valgrind       - run the tests under valgrind
+  --winedebug chan - e.g. --windebug +relay,+seh
+Currently supported suites:
+app_unittests base_unittests courgette_unittests googleurl_unittests
+ipc_tests media_unittests net_unittests printing_unittests sbox_unittests
+sbox_validation_tests setup_unittests tcmalloc_unittests unit_tests
+Default is to run all suites.  It takes about five minutes to run them all.
+_EOF_
+ exit 1
+}
 
 # Tests, grouped by how long they take to run
 # Skip ones that require chrome itself for the moment
@@ -48,43 +70,6 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 --track-origins=yes \
 --workaround-gcc296-bugs=yes \
 "
-
-# Parse arguments
-
-do_individual=no
-announce=true
-dry_run=
-fail_filter="."
-SUITES=
-VALGRIND_CMD=
-want_fails=no
-loops=1
-winedebug=
-
-while test "$1" != ""
-do
-  case $1 in
-  --individual) do_individual=yes;;
-  --just-fails) fail_filter="fail"; want_fails=yes;;
-  --just-flaky) fail_filter="flaky"; want_fails=yes;;
-  --just-hangs) fail_filter="hang"; want_fails=yes;;
-  --list-failures) list_known_failures; exit 0;;
-  --loops) loops=$2; shift;;
-  --winedebug) winedebug=$2; shift;;
-  --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
-  -n) dry_run=true; announce=echo ;;
-  -*) echo bad arg; exit 1;;
-  *) SUITES="$SUITES $1" ;;
-  esac
-  shift
-done
-
-if test "$SUITES" = ""
-then
-   SUITES="$SUITES_1 $SUITES_10 $SUITES_100 $SUITES_1000"
-fi
-
-cd src/chrome/Debug
 
 # Filter out known failures
 # Avoid tests that hung or failed on windows in Dan's reference run,
@@ -109,6 +94,10 @@ courgette_unittests fail ImageInfoTest.All
 ipc_tests flaky IPCChannelTest.ChannelTest
 ipc_tests flaky IPCChannelTest.SendMessageInChannelConnected
 ipc_tests hang IPCSyncChannelTest.*
+media_unittests crash FFmpegGlueTest.OpenClose
+media_unittests crash FFmpegGlueTest.Read
+media_unittests crash FFmpegGlueTest.Seek
+media_unittests crash FFmpegGlueTest.Write
 media_unittests fail FileDataSourceTest.OpenFile
 media_unittests fail FileDataSourceTest.ReadData
 media_unittests fail WinAudioTest.PushSourceFile16KHz
@@ -153,6 +142,7 @@ sbox_validation_tests fail ValidationSuite.TestRegistry
 sbox_validation_tests fail ValidationSuite.TestSuite
 sbox_validation_tests fail ValidationSuite.TestThread
 sbox_validation_tests fail ValidationSuite.TestWindows
+unit_tests dontcare SpellCheckTest.SpellCheckText
 unit_tests fail DownloadManagerTest.TestDownloadFilename
 unit_tests fail EncryptorTest.EncryptionDecryption
 unit_tests fail EncryptorTest.String16EncryptionDecryption
@@ -170,7 +160,6 @@ unit_tests fail SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac
 unit_tests fail SpellCheckTest.GetAutoCorrectionWord_EN_US
 unit_tests fail SpellCheckTest.SpellCheckStrings_EN_US
 unit_tests fail SpellCheckTest.SpellCheckSuggestions_EN_US
-unit_tests fail SpellCheckTest.SpellCheckText
 unit_tests fail TabContentsTest.WebKitPrefs
 unit_tests fail URLFetcherBadHTTPSTest.BadHTTPSTest
 unit_tests fail URLFetcherCancelTest.ReleasesContext
@@ -202,8 +191,6 @@ shutdown_runtime() {
   fi
 }
 
-init_runtime
-
 # Looks up tests from our list of known bad tests.  If $2 is not '.', picks tests expected to fail in a particular way.
 get_test_filter()
 {
@@ -226,6 +213,48 @@ expand_test_list()
    grep -v FLAKY |
    perl -e 'while (<STDIN>) { chomp; if (/^[A-Z]/) { $testname=$_; } elsif (/./) { s/\s*//; print "$testname$_\n"} }'
 }
+
+# Parse arguments
+
+do_individual=no
+announce=true
+dry_run=
+fail_filter="."
+SUITES=
+VALGRIND_CMD=
+want_fails=no
+loops=1
+winedebug=
+
+while test "$1" != ""
+do
+  case $1 in
+  --individual) do_individual=yes;;
+  --just-fails) fail_filter="fail"; want_fails=yes;;
+  --just-flaky) fail_filter="flaky"; want_fails=yes;;
+  --just-hangs) fail_filter="hang"; want_fails=yes;;
+  --list-failures) list_known_failures; exit 0;;
+  --loops) loops=$2; shift;;
+  -n) dry_run=true; announce=echo ;;
+  --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
+  --winedebug) winedebug=$2; shift;;
+  -*) usage; exit 1;;
+  *) SUITES="$SUITES $1" ;;
+  esac
+  shift
+done
+
+if test "$SUITES" = ""
+then
+   SUITES="$SUITES_1 $SUITES_10 $SUITES_100 $SUITES_1000"
+fi
+
+set -x
+set -e
+
+cd src/chrome/Debug
+
+init_runtime
 
 i=1
 while test $i -le $loops
