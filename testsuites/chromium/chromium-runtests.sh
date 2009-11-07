@@ -32,6 +32,7 @@ Stdout/stderr saved to logs/ directory.  (The tests themselves
 may save logs next to their executables in src/Debug.)
 Options:
   --individual     - run tests individually 
+  --just-crashes   - run only tests epected to crash
   --just-fails     - run only tests epected to fail
   --just-flaky     - run only tests epected to fail sometimes
   --just-hangs     - run only tests epected to hang
@@ -44,7 +45,8 @@ Currently supported suites:
 app_unittests base_unittests courgette_unittests googleurl_unittests
 ipc_tests media_unittests net_unittests printing_unittests sbox_unittests
 sbox_validation_tests setup_unittests tcmalloc_unittests unit_tests
-Default is to run all suites.  It takes about five minutes to run them all.
+Default is to run all suites.  It takes about five minutes to run them all
+together, 22 minutes to run them all individually.
 _EOF_
  exit 1
 }
@@ -72,100 +74,82 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 "
 
 # Filter out known failures
-# Avoid tests that hung or failed on windows in Dan's reference run,
-# or which fail in a way we don't care about on Wine
+# Avoid tests that hung, failed, or crashed on windows in Dan's reference run,
+# or which fail in a way we don't care about on Wine,
+# or which hang or crash on wine in a way that keeps other tests from running.
+# Also lists url of bug report, if any.
+# Format with
+#  sh chromium-runtests.sh --list-failures | sort |  awk '{printf("%-21s %-20s %-52s %s\n", $1, $2, $3, $4);}'
 
 list_known_failures() {
 cat <<_EOF_
-app_unittests fail IconUtilTest.TestCreateIconFile
-app_unittests fail IconUtilTest.TestCreateSkBitmapFromHICON
-app_unittests fail IconUtilTest.TestIconToBitmapInvalidParameters
-base_unittests dontcare BaseWinUtilTest.FormatMessageW
-base_unittests dontcare FileUtilTest.CountFilesCreatedAfter
-base_unittests dontcare FileUtilTest.GetFileCreationLocalTime
-base_unittests dontcare WMIUtilTest.*
-base_unittests fail HMACTest.HMACObjectReuse
-base_unittests fail HMACTest.HmacSafeBrowsingResponseTest
-base_unittests fail HMACTest.RFC2202TestCases
-base_unittests fail PEImageTest.EnumeratesPE
-base_unittests fail StackTrace.OutputToStream
-base_unittests hang-dontcare DirectoryWatcherTest.*
-courgette_unittests fail ImageInfoTest.All
-ipc_tests flaky IPCChannelTest.ChannelTest
-ipc_tests flaky IPCChannelTest.SendMessageInChannelConnected
-ipc_tests hang IPCSyncChannelTest.*
-media_unittests crash FFmpegGlueTest.OpenClose
-media_unittests crash FFmpegGlueTest.Read
-media_unittests crash FFmpegGlueTest.Seek
-media_unittests crash FFmpegGlueTest.Write
-media_unittests fail FileDataSourceTest.OpenFile
-media_unittests fail FileDataSourceTest.ReadData
-media_unittests fail WinAudioTest.PushSourceFile16KHz
-media_unittests fail YUVConvertTest.YV12
-media_unittests fail YUVConvertTest.YV16
-media_unittests fail YUVScaleTest.YV12
-media_unittests fail YUVScaleTest.YV16
-net_unittests fail HTTPSRequestTest.HTTPSExpiredTest
-net_unittests fail HTTPSRequestTest.HTTPSGetTest
-net_unittests fail HTTPSRequestTest.HTTPSMismatchedTest
-net_unittests fail ProxyScriptFetcherTest.ContentDisposition
-net_unittests fail ProxyScriptFetcherTest.Encodings
-net_unittests fail ProxyScriptFetcherTest.Hang
-net_unittests fail ProxyScriptFetcherTest.HttpMimeType
-net_unittests fail ProxyScriptFetcherTest.NoCache
-net_unittests fail ProxyScriptFetcherTest.TooLarge
-net_unittests hang SSLClientSocketTest.*
-sbox_unittests fail JobTest.ProcessInJob
-sbox_unittests fail JobTest.TestCreation
-sbox_unittests fail JobTest.TestDetach
-sbox_unittests fail JobTest.TestExceptions
-sbox_unittests fail RestrictedTokenTest.AddAllSidToRestrictingSids
-sbox_unittests fail RestrictedTokenTest.AddMultipleRestrictingSids
-sbox_unittests fail RestrictedTokenTest.AddRestrictingSid
-sbox_unittests fail RestrictedTokenTest.AddRestrictingSidCurrentUser
-sbox_unittests fail RestrictedTokenTest.AddRestrictingSidLogonSession
-sbox_unittests fail RestrictedTokenTest.DefaultDacl
-sbox_unittests fail RestrictedTokenTest.DeleteAllPrivileges
-sbox_unittests fail RestrictedTokenTest.DeleteAllPrivilegesException
-sbox_unittests fail RestrictedTokenTest.DeletePrivilege
-sbox_unittests fail RestrictedTokenTest.DenyOwnerSid
-sbox_unittests fail RestrictedTokenTest.DenySid
-sbox_unittests fail RestrictedTokenTest.DenySids
-sbox_unittests fail RestrictedTokenTest.DenySidsException
-sbox_unittests fail RestrictedTokenTest.ResultToken
-sbox_unittests fail ServiceResolverTest.PatchesServices
-sbox_unittests flaky IPCTest.ClientFastServer
-sbox_validation_tests fail ValidationSuite.TestDesktop
-sbox_validation_tests fail ValidationSuite.TestFileSystem
-sbox_validation_tests fail ValidationSuite.TestProcess
-sbox_validation_tests fail ValidationSuite.TestRegistry
-sbox_validation_tests fail ValidationSuite.TestSuite
-sbox_validation_tests fail ValidationSuite.TestThread
-sbox_validation_tests fail ValidationSuite.TestWindows
-unit_tests dontcare SpellCheckTest.SpellCheckText
-unit_tests fail DownloadManagerTest.TestDownloadFilename
-unit_tests fail EncryptorTest.EncryptionDecryption
-unit_tests fail EncryptorTest.String16EncryptionDecryption
-unit_tests fail HistoryProfileTest.TypicalProfileVersion
-unit_tests fail ImporterTest.IEImporter
-unit_tests fail ProfileManagerTest.CopyProfileData
-unit_tests fail RenderViewTest.InsertCharacters
-unit_tests fail RenderViewTest.OnPrintPages
-unit_tests fail RenderViewTest.PrintLayoutTest
-unit_tests fail RenderViewTest.PrintWithIframe
-unit_tests fail RenderViewTest.PrintWithJavascript
-unit_tests fail SafeBrowsingProtocolParsingTest.TestGetHashWithMac
-unit_tests fail SafeBrowsingProtocolParsingTest.TestVerifyChunkMac
-unit_tests fail SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac
-unit_tests fail SpellCheckTest.GetAutoCorrectionWord_EN_US
-unit_tests fail SpellCheckTest.SpellCheckStrings_EN_US
-unit_tests fail SpellCheckTest.SpellCheckSuggestions_EN_US
-unit_tests fail TabContentsTest.WebKitPrefs
-unit_tests fail URLFetcherBadHTTPSTest.BadHTTPSTest
-unit_tests fail URLFetcherCancelTest.ReleasesContext
-unit_tests fail URLFetcherProtectTest.ServerUnavailable
-unit_tests fail UtilityProcessHostTest.ExtensionMessagesDisconnect
-unit_tests hang ChromePluginTest.*
+app_unittests         fail                 IconUtilTest.TestCreateIconFile                      
+app_unittests         fail                 IconUtilTest.TestCreateSkBitmapFromHICON             
+app_unittests         fail                 IconUtilTest.TestIconToBitmapInvalidParameters       
+base_unittests        dontcare             BaseWinUtilTest.FormatMessageW                       
+base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter                  
+base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime                
+base_unittests        dontcare             WMIUtilTest.*                                        
+base_unittests        fail                 HMACTest.HMACObjectReuse                             http://bugs.winehq.org/show_bug.cgi?id=20340
+base_unittests        fail                 HMACTest.HmacSafeBrowsingResponseTest                http://bugs.winehq.org/show_bug.cgi?id=20340
+base_unittests        fail                 HMACTest.RFC2202TestCases                            http://bugs.winehq.org/show_bug.cgi?id=20340
+base_unittests        fail                 PEImageTest.EnumeratesPE                             
+base_unittests        fail                 StackTrace.OutputToStream                            
+base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
+base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
+ipc_tests             flaky                IPCChannelTest.ChannelTest                           
+ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         
+ipc_tests             hang                 IPCSyncChannelTest.*                                 http://bugs.winehq.org/show_bug.cgi?id=20390
+media_unittests       crash                FFmpegGlueTest.OpenClose                             
+media_unittests       crash                FFmpegGlueTest.Read                                  
+media_unittests       crash                FFmpegGlueTest.Seek                                  
+media_unittests       crash                FFmpegGlueTest.Write                                 
+media_unittests       fail                 FileDataSourceTest.OpenFile                          
+media_unittests       fail                 FileDataSourceTest.ReadData                          
+media_unittests       fail                 WinAudioTest.PushSourceFile16KHz                     
+media_unittests       fail                 YUVConvertTest.YV12                                  
+media_unittests       fail                 YUVConvertTest.YV16                                  
+media_unittests       fail                 YUVScaleTest.YV12                                    
+media_unittests       fail                 YUVScaleTest.YV16                                    
+net_unittests         fail                 HTTPSRequestTest.HTTPSExpiredTest                    
+net_unittests         fail                 HTTPSRequestTest.HTTPSGetTest                        
+net_unittests         fail                 HTTPSRequestTest.HTTPSMismatchedTest                 
+net_unittests         fail                 ProxyScriptFetcherTest.ContentDisposition            
+net_unittests         fail                 ProxyScriptFetcherTest.Encodings                     
+net_unittests         fail                 ProxyScriptFetcherTest.Hang                          
+net_unittests         fail                 ProxyScriptFetcherTest.HttpMimeType                  
+net_unittests         fail                 ProxyScriptFetcherTest.NoCache                       
+net_unittests         fail                 ProxyScriptFetcherTest.TooLarge                      
+net_unittests         hang                 SSLClientSocketTest.*                                
+sbox_unittests        fail                 JobTest.ProcessInJob                                 
+sbox_unittests        fail                 JobTest.TestCreation                                 
+sbox_unittests        fail                 JobTest.TestDetach                                   
+sbox_unittests        fail                 JobTest.TestExceptions                               
+sbox_unittests        fail                 RestrictedTokenTest.*
+sbox_unittests        fail                 ServiceResolverTest.PatchesServices                  
+sbox_unittests        flaky                IPCTest.ClientFastServer                             
+sbox_validation_tests fail                 ValidationSuite.*
+unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   
+unit_tests            dontcare             SpellCheckTest.SpellCheckText                        
+unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             
+unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
+unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
+unit_tests            fail                 HistoryProfileTest.TypicalProfileVersion             
+unit_tests            fail                 ImporterTest.IEImporter                              
+unit_tests            fail                 ProfileManagerTest.CopyProfileData                   
+unit_tests            fail                 RenderViewTest.InsertCharacters                      
+unit_tests            fail                 RenderViewTest.OnPrintPages                          
+unit_tests            fail                 RenderViewTest.PrintLayoutTest                       
+unit_tests            fail                 RenderViewTest.PrintWithIframe                       
+unit_tests            fail                 RenderViewTest.PrintWithJavascript                   
+unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   
+unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  
+unit_tests            fail                 TabContentsTest.WebKitPrefs                          
+unit_tests            fail                 URLFetcherBadHTTPSTest.BadHTTPSTest                  
+unit_tests            fail                 URLFetcherCancelTest.ReleasesContext                 
+unit_tests            fail                 URLFetcherProtectTest.ServerUnavailable              
+unit_tests            fail                 UtilityProcessHostTest.ExtensionMessagesDisconnect   
+unit_tests            hang                 ChromePluginTest.*                                   
 _EOF_
 }
 
@@ -230,6 +214,7 @@ while test "$1" != ""
 do
   case $1 in
   --individual) do_individual=yes;;
+  --just-crashes) fail_filter="crash"; want_fails=yes;;
   --just-fails) fail_filter="fail"; want_fails=yes;;
   --just-flaky) fail_filter="flaky"; want_fails=yes;;
   --just-hangs) fail_filter="hang"; want_fails=yes;;
