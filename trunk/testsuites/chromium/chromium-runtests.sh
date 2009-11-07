@@ -38,6 +38,50 @@ SUITES_100="media_unittests net_unittests"
 SUITES_1000="base_unittests unit_tests"
 #SUITES_10000="ui_tests startup_tests"
 
+THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
+--gen-suppressions=all \
+--leak-check=full \
+--num-callers=25 \
+--show-possible=no \
+--suppressions=../../../../../valgrind/valgrind-suppressions \
+--trace-children=yes \
+--track-origins=yes \
+--workaround-gcc296-bugs=yes \
+"
+
+# Parse arguments
+
+do_individual=no
+announce=true
+dry_run=
+fail_filter="."
+SUITES=
+VALGRIND_CMD=
+want_fails=no
+loops=1
+
+while test "$1" != ""
+do
+  case $1 in
+  --individual) do_individual=yes;;
+  --just-fails) fail_filter="fail"; want_fails=yes;;
+  --just-flaky) fail_filter="flaky"; want_fails=yes;;
+  --just-hangs) fail_filter="hang"; want_fails=yes;;
+  --list-failures) list_known_failures; exit 0;;
+  --loops) loops=$2; shift;;
+  --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
+  -n) dry_run=true; announce=echo ;;
+  -*) echo bad arg; exit 1;;
+  *) SUITES="$SUITES $1" ;;
+  esac
+  shift
+done
+
+if test "$SUITES" = ""
+then
+   SUITES="$SUITES_1 $SUITES_10 $SUITES_100 $SUITES_1000"
+fi
+
 cd src/chrome/Debug
 
 # Filter out known failures
@@ -60,6 +104,8 @@ base_unittests fail PEImageTest.EnumeratesPE
 base_unittests fail StackTrace.OutputToStream
 base_unittests hang-dontcare DirectoryWatcherTest.*
 courgette_unittests fail ImageInfoTest.All
+ipc_tests flaky IPCChannelTest.ChannelTest
+ipc_tests flaky IPCChannelTest.SendMessageInChannelConnected
 ipc_tests hang IPCSyncChannelTest.*
 media_unittests fail FileDataSourceTest.OpenFile
 media_unittests fail FileDataSourceTest.ReadData
@@ -97,6 +143,7 @@ sbox_unittests fail RestrictedTokenTest.DenySids
 sbox_unittests fail RestrictedTokenTest.DenySidsException
 sbox_unittests fail RestrictedTokenTest.ResultToken
 sbox_unittests fail ServiceResolverTest.PatchesServices
+sbox_unittests flaky IPCTest.ClientFastServer
 sbox_validation_tests fail ValidationSuite.TestDesktop
 sbox_validation_tests fail ValidationSuite.TestFileSystem
 sbox_validation_tests fail ValidationSuite.TestProcess
@@ -131,74 +178,81 @@ unit_tests hang ChromePluginTest.*
 _EOF_
 }
 
-# usage: get_gtest_filter suitename
-get_gtest_filter()
-{
-  list_known_failures | awk '$1 == "'"$1"'" {print $3}' | tr '\012' : | sed 's/:$/\n/'
-}
-
 init_runtime() {
   if test "$WINDIR" = ""
   then
     WINE=${WINE:-$HOME/wine-git/wine}
+    WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine-chromium-tests}
     export WINE WINEPREFIX
-    rm -rf $WINEPREFIX
-    $WINE winemine &
-    sleep 1
-    test -f winetricks || wget http://kegel.com/wine/winetricks
-    sh winetricks nocrashdialog corefonts gecko
+    $dry_run rm -rf $WINEPREFIX
+    $dry_run $WINE winemine &
+    $dry_run sleep 1
+    $dry_run test -f winetricks || wget http://kegel.com/wine/winetricks
+    $dry_run sh winetricks nocrashdialog corefonts gecko > /dev/null
   fi
 }
 
-fail_filter="xyzzy"
-case $1 in
---just-fails) fail_filter="fail"; shift;;
---just-hangs) fail_filter="hang"; shift;;
---list-failures) list_known_failures; exit 0;;
---*) echo bad arg; exit 1;;
-esac
-
-# Caller can specify one test suite
-if test "$1" != ""
-then
-   SUITES="$1"
-else
-   SUITES="$SUITES_1 $SUITES_10 $SUITES_100 $SUITES_1000"
-fi
+shutdown_runtime() {
+  if test "$WINDIR" = ""
+  then
+    $dry_run $WINESERVER -k
+  fi
+}
 
 init_runtime
 
-rm -f ../../../logs/failures-*.log
+# Looks up tests from our list of known bad tests.  If $2 is not '.', picks tests expected to fail in a particular way.
+get_test_filter()
+{
+  mysuite=$1
+  myfilter=$2
+  list_known_failures | tee tmp.1 |
+   awk '$1 == "'$mysuite'" && /'$myfilter'/ {print $3}' |tee tmp.2 |
+   tr '\012' : |tee tmp.3 |
+   sed 's/:$/\n/'
+}
 
-# Plain old runs, without valgrind
-# Optional: run tests many times to look for flaky failures
+# Expands a gtest filter spec to a plain old list of tests separated by whitespace
+expand_test_list()
+{
+  mysuite=$1    # e.g. base_unittests
+  myfilter=$2   # existing gtest_filter specification with wildcard
+  # List just the tests matching $myfilter, separated by colons
+  $WINE ./$mysuite.exe --gtest_filter=$myfilter --gtest_list_tests |
+   tr -d '\015' |
+   grep -v FLAKY |
+   perl -e 'while (<STDIN>) { chomp; if (/^[A-Z]/) { $testname=$_; } elsif (/./) { s/\s*//; print "$testname$_\n"} }'
+}
+
 i=1
-while test $i -lt 10
+while test $i -le $loops
 do
   for suite in $SUITES
   do
-   mkdir -p ../../../logs
-   if test $fail_filter != "xyzzy"
-   then
-     for test in `list_known_failures | grep $suite | grep -w $fail_filter | awk '{print $3}'`
-     do
-       $WINE ./$suite.exe --gtest_filter=$test >> ../../../logs/failures-$i.log 2>&1 || true
-     done
-   elif true
-   then
-     # Run the whole suite at once
-     $WINE ./$suite.exe --gtest_filter=-`get_gtest_filter $suite` > ../../../logs/$suite-$i.log 2>&1 || true
-   else
-     # Run tests in small groups (this gets more useful with valgrind)
-     mkdir -p ../../../logs/$suite
-     mkdir -p ../../../logs/$suite/run$i
-     $WINE ./$suite.exe --gtest_list_tests | tr -d '\015' | grep '\.$' | tr -d . > $suite.txt
-     for test in `cat $suite.txt`
-     do
-        /usr/local/valgrind-10903/bin/valgrind  --show-possible=no --workaround-gcc296-bugs=yes --num-callers=25 --trace-children=yes --track-origins=yes --suppressions=../../../valgrind-suppressions --gen-suppressions=all --leak-check=full $WINE ./$suite.exe --gtest_filter="$test.*"-`get_gtest_filter $suite` > ../../../logs/$suite/run$i/$test.log 2>&1 || true
-     done
-   fi
+    mkdir -p ../../../logs
+
+    expected_to_fail="`get_test_filter $suite $fail_filter`"
+    case $want_fails in
+    no)  filterspec=-$expected_to_fail ;;
+    yes) filterspec=$expected_to_fail ;;
+    esac
+
+    case $do_individual in
+    no)
+      $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 
+      $dry_run  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec > ../../../logs/$suite-$i.log 2>&1 || true
+      ;;
+    yes)
+      for test in `expand_test_list $suite $filterspec`
+      do
+        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 
+        $dry_run  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$i-$test.log 2>&1 || true
+      done
+      ;;
+    esac
   done
   i=`expr $i + 1`
 done
+
+shutdown_runtime
