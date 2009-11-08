@@ -91,27 +91,23 @@ base_unittests        dontcare             WMIUtilTest.*
 base_unittests        fail                 HMACTest.HMACObjectReuse                             http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.HmacSafeBrowsingResponseTest                http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.RFC2202TestCases                            http://bugs.winehq.org/show_bug.cgi?id=20340
-base_unittests        fail                 PEImageTest.EnumeratesPE                             
-base_unittests        fail                 StackTrace.OutputToStream                            
+base_unittests        dontcare             PEImageTest.EnumeratesPE                             Alexandre triaged
+base_unittests        fail                 StackTrace.OutputToStream                            http://bugs.winehq.org/show_bug.cgi?id=20627
 base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
 base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
-ipc_tests             flaky                IPCChannelTest.ChannelTest                           
-ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         
+ipc_tests             flaky                IPCChannelTest.ChannelTest                           http://bugs.winehq.org/show_bug.cgi?id=20628
+ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             hang                 IPCSyncChannelTest.*                                 http://bugs.winehq.org/show_bug.cgi?id=20390
 media_unittests       crash                FFmpegGlueTest.OpenClose                             
 media_unittests       crash                FFmpegGlueTest.Read                                  
 media_unittests       crash                FFmpegGlueTest.Seek                                  
 media_unittests       crash                FFmpegGlueTest.Write                                 
-net_unittests         fail                 HTTPSRequestTest.HTTPSExpiredTest                    
-net_unittests         fail                 HTTPSRequestTest.HTTPSGetTest                        
-net_unittests         fail                 HTTPSRequestTest.HTTPSMismatchedTest                 
-net_unittests         fail                 ProxyScriptFetcherTest.ContentDisposition            
-net_unittests         fail                 ProxyScriptFetcherTest.Encodings                     
-net_unittests         fail                 ProxyScriptFetcherTest.Hang                          
-net_unittests         fail                 ProxyScriptFetcherTest.HttpMimeType                  
-net_unittests         fail                 ProxyScriptFetcherTest.NoCache                       
-net_unittests         fail                 ProxyScriptFetcherTest.TooLarge                      
-net_unittests         hang                 SSLClientSocketTest.*                                
+net_unittests         hang                 HTTPSRequestTest.HTTPSExpiredTest                    http://bugs.winehq.org/show_bug.cgi?id=20622
+net_unittests         hang                 HTTPSRequestTest.HTTPSGetTest                        http://bugs.winehq.org/show_bug.cgi?id=20622                   
+net_unittests         hang                 HTTPSRequestTest.HTTPSMismatchedTest                 http://bugs.winehq.org/show_bug.cgi?id=20622
+net_unittests         hang                 SSLClientSocketTest.Read                             http://bugs.winehq.org/show_bug.cgi?id=20622
+net_unittests         hang                 SSLClientSocketTest.Read_SmallChunks                 http://bugs.winehq.org/show_bug.cgi?id=20622
+net_unittests         hang                 SSLClientSocketTest.Read_Interrupted                 http://bugs.winehq.org/show_bug.cgi?id=20622
 sbox_unittests        fail                 JobTest.ProcessInJob                                 
 sbox_unittests        fail                 JobTest.TestCreation                                 
 sbox_unittests        fail                 JobTest.TestDetach                                   
@@ -133,24 +129,20 @@ sbox_unittests        fail                 RestrictedTokenTest.ResultToken
 sbox_unittests        fail                 ServiceResolverTest.PatchesServices                  
 sbox_unittests        flaky                IPCTest.ClientFastServer                             
 sbox_validation_tests fail                 ValidationSuite.*                                    
-unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   
+unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker             
 unit_tests            dontcare             SpellCheckTest.SpellCheckText                        
-unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             
+unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             http://bugs.winehq.org/show_bug.cgi?id=20626
 unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
-unit_tests            fail                 ImporterTest.IEImporter                              
-unit_tests            fail                 RenderViewTest.InsertCharacters                      
-unit_tests            fail                 RenderViewTest.OnPrintPages                          
-unit_tests            fail                 RenderViewTest.PrintLayoutTest                       
-unit_tests            fail                 RenderViewTest.PrintWithIframe                       
-unit_tests            fail                 RenderViewTest.PrintWithJavascript                   
-unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   
-unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  
-unit_tests            fail                 URLFetcherBadHTTPSTest.BadHTTPSTest                  
-unit_tests            fail                 URLFetcherCancelTest.ReleasesContext                 
-unit_tests            fail                 URLFetcherProtectTest.ServerUnavailable              
-unit_tests            hang                 ChromePluginTest.*                                   
+unit_tests            fail                 ImporterTest.IEImporter                              http://bugs.winehq.org/show_bug.cgi?id=20625
+unit_tests            fail                 RenderViewTest.InsertCharacters                      http://bugs.winehq.org/show_bug.cgi?id=20624
+unit_tests            fail                 RenderViewTest.OnPrintPages                          http://bugs.winehq.org/show_bug.cgi?id=20619
+unit_tests            fail                 RenderViewTest.PrintLayoutTest                       http://bugs.winehq.org/show_bug.cgi?id=20619
+unit_tests            fail                 RenderViewTest.PrintWithIframe                       http://bugs.winehq.org/show_bug.cgi?id=20619
+unit_tests            fail                 RenderViewTest.PrintWithJavascript                   http://bugs.winehq.org/show_bug.cgi?id=20619
+unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   http://bugs.winehq.org/show_bug.cgi?id=20340
+unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  http://bugs.winehq.org/show_bug.cgi?id=20340
 _EOF_
 }
 
@@ -161,6 +153,21 @@ init_runtime() {
     WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine-chromium-tests}
     export WINE WINEPREFIX
+    if netstat -tlnp | grep 1337
+    then
+      echo Please kill the server listening on port 1337, or reboot.  The net tests need this port.
+      exit 1
+    fi
+    if test ! -f /usr/share/ca-certificates/root_ca_cert.crt
+    then
+      echo "You need to do"
+      echo   "sudo cp src/net/data/ssl/certificates/root_ca_cert.crt /usr/share/ca-certificates/"
+      echo   "sudo vi /etc/ca-certificates.conf    (and add the line root_ca_cert.crt)"
+      echo   "sudo update-ca-certificates"
+      echo "else ssl tests will fail."
+      echo "(Alternately, modify this script to run Juan's importer, http://bugs.winehq.org/show_bug.cgi?id=20370#c4 )"
+      exit 1
+    fi
     $dry_run rm -rf $WINEPREFIX
     $dry_run $WINE winemine &
     $dry_run sleep 1
@@ -236,12 +243,13 @@ then
    SUITES="$SUITES_1 $SUITES_10 $SUITES_100 $SUITES_1000"
 fi
 
-set -x
 set -e
 
-cd src/chrome/Debug
-
 init_runtime
+
+set -x
+
+cd src/chrome/Debug
 
 i=1
 while test $i -le $loops
