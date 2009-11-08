@@ -83,13 +83,10 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 
 list_known_failures() {
 cat <<_EOF_
-app_unittests         fail                 IconUtilTest.TestCreateIconFile                      
-app_unittests         fail                 IconUtilTest.TestCreateSkBitmapFromHICON             
-app_unittests         fail                 IconUtilTest.TestIconToBitmapInvalidParameters       
 base_unittests        dontcare             BaseWinUtilTest.FormatMessageW                       
-base_unittests        dontcare-winfail     TimeTicks.HighResNow                     fails if run individually on windows
 base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter                  
 base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime                
+base_unittests        dontcare-winfail     TimeTicks.HighResNow                                 fails if run individually on windows
 base_unittests        dontcare             WMIUtilTest.*                                        
 base_unittests        fail                 HMACTest.HMACObjectReuse                             http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.HmacSafeBrowsingResponseTest                http://bugs.winehq.org/show_bug.cgi?id=20340
@@ -105,13 +102,6 @@ media_unittests       crash                FFmpegGlueTest.OpenClose
 media_unittests       crash                FFmpegGlueTest.Read                                  
 media_unittests       crash                FFmpegGlueTest.Seek                                  
 media_unittests       crash                FFmpegGlueTest.Write                                 
-media_unittests       fail                 FileDataSourceTest.OpenFile                          
-media_unittests       fail                 FileDataSourceTest.ReadData                          
-media_unittests       fail                 WinAudioTest.PushSourceFile16KHz                     
-media_unittests       fail                 YUVConvertTest.YV12                                  
-media_unittests       fail                 YUVConvertTest.YV16                                  
-media_unittests       fail                 YUVScaleTest.YV12                                    
-media_unittests       fail                 YUVScaleTest.YV16                                    
 net_unittests         fail                 HTTPSRequestTest.HTTPSExpiredTest                    
 net_unittests         fail                 HTTPSRequestTest.HTTPSGetTest                        
 net_unittests         fail                 HTTPSRequestTest.HTTPSMismatchedTest                 
@@ -126,18 +116,30 @@ sbox_unittests        fail                 JobTest.ProcessInJob
 sbox_unittests        fail                 JobTest.TestCreation                                 
 sbox_unittests        fail                 JobTest.TestDetach                                   
 sbox_unittests        fail                 JobTest.TestExceptions                               
-sbox_unittests        fail                 RestrictedTokenTest.*
+sbox_unittests        fail                 RestrictedTokenTest.AddAllSidToRestrictingSids       
+sbox_unittests        fail                 RestrictedTokenTest.AddMultipleRestrictingSids       
+sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSid                
+sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSidCurrentUser     
+sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSidLogonSession    
+sbox_unittests        fail                 RestrictedTokenTest.DefaultDacl                      
+sbox_unittests        fail                 RestrictedTokenTest.DeleteAllPrivileges              
+sbox_unittests        fail                 RestrictedTokenTest.DeleteAllPrivilegesException     
+sbox_unittests        fail                 RestrictedTokenTest.DeletePrivilege                  
+sbox_unittests        fail                 RestrictedTokenTest.DenyOwnerSid                     
+sbox_unittests        fail                 RestrictedTokenTest.DenySid                          
+sbox_unittests        fail                 RestrictedTokenTest.DenySids                         
+sbox_unittests        fail                 RestrictedTokenTest.DenySidsException                
+sbox_unittests        fail                 RestrictedTokenTest.ResultToken                      
 sbox_unittests        fail                 ServiceResolverTest.PatchesServices                  
 sbox_unittests        flaky                IPCTest.ClientFastServer                             
-sbox_validation_tests fail                 ValidationSuite.*
+sbox_validation_tests fail                 ValidationSuite.*                                    
 unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   
+unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker             
 unit_tests            dontcare             SpellCheckTest.SpellCheckText                        
 unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             
 unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
-unit_tests            fail                 HistoryProfileTest.TypicalProfileVersion             
 unit_tests            fail                 ImporterTest.IEImporter                              
-unit_tests            fail                 ProfileManagerTest.CopyProfileData                   
 unit_tests            fail                 RenderViewTest.InsertCharacters                      
 unit_tests            fail                 RenderViewTest.OnPrintPages                          
 unit_tests            fail                 RenderViewTest.PrintLayoutTest                       
@@ -145,11 +147,9 @@ unit_tests            fail                 RenderViewTest.PrintWithIframe
 unit_tests            fail                 RenderViewTest.PrintWithJavascript                   
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  
-unit_tests            fail                 TabContentsTest.WebKitPrefs                          
 unit_tests            fail                 URLFetcherBadHTTPSTest.BadHTTPSTest                  
 unit_tests            fail                 URLFetcherCancelTest.ReleasesContext                 
 unit_tests            fail                 URLFetcherProtectTest.ServerUnavailable              
-unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker   
 unit_tests            hang                 ChromePluginTest.*                                   
 _EOF_
 }
