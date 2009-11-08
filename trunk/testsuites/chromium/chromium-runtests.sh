@@ -87,6 +87,7 @@ app_unittests         fail                 IconUtilTest.TestCreateIconFile
 app_unittests         fail                 IconUtilTest.TestCreateSkBitmapFromHICON             
 app_unittests         fail                 IconUtilTest.TestIconToBitmapInvalidParameters       
 base_unittests        dontcare             BaseWinUtilTest.FormatMessageW                       
+base_unittests        dontcare-winfail     TimeTicks.HighResNow                     fails if run individually on windows
 base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter                  
 base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime                
 base_unittests        dontcare             WMIUtilTest.*                                        
@@ -148,7 +149,7 @@ unit_tests            fail                 TabContentsTest.WebKitPrefs
 unit_tests            fail                 URLFetcherBadHTTPSTest.BadHTTPSTest                  
 unit_tests            fail                 URLFetcherCancelTest.ReleasesContext                 
 unit_tests            fail                 URLFetcherProtectTest.ServerUnavailable              
-unit_tests            fail                 UtilityProcessHostTest.ExtensionMessagesDisconnect   
+unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker   
 unit_tests            hang                 ChromePluginTest.*                                   
 _EOF_
 }

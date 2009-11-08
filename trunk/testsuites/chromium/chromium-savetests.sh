@@ -20,6 +20,7 @@ cd ..
 
 FILES="
  src/svninfo.txt \
+ src/app/test/data \
  src/base/data \
  src/chrome/Debug/icudt42.dll \
  src/chrome/Debug/crash_service.exe \
@@ -31,6 +32,7 @@ FILES="
  src/chrome/test/unit \
  src/courgette/testdata \
  src/ipc/data \
+ src/media/test/data \
  src/net/data \
  src/net/tools \
  src/third_party/{pyftpdlib,python_24,tlslite,hunspell/dictionaries/en-US*.bdic} \
@@ -65,7 +67,8 @@ cat > toobig.txt <<_EOF_
 firefox2_nss_mac
 firefox3_nss_mac
 layout_tests
-profiles
+profiles/*theme
+profiles/*frame
 safari_import
 safe_browsing
 sunspider
