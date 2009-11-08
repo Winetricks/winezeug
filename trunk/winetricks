@@ -249,6 +249,13 @@ usage() {
     echo " orm=fbo        Registry tweak: OffscreenRenderingMode=fbo (default)"
     echo " orm=pbuffer    Registry tweak: OffscreenRenderingMode=pbuffer"
     echo " sandbox       Sandbox the wineprefix - remove links to ~"
+    echo " sound=alsa       Set sound driver to ALSA"
+    echo " sound=audioio    Set sound driver to AudioIO"
+    echo " sound=coreaudio  Set sound driver to CoreAudio"
+    echo " sound=esound     Set sound driver to Esound"
+    echo " sound=jack       Set sound driver to Jack"
+    echo " sound=nas        Set sound driver to Nas"
+    echo " sound=oss        Set sound driver to OSS"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
@@ -453,6 +460,18 @@ REGEDIT4
 
 _EOF_
     try $WINE regedit "$WINETRICKS_TMP"/set-orm.reg
+}
+
+set_sound_driver() {
+    echo "Setting sound driver to to $1"
+    cat > "$WINETRICKS_TMP"/set-sound.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Drivers]
+"Audio"="$1"
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/set-sound.reg
 }
 
 disable_crashdialog() {
@@ -3028,6 +3047,13 @@ do
     fakeie6) set_fakeie6;;
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
     allvcodecs|allcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
+    alsa|sound=alsa) set_sound_driver alsa;;
+    audioio|sound=audioio) set_sound_driver audioio;;
+    coreaudio|sound=coreaudtio) set_sound_driver coreaudio;;
+    esound|sound=esound) set_sound_driver esound;;
+    jack|sound=jack) set_sound_driver jack;;
+    nas|sound=nas) set_sound_driver nas;;
+    oss|sound=oss) set_sound_driver oss;;
     fbo|orm=fbo) set_orm fbo;;
     backbuffer|orm=backbuffer) set_orm backbuffer;;
     pbuffer|orm=pbuffer) set_orm pbuffer;;
@@ -3059,4 +3085,4 @@ done
     # remove the temp directory
     rm -rf "$WINETRICKS_TMP"
 
-test "$WINETRICKS_QUIET" = "" && echo winetricks done. || true
+test "$WINETRICKS_QUIET" = "" && echo winetricks done. || truea
