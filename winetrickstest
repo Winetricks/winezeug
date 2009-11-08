@@ -97,6 +97,13 @@ for verb in \
     xvid \
     fakeie6 \
     allfonts \
+    alsa \
+    audioio \
+    coreaudio \
+    esound \
+    jack \
+    nas \
+    oss \
     native_mdac \
     native_oleaut32 \
     volnum \
