@@ -28,6 +28,7 @@ FILES="
  src/chrome/Debug/wow_helper.exe \
  src/chrome/Debug/locales/en-US.dll \
  src/chrome/Debug/themes/default.dll \
+ src/chrome/Debug/test_chrome_plugin.dll \
  src/chrome/test/data \
  src/chrome/test/unit \
  src/courgette/testdata \
