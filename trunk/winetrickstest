@@ -9,7 +9,6 @@ set -ex
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 for verb in \
-    ahk \
     art2kmin \
     atmlib \
     colorprofile \
@@ -26,7 +25,6 @@ for verb in \
     droid \
     fakeie6 \
     ffdshow \
-    firefox \
     flash \
     fontfix \
     fontsmooth-bgr \
@@ -36,10 +34,7 @@ for verb in \
     gdiplus \
     gecko \
     gecko-dbg \
-    glsl-disable \
-    glsl-enable \
     hosts \
-    ie6 \
     jet40 \
     liberation \
     mdac25 \
@@ -53,7 +48,6 @@ for verb in \
     mono22 \
     mono24 \
     mozillabuild \
-    mpc \
     mshflxgd \
     msi2 \
     msls31 \
@@ -62,14 +56,12 @@ for verb in \
     msxml3 \
     msxml4 \
     msxml6 \
-    nocrashdialog \
     openwatcom \
     pdh \
     physx \
     quicktime72 \
     riched20 \
     riched30 \
-    sandbox \
     shockwave \
     tahoma \
     urlmon \
@@ -84,7 +76,6 @@ for verb in \
     vcrun2005 \
     vcrun2008 \
     vjrun20 \
-    vlc \
     wenquanyi \
     wininet \
     wme9 \
@@ -95,25 +86,37 @@ for verb in \
     wsh56vb \
     xact \
     xvid \
-    fakeie6 \
+    ahk \
+    firefox \
+    ie6 \
+    mpc \
+    vlc \
     allfonts \
-    alsa \
-    audioio \
-    coreaudio \
-    esound \
-    jack \
-    nas \
-    oss \
+    fakeie6 \
+    glsl-disable \
+    glsl-enable \
     native_mdac \
     native_oleaut32 \
-    volnum \
-    nt40 \
-    win98 \
-    win2k \
-    winxp \
-    vista \
+    nocrashdialog \
+    orm=backbuffer \
+    orm=fbo \
+    orm=pbuffer \
+    sandbox \
+    sound=alsa \
+    sound=audioio \
+    sound=coreaudio \
+    sound=esound \
+    sound=jack \
+    sound=nas \
+    sound=oss \
+    winver=nt40 \
+    winver=win98 \
+    winver=win2k \
+    winver=winxp \
+    winver=vista \
     winver= \
-    version
+    version \
+    volnum
 
 do
     wineserver -k || true
@@ -132,6 +135,8 @@ then
         cygwin \
         directx9 \
         divx \
+        dotnet11sdk \
+        dotnet20sdk \
         icodecs \
         kde \
         ole2 \
@@ -149,6 +154,7 @@ fi
 
 # Broken
 #    controlpad #Broken on 64-bit karmic
+#    dotnet20sp2
 #    dotnet30 
 #    fm20
 #    ogg

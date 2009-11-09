@@ -139,8 +139,8 @@ usage() {
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
     echo " cmake         CMake, the cross-platform, open-source build system"
     echo " colorprofile  Standard RGB color profile"
-    echo " comctl32      MS common controls 5.80"
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
+    echo " comctl32      MS common controls 5.80"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
     echo " cygwin        Unix apps for Windows (needed by some build scripts)"
@@ -152,7 +152,11 @@ usage() {
     echo " directx9      MS DirectX 9 user redistributable (not recommended! use d3dx9 instead)"
     echo " divx          divx video codec"
     echo " dotnet11      MS .NET 1.1 (requires Windows license)"
+# Doesn't work yet, don't make it public
+#    echo " dotnet11sdk   MS .NET Framework SDK Version 1.1 (requires Windows license, may not work yet)"
     echo " dotnet20      MS .NET 2.0 (requires Windows license)"
+# Doesn't work yet, don't make it public
+#    echo " dotnet20sdk   MS .NET Framework SDK Version 2.0 (requires Windows license, may not work yet)"
     echo " dotnet20sp2   MS .NET 2.0 sp2 (requires Windows license)"
     echo " dotnet30      MS .NET 3.0 (requires Windows license, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
@@ -160,15 +164,13 @@ usage() {
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
     echo " fm20          MS Forms 2.0 Object Library"
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
+    echo " fontsmooth-bgr        Enables subpixel smoothing for BGR LCDs"
     echo " fontsmooth-disable    Disables font smoothing"
     echo " fontsmooth-gray       Enables grayscale font smoothing"
     echo " fontsmooth-rgb        Enables subpixel smoothing for RGB LCDs"
-    echo " fontsmooth-bgr        Enables subpixel smoothing for BGR LCDs"
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
     echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
-    echo " glsl-disable  Disable GLSL use by Wine Direct3D"
-    echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Codecs (Indeo)"
     echo " jet40         MS Jet 4.0 Service Pack 8"
@@ -184,8 +186,8 @@ usage() {
     echo " mono22        mono-2.2"
     echo " mono24        mono-2.4"
     echo " mozillabuild  Mozilla build environment"
-    echo " msi2          MS Installer 2.0"
     echo " mshflxgd      MS Hierarchical Flex Grid Control"
+    echo " msi2          MS Installer 2.0"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
     echo " msmask        MS Masked Edit Control"
     echo " msscript      MS Script Control"
@@ -221,11 +223,11 @@ usage() {
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
     echo " vjrun20       MS Visual J# 2.0 SE libraries (requires dotnet20)"
+    echo " wenquanyi     WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)"
     echo " wininet       MS wininet.dll (requires Windows license)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license)"
     echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license)"
-    echo " wenquanyi     WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)"
     echo " wsh56         MS Windows Scripting Host 5.6"
     echo " wsh56js       MS Windows scripting 5.6, jscript only, no cscript"
     echo " wsh56vb       MS Windows scripting 5.6, vbscript only, no cscript"
@@ -242,6 +244,8 @@ usage() {
     echo " allfonts      All listed fonts (corefonts, tahoma, liberation)"
     echo " allcodecs     All listed codecs (xvid, ffdshow, icodecs)"
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
+    echo " glsl-disable  Disable GLSL use by Wine Direct3D"
+    echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
     echo " native_mdac   Override odbc32 and odbccp32"
     echo " native_oleaut32 Override oleaut32"
     echo " nocrashdialog Disable the graphical crash dialog"
@@ -2939,13 +2943,13 @@ do
     -v) set -x;;
     art2kmin) load_art2kmin;;
     atmlib) load_atmlib;;
-    ahk|autohotkey) load_autohotkey;;
-    cc580|comctl32) load_cc580;;
+    autohotkey|ahk) load_autohotkey;;
     cmake) load_cmake;;
     comctl32.ocx) load_comctl32ocx;;
+    comctl32|cc580) load_cc580;;
     colorprofile) load_colorprofile;;
-    corefonts) load_corefonts;;
     controlpad|fm20) load_controlpad;;
+    corefonts) load_corefonts;;
     cygwin) load_cygwin;;
     d3dx9) load_d3dx9;;
     dcom98) load_dcom98;;
@@ -2954,22 +2958,22 @@ do
     directplay|dxplay|dplay) load_directplay;;
     directx9) load_directx9;;
     divx) load_divx;;
-    dotnet11sdk) load_dotnet11sdk;;
     dotnet1|dotnet11) load_dotnet11; load_fontfix;;
+    dotnet11sdk) load_dotnet11sdk;;
     dotnet2|dotnet20) load_dotnet20; load_fontfix;;
-    dotnet20sp2) load_dotnet20sp2; load_fontfix;;
     dotnet20sdk) load_dotnet20sdk;;
+    dotnet20sp2) load_dotnet20sp2; load_fontfix;;
     dotnet3|dotnet30) load_dotnet30; load_fontfix;;
     dotnet35) load_dotnet35; load_fontfix;;
     droid) load_droid;;
-    firefox|firefox3) load_firefox;;
     ffdshow) load_ffdshow;;
+    firefox|firefox3) load_firefox;;
     flash) load_flash;;
     fontfix) load_fontfix;;
+    fontsmooth-bgr|fs-bgr) load_fs_bgr;;
     fontsmooth-disable|fs-disable) load_fs_disable;;
     fontsmooth-gray|fontsmooth-grayscale|fontsmooth-enable|fs-enable) load_fs_grayscale;;
     fontsmooth-rgb|fs-rgb|fs-cleartype) load_fs_rgb;;
-    fontsmooth-bgr|fs-bgr) load_fs_bgr;;
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     gecko-dbg|geckodbg|gecko_dbg|geckodebug|gecko_debug|gecko-debug) load_gecko_dbg;;
@@ -3033,42 +3037,42 @@ do
     vcrun2008|vcrun2008sp1) load_vcrun2008;;
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
+    wenquanyi) load_wenquanyi;;
     wininet) load_wininet;;
     wme9) load_wme9;;
     wmp9) load_wmp9;;
     wmp10) load_wmp10;;
-    wenquanyi) load_wenquanyi;;
     wsh56) load_wsh56;;
     wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
     xact|xactengine|x3daudio) load_xact;;
     xvid) load_xvid;;
 
-    fakeie6) set_fakeie6;;
+    allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
-    allvcodecs|allcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
-    alsa|sound=alsa) set_sound_driver alsa;;
-    audioio|sound=audioio) set_sound_driver audioio;;
-    coreaudio|sound=coreaudtio) set_sound_driver coreaudio;;
-    esound|sound=esound) set_sound_driver esound;;
-    jack|sound=jack) set_sound_driver jack;;
-    nas|sound=nas) set_sound_driver nas;;
-    oss|sound=oss) set_sound_driver oss;;
-    fbo|orm=fbo) set_orm fbo;;
-    backbuffer|orm=backbuffer) set_orm backbuffer;;
-    pbuffer|orm=pbuffer) set_orm pbuffer;;
-    nt40|winver=nt40) set_winver nt40;;
-    win98|winver=win98) set_winver win98;;
-    win2k|winver=win2k) set_winver win2k;;
-    winxp|winver=winxp) set_winver winxp;;
-    vista|winver=vista) set_winver vista;;
-    winver=) unset_winver;;
+    fakeie6) set_fakeie6;;
     native_mdac) set_native_mdac;;
     native_oleaut32) override_dlls native,builtin oleaut32;;
     nocrashdialog) disable_crashdialog;;
+    orm=backbuffer|backbuffer) set_orm backbuffer;;
+    orm=fbo|fbo) set_orm fbo;;
+    orm=pbuffer|pbuffer) set_orm pbuffer;;
     sandbox) sandbox;;
+    sound=alsa|alsa) set_sound_driver alsa;;
+    sound=audioio|audioio) set_sound_driver audioio;;
+    sound=coreaudio|coreaudio) set_sound_driver coreaudio;;
+    sound=esound|esound) set_sound_driver esound;;
+    sound=jack|jack) set_sound_driver jack;;
+    sound=nas|nas) set_sound_driver nas;;
+    sound=oss|oss) set_sound_driver oss;;
     version) print_version;;
     volnum) volnum;;
+    winver=nt40|nt40) set_winver nt40;;
+    winver=win98|win98) set_winver win98;;
+    winver=win2k|win2k) set_winver win2k;;
+    winver=winxp|winxp) set_winver winxp;;
+    winver=vista|vista) set_winver vista;;
+    winver=) unset_winver;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
@@ -3085,4 +3089,4 @@ done
     # remove the temp directory
     rm -rf "$WINETRICKS_TMP"
 
-test "$WINETRICKS_QUIET" = "" && echo winetricks done. || truea
+test "$WINETRICKS_QUIET" = "" && echo winetricks done. || true
