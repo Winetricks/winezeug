@@ -195,15 +195,7 @@ sleep 10s
 }
 
 enable_backbuffer() {
-cat > /tmp/enable_backbuffer.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"OffscreenRenderingMode"="backbuffer"
-_EOF_
-
-./wine regedit /tmp/enable_backbuffer.reg
-sleep 10s
+sh winetricks backbuffer
 }
 
 enable_ddr_opengl() {
@@ -219,27 +211,11 @@ sleep 10s
 }
 
 enable_fbo() {
-cat > /tmp/enable_fbo.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"OffscreenRenderingMode"="fbo"
-_EOF_
-
-./wine regedit /tmp/enable_fbo.reg
-sleep 10s
+sh winetricks fbo
 }
 
 enable_pbuffer() {
-cat > /tmp/enable_pbuffer.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"OffscreenRenderingMode"="pbuffer"
-_EOF_
-
-./wine regedit /tmp/enable_pbuffer.reg
-sleep 10s
+sh winetricks pbuffer
 }
 
 enable_multisampling() {
@@ -285,7 +261,6 @@ get_tests_64() {
 preptests() {
     ./server/wineserver -k || true
     rm -rf $WINEPREFIX winetricks || true
-    $GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
     sh winetricks gecko > /dev/null 2>&1 || exit 1
 }
 
@@ -615,6 +590,9 @@ else
     newtree
 fi
 
+# Get winetricks, used in below tests:
+$GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
+
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
 # Currently, just win16/win64. But could be used for other things, e.g., disabling dlls.
@@ -726,6 +704,6 @@ if [ $VD_TEST = 1 ]
 fi
 
 # Cleanup
-rm -rf /tmp/*.reg $WINEPREFIX
+rm -rf /tmp/*.reg $WINEPREFIX winetricks
 
 exit
