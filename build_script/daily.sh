@@ -292,6 +292,26 @@ preptests
 runtests
 }
 
+alsa_test() {
+WINEDEBUG=""
+TESTNAME="-alsa"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks alsa
+runtests
+}
+
+audioio_test() {
+WINEDEBUG=""
+TESTNAME="-audioio"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks audioio
+runtests
+}
+
 build_dib() {
 BUILDNAME=dib
 CONFIGUREFLAGS=""
@@ -335,6 +355,16 @@ enable_backbuffer
 runtests
 }
 
+coreaudioio_test() {
+WINEDEBUG=""
+TESTNAME="-all"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks coreaudioio
+runtests
+}
+
 ddr_opengl_test() {
 WINEDEBUG=""
 TESTNAME="-ddr-opengl"
@@ -359,6 +389,16 @@ git reset --hard origin
 rm -rf dlls/winedib.drv
 }
 
+esound_test() {
+WINEDEBUG=""
+TESTNAME="-esound"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks esound
+runtests
+}
+
 fbo_test() {
 WINEDEBUG=""
 TESTNAME="-fbo"
@@ -375,6 +415,16 @@ TESTNAME="-heap"
 export WINEDEBUG
 export TESTNAME
 preptests
+runtests
+}
+
+jack_test() {
+WINEDEBUG=""
+TESTNAME="-jack"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks jack
 runtests
 }
 
@@ -424,6 +474,16 @@ export WINEDEBUG
 export TESTNAME
 build_nowin16
 preptests
+runtests
+}
+
+oss_test() {
+WINEDEBUG=""
+TESTNAME="-oss"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks oss
 runtests
 }
 
@@ -562,16 +622,22 @@ do
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
+    --alsa) export ALSA_TEST=1;;
+    --audioio) export AUDIOIO_TEST=1;;
     --backbuffer) export BACKBUFFER_TEST=1;;
+    --coreaudio) export COREAUDIO_TEST=1;;
     --ddr-opengl) export DDR_OPENGL_TEST=1;;
     --dib) export DIB_TEST=1;;
+    --esound) export ESOUND_TEST=1;;
     --fbo) export FBO_TEST=1;;
     --heap) export HEAP_TEST=1;;
+    --jack) export JACK_TEST=1;;
     --message) export MESSAGE_TEST=1;;
     --multisampling) export MULTISAMPLING_TEST=1;;
     --no-gecko) export NOGECKO_TEST=1;;
     --no-glsl) export NOGLSL_TEST=1;;
     --no-win16) export NOWIN16_TEST=1;;
+    --oss) export OSS_TEST=1;;
     --pbuffer) export PBUFFER_TEST=1;;
     --seh) export SEH_TEST=1;;
     --virtual-desktop) export VD_TEST=1;;
@@ -649,14 +715,34 @@ if [ $ALLDEBUG_TEST = 1 ]
         all_test
 fi
 
+if [ $ALSA_TEST = 1 ]
+    then
+        alsa_test
+fi
+
+if [ $AUDIOIO_TEST = 1 ]
+    then
+        audioio_test
+fi
+
 if [ $BACKBUFFER_TEST = 1 ]
     then
         backbuffer_test
 fi
 
+if [ $COREAUDIO_TEST = 1 ]
+    then
+        coreaudio_test
+fi
+
 if [ $DDR_OPENGL_TEST = 1 ]
     then
         ddr_opengl_test
+fi
+
+if [ $ESOUND_TEST = 1 ]
+    then
+        esound_test
 fi
 
 if [ $FBO_TEST = 1 ]
@@ -667,6 +753,11 @@ fi
 if [ $HEAP_TEST = 1 ]
     then
         heap_test
+fi
+
+if [ $JACK_TEST = 1 ]
+    then
+        jack_test
 fi
 
 if [ $MESSAGE_TEST = 1 ]
@@ -686,6 +777,11 @@ fi
 if [ $NOGLSL_TEST = 1 ]
     then
         noglsl_test
+fi
+
+if [ $OSS_TEST = 1 ]
+    then
+        oss_test
 fi
 
 if [ $PBUFFER_TEST = 1 ]
