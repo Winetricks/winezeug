@@ -590,9 +590,6 @@ else
     newtree
 fi
 
-# Get winetricks, used in below tests:
-$GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
-
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
 # Currently, just win16/win64. But could be used for other things, e.g., disabling dlls.
@@ -629,6 +626,9 @@ if [ $NOTESTS = 1 ]
     then
         echo "tests aren't running, exiting"; exit
 fi
+
+# Get winetricks, used in below tests:
+$GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
 
 if [ $NODOWNLOAD = 1 ]
     then
