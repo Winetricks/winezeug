@@ -194,10 +194,6 @@ _EOF_
 sleep 10s
 }
 
-enable_backbuffer() {
-sh winetricks backbuffer
-}
-
 enable_ddr_opengl() {
 cat > /tmp/enable_ddr_opengl.reg <<_EOF_
 REGEDIT4
@@ -208,14 +204,6 @@ _EOF_
 
 ./wine regedit /tmp/enable_ddr_opengl.reg
 sleep 10s
-}
-
-enable_fbo() {
-sh winetricks fbo
-}
-
-enable_pbuffer() {
-sh winetricks pbuffer
 }
 
 enable_multisampling() {
@@ -351,7 +339,7 @@ TESTNAME="-bckbuf"
 export WINEDEBUG
 export TESTNAME
 preptests
-enable_backbuffer
+sh winetricks backbuffer
 runtests
 }
 
@@ -405,7 +393,7 @@ TESTNAME="-fbo"
 export WINEDEBUG
 export TESTNAME
 preptests
-enable_fbo
+sh winetricks fbo
 runtests
 }
 
@@ -493,7 +481,7 @@ TESTNAME="-pbuffer"
 export WINEDEBUG
 export TESTNAME
 preptests
-enable_pbuffer
+sh winetricks pbuffer
 runtests
 }
 
