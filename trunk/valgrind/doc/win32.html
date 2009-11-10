@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>Finding memory bugs in Win32 applications with Valgrind</title>
+</head>
+<body>
+<h1>Finding memory bugs in Win32 applications with Valgrind</h1>
+
+<h2>Dynamic Analysis</h2>
+Writing good software is hard.  
+Programmers must always be on the lookout for bugs.  
+One of the 
+<a href="http://en.wikipedia.org/wiki/Software_engineering">many techniques</a> 
+developed to help programmers do this is called
+<a href="http://en.wikipedia.org/wiki/Dynamic_program_analysis">dynamic analysis</a>.
+In dynamic analysis, programs are run in a special environment
+that watches for flaws such as invalid pointers, undefined values, or race conditions.
+<p>
+The classic dynamic analysis tool is <a href="http://en.wikipedia.org/wiki/IBM_Rational_Purify">Purify</a>.
+It's good, but expensive.   The free software world developed a similar tool,
+<a href="http://valgrind.org">Valgrind</a>, which is also good, but does not
+run on Windows.
+<p>
+However, Linux can run Windows apps via the <a href="http://winehq.org">Wine</a> compatibility layer,
+and Valgrind is compatible with Wine, so Valgrind could potentially replace some of the uses of Purify.
+
+<h2>Chromium, Valgrind, and Win32</h2>
+When the Chromium project needed to add dynamic analysis to its continuous
+build and test rig, it used Purify on Win32, and Valgrind on Linux and Mac.
+To investigate whether Chromium could use Valgrind for Win32, I wrote
+two scripts: one to package up the Chromium unit tests built for Windows
+so they could be copied to a Linux system, and another to run the
+Chromium unit tests under Valgrind.
+
+
+</body>
+</html>
