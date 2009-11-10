@@ -19,26 +19,131 @@ or race conditions.
 The classic dynamic analysis tool is 
 <a href="http://en.wikipedia.org/wiki/IBM_Rational_Purify">Purify</a>.
 It's good, but expensive.   The free software world developed a similar tool,
-<a href="http://valgrind.org">Valgrind</a>, which is also good, but does not
-run on Windows.
+<a href="http://valgrind.org">Valgrind</a>, which is also good, but 
+<a href="http://tml-blog.blogspot.com/2009/07/porting-valgrind-to-windows.html">the windows port is not yet ready</a>.
 <p>
 However, Linux can run Windows apps via the 
 <a href="http://winehq.org">Wine</a> 
 compatibility layer, and Valgrind is compatible with Wine.
-This article investigates whether Valgrind can actually replace 
+This article investigates whether Valgrind+wine can actually replace 
 some of the uses of Purify.
 
-<h2>Preparing The Tools</h2>
+<h2>Tools</h2>
 
+Valgrind needs a patch or two to work well with Wine;
+<a href="http://wiki.winehq.org/Valgrind">http://wiki.winehq.org/Valgrind</a>
+describes how to build it.
+<p>
+Wine needs to be built after installing Valgrind so it can use
+Valgrind's macros to decorate its heap operations.
+You can check that this was done properly by verifying
+that wine's include/config.h sets HAVE_VALGRIND_MEMCHECK_H.
+Once you have Wine installed, run Wine's conformance tests 
+to verify that is operating properly.  (A few test failures
+are ok; see 
+<a href="http://test.winehq.org">http://test.winehq.org</a>
+for current test results from other users.)
+
+<p>
+Once both Valgrind and Wine were installed and working, 
+I ran Wine's conformance tests under Valgrind
+as described at 
+<a href="http://wiki.winehq.org/Valgrind
+to see what kind of background warnings to expect from
+wine and the operating system under Valgrind.
+This takes about five hours.  You can see my results at
+<a href="http://kegel.com/wine/valgrind/logs/">http://kegel.com/wine/valgrind/logs/</a>
+for comparison.   
+<p>
+I put together a suppression file for uninteresting warnings at
+<a href="http://winezeug.googlecode.com/svn/trunk/valgrind/valgrind-suppressions">http://winezeug.googlecode.com/svn/trunk/valgrind/valgrind-suppressions</a>
+and filed bugs against Wine for a number
+of these problems; see 
+<a href="http://bugs.winehq.org/buglist.cgi?quicksearch=valgrind">http://bugs.winehq.org/buglist.cgi?quicksearch=valgrind</a>
+.
+<p>
+
+With the tools more or less working properly, I moved on
+to trying them out on a real win32 project.
 
 <h2>Chromium, Valgrind, and Win32</h2>
 When the Chromium project needed to add dynamic analysis to its continuous
 build and test rig, it used Purify on Win32, and Valgrind on Linux and Mac.
 To investigate whether Chromium could use Valgrind for Win32, I wrote
-two scripts: one to package up the Chromium unit tests built for Windows
-so they could be copied to a Linux system, and another to run the
-Chromium unit tests under Valgrind.
+two scripts: one to extract the tests, and one to run them.
 
+<h3>Building and Extracting Tests</h3>
+<a href="http://dev.chromium.org">http://dev.chromium.org</a>
+describes how to build Chromium on Windows.
+It takes about a day to install Visual Studio and the needed
+SDKs and hotfixes, and sadly, there is no easy way to automate this.
+<p>
+
+Once I had a debug build of Chromium on Windows,
+I packaged it up by running
+<a href="http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-savetests.sh">http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-savetests.sh</a>
+.
+This saves a sizeable subset of Chromium's test suite 
+(roughly everything but the layout and ui tests) together
+with .pdb files into an archive file.
+(I have a prebuilt copy at
+<a href="http://kegel.com/wine/chromium/chromium-tests.tar.bz2">http://kegel.com/wine/chromium/chromium-tests.tar.bz2</a>
+for people who don't want to set up a chromium build environment.)
+<p>
+
+I then unpacked that archive in a different directory of the
+windows machine, ran the tests with the script
+<a href="http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-runtests.sh">http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-runtests.sh</a>
+, checked the results, and added lines to the list of expected failures 
+with the following tags:
+<ul>
+<li>dontcare-fail-win:  tests that fail even on windows
+<li>dontcare-hang-win:  tests that hang even on windows
+<li>dontcare-flaky-win: tests that fail sometimes even on windows
+</ul>
+
+(You can see the list with "sh chromium-runtests.sh --list-failures".)
+<p>
+
+Having validated both the test archive and the script on Windows,
+I then copied them to the Linux system where I had installed valgrind and wine.
+<p>
+
+(Because that script directly references the valgrind suppressions file mentioned
+above, it's easiest to grab a copy of the winezeug tree with the
+command "svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug",
+then cd to winezeug/testcases/chromium and unpack the tarball there.)
+<p>
+
+I then ran "chromium-runtests.sh" again to see how the tests did
+on Wine (without Valgrind), and triaged the misbehaving tests
+by adding lines to the list of expected failures with the following
+tags:
+<ul>
+<li>dontcare:  failing tests that don't seem useful or practical to fix on Wine
+<li>fail:  tests that fail on wine
+<li>fail-wine-vmware:  tests that fail on wine under vmware because of a vmware problem
+<li>hang:  tests that hang on wine
+<li>crash:  tests that crash on wine
+<li>flaky:  tests that fail sometimes on wine
+</ul>
+
+Some of these problems turned out to be bugs in either my scripts
+or in the Chromium testcases; I fixed those myself, and
+filed bugs against Wine for the ones that seemed to be Wine's fault.
+I added URLs for the Wine bug reports to the tags; 
+"sh chromium-runtests.sh --list-failures-html" outputs the 
+<a href="http://kegel.com/wine/chromium/failures.html">expected failure list in HTML with hyperlinks to the bug reports</a>.
+
+
+As the Wine community fixes problems, I remove those lines from the
+list of expected failures.
+
+<h3>Using the tools</h3>
+Finally, with the tools installed and tests validated,
+I then ran the tests under valgrind with the command
+"sh chromium-runtests.sh --valgrind".  It takes about half an hour
+to run this subset of tests under Valgrind.
 
 </body>
 </html>
