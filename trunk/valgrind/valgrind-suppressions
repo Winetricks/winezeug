@@ -379,6 +379,12 @@
    fun:_dl_catch_error
 }
 {
+   suppress_dlopen_addr4
+   Memcheck:Addr4
+   ...
+   fun:__libc_dlopen_mode
+}
+{
    todo_suppress_load_library_leak
    Memcheck:Leak
    fun:RtlAllocateHeap
@@ -804,6 +810,17 @@
    ...
    fun:SECUR32_initSchannelSP
 }
+{
+   # yet another gnutls leak?
+   gnutls_leak_bug_2
+   Memcheck:Leak
+   fun:calloc
+   ...
+   fun:_gnutls_hash_init
+   fun:gnutls_handshake
+   fun:schan_InitializeSecurityContextW
+   fun:InitializeSecurityContextW
+}
 # leak on thread creation?
 {
    wine_bug_20552
@@ -812,4 +829,73 @@
    fun:RtlAllocateHeap
    fun:alloc_thread_tls
    fun:MODULE_DllThreadAttach
+}
+{
+   wine_secur32_ignore_fork_helper_leak
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:fork_helper
+   fun:SECUR32_initNTLMSP
+   fun:SECUR32_initializeProviders
+}
+{
+   wine_bug_20548_ConnectNamedPipe
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:server_ioctl_file
+   fun:NtFsControlFile
+}
+{
+   wine_bug_20548_ReadFile
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:NtReadFile
+}
+{
+   wine_bug_20548_WriteFile
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:NtWriteFile
+}
+{
+   wine_bug_20548_WS_shutdown
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:WS2_register_async_shutdown
+   fun:WS_shutdown
+}
+{
+   todo_tls_leak_wine_bug_20552
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:alloc_thread_tls
+   fun:MODULE_DllThreadAttach
+   fun:start_thread
+}
+# Chromium-specific suppressions
+{
+   dont_valgrind_python_1
+   Memcheck:Cond
+   ...
+   obj:*python*
+}
+{
+   dont_valgrind_python_2
+   Memcheck:Value4
+   ...
+   obj:*python*
+}
+{
+   wine_bug_20551_as_seen_by_chromium
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:GlobalAlloc
+   ...
+   fun:Clipboard::WriteObjects
+}
+{
+   suppress_chromium_crasher
+   Memcheck:Addr1
+   ...
+   fun:*Test_Crasher*
 }

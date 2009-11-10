@@ -67,6 +67,7 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 --leak-check=full \
 --num-callers=25 \
 --show-possible=no \
+--smc-check=all \
 --suppressions=../../../../../valgrind/valgrind-suppressions \
 --trace-children=yes \
 --track-origins=yes \
@@ -87,13 +88,14 @@ app_unittests         crash-valgrind       IconUtilTest.TestCreateSkBitmapFromHI
 base_unittests        dontcare             BaseWinUtilTest.FormatMessageW                       
 base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter                  
 base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime                
+base_unittests        dontcare             PEImageTest.EnumeratesPE                             Alexandre triaged
 base_unittests        dontcare-winfail     TimeTicks.HighResNow                                 fails if run individually on windows
 base_unittests        dontcare             WMIUtilTest.*                                        
 base_unittests        fail                 HMACTest.HMACObjectReuse                             http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.HmacSafeBrowsingResponseTest                http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.RFC2202TestCases                            http://bugs.winehq.org/show_bug.cgi?id=20340
-base_unittests        dontcare             PEImageTest.EnumeratesPE                             Alexandre triaged
 base_unittests        fail                 StackTrace.OutputToStream                            http://bugs.winehq.org/show_bug.cgi?id=20627
+base_unittests        fail_wine_vmware     RSAPrivateKeyUnitTest.ShortIntegers
 base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
 base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
 base_unittests        hang-valgrind        TimerTest.RepeatingTimer*
@@ -104,12 +106,13 @@ media_unittests       crash                FFmpegGlueTest.OpenClose
 media_unittests       crash                FFmpegGlueTest.Read                                  
 media_unittests       crash                FFmpegGlueTest.Seek                                  
 media_unittests       crash                FFmpegGlueTest.Write                                 
+media_unittests       fail_wine_vmware     WinAudioTest.PCMWaveStreamTripleBuffer
 net_unittests         hang                 HTTPSRequestTest.HTTPSExpiredTest                    http://bugs.winehq.org/show_bug.cgi?id=20622
 net_unittests         hang                 HTTPSRequestTest.HTTPSGetTest                        http://bugs.winehq.org/show_bug.cgi?id=20622                   
 net_unittests         hang                 HTTPSRequestTest.HTTPSMismatchedTest                 http://bugs.winehq.org/show_bug.cgi?id=20622
 net_unittests         hang                 SSLClientSocketTest.Read                             http://bugs.winehq.org/show_bug.cgi?id=20622
-net_unittests         hang                 SSLClientSocketTest.Read_SmallChunks                 http://bugs.winehq.org/show_bug.cgi?id=20622
 net_unittests         hang                 SSLClientSocketTest.Read_Interrupted                 http://bugs.winehq.org/show_bug.cgi?id=20622
+net_unittests         hang                 SSLClientSocketTest.Read_SmallChunks                 http://bugs.winehq.org/show_bug.cgi?id=20622
 sbox_unittests        fail                 JobTest.ProcessInJob                                 
 sbox_unittests        fail                 JobTest.TestCreation                                 
 sbox_unittests        fail                 JobTest.TestDetach                                   
@@ -145,6 +148,8 @@ unit_tests            fail                 RenderViewTest.PrintWithIframe       
 unit_tests            fail                 RenderViewTest.PrintWithJavascript                   http://bugs.winehq.org/show_bug.cgi?id=20619
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  http://bugs.winehq.org/show_bug.cgi?id=20340
+unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAllocation
+unit_tests            crash-valgrind        TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
 _EOF_
 }
 
