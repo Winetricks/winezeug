@@ -1,0 +1,34 @@
+# Chromium-specific suppressions
+{
+   dont_valgrind_python_1
+   Memcheck:Cond
+   ...
+   obj:*python*
+}
+{
+   dont_valgrind_python_2
+   Memcheck:Value4
+   ...
+   obj:*python*
+}
+{
+   dont_valgrind_python_3
+   Memcheck:Addr4
+   ...
+   obj:*python*
+}
+{
+   wine_bug_20551_as_seen_by_chromium
+   Memcheck:Leak
+   fun:RtlAllocateHeap
+   fun:GlobalAlloc
+   ...
+   fun:Clipboard::WriteObjects
+}
+{
+   suppress_chromium_crasher
+   Memcheck:Addr1
+   ...
+   fun:*Test_Crasher*
+}
+

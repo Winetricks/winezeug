@@ -32,6 +32,7 @@ Stdout/stderr saved to logs/ directory.  (The tests themselves
 may save logs next to their executables in src/Debug.)
 Options:
   --individual     - run tests individually 
+  --gtest_filter X - only run the tests matching X
   --just-crashes   - run only tests epected to crash
   --just-fails     - run only tests epected to fail
   --just-flaky     - run only tests epected to fail sometimes
@@ -69,6 +70,7 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 --show-possible=no \
 --smc-check=all \
 --suppressions=../../../../../valgrind/valgrind-suppressions \
+--suppressions=../../../chromium-valgrind-suppressions \
 --trace-children=yes \
 --track-origins=yes \
 --workaround-gcc296-bugs=yes \
@@ -201,6 +203,18 @@ get_test_filter()
    sed 's/:$/\n/'
 }
 
+# Output the logical and of the two gtest filters $1 and $2.
+# Handle the case where $1 is empty.
+and_gtest_filters()
+{
+  # FIXME: handle more complex cases
+  case "$1" in
+  "") ;;
+  *) echo -n "$1": ;;
+  esac
+  echo $2
+}
+
 # Expands a gtest filter spec to a plain old list of tests separated by whitespace
 expand_test_list()
 {
@@ -224,11 +238,13 @@ VALGRIND_CMD=
 want_fails=no
 loops=1
 winedebug=
+extra_gtest_filter=
 
 while test "$1" != ""
 do
   case $1 in
   --individual) do_individual=yes;;
+  --gtest_filter) extra_gtest_filter=$2; shift;;
   --just-crashes) fail_filter="crash"; want_fails=yes;;
   --just-fails) fail_filter="fail"; want_fails=yes;;
   --just-flaky) fail_filter="flaky"; want_fails=yes;;
@@ -267,8 +283,8 @@ do
 
     expected_to_fail="`get_test_filter $suite $fail_filter`"
     case $want_fails in
-    no)  filterspec=-$expected_to_fail ;;
-    yes) filterspec=$expected_to_fail ;;
+    no)  filterspec=`and_gtest_filters "${extra_gtest_filter}" -${expected_to_fail}` ;;
+    yes) filterspec=`and_gtest_filters "${extra_gtest_filter}"  ${expected_to_fail}` ;;
     esac
 
     case $do_individual in
