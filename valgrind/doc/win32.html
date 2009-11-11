@@ -73,14 +73,31 @@ To investigate whether Chromium could use Valgrind for Win32, I wrote
 two scripts: one to extract the tests, and one to run them.
 
 <h3>Building and Extracting Tests</h3>
+Here are the steps I follow to bring up the test environment:
+<ol>
+<li>Set up Chromium build environment<br>
 <a href="http://dev.chromium.org">http://dev.chromium.org</a>
 describes how to build Chromium on Windows.
 It takes about a day to install Visual Studio and the needed
 SDKs and hotfixes, and sadly, there is no easy way to automate this.
-<p>
-
-Once I had a debug build of Chromium on Windows,
-I packaged it up by running
+<li>Do a debug build of the Chrome solution<br>
+(This takes about 500 minutes on a 1GB Core 2 Duo, 80 minutes on the same machin with 4GB RAM,
+and about 20 minutes on an 8 core box with 12 GB of RAM and two hard drives.)
+<li>Run the tests on Windows with the cygwin shell script
+<a href="http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-runtests.sh">http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-runtests.sh</a>
+.
+The results are placed in the logs subdirectory.
+<li>Check the results of the script<br>
+If any tests misbehave, add lines to the list of expected failures in the script
+with the following tags:
+<ul>
+<li>dontcare-fail-win:  tests that fail even on windows
+<li>dontcare-hang-win:  tests that hang even on windows
+<li>dontcare-flaky-win: tests that fail sometimes even on windows
+</ul>
+(You can see the list with "sh chromium-runtests.sh --list-failures".)
+<li>Package the tests <br>
+Run
 <a href="http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-savetests.sh">http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-savetests.sh</a>
 .
 This saves a sizeable subset of Chromium's test suite 
@@ -89,35 +106,23 @@ with .pdb files into an archive file.
 (I have a prebuilt copy at
 <a href="http://kegel.com/wine/chromium/chromium-tests.tar.bz2">http://kegel.com/wine/chromium/chromium-tests.tar.bz2</a>
 for people who don't want to set up a chromium build environment.)
-<p>
-
-I then unpacked that archive in a different directory of the
-windows machine, ran the tests with the script
-<a href="http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-runtests.sh">http://winezeug.googlecode.com/svn/trunk/testsuites/chromium/chromium-runtests.sh</a>
-, checked the results, and added lines to the list of expected failures 
-with the following tags:
-<ul>
-<li>dontcare-fail-win:  tests that fail even on windows
-<li>dontcare-hang-win:  tests that hang even on windows
-<li>dontcare-flaky-win: tests that fail sometimes even on windows
-</ul>
-
-(You can see the list with "sh chromium-runtests.sh --list-failures".)
-<p>
-
-Having validated both the test archive and the script on Windows,
-I then copied them to the Linux system where I had installed valgrind and wine.
-<p>
-
+<li>Verify the archived tests work properly on Windows<br>
+Unpack that archive in a different directory of the windows machine,
+run the tests again, and verify that no tests fail.  (If they
+do, either there's a flaky test that needs to be fixed or disabled,
+or the script that archives the tests is buggy and needs fixing.)
+<li>Verify the archived tests work properly on Linux<br>
+Copy the archive to the Linux system where valgrind and wine are installed.
 (Because that script directly references the valgrind suppressions file mentioned
 above, it's easiest to grab a copy of the winezeug tree with the
 command "svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug",
 then cd to winezeug/testcases/chromium and unpack the tarball there.)
-<p>
+<br>
+Then run "chromium-runtests.sh" again to see how the tests did
+on Wine (without Valgrind).
 
-I then ran "chromium-runtests.sh" again to see how the tests did
-on Wine (without Valgrind), and triaged the misbehaving tests
-by adding lines to the list of expected failures with the following
+<li>Check the results of the script<br>
+Triage any misbehaving tests by adding lines to the list of expected failures with the following
 tags:
 <ul>
 <li>dontcare:  failing tests that don't seem useful or practical to fix on Wine
@@ -127,23 +132,39 @@ tags:
 <li>crash:  tests that crash on wine
 <li>flaky:  tests that fail sometimes on wine
 </ul>
-
-Some of these problems turned out to be bugs in either my scripts
-or in the Chromium testcases; I fixed those myself, and
-filed bugs against Wine for the ones that seemed to be Wine's fault.
-I added URLs for the Wine bug reports to the tags; 
+If any problems turn out to be bugs in either the test scripts
+or in the Chromium testcases, fix those (or file a chromium bug).
+If any seem to be Wine's fault, file bugs against Wine for those,
+and add URLs for the Wine bug reports to the tags; 
 "sh chromium-runtests.sh --list-failures-html" outputs the 
 <a href="http://kegel.com/wine/chromium/failures.html">expected failure list in HTML with hyperlinks to the bug reports</a>.
-
-
-As the Wine community fixes problems, I remove those lines from the
-list of expected failures.
+<li>
+As the Wine community fixes problems, remove the corresponding lines from the list of expected failures.
+</ol>
 
 <h3>Using the tools</h3>
 Finally, with the tools installed and tests validated,
 I then ran the tests under valgrind with the command
-"sh chromium-runtests.sh --valgrind".  It takes about half an hour
-to run this subset of tests under Valgrind.
-
+"sh chromium-runtests.sh --valgrind".  It takes about an hour
+to run this subset of tests under Valgrind on a Core 2 Duo --
+unless there's a crash; handling crashes takes up about
+two gigabytes of RAM and many minutes (the pdb reading code
+of both wine and valgrind is relatively inefficient).
+<p>
+The Chromium team runs Valgrind on the Linux and Mac tests continuously.
+When Valgrind finds a flaw, the developer dealing with it either fixes
+it immediately, or files a bug, then either adds a suppression
+to one of the valgrind suppression files, or disables the test
+(in the case of a crash).  The goal is to keep the tree green
+so that any new failures stand out vividly.
+<p>
+The same strategy is followed when running Valgrind on the
+Windows tests; either fix the problems (if you can), or
+file bugs and suppress the error or disable the test,
+such that all the tests pass under Valgrind without any
+reported warnings.  Then work can continue, and the problems
+recorded in the suppressions files and expected failure list
+can be fixed offline.
+<p>
 </body>
 </html>
