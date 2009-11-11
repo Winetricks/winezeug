@@ -270,6 +270,7 @@
 {
    todo_wine_dlls_winex11drv__x11drv_init_thread_data_main
    Memcheck:Leak 
+   ...
    fun:RtlAllocateHeap
    fun:x11drv_init_thread_data
 }
@@ -349,6 +350,7 @@
 {
    todo_suppress_alloc_module_leak
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:RtlCreateUnicodeString
    fun:alloc_module
@@ -387,6 +389,7 @@
 {
    todo_suppress_load_library_leak
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:RtlAnsiStringToUnicodeString
    fun:RtlCreateUnicodeStringFromAsciiz
@@ -395,7 +398,7 @@
 {
    todo_suppress_wine_init_load_order_leak
    Memcheck:Leak
-   fun:notify_alloc
+   ...
    fun:RtlAllocateHeap
    fun:RtlAnsiStringToUnicodeString
    fun:RtlCreateUnicodeStringFromAsciiz
@@ -405,7 +408,7 @@
 {
    todo_suppress_wine_alloc_module_leak
    Memcheck:Leak
-   fun:notify_alloc
+   ...
    fun:RtlAllocateHeap
    fun:RtlCreateUnicodeString
    fun:alloc_module
@@ -413,6 +416,7 @@
 {
    todo_suppress_explorer_leak
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:load_driver
    fun:loaderdrv_CreateDesktopWindow
@@ -777,7 +781,7 @@
 {
    wine_bug_20545
    Memcheck:Leak
-   fun:notify_alloc
+   ...
    fun:Rtl*AllocateHeap
    fun:MMDRV_InitPerType
    fun:MMDRV_Install
@@ -830,7 +834,7 @@
 {
    wine_bug_20552
    Memcheck:Leak
-   fun:notify_alloc
+   ...
    fun:RtlAllocateHeap
    fun:alloc_thread_tls
    fun:MODULE_DllThreadAttach
@@ -886,7 +890,7 @@
 {
    wine_bug_20654
    Memcheck:Leak
-   fun:notify_alloc
+   ...
    fun:RtlAllocateHeap
    fun:get_full_path_helper
    fun:RtlGetFullPathName_U
