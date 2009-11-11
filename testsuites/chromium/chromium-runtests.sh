@@ -32,6 +32,7 @@ Stdout/stderr saved to logs/ directory.  (The tests themselves
 may save logs next to their executables in src/Debug.)
 Options:
   --individual     - run tests individually 
+  --groups         - run tests grouped by their major gtest name
   --gtest_filter X - only run the tests matching X
   --just-crashes   - run only tests epected to crash
   --just-fails     - run only tests epected to fail
@@ -311,9 +312,9 @@ do
     groups)
       for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
       do
-        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*" 
+        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 
         WINEDEBUG=$winedebug $dry_run  \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*" > ../../../logs/$suite-$test-$i.log 2>&1 || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
       ;;
     esac
