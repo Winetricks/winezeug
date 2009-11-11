@@ -33,4 +33,8 @@
    ...
    fun:*Test_Crasher*
 }
-
+{
+   ignore_mozilla_errors
+   Memcheck:Cond
+   obj:*/ImporterTest/profile/mozcrt19.dll
+}
