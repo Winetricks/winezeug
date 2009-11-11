@@ -112,6 +112,7 @@ media_unittests       crash                FFmpegGlueTest.Read
 media_unittests       crash                FFmpegGlueTest.Seek                                  
 media_unittests       crash                FFmpegGlueTest.Write                                 
 media_unittests       fail_wine_vmware     WinAudioTest.PCMWaveStreamTripleBuffer
+media_unittests       hang-valgrind        WinAudioTest.PCMWaveSlowSource
 net_unittests         hang                 HTTPSRequestTest.HTTPSExpiredTest                    http://bugs.winehq.org/show_bug.cgi?id=20622
 net_unittests         hang                 HTTPSRequestTest.HTTPSGetTest                        http://bugs.winehq.org/show_bug.cgi?id=20622                   
 net_unittests         hang                 HTTPSRequestTest.HTTPSMismatchedTest                 http://bugs.winehq.org/show_bug.cgi?id=20622
@@ -154,7 +155,8 @@ unit_tests            fail                 RenderViewTest.PrintWithJavascript   
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAllocation
-unit_tests            crash-valgrind        TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
+unit_tests            crash-valgrind       TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
+unit_tests            crash-valgrind       RenderViewTest.OnPrintPageAsBitmap                    http://bugs.winehq.org/show_bug.cgi?id=20657 (for wine oom)
 _EOF_
 }
 
