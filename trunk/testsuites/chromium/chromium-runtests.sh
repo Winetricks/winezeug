@@ -250,6 +250,7 @@ while test "$1" != ""
 do
   case $1 in
   --individual) do_individual=yes;;
+  --groups) do_individual=groups;;
   --gtest_filter) extra_gtest_filter=$2; shift;;
   --just-crashes) fail_filter="crash"; want_fails=yes;;
   --just-fails) fail_filter="fail"; want_fails=yes;;
@@ -305,6 +306,14 @@ do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 
         WINEDEBUG=$winedebug $dry_run  \
                   $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$test-$i.log 2>&1 || true
+      done
+      ;;
+    groups)
+      for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
+      do
+        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*" 
+        WINEDEBUG=$winedebug $dry_run  \
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
       ;;
     esac
