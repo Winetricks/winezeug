@@ -150,6 +150,7 @@ unit_tests            dontcare             SpellCheckTest.SpellCheckText
 unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             http://bugs.winehq.org/show_bug.cgi?id=20626
 unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
+unit_tests            hang-valgrind        ExtensionAPIClientTest.*                             Not really a hang, just takes 30 minutes
 unit_tests            fail                 ImporterTest.IEImporter                              http://bugs.winehq.org/show_bug.cgi?id=20625
 unit_tests            fail                 RenderViewTest.InsertCharacters                      http://bugs.winehq.org/show_bug.cgi?id=20624
 unit_tests            fail                 RenderViewTest.OnPrintPages                          http://bugs.winehq.org/show_bug.cgi?id=20619
@@ -161,6 +162,30 @@ unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestV
 unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAllocation
 _EOF_
 }
+
+# Times are in seconds, and are ~20% higher than slowest observed runtime so far in valgrind.
+# TODO: make the returned value depend on --valgrind
+get_expected_runtime() {
+  case $1 in
+  app_unittests)         echo 30;;
+  base_unittests)        echo 500;;
+  courgette_unittests)   echo 600;;
+  googleurl_unittests)   echo 30;;
+  ipc_tests)             echo 200;;
+  media_unittests)       echo 200;;
+  net_unittests)         echo 1300;;
+  printing_unittests)    echo 30;;
+  sbox_unittests)        echo 30;;
+  sbox_validation_tests) echo 30;;
+  setup_unittests)       echo 30;;
+  tcmalloc_unittests)    echo 200;;
+  unit_tests)            echo 3000;;
+  *)                     echo "unknown test $1" >&2 ; exec false;;
+  esac
+}
+
+# Run $2... but kill it if it takes longer than $1 seconds
+alarm() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
 init_runtime() {
   if test "$WINDIR" = ""
@@ -280,6 +305,7 @@ init_runtime
 
 set -x
 
+mkdir -p logs
 cd src/chrome/Debug
 
 i=1
@@ -287,8 +313,6 @@ while test $i -le $loops
 do
   for suite in $SUITES
   do
-    mkdir -p ../../../logs
-
     expected_to_fail="`get_test_filter $suite $fail_filter`"
     case $want_fails in
     no)  filterspec=`and_gtest_filters "${extra_gtest_filter}" -${expected_to_fail}` ;;
@@ -298,14 +322,14 @@ do
     case $do_individual in
     no)
       $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 
-      WINEDEBUG=$winedebug $dry_run  \
+      WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
                 $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec > ../../../logs/$suite-$i.log 2>&1 || true
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 
-        WINEDEBUG=$winedebug $dry_run  \
+        WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
                   $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
       ;;
@@ -313,7 +337,7 @@ do
       for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 
-        WINEDEBUG=$winedebug $dry_run  \
+        WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
                   $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
       ;;
