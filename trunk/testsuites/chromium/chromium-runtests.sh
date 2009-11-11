@@ -100,10 +100,10 @@ base_unittests        fail                 StackTrace.OutputToStream            
 base_unittests        fail_wine_vmware     RSAPrivateKeyUnitTest.ShortIntegers
 base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
 base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
+base_unittests        hang-valgrind        JSONReaderTest.Reading                               # not really a hang, takes 400 seconds
+base_unittests        hang-valgrind        RSAPrivateKeyUnitTest.InitRandomTest                 # not really a hang, takes 300 seconds
 base_unittests        hang-valgrind        TimerTest.RepeatingTimer*
 base_unittests        hang-valgrind        TimeTicks.WinRollover                                # not really a hang, takes 1000 seconds
-base_unittests        hang-valgrind        RSAPrivateKeyUnitTest.InitRandomTest                 # not really a hang, takes 300 seconds
-base_unittests        hang-valgrind        JSONReaderTest.Reading                               # not really a hang, takes 400 seconds
 ipc_tests             flaky                IPCChannelTest.ChannelTest                           http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             hang                 IPCSyncChannelTest.*                                 http://bugs.winehq.org/show_bug.cgi?id=20390
@@ -141,6 +141,9 @@ sbox_unittests        fail                 ServiceResolverTest.PatchesServices
 sbox_unittests        flaky                IPCTest.ClientFastServer                             
 sbox_validation_tests fail                 ValidationSuite.*                                    
 unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   http://bugs.winehq.org/show_bug.cgi?id=20340
+unit_tests            crash-valgrind       DnsMasterTest.MassiveConcurrentLookupTest
+unit_tests            crash-valgrind       RenderViewTest.OnPrintPageAsBitmap                    http://bugs.winehq.org/show_bug.cgi?id=20657 (for wine oom)
+unit_tests            crash-valgrind       TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
 unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker             
 unit_tests            dontcare             SpellCheckTest.SpellCheckText                        
 unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             http://bugs.winehq.org/show_bug.cgi?id=20626
@@ -155,8 +158,6 @@ unit_tests            fail                 RenderViewTest.PrintWithJavascript   
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAllocation
-unit_tests            crash-valgrind       TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
-unit_tests            crash-valgrind       RenderViewTest.OnPrintPageAsBitmap                    http://bugs.winehq.org/show_bug.cgi?id=20657 (for wine oom)
 _EOF_
 }
 
