@@ -101,6 +101,9 @@ base_unittests        fail_wine_vmware     RSAPrivateKeyUnitTest.ShortIntegers
 base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
 base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
 base_unittests        hang-valgrind        TimerTest.RepeatingTimer*
+base_unittests        hang-valgrind        TimeTicks.WinRollover                                # not really a hang, takes 1000 seconds
+base_unittests        hang-valgrind        RSAPrivateKeyUnitTest.InitRandomTest                 # not really a hang, takes 300 seconds
+base_unittests        hang-valgrind        JSONReaderTest.Reading                               # not really a hang, takes 400 seconds
 ipc_tests             flaky                IPCChannelTest.ChannelTest                           http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             hang                 IPCSyncChannelTest.*                                 http://bugs.winehq.org/show_bug.cgi?id=20390
