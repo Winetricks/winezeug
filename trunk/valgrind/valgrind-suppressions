@@ -821,8 +821,8 @@
    Memcheck:Leak
    fun:calloc
    ...
-   fun:_gnutls_hash_init
-   fun:gnutls_handshake
+#   fun:_gnutls_hash_init         (commented out because sometimes this shows up without symbols)
+#   fun:gnutls_handshake
    fun:schan_InitializeSecurityContextW
    fun:InitializeSecurityContextW
 }
@@ -838,6 +838,7 @@
 {
    wine_secur32_ignore_fork_helper_leak
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:fork_helper
    fun:SECUR32_initNTLMSP
@@ -846,6 +847,7 @@
 {
    wine_bug_20548_ConnectNamedPipe
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:server_ioctl_file
    fun:NtFsControlFile
@@ -853,18 +855,21 @@
 {
    wine_bug_20548_ReadFile
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:NtReadFile
 }
 {
    wine_bug_20548_WriteFile
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:NtWriteFile
 }
 {
    wine_bug_20548_WS_shutdown
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:WS2_register_async_shutdown
    fun:WS_shutdown
@@ -872,8 +877,17 @@
 {
    todo_tls_leak_wine_bug_20552
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
    fun:alloc_thread_tls
    fun:MODULE_DllThreadAttach
    fun:start_thread
+}
+{
+   wine_bug_20654
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:get_full_path_helper
+   fun:RtlGetFullPathName_U
 }
