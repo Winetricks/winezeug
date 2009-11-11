@@ -20,7 +20,9 @@
 {
    wine_bug_20551_as_seen_by_chromium
    Memcheck:Leak
+   ...
    fun:RtlAllocateHeap
+   ...
    fun:GlobalAlloc
    ...
    fun:Clipboard::WriteObjects
