@@ -76,10 +76,18 @@ if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
         export CONFIGUREFLAGS="--without-ldap --without-capi"
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
-# Unused at the moment, but if there's a distro requiring a strange build setup, this will be useful.
-#       distro=`lsb_release -i -r -s`
-        echo "Most Linux distros should build fine out of the box."
-        echo "If not, please notifiy the maintainer to add your build script here."
+        # Are we on 64-bit?
+        if [ "`uname -m`" = "x86_64" ]
+            then
+            # Are we on Ubuntu?
+            if [ "`lsb_release -i -s`" = "Ubuntu" ]
+                then
+                    export CONFIGUREFLAGS="--without-mpg123"
+            fi
+        else
+            echo "Most Linux distros should build fine out of the box."
+            echo "If not, please notifiy the maintainer to add your build script here."
+        fi
 elif [ $OS = 'FreeBSD' ]
     then
         export CPPFLAGS="-I/usr/local/include"
