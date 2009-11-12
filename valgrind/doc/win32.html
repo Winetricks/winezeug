@@ -39,9 +39,25 @@ Valgrind needs a patch or two to work well with Wine;
 describes how to build it.
 <p>
 Wine needs to be built after installing Valgrind so it can use
-Valgrind's macros to decorate its heap operations.
+Valgrind's macros to decorate its heap operations -- and
+the /usr/include/valgrind/valgrind.h file must be new
+enough to contain the lines
+<pre>
+          /* Wine support */
+          VG_USERREQ__LOAD_PDB_DEBUGINFO = 0x1601
+</pre>
+This happens automatically if you install valgrind with --prefix /usr,
+but since I prefer to install it into /usr/local/valgrind-NNNN, 
+I usually do 
+<pre>
+          cd /usr/include; sudo mv valgrind valgrind.orig; sudo ln -s /usr/local/valgrind-NNNN/include/valgrind valgrind
+</pre>
+<p>
 You can check that this was done properly by verifying
-that wine's include/config.h sets HAVE_VALGRIND_MEMCHECK_H.
+that wine's include/config.h sets HAVE_VALGRIND_MEMCHECK_H,
+and that valgrind gives good symbolic stacks for
+errors in win32 code.
+<p>
 Once you have Wine installed, run Wine's conformance tests 
 to verify that is operating properly.  (A few test failures
 are ok; see 
