@@ -895,3 +895,10 @@
    fun:get_full_path_helper
    fun:RtlGetFullPathName_U
 }
+{
+   # This leak is expected - wine doesn't have a reliable way to free the default provider on exit.
+   wine_bug_20679
+   Memcheck:Leak
+   ...
+   fun:CRYPT_GetDefaultProvider
+}
