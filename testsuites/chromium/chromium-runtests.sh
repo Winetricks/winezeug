@@ -41,6 +41,7 @@ Options:
   --list-failures  - show list of expected failures
   --loops N        - run tests N times
   -n               - dry run, only show what will be done
+  --used-suppressions - extract histogram of used valgrind suppressions from current contents of logs directory
   --valgrind       - run the tests under valgrind
   --winedebug chan - e.g. --windebug +relay,+seh
 Currently supported suites:
@@ -74,6 +75,7 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 --suppressions=../../../chromium-valgrind-suppressions \
 --trace-children=yes \
 --track-origins=yes \
+-v \
 --workaround-gcc296-bugs=yes \
 "
 
@@ -167,17 +169,17 @@ _EOF_
 # TODO: make the returned value depend on --valgrind
 get_expected_runtime() {
   case $1 in
-  app_unittests)         echo 30;;
+  app_unittests)         echo 60;;
   base_unittests)        echo 500;;
   courgette_unittests)   echo 600;;
-  googleurl_unittests)   echo 30;;
+  googleurl_unittests)   echo 60;;
   ipc_tests)             echo 200;;
   media_unittests)       echo 200;;
   net_unittests)         echo 1300;;
-  printing_unittests)    echo 30;;
-  sbox_unittests)        echo 30;;
-  sbox_validation_tests) echo 30;;
-  setup_unittests)       echo 30;;
+  printing_unittests)    echo 60;;
+  sbox_unittests)        echo 60;;
+  sbox_validation_tests) echo 60;;
+  setup_unittests)       echo 60;;
   tcmalloc_unittests)    echo 200;;
   unit_tests)            echo 3000;;
   *)                     echo "unknown test $1" >&2 ; exec false;;
@@ -185,7 +187,7 @@ get_expected_runtime() {
 }
 
 # Run $2... but kill it if it takes longer than $1 seconds
-alarm() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+alarm() { time perl -e 'alarm shift; exec @ARGV' "$@"; }
 
 init_runtime() {
   if test "$WINDIR" = ""
@@ -286,6 +288,7 @@ do
   --list-failures-html) list_known_failures | sed 's,http://\(.*\),<a href="http://\1">\1</a>,;s/$/<br>/' ; exit 0;;
   --loops) loops=$2; shift;;
   -n) dry_run=true; announce=echo ;;
+  --used-suppressions) cd logs; grep used_suppression *.log | sed 's/-1.*--[0-9]*-- used_suppression//'; exit 0;;
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
   --winedebug) winedebug=$2; shift;;
   -*) usage; exit 1;;
