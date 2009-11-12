@@ -302,7 +302,7 @@ runtests
 
 build_dib() {
 BUILDNAME=dib
-CONFIGUREFLAGS=""
+CONFIGUREFLAGS=${CONFIGUREFLAGS}""
 $GET "http://bugs.winehq.org/attachment.cgi?id=21159"
 rm -rf dlls/winedib.drv
 patch -p1 < attachment.cgi\?id\=21159
@@ -311,13 +311,13 @@ build || build_failed
 
 build_regular() {
 BUILDNAME=regular
-CONFIGUREFLAGS=""
+CONFIGUREFLAGS=${CONFIGUREFLAGS}""
 build || build_failed
 }
 
 build_nowin16() {
 BUILDNAME=nowin16
-CONFIGUREFLAGS="--disable-win16"
+CONFIGUREFLAGS=${CONFIGUREFLAGS}" --disable-win16"
 build || build_failed
 }
 
@@ -329,7 +329,7 @@ build || build_failed
 
 build_win64() {
 BUILDNAME=win64
-CONFIGUREFLAGS="--enable-win64"
+CONFIGUREFLAGS=${CONFIGUREFLAGS}" --enable-win64"
 build || build_failed
 }
 
