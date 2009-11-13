@@ -294,7 +294,7 @@
    fun:*alloc
    fun:XInitExtension
    fun:XextAddDisplay
-   fun:XRRFindDisplay
+   obj:*/libXrandr*
    fun:XRRQueryExtension
    fun:X11DRV_XRandR_Init
 }
@@ -314,10 +314,9 @@
    fun:XInitExtension
    fun:XextAddDisplay
    ...
-   fun:find_display
    fun:XPanoramiXQueryExtension
    fun:XineramaQueryExtension
-   fun:query_screens
+   ...
    fun:xinerama_init
 }
 {
@@ -335,7 +334,6 @@
    fun:XInitExtension
    fun:XCompositeFindDisplay
    fun:XCompositeQueryExtension
-   fun:X11DRV_XComposite_Init
 }
 {
    todo_wine_dlls_winex11drv__X11DRV_XF86VM_Init
@@ -343,9 +341,29 @@
    fun:*alloc
    fun:XInitExtension
    fun:XextAddDisplay
-   obj:/usr/lib32/libXxf86vm.so.1.0.0
+   fun:*
    fun:XF86VidModeQueryExtension
    fun:X11DRV_XF86VM_Init
+}
+{
+   todo_wine_dlls_winex11drv_XOpenDisplay
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:xcb_connect
+   fun:_XConnectXCB
+   fun:XOpenDisplay
+}
+{
+   todo_wine_dlls_winex11drv_XOpenDisplay_2
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:xcb_get_extension_data
+   fun:xcb_prefetch_maximum_request_length
+   fun:xcb_get_maximum_request_length
+   fun:XOpenDisplay
+   fun:DllMain
 }
 {
    todo_suppress_alloc_module_leak
@@ -358,15 +376,8 @@
 {
    todo_suppress_dlopen_leak
    Memcheck:Leak
-   fun:malloc
-   obj:*
-   obj:*
-   obj:*
-   obj:*
-   obj:*
-   obj:*
-   obj:*
-   obj:*
+   fun:*alloc
+   ...
    fun:dlopen
 }
 {
@@ -768,7 +779,7 @@
    fun:malloc
    fun:XInitExtension
    fun:XextAddDisplay
-   fun:find_display
+   fun:*
    fun:XShmQueryVersion
    fun:X11DRV_CreateDIBSection
    fun:CreateDIBSection
@@ -901,4 +912,13 @@
    Memcheck:Leak
    ...
    fun:CRYPT_GetDefaultProvider
+}
+{
+   # Benign window title leak?
+   wine_bug_20692_wontfix
+   Memcheck:Leak
+   ...
+   fun:DEFWND_SetText*
+   ...
+   fun:CreateWindow*
 }
