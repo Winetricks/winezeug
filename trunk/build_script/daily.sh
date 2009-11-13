@@ -123,15 +123,15 @@ fi
 # Make sure wget is available:
 if [ `which wget` ]
     then
-        GET='wget "$1"'
+        GET="wget "$1""
 # If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
 # to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
 elif [ `which curl` ]
     then
-        GET='curl -o `basename "$1"` $1'
+        GET="curl -o `basename "$1"` $1"
 elif [ `which ftp` ]
     then
-        GET='ftp "$1"'
+        GET="ftp "$1""
 else
     echo "You don't have wget, curl or ftp installed. I can't download needed files. Please report this as a bug."
     exit 1
