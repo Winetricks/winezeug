@@ -237,6 +237,7 @@ usage() {
     echo " autohotkey    Autohotkey (open source gui scripting language)"
     echo " firefox       Firefox"
     echo " ie6           Microsoft Internet Explorer 6.0"
+    echo " ie7           Microsoft Internet Explorer 7.0"
     echo " kde           KDE for Windows installer"
     echo " mpc           Media Player Classic"
     echo " vlc           VLC media player"
@@ -1572,6 +1573,62 @@ load_ie6() {
     unset_winver
 
     # try $WINE "$programfilesdir_unix"/"Internet Explorer"/IEXPLORE.EXE http://www.winehq.org
+}
+
+load_ie7() {
+
+    # Unregister Wine IE
+    try $WINE iexplore -unregserver
+
+    # Change the override to the native so we are sure we use and register them
+    override_dlls native,builtin iexplore.exe itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon xmllite
+
+    # Bundled updspapi cannot work on wine
+    override_dlls builtin updspapi
+
+    # Remove the fake dlls from the existing WINEPREFIX
+    for dll in itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    do
+        test -f "$WINDIR"/system32/$dll.dll &&
+        mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
+    done
+
+    # See http://bugs.winehq.org/show_bug.cgi?id=16013
+    # Find instructions to create this file in dlls/wintrust/tests/crypt.c
+    download . http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+
+    # Put a dummy catalog file in place
+    mkdir -p "$WINDIR"/system32/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    try cp -f "$WINETRICKS_CACHE"/winetest.cat "$WINDIR"/system32/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+
+    # Install
+    download . http://download.microsoft.com/download/3/8/8/38889DC1-848C-4BF2-8335-86C573AD86D9/IE7-WindowsXP-x86-enu.exe d39b89c360fbaa9706b5181ae4718100687a5326
+    if [ $WINETRICKS_QUIET ]
+    then
+        $WINE "$WINETRICKS_CACHE"/IE7-WindowsXP-x86-enu.exe /quiet
+    else
+        $WINE "$WINETRICKS_CACHE"/IE7-WindowsXP-x86-enu.exe
+    fi
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: whittle down this list
+    cd "$WINDIR"/system32/
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll mshtml.dll mshtmled.dll msi.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx webcheck.dll wshom.ocx
+    do
+        $WINE regsvr32 /i $i > /dev/null 2>&1
+    done
+
+    # try $WINE "$programfilesdir_win"\\"Internet Explorer"\\IEXPLORE.EXE http://www.winehq.org
+    warn "When running IE7, be sure to use the full path!"
 }
 
 #----------------------------------------------------------------
@@ -2982,6 +3039,7 @@ do
     hosts) load_hosts;;
     icodecs) load_icodecs;;
     ie6) load_ie6;;
+    ie7) load_ie7;;
     jet40) load_jet40;;
     kde) load_kde;;
     liberation) load_liberation;;
