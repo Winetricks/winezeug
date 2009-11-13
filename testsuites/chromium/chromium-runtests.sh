@@ -213,10 +213,10 @@ init_runtime() {
       exit 1
     fi
     $dry_run rm -rf $WINEPREFIX
-    $dry_run $WINE winemine &
-    $dry_run sleep 1
     $dry_run test -f winetricks || wget http://kegel.com/wine/winetricks
     $dry_run sh winetricks nocrashdialog corefonts gecko > /dev/null
+    $dry_run sleep 1
+    $dry_run $WINE winemine &
   fi
 }
 
