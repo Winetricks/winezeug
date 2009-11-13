@@ -157,6 +157,17 @@
    obj:/usr/lib32/libGL.so.180.44
 }
 {
+   suppress_leak_wglGetProcAddress
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libGL*
+   ...
+   fun:glXChooseVisual
+   fun:has_opengl
+   fun:X11DRV_wglGetProcAddress
+   fun:wglGetProcAddress
+}
+{
    bogus_X11_1
    Memcheck:Param
    write(buf)

@@ -21,6 +21,11 @@
 # Name of this version of winetricks (YYYYMMDD)
 VERSION=20091022
 
+early_wine()
+{
+    WINEDLLOVERRIDES=mshtml= $WINE "$@"
+}
+
 # Default values for important settings if not already in environment.
 # These settings should not need editing here.
 case "$OS" in
@@ -38,7 +43,7 @@ case "$OS" in
     WINE=${WINE:-wine}
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
     DRIVE_C="$WINEPREFIX/drive_c"
-    XXXPATH="$WINE winepath"
+    XXXPATH="early_wine winepath"
     ;;
 esac
 
@@ -365,6 +370,10 @@ try() {
     fi
 }
 
+regedit() {
+    try early_wine regedit "$@"
+}
+
 # verify an sha1sum
 verify_sha1sum() {
     wantsum=$1
@@ -437,7 +446,7 @@ REGEDIT4
 "Version"="$1"
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/set-winver.reg
+    try regedit "$WINETRICKS_TMP"/set-winver.reg
 }
 
 set_app_winver() {
@@ -451,7 +460,7 @@ set_app_winver() {
     echo "\"Version\"=\"$version\""
     ) > "$WINETRICKS_TMP"/set-winver.reg
 
-    try $WINE regedit "$WINETRICKS_TMP"/set-winver.reg
+    try regedit "$WINETRICKS_TMP"/set-winver.reg
     rm "$WINETRICKS_TMP"/set-winver.reg
 }
 
@@ -464,7 +473,7 @@ REGEDIT4
 "OffscreenRenderingMode"="$1"
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/set-orm.reg
+    try regedit "$WINETRICKS_TMP"/set-orm.reg
 }
 
 set_sound_driver() {
@@ -476,7 +485,7 @@ REGEDIT4
 "Audio"="$1"
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/set-sound.reg
+    try regedit "$WINETRICKS_TMP"/set-sound.reg
 }
 
 disable_crashdialog() {
@@ -488,7 +497,7 @@ REGEDIT4
 "ShowCrashDialog"=dword:00000000
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/crashdialog.reg
+    try regedit "$WINETRICKS_TMP"/crashdialog.reg
 }
 
 sandbox() {
@@ -515,7 +524,7 @@ REGEDIT4
 "Version"=-
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/unset-winver.reg
+    try regedit "$WINETRICKS_TMP"/unset-winver.reg
 }
 
 override_dlls() {
@@ -538,7 +547,7 @@ _EOF_
         shift
     done
 
-    try $WINE regedit "$WINETRICKS_TMP"/override-dll.reg
+    try regedit "$WINETRICKS_TMP"/override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
 }
 
@@ -565,7 +574,7 @@ override_app_dlls() {
         shift
     done
 
-    try $WINE regedit "$WINETRICKS_TMP"/override-dll.reg
+    try regedit "$WINETRICKS_TMP"/override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
 }
 
@@ -581,8 +590,7 @@ REGEDIT4
 "$font"="$file"
 _EOF_
     # too verbose
-    #try $WINE regedit "$WINETRICKS_TMP"/register-font.reg
-    $WINE regedit "$WINETRICKS_TMP"/register-font.reg
+    regedit "$WINETRICKS_TMP"/register-font.reg
 }
 
 append_path() {
@@ -597,7 +605,7 @@ _EOF_
     printf '"PATH"="' >>"$WINETRICKS_TMP"/path.reg
     printf "$NEW_PATH;$WIN_PATH"'\"' | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/path.reg
 
-    try $WINE regedit "$WINETRICKS_TMP"/path.reg
+    try regedit "$WINETRICKS_TMP"/path.reg
     rm -f "$WINETRICKS_TMP"/path.reg
 
 }
@@ -1150,7 +1158,7 @@ _EOF_
     echo -n "${programfilesdir_win}" | sed "s/\\\\/\\\\\\\\/" >>"$WINETRICKS_TMP"/fakeie6.reg
     echo '\\\\Internet Explorer"' >>"$WINETRICKS_TMP"/fakeie6.reg
 
-    try $WINE regedit "$WINETRICKS_TMP"/fakeie6.reg
+    try regedit "$WINETRICKS_TMP"/fakeie6.reg
 
     # On old wineprefixes iexplore.exe is not created. Create a fake dll using
     # shdocvw.dll that should have similar VERSIONINFO.
@@ -1265,7 +1273,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000000
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/fs_disable.reg
+    try regedit "$WINETRICKS_TMP"/fs_disable.reg
 }
 #----------------------------------------------------------------
 load_fs_grayscale() {
@@ -1280,7 +1288,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000001
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/fs_grayscale.reg
+    try regedit "$WINETRICKS_TMP"/fs_grayscale.reg
 }
 #----------------------------------------------------------------
 load_fs_bgr() {
@@ -1295,7 +1303,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/fs_bgr.reg
+    try regedit "$WINETRICKS_TMP"/fs_bgr.reg
 }
 #----------------------------------------------------------------
 load_fs_rgb() {
@@ -1310,7 +1318,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/fs_rgb.reg
+    try regedit "$WINETRICKS_TMP"/fs_rgb.reg
 }
 #----------------------------------------------------------------
 
@@ -1377,7 +1385,7 @@ _EOF_
     cd "$olddir"
 
     # set install-path
-    try $WINE regedit "$WINETRICKS_TMP"/geckopath.reg
+    try regedit "$WINETRICKS_TMP"/geckopath.reg
 }
 
 #----------------------------------------------------------------
@@ -1438,7 +1446,7 @@ _EOF_
     cd "$olddir"
 
     # set install-path
-    try $WINE regedit "$WINETRICKS_TMP"/geckopath.reg
+    try regedit "$WINETRICKS_TMP"/geckopath.reg
 }
 
 #----------------------------------------------------------------
@@ -1465,7 +1473,7 @@ REGEDIT4
 "UseGLSL"="disabled"
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/disableglsl.reg
+    try regedit "$WINETRICKS_TMP"/disableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -1479,7 +1487,7 @@ REGEDIT4
 "UseGLSL"="enabled"
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/enableglsl.reg
+    try regedit "$WINETRICKS_TMP"/enableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -1804,7 +1812,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try regedit "$WINETRICKS_TMP"/mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1826,7 +1834,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try regedit "$WINETRICKS_TMP"/mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1848,7 +1856,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try regedit "$WINETRICKS_TMP"/mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -2770,8 +2778,8 @@ load_wmp9() {
     try $WINE "$WINETRICKS_CACHE"/WM9Codecs9x.exe $WINETRICKS_QUIET
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
-    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
-    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     unset_winver
 }
@@ -2797,8 +2805,8 @@ load_wmp10() {
     try $WINE "$WINETRICKS_CACHE"/WM9Codecs9x.exe $WINETRICKS_QUIET
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
-    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
-    try $WINE regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     unset_winver
 }
@@ -2928,7 +2936,7 @@ case "$OS" in
   fi
 
   # Create wineprefix if not already there
-  test -d "$WINEPREFIX" || $WINE cmd /c echo yes > /dev/null 2>&1
+  test -d "$WINEPREFIX" || WINEDLLOVERRIDES=mshtml= $WINE cmd /c echo yes > /dev/null 2>&1
   ;;
 esac
 
@@ -2944,14 +2952,14 @@ olddir=`pwd`
 rm -rf "$WINETRICKS_TMP"/*
 
 # The folder-name is localized!
-programfilesdir_win="`unset WINEDEBUG; $WINE cmd.exe /c echo "%ProgramFiles%"`"
+programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%"`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 winetricks_tmp_win="`$XXXPATH -w "$WINETRICKS_TMP"`"
 
 # Get the %PATH%, needed by MinGW, possibly others:
-WIN_PATH="`$WINE cmd.exe /c echo "%PATH%"`"
+WIN_PATH="`WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%PATH%"`"
 
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
