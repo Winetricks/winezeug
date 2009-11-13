@@ -165,23 +165,24 @@ unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAll
 _EOF_
 }
 
-# Times are in seconds, and are ~20% higher than slowest observed runtime so far in valgrind.
-# TODO: make the returned value depend on --valgrind
+# Times are in seconds, and are twice as high as slowest observed runtime so far in valgrind,
+# rounded to the nearest power of two multiple of 100 seconds.
+# TODO: make the returned value lower if --valgrind is not given
 get_expected_runtime() {
   case $1 in
-  app_unittests)         echo 60;;
-  base_unittests)        echo 500;;
-  courgette_unittests)   echo 600;;
-  googleurl_unittests)   echo 60;;
-  ipc_tests)             echo 200;;
-  media_unittests)       echo 200;;
-  net_unittests)         echo 1300;;
-  printing_unittests)    echo 60;;
-  sbox_unittests)        echo 60;;
-  sbox_validation_tests) echo 60;;
-  setup_unittests)       echo 60;;
-  tcmalloc_unittests)    echo 200;;
-  unit_tests)            echo 3000;;
+  app_unittests)         echo 200;;
+  base_unittests)        echo 1000;;
+  courgette_unittests)   echo 1000;;
+  googleurl_unittests)   echo 200;;
+  ipc_tests)             echo 400;;
+  media_unittests)       echo 400;;
+  net_unittests)         echo 2000;;
+  printing_unittests)    echo 100;;
+  sbox_unittests)        echo 100;;
+  sbox_validation_tests) echo 100;;
+  setup_unittests)       echo 100;;
+  tcmalloc_unittests)    echo 1000;;
+  unit_tests)            echo 4000;;
   *)                     echo "unknown test $1" >&2 ; exec false;;
   esac
 }
