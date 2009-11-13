@@ -38,3 +38,20 @@
    Memcheck:Cond
    obj:*/ImporterTest/profile/mozcrt19.dll
 }
+{
+   wine_bug_20692_a
+   Memcheck:Leak
+   ...
+   fun:CryptImportKey
+   fun:CRYPT_ImportRsaPublicKeyInfoEx
+   fun:CryptImportPublicKeyInfoEx
+   fun:CryptImportPublicKeyInfo
+   fun:base::SignatureVerifier::VerifyInit
+}
+{
+   wine_bug_20692_b
+   Memcheck:Leak
+   ...
+   fun:CryptGenKey
+   fun:base::RSAPrivateKey::Create
+}
