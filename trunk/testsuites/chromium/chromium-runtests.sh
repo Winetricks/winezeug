@@ -143,7 +143,7 @@ sbox_unittests        fail                 RestrictedTokenTest.ResultToken
 sbox_unittests        fail                 ServiceResolverTest.PatchesServices                  
 sbox_unittests        flaky                IPCTest.ClientFastServer                             
 sbox_validation_tests fail                 ValidationSuite.*                                    
-unit_tests            crash                BlacklistManagerTest.BlacklistPathProvider           http://crbug.com/27726
+unit_tests            crash                BlacklistManagerTest.*                               http://crbug.com/27726
 unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            crash-valgrind       DnsMasterTest.MassiveConcurrentLookupTest
 unit_tests            crash-valgrind       NullModelTableViewTest.*                             http://bugs.winehq.org/show_bug.cgi?id=20553
