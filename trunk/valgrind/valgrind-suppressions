@@ -521,6 +521,14 @@
    Memcheck:Cond
    fun:_dl_relocate_object
 }
+{
+   # With ubuntu 9.04:
+   #  Uninitialised value was created by a stack allocation
+   #    at  __libc_res_nsend (res_send.c:343)
+   glibc_bug_libc_res_nsend
+   Memcheck:Cond
+   fun:__libc_res_nsend
+}
 # Naming convention for Wine suppressions:
 # If we think it's solid:
 # suppress_wine_dirname__functionname[_moreifneeded]
