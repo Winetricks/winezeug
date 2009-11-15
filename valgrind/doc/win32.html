@@ -237,8 +237,30 @@ Valgrind should probably intercept calls to ::operator new,
 malloc, and friends, and wrap them with a type label before
 redirecting them to the win32 system heap.
 
+<h3>Issue: valgrind.h doesn't compile with Visual C++</h3>
+win32 apps can't currently include valgrind.h, so they
+can't use Valgrind's client hooks to inform Valgrind
+about functions expected to generate exceptions, etc.
+<p>
+valgrind.h should be ported to visual C++; see 
+<a href="https://bugs.kde.org/show_bug.cgi?id=210935">valgrind bug 210935</a>.
+
+<h3>Issue: spurious warnings from _strlen</h3>
+Library routines that process strings a word at a time
+seem to generate false warnings like
+<pre>
+ Conditional jump or move depends on uninitialised value(s)
+    at 0x401086: _strlen (in /home/dank/test2.exe)
+</pre>
+Valgrind has custom versions of these functions for Linux.
+<p>
+Valgrind should probably have custom versions of these 
+functions for win32 as well; see 
+<a href="https://bugs.kde.org/show_bug.cgi?id=190660">valgrind bug 190660</a>.
+Until then, using the debugging C runtime library may be a sufficient workaround.
+
 <h3>Issue: Slowdown from _chkstk?</h3>
-Win32 apps issue a large number of calls to _chkstk(),
+Win32 apps that have large stack variables issue a large number of calls to _chkstk(),
 all? of which trigger Valgrind warnings (at least when --check-smc=all
 is given).  (See <a href="http://support.microsoft.com/kb/100775">kb100775</a>.)
 It may also interfere with --track-origins.
@@ -246,7 +268,7 @@ It may also interfere with --track-origins.
 Valgrind could know about _chkstk() at a lower level than it currently does;
 see <a href="http://old.nabble.com/memcheck---track-origins%3Dyes-vs-alloca-__chkstk-td18308025.html">John Reiser's note from 2008</a>.
 User apps 
-<p>
+
 <h3>Issue: Incomplete pdb file support in Valgrind</h3>
 Some small test programs don't get symbolic stack dumps
 in Valgrind because of incomplete pdb file support.
