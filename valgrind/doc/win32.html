@@ -185,6 +185,73 @@ such that all the tests pass under Valgrind without any
 reported warnings.  Then work can continue, and the problems
 recorded in the suppressions files and expected failure list
 can be fixed offline.
+
+<h3>Issue: detecting overruns</h3>
+Valgrind replaces the linux heap with one that puts guard bytes before and after
+each allocation, and marks those guard bytes as inaccessible.
+At the moment, nothing does this when running win32 apps
+under wine+valgrind; wine does inform Valgrind about the
+allocations made by the NT heap, but it doesn't put any
+guard bytes around them.
 <p>
+So, how can we achieve this on Wine?  The Wine philosophy
+is to look for how Windows likes to do things, and sure enough,
+there are ways to tell the Windows kernel to do similar things.
+http://technet.microsoft.com/en-us/library/cc736347(WS.10).aspx
+describes the gflags utility, used to set registry flags that end
+up controlling the NtGlobalFlags field of each processes' PEB.
+<p>
+It would probably suffice to implement the
+FLG_HEAP_ENABLE_TAIL_CHECK bit of NtGlobalFlags in Wine,
+and add a Valgrind annotation for the guard bytes.
+This would improve memory error detection in Wine even
+without Valgrind, too.
+
+<h3>Issue: detecting double frees</h3>
+Valgrind's replacement heap also keeps freed blocks out of
+circulation for a while, marking them completely inaccessible
+so that references to freed blocks are caught.
+<p>
+Wine's implementation of the win32 system heap should probably 
+provide this feature, possibly triggered by the
+FLG_HEAP_DISABLE_COALESCING NtGlobalFlags bit.
+
+<h3>Issue: userspace heaps getting in the way</h3>
+Visual C++'s C runtime library may have its own heap
+implementation on top of the Win32 system heap.
+Likewise, applications may override the default ::operator new
+and malloc with their own heap implementations.
+All of these can get in the way of the valgrind-aware
+system heap described above.
+<p>
+Valgrind should probably intercept calls to ::operator new,
+malloc, and friends, and redirect them straight to the win32
+system heap (but see below).
+
+<h3>Issue: detecting delete/delete[]/free mismatches</h3>
+On Linux, Valgrind's replacement heap marks each block
+with a type so mismatches between the various allocation
+types can be detected.  
+<p>
+Valgrind should probably intercept calls to ::operator new,
+malloc, and friends, and wrap them with a type label before
+redirecting them to the win32 system heap.
+
+<h3>Issue: Slowdown from _chkstk?</h3>
+Win32 apps issue a large number of calls to _chkstk(),
+all? of which trigger Valgrind warnings (at least when --check-smc=all
+is given).  (See <a href="http://support.microsoft.com/kb/100775">kb100775</a>.)
+It may also interfere with --track-origins.
+<p>
+Valgrind could know about _chkstk() at a lower level than it currently does;
+see <a href="http://old.nabble.com/memcheck---track-origins%3Dyes-vs-alloca-__chkstk-td18308025.html">John Reiser's note from 2008</a>.
+User apps 
+<p>
+<h3>Issue: Incomplete pdb file support in Valgrind</h3>
+Some small test programs don't get symbolic stack dumps
+in Valgrind because of incomplete pdb file support.
+<p>
+Valgrind should copy the fix for this issue from Wine.
+See <a href="https://bugs.kde.org/show_bug.cgi?id=211529">valgrind bug 211529</a>.
 </body>
 </html>
