@@ -186,6 +186,16 @@ reported warnings.  Then work can continue, and the problems
 recorded in the suppressions files and expected failure list
 can be fixed offline.
 
+<h3>Issue: memcheck unit tests not ported</h3>
+Valgrind's memcheck has a nice set of unit tests, but it's
+hard to run them on valgrind+wine to see whether
+valgrind works as it should there.
+<p>
+The test suite should be ported to Visual C++
+and we should use it to find and fix problems in
+the valgrind+wine combination.  If it doesn't have
+tests for C++, those need to be added.
+
 <h3>Issue: detecting overruns</h3>
 Valgrind replaces the linux heap with one that puts guard bytes before and after
 each allocation, and marks those guard bytes as inaccessible.
