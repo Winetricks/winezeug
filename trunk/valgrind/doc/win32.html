@@ -237,6 +237,12 @@ system heap described above.
 Valgrind should probably intercept calls to ::operator new,
 malloc, and friends, and redirect them straight to the win32
 system heap (but see below).
+<p>
+However, it may be sufficient to run Chromium
+with the system heap selected by setting
+CHROME_ALLOCATOR=winheap as described in
+<a href="http://dev.chromium.org/developers/page-heap-for-chrome">Page Heap for Chrome</a>.
+That's next on my list of things to try.
 
 <h3>Issue: detecting delete/delete[]/free mismatches</h3>
 On Linux, Valgrind's replacement heap marks each block
