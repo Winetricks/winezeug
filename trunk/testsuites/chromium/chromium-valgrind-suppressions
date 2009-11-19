@@ -83,3 +83,10 @@
    Memcheck:Addr4
    fun:strcat
 }
+{
+   # Boy, oh, boy do we need a better way to deal with this.
+   # See https://bugs.kde.org/show_bug.cgi?id=190660
+   valgrind_bug_190660
+   Memcheck:Addr4
+   fun:strncpy
+}
