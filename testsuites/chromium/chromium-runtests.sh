@@ -99,7 +99,6 @@ base_unittests        dontcare             WMIUtilTest.*
 base_unittests        fail                 HMACTest.HMACObjectReuse                             http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.HmacSafeBrowsingResponseTest                http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.RFC2202TestCases                            http://bugs.winehq.org/show_bug.cgi?id=20340
-base_unittests        fail                 StackTrace.OutputToStream                            http://bugs.winehq.org/show_bug.cgi?id=20627
 base_unittests        fail_wine_vmware     RSAPrivateKeyUnitTest.ShortIntegers
 base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
 base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
@@ -116,12 +115,7 @@ media_unittests       crash                FFmpegGlueTest.Seek
 media_unittests       crash                FFmpegGlueTest.Write                                 
 media_unittests       fail_wine_vmware     WinAudioTest.PCMWaveStreamTripleBuffer
 media_unittests       hang-valgrind        WinAudioTest.PCMWaveSlowSource
-net_unittests         hang                 HTTPSRequestTest.HTTPSExpiredTest                    http://bugs.winehq.org/show_bug.cgi?id=20622
-net_unittests         hang                 HTTPSRequestTest.HTTPSGetTest                        http://bugs.winehq.org/show_bug.cgi?id=20622                   
-net_unittests         hang                 HTTPSRequestTest.HTTPSMismatchedTest                 http://bugs.winehq.org/show_bug.cgi?id=20622
-net_unittests         hang                 SSLClientSocketTest.Read                             http://bugs.winehq.org/show_bug.cgi?id=20622
-net_unittests         hang                 SSLClientSocketTest.Read_Interrupted                 http://bugs.winehq.org/show_bug.cgi?id=20622
-net_unittests         hang                 SSLClientSocketTest.Read_SmallChunks                 http://bugs.winehq.org/show_bug.cgi?id=20622
+net_unittests         fail                 SSLClientSocketTest.Read_Interrupted                 http://bugs.winehq.org/show_bug.cgi?id=20748
 sbox_unittests        fail                 JobTest.ProcessInJob                                 
 sbox_unittests        fail                 JobTest.TestCreation                                 
 sbox_unittests        fail                 JobTest.TestDetach                                   
@@ -151,16 +145,11 @@ unit_tests            crash-valgrind       RenderViewTest.OnPrintPageAsBitmap   
 unit_tests            crash-valgrind       TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
 unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker             
 unit_tests            dontcare             SpellCheckTest.SpellCheckText                        
-unit_tests            fail                 DownloadManagerTest.TestDownloadFilename             http://bugs.winehq.org/show_bug.cgi?id=20626
 unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            hang-valgrind        ExtensionAPIClientTest.*                             Not really a hang, just takes 30 minutes
 unit_tests            fail                 ImporterTest.IEImporter                              http://bugs.winehq.org/show_bug.cgi?id=20625
 unit_tests            fail                 RenderViewTest.InsertCharacters                      http://bugs.winehq.org/show_bug.cgi?id=20624
-unit_tests            fail                 RenderViewTest.OnPrintPages                          http://bugs.winehq.org/show_bug.cgi?id=20619
-unit_tests            fail                 RenderViewTest.PrintLayoutTest                       http://bugs.winehq.org/show_bug.cgi?id=20619
-unit_tests            fail                 RenderViewTest.PrintWithIframe                       http://bugs.winehq.org/show_bug.cgi?id=20619
-unit_tests            fail                 RenderViewTest.PrintWithJavascript                   http://bugs.winehq.org/show_bug.cgi?id=20619
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAllocation
@@ -193,12 +182,19 @@ get_expected_runtime() {
 alarm() { time perl -e 'alarm shift; exec @ARGV' "$@"; }
 
 init_runtime() {
+  CHROME_ALLOCATOR=winheap
+  export CHROME_ALLOCATOR
+
   if test "$WINDIR" = ""
   then
     WINE=${WINE:-$HOME/wine-git/wine}
+    export WINE
     WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine-chromium-tests}
-    export WINE WINEPREFIX
+    export WINEPREFIX
+    WINE_HEAP_REDZONE=16
+    export WINE_HEAP_REDZONE
+    
     if netstat -tlnp | grep 1337
     then
       echo Please kill the server listening on port 1337, or reboot.  The net tests need this port.
