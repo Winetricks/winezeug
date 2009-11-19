@@ -50,7 +50,8 @@ die() {
   exit 1
 }
 
-export WINE=`pwd`/wine
+export WINE="`pwd`/wine"
+export SOURCETREE="`pwd`"
 
 if [ `which ccache` ]
     then
@@ -138,7 +139,6 @@ else
 fi
 
 # Fetch an updated tree
-
 newtree() {
 
 # make sure we're in a git tree to start with:
@@ -186,7 +186,7 @@ REGEDIT4
 "GeckoUrl"=-
 _EOF_
 
-./wine regedit /tmp/disable_gecko.reg
+$WINE regedit /tmp/disable_gecko.reg
 sleep 10s
 }
 
@@ -198,7 +198,7 @@ REGEDIT4
 "UseGLSL"="disabled"
 _EOF_
 
-./wine regedit /tmp/disable_glsl.reg
+$WINE regedit /tmp/disable_glsl.reg
 sleep 10s
 }
 
@@ -210,7 +210,7 @@ REGEDIT4
 "DirectDrawRenderer"="opengl"
 _EOF_
 
-./wine regedit /tmp/enable_ddr_opengl.reg
+$WINE regedit /tmp/enable_ddr_opengl.reg
 sleep 10s
 }
 
@@ -222,7 +222,7 @@ REGEDIT4
 "Multisampling"="enabled"
 _EOF_
 
-./wine regedit /tmp/enable_multisampling.reg
+$WINE regedit /tmp/enable_multisampling.reg
 sleep 10s
 }
 
@@ -238,7 +238,7 @@ REGEDIT4
 "Default"="800x600"
 _EOF_
 echo "Importing registry key"
-./wine regedit /tmp/virtualdesktop.reg
+$WINE regedit /tmp/virtualdesktop.reg
 echo "sleeping for 10 seconds...regedit bug?"
 sleep 10s
 }
@@ -254,10 +254,32 @@ get_tests_64() {
     $GET http://test.winehq.org/builds/winetest64-latest.exe
 }
 
+# FIXME: Should be more generic for gecko version, and maybe should support using 
+# the debug version of gecko? Should possibly cleanup the gecko download? 
+# For now, leave it, to save bandwidth. I'm deleting it in my wrapper script afterward...
+
+# FIXME: Should probably sha1sum it to ensure correct download...
+get_gecko() (
+    mkdir -p ../$SOURCETREE/gecko
+    if [ -f ../$SOURCETREE/gecko/wine_gecko-1.0.0-x86.cab ]
+        then
+            break
+    elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ]
+        then
+            cp /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../$SOURCETREE/gecko/
+    elif [ -f /usr/gecko/wine_gecko-1.0.0-x86.cab ]
+        then
+            cp /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../$SOURCETREE/gecko/
+    else
+        $GET http://downloads.sourceforge.net/wine/wine_gecko-1.0.0-x86.cab
+        mv wine_gecko-1.0.0-x86.cab ../$SOURCETREE/gecko/
+    fi
+)
+
 preptests() {
     ./server/wineserver -k || true
-    rm -rf $WINEPREFIX winetricks || true
-    sh winetricks gecko > /dev/null 2>&1 || exit 1
+    rm -rf $WINEPREFIX || true
+    $WINE wineboot > /dev/null 2>&1 || exit 1
 }
 
 preptests_nogecko() {
@@ -267,15 +289,17 @@ preptests_nogecko() {
 }
 
 # TODO: fix to use the SHA1SUM as well.
+# FIXME: If $NAME-$MACHINE-$TESTNAME > 20 characters, it will silently exit.
+# Need to make sure it doesn't/trim it/warn/something.
 runtests() {
     echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
-    ./wine winetest-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
+    $WINE winetest-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
     rm -rf $WINEPREFIX
 }
 
 runtests64() {
     echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
-    ./wine winetest64-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
+    $WINE winetest64-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
     rm -rf $WINEPREFIX
 }
 
@@ -661,6 +685,9 @@ fi
 # Get winetricks, used in below tests:
 $GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
 
+# Make sure we have gecko:
+get_gecko
+
 if [ $NODOWNLOAD = 1 ]
     then
         echo "not downloading tests...I assume you have a good reason?"
@@ -765,6 +792,6 @@ if [ $VD_TEST = 1 ]
 fi
 
 # Cleanup
-rm -rf /tmp/*.reg $WINEPREFIX winetricks
+rm -rf /tmp/*.reg $WINEPREFIX winetricks winetricks.*
 
 exit
