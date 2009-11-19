@@ -1,5 +1,5 @@
 #!/bin/sh
-#
+set -x
 # Wine build-helper script
 #
 # Copyright 2009 Austin English <austinenglish@gmail.com>
@@ -292,22 +292,26 @@ preptests_nogecko() {
 # FIXME: If $NAME-$MACHINE-$TESTNAME > 20 characters, it will silently exit.
 # Need to make sure it doesn't/trim it/warn/something.
 runtests() {
-    echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
-    $WINE winetest-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
-    rm -rf $WINEPREFIX
-}
-
-runtests64() {
-    echo "About to start $NAME-$MACHINE$TESTNAME test run. Expect no output for a while..." &&
-    $WINE winetest64-latest.exe -c -t $NAME-$MACHINE$TESTNAME 1>/dev/null 2>&1 &&
+    length=`eval echo "$NAME-$MACHINE$TESTNAME" | wc -m`
+    if [ $length -ge 22 ]
+        then
+            tag=`eval echo $NAME-$MACHINE$TESTNAME | cut -c 1-20`
+    else
+        tag="$NAME-$MACHINE$TESTNAME"
+    fi
+    
+    echo "About to start $tag test run. Expect no output for a while..." &&
+    $WINE $TESTBINARY -c -t $tag 1>/dev/null 2>&1 &&
     rm -rf $WINEPREFIX
 }
 
 all_test() {
 WINEDEBUG="+all"
 TESTNAME="-all"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 runtests
 }
@@ -315,8 +319,10 @@ runtests
 alsa_test() {
 WINEDEBUG=""
 TESTNAME="-alsa"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks alsa
 runtests
@@ -325,8 +331,10 @@ runtests
 audioio_test() {
 WINEDEBUG=""
 TESTNAME="-audioio"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks audioio
 runtests
@@ -359,8 +367,10 @@ build || build_failed
 backbuffer_test() {
 WINEDEBUG=""
 TESTNAME="-bckbuf"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks backbuffer
 runtests
@@ -369,8 +379,10 @@ runtests
 coreaudioio_test() {
 WINEDEBUG=""
 TESTNAME="-all"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks coreaudioio
 runtests
@@ -379,8 +391,10 @@ runtests
 ddr_opengl_test() {
 WINEDEBUG=""
 TESTNAME="-ddr-opengl"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 enable_ddr_opengl
 runtests
@@ -389,8 +403,10 @@ runtests
 esound_test() {
 WINEDEBUG=""
 TESTNAME="-esound"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks esound
 runtests
@@ -399,8 +415,10 @@ runtests
 fbo_test() {
 WINEDEBUG=""
 TESTNAME="-fbo"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks fbo
 runtests
@@ -409,8 +427,10 @@ runtests
 heap_test() {
 WINEDEBUG="warn+heap"
 TESTNAME="-heap"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 runtests
 }
@@ -418,8 +438,10 @@ runtests
 jack_test() {
 WINEDEBUG=""
 TESTNAME="-jack"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks jack
 runtests
@@ -428,8 +450,10 @@ runtests
 message_test() {
 WINEDEBUG="+message"
 TESTNAME="-message"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 runtests
 }
@@ -437,8 +461,10 @@ runtests
 multisampling_test() {
 WINEDEBUG=""
 TESTNAME="-mltsmp"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 enable_multisampling
 runtests
@@ -447,8 +473,10 @@ runtests
 nogecko_test() {
 WINEDEBUG=""
 TESTNAME="-nogecko"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests_nogecko
 disable_gecko
 runtests
@@ -457,8 +485,10 @@ runtests
 noglsl_test() {
 WINEDEBUG=""
 TESTNAME="-noglsl"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 disable_glsl
 runtests
@@ -467,8 +497,10 @@ runtests
 nowin16_test() {
 WINEDEBUG=""
 TESTNAME="-nowin16"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 build_nowin16
 preptests
 runtests
@@ -477,8 +509,10 @@ runtests
 oss_test() {
 WINEDEBUG=""
 TESTNAME="-oss"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks oss
 runtests
@@ -487,8 +521,10 @@ runtests
 pbuffer_test() {
 WINEDEBUG=""
 TESTNAME="-pbuffer"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 sh winetricks pbuffer
 runtests
@@ -497,8 +533,10 @@ runtests
 regular_test() {
 WINEDEBUG=""
 TESTNAME=""
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 runtests
 }
@@ -506,8 +544,10 @@ runtests
 relay_test() {
 WINEDEBUG="+relay"
 TESTNAME="-relay"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 runtests
 }
@@ -515,8 +555,10 @@ runtests
 seh_test() {
 WINEDEBUG="+seh"
 TESTNAME="-seh"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 runtests
 }
@@ -524,8 +566,10 @@ runtests
 virtual_desktop_test() {
 WINEDEBUG=""
 TESTNAME="-virtdesktop"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
 enable_virtual_desktop
 runtests
@@ -534,8 +578,10 @@ runtests
 werror_test() {
 WINEDEBUG=""
 TESTNAME="-werror"
+TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 build_werror
 preptests
 runtests
@@ -544,11 +590,13 @@ runtests
 win64_test() {
 WINEDEBUG=""
 TESTNAME="-x64-nogecko"
+TESTBINARY="winetest64-latest.exe"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 build_win64
 preptests_nogecko
-runtests64
+runtests
 }
 
 #######################################################
