@@ -75,7 +75,7 @@ if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
         export LD="/usr/gnu/bin/ld" 
         export PATH="/usr/gnu/bin:/usr/bin:/usr/X11/bin:/usr/sbin:/sbin:/opt/csw/bin/:/usr/ccs/bin:/usr/sfw/bin:/usr/local/bin"
         export CONFIGUREFLAGS="--without-ldap --without-capi"
-        CORES=$(psrinfo -p)
+        CORES=$(/usr/sbin/psrinfo| grep -c on-line)
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
         export CFLAGS="-Wno-unused"
