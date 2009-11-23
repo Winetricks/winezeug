@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+#
 # Wine build-helper script
 #
 # Copyright 2009 Austin English <austinenglish@gmail.com>
@@ -293,8 +293,10 @@ preptests_nogecko() {
 # Need to make sure it doesn't/trim it/warn/something.
 runtests() {
     length=`eval echo "$NAME-$MACHINE$TESTNAME" | wc -m`
-    if [ $length -ge 22 ]
+    # The newline character counts as a charcter to wc, but not cut:
+    if [ $length -gt 21 ]
         then
+            echo "Your tag name is too long, trimming it down to 20 characters"
             tag=`eval echo $NAME-$MACHINE$TESTNAME | cut -c 1-20`
     else
         tag="$NAME-$MACHINE$TESTNAME"
@@ -640,7 +642,10 @@ NODOWNLOAD=0
 NOTESTS=0
 NOREGULAR_TEST=0
 ALLDEBUG_TEST=0
+ALSA_TEST=0
+AUDIOIO_TEST=0
 BACKBUFFER_TEST=0
+COREAUDIO_TEST=0
 DDR_OPENGL_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
