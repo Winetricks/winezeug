@@ -77,6 +77,7 @@ if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
         export CONFIGUREFLAGS="--without-ldap --without-capi"
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
+        export CFLAGS="-Wno-unused"
         # Are we on 64-bit?
         if [ "`uname -m`" = "x86_64" ]
             then
