@@ -171,7 +171,7 @@ exit 1
 # TODO: determine if logs are wanted, and if so, store in buildlog-date.txt
 build() {
 echo "Starting $BUILDNAME build." && 
-echo "Running configure." && ./configure $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
+echo "Running configure." && ./configure --disable-tests $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
 echo "Running make depend." && make depend 1>/dev/null 2>&1 &&
 echo "Running make." && make 1>/dev/null 2>&1 &&
 echo "$BUILDNAME build was fine. Coolio"
