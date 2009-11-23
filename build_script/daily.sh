@@ -284,13 +284,13 @@ get_gecko() (
 )
 
 preptests() {
-    ./server/wineserver -k || true
+    $WINEPREFIX ./server/wineserver -k || true
     rm -rf $WINEPREFIX || true
     $WINE wineboot > /dev/null 2>&1 || exit 1
 }
 
 preptests_nogecko() {
-    ./server/wineserver -k || true
+    $WINEPREFIX ./server/wineserver -k || true
     rm -rf $WINEPREFIX || true
     disable_gecko
 }
