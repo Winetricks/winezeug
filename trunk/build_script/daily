@@ -17,8 +17,6 @@ export NAME="yournamegoeshere"
 # Typically, put your distribution/architecture. If blank, your hostname is used.
 export MACHINE="machinename"
 
-# Kill Wine. We obviously don't care if it passes/fails.
-$WINEGIT/server/wineserver -k ;
 cd $WINEGIT &&
 rm daily.sh || true
 if [ -x "`which wget`" ]
