@@ -75,9 +75,11 @@ if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
         export LD="/usr/gnu/bin/ld" 
         export PATH="/usr/gnu/bin:/usr/bin:/usr/X11/bin:/usr/sbin:/sbin:/opt/csw/bin/:/usr/ccs/bin:/usr/sfw/bin:/usr/local/bin"
         export CONFIGUREFLAGS="--without-ldap --without-capi"
+        CORES=$(psrinfo -p)
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
         export CFLAGS="-Wno-unused"
+        CORES=$(cat /proc/cpuinfo | grep -c processor)
         # Are we on 64-bit?
         if [ "`uname -m`" = "x86_64" ]
             then
@@ -94,6 +96,7 @@ elif [ $OS = 'FreeBSD' ]
     then
         export CPPFLAGS="-I/usr/local/include"
         export LDFLAGS="-L/usr/local/lib"
+        CORES=$(/sbin/sysctl -n hw.ncpu)
 elif [ $OS = 'Darwin' ]
     then
         # BUILD_DIR is the directory where you've built and installed wine's dependencies...OS X's built in one's are
@@ -105,18 +108,21 @@ elif [ $OS = 'Darwin' ]
         export PATH=$PATH:"$BUILD_DIR/usr/bin"
         export PKG_CONFIG_PATH="$BUILD_DIR/usr/lib/pkgconfig"
         export CONFIGUREFLAGS='--disable-win16 --without-hal --without-capi'
+        CORES=$(/usr/sbin/sysctl -n hw.ncpu)
 elif [ $OS = 'NetBSD' ]
     then
         echo "This is untested...going from memory"
         export CFLAGS="-O2 -I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include"
         export CPPFLAGS="-I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include"
         export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/lib -Wl,-R/usr/lib -L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib"
+        CORES=$(/sbin/sysctl -n hw.ncpu)
 elif [ $OS = 'OpenBSD' ]
     then
         export CFLAGS="-I/usr/local/include -I/usr/local/include/libpng"
         export LDFLAGS="-lm -lz -lcrypto -L/usr/local/lib"
         export X_EXTRA_LIBS="-lXau -lXdmcp"
         export CPPFLAGS="-I/usr/local/include"
+        #FIXME: CORES
 else
     echo "Your OS is not supported by this build script. Please e-mail the maintainer if you get this message."
     exit 1
@@ -172,8 +178,8 @@ exit 1
 build() {
 echo "Starting $BUILDNAME build." && 
 echo "Running configure." && ./configure --disable-tests $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
-echo "Running make depend." && make depend 1>/dev/null 2>&1 &&
-echo "Running make." && make 1>/dev/null 2>&1 &&
+echo "Running make depend." && make -j$CORES depend 1>/dev/null 2>&1 &&
+echo "Running make." && make -j$CORES 1>/dev/null 2>&1 &&
 echo "$BUILDNAME build was fine. Coolio"
 }
 
