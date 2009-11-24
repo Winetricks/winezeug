@@ -51,7 +51,6 @@ die() {
 }
 
 export WINE="`pwd`/wine"
-export SOURCETREE="`pwd`"
 
 if [ `which ccache` ]
     then
@@ -267,19 +266,19 @@ get_tests_64() {
 
 # FIXME: Should probably sha1sum it to ensure correct download...
 get_gecko() (
-    mkdir -p ../$SOURCETREE/gecko
-    if [ -f ../$SOURCETREE/gecko/wine_gecko-1.0.0-x86.cab ]
+    mkdir -p ../gecko
+    if [ -f ../gecko/wine_gecko-1.0.0-x86.cab ]
         then
             break
     elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ]
         then
-            cp /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../$SOURCETREE/gecko/
+            cp /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../$gecko/
     elif [ -f /usr/gecko/wine_gecko-1.0.0-x86.cab ]
         then
-            cp /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../$SOURCETREE/gecko/
+            cp /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../gecko/
     else
         $GET http://downloads.sourceforge.net/wine/wine_gecko-1.0.0-x86.cab
-        mv wine_gecko-1.0.0-x86.cab ../$SOURCETREE/gecko/
+        mv wine_gecko-1.0.0-x86.cab ../gecko/
     fi
 )
 
