@@ -27,13 +27,24 @@
 # To do:
 # handle errors gracefully with proper exits and error messages
 # add more Linux distro support
-# Add support for first time git initialization.
 
 # Now some common definitions:
 
+# Where your wine-git directory is located. Most people have it in
+# $HOME/wine-git, but I know some cranky bastard is going to put it
+# elsewhere...
+WINEGIT=${WINEGIT:-$HOME/wine-git}
+
+# The directory where the script will put its temp files.
+WINETESTDIR=${WINETESTDIR:-$HOME/.winetest}
+
 # This WINEPREFIX is for running the conformance tests. If you want to use a
 # different one, change it here or override the environmental variable.
-WINEPREFIX=${WINEPREFIX:-$HOME/.winetest}
+WINEPREFIX=${WINEPREFIX:-$WINETESTDIR/wineprefix}
+
+# The tree for building Wine for the conformance tests. This will be removed and
+# recreated unless --no-newtree is specified.
+WINETESTGIT=${WINETESTGIT:-$WINETESTDIR/winesrc}
 
 # Set your name here. It will be used to submit test data. If none is given, your username will be used.
 NAME=${NAME:-`whoami`}
@@ -43,14 +54,16 @@ MACHINE=${MACHINE:-`uname -n`}
 
 # This is the time between retrying to fetch the updated git tree. Default is 30 minutes. Adjust to your taste.
 # Be sure you put it in seconds. Not all OS's support the d/h/m options (OpenSolaris, I'm looking at you!)
-WAITTIME=1800
+WAITTIME=${WAITTIME:-1800}
 
 die() {
   echo "$@"
   exit 1
 }
 
-export WINE="`pwd`/wine"
+export WINE=$WINETESTGIT/wine
+export WINESERVER=$WINETESTGIT/server/wineserver
+export WINEGITURL="git://source.winehq.org/git/wine.git"
 
 if [ `which ccache` ]
     then
@@ -146,22 +159,36 @@ fi
 
 # Fetch an updated tree
 newtree() {
+# Make sure the user has a git tree. If not, initialize (a small) one for them:
+if [ ! -d "$WINEGIT" ]
+    then
+        git clone --depth 1 "$WINEGITURL" "$WINEGIT"
+else
+    cd "$WINEGIT"
+    git show > /dev/null 2>&1 || die "$WINEGIT exists but is not a git directory. Exiting!"
 
-# make sure we're in a git tree to start with:
-git show > /dev/null 2>&1 || die "Not in a git tree! Initializing a fresh git tree isn't yet supported."
+    # This is used for our loop to check for updated git tree.
+    TREESTATUS=0
+    while [ $TREESTATUS = "0" ]
+    do
+        echo "Attempting to fetch updated tree." &&
+        # Should perhaps be [::alphanum::] instead of '.'?
+        git fetch -v 2>&1 | grep ".......\.\........\ \ master" && break
+        sleep $WAITTIME
+    done
+fi
+}
 
-# TODO: don't force a hard reset for those that don't want it. 'git checkout -f origin' should be just as effective 
-echo "Resetting git tree to origin." && git reset --hard origin &&
+rebase_tree() {
+# Apply the updates to the tree.
+# NOTE: This is not always safe, so it is not enabled by default.
+# Use --rebase-tree to enable it
+git rebase origin
+}
 
-# This is used for our loop to check for updated git tree. TODO: Is there a cleaner way to do this?
-TREESTATUS=0
-while [ $TREESTATUS = "0" ]
-do
-# TODO: This fails if the the git site can't be reached. Need to adjust appropriately.
-  echo "Attempting to fetch updated tree." && git fetch ;
-  git rebase origin 2>&1 | grep "Current branch HEAD is up to date" || break
-  sleep $WAITTIME
-done
+clone_tree() {
+# Clone a copy of the user's git tree from $WINEGIT to $WINETESTGIT
+git clone --reference "$WINEGIT" "$WINEGITURL" "$WINETESTGIT"
 }
 
 # If our build fails :'(
@@ -283,20 +310,18 @@ get_gecko() (
 )
 
 preptests() {
-    $WINEPREFIX ./server/wineserver -k || true
+    ./server/wineserver -k || true
     rm -rf $WINEPREFIX || true
     $WINE wineboot > /dev/null 2>&1 || exit 1
 }
 
 preptests_nogecko() {
-    $WINEPREFIX ./server/wineserver -k || true
+    ./server/wineserver -k || true
     rm -rf $WINEPREFIX || true
     disable_gecko
 }
 
 # TODO: fix to use the SHA1SUM as well.
-# FIXME: If $NAME-$MACHINE-$TESTNAME > 20 characters, it will silently exit.
-# Need to make sure it doesn't/trim it/warn/something.
 runtests() {
     length=`eval echo "$NAME-$MACHINE$TESTNAME" | wc -m`
     # The newline character counts as a charcter to wc, but not cut:
@@ -621,6 +646,8 @@ echo ""
 echo "The script, however, has many more options:"
 echo "--no-newtree - Disables updating your git tree."
 echo "--no-build - Disables (re)building Wine"
+echo "--no-download - Don't download winetest.exe, assumes you already have one downloaded"
+echo "--rebase-tree - Run 'git rebase origin' in $WINEGIT, rather than making a new temp tree"
 echo "--no-tests - Disables downloading/running winetest.exe"
 echo "--no-regular - Skip running winetest.exe without special options"
 echo "--alldebug - Runs winetest.exe with WINEDEBUG=+all"
@@ -645,6 +672,7 @@ echo "The exception is --no-newtree/--no-build in case you want to run tests aga
 NEWTREE=0
 NOBUILD=0
 NODOWNLOAD=0
+REBASE_TREE=0
 NOTESTS=0
 NOREGULAR_TEST=0
 ALLDEBUG_TEST=0
@@ -653,13 +681,16 @@ AUDIOIO_TEST=0
 BACKBUFFER_TEST=0
 COREAUDIO_TEST=0
 DDR_OPENGL_TEST=0
+ESOUND_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
+JACK_TEST=0
 MESSAGE_TEST=0
 MULTISAMPLING_TEST=0
 NOGECKO_TEST=0
 NOGLSL_TEST=0
 NOWIN16_TEST=0
+OSS_TEST=0
 PBUFFER_TEST=0
 SEH_TEST=0
 VD_TEST=0
@@ -672,6 +703,7 @@ do
     -v) set -x;;
     --no-newtree) export NEWTREE=1;;
     --no-build) export NOBUILD=1;;
+    --rebase-tree) export REBASE_TREE=1;;
     --no-download) export NODOWNLOAD=1;;
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
@@ -701,6 +733,10 @@ do
     shift
 done
 
+# Start with a clean slate:
+rm -rf $WINETESTDIR
+mkdir -p $WINETESTDIR
+
 # Get new tree, if it wasn't disabled.
 if [ $NEWTREE = 1 ]
     then 
@@ -708,6 +744,17 @@ if [ $NEWTREE = 1 ]
 else
     newtree
 fi
+
+# Rebase tree, if desired. Otherwise, clone a copy of the tree for our tests.
+if [ $REBASE_TREE = 1 ]
+    then
+        rebase_tree
+else
+    clone_tree
+fi
+
+# Move to the right directory:
+cd $WINETESTGIT
 
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
@@ -851,6 +898,6 @@ if [ $VD_TEST = 1 ]
 fi
 
 # Cleanup
-rm -rf /tmp/*.reg $WINEPREFIX winetricks winetricks.*
+rm -rf /tmp/*.reg $WINEPREFIX winetrick* $WINETESTDIR
 
 exit
