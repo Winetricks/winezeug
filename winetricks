@@ -142,10 +142,11 @@ usage() {
     echo "Packages:"
     echo " art2kmin      MS Access 2000 runtime.  Requires Access 2000 Dev license!"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
+    echo " autohotkey    Autohotkey (open source gui scripting language)"
     echo " cmake         CMake, the cross-platform, open-source build system"
     echo " colorprofile  Standard RGB color profile"
-    echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
     echo " comctl32      MS common controls 5.80"
+    echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
     echo " cygwin        Unix apps for Windows (needed by some build scripts)"
@@ -166,6 +167,7 @@ usage() {
     echo " dotnet30      MS .NET 3.0 (requires Windows license, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " ffdshow       ffdshow video codecs"
+    echo " firefox       Firefox web browser"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
     echo " fm20          MS Forms 2.0 Object Library"
     echo " fontfix       Fix bad fonts which cause crash in some apps (e.g. .net)."
@@ -174,23 +176,27 @@ usage() {
     echo " fontsmooth-gray       Enables grayscale font smoothing"
     echo " fontsmooth-rgb        Enables subpixel smoothing for RGB LCDs"
     echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
-    echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
+    echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Codecs (Indeo)"
+    echo " ie6           Microsoft Internet Explorer 6.0"
+    echo " ie7           Microsoft Internet Explorer 7.0"
     echo " jet40         MS Jet 4.0 Service Pack 8"
+    echo " kde           KDE for Windows installer"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
     echo " mdac25        MS MDAC 2.5: Microsoft ODBC drivers, etc."
     echo " mdac27        MS MDAC 2.7"
     echo " mdac28        MS MDAC 2.8"
     echo " mfc40         MS mfc40 (Microsoft Foundation Classes from Visual C++ 4)"
     echo " mfc42         MS mfc42 (same as vcrun6 below)"
-    echo " mingw         Minimalist GNU for Windows, including GCC for Windows!"
     echo " mingw-gdb     GDB for MinGW"
+    echo " mingw         Minimalist GNU for Windows, including GCC for Windows!"
     echo " mono20        mono-2.0.1"
     echo " mono22        mono-2.2"
     echo " mono24        mono-2.4"
     echo " mozillabuild  Mozilla build environment"
+    echo " mpc           Media Player Classic"
     echo " mshflxgd      MS Hierarchical Flex Grid Control"
     echo " msi2          MS Installer 2.0"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
@@ -219,33 +225,26 @@ usage() {
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
     echo " vb6run        MS Visual Basic 6 runtime"
-    echo " vc2005sp1     MS Visual C++ 2005 Service Pack 1 (install trial 1st)"
-    echo " vc2005trial   MS Visual C++ 2005 Trial"
     echo " vc2005express MS Visual C++ 2005 Express"
     echo " vc2005expresssp1 MS Visual C++ 2005 Express SP1 (does not work yet)"
-    echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
+    echo " vc2005sp1     MS Visual C++ 2005 Service Pack 1 (install trial 1st)"
+    echo " vc2005trial   MS Visual C++ 2005 Trial"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
+    echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vjrun20       MS Visual J# 2.0 SE libraries (requires dotnet20)"
+    echo " vlc           VLC media player"
     echo " wenquanyi     WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)"
     echo " wininet       MS wininet.dll (requires Windows license)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license)"
-    echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license)"
-    echo " wsh56         MS Windows Scripting Host 5.6"
+    echo " wmp9          MS Windows Media Player 9 (requires Windows license)"
     echo " wsh56js       MS Windows scripting 5.6, jscript only, no cscript"
+    echo " wsh56         MS Windows Scripting Host 5.6"
     echo " wsh56vb       MS Windows scripting 5.6, vbscript only, no cscript"
     echo " xact          MS XACT Engine (x3daudio?_?.dll, xactengine?_?.dll)"
     echo " xvid          xvid video codec"
-    echo "Apps:"
-    echo " autohotkey    Autohotkey (open source gui scripting language)"
-    echo " firefox       Firefox"
-    echo " ie6           Microsoft Internet Explorer 6.0"
-    echo " ie7           Microsoft Internet Explorer 7.0"
-    echo " kde           KDE for Windows installer"
-    echo " mpc           Media Player Classic"
-    echo " vlc           VLC media player"
     echo "Pseudopackages:"
     echo " allfonts      All listed fonts (corefonts, tahoma, liberation)"
     echo " allcodecs     All listed codecs (xvid, ffdshow, icodecs)"
@@ -1584,7 +1583,8 @@ load_ie6() {
 }
 
 load_ie7() {
-
+if false
+then
     # Unregister Wine IE
     try $WINE iexplore -unregserver
 
@@ -1634,9 +1634,15 @@ load_ie7() {
     do
         $WINE regsvr32 /i $i > /dev/null 2>&1
     done
-
-    # try $WINE "$programfilesdir_win"\\"Internet Explorer"\\IEXPLORE.EXE http://www.winehq.org
-    warn "When running IE7, be sure to use the full path!"
+fi
+    # Seeing is believing
+    if [ "$WINETRICKS_QUIET" = "" ]
+    then
+        warn "Starting ie7.  To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
+    else
+        warn "Start ie7 with the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+    fi
 }
 
 #----------------------------------------------------------------
