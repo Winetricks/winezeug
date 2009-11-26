@@ -19,7 +19,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20091022
+VERSION=20091125
 
 early_wine()
 {
@@ -1583,8 +1583,6 @@ load_ie6() {
 }
 
 load_ie7() {
-if false
-then
     # Unregister Wine IE
     try $WINE iexplore -unregserver
 
@@ -1634,14 +1632,14 @@ then
     do
         $WINE regsvr32 /i $i > /dev/null 2>&1
     done
-fi
+
     # Seeing is believing
     if [ "$WINETRICKS_QUIET" = "" ]
     then
         warn "Starting ie7.  To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
         $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
     else
-        warn "Start ie7 with the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        warn "To start ie7, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
     fi
 }
 
