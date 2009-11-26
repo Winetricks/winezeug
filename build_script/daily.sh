@@ -148,7 +148,7 @@ if [ `which wget` ]
 # to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
 elif [ `which curl` ]
     then
-        GET="curl -O"
+        GET="curl -L -O"
 elif [ `which ftp` ]
     then
         GET="ftp"
