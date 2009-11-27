@@ -251,6 +251,7 @@ usage() {
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
+    echo " heapcheck     Enable heap checking"
     echo " native_mdac   Override odbc32 and odbccp32"
     echo " native_oleaut32 Override oleaut32"
     echo " nocrashdialog Disable the graphical crash dialog"
@@ -371,6 +372,10 @@ try() {
 
 try_regedit() {
     try early_wine regedit "$@"
+}
+
+regedit() {
+    die oops, bug, please report
 }
 
 # verify an sha1sum
@@ -1504,6 +1509,20 @@ load_hosts() {
 }
 
 #----------------------------------------------------------------
+
+set_heapcheck() {
+    cat > "$WINETRICKS_TMP"/heapcheck.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager]
+"GlobalFlag"=dword:00200030
+
+_EOF_
+    try_regedit "$WINETRICKS_TMP"/heapcheck.reg
+}
+
+#----------------------------------------------------------------
+
 load_icodecs() {
     # http://downloadcenter.intel.com/Detail_Desc.aspx?strState=LIVE&ProductID=355&DwnldID=2846
     download . http://downloadmirror.intel.com/2846/eng/codinstl.exe 2c5d64f472abe3f601ce352dcca75b4f02996f8a
@@ -3121,6 +3140,7 @@ do
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
     fakeie6) set_fakeie6;;
+    heapcheck) set_heapcheck;;
     native_mdac) set_native_mdac;;
     native_oleaut32) override_dlls native,builtin oleaut32;;
     nocrashdialog) disable_crashdialog;;
