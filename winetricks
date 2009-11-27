@@ -369,7 +369,7 @@ try() {
     fi
 }
 
-regedit() {
+try_regedit() {
     try early_wine regedit "$@"
 }
 
@@ -445,7 +445,7 @@ REGEDIT4
 "Version"="$1"
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/set-winver.reg
+    try_regedit "$WINETRICKS_TMP"/set-winver.reg
 }
 
 set_app_winver() {
@@ -459,7 +459,7 @@ set_app_winver() {
     echo "\"Version\"=\"$version\""
     ) > "$WINETRICKS_TMP"/set-winver.reg
 
-    try regedit "$WINETRICKS_TMP"/set-winver.reg
+    try_regedit "$WINETRICKS_TMP"/set-winver.reg
     rm "$WINETRICKS_TMP"/set-winver.reg
 }
 
@@ -472,7 +472,7 @@ REGEDIT4
 "OffscreenRenderingMode"="$1"
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/set-orm.reg
+    try_regedit "$WINETRICKS_TMP"/set-orm.reg
 }
 
 set_sound_driver() {
@@ -484,7 +484,7 @@ REGEDIT4
 "Audio"="$1"
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/set-sound.reg
+    try_regedit "$WINETRICKS_TMP"/set-sound.reg
 }
 
 disable_crashdialog() {
@@ -496,7 +496,7 @@ REGEDIT4
 "ShowCrashDialog"=dword:00000000
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/crashdialog.reg
+    try_regedit "$WINETRICKS_TMP"/crashdialog.reg
 }
 
 sandbox() {
@@ -523,7 +523,7 @@ REGEDIT4
 "Version"=-
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/unset-winver.reg
+    try_regedit "$WINETRICKS_TMP"/unset-winver.reg
 }
 
 override_dlls() {
@@ -546,7 +546,7 @@ _EOF_
         shift
     done
 
-    try regedit "$WINETRICKS_TMP"/override-dll.reg
+    try_regedit "$WINETRICKS_TMP"/override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
 }
 
@@ -573,7 +573,7 @@ override_app_dlls() {
         shift
     done
 
-    try regedit "$WINETRICKS_TMP"/override-dll.reg
+    try_regedit "$WINETRICKS_TMP"/override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
 }
 
@@ -589,7 +589,7 @@ REGEDIT4
 "$font"="$file"
 _EOF_
     # too verbose
-    regedit "$WINETRICKS_TMP"/register-font.reg
+    try_regedit "$WINETRICKS_TMP"/register-font.reg
 }
 
 append_path() {
@@ -604,7 +604,7 @@ _EOF_
     printf '"PATH"="' >>"$WINETRICKS_TMP"/path.reg
     printf "$NEW_PATH;$WIN_PATH"'\"' | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/path.reg
 
-    try regedit "$WINETRICKS_TMP"/path.reg
+    try_regedit "$WINETRICKS_TMP"/path.reg
     rm -f "$WINETRICKS_TMP"/path.reg
 
 }
@@ -1157,7 +1157,7 @@ _EOF_
     echo -n "${programfilesdir_win}" | sed "s/\\\\/\\\\\\\\/" >>"$WINETRICKS_TMP"/fakeie6.reg
     echo '\\\\Internet Explorer"' >>"$WINETRICKS_TMP"/fakeie6.reg
 
-    try regedit "$WINETRICKS_TMP"/fakeie6.reg
+    try_regedit "$WINETRICKS_TMP"/fakeie6.reg
 
     # On old wineprefixes iexplore.exe is not created. Create a fake dll using
     # shdocvw.dll that should have similar VERSIONINFO.
@@ -1272,7 +1272,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000000
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/fs_disable.reg
+    try_regedit "$WINETRICKS_TMP"/fs_disable.reg
 }
 #----------------------------------------------------------------
 load_fs_grayscale() {
@@ -1287,7 +1287,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000001
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/fs_grayscale.reg
+    try_regedit "$WINETRICKS_TMP"/fs_grayscale.reg
 }
 #----------------------------------------------------------------
 load_fs_bgr() {
@@ -1302,7 +1302,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/fs_bgr.reg
+    try_regedit "$WINETRICKS_TMP"/fs_bgr.reg
 }
 #----------------------------------------------------------------
 load_fs_rgb() {
@@ -1317,7 +1317,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/fs_rgb.reg
+    try_regedit "$WINETRICKS_TMP"/fs_rgb.reg
 }
 #----------------------------------------------------------------
 
@@ -1384,7 +1384,7 @@ _EOF_
     cd "$olddir"
 
     # set install-path
-    try regedit "$WINETRICKS_TMP"/geckopath.reg
+    try_regedit "$WINETRICKS_TMP"/geckopath.reg
 }
 
 #----------------------------------------------------------------
@@ -1445,7 +1445,7 @@ _EOF_
     cd "$olddir"
 
     # set install-path
-    try regedit "$WINETRICKS_TMP"/geckopath.reg
+    try_regedit "$WINETRICKS_TMP"/geckopath.reg
 }
 
 #----------------------------------------------------------------
@@ -1472,7 +1472,7 @@ REGEDIT4
 "UseGLSL"="disabled"
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/disableglsl.reg
+    try_regedit "$WINETRICKS_TMP"/disableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -1486,7 +1486,7 @@ REGEDIT4
 "UseGLSL"="enabled"
 
 _EOF_
-    try regedit "$WINETRICKS_TMP"/enableglsl.reg
+    try_regedit "$WINETRICKS_TMP"/enableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -1816,7 +1816,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try_regedit "$WINETRICKS_TMP"/mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1838,7 +1838,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try_regedit "$WINETRICKS_TMP"/mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1860,7 +1860,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try_regedit "$WINETRICKS_TMP"/mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -2782,8 +2782,8 @@ load_wmp9() {
     try $WINE "$WINETRICKS_CACHE"/WM9Codecs9x.exe $WINETRICKS_QUIET
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
-    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
-    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     unset_winver
 }
@@ -2809,8 +2809,8 @@ load_wmp10() {
     try $WINE "$WINETRICKS_CACHE"/WM9Codecs9x.exe $WINETRICKS_QUIET
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
-    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
-    try regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     unset_winver
 }
