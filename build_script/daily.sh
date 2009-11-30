@@ -319,6 +319,7 @@ preptests() {
     ./server/wineserver -k || true
     rm -rf $WINEPREFIX || true
     $WINE wineboot > /dev/null 2>&1 || exit 1
+    sh winetricks nocrashdialog
 }
 
 preptests_nogecko() {
