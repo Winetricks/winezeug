@@ -104,6 +104,12 @@ elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
             echo "Most Linux distros should build fine out of the box."
             echo "If not, please notifiy the maintainer to add your build script here."
         fi
+# PC-BSD or FreeBSD?
+elif [ $OS = 'FreeBSD' ] && [ "`which pbreg`" ]
+    then
+        export CPPFLAGS="-I/PCBSD/local/include"
+        export LDFLAGS="-L/PCBSD/local/lib"
+        CORES=$(/sbin/sysctl -n hw.ncpu)
 elif [ $OS = 'FreeBSD' ]
     then
         export CPPFLAGS="-I/usr/local/include"
