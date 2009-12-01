@@ -988,3 +988,19 @@
    fun:run_test
    fun:main
 }
+{
+   expected_advapi32_tests_crypt_badparams
+   Memcheck:Addr4
+   ...
+   fun:test_incorrect_api_usage
+   fun:func_crypt
+   fun:run_test
+   fun:main
+}
+{
+   # These aren't even in wine, but in a helper app wine runs
+   ntlm_auth_leaks
+   Memcheck:Leak
+   ...
+   obj:*/ntlm_auth
+}
