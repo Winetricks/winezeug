@@ -969,3 +969,22 @@
    fun:run_test
    fun:main
 }
+{
+   expected_12345678_ptr_user32_tests_class
+   Memcheck:Addr2
+   fun:RtlImageNtHeader
+   fun:RtlImageDirectoryEntryToData
+   fun:find_entry
+   fun:LdrFindResource_U
+   fun:find_resourceA
+   fun:FindResourceExA
+   fun:FindResourceA
+   fun:LoadMenuA
+   fun:WIN_CreateWindowEx
+   fun:CreateWindowExA
+   fun:check_instance_
+   fun:test_instances
+   fun:func_class
+   fun:run_test
+   fun:main
+}
