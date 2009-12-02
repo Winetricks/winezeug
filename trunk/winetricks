@@ -140,7 +140,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
-    echo " art2kmin      MS Access 2000 runtime.  Requires Access 2000 Dev license!"
+    echo " art2kmin      MS Access 2007 runtime"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
     echo " cmake         CMake, the cross-platform, open-source build system"
@@ -625,11 +625,10 @@ helper_directx_dl() {
 #----- One function per package, in alphabetical order ----------
 
 load_art2kmin() {
-    # See http://support.microsoft.com/kb/243957
-    download . http://download.microsoft.com/download/office2000dev/art2kmin/1/win98/en-us/art2kmin.exe 73be2622254d1f857a204a03f068787542b985e9
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/art2kmin.exe
-    cd "$WINETRICKS_TMP"
-    try $WINE Setup.exe INSTALLPFILES=1 /wait $WINETRICKS_QUIET
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=d9ae78d9-9dc6-4b38-9fa6-2c745a175aed&displaylang=en
+    download . http://download.microsoft.com/download/D/2/A/D2A2FC8B-0447-491C-A5EF-E8AA3A74FB98/AccessRuntime.exe 571811b7536e97cf4e4e53bbf8260cddd69f9b2d
+    cd "$WINETRICKS_CACHE"
+    try $WINE AccessRuntime.exe $WINETRICKS_QUIET
     cd "$olddir"
 }
 
@@ -3029,7 +3028,7 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
-    art2kmin) load_art2kmin;;
+    art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;
     autohotkey|ahk) load_autohotkey;;
     cmake) load_cmake;;
