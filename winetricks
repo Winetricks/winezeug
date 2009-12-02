@@ -252,7 +252,7 @@ usage() {
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
     echo " heapcheck     Enable heap checking"
-    echo " native_mdac   Override odbc32 and odbccp32"
+    echo " native_mdac   Override odbc32, odbccp32 and oledb32"
     echo " native_oleaut32 Override oleaut32"
     echo " nocrashdialog Disable the graphical crash dialog"
     echo " orm=backbuffer Registry tweak: OffscreenRenderingMode=backbuffer"
@@ -1708,7 +1708,7 @@ load_liberation() {
 set_native_mdac() {
     # Set those overrides globally so user programs get MDAC's odbc
     # instead of wine's unixodbc
-    override_dlls native,builtin odbc32 odbccp32
+    override_dlls native,builtin odbc32 odbccp32 oledb32
 }
 
 #----------------------------------------------------------------
