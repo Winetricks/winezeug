@@ -549,6 +549,16 @@
    fun:run_test
    fun:main
 }
+{
+   # Lots of little invalid things going on in this test
+   suppress_wine_dlls_kernel32_tests_test_heap
+   Memcheck:Addr2
+   ...
+   fun:test_heap
+   fun:func_heap
+   fun:run_test
+   fun:main
+}
 {   
    suppress_wine_dlls_kernel32_tests__CreateThread_basic_badaccess
    Memcheck:Addr1
@@ -703,6 +713,20 @@
    todo_openssl_warnings_r_us3c
    Memcheck:Cond
    obj:/usr/lib*/*libssl.so*
+}
+{
+   # http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=532059
+   # http://rt.openssl.org/index.html?q=1642
+   todo_openssl_warnings_mod_inverse
+   Memcheck:Cond
+   fun:BN_mod_inverse
+}
+{
+   # http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=532059
+   # http://rt.openssl.org/index.html?q=1642
+   todo_openssl_warnings_div
+   Memcheck:Cond
+   fun:BN_div
 }
 # And sane
 {
@@ -1003,4 +1027,13 @@
    Memcheck:Leak
    ...
    obj:*/ntlm_auth
+}
+{
+   expected_wininet_tests_http_test_bogus_accept_types_array
+   Memcheck:Addr1
+   fun:HttpOpenRequestA
+   fun:test_bogus_accept_types_array
+   fun:func_http
+   fun:run_test
+   fun:main
 }
