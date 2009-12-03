@@ -2368,19 +2368,17 @@ load_vcrun6() {
        mv "$WINETRICKS_TMP"/vcredist.exe "$WINETRICKS_CACHE"
     fi
     # Delete some fake dlls to avoid vcredist installer warnings
+    rm -f "$WINDIR"/system32/comcat.dll
     rm -f "$WINDIR"/system32/msvcrt.dll
     rm -f "$WINDIR"/system32/oleaut32.dll
     rm -f "$WINDIR"/system32/olepro32.dll
+    rm -f "$WINDIR"/system32/stdole2.tlb
     # vcredist still exits with status 43.  Anyone know why?
     $WINE "$WINETRICKS_CACHE"/vcredist.exe || true
 
     # And then some apps need mfc42u.dll, dunno what right way
     # is to get it, vcredist doesn't install it by default?
-    cd "$WINETRICKS_TMP"/
-    rm -rf "$WINETRICKS_TMP"/*
-    try cabextract "$WINETRICKS_CACHE"/vcredist.exe
-    mv mfc42u.dll "$WINDIR"/system32/
-    cd "$olddir"
+    try cabextract "$WINETRICKS_CACHE"/vcredist.exe -d "$WINDIR"/system32/ -F mfc42u.dll
 
     override_dlls native,builtin msvcrt
 
