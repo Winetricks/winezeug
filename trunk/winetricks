@@ -3166,7 +3166,7 @@ do
     vc2008sp1) load_vc2008sp1;;
     vc2005trial) load_vc2005trial;;
     vc2008trial) load_vc2008trial;;
-    vcrun600|vcrun6|mfc42) load_vcrun6;;
+    vcrun600|vcrun60|vcrun6|mfc42) load_vcrun6;;
     vcrun60sp6|vcrun6sp6) load_vcrun6sp6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005|vcrun2005sp1) load_vcrun2005;;
