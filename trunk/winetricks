@@ -234,6 +234,7 @@ usage() {
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
+    echo " vcrun6sp6     MS Visual C++ 6 sp6 libraries (mfc42, msvcp60, msvcrt; 64 MB download)"
     echo " vjrun20       MS Visual J# 2.0 SE libraries (requires dotnet20)"
     echo " vlc           VLC media player"
     echo " wenquanyi     WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)"
@@ -2387,6 +2388,42 @@ load_vcrun6() {
 
 #----------------------------------------------------------------
 
+load_vcrun6sp6() {
+    if test ! -f vcredistsp6.exe
+    then
+        download . http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe 2292437a8967349261c810ae8b456592eeb76620
+
+        # No EULA is presented when passing command-line extraction arguments,
+        # so we'll simplify extraction with cabextract. We'll also try to avoid
+        # overwriting the older vcrun6 redist by renaming the extracted file.
+        try cabextract "$WINETRICKS_CACHE"/Vs6sp6.exe -d "$WINETRICKS_TMP" -F vcredist.exe
+        try mv "$WINETRICKS_TMP"/vcredist.exe "$WINETRICKS_CACHE"/vcredistsp6.exe
+    fi
+
+    # Delete some fake dlls to avoid vcredist installer warnings
+    try rm -f "$WINDIR"/system32/comcat.dll
+    try rm -f "$WINDIR"/system32/msvcrt.dll
+    try rm -f "$WINDIR"/system32/oleaut32.dll
+    try rm -f "$WINDIR"/system32/olepro32.dll
+    try rm -f "$WINDIR"/system32/stdole2.tlb
+    # vcredist still exits with status 43.  Anyone know why?
+    $WINE "$WINETRICKS_CACHE"/vcredistsp6.exe
+
+    status=$?
+    case $status in
+    0|43) ;;
+    *) die $PACKAGE installation failed
+    esac
+
+    # And then some apps need mfc42u.dll, dunno what right way
+    # is to get it, vcredist doesn't install it by default?
+    try cabextract "$WINETRICKS_CACHE"/vcredistsp6.exe -d "$WINDIR"/system32/ -F mfc42u.dll
+
+    override_dlls native,builtin msvcrt
+}
+
+#----------------------------------------------------------------
+
 load_vcrun2003() {
     # Load the Visual C++ 2003 runtime libraries
     # Sadly, I know of no Microsoft URL for these
@@ -3130,6 +3167,7 @@ do
     vc2005trial) load_vc2005trial;;
     vc2008trial) load_vc2008trial;;
     vcrun600|vcrun6|mfc42) load_vcrun6;;
+    vcrun60sp6|vcrun6sp6) load_vcrun6sp6;;
     vcrun2003) load_vcrun2003;;
     vcrun2005|vcrun2005sp1) load_vcrun2005;;
     vcrun2008|vcrun2008sp1) load_vcrun2008;;
