@@ -2396,7 +2396,13 @@ load_vcrun6() {
     rm -f "$WINDIR"/system32/olepro32.dll
     rm -f "$WINDIR"/system32/stdole2.tlb
     # vcredist still exits with status 43.  Anyone know why?
-    $WINE "$WINETRICKS_CACHE"/vcredist.exe || true
+    $WINE "$WINETRICKS_CACHE"/vcredist.exe
+
+    status=$?
+    case $status in
+    0|43) ;;
+    *) die $PACKAGE installation failed
+    esac
 
     # And then some apps need mfc42u.dll, dunno what right way
     # is to get it, vcredist doesn't install it by default?
@@ -2884,7 +2890,7 @@ load_wmp10() {
 
     # Crashes on exit, but otherwise ok; see http://bugs.winehq.org/show_bug.cgi?id=12633
     echo Executing $WINE "$WINETRICKS_CACHE"/MP10Setup.exe $WINETRICKS_QUIET
-    $WINE "$WINETRICKS_CACHE"/MP10Setup.exe $WINETRICKS_QUIET || true
+    try $WINE "$WINETRICKS_CACHE"/MP10Setup.exe $WINETRICKS_QUIET
 
     # Also install the codecs
     # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
