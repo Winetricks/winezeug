@@ -217,6 +217,7 @@ usage() {
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
+    echo " richtx32      MS Rich TextBox Control 6.0"
     echo " shockwave     Adobe Shockwave Player"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
@@ -2250,6 +2251,14 @@ load_riched30() {
 
 #----------------------------------------------------------------
 
+load_richtx32() {
+    download . http://activex.microsoft.com/controls/vb6/richtx32.cab da404b566df3ad74fe687c39404a36c3e7cadc07
+    try cabextract "$WINETRICKS_CACHE"/richtx32.cab -d "$WINDIR"/system32 -F RichTx32.Ocx
+    try $WINE regsvr32 RichTx32.ocx
+}
+
+#----------------------------------------------------------------
+
 load_shockwave() {
     # Not silent enough, use msi instead
     #download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
@@ -3104,6 +3113,7 @@ do
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
+    richtx32) load_richtx32;;
     shockwave) load_shockwave;;
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
