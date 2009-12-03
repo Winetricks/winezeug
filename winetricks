@@ -225,7 +225,7 @@ usage() {
     echo " vb3run        MS Visual Basic 3 runtime"
     echo " vb4run        MS Visual Basic 4 runtime"
     echo " vb5run        MS Visual Basic 5 runtime"
-    echo " vb6run        MS Visual Basic 6 runtime"
+    echo " vb6run        MS Visual Basic 6 Service Pack 6 runtime"
     echo " vc2005express MS Visual C++ 2005 Express"
     echo " vc2005expresssp1 MS Visual C++ 2005 Express SP1 (does not work yet)"
     echo " vc2005sp1     MS Visual C++ 2005 Service Pack 1 (install trial 1st)"
@@ -2338,9 +2338,32 @@ load_vbvm50() {
 #----------------------------------------------------------------
 
 load_vbrun60() {
-    download . http://download.microsoft.com/download/vb60pro/install/6/win98me/en-us/vbrun60.exe 2dc00e5fc701492bcba7ac58f057ee43751e18e5
+    if test ! -f "$WINETRICKS_CACHE"/vbrun60sp6.exe
+    then
+        download . http://download.microsoft.com/download/5/a/d/5ad868a0-8ecd-4bb0-a882-fe53eb7ef348/VB6.0-KB290887-X86.exe 73ef177008005675134d2f02c6f580515ab0d842
+        rm -rf "$WINETRICKS_TMP"/*
+
+        try $WINE "$WINETRICKS_CACHE"/VB6.0-KB290887-X86.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
+        if test ! -f "$WINETRICKS_TMP"/vbrun60sp6.exe
+        then
+            die vbrun60sp6.exe not found
+        fi
+        try mv "$WINETRICKS_TMP"/vbrun60sp6.exe "$WINETRICKS_CACHE"
+    fi
+
+    # Delete some fake DLLs to ensure that the installer overwrites them.
+    rm -f "$WINDIR"/system32/comcat.dll
+    rm -f "$WINDIR"/system32/oleaut32.dll
+    rm -f "$WINDIR"/system32/olepro32.dll
+    rm -f "$WINDIR"/system32/stdole2.tlb
     # Exits with status 43 for some reason?
-    $WINE "$WINETRICKS_CACHE"/vbrun60.exe $WINETRICKS_QUIET || true
+    $WINE "$WINETRICKS_CACHE"/vbrun60sp6.exe $WINETRICKS_QUIET
+
+    status=$?
+    case $status in
+    0|43) ;;
+    *) die $PACKAGE installation failed
+    esac
 }
 
 #----------------------------------------------------------------
