@@ -305,7 +305,7 @@ get_gecko() (
             break
     elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ]
         then
-            cp /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../$gecko/
+            cp /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../gecko/
     elif [ -f /usr/gecko/wine_gecko-1.0.0-x86.cab ]
         then
             cp /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../gecko/
