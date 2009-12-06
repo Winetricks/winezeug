@@ -7,8 +7,8 @@
 sub is_error
 {
 	#return /uninitialised|Unhandled exception:|Invalid read|Warning: invalid file descriptor|blocks are definitely lost/;
-	return /uninitialised|Unhandled exception:|Invalid read|Invalid write|Invalid free|Source and destination overlap|Mismatched free|unaddressable byte|Uninitialised value was created|vex x86|Warning: invalid file descriptor/ && !/Warning: invalid file descriptor -1 in syscall close/;
-
+	#return /uninitialised|Unhandled exception:|Invalid read|Invalid write|Invalid free|Source and destination overlap|Mismatched free|unaddressable byte|Uninitialised value was created|vex x86|Warning: invalid file descriptor/ && !/Warning: invalid file descriptor -1 in syscall close/;
+        return /uninitialised|Unhandled exception:|Invalid read|Invalid write|Invalid free|Source and destination overlap|Mismatched free|unaddressable byte|vex x86|Warning: invalid file descriptor|impossible|INTERNAL ERROR|are definitely/ && !/Warning: invalid file descriptor -1 in syscall close/;
 }
 
 $saved = "";
@@ -24,15 +24,20 @@ sub flushlog
 		close LOG;
 	}
 	$saved = "";
-	$name="$1_$2";
 }
 
 while (<>) {
         # runtest puts a # in front of commandlines when reassembling parallel logs
 	s/# runtest/runtest/;
 
+        # newer version of runtest/alarm uses a differet format as header;
+        # it comes one line after the regular runtest, and overrides it.
+        if (/alarm: runtest (.*):(.*) log:/) {
+	        $name="$1_$2";
+        }
 	if (/runtest.*-M (.*)\.dll.*exe\.so (.*)\.c/) {
 		&flushlog();
+	        $name="$1_$2";
 	}
 	if ($saved ne "" || &is_error()) {
 		if (!/stack ptr.  To suppress/ && !/set address range perms/) {

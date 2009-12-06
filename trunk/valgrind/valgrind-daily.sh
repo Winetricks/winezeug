@@ -33,12 +33,12 @@ if true
 then
     ./configure CFLAGS="-g -O0 -fno-inline" --prefix=/usr/local/wine
     make clean
-    time make -j3
+    time make -j4
 fi
 make testclean
 
 # Load gecko and disable the crash dialog
-sh winetricks gecko nocrashdialog || true
+sh winetricks gecko nocrashdialog heapcheck || true
 
 # keep a notepad up to avoid repeated startup penalty
 # even though that hides some errors
@@ -50,10 +50,31 @@ DATE=`date +%F-%H.%M`
 # Get info about what tree we're testing
 git log -n 1 > logs/$DATE.log
 
+# Disable any tests known to crash reliably and noisily
+# http://bugs.winehq.org/show_bug.cgi?id=20917
+touch dlls/d3d8/tests/device.ok
+touch dlls/d3d9/tests/device.ok
+touch dlls/ddrawex/tests/surface.ok
+# http://bugs.winehq.org/show_bug.cgi?id=20925
+touch dlls/d3d8/tests/visual.ok
+touch dlls/d3d9/tests/visual.ok
+touch dlls/d3dx9_36/tests/core.ok
+
+# Disable any tests known to hang reliably
+# http://bugs.winehq.org/show_bug.cgi?id=20919
+touch dlls/kernel32/tests/process.ok
+touch dlls/ole32/tests/marshal.ok
+touch dlls/shdocvw/tests/webbrowser.ok
+touch dlls/urlmon/tests/url.ok
+touch dlls/winmm/tests/mci.ok
+touch dlls/winmm/tests/wave.ok
+
 # Finally run the test
 export VALGRIND_OPTS="-q --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$PWD/tools/valgrind/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes --show-possible=no"
+export WINETEST_TIMEOUT=600
 export WINETEST_WRAPPER=valgrind
-time make -k test >> logs/$DATE.log 2>&1 || true
+export WINE_HEAP_TAIL_REDZONE=32
+time make -k -j2 test >> logs/$DATE.log 2>&1 || true
 
 # Kill off our notepad and any stragglers
 $WINESERVER -k || true
@@ -65,4 +86,4 @@ mkdir logs/$DATE
 perl tools/valgrind/valgrind-split.pl logs/$DATE.log
 mv vg*.txt logs/$DATE
 
-sh tools/valgrind/valgrind-status.sh
+sh tools/valgrind/valgrind-stats.sh
