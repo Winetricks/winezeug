@@ -44,9 +44,16 @@ checked_git_pull()
 wait_for_update()
 {
   # Wait until some change
-  while ! checked_git_pull
+  git show | head -n 1 > rev1
+  while true
   do
-     sleep 600
+    checked_git_pull || true
+    git show | head -n 1 > rev2
+    if grep commit rev1 && grep commit rev2 && ! cmp rev1 rev2
+    then
+     break
+    fi
+    sleep 600
   done
 
   # Then wait for no change for ten minutes 

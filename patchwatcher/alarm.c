@@ -76,13 +76,20 @@ static int getTestID(int argc, char **argv, char *buf)
     const char *module, *module_end;
     const char *file, *file_end;
     char *p = buf;
+    int argi;
 
-    module = argv[1];
+    for (argi=1; argi < argc; argi++)
+        if (strstr(argv[argi], "wine"))
+            break;
+    if (argi + 2 >= argc)
+        return 0;
+
+    module = argv[argi+1];
     if (!module) return 0;
     module_end = strrchr(module, '_');
     if (!module_end) return 0;
 
-    file = argv[2];
+    file = argv[argi+2];
     if (!file) return 0;
     file_end = strrchr(file, '.');
     if (!file_end) return 0;

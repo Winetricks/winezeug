@@ -9,7 +9,7 @@ cd logs
 DATE=`ls -d ????-??-??-??.?? | tail -1`
 PREV=`ls -d ????-??-??-??.?? | tail -2 | head -1`
 
-PATTERN="are definitely|uninitialised|Unhandled exception|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86|impossible|Assertion|INTERNAL ERROR|Terminated"
+PATTERN="are definitely|uninitialised|Unhandled exception|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86|impossible|Assertion|INTERNAL ERROR|Terminated|Killed"
 
 # Generate histogram of errors
 cat $DATE.log |

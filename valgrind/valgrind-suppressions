@@ -1026,7 +1026,14 @@
    ntlm_auth_leaks
    Memcheck:Leak
    ...
-   obj:*/ntlm_auth
+   obj:/usr/bin/ntlm_auth
+}
+{
+   ntlm_auth_leaks
+   Memcheck:Leak
+   ...
+   fun:poptGetNextOpt
+   fun:main
 }
 {
    expected_wininet_tests_http_test_bogus_accept_types_array
@@ -1037,3 +1044,13 @@
    fun:run_test
    fun:main
 }
+{
+   expected_advapi32_tests_crypt_see_wine_bug_20918
+   Memcheck:Addr4
+   fun:*
+   fun:test_incorrect_api_usage
+   fun:func_crypt
+   fun:run_test
+   fun:main
+}
+
