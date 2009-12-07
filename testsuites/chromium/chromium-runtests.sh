@@ -92,6 +92,9 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 list_known_failures() {
 cat <<_EOF_
 app_unittests         crash-valgrind       IconUtilTest.TestCreateSkBitmapFromHICON             http://bugs.winehq.org/show_bug.cgi?id=20634, not a bug, need to figure out how to handle DIB faults
+base_unittests        hang                 EtwTraceControllerTest.EnableDisable                 http://bugs.winehq.org/show_bug.cgi?id=20946, advapi32.ControlTrace() not yet implemented
+base_unittests        crash                EtwTraceConsumer*Test.*                              http://bugs.winehq.org/show_bug.cgi?id=20946, advapi32.OpenTrace() unimplemented
+base_unittests        crash                EtwTraceProvider*Test.*                              http://bugs.winehq.org/show_bug.cgi?id=20946, advapi32.RegisterTraceGuids() unimplemented
 base_unittests        dontcare             BaseWinUtilTest.FormatMessageW
 base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter
 base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime
