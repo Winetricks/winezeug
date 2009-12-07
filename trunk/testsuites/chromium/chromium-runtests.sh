@@ -34,6 +34,7 @@ Options:
   --individual     - run tests individually
   --groups         - run tests grouped by their major gtest name
   --gtest_filter X - only run the tests matching X
+  --target X       - test with Debug or Release binaries, default to Debug
   --just-crashes   - run only tests epected to crash
   --just-fails     - run only tests epected to fail
   --just-flaky     - run only tests epected to fail sometimes
@@ -267,6 +268,7 @@ announce=true
 dry_run=
 fail_filter="."
 SUITES=
+TARGET=Debug
 VALGRIND_CMD=
 want_fails=no
 loops=1
@@ -287,6 +289,7 @@ do
   --list-failures-html) list_known_failures | sed 's,http://\(.*\),<a href="http://\1">\1</a>,;s/$/<br>/' ; exit 0;;
   --loops) loops=$2; shift;;
   -n) dry_run=true; announce=echo ;;
+  --target) TARGET=$2; shift;;
   --used-suppressions) cd logs; grep used_suppression *.log | sed 's/-1.*--[0-9]*-- used_suppression//'; exit 0;;
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
   --winedebug) winedebug=$2; shift;;
@@ -308,7 +311,7 @@ init_runtime
 set -x
 
 mkdir -p logs
-cd src/chrome/Debug
+cd "src/chrome/$TARGET"
 
 i=1
 while test $i -le $loops
