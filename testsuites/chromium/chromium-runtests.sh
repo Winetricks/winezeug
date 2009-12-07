@@ -320,6 +320,7 @@ fi
 
 set -e
 
+trap shutdown_runtime 0
 init_runtime
 
 set -x
@@ -364,5 +365,3 @@ do
   done
   i=`expr $i + 1`
 done
-
-shutdown_runtime
