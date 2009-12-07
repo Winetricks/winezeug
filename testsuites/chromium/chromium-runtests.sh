@@ -44,6 +44,7 @@ Options:
   -n               - dry run, only show what will be done
   --used-suppressions - extract histogram of used valgrind suppressions from current contents of logs directory
   --valgrind       - run the tests under valgrind
+  --vnc N          - run the tests inside a vnc server running on display N
   --winedebug chan - e.g. --windebug +relay,+seh
 Currently supported suites:
 app_unittests base_unittests courgette_unittests googleurl_unittests
@@ -211,6 +212,13 @@ init_runtime() {
       echo "(Alternately, modify this script to run Juan's importer, http://bugs.winehq.org/show_bug.cgi?id=20370#c4 )"
       exit 1
     fi
+
+    if test -n "$VNC"
+    then
+      export DISPLAY=":$VNC"
+      vncserver -kill "$DISPLAY" || true
+      vncserver "$DISPLAY" -ac -depth 24 -geometry 1024x768
+    fi
     $dry_run rm -rf $WINEPREFIX
     $dry_run test -f winetricks || wget http://kegel.com/wine/winetricks
     $dry_run sh winetricks nocrashdialog corefonts gecko > /dev/null
@@ -223,6 +231,10 @@ shutdown_runtime() {
   if test "$WINDIR" = ""
   then
     $dry_run $WINESERVER -k
+    if test -n "$VNC"
+    then
+      vncserver -kill "$DISPLAY"
+    fi
   fi
 }
 
@@ -270,6 +282,7 @@ fail_filter="."
 SUITES=
 TARGET=Debug
 VALGRIND_CMD=
+VNC=
 want_fails=no
 loops=1
 winedebug=
@@ -292,6 +305,7 @@ do
   --target) TARGET=$2; shift;;
   --used-suppressions) cd logs; grep used_suppression *.log | sed 's/-1.*--[0-9]*-- used_suppression//'; exit 0;;
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
+  --vnc) VNC=$2; shift;;
   --winedebug) winedebug=$2; shift;;
   -*) usage; exit 1;;
   *) SUITES="$SUITES $1" ;;
