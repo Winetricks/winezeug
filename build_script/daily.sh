@@ -629,7 +629,7 @@ runtests
 
 win64_test() {
 WINEDEBUG=""
-TESTNAME="-x64-nogecko"
+TESTNAME="-x64"
 TESTBINARY="winetest64-latest.exe"
 export WINEDEBUG
 export TESTNAME
@@ -734,7 +734,7 @@ do
     --seh) export SEH_TEST=1;;
     --virtual-desktop) export VD_TEST=1;;
     --werror) export WERROR_TEST=1;;
-    --win-64) export WIN64_TEST=1;;
+    --win64|--win-64) export WIN64_TEST=1;;
     *) echo Unknown arg $1; usage; exit 1;;
     esac
     shift
