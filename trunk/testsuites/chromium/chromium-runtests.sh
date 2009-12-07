@@ -3,7 +3,7 @@
 # Script to run a respectable subset of Chromium's test suite
 # (excepting parts that run the browser itself, and excepting layout tests).
 # Run from parent of src directory.
-# By default, runs all test suites.  If you specify one testsuite 
+# By default, runs all test suites.  If you specify one testsuite
 # (e.g. base_unittests), it only runs that one.
 #
 # Chromium's test suite uses gtest, so each executable obeys the options
@@ -31,7 +31,7 @@ Runs chromium tests on Windows or Wine, optionally with valgrind.
 Stdout/stderr saved to logs/ directory.  (The tests themselves
 may save logs next to their executables in src/Debug.)
 Options:
-  --individual     - run tests individually 
+  --individual     - run tests individually
   --groups         - run tests grouped by their major gtest name
   --gtest_filter X - only run the tests matching X
   --just-crashes   - run only tests epected to crash
@@ -90,18 +90,18 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 list_known_failures() {
 cat <<_EOF_
 app_unittests         crash-valgrind       IconUtilTest.TestCreateSkBitmapFromHICON             http://bugs.winehq.org/show_bug.cgi?id=20634, not a bug, need to figure out how to handle DIB faults
-base_unittests        dontcare             BaseWinUtilTest.FormatMessageW                       
-base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter                  
-base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime                
+base_unittests        dontcare             BaseWinUtilTest.FormatMessageW
+base_unittests        dontcare             FileUtilTest.CountFilesCreatedAfter
+base_unittests        dontcare             FileUtilTest.GetFileCreationLocalTime
 base_unittests        dontcare             PEImageTest.EnumeratesPE                             Alexandre triaged
 base_unittests        dontcare-winfail     TimeTicks.HighResNow                                 fails if run individually on windows
-base_unittests        dontcare             WMIUtilTest.*                                        
+base_unittests        dontcare             WMIUtilTest.*
 base_unittests        fail                 HMACTest.HMACObjectReuse                             http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.HmacSafeBrowsingResponseTest                http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail                 HMACTest.RFC2202TestCases                            http://bugs.winehq.org/show_bug.cgi?id=20340
 base_unittests        fail_wine_vmware     RSAPrivateKeyUnitTest.ShortIntegers
 base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses                     http://bugs.winehq.org/show_bug.cgi?id=20606
-base_unittests        hang-dontcare        DirectoryWatcherTest.*                               
+base_unittests        hang-dontcare        DirectoryWatcherTest.*
 base_unittests        hang-valgrind        JSONReaderTest.Reading                               # not really a hang, takes 400 seconds
 base_unittests        hang-valgrind        RSAPrivateKeyUnitTest.InitRandomTest                 # not really a hang, takes 300 seconds
 base_unittests        hang-valgrind        TimerTest.RepeatingTimer*
@@ -109,42 +109,42 @@ base_unittests        hang-valgrind        TimeTicks.WinRollover                
 ipc_tests             flaky                IPCChannelTest.ChannelTest                           http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             hang                 IPCSyncChannelTest.*                                 http://bugs.winehq.org/show_bug.cgi?id=20390
-media_unittests       crash                FFmpegGlueTest.OpenClose                             
-media_unittests       crash                FFmpegGlueTest.Read                                  
-media_unittests       crash                FFmpegGlueTest.Seek                                  
-media_unittests       crash                FFmpegGlueTest.Write                                 
+media_unittests       crash                FFmpegGlueTest.OpenClose
+media_unittests       crash                FFmpegGlueTest.Read
+media_unittests       crash                FFmpegGlueTest.Seek
+media_unittests       crash                FFmpegGlueTest.Write
 media_unittests       fail_wine_vmware     WinAudioTest.PCMWaveStreamTripleBuffer
 media_unittests       hang-valgrind        WinAudioTest.PCMWaveSlowSource
 net_unittests         fail                 SSLClientSocketTest.Read_Interrupted                 http://bugs.winehq.org/show_bug.cgi?id=20748
-sbox_unittests        fail                 JobTest.ProcessInJob                                 
-sbox_unittests        fail                 JobTest.TestCreation                                 
-sbox_unittests        fail                 JobTest.TestDetach                                   
-sbox_unittests        fail                 JobTest.TestExceptions                               
-sbox_unittests        fail                 RestrictedTokenTest.AddAllSidToRestrictingSids       
-sbox_unittests        fail                 RestrictedTokenTest.AddMultipleRestrictingSids       
-sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSid                
-sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSidCurrentUser     
-sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSidLogonSession    
-sbox_unittests        fail                 RestrictedTokenTest.DefaultDacl                      
-sbox_unittests        fail                 RestrictedTokenTest.DeleteAllPrivileges              
-sbox_unittests        fail                 RestrictedTokenTest.DeleteAllPrivilegesException     
-sbox_unittests        fail                 RestrictedTokenTest.DeletePrivilege                  
-sbox_unittests        fail                 RestrictedTokenTest.DenyOwnerSid                     
-sbox_unittests        fail                 RestrictedTokenTest.DenySid                          
-sbox_unittests        fail                 RestrictedTokenTest.DenySids                         
-sbox_unittests        fail                 RestrictedTokenTest.DenySidsException                
-sbox_unittests        fail                 RestrictedTokenTest.ResultToken                      
-sbox_unittests        fail                 ServiceResolverTest.PatchesServices                  
-sbox_unittests        flaky                IPCTest.ClientFastServer                             
-sbox_validation_tests fail                 ValidationSuite.*                                    
+sbox_unittests        fail                 JobTest.ProcessInJob
+sbox_unittests        fail                 JobTest.TestCreation
+sbox_unittests        fail                 JobTest.TestDetach
+sbox_unittests        fail                 JobTest.TestExceptions
+sbox_unittests        fail                 RestrictedTokenTest.AddAllSidToRestrictingSids
+sbox_unittests        fail                 RestrictedTokenTest.AddMultipleRestrictingSids
+sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSid
+sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSidCurrentUser
+sbox_unittests        fail                 RestrictedTokenTest.AddRestrictingSidLogonSession
+sbox_unittests        fail                 RestrictedTokenTest.DefaultDacl
+sbox_unittests        fail                 RestrictedTokenTest.DeleteAllPrivileges
+sbox_unittests        fail                 RestrictedTokenTest.DeleteAllPrivilegesException
+sbox_unittests        fail                 RestrictedTokenTest.DeletePrivilege
+sbox_unittests        fail                 RestrictedTokenTest.DenyOwnerSid
+sbox_unittests        fail                 RestrictedTokenTest.DenySid
+sbox_unittests        fail                 RestrictedTokenTest.DenySids
+sbox_unittests        fail                 RestrictedTokenTest.DenySidsException
+sbox_unittests        fail                 RestrictedTokenTest.ResultToken
+sbox_unittests        fail                 ServiceResolverTest.PatchesServices
+sbox_unittests        flaky                IPCTest.ClientFastServer
+sbox_validation_tests fail                 ValidationSuite.*
 unit_tests            crash                BlacklistManagerTest.*                               http://crbug.com/27726
 unit_tests            crash                SafeBrowsingProtocolParsingTest.TestGetHashWithMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            crash-valgrind       DnsMasterTest.MassiveConcurrentLookupTest
 unit_tests            crash-valgrind       NullModelTableViewTest.*                             http://bugs.winehq.org/show_bug.cgi?id=20553
 unit_tests            crash-valgrind       RenderViewTest.OnPrintPageAsBitmap                   http://bugs.winehq.org/show_bug.cgi?id=20657 (for wine oom)
 unit_tests            crash-valgrind       TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
-unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker             
-unit_tests            dontcare             SpellCheckTest.SpellCheckText                        
+unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker
+unit_tests            dontcare             SpellCheckTest.SpellCheckText
 unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            hang-valgrind        ExtensionAPIClientTest.*                             Not really a hang, just takes 30 minutes
@@ -194,7 +194,7 @@ init_runtime() {
     export WINEPREFIX
     WINE_HEAP_REDZONE=16
     export WINE_HEAP_REDZONE
-    
+
     if netstat -tlnp | grep 1337
     then
       echo Please kill the server listening on port 1337, or reboot.  The net tests need this port.
@@ -323,14 +323,14 @@ do
 
     case $do_individual in
     no)
-      $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 
+      $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec
       WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
                 $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec > ../../../logs/$suite-$i.log 2>&1 || true
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
-        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 
+        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test"
         WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
                   $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
@@ -338,7 +338,7 @@ do
     groups)
       for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
       do
-        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 
+        $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}"
         WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
                   $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" > ../../../logs/$suite-$test-$i.log 2>&1 || true
       done
