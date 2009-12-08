@@ -652,8 +652,6 @@ echo "4) Runs winetest.exe, without any special options, and submits the results
 echo ""
 echo "The script, however, has many more options:"
 echo "--no-newtree - Disables updating your git tree."
-echo "--no-build - Disables (re)building Wine"
-echo "--no-download - Don't download winetest.exe, assumes you already have one downloaded"
 echo "--rebase-tree - Run 'git rebase origin' in $WINEGIT, rather than making a new temp tree"
 echo "--no-tests - Disables downloading/running winetest.exe"
 echo "--no-regular - Skip running winetest.exe without special options"
@@ -677,8 +675,6 @@ echo "The exception is --no-newtree/--no-build in case you want to run tests aga
 # There's probably a cleaner way to do this, but I'm lazy and I'll do it how I know
 # Setting the variables here, to avoid errors below.
 NEWTREE=0
-NOBUILD=0
-NODOWNLOAD=0
 REBASE_TREE=0
 NOTESTS=0
 NOREGULAR_TEST=0
@@ -709,9 +705,7 @@ do
     case $1 in
     -v) set -x;;
     --no-newtree) export NEWTREE=1;;
-    --no-build) export NOBUILD=1;;
     --rebase-tree) export REBASE_TREE=1;;
-    --no-download) export NODOWNLOAD=1;;
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
@@ -753,15 +747,15 @@ else
 fi
 
 # Rebase tree, if desired. Otherwise, clone a copy of the tree for our tests.
+# Either way, cd to the right directory.
 if [ $REBASE_TREE = 1 ]
     then
+        cd "$WINEGIT"
         rebase_tree
 else
     clone_tree
+    cd "$WINETESTGIT"
 fi
-
-# Move to the right directory:
-cd $WINETESTGIT
 
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
@@ -800,13 +794,7 @@ $GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
 
 # Make sure we have gecko:
 get_gecko
-
-if [ $NODOWNLOAD = 1 ]
-    then
-        echo "not downloading tests...I assume you have a good reason?"
-else
-    get_tests_32
-fi
+get_tests_32
 
 if [ $NOREGULAR_TEST = 1 ]
     then
