@@ -325,6 +325,7 @@ set -e
 
 trap shutdown_runtime 0
 init_runtime
+export WINEDEBUG=$winedebug
 
 set -x
 
@@ -345,23 +346,23 @@ do
     case $do_individual in
     no)
       $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec
-      WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
-                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec > ../../../logs/$suite-$i.log 2>&1 || true
+      $dry_run alarm `get_expected_runtime $suite` \
+                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | tr -d '\015' > ../../../logs/$suite-$i.log || true
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test"
-        WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" > ../../../logs/$suite-$test-$i.log 2>&1 || true
+        $dry_run alarm `get_expected_runtime $suite` \
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | tr -d '\015'  > ../../../logs/$suite-$test-$i.log || true
       done
       ;;
     groups)
       for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}"
-        WINEDEBUG=$winedebug $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" > ../../../logs/$suite-$test-$i.log 2>&1 || true
+        $dry_run alarm `get_expected_runtime $suite` \
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | tr -d '\015'  > ../../../logs/$suite-$test-$i.log || true
       done
       ;;
     esac
