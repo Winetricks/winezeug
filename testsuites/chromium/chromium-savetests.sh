@@ -10,6 +10,19 @@
 
 set -x
 
+# Parse arguments
+
+TARGET=Debug
+
+while test "$1" != ""
+do
+  case $1 in
+  --target) TARGET=$2; shift;;
+  *) echo bad arg $1; exit 1;;
+  esac
+  shift
+done
+
 # Record which version of the source this was built with
 cd src
 svn info > svninfo.txt
@@ -22,13 +35,13 @@ FILES="
  src/svninfo.txt \
  src/app/test/data \
  src/base/data \
- src/chrome/Debug/icudt42.dll \
- src/chrome/Debug/crash_service.exe \
- src/chrome/Debug/pthreads.dll \
- src/chrome/Debug/wow_helper.exe \
- src/chrome/Debug/locales/en-US.dll \
- src/chrome/Debug/themes/default.dll \
- src/chrome/Debug/test_chrome_plugin.dll \
+ src/chrome/$TARGET/icudt42.dll \
+ src/chrome/$TARGET/crash_service.exe \
+ src/chrome/$TARGET/pthreads.dll \
+ src/chrome/$TARGET/wow_helper.exe \
+ src/chrome/$TARGET/locales/en-US.dll \
+ src/chrome/$TARGET/themes/default.dll \
+ src/chrome/$TARGET/test_chrome_plugin.dll \
  src/chrome/test/data \
  src/chrome/test/unit \
  src/courgette/testdata \
@@ -40,9 +53,9 @@ FILES="
 "
 
 # Skip chrome itself for the moment, it makes the download huge.
-# src/chrome/Debug/chrome.{dll,exe} \
-# src/chrome/Debug/chrome_dll.pdb \
-# src/chrome/Debug/chrome_exe.pdb \
+# src/chrome/$TARGET/chrome.{dll,exe} \
+# src/chrome/$TARGET/chrome_dll.pdb \
+# src/chrome/$TARGET/chrome_exe.pdb \
 
 # Tests, grouped by how long they take to run
 # Skip ones that require chrome itself for the moment
@@ -58,7 +71,7 @@ TESTS_1000="base_unittests unit_tests"
 # Save the tests we're interested in
 for test in $TESTS_1 $TESTS_10 $TESTS_100 $TESTS_1000
 do
- FILES="$FILES src/chrome/Debug/$test.{exe,pdb} " 
+ FILES="$FILES src/chrome/$TARGET/$test.{exe,pdb} " 
 done
 
 FILES=`eval echo $FILES`
