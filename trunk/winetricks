@@ -1212,8 +1212,9 @@ load_flash() {
     # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd
     # 2009-02-27: sha1sum 86745020a25edc9695a1a6a4d59eae375665a0b3
     # 2009-07-31: sha1sum 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
+    # 2009-12-09: sha1sum f4ec0e95099e354fd01cd3bb27c202f54932dc70
 
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe f4ec0e95099e354fd01cd3bb27c202f54932dc70
     try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe $WINETRICKS_S
 
     # Mozilla / Firefox plugin
@@ -1221,8 +1222,9 @@ load_flash() {
     # 2008-11-27: sha1sum 20ec0300a8cae19105c903a7ec6c0801e016beb0
     # 2009-02-27: sha1sum 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
     # 2009-07-31: sha1sum 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
-
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
+    # 2009-12-09: sha1sum ccb4811b1cc26721c4abb2e5a080868acdee7b87
+    
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe ccb4811b1cc26721c4abb2e5a080868acdee7b87
     try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
 
