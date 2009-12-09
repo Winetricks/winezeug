@@ -205,7 +205,7 @@ init_runtime() {
     WINE_HEAP_REDZONE=16
     export WINE_HEAP_REDZONE
 
-    if netstat -tlnp | grep 1337
+    if netstat -tlnp | grep :1337
     then
       echo Please kill the server listening on port 1337, or reboot.  The net tests need this port.
       exit 1
