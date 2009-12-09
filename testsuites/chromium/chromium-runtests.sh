@@ -81,6 +81,12 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 --workaround-gcc296-bugs=yes \
 "
 
+reduce_verbosity() {
+  # Filter out valgrind's extra -v output except for the 'used_suppression' lines
+  # Also remove extra carriage returns
+  awk '!/^--/ || /^--.*used_suppression:/' | tr -d '\015'
+}
+
 # Filter out known failures
 # Avoid tests that hung, failed, or crashed on windows in Dan's reference run,
 # or which fail in a way we don't care about on Wine,
@@ -347,14 +353,14 @@ do
     no)
       $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec
       $dry_run alarm `get_expected_runtime $suite` \
-                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | tr -d '\015' > ../../../logs/$suite-$i.log || true
+                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | reduce_verbosity > ../../../logs/$suite-$i.log || true
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test"
         $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | tr -d '\015'  > ../../../logs/$suite-$test-$i.log || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | reduce_verbosity > ../../../logs/$suite-$test-$i.log || true
       done
       ;;
     groups)
@@ -362,7 +368,7 @@ do
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}"
         $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | tr -d '\015'  > ../../../logs/$suite-$test-$i.log || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | reduce_verbosity > ../../../logs/$suite-$test-$i.log || true
       done
       ;;
     esac
