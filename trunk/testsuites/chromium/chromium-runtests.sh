@@ -27,9 +27,7 @@
 usage() {
   cat <<_EOF_
 Usage: sh chromium-runtests.sh [--options] [suite ...]
-Runs chromium tests on Windows or Wine, optionally with valgrind.
-Stdout/stderr saved to logs/ directory.  (The tests themselves
-may save logs next to their executables in src/Debug.)
+Runs chromium tests on Windows or Wine.
 Options:
   --individual     - run tests individually
   --groups         - run tests grouped by their major gtest name
@@ -40,6 +38,7 @@ Options:
   --just-flaky     - run only tests epected to fail sometimes
   --just-hangs     - run only tests epected to hang
   --list-failures  - show list of expected failures
+  --logfiles       - log to one file per test, in logs subdir, rather than stdout
   --loops N        - run tests N times
   -n               - dry run, only show what will be done
   --used-suppressions - extract histogram of used valgrind suppressions from current contents of logs directory
@@ -284,18 +283,19 @@ expand_test_list()
 
 # Parse arguments
 
-do_individual=no
 announce=true
+do_individual=no
 dry_run=
+extra_gtest_filter=
 fail_filter="."
+loops=1
+logfiles=
 SUITES=
 TARGET=Debug
 VALGRIND_CMD=
 VNC=
 want_fails=no
-loops=1
 winedebug=
-extra_gtest_filter=
 
 while test "$1" != ""
 do
@@ -316,6 +316,7 @@ do
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
   --vnc) VNC=$2; shift;;
   --winedebug) winedebug=$2; shift;;
+  --logfiles) logfiles=yes;;
   -*) usage; exit 1;;
   *) SUITES="$SUITES $1" ;;
   esac
@@ -348,27 +349,31 @@ do
     no)  filterspec=`and_gtest_filters "${extra_gtest_filter}" -${expected_to_fail}` ;;
     yes) filterspec=`and_gtest_filters "${extra_gtest_filter}"  ${expected_to_fail}` ;;
     esac
+    LOGCMD=
 
     case $do_individual in
     no)
       $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec
+      test "$logfiles" = yes && LOGCMD="> ../../../logs/$suite-$i.log" 
       $dry_run alarm `get_expected_runtime $suite` \
-                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | reduce_verbosity > ../../../logs/$suite-$i.log || true
+                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | eval reduce_verbosity $LOGCMD || true
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test"
+        test "$logfiles" = yes && LOGCMD="> ../../../logs/$suite-$test-$i.log" 
         $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | reduce_verbosity > ../../../logs/$suite-$test-$i.log || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | eval reduce_verbosity $LOGCMD || true
       done
       ;;
     groups)
       for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}"
+        test "$logfiles" = yes && LOGCMD="> ../../../logs/$suite-$test-$i.log"
         $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | reduce_verbosity > ../../../logs/$suite-$test-$i.log || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | eval reduce_verbosity $LOGCMD || true
       done
       ;;
     esac
