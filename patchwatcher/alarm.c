@@ -207,8 +207,6 @@ static const char *whitelist[] = {
     "mapi32:util",
     "msacm32:msacm",
     "mscms:profile",
-    "msi:record",
-    "msi:source",
     "msvcrt:cpp",
     "msvcrt:data",
     "msvcrtd:debug",
