@@ -1053,4 +1053,24 @@
    fun:run_test
    fun:main
 }
-
+{
+   expected_crypt32_tests_crypt_see_wine_bug_20984
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:new_object
+   fun:new_key
+   fun:import_public_key
+   fun:import_key
+   fun:RSAENH_CPImportKey
+   fun:CryptImportKey
+   fun:CRYPT_ImportRsaPublicKeyInfoEx
+   fun:CryptImportPublicKeyInfoEx
+   fun:CryptImportPublicKeyInfo
+   fun:CDecodeSignedMsg_VerifySignatureWithKey
+   fun:CDecodeSignedMsg_VerifySignature
+   fun:CDecodeMsg_Control
+   fun:CryptMsgControl
+   fun:CryptVerifyDetachedMessageSignature
+   fun:test_verify_detached_message_signature
+}
