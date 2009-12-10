@@ -705,7 +705,7 @@ do
     case $1 in
     -v) set -x;;
     --no-newtree) export NEWTREE=1;;
-    --rebase-tree) export REBASE_TREE=1;;
+    --rebase-tree) export REBASE_TREE=1; export WINE=$WINEGIT/wine;;
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
@@ -778,10 +778,7 @@ if [ $WIN64_TEST = 1 ]
 fi
 
 # Build Wine
-if [ $NOBUILD != 1 ]
-    then
-        build_regular
-fi
+build_regular
 
 # Exit early, if tests aren't to be run:
 if [ $NOTESTS = 1 ]
