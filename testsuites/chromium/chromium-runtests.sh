@@ -41,6 +41,7 @@ Options:
   --logfiles       - log to one file per test, in logs subdir, rather than stdout
   --loops N        - run tests N times
   -n               - dry run, only show what will be done
+  --timeout N      - let each executable run for N seconds (default varies)
   --used-suppressions - extract histogram of used valgrind suppressions from current contents of logs directory
   --valgrind       - run the tests under valgrind
   --vnc N          - run the tests inside a vnc server running on display N
@@ -170,6 +171,10 @@ _EOF_
 # rounded to the nearest power of two multiple of 100 seconds.
 # TODO: make the returned value lower if --valgrind is not given
 get_expected_runtime() {
+  case "$timeout_manual" in
+  [0-9]*)                echo $timeout_manual; return;;
+  esac
+
   case $1 in
   app_unittests)         echo 200;;
   base_unittests)        echo 1000;;
@@ -292,6 +297,7 @@ loops=1
 logfiles=
 SUITES=
 TARGET=Debug
+timeout_manual=
 VALGRIND_CMD=
 VNC=
 want_fails=no
@@ -312,6 +318,7 @@ do
   --loops) loops=$2; shift;;
   -n) dry_run=true; announce=echo ;;
   --target) TARGET=$2; shift;;
+  --timeout) timeout_manual=$2; shift;;
   --used-suppressions) cd logs; grep used_suppression *.log | sed 's/-1.*--[0-9]*-- used_suppression//'; exit 0;;
   --valgrind) VALGRIND_CMD="$THE_VALGRIND_CMD";;
   --vnc) VNC=$2; shift;;
