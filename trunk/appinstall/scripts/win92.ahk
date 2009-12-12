@@ -43,8 +43,6 @@ SHA1("bbe8956460b1084b42305df8286a4cb7119b52b5", "Win92.exe")
 SHA1("85e10417e6a814e44b2f09610d02d7c527db87bd", "WinXXCommon.dll")
 
 Run, Win92.exe
-WAIT_CRASH_FATAL("Win92.exe", 18574)
-
 ; Probably should test ErrorLevel here, but in my test on windows, it keeps
 ; exiting even if there is no lasterror or I set it to NULL
 
@@ -54,10 +52,13 @@ ERROR_TEST("Win92 window never appeared.", "Win92 launched fine.")
 
 IfWinExist, Win92 V00.46
 {
-FileAppend, Win92 launched successfully. Check bug 18574. TODO_FIXED.`n, %OUTPUT%
+    FileAppend, Win92 launched successfully. Check bug 18574. Test passed.`n, %OUTPUT%
+    WinClose, Win92 V00.46
 }
-WinClose, Win92 V00.46
-
+Else
+{
+    FileAppend, Win92 launched successfully. Bug 18574 regressed. Test failed.`n, %OUTPUT%
+}
 ERROR_TEST("Exiting Win92 gave an error.", "Win92 claimed to exit fine.")
 
 WIN_EXIST_TEST("Win92 V00.46")
