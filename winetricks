@@ -600,6 +600,9 @@ _EOF_
 }
 
 append_path() {
+# Get the %PATH%
+WIN_PATH="`WINEDEBUG= $WINE cmd.exe /c echo "%PATH%"`"
+
 # Set the path. Make sure to not remove any other variables in %PATH% set by the user/other programs:
     NEW_PATH="$1"
     cat > "$WINETRICKS_TMP"/path.reg <<_EOF_
@@ -3059,9 +3062,6 @@ test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%'
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 winetricks_tmp_win="`$XXXPATH -w "$WINETRICKS_TMP"`"
-
-# Get the %PATH%, needed by MinGW, possibly others:
-WIN_PATH="`WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%PATH%"`"
 
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
