@@ -1393,6 +1393,9 @@ _EOF_
 
     # set install-path
     try_regedit "$WINETRICKS_TMP"/geckopath.reg
+    
+    # register the dll, since it was disabled before
+    try $WINE regsvr32 mshtml
 }
 
 #----------------------------------------------------------------
@@ -1454,6 +1457,9 @@ _EOF_
 
     # set install-path
     try_regedit "$WINETRICKS_TMP"/geckopath.reg
+    
+    # register the dll, since it was disabled before
+    try $WINE regsvr32 mshtml
 }
 
 #----------------------------------------------------------------
