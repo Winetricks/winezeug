@@ -5,7 +5,7 @@
 
 set -ex
 
-#rm -rf $HOME/.winetrickscache
+rm -rf $HOME/.winetrickscache
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 for verb in \
