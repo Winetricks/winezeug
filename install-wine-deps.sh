@@ -4,6 +4,7 @@
 # Home page (until accepted into wine tree): http://winezeug.googlecode.com
 # Copyright 2006-2009 Dan Kegel
 # Copyright 2009 Austin English
+# Please report bugs to http://code.google.com/p/winezeug/issues/list
 # LGPL
 
 # OpenSolaris stuff...
@@ -41,7 +42,7 @@ fi
 # Ubuntu data
 ubuntu_common_pkgs="\
 bison ccache cvs flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
-libcapi20-3 libcapi20-dev libcupsys2-dev libdbus-1-dev libesd0-dev libexif-dev \
+libcapi20-3 libcapi20-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
 libgphoto2-2-dev libgsm1-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
@@ -59,6 +60,7 @@ libelfg0 libfreebob0 libgif-dev libhal-storage-dev libjack-dev"
 
 ubuntu_gutsy_pkgs="\
 cogito \
+libcupsys2-dev \
 libglib1.2-dev \
 libltdl3 \
 libltdl3-dev \
@@ -69,6 +71,7 @@ x11proto-render-dev \
 "
 
 ubuntu_hardy_pkgs="\
+libcupsys2-dev \
 libglib1.2-dev \
 libltdl3 \
 libltdl3-dev \
@@ -77,6 +80,7 @@ libopencdk10-dev \
 "
 
 ubuntu_ibex_pkgs="\
+libcups2-dev \
 libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
@@ -84,6 +88,7 @@ libltdl7-dev \
 "
 
 ubuntu_jaunty_pkgs="\
+libcups2-dev \
 libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
@@ -91,6 +96,7 @@ libltdl7-dev \
 "
 
 ubuntu_karmic_pkgs="\
+libcups2-dev \
 liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
