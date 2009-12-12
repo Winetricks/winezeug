@@ -175,7 +175,7 @@ usage() {
     echo " fontsmooth-disable    Disables font smoothing"
     echo " fontsmooth-gray       Enables grayscale font smoothing"
     echo " fontsmooth-rgb        Enables subpixel smoothing for RGB LCDs"
-    echo " gdiplus       MS gdiplus.dll (from powerpoint viewer)"
+    echo " gdiplus       MS gdiplus.dll"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
     echo " gecko         The HTML rendering Engine (Mozilla)"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
