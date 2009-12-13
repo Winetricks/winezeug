@@ -214,6 +214,7 @@ usage() {
     echo " psdkvista     MS Vista SDK (does not install yet)"
     echo " psdkwin7      MS Windows 7 SDK (installing just headers and c++ compiler works)"
     echo " python26      Python 2.6.2 (and pywin32)"
+    echo " python-comtypes Python 0.6.1-1 comtypes package"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
@@ -2164,12 +2165,34 @@ load_psdkwin7()
 #----------------------------------------------------------------
 
 load_python26() {
+
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != python26 && test -f "$WINEPREFIX"/drive_c/Python26/python.exe
+    then
+        echo "prerequisite python26 already installed, skipping"
+        return
+    fi
+
     download . http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi 2d1503b0e8b7e4c72a276d4d9027cf4856b208b8
     download . $SOURCEFORGE/project/pywin32/pywin32/Build%20214/pywin32-214.win32-py2.6.exe eca58f29b810d8e3e7951277ebb3e35ac35794a3
     cd "$WINETRICKS_CACHE"
     try $WINE msiexec /i python-2.6.2.msi ALLUSERS=1 $WINETRICKS_QUIET
     # FIXME: unzip this instead of running it if quiet install?
     try $WINE pywin32-214.win32-py2.6.exe
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_python_comtypes() {
+    
+    load_python26
+    
+    download . $SOURCEFORGE/project/comtypes/comtypes/0.6.1/comtypes-0.6.1-1.zip 814318cdae0ab2471a9cd500847bf12f4df9a57c
+    cd "$WINETRICKS_CACHE"
+    try unzip comtypes-0.6.1-1.zip
+    cd comtypes-0.6.1
+    try $WINE "C:\Python26\python.exe" setup.py install
     cd "$olddir"
 }
 
@@ -3183,6 +3206,7 @@ do
     psdkvista) load_psdkvista;;
     psdkwin7) load_psdkwin7;;
     python|python26) load_python26;;
+    python-comtypes|pythoncom|python-com|pythoncomtypes) load_python_comtypes;;
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;

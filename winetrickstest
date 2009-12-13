@@ -145,6 +145,7 @@ then
         psdk2003 \
         psdkwin7 \
         python26 \
+        python-comtypes \
         vc2005sp1 \
         vc2005trial
     do
