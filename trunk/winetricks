@@ -2301,8 +2301,9 @@ load_shockwave() {
     #try $WINE "$WINETRICKS_CACHE"/Shockwave_Installer_Full.exe $WINETRICKS_S
     # old sha1sum: 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
     # 2009-07-31 sha1sum: 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
-
-    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
+    # 2009-12-13 sha1sum: d35649883bf13cb1a86f5650e1050d15533ac0f4
+    
+    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi d35649883bf13cb1a86f5650e1050d15533ac0f4
     try $WINE msiexec /i "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
 }
 
