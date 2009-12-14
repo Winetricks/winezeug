@@ -124,6 +124,17 @@ CHECK_FILE(filename)
     }
 }
 
+; Check to see that a file does not exist. On success, print nothing. On failure, 'test failed' (non fatal).
+; Used to check that files were deleted, for example in an uninstaller.
+CHECK_NOT_FILE(filename)
+{
+    global 
+    IfExist, %filename%
+    {
+        FileAppend, File %filename% exists when it should not. Test failed.`n, %OUTPUT%
+    }
+}
+
 ; Removes the temporary directory and all files, recursively
 CLEANUP()
 {

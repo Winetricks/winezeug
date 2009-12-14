@@ -179,6 +179,7 @@ for x in \
     kmeleon-152.ahk \
     kmeleon-153.ahk \
     mpc.ahk \
+    mt_demo.ahk \
     nestopia.ahk \
     notepad.ahk \
     notepadpp.ahk \
