@@ -2594,6 +2594,7 @@ load_vc2003toolkit()
 
 load_vc2005express()
 {
+    # Currently broken in wine, see http://bugs.winehq.org/show_bug.cgi?id=21010
     # Thanks to http://blogs.msdn.com/astebner/articles/551674.aspx for the recipe
     load_dotnet20
     load_msxml6

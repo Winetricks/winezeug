@@ -71,7 +71,6 @@ for verb in \
     vb4run \
     vb5run \
     vb6run \
-    vc2005express \
     vcrun6 \
     vcrun6sp6 \
     vcrun2003 \
@@ -162,6 +161,7 @@ fi
 #    fm20
 #    ogg
 #    psdkvista
+#    vc2005express
 #    vc2005expresssp1
 
 exit 0
