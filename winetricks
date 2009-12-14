@@ -1577,6 +1577,10 @@ load_ie6() {
 
     # Install
     download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
+    
+    # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
+    # See also http://code.google.com/p/winezeug/issues/detail?id=78
+    rm -f "$WINDIR"/system32/browseui.dll "$WINDIR"/system32/inseng.dll
 
     # Silent install recipe from:
     # http://www.axonpro.sk/japo/info/MS/SILENT%20INSTALL/Unattended-Silent%20Installation%20Switches%20for%20Windows%20Apps.htm
@@ -1615,6 +1619,8 @@ load_ie6() {
 
     # try $WINE "$programfilesdir_unix"/"Internet Explorer"/IEXPLORE.EXE http://www.winehq.org
 }
+
+#----------------------------------------------------------------
 
 load_ie7() {
     # Unregister Wine IE
