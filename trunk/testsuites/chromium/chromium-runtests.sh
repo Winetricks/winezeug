@@ -29,23 +29,24 @@ usage() {
 Usage: sh chromium-runtests.sh [--options] [suite ...]
 Runs chromium tests on Windows or Wine.
 Options:
-  --individual     - run tests individually
-  --groups         - run tests grouped by their major gtest name
-  --gtest_filter X - only run the tests matching X
-  --target X       - test with Debug or Release binaries, default to Debug
-  --just-crashes   - run only tests epected to crash
-  --just-fails     - run only tests epected to fail
-  --just-flaky     - run only tests epected to fail sometimes
-  --just-hangs     - run only tests epected to hang
-  --list-failures  - show list of expected failures
-  --logfiles       - log to one file per test, in logs subdir, rather than stdout
-  --loops N        - run tests N times
-  -n               - dry run, only show what will be done
-  --timeout N      - let each executable run for N seconds (default varies)
+  --individual        - run tests individually
+  --groups            - run tests grouped by their major gtest name
+  --gtest_filter X    - only run the tests matching X
+  --target X          - test with Debug or Release binaries, default to Debug
+  --just-crashes      - run only tests epected to crash
+  --just-fails        - run only tests epected to fail
+  --just-flaky        - run only tests epected to fail sometimes
+  --just-hangs        - run only tests epected to hang
+  --list-failures     - show list of expected failures
+  --logfiles          - log to one file per test, in logs subdir, rather than stdout
+  --loops N           - run tests N times
+  -n                  - dry run, only show what will be done
+  --suppression_dir   - directory containing the suppression files
+  --timeout N         - let each executable run for N seconds (default varies)
   --used-suppressions - extract histogram of used valgrind suppressions from current contents of logs directory
-  --valgrind       - run the tests under valgrind
-  --vnc N          - run the tests inside a vnc server running on display N
-  --winedebug chan - e.g. --windebug +relay,+seh
+  --valgrind          - run the tests under valgrind
+  --vnc N             - run the tests inside a vnc server running on display N
+  --winedebug chan    - e.g. --windebug +relay,+seh
 Currently supported suites:
 app_unittests base_unittests courgette_unittests googleurl_unittests
 ipc_tests media_unittests net_unittests printing_unittests sbox_unittests
@@ -73,8 +74,6 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 --num-callers=25 \
 --show-possible=no \
 --smc-check=all \
---suppressions=../../../../../valgrind/valgrind-suppressions \
---suppressions=../../../chromium-valgrind-suppressions \
 --trace-children=yes \
 --track-origins=yes \
 -v \
@@ -296,6 +295,7 @@ fail_filter="."
 loops=1
 logfiles=
 SUITES=
+suppression_dirs=
 TARGET=Debug
 timeout_manual=
 VALGRIND_CMD=
@@ -317,6 +317,7 @@ do
   --list-failures-html) list_known_failures | sed 's,http://\(.*\),<a href="http://\1">\1</a>,;s/$/<br>/' ; exit 0;;
   --loops) loops=$2; shift;;
   -n) dry_run=true; announce=echo ;;
+  --suppression_dir) suppression_dirs="$suppression_dirs $2"; shift;;
   --target) TARGET=$2; shift;;
   --timeout) timeout_manual=$2; shift;;
   --used-suppressions) cd logs; grep used_suppression *.log | sed 's/-1.*--[0-9]*-- used_suppression//'; exit 0;;
@@ -333,6 +334,30 @@ done
 if test "$SUITES" = ""
 then
    SUITES="$SUITES_1 $SUITES_10 $SUITES_100 $SUITES_1000"
+fi
+
+if test "$VALGRIND_CMD" != ""
+then
+  if test "$suppression_dirs" = ""
+  then
+    # Default value for winezeug.
+    suppression_dirs="../../../ ../../../../../valgrind"
+    # Also try the script dir.
+    suppression_dirs="$suppression_dirs $(dirname $0)"
+  fi
+  # Check suppression_dirs for suppression files to create suppression_options
+  suppression_options=
+  for dir in $suppression_dirs
+  do
+    for f in valgrind-suppressions chromium-valgrind-suppressions
+    do
+      if test -f "$dir/$f"
+      then
+        suppression_options="$suppression_options --suppressions=$dir/$f"
+      fi
+    done
+  done
+  VALGRIND_CMD="$VALGRIND_CMD $suppression_options"
 fi
 
 set -e
