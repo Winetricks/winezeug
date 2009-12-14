@@ -316,14 +316,14 @@ get_gecko() (
 )
 
 preptests() {
-    ./server/wineserver -k || true
+    $WINESERVER -k || true
     rm -rf $WINEPREFIX || true
     $WINE wineboot > /dev/null 2>&1 || exit 1
     sh winetricks nocrashdialog
 }
 
 preptests_nogecko() {
-    ./server/wineserver -k || true
+    $WINESERVER -k || true
     rm -rf $WINEPREFIX || true
     disable_gecko
 }
@@ -639,6 +639,18 @@ preptests_nogecko
 runtests
 }
 
+with64_test() {
+WINEDEBUG=""
+TESTNAME="-with64"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+$GET "http://winezeug.googlecode.com/svn/trunk/winetricks"
+WINE=wine preptests
+WINE=$WINETESTDIR/install/bin/wine32 runtests
+}
+
 #######################################################
 ##    Now to use the functions :-)
 #######################################################
@@ -668,8 +680,9 @@ echo "--seh - Runs winetest.exe with WINEDEBUG=+seh"
 echo "--virtual-desktop - Runs winetest.exe in a virtual desktop"
 echo "--werror - Builds Wine with -Werror and runs winetest.exe"
 echo "--win64 - Builds 64-bit Wine and runs winetest64.exe"
+echo "--with64 - Builds 32-bit Wine alongside 64-bit Wine, then runs winetest.exe"
 echo "You probably don't need any of the special options, though"
-echo "The exception is --no-newtree/--no-build in case you want to run tests again without rebuilding Wine."
+echo "The exception is --no-newtree in case you want to run tests again without waiting for a git push."
 }
 
 # There's probably a cleaner way to do this, but I'm lazy and I'll do it how I know
@@ -699,6 +712,7 @@ SEH_TEST=0
 VD_TEST=0
 WERROR_TEST=0
 WIN64_TEST=0
+WITH64_TEST=0
 
 while test "$1" != ""
 do
@@ -729,6 +743,7 @@ do
     --virtual-desktop) export VD_TEST=1;;
     --werror) export WERROR_TEST=1;;
     --win64|--win-64) export WIN64_TEST=1;;
+    --with64|--with-64) export WITH64_TEST=1;;
     *) echo Unknown arg $1; usage; exit 1;;
     esac
     shift
@@ -775,6 +790,30 @@ if [ $WIN64_TEST = 1 ]
     then 
         get_tests_64
         win64_test
+fi
+
+if [ $WITH64_TEST = 1 ]
+    then
+        WINETESTGIT=$WINETESTDIR/wine64 clone_tree
+        # FIXME: Should probably be a more proper build function, a la above.
+        # Though, right now, 64-bit only works on Linux, so not a huge deal.
+        cd $WINETESTDIR/wine64
+        ./configure --enable-win64 --disable-tests --prefix=$WINETESTDIR/install
+        make -j$CORES depend
+        make -j$CORES
+        make install
+        
+        WINETESTGIT=$WINETESTDIR/wine32 clone_tree
+        cd $WINETESTDIR/wine32
+        ./configure --with-wine64=$WINETESTDIR/wine64 --disable-tests --without-mpg123 --prefix=$WINETESTDIR/install
+        make -j$CORES depend
+        make -j$CORES
+        make install
+        
+        get_tests_32
+        export WINE=$WINETESTDIR/install/bin/wine32
+        export WINESERVER=$WINETESTDIR/install/bin/wineserver
+        with64_test
 fi
 
 # Build Wine

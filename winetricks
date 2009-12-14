@@ -156,6 +156,7 @@ usage() {
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
     echo " directplay    MS DirectPlay (from DirectX 9 user redistributable)"
     echo " directx9      MS DirectX 9 user redistributable (not recommended! use d3dx9 instead)"
+    echo " directx9-beta MS DirectX 9 user redistributable - beta verb (not recommended! use d3dx9 instead)"
     echo " divx          divx video codec"
     echo " dotnet11      MS .NET 1.1 (requires Windows license, but does not check for one)"
 # Doesn't work yet, don't make it public
@@ -893,7 +894,16 @@ load_directx9() {
     # list down as soon as we can.
     echo "You probably shouldn't be using this. It's VERY invasive."
     echo "Use 'winetricks d3dx9' instead."
-    set_winver win2k
+    
+    # Setting windows version to win2k apparently crashes the installer on OS X...
+    # See http://code.google.com/p/winezeug/issues/detail?id=71
+    if [ "`uname -s`" = "Darwin" ]
+    then
+        set_winver winxp
+    else
+        set_winver $DIRECTX_WINDOWS
+    fi
+    
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
        try $WINE "$WINETRICKS_CACHE"/$DIRECTX_NAME /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
 
@@ -3155,7 +3165,8 @@ do
     dinput8) load_dinput8;;
     dirac|dirac0.8) load_dirac08;;
     directplay|dxplay|dplay) load_directplay;;
-    directx9) load_directx9;;
+    directx9) DIRECTX_WINDOWS=win2k ; load_directx9;;
+    directx9-beta) DIRECTX_WINDOWS=winxp ; load_directx9;;
     divx) load_divx;;
     dotnet1|dotnet11) load_dotnet11; load_fontfix;;
     dotnet11sdk) load_dotnet11sdk;;
