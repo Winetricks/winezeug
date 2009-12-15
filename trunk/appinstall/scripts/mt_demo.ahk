@@ -437,4 +437,7 @@ CHECK_NOT_FILE("Infogrames` Interactive\Monopoly` Tycoon` Demo\MTDemo.exe")
 CHECK_NOT_FILE("Infogrames` Interactive\Monopoly` Tycoon` Demo\Readme.wri")
 
 CLEANUP()
+
+TEST_COMPLETED()
+
 exit 0
