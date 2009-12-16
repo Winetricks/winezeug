@@ -252,6 +252,8 @@ usage() {
     echo "Pseudopackages:"
     echo " allfonts      All listed fonts (corefonts, tahoma, liberation)"
     echo " allcodecs     All listed codecs (xvid, ffdshow, icodecs)"
+    echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
+    echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
@@ -478,6 +480,17 @@ set_app_winver() {
     rm "$WINETRICKS_TMP"/set-winver.reg
 }
 
+set_ddr() {
+    echo "Setting DirectDrawRenderer to $1"
+    cat > "$WINETRICKS_TMP"/set-ddr.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"DirectDrawRenderer"="$1"
+
+_EOF_
+    try_regedit "$WINETRICKS_TMP"/set-ddr.reg
+}
 set_orm() {
     echo "Setting OffscreenRenderingMode to $1"
     cat > "$WINETRICKS_TMP"/set-orm.reg <<_EOF_
@@ -3283,6 +3296,8 @@ do
 
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid; load_icodecs;;
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
+    ddr=gdi) set_ddr gdi;;
+    ddr=opengl) set_ddr opengl;;
     fakeie6) set_fakeie6;;
     heapcheck) set_heapcheck;;
     native_mdac) set_native_mdac;;
