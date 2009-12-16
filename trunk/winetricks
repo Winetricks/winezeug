@@ -258,6 +258,8 @@ usage() {
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
     echo " heapcheck     Enable heap checking"
+    echo " multisampling=enabled  Enable Direct3D multisampling"
+    echo " multisampling=disabled Disable Direct3D multisampling (default)"
     echo " native_mdac   Override odbc32, odbccp32 and oledb32"
     echo " native_oleaut32 Override oleaut32"
     echo " nocrashdialog Disable the graphical crash dialog"
@@ -513,6 +515,18 @@ REGEDIT4
 
 _EOF_
     try_regedit "$WINETRICKS_TMP"/set-rtlm.reg
+}
+
+set_multisampling() {
+    echo "Setting Multisampling to $1"
+    cat > "$WINETRICKS_TMP"/set-multi.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"Multisampling"="$1"
+
+_EOF_
+    try_regedit "$WINETRICKS_TMP"/set-multi.reg
 }
 
 set_sound_driver() {
@@ -3300,6 +3314,8 @@ do
     ddr=opengl) set_ddr opengl;;
     fakeie6) set_fakeie6;;
     heapcheck) set_heapcheck;;
+    multisampling=enabled|multisampling=on) set_multisampling enabled;;
+    multisampling=disabled|multisampling=off) set_multisampling disabled;;
     native_mdac) set_native_mdac;;
     native_oleaut32) override_dlls native,builtin oleaut32;;
     nocrashdialog) disable_crashdialog;;
