@@ -262,6 +262,12 @@ usage() {
     echo " orm=backbuffer Registry tweak: OffscreenRenderingMode=backbuffer"
     echo " orm=fbo        Registry tweak: OffscreenRenderingMode=fbo (default)"
     echo " orm=pbuffer    Registry tweak: OffscreenRenderingMode=pbuffer"
+    echo " rtlm=auto      Set RenderTargetLockMode to auto (default)"
+    echo " rtlm=disabled  Set RenderTargetLockMode to disabled"
+    echo " rtlm=readdraw  Set RenderTargetLockMode to readdraw"
+    echo " rtlm=readtex   Set RenderTargetLockMode to readtex"
+    echo " rtlm=texdraw   Set RenderTargetLockMode to texdraw"
+    echo " rtlm=textex    Set RenderTargetLockMode to textex"
     echo " sandbox       Sandbox the wineprefix - remove links to ~"
     echo " sound=alsa       Set sound driver to ALSA"
     echo " sound=audioio    Set sound driver to AudioIO"
@@ -482,6 +488,18 @@ REGEDIT4
 
 _EOF_
     try_regedit "$WINETRICKS_TMP"/set-orm.reg
+}
+
+set_rtlm() {
+    echo "Setting RenderTargetLockMode to $1"
+    cat > "$WINETRICKS_TMP"/set-rtlm.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"RenderTargetLockMode"="$1"
+
+_EOF_
+    try_regedit "$WINETRICKS_TMP"/set-rtlm.reg
 }
 
 set_sound_driver() {
@@ -3273,6 +3291,12 @@ do
     orm=backbuffer|backbuffer) set_orm backbuffer;;
     orm=fbo|fbo) set_orm fbo;;
     orm=pbuffer|pbuffer) set_orm pbuffer;;
+    rtlm=auto) set_rtlm auto;;
+    rtlm=disabled) set_rtlm disabled;;
+    rtlm=readdraw) set_rtlm readdraw;;
+    rtlm=readtex) set_rtlm readtex;;
+    rtlm=texdraw) set_rtlm texdraw;;
+    rtlm=textex) set_rtlm textex;;
     sandbox) sandbox;;
     sound=alsa|alsa) set_sound_driver alsa;;
     sound=audioio|audioio) set_sound_driver audioio;;
