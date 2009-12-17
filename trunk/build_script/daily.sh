@@ -63,6 +63,7 @@ die() {
 
 export WINE=$WINETESTGIT/wine
 export WINESERVER=$WINETESTGIT/server/wineserver
+export WINEPREFIX=$WINEPREFIX
 export WINEGITURL="git://source.winehq.org/git/wine.git"
 
 if [ `which ccache` ]
@@ -217,18 +218,6 @@ echo "$BUILDNAME build was fine. Coolio"
 
 # Test functions here...
 
-disable_gecko() {
-cat > /tmp/disable_gecko.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\MSHTML]
-"GeckoUrl"=-
-_EOF_
-
-$WINE regedit /tmp/disable_gecko.reg
-sleep 10s
-}
-
 disable_glsl() {
 cat > /tmp/disable_glsl.reg <<_EOF_
 REGEDIT4
@@ -319,13 +308,7 @@ preptests() {
     $WINESERVER -k || true
     rm -rf $WINEPREFIX || true
     $WINE wineboot > /dev/null 2>&1 || exit 1
-    sh winetricks nocrashdialog
-}
-
-preptests_nogecko() {
-    $WINESERVER -k || true
-    rm -rf $WINEPREFIX || true
-    disable_gecko
+    sh $WINETESTDIR/winetricks nocrashdialog
 }
 
 # TODO: fix to use the SHA1SUM as well.
@@ -364,7 +347,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks alsa
+sh $WINETESTDIR/winetricks alsa
 runtests
 }
 
@@ -376,7 +359,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks audioio
+sh $WINETESTDIR/winetricks audioio
 runtests
 }
 
@@ -412,7 +395,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks backbuffer
+sh $WINETESTDIR/winetricks backbuffer
 runtests
 }
 
@@ -424,7 +407,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks coreaudioio
+sh $WINETESTDIR/winetricks coreaudioio
 runtests
 }
 
@@ -448,7 +431,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks esound
+sh $WINETESTDIR/winetricks esound
 runtests
 }
 
@@ -460,7 +443,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks fbo
+sh $WINETESTDIR/winetricks fbo
 runtests
 }
 
@@ -483,7 +466,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks jack
+sh $WINETESTDIR/winetricks jack
 runtests
 }
 
@@ -507,18 +490,6 @@ export TESTNAME
 export TESTBINARY
 preptests
 enable_multisampling
-runtests
-}
-
-nogecko_test() {
-WINEDEBUG=""
-TESTNAME="-nogecko"
-TESTBINARY="winetest-latest.exe"
-export WINEDEBUG
-export TESTNAME
-export TESTBINARY
-preptests_nogecko
-disable_gecko
 runtests
 }
 
@@ -554,7 +525,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks oss
+sh $WINETESTDIR/winetricks oss
 runtests
 }
 
@@ -566,7 +537,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-sh winetricks pbuffer
+sh $WINETESTDIR/winetricks pbuffer
 runtests
 }
 
@@ -635,7 +606,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 build_win64
-preptests_nogecko
+preptests
 runtests
 }
 
@@ -646,7 +617,6 @@ TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
-$GET "http://winezeug.googlecode.com/svn/trunk/winetricks"
 WINE=wine preptests
 WINE=$WINETESTDIR/install/bin/wine32 runtests
 }
@@ -703,7 +673,6 @@ HEAP_TEST=0
 JACK_TEST=0
 MESSAGE_TEST=0
 MULTISAMPLING_TEST=0
-NOGECKO_TEST=0
 NOGLSL_TEST=0
 NOWIN16_TEST=0
 OSS_TEST=0
@@ -719,7 +688,7 @@ do
     case $1 in
     -v) set -x;;
     --no-newtree) export NEWTREE=1;;
-    --rebase-tree) export REBASE_TREE=1; export WINE=$WINEGIT/wine;;
+    --rebase-tree) export REBASE_TREE=1; export WINE=$WINEGIT/wine; export WINESERVER=$WINEGIT/server/wineserver;;
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
@@ -734,7 +703,6 @@ do
     --jack) export JACK_TEST=1;;
     --message) export MESSAGE_TEST=1;;
     --multisampling) export MULTISAMPLING_TEST=1;;
-    --no-gecko) export NOGECKO_TEST=1;;
     --no-glsl) export NOGLSL_TEST=1;;
     --no-win16) export NOWIN16_TEST=1;;
     --oss) export OSS_TEST=1;;
@@ -742,7 +710,7 @@ do
     --seh) export SEH_TEST=1;;
     --virtual-desktop) export VD_TEST=1;;
     --werror) export WERROR_TEST=1;;
-    --win64|--win-64) export WIN64_TEST=1;;
+    --win64|--win-64|--wine64|--wine-64) export WIN64_TEST=1;;
     --with64|--with-64) export WITH64_TEST=1;;
     *) echo Unknown arg $1; usage; exit 1;;
     esac
@@ -752,6 +720,10 @@ done
 # Start with a clean slate:
 rm -rf $WINETESTDIR
 mkdir -p $WINETESTDIR
+
+# Get winetricks, used in below tests:
+$GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
+mv winetricks $WINETESTDIR
 
 # Get new tree, if it wasn't disabled.
 if [ $NEWTREE = 1 ]
@@ -825,9 +797,6 @@ if [ $NOTESTS = 1 ]
         echo "tests aren't running, exiting"; exit
 fi
 
-# Get winetricks, used in below tests:
-$GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
-
 # Make sure we have gecko:
 get_gecko
 get_tests_32
@@ -896,11 +865,6 @@ fi
 if [ $MULTISAMPLING_TEST = 1 ]
     then
         multisampling_test
-fi
-
-if [ $NOGECKO_TEST = 1 ]
-    then
-        nogecko_test
 fi
 
 if [ $NOGLSL_TEST = 1 ]
