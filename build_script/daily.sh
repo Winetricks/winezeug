@@ -527,7 +527,7 @@ preptests
 runtests
 }
 
-rtlm_disabled() {
+rtlm_disabled_test() {
 WINEDEBUG=""
 TESTNAME="-no-rtlm"
 TESTBINARY="winetest-latest.exe"
@@ -539,7 +539,19 @@ sh $WINETESTDIR/winetricks rtlm=disabled
 runtests
 }
 
-rtlm_readtex() {
+rtlm_readdraw_test() {
+WINEDEBUG=""
+TESTNAME="-readtex"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+sh $WINETESTDIR/winetricks rtlm=readdraw
+runtests
+}
+
+rtlm_readtex_test() {
 WINEDEBUG=""
 TESTNAME="-readtex"
 TESTBINARY="winetest-latest.exe"
@@ -551,7 +563,7 @@ sh $WINETESTDIR/winetricks rtlm=readtex
 runtests
 }
 
-rtlm_texdraw() {
+rtlm_texdraw_test() {
 WINEDEBUG=""
 TESTNAME="-texdraw"
 TESTBINARY="winetest-latest.exe"
@@ -563,7 +575,7 @@ sh $WINETESTDIR/winetricks rtlm=texdraw
 runtests
 }
 
-rtlm_textex() {
+rtlm_textex_test() {
 WINEDEBUG=""
 TESTNAME="-textex"
 TESTBINARY="winetest-latest.exe"
@@ -913,6 +925,33 @@ if [ $PBUFFER_TEST = 1 ]
     then
         pbuffer_test
 fi
+
+
+if [ RTLM_DISABLED=1 ]
+    then
+        rtlm_disabled_test
+fi
+
+if [ RTLM_READDRAW=1 ]
+    then
+        rtlm_readdraw_test
+fi
+    
+if [ RTLM_READTEX=1 ]
+    then
+        rtlm_readtex_test
+fi
+    
+if [ RTLM_TEXDRAW=1 ]
+    then
+        rtlm_texdraw_test
+fi
+    
+if [ RTLM_TEXTEX=1 ]
+    then
+        rtlm_textex_test
+fi
+    
 
 if [ $SEH_TEST = 1 ]
     then
