@@ -218,42 +218,6 @@ echo "$BUILDNAME build was fine. Coolio"
 
 # Test functions here...
 
-disable_glsl() {
-cat > /tmp/disable_glsl.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"UseGLSL"="disabled"
-_EOF_
-
-$WINE regedit /tmp/disable_glsl.reg
-sleep 10s
-}
-
-enable_ddr_opengl() {
-cat > /tmp/enable_ddr_opengl.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"DirectDrawRenderer"="opengl"
-_EOF_
-
-$WINE regedit /tmp/enable_ddr_opengl.reg
-sleep 10s
-}
-
-enable_multisampling() {
-cat > /tmp/enable_multisampling.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"Multisampling"="enabled"
-_EOF_
-
-$WINE regedit /tmp/enable_multisampling.reg
-sleep 10s
-}
-
 enable_virtual_desktop() {
 echo "Enabling virtual desktop"
 cat > /tmp/virtualdesktop.reg <<_EOF_
@@ -419,7 +383,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-enable_ddr_opengl
+sh $WINETESTDIR/winetricks ddr=opengl
 runtests
 }
 
@@ -489,7 +453,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-enable_multisampling
+sh $WINETESTDIR/winetricks multisampling=enabled
 runtests
 }
 
@@ -501,7 +465,7 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
-disable_glsl
+sh $WINETESTDIR/winetricks glsl-disable
 runtests
 }
 
@@ -560,6 +524,54 @@ export WINEDEBUG
 export TESTNAME
 export TESTBINARY
 preptests
+runtests
+}
+
+rtlm_disabled() {
+WINEDEBUG=""
+TESTNAME="-no-rtlm"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+sh $WINETESTDIR/winetricks rtlm=disabled
+runtests
+}
+
+rtlm_readtex() {
+WINEDEBUG=""
+TESTNAME="-readtex"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+sh $WINETESTDIR/winetricks rtlm=readtex
+runtests
+}
+
+rtlm_texdraw() {
+WINEDEBUG=""
+TESTNAME="-texdraw"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+sh $WINETESTDIR/winetricks rtlm=texdraw
+runtests
+}
+
+rtlm_textex() {
+WINEDEBUG=""
+TESTNAME="-textex"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+sh $WINETESTDIR/winetricks rtlm=textex
 runtests
 }
 
@@ -638,14 +650,24 @@ echo "--rebase-tree - Run 'git rebase origin' in $WINEGIT, rather than making a 
 echo "--no-tests - Disables downloading/running winetest.exe"
 echo "--no-regular - Skip running winetest.exe without special options"
 echo "--alldebug - Runs winetest.exe with WINEDEBUG=+all"
+echo "--alsa - Runs winetest.exe with ALSA sound system"
+echo "--audioio - Runs winetest.exe with AudioIO sound system"
 echo "--backbuffer - Runs winetest.exe with offscreen rendering mode set to backbuffer"
+echo "--ddr-opengl - Runs winetest.exe with DirectDrawRenderer set to OpenGL"
+echo "--esound - Runs winetest.exe with ESound sound system"
 echo "--fbo - Runs winetest.exe with offscreen rendering mode set to FBO"
 echo "--heap - Runs winetest.exe with WINEDEBUG=+heap"
+echo "--jack - Runs winetest.exe with JACK sound system"
 echo "--message - Runs winetest.exe with WINEDEBUG=+message"
-echo "--no-gecko - Runs winetest.exe without gecko installed"
+echo "--multisamping - Runs winetest.exe with multisampling enabled"
 echo "--no-glsl - Runs winetest.exe with glsl disabled"
 echo "--no-win16 - Builds Wine without win16 support and runs winetest.exe"
 echo "--pbuffer - Runs winetest.exe with offscreen rendering mode set to pbuffer"
+echo "--rtlm-disabled - Runs winetest.exe with RenderTargetLockMode disabled"
+echo "--rtlm-readdraw - Runs winetest.exe with RenderTargetLockMode set to readdraw"
+echo "--rtlm-readtex - Runs winetest.exe with RenderTargetLockMode set to readtex"
+echo "--rtlm-texdraw - Runs winetest.exe with RenderTargetLockMode set to texdraw"
+echo "--rtlm-textex - Runs winetest.exe with RenderTargetLockMode set to textex"
 echo "--seh - Runs winetest.exe with WINEDEBUG=+seh"
 echo "--virtual-desktop - Runs winetest.exe in a virtual desktop"
 echo "--werror - Builds Wine with -Werror and runs winetest.exe"
@@ -677,6 +699,11 @@ NOGLSL_TEST=0
 NOWIN16_TEST=0
 OSS_TEST=0
 PBUFFER_TEST=0
+RTLM_DISABLED=0
+RTLM_READDRAW=0
+RTLM_READTEX=0
+RTLM_TEXDRAW=0
+RTLM_TEXTEX=0
 SEH_TEST=0
 VD_TEST=0
 WERROR_TEST=0
@@ -707,6 +734,11 @@ do
     --no-win16) export NOWIN16_TEST=1;;
     --oss) export OSS_TEST=1;;
     --pbuffer) export PBUFFER_TEST=1;;
+    --rtlm-disabled) export RTLM_DISABLED=0;;
+    --rtlm-readdraw) export RTLM_READDRAW=0;;
+    --rtlm-readtex) export RTLM_READTEX=1;;
+    --rtlm-texdraw) export RTLM_TEXDRAW=1;;
+    --rtlm-textex) export RTLM_TEXTEX=1;;
     --seh) export SEH_TEST=1;;
     --virtual-desktop) export VD_TEST=1;;
     --werror) export WERROR_TEST=1;;
