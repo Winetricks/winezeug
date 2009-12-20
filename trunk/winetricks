@@ -223,6 +223,7 @@ usage() {
     echo " shockwave     Adobe Shockwave Player"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
+    echo " usp10         MS usp10.dll (Uniscribe)"
     echo " vb2run        MS Visual Basic 2 runtime"
     echo " vb3run        MS Visual Basic 3 runtime"
     echo " vb4run        MS Visual Basic 4 runtime"
@@ -2393,6 +2394,14 @@ load_urlmon() {
     override_dlls native,builtin urlmon
 }
 
+load_usp10() {
+    # http://www.microsoft.com/downloads/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f
+    download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    try cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
+    try cp -f "$WINETRICKS_TMP"/usp10.dll "$WINDIR"/system32
+    override_dlls native,builtin usp10
+}
+
 #----------------------------------------------------------------
 
 load_vb2run() {
@@ -3278,6 +3287,7 @@ do
     shockwave) load_shockwave;;
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
+    usp10) load_usp10;;
     vbrun200|vb2run) load_vb2run;;
     vbrun300|vb3run) load_vb3run;;
     vbrun400|vb4run) load_vb4run;;
