@@ -457,6 +457,26 @@ sh $WINETESTDIR/winetricks multisampling=enabled
 runtests
 }
 
+nas_test() {
+WINEDEBUG=""
+TESTNAME="-nas"
+export WINEDEBUG
+export TESTNAME
+preptests
+sh winetricks nas
+runtests
+}
+
+nogecko_test() {
+WINEDEBUG=""
+TESTNAME="-nogecko"
+export WINEDEBUG
+export TESTNAME
+preptests_nogecko
+disable_gecko
+runtests
+}
+
 noglsl_test() {
 WINEDEBUG=""
 TESTNAME="-noglsl"
@@ -742,6 +762,8 @@ do
     --jack) export JACK_TEST=1;;
     --message) export MESSAGE_TEST=1;;
     --multisampling) export MULTISAMPLING_TEST=1;;
+    --nas) export NAS_TEST=1;;
+    --no-gecko) export NOGECKO_TEST=1;;
     --no-glsl) export NOGLSL_TEST=1;;
     --no-win16) export NOWIN16_TEST=1;;
     --oss) export OSS_TEST=1;;
@@ -911,6 +933,16 @@ if [ $MULTISAMPLING_TEST = 1 ]
         multisampling_test
 fi
 
+if [ $NAS_TEST = 1 ]
+    then
+        nas_test
+fi
+
+if [ $NOGECKO_TEST = 1 ]
+    then
+        nogecko_test
+fi
+
 if [ $NOGLSL_TEST = 1 ]
     then
         noglsl_test
@@ -927,27 +959,27 @@ if [ $PBUFFER_TEST = 1 ]
 fi
 
 
-if [ RTLM_DISABLED=1 ]
+if [ $RTLM_DISABLED = 1 ]
     then
         rtlm_disabled_test
 fi
 
-if [ RTLM_READDRAW=1 ]
+if [ $RTLM_READDRAW = 1 ]
     then
         rtlm_readdraw_test
 fi
     
-if [ RTLM_READTEX=1 ]
+if [ $RTLM_READTEX = 1 ]
     then
         rtlm_readtex_test
 fi
     
-if [ RTLM_TEXDRAW=1 ]
+if [ $RTLM_TEXDRAW = 1 ]
     then
         rtlm_texdraw_test
 fi
     
-if [ RTLM_TEXTEX=1 ]
+if [ $RTLM_TEXTEX = 1 ]
     then
         rtlm_textex_test
 fi
