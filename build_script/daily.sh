@@ -467,16 +467,6 @@ sh winetricks nas
 runtests
 }
 
-nogecko_test() {
-WINEDEBUG=""
-TESTNAME="-nogecko"
-export WINEDEBUG
-export TESTNAME
-preptests_nogecko
-disable_gecko
-runtests
-}
-
 noglsl_test() {
 WINEDEBUG=""
 TESTNAME="-noglsl"
@@ -733,7 +723,7 @@ OSS_TEST=0
 PBUFFER_TEST=0
 RTLM_DISABLED=0
 RTLM_READDRAW=0
-RTLM_READTEX=0
+RTLM_READTEX=0zz
 RTLM_TEXDRAW=0
 RTLM_TEXTEX=0
 SEH_TEST=0
@@ -763,7 +753,6 @@ do
     --message) export MESSAGE_TEST=1;;
     --multisampling) export MULTISAMPLING_TEST=1;;
     --nas) export NAS_TEST=1;;
-    --no-gecko) export NOGECKO_TEST=1;;
     --no-glsl) export NOGLSL_TEST=1;;
     --no-win16) export NOWIN16_TEST=1;;
     --oss) export OSS_TEST=1;;
@@ -936,11 +925,6 @@ fi
 if [ $NAS_TEST = 1 ]
     then
         nas_test
-fi
-
-if [ $NOGECKO_TEST = 1 ]
-    then
-        nogecko_test
 fi
 
 if [ $NOGLSL_TEST = 1 ]
