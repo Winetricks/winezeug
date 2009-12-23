@@ -170,6 +170,7 @@ for x in \
     builtin-gui.ahk \
     ccleaner-220.ahk \
     clamwin.ahk \
+    cmd.ahk \
     dirac.ahk \
     excelviewer03.ahk \
     firefox35.ahk \
