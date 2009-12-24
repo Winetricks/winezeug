@@ -91,7 +91,7 @@ if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
         CORES=$(/usr/sbin/psrinfo| grep -c on-line)
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
-        export CFLAGS="-Wno-unused"
+        export CFLAGS="-Wno-unused -g"
         CORES=$(cat /proc/cpuinfo | grep -c processor)
         # Are we on 64-bit?
         if [ "`uname -m`" = "x86_64" ]
@@ -122,7 +122,7 @@ elif [ $OS = 'Darwin' ]
         # very broken for wine. Use install-osx-deps.sh from Winezeug to install this stuff in the right place.
         export BUILD_DIR=$HOME/.winedeps
         export CPPFLAGS="-I$BUILD_DIR/usr/include"
-        export CFLAGS="-I$BUILD_DIR/usr/include"
+        export CFLAGS="-I$BUILD_DIR/usr/include -g"
         export LDFLAGS="-L$BUILD_DIR/usr/lib"
         export PATH=$PATH:"$BUILD_DIR/usr/bin"
         export PKG_CONFIG_PATH="$BUILD_DIR/usr/lib/pkgconfig"
@@ -131,13 +131,13 @@ elif [ $OS = 'Darwin' ]
 elif [ $OS = 'NetBSD' ]
     then
         echo "This is untested...going from memory"
-        export CFLAGS="-O2 -I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include"
+        export CFLAGS="-O2 -I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include -g"
         export CPPFLAGS="-I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include"
         export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/lib -Wl,-R/usr/lib -L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib"
         CORES=$(/sbin/sysctl -n hw.ncpu)
 elif [ $OS = 'OpenBSD' ]
     then
-        export CFLAGS="-I/usr/local/include -I/usr/local/include/libpng"
+        export CFLAGS="-I/usr/local/include -I/usr/local/include/libpng -g"
         export LDFLAGS="-lm -lz -lcrypto -L/usr/local/lib"
         export X_EXTRA_LIBS="-lXau -lXdmcp"
         export CPPFLAGS="-I/usr/local/include"
