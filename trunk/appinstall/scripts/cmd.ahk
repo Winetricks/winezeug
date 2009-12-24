@@ -1,4 +1,4 @@
-;
+﻿;
 ; AutoHotKey Test Script - Command tests
 ;
 ; Copyright (C) 2009 Austin English
@@ -129,6 +129,66 @@ test_output("echo /", "/ `r`n")
 test_output("echo //", "// `r`n")
 test_output("echo *", "* `r`n")
 test_output("echo **", "** `r`n")
+
+; Now for some comparison statements:
+; test_output("IF 0 == 0 echo foo1", "foo1 `r`n") - fails on wine, but works manually...
+todo_test_output("IF 0 EQU 0 echo foo2", "foo2 `r`n", "21046")
+todo_test_output("IF 0 NEQ 1 echo foo3", "foo3 `r`n", "21046")
+todo_test_output("IF 0 LSS 1 echo foo4", "foo4 `r`n", "21046")
+todo_test_output("IF 0 LEQ 1 echo foo5", "foo5 `r`n", "21046")
+todo_test_output("IF 0 GTR -1 echo foo6", "foo6 `r`n", "21046")
+todo_test_output("IF 0 GEQ -1 echo foo7", "foo7 `r`n", "21046")
+
+todo_test_output("IF NOT foo==bar echo foo8", "foo8 `r`n", "21046")
+
+; Using /I performs a case insensitive match:
+test_output("IF bar==BAR echo bar", "")
+todo_test_output("IF /i bar==BAR echo bar1", "bar1 `r`n", "21145")
+
+; Test defined variables:
+todo_test_output("IF defined windir echo bar2", "bar2 `r`n", "18712")
+
+Runwait, %comspec% /c set foo=  ; Unset foo, just in case it was somehow set
+todo_test_output("If NOT defined foo echo bar3", "bar3 `r`n", "18712")
+
+/* These are failing on Wine, but when run manually, it works. Need to investigate further.
+; IF exist:
+IfExist, a.txt
+    FileDelete, a.txt
+Runwait, %comspec% /c echo foobar > a.txt
+test_output("IF EXIST a.txt echo bar4", "bar4 `r`n")
+FileDelete, a.txt
+test_output("If NOT EXIST a.txt echo bar5", "bar5 `r`n")
+
+; Parentheses tests. Can't use the test_output()/todo_test_output functions because
+; of the nested parentheses.
+commandtotest="if 0==0 (echo a)"
+expectedresult=a`r`n
+TEMPFILE=%APPINSTALL_TEMP%\result.txt
+FileDelete, %TEMPFILE%
+Runwait, %comspec% /c %commandtotest% > %TEMPFILE%
+FileRead, result, %TEMPFILE%
+FileDelete, %TEMPFILE%
+If (result != expectedresult)
+        FileAppend, expected "%expectedresult%" got "%result%". TEST FAILED.`n, %OUTPUT%
+*/
+
+commandtotest="if 0==1 (echo a) else echo b"
+expectedresult=b `r`n
+TEMPFILE=%APPINSTALL_TEMP%\result.txt   
+FileDelete, %TEMPFILE%
+Runwait, %comspec% /c %commandtotest% > %TEMPFILE%
+FileRead, result, %TEMPFILE%
+FileDelete, %TEMPFILE%
+If (result = expectedresult)
+    {
+        FileAppend, expected "%expectedresult%" got "%result%". Check bug 21142. TODO_FIXED.`n, %OUTPUT%
+    }
+else
+    {
+        FileAppend, expected "%expectedresult%" got "%result%". Bug 21142 TODO_FAILED.`n, %OUTPUT%
+    }
+
 
 TEST_COMPLETED()
 
