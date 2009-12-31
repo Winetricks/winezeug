@@ -166,10 +166,10 @@ fi
 
 # Fetch an updated tree
 newtree() {
-# Make sure the user has a git tree. If not, initialize (a small) one for them:
+# Make sure the user has a git tree. If not, initialize one for them:
 if [ ! -d "$WINEGIT" ]
     then
-        git clone --depth 1 "$WINEGITURL" "$WINEGIT"
+        git clone "$WINEGITURL" "$WINEGIT"
 else
     cd "$WINEGIT"
     git show > /dev/null 2>&1 || die "$WINEGIT exists but is not a git directory. Exiting!"
@@ -661,7 +661,7 @@ WINE=$WINETESTDIR/install/bin/wine32 runtests
 
 usage() {
 echo "This script is used for Wine testing. By default, it will:"
-echo "1) update your git tree"
+echo "1) update your git tree, or clone one for you if you don't have one"
 echo "2) Build (32-bit) Wine"
 echo "3) Download winetest.exe"
 echo "4) Runs winetest.exe, without any special options, and submits the results"
