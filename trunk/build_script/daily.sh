@@ -551,7 +551,7 @@ runtests
 
 rtlm_readdraw_test() {
 WINEDEBUG=""
-TESTNAME="-readtex"
+TESTNAME="-readdraw"
 TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
 export TESTNAME
