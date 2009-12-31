@@ -386,7 +386,13 @@ try() {
 }
 
 try_regedit() {
-    try early_wine regedit "$@"
+    # on windows, doesn't work without cmd /c
+    case "$OS" in
+    "Windows_NT") cmdc="cmd /c";;
+    *) unset cmdc
+    esac
+
+    try early_wine $cmdc regedit "$@"
 }
 
 regedit() {
@@ -465,7 +471,7 @@ REGEDIT4
 "Version"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-winver.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\set-winver.reg
 }
 
 set_app_winver() {
@@ -479,7 +485,7 @@ set_app_winver() {
     echo "\"Version\"=\"$version\""
     ) > "$WINETRICKS_TMP"/set-winver.reg
 
-    try_regedit "$WINETRICKS_TMP"/set-winver.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\set-winver.reg
     rm "$WINETRICKS_TMP"/set-winver.reg
 }
 
@@ -503,7 +509,7 @@ REGEDIT4
 "OffscreenRenderingMode"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-orm.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\set-orm.reg
 }
 
 set_rtlm() {
@@ -539,7 +545,7 @@ REGEDIT4
 "Audio"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-sound.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\set-sound.reg
 }
 
 disable_crashdialog() {
@@ -551,7 +557,7 @@ REGEDIT4
 "ShowCrashDialog"=dword:00000000
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/crashdialog.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\crashdialog.reg
 }
 
 sandbox() {
@@ -578,7 +584,7 @@ REGEDIT4
 "Version"=-
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/unset-winver.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\unset-winver.reg
 }
 
 override_dlls() {
@@ -601,7 +607,7 @@ _EOF_
         shift
     done
 
-    try_regedit "$WINETRICKS_TMP"/override-dll.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
 }
 
@@ -628,7 +634,7 @@ override_app_dlls() {
         shift
     done
 
-    try_regedit "$WINETRICKS_TMP"/override-dll.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
 }
 
@@ -644,29 +650,27 @@ REGEDIT4
 "$font"="$file"
 _EOF_
     # too verbose
-    try_regedit "$WINETRICKS_TMP"/register-font.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\register-font.reg
 }
 
 append_path() {
-# Get the %PATH%
-WIN_PATH="`WINEDEBUG= $WINE cmd.exe /c echo "%PATH%"`"
-
-# Set the path. Make sure to not remove any other variables in %PATH% set by the user/other programs:
+    # Prepend $1 to the windows path in the registry.  Caller must use single quotes and double backslashes in argument.
     NEW_PATH="$1"
+    WIN_PATH="`WINEDEBUG= $WINE cmd.exe /c echo "%PATH%" | sed 's,\\\\,\\\\\\\\,g'`"
+
     cat > "$WINETRICKS_TMP"/path.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Environment]
 _EOF_
+    echo '"PATH"="'"$NEW_PATH;$WIN_PATH\"" | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/path.reg
 
-    printf '"PATH"="' >>"$WINETRICKS_TMP"/path.reg
-    printf "$NEW_PATH;$WIN_PATH"'\"' | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/path.reg
-
-    try_regedit "$WINETRICKS_TMP"/path.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\path.reg
     rm -f "$WINETRICKS_TMP"/path.reg
-
 }
+
 #----- common download for several verbs
+
 helper_directx_dl() {
     # Aug 2009 DirectX 9c User Redistributable
     # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=04ac064b-00d1-474e-b7b1-442d8712d553
@@ -1225,7 +1229,7 @@ _EOF_
     echo -n "${programfilesdir_win}" | sed "s/\\\\/\\\\\\\\/" >>"$WINETRICKS_TMP"/fakeie6.reg
     echo '\\\\Internet Explorer"' >>"$WINETRICKS_TMP"/fakeie6.reg
 
-    try_regedit "$WINETRICKS_TMP"/fakeie6.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\fakeie6.reg
 
     # On old wineprefixes iexplore.exe is not created. Create a fake dll using
     # shdocvw.dll that should have similar VERSIONINFO.
@@ -1342,7 +1346,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000000
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/fs_disable.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\fs_disable.reg
 }
 #----------------------------------------------------------------
 load_fs_grayscale() {
@@ -1357,7 +1361,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000001
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/fs_grayscale.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\fs_grayscale.reg
 }
 #----------------------------------------------------------------
 load_fs_bgr() {
@@ -1372,7 +1376,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/fs_bgr.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\fs_bgr.reg
 }
 #----------------------------------------------------------------
 load_fs_rgb() {
@@ -1387,7 +1391,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/fs_rgb.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\fs_rgb.reg
 }
 #----------------------------------------------------------------
 
@@ -1454,7 +1458,7 @@ _EOF_
     cd "$olddir"
 
     # set install-path
-    try_regedit "$WINETRICKS_TMP"/geckopath.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
     try $WINE regsvr32 mshtml
@@ -1518,7 +1522,7 @@ _EOF_
     cd "$olddir"
 
     # set install-path
-    try_regedit "$WINETRICKS_TMP"/geckopath.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
     try $WINE regsvr32 mshtml
@@ -1548,7 +1552,7 @@ REGEDIT4
 "UseGLSL"="disabled"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/disableglsl.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\disableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -1562,7 +1566,7 @@ REGEDIT4
 "UseGLSL"="enabled"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/enableglsl.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\enableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -1589,7 +1593,7 @@ REGEDIT4
 "GlobalFlag"=dword:00200030
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/heapcheck.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\heapcheck.reg
 }
 
 #----------------------------------------------------------------
@@ -1879,7 +1883,7 @@ load_mingw_min() {
     gzip -d -c "$WINETRICKS_CACHE"/gcc-core-4.4.0-mingw32-bin.tar.gz | tar x
     gzip -d -c "$WINETRICKS_CACHE"/gcc-core-4.4.0-mingw32-dll.tar.gz | tar x
 
-    append_path C:\\MinGW\\bin
+    append_path 'C:\\MinGW\\bin'
 }
 
 #----------------------------------------------------------------
@@ -1911,7 +1915,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1933,7 +1937,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1955,7 +1959,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
 "4322"="3706-4322"
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/mono_2.0.reg
+    try_regedit "$WINETRICKS_TMP_WIN"\\mono_2.0.reg
     rm -f "$WINETRICKS_TMP"/mono_2.0.reg
 }
 
@@ -1974,7 +1978,7 @@ load_mpc() {
     cd "$programfilesdir_unix/Media Player Classic"
     try unzip "$WINETRICKS_CACHE"/mplayerc_20090706.zip
 
-    append_path "$programfilesdir_win\Media Player Classic"
+    append_path "$programfilesdir_win"'\\Media Player Classic'
 
     cd "$olddir"
     warn "MPC now available as $programfilesdir_win\Media Player Classic\mplayerc.exe"
