@@ -281,6 +281,7 @@ usage() {
     echo " sound=jack       Set sound driver to Jack"
     echo " sound=nas        Set sound driver to Nas"
     echo " sound=oss        Set sound driver to OSS"
+    echo " sound=disabled   Disable sound"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
@@ -537,7 +538,7 @@ _EOF_
 }
 
 set_sound_driver() {
-    echo "Setting sound driver to to $1"
+    echo "Setting sound driver to $1"
     cat > "$WINETRICKS_TMP"/set-sound.reg <<_EOF_
 REGEDIT4
 
@@ -3350,6 +3351,7 @@ do
     sound=jack|jack) set_sound_driver jack;;
     sound=nas|nas) set_sound_driver nas;;
     sound=oss|oss) set_sound_driver oss;;
+    sound=disabled|sound=) set_sound_driver "";;
     version) print_version;;
     volnum) volnum;;
     winver=nt40|nt40) set_winver nt40;;
