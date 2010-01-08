@@ -117,7 +117,7 @@ die_if_user_not_dirowner() {
         checkdir=`dirname "$1"`
     fi
     nuser=`id -u`
-    nowner=`ls -l -n -d "$checkdir" | awk '{print $3}'`
+    nowner=`ls -l -n -d -L "$checkdir" | awk '{print $3}'`
     if test x$nuser != x$nowner
     then
         die "You (`id -un`) don't own $checkdir. Don't run winetricks as another user!"
