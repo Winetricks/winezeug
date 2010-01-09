@@ -1,0 +1,390 @@
+==9866== Memcheck, a memory error detector
+==9866== Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+==9866== Using Valgrind-3.6.0.SVN and LibVEX; rerun with -h for copyright info
+==9866== Command: /home/austin/wine-git/wine mspaint.exe.so
+==9866== 
+==9867== Memcheck, a memory error detector
+==9867== Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+==9867== Using Valgrind-3.6.0.SVN and LibVEX; rerun with -h for copyright info
+==9867== Command: /usr/bin/dirname /home/austin/wine-git/wine
+==9867== 
+==9867== 
+==9867== HEAP SUMMARY:
+==9867==     in use at exit: 0 bytes in 0 blocks
+==9867==   total heap usage: 1,387 allocs, 1,387 frees, 64,390 bytes allocated
+==9867== 
+==9867== All heap blocks were freed -- no leaks are possible
+==9867== 
+==9867== For counts of detected and suppressed errors, rerun with: -v
+==9867== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 8)
+==9866== 
+==9866== HEAP SUMMARY:
+==9866==     in use at exit: 9,122 bytes in 49 blocks
+==9866==   total heap usage: 59 allocs, 10 frees, 13,396 bytes allocated
+==9866== 
+==9866== LEAK SUMMARY:
+==9866==    definitely lost: 0 bytes in 0 blocks
+==9866==    indirectly lost: 0 bytes in 0 blocks
+==9866==      possibly lost: 0 bytes in 0 blocks
+==9866==    still reachable: 9,122 bytes in 49 blocks
+==9866==         suppressed: 0 bytes in 0 blocks
+==9866== Reachable blocks (those to which a pointer was found) are not shown.
+==9866== To see them, rerun with: --leak-check=full --show-reachable=yes
+==9866== 
+==9866== For counts of detected and suppressed errors, rerun with: -v
+==9866== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 8)
+==9869== Memcheck, a memory error detector
+==9869== Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+==9869== Using Valgrind-3.6.0.SVN and LibVEX; rerun with -h for copyright info
+==9869== Command: /bin/uname -s
+==9869== 
+==9869== 
+==9869== HEAP SUMMARY:
+==9869==     in use at exit: 0 bytes in 0 blocks
+==9869==   total heap usage: 1,387 allocs, 1,387 frees, 64,390 bytes allocated
+==9869== 
+==9869== All heap blocks were freed -- no leaks are possible
+==9869== 
+==9869== For counts of detected and suppressed errors, rerun with: -v
+==9869== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 13 from 8)
+==9866== Memcheck, a memory error detector
+==9866== Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+==9866== Using Valgrind-3.6.0.SVN and LibVEX; rerun with -h for copyright info
+==9866== Command: /home/austin/wine-git/loader/wine mspaint.exe.so
+==9866== 
+==9866== Memcheck, a memory error detector
+==9866== Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+==9866== Using Valgrind-3.6.0.SVN and LibVEX; rerun with -h for copyright info
+==9866== Command: /home/austin/wine-git/loader/wine-preloader /home/austin/wine-git/loader/wine mspaint.exe.so
+==9866== 
+preloader: Warning: failed to reserve range 00110000-68000000
+==9866== Warning: set address range perms: large range [0x82000000, 0xbeaf0000) (defined)
+==9866== Invalid read of size 1
+==9866==    at 0x40269A0: memcpy (mc_replace_strmem.c:497)
+==9866==    by 0x4B97662: GetDIBits (in /home/austin/wine-git/dlls/gdi32/gdi32.dll.so)
+==9866==    by 0x4A83E11: CopyImage (cursoricon.c:2733)
+==9866==    by 0x4949671: BM_Copy (bitmap.c:518)
+==9866==    by 0x495753B: PAINT_FileNew (paint.c:267)
+==9866==    by 0x4956CAD: WinMain (main.c:1483)
+==9866==    by 0x495A41E: main (in /home/austin/wine-git/programs/mspaint/mspaint.exe.so)
+==9866==  Address 0x7cea0000 is not stack'd, malloc'd or (recently) free'd
+==9866== 
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr1
+   fun:memcpy
+   fun:GetDIBits
+   fun:CopyImage
+   fun:BM_Copy
+   fun:PAINT_FileNew
+   fun:WinMain
+   fun:main
+}
+wine: Unhandled page fault on read access to 0x7cea0000 at address 0x40269a0 (thread 003a), starting debugger...
+==9872== Memcheck, a memory error detector
+==9872== Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+==9872== Using Valgrind-3.6.0.SVN and LibVEX; rerun with -h for copyright info
+==9872== Command: /home/austin/wine-git/loader/wine-preloader /home/austin/wine-git/loader/wine winedbg --auto 57 88
+==9872== 
+preloader: Warning: failed to reserve range 00110000-68000000
+==9872== Warning: set address range perms: large range [0x82000000, 0xbe9e0000) (defined)
+Unhandled exception: page fault on read access to 0x7cea0000 in 32-bit code (0x040269a0).
+Register dump:
+ CS:0073 SS:007b DS:007b ES:0000 FS:000b GS:0013
+ EIP:040269a0 ESP:7f21f658 EBP:7f21f688 EFLAGS:00000014(   - --      -A-P- )
+ EAX:7f620000 EBX:04028ff4 ECX:7f620000 EDX:7f0fcf80
+ ESI:7f0fcf80 EDI:000000cc
+Stack dump:
+0x7f21f658:  00000000 0000032c 7f071188 04bf3ff4
+0x7f21f668:  04b8a631 04b9151e 7f07118c 00000000
+0x7f21f678:  00000315 04bf3ff4 0003bf70 beb09ddc
+0x7f21f688:  7f21fbb8 04b97663 7f0fcf80 7f620000
+0x7f21f698:  00000330 7f21fbae 7f21fbac 7f21fb84
+0x7f21f6a8:  7f21fb80 00000001 079e0201 0477dff4
+Backtrace:
+=>0 0x040269a0 _vgrZU_libcZdsoZa_memcpy+0x170(dst=0x7f0fcf80, src=0x7f620000, len=816) [/home/austin/valgrind/memcheck/mc_replace_strmem.c:497] in vgpreload_memcheck-x86-linux.so (0x7f21f688)
+  1 0x04b97663 GetDIBits+0xfbc() in gdi32 (0x7f21fbb8)
+  2 0x04a83e12 CopyImage+0x63b(hnd=0xc94, type=0, desiredx=271, desiredy=301, flags=4) [/home/austin/wine-git/dlls/user32/cursoricon.c:2733] in user32 (0x7f21fcb8)
+  3 0x04949672 BM_Copy+0x31(hbm=0xc94) [/home/austin/wine-git/programs/mspaint/bitmap.c:518] in mspaint (0x7f21fcf8)
+  4 0x0495753c PAINT_FileNew+0x145() [/home/austin/wine-git/programs/mspaint/paint.c:267] in mspaint (0x7f21fd48)
+  5 0x04956cae WinMain+0x23f(hInstance=0x4940000, hPrevInstance=(nil), pszCmdLine="", nCmdShow=1) [/home/austin/wine-git/programs/mspaint/main.c:1485] in mspaint (0x7f21fdd8)
+  6 0x0495a41f main+0x10b() in mspaint (0x7f21fe58)
+  7 0x0495a2fa __wine_spec_exe_entry+0x6a() in mspaint (0x7f21fe98)
+  8 0x048517f6 start_process+0x137(peb=0x7ffdf000) [/home/austin/wine-git/dlls/kernel32/process.c:1037] in kernel32 (0x7f21fed8)
+  9 0x04753b8c call_thread_func+0xc() in ntdll (0x7f21fee8)
+  10 0x04753bca call_thread_entry_point+0x34(entry=0x48516bf, arg=0x7ffdf000) [/home/austin/wine-git/dlls/ntdll/signal_i386.c:2424] in ntdll (0x7f21ffc8)
+  11 0x0472ceac LdrInitializeThunk(kernel_start=0x7ffdf000, unknown2=0, unknown3=0, unknown4=0) [/home/austin/wine-git/dlls/ntdll/loader.c:2468] in ntdll (0x7f21ffe8)
+0x040269a0 _vgrZU_libcZdsoZa_memcpy+0x170 [/home/austin/valgrind/memcheck/mc_replace_strmem.c:497] in vgpreload_memcheck-x86-linux.so: movzbl	0x0(%ecx,%eax,4),%edx
+497	MEMCPY(VG_Z_LIBC_SONAME, memcpy)
+Modules:
+Module	Address			Debug info	Name (98 modules)
+ELF	 4000000- 401d000	Deferred        ld-linux.so.2
+ELF	 401f000- 4022000	Deferred        vgpreload_core-x86-linux.so
+ELF	 4022000- 402a000	Dwarf           vgpreload_memcheck-x86-linux.so
+ELF	 402a000- 4166000	Deferred        libwine.so.1
+ELF	 4178000- 4191000	Deferred        libpthread.so.0
+ELF	 4192000- 42d6000	Deferred        libc.so.6
+ELF	 42d6000- 42da000	Deferred        libdl.so.2
+ELF	 46db000- 479a000	Dwarf           ntdll<elf>
+  \-PE	 46f0000- 479a000	\               ntdll
+ELF	 479a000- 47c0000	Deferred        libm.so.6
+ELF	 47c0000- 47c8000	Deferred        libnss_compat.so.2
+ELF	 47c8000- 47df000	Deferred        libnsl.so.1
+ELF	 47df000- 47ea000	Deferred        libnss_nis.so.2
+ELF	 47ea000- 47f6000	Deferred        libnss_files.so.2
+ELF	 47f6000- 4935000	Dwarf           kernel32<elf>
+  \-PE	 4810000- 4935000	\               kernel32
+ELF	 4935000- 496e000	Dwarf           mspaint<elf>
+  \-PE	 4940000- 496e000	\               mspaint
+ELF	 496e000- 4a4d000	Deferred        comctl32<elf>
+  \-PE	 4980000- 4a4d000	\               comctl32
+ELF	 4a4d000- 4b6f000	Dwarf           user32<elf>
+  \-PE	 4a60000- 4b6f000	\               user32
+ELF	 4b6f000- 4c08000	Dwarf           gdi32<elf>
+  \-PE	 4b80000- 4c08000	\               gdi32
+ELF	 4c08000- 4c62000	Deferred        advapi32<elf>
+  \-PE	 4c10000- 4c62000	\               advapi32
+ELF	 4c62000- 4cda000	Deferred        rpcrt4<elf>
+  \-PE	 4c70000- 4cda000	\               rpcrt4
+ELF	 4cda000- 4d85000	Deferred        comdlg32<elf>
+  \-PE	 4ce0000- 4d85000	\               comdlg32
+ELF	 4d85000- 4f20000	Deferred        shell32<elf>
+  \-PE	 4da0000- 4f20000	\               shell32
+ELF	 4f20000- 4f80000	Deferred        shlwapi<elf>
+  \-PE	 4f30000- 4f80000	\               shlwapi
+ELF	 4f80000- 4fb8000	Deferred        winspool<elf>
+  \-PE	 4f90000- 4fb8000	\               winspool
+ELF	 4fb8000- 5028000	Deferred        msvcrt<elf>
+  \-PE	 4fd0000- 5028000	\               msvcrt
+ELF	 5028000- 5086000	Deferred        krnl386.exe16.so
+PE	 5040000- 5086000	Deferred        krnl386.exe16
+ELF	 5086000- 509b000	Deferred        system.drv16.so
+PE	 5090000- 509b000	Deferred        system.drv16
+ELF	 509b000- 50af000	Deferred        comm.drv16.so
+PE	 50a0000- 50af000	Deferred        comm.drv16
+ELF	 50af000- 50db000	Deferred        gdi.exe16.so
+PE	 50c0000- 50db000	Deferred        gdi.exe16
+ELF	 50db000- 515a000	Deferred        libfreetype.so.6
+ELF	 515a000- 5170000	Deferred        libz.so.1
+ELF	 5170000- 519d000	Deferred        libfontconfig.so.1
+ELF	 519d000- 51c4000	Deferred        libexpat.so.1
+ELF	 5a08000- 5a4e000	Deferred        user.exe16.so
+PE	 5a10000- 5a4e000	Deferred        user.exe16
+ELF	 5a4e000- 5a63000	Deferred        display.drv16.so
+PE	 5a50000- 5a63000	Deferred        display.drv16
+ELF	 5a63000- 5a78000	Deferred        keyboard.drv16.so
+PE	 5a70000- 5a78000	Deferred        keyboard.drv16
+ELF	 5a78000- 5a8c000	Deferred        mouse.drv16.so
+PE	 5a80000- 5a8c000	Deferred        mouse.drv16
+ELF	 5a8c000- 5b3d000	Deferred        winex11<elf>
+  \-PE	 5aa0000- 5b3d000	\               winex11
+ELF	 5b3f000- 5b43000	Deferred        libcom_err.so.2
+ELF	 5b4f000- 5b58000	Deferred        libsm.so.6
+ELF	 5b58000- 5b73000	Deferred        libice.so.6
+ELF	 5b73000- 5b83000	Deferred        libxext.so.6
+ELF	 5b83000- 5cb2000	Deferred        libx11.so.6
+ELF	 5cb2000- 5cb7000	Deferred        libuuid.so.1
+ELF	 5cb7000- 5cbb000	Deferred        libxau.so.6
+ELF	 5cbb000- 5cd9000	Deferred        libxcb.so.1
+ELF	 5cd9000- 5cde000	Deferred        libxdmcp.so.6
+ELF	 5cde000- 5cff000	Deferred        imm32<elf>
+  \-PE	 5ce0000- 5cff000	\               imm32
+ELF	 5cff000- 5d02000	Deferred        libxinerama.so.1
+ELF	 5d02000- 5d08000	Deferred        libxxf86vm.so.1
+ELF	 5d08000- 5d12000	Deferred        libxrender.so.1
+ELF	 5d12000- 5d1b000	Deferred        libxrandr.so.2
+ELF	 5d1b000- 5d1f000	Deferred        libxcomposite.so.1
+ELF	 5d1f000- 5d25000	Deferred        libxfixes.so.3
+ELF	 5d25000- 5d30000	Deferred        libxcursor.so.1
+ELF	 5d30000- 5d63000	Deferred        uxtheme<elf>
+  \-PE	 5d40000- 5d63000	\               uxtheme
+ELF	 5d8d000- 5eb0000	Deferred        ole32<elf>
+  \-PE	 5db0000- 5eb0000	\               ole32
+ELF	 5ee6000- 5f2b000	Deferred        libcups.so.2
+ELF	 5f2b000- 5f58000	Deferred        libgssapi_krb5.so.2
+ELF	 5f58000- 6000000	Deferred        libgnutls.so.26
+ELF	 6000000- 600c000	Deferred        libavahi-common.so.3
+ELF	 600c000- 601d000	Deferred        libavahi-client.so.3
+ELF	 601d000- 60cf000	Deferred        libkrb5.so.3
+ELF	 60cf000- 60fa000	Deferred        libk5crypto.so.3
+ELF	 60fa000- 6103000	Deferred        libkrb5support.so.0
+ELF	 6103000- 6107000	Deferred        libkeyutils.so.1
+ELF	 6107000- 611b000	Deferred        libresolv.so.2
+ELF	 611b000- 612d000	Deferred        libtasn1.so.3
+ELF	 612d000- 61a9000	Deferred        libgcrypt.so.11
+ELF	 61a9000- 61e2000	Deferred        libdbus-1.so.3
+ELF	 61e2000- 61eb000	Deferred        librt.so.1
+ELF	 61eb000- 61f0000	Deferred        libgpg-error.so.0
+ELF	7bf00000-7bf04000	Deferred        <wine-loader>
+Threads:
+process  tid      prio (all id:s are in hex)
+0000000e services.exe
+	00000014    0
+	00000010    0
+	0000000f    0
+00000011 winedevice.exe
+	00000017    0
+	00000016    0
+	00000013    0
+	00000012    0
+00000018 explorer.exe
+	00000019    0
+00000025 clock.exe
+	00000026    0
+00000039 (D) Z:\home\austin\wine-git\programs\mspaint\mspaint.exe
+	0000003a    0 <==
+Backtrace:
+=>0 0x040269a0 _vgrZU_libcZdsoZa_memcpy+0x170(dst=0x7f0fcf80, src=0x7f620000, len=816) [/home/austin/valgrind/memcheck/mc_replace_strmem.c:497] in vgpreload_memcheck-x86-linux.so (0x7f21f688)
+  1 0x04b97663 GetDIBits+0xfbc() in gdi32 (0x7f21fbb8)
+  2 0x04a83e12 CopyImage+0x63b(hnd=0xc94, type=0, desiredx=271, desiredy=301, flags=4) [/home/austin/wine-git/dlls/user32/cursoricon.c:2733] in user32 (0x7f21fcb8)
+  3 0x04949672 BM_Copy+0x31(hbm=0xc94) [/home/austin/wine-git/programs/mspaint/bitmap.c:518] in mspaint (0x7f21fcf8)
+  4 0x0495753c PAINT_FileNew+0x145() [/home/austin/wine-git/programs/mspaint/paint.c:267] in mspaint (0x7f21fd48)
+  5 0x04956cae WinMain+0x23f(hInstance=0x4940000, hPrevInstance=(nil), pszCmdLine="", nCmdShow=1) [/home/austin/wine-git/programs/mspaint/main.c:1485] in mspaint (0x7f21fdd8)
+  6 0x0495a41f main+0x10b() in mspaint (0x7f21fe58)
+  7 0x0495a2fa __wine_spec_exe_entry+0x6a() in mspaint (0x7f21fe98)
+  8 0x048517f6 start_process+0x137(peb=0x7ffdf000) [/home/austin/wine-git/dlls/kernel32/process.c:1037] in kernel32 (0x7f21fed8)
+  9 0x04753b8c call_thread_func+0xc() in ntdll (0x7f21fee8)
+  10 0x04753bca call_thread_entry_point+0x34(entry=0x48516bf, arg=0x7ffdf000) [/home/austin/wine-git/dlls/ntdll/signal_i386.c:2424] in ntdll (0x7f21ffc8)
+  11 0x0472ceac LdrInitializeThunk(kernel_start=0x7ffdf000, unknown2=0, unknown3=0, unknown4=0) [/home/austin/wine-git/dlls/ntdll/loader.c:2468] in ntdll (0x7f21ffe8)
+==9866== 
+==9866== HEAP SUMMARY:
+==9866==     in use at exit: 3,310,231 bytes in 6,988 blocks
+==9866==   total heap usage: 34,842 allocs, 27,854 frees, 14,542,385 bytes allocated
+==9866== 
+==9866== 1,064 bytes in 1 blocks are definitely lost in loss record 1,052 of 1,162
+==9866==    at 0x47215AC: notify_alloc (heap.c:214)
+==9866==    by 0x4724D65: RtlAllocateHeap (heap.c:1421)
+==9866==    by 0x4A83957: CopyImage (cursoricon.c:2601)
+==9866==    by 0x4949671: BM_Copy (bitmap.c:518)
+==9866==    by 0x495753B: PAINT_FileNew (paint.c:267)
+==9866==    by 0x4956CAD: WinMain (main.c:1483)
+==9866==    by 0x495A41E: main (in /home/austin/wine-git/programs/mspaint/mspaint.exe.so)
+==9866== 
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:CopyImage
+   fun:BM_Copy
+   fun:PAINT_FileNew
+   fun:WinMain
+   fun:main
+}
+==9866== 245,616 bytes in 1 blocks are definitely lost in loss record 1,160 of 1,162
+==9866==    at 0x47215AC: notify_alloc (heap.c:214)
+==9866==    by 0x4724D65: RtlAllocateHeap (heap.c:1421)
+==9866==    by 0x4A83DC5: CopyImage (cursoricon.c:2726)
+==9866==    by 0x4949671: BM_Copy (bitmap.c:518)
+==9866==    by 0x495753B: PAINT_FileNew (paint.c:267)
+==9866==    by 0x4956CAD: WinMain (main.c:1483)
+==9866==    by 0x495A41E: main (in /home/austin/wine-git/programs/mspaint/mspaint.exe.so)
+==9866== 
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:CopyImage
+   fun:BM_Copy
+   fun:PAINT_FileNew
+   fun:WinMain
+   fun:main
+}
+==9866== LEAK SUMMARY:
+==9866==    definitely lost: 246,680 bytes in 2 blocks
+==9866==    indirectly lost: 120 bytes in 10 blocks
+==9866==      possibly lost: 0 bytes in 0 blocks
+==9866==    still reachable: 2,950,605 bytes in 3,956 blocks
+==9866==         suppressed: 112,826 bytes in 3,020 blocks
+==9866== Reachable blocks (those to which a pointer was found) are not shown.
+==9866== To see them, rerun with: --leak-check=full --show-reachable=yes
+==9866== 
+==9866== For counts of detected and suppressed errors, rerun with: -v
+==9866== ERROR SUMMARY: 4 errors from 3 contexts (suppressed: 688 from 57)
+==9872== 
+==9872== HEAP SUMMARY:
+==9872==     in use at exit: 255,600 bytes in 234 blocks
+==9872==   total heap usage: 4,771 allocs, 4,537 frees, 38,590,585 bytes allocated
+==9872== 
+==9872== 8 bytes in 1 blocks are definitely lost in loss record 14 of 140
+==9872==    at 0x47215AC: notify_alloc (heap.c:214)
+==9872==    by 0x4724D65: RtlAllocateHeap (heap.c:1421)
+==9872==    by 0x49C23F8: elf_load_file (elf_module.c:1131)
+==9872==    by 0x49C295B: elf_search_and_load_file (elf_module.c:1269)
+==9872==    by 0x49C2E45: elf_search_loader (elf_module.c:1399)
+==9872==    by 0x49C2F3A: elf_read_wine_loader_dbg_info (elf_module.c:1418)
+==9872==    by 0x49B9C9F: SymInitializeW (dbghelp.c:277)
+==9872==    by 0x49B9FD1: SymInitialize (dbghelp.c:404)
+==9872==    by 0x496D5B1: dbg_init (winedbg.c:370)
+==9872==    by 0x49666E6: dbg_handle_debug_event (tgt_active.c:521)
+==9872==    by 0x4967451: wait_exception (tgt_active.c:692)
+==9872==    by 0x49675C6: dbg_active_wait_for_first_exception (tgt_active.c:723)
+==9872==    by 0x4967ECB: dbg_active_auto (tgt_active.c:968)
+==9872==    by 0x496E0CE: main (winedbg.c:668)
+==9872== 
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:elf_load_file
+   fun:elf_search_and_load_file
+   fun:elf_search_loader
+   fun:elf_read_wine_loader_dbg_info
+   fun:SymInitializeW
+   fun:SymInitialize
+   fun:dbg_init
+   fun:dbg_handle_debug_event
+   fun:wait_exception
+   fun:dbg_active_wait_for_first_exception
+   fun:dbg_active_auto
+   fun:main
+}
+==9872== 576 bytes in 72 blocks are definitely lost in loss record 125 of 140
+==9872==    at 0x47215AC: notify_alloc (heap.c:214)
+==9872==    by 0x4724D65: RtlAllocateHeap (heap.c:1421)
+==9872==    by 0x49C23F8: elf_load_file (elf_module.c:1131)
+==9872==    by 0x49C295B: elf_search_and_load_file (elf_module.c:1269)
+==9872==    by 0x49C2F9F: elf_enum_sync_cb (elf_module.c:1336)
+==9872==    by 0x49BFA26: elf_enum_modules_internal (elf_module.c:1320)
+==9872==    by 0x49C02C1: elf_synchronize_module_list (elf_module.c:1361)
+==9872==    by 0x49B9CDB: SymInitializeW (dbghelp.c:372)
+==9872==    by 0x49B9FD1: SymInitialize (dbghelp.c:404)
+==9872==    by 0x496D5B1: dbg_init (winedbg.c:370)
+==9872==    by 0x49666E6: dbg_handle_debug_event (tgt_active.c:521)
+==9872==    by 0x4967451: wait_exception (tgt_active.c:692)
+==9872==    by 0x49675C6: dbg_active_wait_for_first_exception (tgt_active.c:723)
+==9872==    by 0x4967ECB: dbg_active_auto (tgt_active.c:968)
+==9872==    by 0x496E0CE: main (winedbg.c:668)
+==9872== 
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:elf_load_file
+   fun:elf_search_and_load_file
+   fun:elf_enum_sync_cb
+   fun:elf_enum_modules_internal
+   fun:elf_synchronize_module_list
+   fun:SymInitializeW
+   fun:SymInitialize
+   fun:dbg_init
+   fun:dbg_handle_debug_event
+   fun:wait_exception
+   fun:dbg_active_wait_for_first_exception
+   fun:dbg_active_auto
+   fun:main
+}
+==9872== LEAK SUMMARY:
+==9872==    definitely lost: 584 bytes in 73 blocks
+==9872==    indirectly lost: 120 bytes in 10 blocks
+==9872==      possibly lost: 0 bytes in 0 blocks
+==9872==    still reachable: 242,112 bytes in 58 blocks
+==9872==         suppressed: 12,784 bytes in 93 blocks
+==9872== Reachable blocks (those to which a pointer was found) are not shown.
+==9872== To see them, rerun with: --leak-check=full --show-reachable=yes
+==9872== 
+==9872== For counts of detected and suppressed errors, rerun with: -v
+==9872== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 87 from 18)

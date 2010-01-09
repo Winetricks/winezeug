@@ -1,0 +1,27 @@
+TOPSRCDIR = @top_srcdir@
+TOPOBJDIR = ../..
+SRCDIR    = @srcdir@
+VPATH     = @srcdir@
+MODULE    = mspaint.exe
+APPMODE   = -mwindows -mno-cygwin
+IMPORTS   = comctl32 comdlg32 shell32 shlwapi user32 gdi32 advapi32 kernel32
+EXTRAINCL = -I$(TOPSRCDIR)/include/msvcrt
+MODCFLAGS = @BUILTINFLAG@
+EXTRADEFS = -DNO_LIBWINE_PORT -DWINE_NO_UNICODE_MACROS
+
+C_SRCS = \
+	bitmap.c \
+	canvas.c \
+	main.c \
+	paint.c
+
+RC_SRCS = \
+	En.rc \
+	Ja.rc \
+	rsrc.rc
+
+SVG_SRCS = paint.svg
+
+@MAKE_PROG_RULES@
+
+@DEPENDENCIES@  # everything below this line is overwritten by make depend

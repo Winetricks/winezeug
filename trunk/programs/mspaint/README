@@ -1,0 +1,12 @@
+This implements mspaint.exe. The code was originally written by Katayama Hirofumi MZ,
+see http://markmail.org/message/df3gsjw7bw7tbnxr#query:wine%20mspaint%20wine-patches+page:1+mid:mrrzqefiseorgoos+state:results .
+It was cleaned up by Austin English.
+
+Known bugs:
+Uses 100% of cpu when running.
+Cursor is messed up when drawing.
+Some stuff is still unimplemented.
+
+TODO:
+Several of the functions are very similar to gdiplus functions and should instead use that.
+For advice, ask Vincent Povirk.
