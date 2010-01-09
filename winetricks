@@ -202,6 +202,7 @@ usage() {
     echo " msi2          MS Installer 2.0"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
     echo " msmask        MS Masked Edit Control"
+    echo " mspaint       MS Paint (gotta draw stick figures somehow...)"
     echo " msscript      MS Script Control"
     echo " msxml3        MS XML version 3"
     echo " msxml4        MS XML version 4"
@@ -2043,6 +2044,15 @@ load_msmask() {
 
 #----------------------------------------------------------------
 
+load_mspaint() {
+    # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
+    download . http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
+    try unzip "$WINETRICKS_CACHE"/paintnt.exe -d "$WINDIR"
+    warn "Paint is now installed to $WINDIR/MSPAINT.EXE"
+}
+
+#----------------------------------------------------------------
+
 load_msscript() {
     # http://msdn.microsoft.com/scripting/scriptcontrol/x86/sct10en.exe
     # http://www.microsoft.com/downloads/details.aspx?familyid=d7e31492-2595-49e6-8c02-1426fec693ac
@@ -3271,6 +3281,7 @@ do
     mshflxgd) load_mshflxgd;;
     msls31) load_msls31;;
     msmask) load_msmask;;
+    mspaint|paint) load_mspaint;;
     msscript) load_msscript;;
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
