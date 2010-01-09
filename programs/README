@@ -1,0 +1,3 @@
+This folder holds implementations of programs missing in wine that people have written,
+but weren't committed by the maintainer. If you can get them into WineHQ, you'll
+get a free beer courtesy of Winezeug ;-).

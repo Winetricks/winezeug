@@ -1,0 +1,104 @@
+/*
+ *  Copyright 2008 Katayama Hirofumi MZ <katayama.hirofumi.mz@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#include "resource.h"
+
+ID_ACCEL ACCELERATORS
+{
+    "^N", CMD_CLEAR_IMAGE, ASCII, SHIFT
+    "^A", CMD_SELECT_ALL
+    "^C", CMD_COPY
+    "^N", CMD_NEW
+    "^O", CMD_OPEN
+    "^P", CMD_PRINT
+    "^S", CMD_SAVE
+    "^X", CMD_CUT
+    "^C", CMD_COPY
+    "^V", CMD_PASTE
+    "^X", CMD_CUT
+    "^Z", CMD_UNDO
+    "^Y", CMD_REPEAT
+    "^T", CMD_TOOL_BOX
+    "^L", CMD_COLOR_BOX
+    "^F", CMD_VIEW_BITMAP
+    "^G", CMD_SHOW_GRID
+    "^I", CMD_INVERT_COLORS
+    "^W", CMD_STRETCH_SKEW
+    "^R", CMD_FLIP_ROTATE
+    "^E", CMD_ATTRIBUTES
+    VK_DELETE, CMD_DELETE, VIRTKEY
+    VK_BACK, CMD_UNDO, VIRTKEY, ALT
+    VK_INSERT, CMD_COPY, VIRTKEY, CONTROL
+    VK_INSERT, CMD_PASTE, VIRTKEY, SHIFT
+    VK_PRIOR, CMD_ZOOM_NORMAL, VIRTKEY, CONTROL
+    VK_NEXT, CMD_ZOOM_LARGE, VIRTKEY, CONTROL
+}
+
+/* @makedep: paint.ico */
+IDI_PAINT ICON "paint.ico"
+/* @makedep: hstretch.ico */
+100 ICON "hstretch.ico"
+/* @makedep: vstretch.ico */
+101 ICON "vstretch.ico"
+/* @makedep: hslant.ico */
+102 ICON "hslant.ico"
+/* @makedep: vslant.ico */
+103 ICON "vslant.ico"
+
+/* @makedep: tools.bmp */
+IDB_TOOLS BITMAP "tools.bmp"
+/* @makedep: airbrush.bmp */
+IDB_AIRBRUSH BITMAP "airbrush.bmp"
+/* @makedep: eraser.bmp */
+IDB_ERASER BITMAP "eraser.bmp"
+/* @makedep: zoom.bmp */
+IDB_ZOOM BITMAP "zoom.bmp"
+/* @makedep: line.bmp */
+IDB_LINE BITMAP "line.bmp"
+/* @makedep: brush.bmp */
+IDB_BRUSH BITMAP "brush.bmp"
+/* @makedep: fill.bmp */
+IDB_FILL BITMAP "fill.bmp"
+/* @makedep: trans.bmp */
+IDB_TRANS BITMAP "trans.bmp"
+
+/* @makedep: horizon.cur */
+1 CURSOR "horizon.cur"
+/* @makedep: vertical.cur */
+2 CURSOR "vertical.cur"
+/* @makedep: bdiagon.cur */
+3 CURSOR "bdiagon.cur"
+/* @makedep: fdiagon.cur */
+4 CURSOR "fdiagon.cur"
+/* @makedep: pencil.cur */
+5 CURSOR "pencil.cur"
+/* @makedep: flood.cur */
+6 CURSOR "flood.cur"
+/* @makedep: spoit.cur */
+7 CURSOR "spoit.cur"
+/* @makedep: airbrush.cur */
+8 CURSOR "airbrush.cur"
+/* @makedep: zoom.cur */
+9 CURSOR "zoom.cur"
+/* @makedep: cross.cur */
+10 CURSOR "cross.cur"
+/* @makedep: move.cur */
+11 CURSOR "move.cur"
+/* @makedep: cross2.cur */
+12 CURSOR "cross2.cur"
+

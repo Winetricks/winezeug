@@ -1,0 +1,337 @@
+/*
+ *  Paint (English resources)
+ *
+ *  Copyright 2008 Katayama Hirofumi MZ <katayama.hirofumi.mz@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+#include "resource.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
+
+MAIN_MENU MENU
+{
+    POPUP "&File"
+    {
+        MENUITEM "&New\tCtrl+N",                    CMD_NEW
+        MENUITEM "&Open...\tCtrl+O",                CMD_OPEN
+        MENUITEM "&Save\tCtrl+S",                   CMD_SAVE
+        MENUITEM "Save &As...",                     CMD_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "Print Pre&view",                  CMD_PRINT_PREVIEW, GRAYED
+        MENUITEM "Page Set&up...",                  CMD_PAGE_SETUP, GRAYED
+        MENUITEM "&Print...\tCtrl+P",               CMD_PRINT, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "Set As &Wallpaper (Tiled)",       CMD_WALLPAPAER_TILED, GRAYED
+        MENUITEM "Set As Wa&llpaper (Centered)",    CMD_WALLPAPAER_CENTERED, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                           CMD_EXIT
+    }
+    POPUP "&Edit"
+    {
+        MENUITEM "&Undo\tCtrl+Z",       CMD_UNDO, GRAYED
+        MENUITEM "&Repeat\tCtrl+Y",     CMD_REPEAT, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",        CMD_CUT
+        MENUITEM "&Copy\tCtrl+C",       CMD_COPY
+        MENUITEM "&Paste\tCtrl+V",      CMD_PASTE
+        MENUITEM "&Delete\tDel",        CMD_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Select &All\tCtrl+A", CMD_SELECT_ALL
+        MENUITEM SEPARATOR
+        MENUITEM "C&opy To...",          CMD_COPY_TO
+        MENUITEM "Paste &From...",      CMD_PASTE_FROM
+    }
+    POPUP "&View"
+    {
+        MENUITEM "&Tool Box\tCtrl+T",   CMD_TOOL_BOX, CHECKED
+        MENUITEM "&Color Box\tCtrl+L",  CMD_COLOR_BOX, CHECKED
+        MENUITEM "&Status Bar",         CMD_STATUS_BAR, CHECKED
+        MENUITEM "&Text Tool",          CMD_TEXT_TOOL, CHECKED, GRAYED
+        MENUITEM SEPARATOR
+        POPUP "&Zoom"
+        {
+            MENUITEM "&Normal Size\tCtrl+PgUp", CMD_ZOOM_NORMAL
+            MENUITEM "&Large Size\tCtrl+PgDn",  CMD_ZOOM_LARGE
+            MENUITEM "C&ustom",                 CMD_ZOOM_CUSTOM
+            MENUITEM SEPARATOR
+            MENUITEM "Show &Grid\tCtrl+G",      CMD_SHOW_GRID
+            MENUITEM "Show T&humbnail",         CMD_SHOW_THUMBNAIL, GRAYED
+        }
+        MENUITEM "&View bitmap\tCtrl+F", CMD_VIEW_BITMAP, GRAYED
+    }
+    POPUP "&Image"
+    {
+        MENUITEM "Flip/Rotate...\tCtrl+R",      CMD_FLIP_ROTATE
+        MENUITEM "Stretch/Skew...\tCtrl+W",     CMD_STRETCH_SKEW
+        MENUITEM "Invert Colors\tCtrl+I",      CMD_INVERT_COLORS
+        MENUITEM "Attributes...\tCtrl+E",       CMD_ATTRIBUTES
+        MENUITEM "Clear Image\tCtrl+Shift+N",   CMD_CLEAR_IMAGE
+        MENUITEM "Draw Opaque",                 CMD_DRAW_OPAQUE, CHECKED, GRAYED
+    }
+    POPUP "&Color"
+    {
+        MENUITEM "&Edit color...",      CMD_EDIT_COLOR
+        MENUITEM "&Get Colors...",      CMD_GET_COLORS, GRAYED
+        MENUITEM "&Save Colors...",     CMD_SAVE_COLORS, GRAYED
+    }
+    POPUP "&Help"
+    {
+        MENUITEM "&Contents",           CMD_HELP_CONTENTS
+        MENUITEM "&Help on help",       CMD_HELP_ON_HELP
+        MENUITEM SEPARATOR
+        MENUITEM "&About Paint",        CMD_HELP_ABOUT_PAINT
+    }
+}
+
+TEXT_MENU MENU
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+    POPUP "Text"
+    {
+        MENUITEM "Undo",                CMD_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cut",                 CMD_CUT
+        MENUITEM "Copy",                CMD_COPY
+        MENUITEM "Paste",               CMD_PASTE
+        MENUITEM "Clear Selection",     CMD_CLEAR_SELECTION
+        MENUITEM "Select All",          CMD_SELECT_ALL
+        MENUITEM SEPARATOR
+        MENUITEM "Text Toolbar",        CMD_TEXT_TOOL
+    }
+}
+
+SELECTION_MENU MENU
+{
+    POPUP "Selection"
+    {
+        MENUITEM "Cu&t",                CMD_CUT
+        MENUITEM "&Copy",               CMD_COPY
+        MENUITEM "&Paste",              CMD_PASTE
+        MENUITEM "C&lear Selection",    CMD_CLEAR_SELECTION
+        MENUITEM "Select &All",         CMD_SELECT_ALL
+        MENUITEM SEPARATOR
+        MENUITEM "C&opy To...",         CMD_COPY_TO, GRAYED
+        MENUITEM "Paste &From...",      CMD_PASTE_FROM
+        MENUITEM SEPARATOR
+        MENUITEM "Flip/&Rotate...",     CMD_FLIP_ROTATE
+        MENUITEM "&Stretch/Skew...",    CMD_STRETCH_SKEW
+        MENUITEM "&Invert Colors",      CMD_INVERT_COLORS
+    }
+}
+
+IDD_ZOOM DIALOG 0, 0, 200, 83
+STYLE DS_MODALFRAME | DS_CENTER | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Custom Zoom"
+FONT 8, "MS Shell Dlg"
+{
+    LTEXT "Current zoom:", stc1, 13, 7, 47, 7
+    RTEXT "", stc2, 61, 7, 49, 9
+    GROUPBOX "Zoom to", grp1, 7, 20, 127, 57
+    CONTROL "&100%", rad1, "BUTTON", BS_AUTORADIOBUTTON, 13, 38, 33, 10
+    CONTROL "&200%", rad2, "BUTTON", BS_AUTORADIOBUTTON, 13, 57, 33, 10
+    CONTROL "&400%", rad3, "BUTTON", BS_AUTORADIOBUTTON, 56, 38, 33, 10
+    CONTROL "&600%", rad4, "BUTTON", BS_AUTORADIOBUTTON, 56, 57, 33, 10
+    CONTROL "&800%", rad5, "BUTTON", BS_AUTORADIOBUTTON, 94, 38, 33, 10
+    DEFPUSHBUTTON "OK", IDOK, 142, 7, 50, 14
+    PUSHBUTTON "Cancel", IDCANCEL, 142, 24, 50, 14
+}
+
+IDD_FLIP_ROTATE DIALOG 32, 16, 200, 107
+STYLE DS_MODALFRAME | DS_CENTER | WS_CAPTION | WS_SYSMENU
+CAPTION "Flip and Rotate"
+FONT 8, "MS Shell Dlg"
+{
+    GROUPBOX "Flip or rotate", grp1, 7, 7, 127, 94
+    CONTROL "&Flip horizontal", rad1, "BUTTON", BS_AUTORADIOBUTTON | WS_GROUP, 13, 20, 77, 9
+    CONTROL "Flip &vertical", rad2, "BUTTON", BS_AUTORADIOBUTTON, 13, 33, 72, 9
+    CONTROL "&Rotate by angle", rad3, "BUTTON", BS_AUTORADIOBUTTON, 13, 46, 72, 9
+    CONTROL "&90\xB0", rad4, "BUTTON", BS_AUTORADIOBUTTON | WS_GROUP | WS_DISABLED, 49, 60, 30, 10
+    CONTROL "&180\xB0", rad5, "BUTTON", BS_AUTORADIOBUTTON | WS_DISABLED, 49, 73, 31, 10
+    CONTROL "&270\xB0", rad6, "BUTTON", BS_AUTORADIOBUTTON | WS_DISABLED, 49, 86, 33, 10
+    DEFPUSHBUTTON "OK", IDOK, 142, 7, 50, 14
+    PUSHBUTTON "Cancel", IDCANCEL, 142, 24, 50, 14
+}
+
+IDD_STRETCH_SKEW DIALOG 18, 48, 232, 150
+STYLE DS_MODALFRAME | DS_CENTER | WS_CAPTION | WS_SYSMENU
+CAPTION "Stretch and Skew"
+FONT 9, "MS Shell Dlg"
+{
+    GROUPBOX "Stretch", IDC_STATIC, 7, 7, 160, 67
+    ICON     100, ico1, 15, 20, 21, 22
+    LTEXT    "&Horizontal:", IDC_STATIC, 47, 27, 46, 8
+    EDITTEXT edt1, 95, 26, 32, 12, ES_AUTOHSCROLL
+    LTEXT    "%", IDC_STATIC, 130, 28, 8, 8
+    ICON     101, ico2, 15, 45, 21, 22
+    LTEXT    "&Vertical:", IDC_STATIC, 47, 51, 46, 8
+    EDITTEXT edt2, 95, 50, 32, 12, ES_AUTOHSCROLL
+    LTEXT    "%", IDC_STATIC, 130, 52, 8, 8
+    GROUPBOX "Skew", IDC_STATIC, 7, 77, 160, 67, WS_DISABLED
+    ICON     102, ico3, 15, 90, 21, 22, WS_DISABLED
+    LTEXT    "H&orizontal:", IDC_STATIC, 47, 97, 46, 8, WS_DISABLED
+    EDITTEXT edt3, 95, 96, 32, 12, ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT    "Degree", IDC_STATIC, 130, 98, 28, 8, WS_DISABLED
+    ICON     103, ico4, 15, 115, 21, 22, WS_DISABLED
+    LTEXT    "V&ertical:", IDC_STATIC, 47, 121, 46, 8, WS_DISABLED
+    EDITTEXT edt4, 95, 120, 32, 12, ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT    "Degree", IDC_STATIC, 130, 122, 28, 8, WS_DISABLED
+    DEFPUSHBUTTON    "OK", IDOK, 175, 7, 50, 14
+    PUSHBUTTON       "Cancel", IDCANCEL, 175, 24, 50, 14
+}
+
+IDD_ATTRIBUTES DIALOG 0, 0, 234, 166
+STYLE DS_MODALFRAME | DS_CENTER | WS_CAPTION | WS_SYSMENU
+CAPTION "Attributes"
+FONT 8, "MS Shell Dlg"
+{
+    LTEXT    "", stc1, 13, 7, 144, 8
+    LTEXT    "", stc2, 13, 17, 144, 8
+    LTEXT    "&Width:", IDC_STATIC, 13, 34, 22, 10
+    EDITTEXT edt1, 42, 32, 32, 12, ES_AUTOHSCROLL | WS_GROUP
+    LTEXT    "&Height:", IDC_STATIC, 92, 34, 22, 10
+    EDITTEXT edt2, 123, 32, 32, 12, ES_AUTOHSCROLL
+    GROUPBOX "Units", IDC_STATIC, 7, 48, 154, 28
+    AUTORADIOBUTTON "&Inches", rad1, 13, 60, 34, 10, WS_GROUP | WS_DISABLED
+    AUTORADIOBUTTON "C&m", rad2, 63, 60, 27, 10, WS_DISABLED
+    AUTORADIOBUTTON "&Pixels", rad3, 105, 60, 30, 10
+    GROUPBOX        "Colors", IDC_STATIC, 7, 80, 154, 28
+    AUTORADIOBUTTON "&Black and white", rad4, 13, 92, 64, 10, WS_GROUP | WS_DISABLED
+    AUTORADIOBUTTON "Co&lors", rad5, 105, 92, 34, 10
+    GROUPBOX        "Transparency", IDC_STATIC, 7, 112, 154, 48
+    AUTOCHECKBOX    "Use &Transparent background color", chx1, 13, 124, 126, 10, WS_DISABLED
+    PUSHBUTTON      "Select &Color...", psh1, 33, 138, 73, 14, WS_DISABLED
+    CONTROL         "", stc4, "STATIC", SS_SIMPLE | SS_SUNKEN | WS_DISABLED, 119, 138, 16, 14
+    DEFPUSHBUTTON   "OK", IDOK, 176, 7, 50, 14
+    PUSHBUTTON      "Cancel", IDCANCEL, 176, 24, 50, 14
+    PUSHBUTTON      "&Default", psh2, 176, 41, 50, 14, WS_DISABLED
+}
+
+STRINGTABLE DISCARDABLE
+{
+    STRING_PAINT,           "Paint"
+    STRING_UNTITLED,        "Untitled"
+    STRING_ALL_FILES,       "All Files (*.*)"
+    STRING_BMP_FILES_BMP,   "Bitmap Files (*.bmp)"
+    STRING_DOESNOTEXIST,    "File '%s' does not exist.\n\nDo you want to create a new file?"
+    STRING_SAVECHANGE,      "Save changes to %s?"
+    STRING_NOTFOUND,        "'%s' could not be found."
+    STRING_MONOCROME_BM,    "Monochrome Bitmap (*.bmp)"
+    STRING_16COLOR_BM,      "16 Color Bitmap (*.bmp)"
+    STRING_256COLOR_BM,     "256 Color Bitmap (*.bmp)"
+    STRING_24BIT_BM,        "24-bit Bitmap (*.bmp)"
+    STRING_JPEG_FILES,      "JPEG (*.JPG;*.JPEG;*.JPE;*.JFIF)"
+    STRING_GIF_FILES,       "GIF (*.GIF)"
+    STRING_TIFF_FILES,      "TIFF (*.TIF;*.TIFF)"
+    STRING_PNG_FILES,       "PNG (*.PNG)"
+    STRING_ICON_FILES,      "Icon Files (*.ico)"
+    STRING_PCX_FILES,       "PCX Files (*.pcx)"
+    STRING_ALL_PICTURE,     "All Picture Files"
+    STRING_PALETTE,         "Palette (*.pal)"
+}
+
+STRINGTABLE DISCARDABLE
+{
+    STRING_POLYSELECT,      "Selects a free-form part of the picture to move, copy, or edit."
+    STRING_BOXSELECT,       "Selects a rectangular part of the picture to move, copy, or edit."
+    STRING_ERASER,          "Erases a portion of the picture, using the selected eraser shape."
+    STRING_FLOODFILL,       "Fills an area with the current drawing color."
+    STRING_SPOIT,           "Picks up a color from the picture for drawing."
+    STRING_MAGNIFIER,       "Changes the magnification."
+    STRING_PENCIL,          "Draws a free-form line one pixel wide."
+    STRING_BRUSH,           "Draws using a brush with the selected shape and size."
+    STRING_AIRBRUSH,        "Draws using an airbrush of the selected size."
+    STRING_TEXT,            "Inserts text into the picture."
+    STRING_LINE,            "Draws a straight line with the selected line width."
+    STRING_CURVE,           "Draws a curved line with the selected line width."
+    STRING_BOX,             "Draws a rectangle with the selected fill style."
+    STRING_POLYGON,         "Draws a polygon with the selected fill style."
+    STRING_ELLIPSE,         "Draws an ellipse with the selected fill style."
+    STRING_ROUNDRECT,       "Draws a rounded rectangle with the selected fill style."
+}
+
+STRINGTABLE DISCARDABLE
+{
+    STRING_NEW,             "Creates a new document."
+    STRING_OPEN,            "Opens an existing document."
+    STRING_SAVE,            "Saves the active document."
+    STRING_SAVE_AS,         "Saves the active document with a new name."
+    STRING_PRINT_PREVIEW,   "Displays full pages."
+    STRING_PAGE_SETUP,      "Changes the page layout."
+    STRING_PRINT,           "Prints the active document and sets printing options."
+    STRING_EXIT,            "Quits Paint."
+
+    STRING_WALLPAPAER_TILED,    "Tiles this bitmap as the desktop wallpaper."
+    STRING_WALLPAPAER_CENTERED, "Centers this bitmap as the desktop wallpaper."
+
+    STRING_UNDO,            "Undoes the last action."
+    STRING_CUT,             "Cuts the selection and puts it on the Clipboard."
+    STRING_COPY,            "Copies the selection and puts it on the Clipboard."
+    STRING_PASTE,           "Inserts the contents of the Clipboard."
+    STRING_DELETE,          "Deletes the selection."
+    STRING_SELECT_ALL,      "Selects everything."
+    STRING_REPEAT,          "Repeats the last action."
+    STRING_COPY_TO,         "Copies the selection to a file."
+    STRING_PASTE_FROM,      "Pastes a file into the selection."
+
+    STRING_TOOL_BOX,        "Shows or hides the tool box."
+    STRING_COLOR_BOX,       "Shows or hides the color box."
+    STRING_STATUS_BAR,      "Shows or hides the status bar."
+    STRING_TEXT_TOOL,       "Shows or hides the text toolbar."
+    STRING_ZOOM_NORMAL,     "Zooms the picture to 100%."
+    STRING_ZOOM_LARGE,      "Zooms the picture to 400%."
+    STRING_ZOOM_CUSTOM,     "Zooms the picture."
+    STRING_SHOW_GRID,       "Shows or hides the grid."
+    STRING_VIEW_BITMAP,     "Displays the entire picture."
+    STRING_SHOW_THUMBNAIL,  "Shows or hides the thumbnail."
+
+    STRING_FLIP_ROTATE,     "Flips or rotates the picture or a selection."
+    STRING_STRETCH_SKEW,    "Stretches or skews the picture or a selection."
+    STRING_INVERT_COLORS,   "Inverts the colors of the picture or a selection."
+    STRING_ATTRIBUTES,      "Changes the attributes of the picture."
+    STRING_CLEAR_IMAGE,     "Clears the picture or selection."
+    STRING_DRAW_OPAQUE,     "Makes the current selection either opaque or transparent."
+    STRING_CLEAR_SELECTION, "Clears the picture or selection."
+
+    STRING_EDIT_COLOR,      "Creates a new color."
+    STRING_GET_COLORS,      "Uses a previously saved palette of colors."
+    STRING_SAVE_COLORS,     "Saves the current palette of colors to a file."
+
+    STRING_HELP_CONTENTS,       "Opens Paint Help."
+    STRING_HELP_ON_HELP,        "Displays instructions about how to use Help."
+    STRING_HELP_ABOUT_PAINT,    "Displays program information, version number, and copyright."
+}
+
+STRINGTABLE DISCARDABLE
+{
+    STRING_SIZE,            "Changes the window size."
+    STRING_MOVE,            "Changes the window position."
+    STRING_MINIMIZE,        "Reduces the window to an icon."
+    STRING_MAXIMIZE,        "Enlarges the window to full size."
+    STRING_NEXTWINDOW,      "Switches to the next document window."
+    STRING_PREVWINDOW,      "Switches to the previous document window."
+    STRING_CLOSE,           "Closes the active window and asks if you want to save changes."
+    STRING_RESTORE,         "Restores the window to normal size."
+    STRING_TASKLIST,        "Activates the task list."
+}
+
+STRINGTABLE DISCARDABLE
+{
+    STRING_READY,           "Ready"
+    STRING_POSITIVE_INT,    "Please enter a positive integer."
+    STRING_INVALID_BM,      "Invalid bitmap file"
+    STRING_LOSS_COLOR,      "Saving into this format may cause some loss of color information.\nDo you want to continue?"
+}
