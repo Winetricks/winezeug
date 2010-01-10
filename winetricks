@@ -1602,7 +1602,7 @@ _EOF_
 
 load_icodecs() {
     # http://downloadcenter.intel.com/Detail_Desc.aspx?strState=LIVE&ProductID=355&DwnldID=2846
-    download . http://downloadmirror.intel.com/2846/eng/codinstl.exe 2c5d64f472abe3f601ce352dcca75b4f02996f8a
+    download . ftp://download.intel.com/support/createshare/camerapack/codinstl.exe 2c5d64f472abe3f601ce352dcca75b4f02996f8a
     try $WINE "$WINETRICKS_CACHE"/codinstl.exe
     # Work around bug in codec's installer?
     # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
