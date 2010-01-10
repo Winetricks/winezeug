@@ -52,6 +52,7 @@ for verb in \
     msi2 \
     msls31 \
     msmask \
+    mspaint \
     msscript \
     msxml3 \
     msxml4 \
