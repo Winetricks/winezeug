@@ -685,6 +685,7 @@ echo "--multisamping - Runs winetest.exe with multisampling enabled"
 echo "--no-glsl - Runs winetest.exe with glsl disabled"
 echo "--no-win16 - Builds Wine without win16 support and runs winetest.exe"
 echo "--pbuffer - Runs winetest.exe with offscreen rendering mode set to pbuffer"
+echo "--relay - Runs winetest.exe with WINEDEBUG=+relay"
 echo "--rtlm-disabled - Runs winetest.exe with RenderTargetLockMode disabled"
 echo "--rtlm-readdraw - Runs winetest.exe with RenderTargetLockMode set to readdraw"
 echo "--rtlm-readtex - Runs winetest.exe with RenderTargetLockMode set to readtex"
@@ -721,6 +722,7 @@ NOGLSL_TEST=0
 NOWIN16_TEST=0
 OSS_TEST=0
 PBUFFER_TEST=0
+RElAY_TEST=0
 RTLM_DISABLED=0
 RTLM_READDRAW=0
 RTLM_READTEX=0zz
@@ -757,6 +759,7 @@ do
     --no-win16) export NOWIN16_TEST=1;;
     --oss) export OSS_TEST=1;;
     --pbuffer) export PBUFFER_TEST=1;;
+    --relay) export RELAY_TEST=1;;
     --rtlm-disabled) export RTLM_DISABLED=0;;
     --rtlm-readdraw) export RTLM_READDRAW=0;;
     --rtlm-readtex) export RTLM_READTEX=1;;
@@ -942,6 +945,10 @@ if [ $PBUFFER_TEST = 1 ]
         pbuffer_test
 fi
 
+if [ $RELAY_TEST = 1 ]
+    then
+        relay_test
+fi
 
 if [ $RTLM_DISABLED = 1 ]
     then
