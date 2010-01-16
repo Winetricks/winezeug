@@ -2709,8 +2709,8 @@ load_vc2005express()
         warn "Don't forget to install the IDE, or mt.exe won't be installed"
         cd "$WINETRICKS_CACHE"/vc2005express
         try $WINE vcsetup.exe
-        # The interactive installer seems to be asynchronous, so wait until its log file directory is created
-        while test ! -d "$programfilesdir_unix/Microsoft Visual Studio 8/Microsoft Visual C++ 2005 Express Edition - ENU/Logs"
+        # The interactive installer seems to be asynchronous, so wait until one of the last files is created
+        while test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
         do
           echo "Waiting for install to finish..."
           sleep 10
