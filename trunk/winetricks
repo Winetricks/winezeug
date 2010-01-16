@@ -1086,6 +1086,8 @@ load_dotnet11sdk() {
 #----------------------------------------------------------------
 
 load_dotnet20() {
+    load_fontfix
+
     # If this is just a dependency check, don't re-install
     if test $PACKAGE != dotnet20 && test -f "$WINDIR"/system32/l_intl.nls
     then
@@ -1337,9 +1339,13 @@ load_fontfix() {
     fi
 
     # Focht says Samyak is bad news, and font substitution isn't a good workaround.
-    if xlsfonts 2>/dev/null | grep -i samyak
+    # I've seen psdkwin7 setup crash because of this; the symptom was a messagebox saying
+    # SDKSetup encountered an error: The type initializer for 'Microsoft.WizardFramework.WizardSettings' threw an exception
+    # and WINEDEBUG=+relay,+seh shows an exception very quickly after
+    # Call KERNEL32.CreateFileW(0c83b36c L"Z:\\USR\\SHARE\\FONTS\\TRUETYPE\\TTF-ORIYA-FONTS\\SAMYAK-ORIYA.TTF",80000000,00000001,00000000,00000003,00000080,00000000) ret=70d44091
+    if xlsfonts 2>/dev/null | egrep -i "samyak|oriya"
     then
-        warn "Please uninstall the Samyak font.  It has been known to cause problems."
+        die "Please uninstall the Samyak/Oriya font, e.g. 'sudo dpkg -r ttf-oriya-fonts', then log out and log in again.  That font causes strange crashes in .net programs."
     fi
 }
 
@@ -3247,7 +3253,7 @@ do
     divx) load_divx;;
     dotnet1|dotnet11) load_dotnet11; load_fontfix;;
     dotnet11sdk) load_dotnet11sdk;;
-    dotnet2|dotnet20) load_dotnet20; load_fontfix;;
+    dotnet2|dotnet20) load_dotnet20;;
     dotnet20sdk) load_dotnet20sdk;;
     dotnet20sp2) load_dotnet20sp2; load_fontfix;;
     dotnet3|dotnet30) load_dotnet30; load_fontfix;;
