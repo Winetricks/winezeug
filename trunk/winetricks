@@ -1337,7 +1337,7 @@ load_fontfix() {
     fi
 
     # Focht says Samyak is bad news, and font substitution isn't a good workaround.
-    if xlsfonts | grep -i samyak
+    if xlsfonts 2>/dev/null | grep -i samyak
     then
         warn "Please uninstall the Samyak font.  It has been known to cause problems."
     fi
