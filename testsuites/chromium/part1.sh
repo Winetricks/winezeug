@@ -1,9 +1,11 @@
 #!/bin/sh
 # First step in building chromium with visual c++
-# Before running, patch wine to work around following problems:
+# Before running, patch wine to work around following problems (each has an attached patch):
 #
 # %~dp0 doesn't work properly
-# bug http://bugs.winehq.org/show_bug.cgi?id=21382 patch http://bugs.winehq.org/attachment.cgi?id=25746
+# bug http://bugs.winehq.org/show_bug.cgi?id=21382
+# PATH screwed up
+# bug http://bugs.winehq.org/show_bug.cgi?id=21322 
 
 do_init=0
 if test "$1"x = "--init"x
@@ -97,14 +99,38 @@ then
    $WINE cmd /c gclient help 
 fi
 
+# gyp needs to know username and domain for some reason (see http://code.google.com/p/gyp/issues/detail?id=100 )
+export USERNAME=dank
+export USERDOMAIN=kegel.com
+# Work around Bug 19533 - reg.exe missing most options; breaks firefox and chromium builds
+# http://bugs.winehq.org/show_bug.cgi?id=19533
+export GYP_GENERATORS=msvs
+export GYP_MSVS_VERSION=2005
+
 # Get sources!
 if test ! -d src
 then
-   gclient config http://src.chromium.org/svn/trunk/src 
-   gclient sync
+   rm -f .gclient .gclient_entries
+   $WINE cmd /c gclient config http://src.chromium.org/svn/trunk/src 
+   $WINE cmd /c gclient sync
+
+   # Follow instructions in third_party/cygwin/README.google for
+   # setting up mounts for the bundled version of cygwin.
+   # Not sure why we have to do this on wine but not windows,
+   # but not doing it makes the libcmt custom build step fail
+   # because #!/bin/sh doesn't point to the embedded cygwin's sh
+   # (though #!/cygdrive/c/cygwin/bin/sh does, showing it's just a 
+   # mount problem).
+   $WINE cmd /c src\\third_party\\cygwin\\setup_mount.bat
 fi
 
-# Build!
-$WINE "C:\Program Files\Microsoft Visual Studio 8\Common7\IDE\devenv"
+# Clean old build result, if any
+#rm -rf "$DRIVE_C/chromium/src/chrome/Debug"
+
+# Build!  The three projects we want to start with are base_unittests, net_unittests, and unit_tests.
+cd src
+$WINE "C:\Program Files\Microsoft Visual Studio 8\Common7\IDE\devenv" /build Debug /out base_unittests.log /project base_unittests chrome\\chrome.sln
+#$WINE "C:\Program Files\Microsoft Visual Studio 8\Common7\IDE\devenv" /build Debug /out net_unittests.log /project net_unittests chrome\\chrome.sln
+#$WINE "C:\Program Files\Microsoft Visual Studio 8\Common7\IDE\devenv" /build Debug /out unit_tests.log /project unit_tests chrome\\chrome.sln
 
 echo done
