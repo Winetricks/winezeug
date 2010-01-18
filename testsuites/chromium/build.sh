@@ -1,5 +1,10 @@
 #!/bin/sh
-# First step in building chromium with visual c++
+# Script to set up build envrionment for chromium with visual c++
+# and then build part or all of chromium.
+# Without arguments, just sets up the build environment.
+# With an argument, also starts the ide or builds the module indicated by the argument.
+# Usage: build.sh ide|base|net|unit|clean
+#
 # Before running, patch wine to work around following problems (each has an attached patch):
 #
 # %~dp0 doesn't work properly
@@ -149,13 +154,16 @@ then
    $WINE cmd /c src\\third_party\\cygwin\\setup_mount.bat
 fi
 
-# Clean old build result, if any
-#rm -rf "$DRIVE_C/chromium/src/chrome/Debug"
-
-# Build!  The three projects we want to start with are base_unittests, net_unittests, and unit_tests.
 cd src
-$WINE "$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE\\devenv" /build Debug /out base_unittests.log /project base_unittests chrome\\chrome.sln
-#$WINE "$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE\\devenv" /build Debug /out net_unittests.log /project net_unittests chrome\\chrome.sln
-#$WINE "$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE\\devenv" /build Debug /out unit_tests.log /project unit_tests chrome\\chrome.sln
 
-echo done
+# Now that the environment is set up, get on with whatever the developer needs to do.
+
+DEVENV="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE\\devenv" 
+case "$1" in
+clean) rm -rf "$DRIVE_C/chromium/src/chrome/Debug" ;;
+ide)  $WINE "$DEVENV" ;;
+base) $WINE "$DEVENV" /build Debug /out base.log /project base_unittests chrome\\chrome.sln ;;
+net)  $WINE "$DEVENV" /build Debug /out net.log  /project net_unittests  chrome\\chrome.sln ;;
+unit) $WINE "$DEVENV" /build Debug /out unit.log /project unit_tests     chrome\\chrome.sln ;;
+*) echo "Usage: build.sh ide|base|net|unit|clean" ;;
+esac
