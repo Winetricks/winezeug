@@ -161,7 +161,7 @@ cd src
 DEVENV="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE\\devenv" 
 case "$1" in
 clean) rm -rf "$DRIVE_C/chromium/src/chrome/Debug" ;;
-ide)  $WINE "$DEVENV" ;;
+ide)  $WINE "$DEVENV" chrome\\chrome.sln ;;
 base) $WINE "$DEVENV" /build Debug /out base.log /project base_unittests chrome\\chrome.sln ;;
 net)  $WINE "$DEVENV" /build Debug /out net.log  /project net_unittests  chrome\\chrome.sln ;;
 unit) $WINE "$DEVENV" /build Debug /out unit.log /project unit_tests     chrome\\chrome.sln ;;
