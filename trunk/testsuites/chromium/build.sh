@@ -89,6 +89,10 @@ fi
 # then simply copied the resulting
 # C:\Program Files\Microsoft Visual Studio 8\VC\vcpackages\VCProjectEngine.dll.config
 # thereafter.
+# 
+# NOTE: on Vista, this copy doesn't seem to work; the file lands in a virtual
+# overlay directory which is ignored by visual studio.  You have to
+# copy the file using Explorer to override the virtual overlay.
 
 cp VCProjectEngine.dll.config "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcpackages/"
 
@@ -102,8 +106,8 @@ if test ! -f "$DRIVE_C/chromium/depot_tools/gclient"
 then
    mkdir depot_tools
    svn co http://src.chromium.org/svn/trunk/tools/depot_tools
-   # Add it to user's PATH
-   $WINE regedit depot_tools.reg
+   # Add it to user's PATH.  Note: native regedit requires absolute path.
+   $WINE regedit C:\\chromium\\depot_tools.reg
 fi
 
 # Get gclient to install svn
@@ -115,14 +119,12 @@ then
       patch -p0 < depot_tools.patch
    fi
    # First run causes it to download and install svn.
-   $WINE cmd /c gclient help || true
+   $WINE cmd /c depot_tools\\gclient.bat || true
    if test "$OS" != Windows_NT
    then
       # It fails at the very last moment, so do the missing two steps.
       cp depot_tools/bootstrap/win/python.new.bat depot_tools/python.bat
       cp depot_tools/bootstrap/win/python.new depot_tools/python
-      # Show that it works.
-      $WINE cmd /c gclient help 
    fi
 fi
 
