@@ -158,14 +158,22 @@ fi
 
 cd src
 
+buildproj() {
+   rm -f $1.log
+   $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
+}
+
 # Now that the environment is set up, get on with whatever the developer needs to do.
 
-DEVENV="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE\\devenv" 
+IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 case "$1" in
-clean) rm -rf "$DRIVE_C/chromium/src/chrome/Debug" ;;
-ide)  $WINE "$DEVENV" chrome\\chrome.sln ;;
-base) $WINE "$DEVENV" /build Debug /out base.log /project base_unittests chrome\\chrome.sln ;;
-net)  $WINE "$DEVENV" /build Debug /out net.log  /project net_unittests  chrome\\chrome.sln ;;
-unit) $WINE "$DEVENV" /build Debug /out unit.log /project unit_tests     chrome\\chrome.sln ;;
-*) echo "Usage: build.sh ide|base|net|unit|clean" ;;
+clean)    rm -rf "$DRIVE_C/chromium/src/chrome/Debug" ;;
+kill)     ~/wine-git/server/wineserver -k;;
+runhooks) $WINE cmd /c gclient runhooks --force ;;
+start)    $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 ;;
+ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
+base)     buildproj base_unittests;;
+net)      buildproj net_unittests;;
+unit)     buildproj unit_tests;;
+*) echo "Usage: build.sh ide|base|net|unit|clean|kill|start" ;;
 esac
