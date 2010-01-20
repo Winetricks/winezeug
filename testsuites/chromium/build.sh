@@ -38,6 +38,8 @@ fi
 
 set -e
 
+OLDDIR=`pwd`
+
 case "$OS" in
  "Windows_NT") 
    # Windows or Wine
@@ -182,6 +184,9 @@ then
    # (though #!/cygdrive/c/cygwin/bin/sh does, showing it's just a 
    # mount problem).
    $WINE cmd /c src\\third_party\\cygwin\\setup_mount.bat
+
+   # For my convenience while developing this script, maybe useful for others
+   ln -s "$DRIVE_C/chromium/src" "$OLDDIR"
 fi
 
 cd src
@@ -219,6 +224,7 @@ do_all() {
   do_clean
   do_gclient sync
   do_build base_unittests
+  do_kill
 }
 
 # Now that the environment is set up, get on with whatever the developer needs to do.
@@ -232,7 +238,8 @@ cmd)      $WINE cmd ;;
 gclient)  shift; do_gclient "$@" ;;
 ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
 kill)     do_kill;;
-vcsave)   tar -C "$PROGRAM_FILES_x86" -czvf vc8.tgz "Microsoft Visual Studio 8";;
+vcsave)   # fixme: abort if $IDEDIR/devenv.exe does not exist
+          tar -C "$PROGRAM_FILES_x86" -czvf vc8.tgz "Microsoft Visual Studio 8";;
 vcload)   tar -C "$PROGRAM_FILES_x86" -xzvf vc8.tgz ;;
 start)    do_start ;;
 *)        usage ;;
