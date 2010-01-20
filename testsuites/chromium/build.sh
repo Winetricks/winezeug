@@ -205,7 +205,7 @@ do_gclient() {
 }
 
 do_kill() {
-   $WINESERVER -k
+   $WINESERVER -k || true
 }
 
 do_start() {
