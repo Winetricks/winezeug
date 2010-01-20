@@ -45,10 +45,12 @@ case "$OS" in
    PROGRAM_FILES_x86="$DRIVE_C/Program Files (x86)"
    PROGRAM_FILES="$DRIVE_C/Program Files"
    WINE="cmd /c"
+   WINESERVER=true
    ;;
  *)
    # Linux
    DIR=`pwd`
+   WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
    WINE=${WINE:-$HOME/wine-git/wine}
    export WINE
    WINEDEBUG=${WINEDEBUG:-fixme-all,warn-all,err-all}
@@ -99,22 +101,26 @@ if test ! -f "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Lib/windowscodecs.lib"
 then
    echo "Be sure to only select the minimum options needed for C development in the Platform SDK!"
    sh ../../winetricks -v psdkwin7
+
+   # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
+   # says "integrate windows SDK into Visual C++ 2005 by running windowssdkver -version:v7 -legacy",
+   # but that fails because of http://bugs.winehq.org/show_bug.cgi?id=21362
+   # So instead, I did it once by hand per
+   # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Manually-registering-the-Platform-S
+   # then simply copied the resulting
+   # C:\Program Files\Microsoft Visual Studio 8\VC\vcpackages\VCProjectEngine.dll.config
+   # thereafter.
+   # 
+   # NOTE: on Vista, this copy doesn't seem to work; the file lands in a virtual
+   # overlay directory which is ignored by visual studio.  You have to
+   # copy the file using Explorer to override the virtual overlay.
+   
+   case "$OS" in
+   Windows_NT) echo "Please copy VCProjectEngine.dll.config to $PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcpackages/" ;;
+   *) cp VCProjectEngine.dll.config "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcpackages/" ;;
+   esac
+   
 fi
-
-# http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
-# says "integrate windows SDK into Visual C++ 2005 by running windowssdkver -version:v7 -legacy",
-# but that fails because of http://bugs.winehq.org/show_bug.cgi?id=21362
-# So instead, I did it once by hand per
-# http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Manually-registering-the-Platform-S
-# then simply copied the resulting
-# C:\Program Files\Microsoft Visual Studio 8\VC\vcpackages\VCProjectEngine.dll.config
-# thereafter.
-# 
-# NOTE: on Vista, this copy doesn't seem to work; the file lands in a virtual
-# overlay directory which is ignored by visual studio.  You have to
-# copy the file using Explorer to override the virtual overlay.
-
-cp VCProjectEngine.dll.config "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcpackages/"
 
 mkdir -p "$DRIVE_C/chromium"
 cp depot_tools.reg depot_tools.patch "$DRIVE_C/chromium"
@@ -159,12 +165,14 @@ fi
 export GYP_GENERATORS=msvs
 export GYP_MSVS_VERSION=2005
 
-# Get sources!
+# Set up svn client and cygwin
 if test ! -d src
 then
    rm -f .gclient .gclient_entries
    $WINE cmd /c gclient config http://src.chromium.org/svn/trunk/src 
-   $WINE cmd /c gclient sync
+   cd src
+   $WINE cmd /c svn sync third_party/cygwin
+   cd ..
 
    # Follow instructions in third_party/cygwin/README.google for
    # setting up mounts for the bundled version of cygwin.
@@ -178,7 +186,7 @@ fi
 
 cd src
 
-buildproj() {
+do_build() {
    case $1 in
    base_unittests|net_unittests|unit_tests) ;;
    *) echo unknown project $1, might explode;;
@@ -188,16 +196,44 @@ buildproj() {
    time $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
 }
 
+do_clean() {
+   rm -rf "$DRIVE_C/chromium/src/chrome/Debug" 
+}
+
+do_gclient() {
+   $WINE cmd /c gclient "$@"
+}
+
+do_kill() {
+   $WINESERVER -k
+}
+
+do_start() {
+   $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 > start.log 2>&1 &
+}
+
+# Example of how to do it all from start to finish
+do_all() {
+  do_kill
+  do_start
+  do_clean
+  do_gclient sync
+  do_build base_unittests
+}
+
 # Now that the environment is set up, get on with whatever the developer needs to do.
 
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 case "$1" in
-build)    shift; buildproj $1;;
-clean)    rm -rf "$DRIVE_C/chromium/src/chrome/Debug" ;;
+all)      do_all ;;
+build)    shift; do_build $1;;
+clean)    do_clean ;;
 cmd)      $WINE cmd ;;
-gclient)  shift; $WINE cmd /c gclient "$@" ;;
+gclient)  shift; do_gclient "$@" ;;
 ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
-kill)     ~/wine-git/server/wineserver -k;;
-start)    $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 > start.log 2>&1 &;;
+kill)     do_kill;;
+vcsave)   tar -C "$PROGRAM_FILES_x86" -czvf vc8.tgz "Microsoft Visual Studio 8";;
+vcload)   tar -C "$PROGRAM_FILES_x86" -xzvf vc8.tgz ;;
+start)    do_start ;;
 *)        usage ;;
 esac
