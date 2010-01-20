@@ -3,7 +3,6 @@
 # and then build part or all of chromium.
 # Without arguments, just sets up the build environment.
 # With an argument, also starts the ide or builds the module indicated by the argument.
-# Usage: build.sh ide|base|net|unit|clean
 #
 # Before running, patch wine to work around following problems (each has an attached patch):
 #
@@ -11,14 +10,32 @@
 # bug http://bugs.winehq.org/show_bug.cgi?id=21382
 # PATH screwed up
 # bug http://bugs.winehq.org/show_bug.cgi?id=21322 
+#
+# and do
+#     sudo apt-get install cabextract winbind
+# or winetricks and svn will complain.
+
+usage() {
+   set +x
+   echo "Usage: build.sh [--init] build|clean|cmd|gclient|ide|kill|start"
+   echo " --init: wipe out wine bottle and start over"
+   echo " build XXX: build project XXX (e.g. base_unittests, net_unittests, unit_tests)"
+   echo " clean: remove built objects and binaries in src/chrome/Debug"
+   echo " cmd: windows command prompt"
+   echo " gclient: run gclient with given arguments"
+   echo " ide: run Visual C++ IDE"
+   echo " kill: kill wineserver"
+   echo " start: start persistent pdbserver (else you'll see random hangs)"
+   exit 1
+}
 
 do_init=0
 if test "$1"x = "--init"x
 then
   do_init=1
+  shift
 fi
 
-set -x
 set -e
 
 case "$OS" in
@@ -32,7 +49,10 @@ case "$OS" in
  *)
    # Linux
    DIR=`pwd`
-   export WINE=$HOME/wine-git/wine
+   WINE=${WINE:-$HOME/wine-git/wine}
+   export WINE
+   WINEDEBUG=${WINEDEBUG:-fixme-all,warn-all,err-all}
+   export WINEDEBUG
    WINEPREFIX=${WINEPREFIX:-$HOME/.wine-chromium-tests}
    export WINEPREFIX
    DRIVE_C=$WINEPREFIX/drive_c
@@ -110,8 +130,8 @@ then
    $WINE regedit C:\\chromium\\depot_tools.reg
 fi
 
-# Get gclient to install svn
-if test ! -d depot_tools/svn_bin
+# Get gclient to install svn and python
+if test ! -d depot_tools/python_bin
 then
    # Work around http://bugs.winehq.org/show_bug.cgi?id=19799 and http://bugs.winehq.org/show_bug.cgi?id=21381
    if test "$OS" != Windows_NT
@@ -159,21 +179,25 @@ fi
 cd src
 
 buildproj() {
+   case $1 in
+   base_unittests|net_unittests|unit_tests) ;;
+   *) echo unknown project $1, might explode;;
+   esac
+
    rm -f $1.log
-   $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
+   time $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
 }
 
 # Now that the environment is set up, get on with whatever the developer needs to do.
 
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 case "$1" in
+build)    shift; buildproj $1;;
 clean)    rm -rf "$DRIVE_C/chromium/src/chrome/Debug" ;;
-kill)     ~/wine-git/server/wineserver -k;;
-runhooks) $WINE cmd /c gclient runhooks --force ;;
-start)    $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 ;;
+cmd)      $WINE cmd ;;
+gclient)  shift; $WINE cmd /c gclient "$@" ;;
 ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
-base)     buildproj base_unittests;;
-net)      buildproj net_unittests;;
-unit)     buildproj unit_tests;;
-*) echo "Usage: build.sh ide|base|net|unit|clean|kill|start" ;;
+kill)     ~/wine-git/server/wineserver -k;;
+start)    $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 > start.log 2>&1 &;;
+*)        usage ;;
 esac
