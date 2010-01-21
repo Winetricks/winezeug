@@ -16,7 +16,7 @@
 #
 # If running on Windows:
 # First download cygwin's setup.exe to new directory c:/cygpkgs
-# and run it to install Cygwin, Subversion, cabextract, and unzip.
+# and run it to install Cygwin, Subversion, cabextract, unzip, and wget.
 # Note: until wine can run cygwin 1.7, be sure to use the same setup.exe 
 # as winetricks does, i.e.
 #   http://kegel.com/cygwin/1.5/setup.exe
@@ -101,7 +101,7 @@ done
 # says "install Visual C++ 2005"
 if test ! -f "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcvarsall.bat"
 then
-   time sh ../../winetricks vcrun2005
+   time sh ../../winetricks -q vcrun2005
    time sh ../../winetricks vc2005trial
 fi
 
@@ -183,10 +183,9 @@ export GYP_MSVS_VERSION=2005
 if test ! -d src
 then
    rm -f .gclient .gclient_entries
-   $WINE cmd /c gclient config http://src.chromium.org/svn/trunk/src 
-   cd src
-   $WINE cmd /c svn sync third_party/cygwin
-   cd ..
+   $WINE cmd /c depot_tools\\gclient.bat config http://src.chromium.org/svn/trunk/src 
+   # FIXME: make this optional somehow.
+   $WINE cmd /c depot_tools\\gclient.bat sync
 
    # Follow instructions in third_party/cygwin/README.google for
    # setting up mounts for the bundled version of cygwin.
