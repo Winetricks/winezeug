@@ -4,16 +4,24 @@
 # Without arguments, just sets up the build environment.
 # With an argument, also starts the ide or builds the module indicated by the argument.
 #
-# Before running, patch wine to work around following problems (each has an attached patch):
-#
-# %~dp0 doesn't work properly
-# bug http://bugs.winehq.org/show_bug.cgi?id=21382
-# PATH screwed up
-# bug http://bugs.winehq.org/show_bug.cgi?id=21322 
-#
+# If running on Linux:
+# First patch wine for the following problems (each has an attached patch):
+#  %~dp0 doesn't work properly
+#    http://bugs.winehq.org/show_bug.cgi?id=21382
+#  PATH screwed up
+#    http://bugs.winehq.org/show_bug.cgi?id=21322 
 # and do
-#     sudo apt-get install cabextract winbind
+#  sudo apt-get install cabextract winbind
 # or winetricks and svn will complain.
+#
+# If running on Windows:
+# First download cygwin's setup.exe to new directory c:/cygpkgs
+# and run it to install Cygwin.  
+# Note: until wine can run cygwin 1.7, be sure to use the same setup.exe 
+# as winetricks does, i.e.
+#   http://kegel.com/cygwin/1.5/setup.exe
+# and paste in the same repo as cygwin tells you to, i.e.
+#   ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037
 
 usage() {
    set +x
