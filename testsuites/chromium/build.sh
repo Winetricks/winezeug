@@ -16,12 +16,16 @@
 #
 # If running on Windows:
 # First download cygwin's setup.exe to new directory c:/cygpkgs
-# and run it to install Cygwin.  
+# and run it to install Cygwin, Subversion, cabextract, and unzip.
 # Note: until wine can run cygwin 1.7, be sure to use the same setup.exe 
 # as winetricks does, i.e.
 #   http://kegel.com/cygwin/1.5/setup.exe
+# but use the -X commandline option,
 # and paste in the same repo as cygwin tells you to, i.e.
 #   ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037
+#
+# Use Subversion to check out winezeug.googlecode.com, and run this script 
+# from the Winezeug tree.
 
 usage() {
    set +x
@@ -87,7 +91,7 @@ then
    PROGRAM_FILES_x86_WIN="$PROGRAM_FILES_WIN"
 fi
 
-while ! test -f "$DRIVE_C/cygwin/bin/unzip.exe"
+while ! test -f "$DRIVE_C/cygwin/bin/unzip.exe" || ! test -f "$DRIVE_C/cygwin/bin/wget.exe" 
 do
    echo "Please install unzip and wget in cygwin"
    time sh ../../winetricks cygwin
