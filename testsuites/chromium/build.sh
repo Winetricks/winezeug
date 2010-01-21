@@ -236,7 +236,7 @@ do_all() {
   do_kill
   do_start
   do_clean
-  do_gclient sync
+  #do_gclient sync
   do_build base_unittests
   do_kill
 }
