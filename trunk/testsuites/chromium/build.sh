@@ -103,6 +103,9 @@ if test ! -f "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcvarsall.bat"
 then
    time sh ../../winetricks -q vcrun2005
    time sh ../../winetricks vc2005trial
+   # The following two fail in Wine; use vcsave/vcload verbs for now.
+   time sh ../../winetricks vc2005sp1
+   time sh ../../winetricks vc2005hotfix
 fi
 
 # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
@@ -217,7 +220,7 @@ do_clean() {
 }
 
 do_gclient() {
-   $WINE cmd /c gclient "$@"
+   $WINE cmd /c "c:\\chromium\\depot_tools\\gclient.bat" "$@"
 }
 
 do_kill() {
