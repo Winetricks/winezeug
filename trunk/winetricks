@@ -51,7 +51,7 @@ esac
 WINETRICKS_CACHE="$HOME/winetrickscache"
 # Default to hiding the directory, by popular demand
 test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
-WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE`"
+WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
 mkdir -p $WINETRICKS_TMP
@@ -2936,7 +2936,7 @@ load_one_hotfix()
     then
        case "$OS" in
        "Windows_NT")
-          $WINE start "https://connect.microsoft.com/VisualStudio/Downloads/DownloadDetails.aspx?DownloadID=$downloadid" ;;
+          $WINE cygstart "https://connect.microsoft.com/VisualStudio/Downloads/DownloadDetails.aspx?DownloadID=$downloadid" ;;
        *) # fails for chrome, see http://crbug.com/32800
           xdg-open "https://connect.microsoft.com/VisualStudio/Downloads/DownloadDetails.aspx?DownloadID=$downloadid" ;;
        esac
@@ -2965,13 +2965,15 @@ load_vc2005hotfix()
 
     mkdir -p "$WINETRICKS_CACHE/vs2005hotfixes"
     case "$OS" in
-    "Windows_NT") $WINE start "$WINETRICKS_CACHE_WIN\\vs2005hotfixes" ;;
+    "Windows_NT") $WINE cygstart "$WINETRICKS_CACHE_WIN\\vs2005hotfixes" ;;
     *)            xdg-open "$WINETRICKS_CACHE/vs2005hotfixes" ;;
     esac
 
     load_one_hotfix KB935225 7258  306439_ENU_i386_zip.exe VS80sp1-KB935225-X86-ENU.exe
     load_one_hotfix KB947315 11587 341798_ENU_i386_zip.exe VS80sp1-KB947315-X86-ENU.exe
-    load_one_hotfix KB958842 16558 VS90SP1-KB958842-x86.exe VS90SP1-KB958842-x86.exe 
+    load_one_hotfix KB949009 18623 VS80sp1-KB949009-X86-INTL.exe VS80sp1-KB949009-X86-INTL.exe 
+    load_one_hotfix KB946310 10644 335739_ENU_i386_zip.exe VS80sp1-KB946310-X86-ENU.exe
+    # KB971090 is part of the sp1 verb, since it can be downloaded normally
 }
 
 #----------------------------------------------------------------
