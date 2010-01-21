@@ -253,7 +253,20 @@ gclient)  shift; do_gclient "$@" ;;
 ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
 kill)     do_kill;;
 vcsave)   # fixme: abort if $IDEDIR/devenv.exe does not exist
-          tar -C "$PROGRAM_FILES_x86" -czvf vc8.tgz "Microsoft Visual Studio 8";;
+          tar -C "$PROGRAM_FILES_x86" \
+ --exclude "Crystal Reports" \
+ --exclude "DIA SDK" \
+ --exclude "EnterpriseFrameworks" \
+ --exclude "Microsoft Visual Studio 2005 Team Suite - ENU" \
+ --exclude "ReportViewer" \
+ --exclude "SmartDevices" \
+ --exclude "Team Tools" \
+ --exclude "VB" \
+ --exclude "ce" \
+ --exclude "Visual Studio Tools for Office" \
+ --exclude "Xml" \
+ --exclude "sqlserver" \
+ -czvf vc8.tgz "Microsoft Visual Studio 8";;
 vcload)   tar -C "$PROGRAM_FILES_x86" -xzvf vc8.tgz ;;
 start)    do_start ;;
 *)        usage ;;
