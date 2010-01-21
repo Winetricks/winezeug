@@ -48,7 +48,7 @@ case "$OS" in
 esac
 
 # Internal variables; these locations are not too important
-WINETRICKS_CACHE=$HOME/winetrickscache
+WINETRICKS_CACHE="$HOME/winetrickscache"
 # Default to hiding the directory, by popular demand
 test -d "$WINETRICKS_CACHE" || WINETRICKS_CACHE=$HOME/.winetrickscache
 WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE`"
@@ -2763,7 +2763,7 @@ load_vcdmount()
     fi
 
     # Call only on real Windows.
-    # Sets VCDMOUNT and ISO_MOUNT_ROOT
+    # Sets VCD_DIR and ISO_MOUNT_ROOT
 
     # The only free mount tool I know for Windows Vista is Virtual CloneDrive,
     # which can be downloaded at 
@@ -2775,14 +2775,16 @@ load_vcdmount()
     do
         test -d "$PROGRAMFILES" && break
     done
-    VCDMOUNT="$PROGRAMFILES/Elaborate Bytes/VirtualCloneDrive/vcdmount.exe"
-    if test ! -x "$VCDMOUNT" 
+    VCD_DIR="$PROGRAMFILES/Elaborate Bytes/VirtualCloneDrive"
+    if test ! -x "$VCD_DIR/vcdmount.exe" 
     then
         warn "Installing Virtual CloneDrive"
         download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
         # have to use cmd else vista won't let cygwin run .exe's?
         chmod +x "$WINETRICKS_CACHE"/SetupVirtualCloneDrive.exe
-        cmd /c "$WINETRICKS_CACHE_WIN"\\SetupVirtualCloneDrive.exe
+        cd "$WINETRICKS_CACHE"
+        cmd /c SetupVirtualCloneDrive.exe
+        cd "$olddir"
     fi
 
     # FIXME: Use WMI to locate the drive named
@@ -2805,8 +2807,10 @@ iso_mount()
     if test "$WINE" = ""
     then
         load_vcdmount
-        my_img_win="`$XXXPATH -w $my_img`"
-        try "$VCDMOUNT" /l=$letter "$my_img_win"
+        my_img_win="`$XXXPATH -w $my_img | tr '\012' ' ' | sed 's/ $//'`"
+        cd "$VCD_DIR"
+        try vcdmount.exe /l=$letter "$my_img_win"
+        cd "$olddir"
         while ! test -d "$ISO_MOUNT_ROOT"
         do
             echo "Waiting for mount to finish"
@@ -2833,7 +2837,9 @@ iso_umount()
     then
         # Windows
         load_vcdmount
-        "$VCDMOUNT" /u
+        cd "$VCD_DIR"
+        vcdmount /u
+        cd "$olddir"
     else
         case "$GUI-$DE" in
         gnome) 
@@ -2878,7 +2884,7 @@ load_vc2005trial()
       # FIXME: unify these and make the windows one right
       if test "$WINE" = ""
       then
-          while ! tr -d '\000' < /cygdrive/c/Users/$USER/AppData/local/temp/dd_vsinstall80.txt | grep End_Session
+          while ! tr -d '\000' < "$TEMP"/dd_vsinstall80.txt | grep End_Session
           do
               sleep 10
               echo waiting for setup to finish
