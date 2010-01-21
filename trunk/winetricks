@@ -233,7 +233,8 @@ usage() {
     echo " vb6run        MS Visual Basic 6 Service Pack 6 runtime"
     echo " vc2005express MS Visual C++ 2005 Express"
     echo " vc2005expresssp1 MS Visual C++ 2005 Express SP1 (does not work yet)"
-    echo " vc2005sp1     MS Visual C++ 2005 Service Pack 1 (install trial 1st)"
+    echo " vc2005sp1     MS Visual C++ 2005 Service Pack 1 and ATL fix (install trial 1st)"
+    echo " vc2005hotfix  MS Visual C++ 2005 hotfixes (install sp1 1st)"
     echo " vc2005trial   MS Visual C++ 2005 Trial"
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
@@ -2913,9 +2914,64 @@ load_vc2005sp1()
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=bb4a75ab-e2d4-4c96-b39d-37baf6b5b1dc
     download vc2005sp1 http://download.microsoft.com/download/6/3/c/63c69e5d-74c9-48ea-b905-30ac3831f288/VS80sp1-KB926601-X86-ENU.exe d4b5c73253a7a4f5b4b389f41b94fea4a7247b57
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197
+    download vc2005sp1 http://download.microsoft.com/download/D/2/3/D23F9F62-3DEE-4EC0-B3B9-D64E9F573D1F/VS80sp1-KB971090-X86-INTL.exe 
     cd "$WINETRICKS_CACHE"/vc2005sp1
     try $WINE VS80sp1-KB926601-X86-ENU.exe
+    try $WINE VS80sp1-KB971090-X86-INTL.exe
     cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_one_hotfix()
+{
+    kb=$1
+    downloadid=$2
+    downloadfile=$3
+    hotfix=$4
+
+    cd "$WINETRICKS_CACHE/vs2005hotfixes"
+    if test ! -f $downloadfile
+    then
+       case "$OS" in
+       "Windows_NT")
+          $WINE start "https://connect.microsoft.com/VisualStudio/Downloads/DownloadDetails.aspx?DownloadID=$downloadid" ;;
+       *) # fails for chrome, see http://crbug.com/32800
+          xdg-open "https://connect.microsoft.com/VisualStudio/Downloads/DownloadDetails.aspx?DownloadID=$downloadid" ;;
+       esac
+    fi
+    while test ! -f $downloadfile
+    do
+       echo "Waiting for you to save $downloadfile in $WINETRICKS_CACHE_WIN/vs2005hotfixes"
+       sleep 1
+    done
+    if test ! -f $hotfix
+    then
+       unzip -o $downloadfile
+    fi
+    try $WINE $hotfix
+    cd "$olddir"
+}
+
+load_vc2005hotfix()
+{
+    # Loads the hotfixes recommended in http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Additional-free-downloads
+    warn "This does not work in Wine yet."
+    if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+    then
+        die "install vc2005trial and vc2005sp1 first"
+    fi
+
+    mkdir -p "$WINETRICKS_CACHE/vs2005hotfixes"
+    case "$OS" in
+    "Windows_NT") $WINE start "$WINETRICKS_CACHE_WIN\\vs2005hotfixes" ;;
+    *)            xdg-open "$WINETRICKS_CACHE/vs2005hotfixes" ;;
+    esac
+
+    load_one_hotfix KB935225 7258  306439_ENU_i386_zip.exe VS80sp1-KB935225-X86-ENU.exe
+    load_one_hotfix KB947315 11587 341798_ENU_i386_zip.exe VS80sp1-KB947315-X86-ENU.exe
+    load_one_hotfix KB958842 16558 VS90SP1-KB958842-x86.exe VS90SP1-KB958842-x86.exe 
 }
 
 #----------------------------------------------------------------
@@ -3353,6 +3409,7 @@ do
     vc2003toolkit) load_vc2003toolkit;;
     vc2005express) load_vc2005express;;
     vc2005expresssp1) load_vc2005expresssp1;;
+    vc2005hotfix) load_vc2005hotfix;;
     vc2005sp1) load_vc2005sp1;;
     vc2008sp1) load_vc2008sp1;;
     vc2005trial) load_vc2005trial;;
