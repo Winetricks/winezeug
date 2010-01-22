@@ -10,6 +10,8 @@
 #    http://bugs.winehq.org/show_bug.cgi?id=21382
 #  PATH screwed up
 #    http://bugs.winehq.org/show_bug.cgi?id=21322 
+#  reg can't set DWORD values
+#    http://bugs.winehq.org/show_bug.cgi?id=19533
 # and do
 #  sudo apt-get install cabextract winbind
 # or winetricks and svn will complain.
@@ -211,6 +213,8 @@ do_build() {
    *) echo unknown project $1, might explode;;
    esac
 
+   # Work around http://bugs.winehq.org/show_bug.cgi?id=21174
+   export NUMBER_OF_PROCESSORS_PLUS_1=2
    rm -f $1.log
    time $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
 }
@@ -237,7 +241,7 @@ do_all() {
   do_start
   do_clean
   #do_gclient sync
-  do_build base_unittests
+  do_build chrome
   do_kill
 }
 
@@ -249,6 +253,8 @@ all)      do_all ;;
 build)    shift; do_build $1;;
 clean)    do_clean ;;
 cmd)      $WINE cmd ;;
+sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
+ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
 gclient)  shift; do_gclient "$@" ;;
 ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
 kill)     do_kill;;
