@@ -214,7 +214,9 @@ do_build() {
    esac
 
    # Work around http://bugs.winehq.org/show_bug.cgi?id=21174
-   export NUMBER_OF_PROCESSORS_PLUS_1=2
+   # and around even stranger problem where Make exits early
+   # if you try to run jobs in parallel?
+   export NUMBER_OF_PROCESSORS_PLUS_1=1
    rm -f $1.log
    time $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
 }
