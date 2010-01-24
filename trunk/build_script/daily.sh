@@ -780,8 +780,8 @@ rm -rf $WINETESTDIR
 mkdir -p $WINETESTDIR
 
 # Get winetricks, used in below tests:
-$GET "http://winezeug.googlecode.com/svn/trunk/winetricks" &&
-mv winetricks $WINETESTDIR
+(cd $WINETESTDIR && 
+$GET "http://winezeug.googlecode.com/svn/trunk/winetricks")
 
 # Get new tree, if it wasn't disabled.
 if [ $NEWTREE = 1 ]
