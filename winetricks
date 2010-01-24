@@ -877,6 +877,8 @@ load_cygwin() {
     # this is some random verison of cygwin's setup from mid-2009, before the change that wine couldn't handle.
     download cygwin http://kegel.com/cygwin/1.5/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
     mkdir -p "$DRIVE_C"/cygpkgs
+    # If you happen to have saved your cygpkgs directory, unpack it now
+    test -f "$WINETRICKS_CACHE/cygwin/cygpkgs.tgz" && (cd "$DRIVE_C"; gunzip -dc "$WINETRICKS_CACHE/cygwin/cygpkgs.tgz" | tar -xf -)
     cp "$WINETRICKS_CACHE/cygwin/setup.exe" "$DRIVE_C"/cygpkgs
     cd "$DRIVE_C"/cygpkgs
     warn "Paste in ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037 as the repo url for now, until bug 21206 is fixed"
