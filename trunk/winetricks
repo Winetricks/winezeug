@@ -2988,6 +2988,36 @@ load_vc2005hotfix()
 
 #----------------------------------------------------------------
 
+save_vc2005_tarball()
+{
+    # Save just the interesting parts of Visual Studio 2005 (edit to taste).
+    # Workaround for vc 2005 sp1 and hotfixes not installing on Wine.
+    # In Windows, do "winetricks vc2005trial vc2005sp1 vc2005hotfix vc2005save",
+    # then reboot to Linux, grab vc8.tgz from the Windows partition,
+    # and do "winetricks vc2005trial vc2005load".
+    tar -C "$programfilesdir_x86_unix" \
+     --exclude "Crystal Reports" \
+     --exclude "DIA SDK" \
+     --exclude "EnterpriseFrameworks" \
+     --exclude "Microsoft Visual Studio 2005 Team Suite - ENU" \
+     --exclude "ReportViewer" \
+     --exclude "SmartDevices" \
+     --exclude "Team Tools" \
+     --exclude "VB" \
+     --exclude "ce" \
+     --exclude "Visual Studio Tools for Office" \
+     --exclude "Xml" \
+     --exclude "sqlserver" \
+     -czvf vc8.tgz "Microsoft Visual Studio 8"
+}
+
+load_vc2005_tarball()
+{
+    tar -C "$programfilesdir_x86_unix" -xzvf vc8.tgz
+}
+
+#----------------------------------------------------------------
+
 load_vc2008trial()
 {
     load_vcrun6
@@ -3277,7 +3307,7 @@ olddir=`pwd`
 rm -rf "$WINETRICKS_TMP"/*
 
 # The folder-name is localized!
-programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%"`"
+programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
@@ -3431,6 +3461,8 @@ do
     vc2005express) load_vc2005express;;
     vc2005expresssp1) load_vc2005expresssp1;;
     vc2005hotfix) load_vc2005hotfix;;
+    vc2005load) load_vc2005_tarball;;
+    vc2005save) save_vc2005_tarball;;
     vc2005sp1) load_vc2005sp1;;
     vc2008sp1) load_vc2008sp1;;
     vc2005trial) load_vc2005trial;;
