@@ -207,16 +207,17 @@ fi
 
 cd src
 
+# Work around http://bugs.winehq.org/show_bug.cgi?id=21174
+# and http://bugs.winehq.org/show_bug.cgi?id=21484
+# (though we'll need a new workaround for 21484 once 21174 is fixed)
+export NUMBER_OF_PROCESSORS_PLUS_1=1
+
 do_build() {
    case $1 in
    base_unittests|net_unittests|unit_tests) ;;
    *) echo unknown project $1, might explode;;
    esac
 
-   # Work around http://bugs.winehq.org/show_bug.cgi?id=21174
-   # and around even stranger problem where Make exits early
-   # if you try to run jobs in parallel?
-   export NUMBER_OF_PROCESSORS_PLUS_1=1
    rm -f $1.log
    time $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
 }
