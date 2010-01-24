@@ -94,10 +94,12 @@ warn() {
 
     test "$GUI" = 1 || return
 
+    # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
+    msg="`echo $@ | tr '\000' ' '`"
     case $DE in
-    gnome) zenity --error --title=Winetricks --text="$@" --no-wrap ;;
-    kde) kdialog --title Winetricks --error "$@" ;;
-    x) xmessage -title Winetricks -center "  Error: $@  " ;;
+    gnome) zenity --error --title=Winetricks --text="$msg" --no-wrap;;
+    kde) kdialog --title Winetricks --error "$msg" ;;
+    x) xmessage -title Winetricks -center "  Error: $msg  " ;;
     esac
 }
 
@@ -2828,13 +2830,13 @@ iso_mount()
     else 
         # Linux
         case "$GUI-$DE" in
-        gnome) 
-          1-gksudo "mkdir -p $ISO_MOUNT_ROOT"
-          1-gksudo "mount -o ro,loop $my_img $ISO_MOUNT_ROOT"
+        1-gnome) 
+          try gksudo "mkdir -p $ISO_MOUNT_ROOT"
+          try gksudo "mount -o ro,loop $my_img $ISO_MOUNT_ROOT"
           ;;
         *)
-          sudo mkdir -p $ISO_MOUNT_ROOT
-          sudo mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
+          try sudo mkdir -p $ISO_MOUNT_ROOT
+          try sudo mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
           ;;
         esac
     fi
@@ -2851,13 +2853,13 @@ iso_umount()
         cd "$olddir"
     else
         case "$GUI-$DE" in
-        gnome) 
-          1-gksudo "umount $ISO_MOUNT_ROOT"
-          1-gksudo "rm -rf $ISO_MOUNT_ROOT"
+        1-gnome) 
+          try gksudo "umount $ISO_MOUNT_ROOT"
+          try gksudo "rm -rf $ISO_MOUNT_ROOT"
           ;;
         *)
-          sudo umount $ISO_MOUNT_ROOT
-          sudo rm -rf $ISO_MOUNT_ROOT
+          try sudo umount $ISO_MOUNT_ROOT
+          try sudo rm -rf $ISO_MOUNT_ROOT
           ;;
         esac
     fi
@@ -2887,7 +2889,7 @@ load_vc2005trial()
       # See also http://support.microsoft.com/?kbid=913445
       die "not implemented yet"
     else
-      cd $ISO_MOUNT_ROOT/vs/Setup
+      try cd "$ISO_MOUNT_ROOT/vs/Setup"
       try $WINE setup.exe
 
       # FIXME: unify these and make the windows one right
@@ -3006,7 +3008,7 @@ load_vc2008trial()
 
     if true
     then
-      cd $ISO_MOUNT_ROOT/Setup
+      try cd "$ISO_MOUNT_ROOT/Setup"
       try $WINE setup.exe
 
       # FIXME: unify these and make the windows one right
