@@ -12,6 +12,8 @@
 #    http://bugs.winehq.org/show_bug.cgi?id=21322 
 #  reg can't set DWORD values
 #    http://bugs.winehq.org/show_bug.cgi?id=19533
+#  Debug build of Chromium aborts on startup because GdiInitializeLanguagePack() returns failure
+#    http://bugs.winehq.org/show_bug.cgi?id=21490
 # and do
 #  sudo apt-get install cabextract winbind
 # or winetricks and svn will complain.
@@ -243,6 +245,7 @@ do_all() {
   do_start
   do_clean
   #do_gclient sync
+  do_gclient runhooks --force
   do_build chrome
   do_kill
 }
@@ -254,10 +257,12 @@ case "$1" in
 all)      do_all ;;
 build)    shift; do_build $1;;
 clean)    do_clean ;;
+run)      $WINE c:\\chromium\\src\\chrome\\Debug\\chrome.exe --no-sandbox ;;
 cmd)      $WINE cmd ;;
 sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
 ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
 gclient)  shift; do_gclient "$@" ;;
+bareide)  $WINE "$IDEDIR\\devenv" ;;
 ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
 kill)     do_kill;;
 vcsave)   sh -x "$OLDDIR/../../winetricks" vc2005save ;;
