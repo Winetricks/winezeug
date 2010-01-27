@@ -1,8 +1,7 @@
 #!/bin/sh
 # Script to set up build envrionment for chromium with visual c++
 # and then build part or all of chromium.
-# Without arguments, just sets up the build environment.
-# With an argument, also starts the ide or builds the module indicated by the argument.
+# Simple usage:  sh build.sh all
 #
 # If running on Linux:
 # First patch wine for the following problems (each has an attached patch):
@@ -30,6 +29,8 @@
 #
 # Use Subversion to check out winezeug.googlecode.com, and run this script 
 # from the Winezeug tree.
+#
+# Requires, oh, 32 gigabytes of free space.  Checks out about 5 GB of source code.
 
 usage() {
    set +x
@@ -199,10 +200,11 @@ check_tools() {
 check_source() {
  cd "$DRIVE_C/chromium"
  # Set up svn client and cygwin
- if test ! -f src/.gclient
+ if test ! -f .gclient
  then
    $WINE cmd /c depot_tools\\gclient.bat config http://src.chromium.org/svn/trunk/src 
    # FIXME: make this optional somehow.
+   echo "Checking out roughly 4.8 gigabytes of source.  Please wait."
    $WINE cmd /c depot_tools\\gclient.bat sync
 
    # Follow instructions in third_party/cygwin/README.google for
