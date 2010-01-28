@@ -17,6 +17,24 @@
 #  sudo apt-get install cabextract winbind
 # or winetricks and svn will complain.
 #
+# Note: devenv can use more than 1024 files, so to avoid build errors,
+# raise ulimit -n to 5000 or so before running.  e.g. to get a single shell
+# with a high ulimit -n, do
+#  sudo bash
+#    ulimit -n 10000
+#    su YOURNAME
+# Then run the build in that session.
+#
+# Also, you might want to turn on parallel building
+# by creating the file ~/.wine-chromium-tests/drive_c/users/$YOURUSERNAME/.gyp/include.gypi
+# containing the five lines
+#   { 
+#      'variables': { 
+#          'msvs_multi_core_compile': 1 
+#      } 
+#   }
+# See http://groups.google.com/group/chromium-dev/msg/0011dfa6dbf335bd
+#
 # If running on Windows:
 # First download cygwin's setup.exe to new directory c:/cygpkgs
 # and run it to install Cygwin, Subversion, cabextract, unzip, and wget.
@@ -219,6 +237,9 @@ check_source() {
 }
 
 do_build() {
+   echo -n "File descriptor limit is  "
+   ulimit -n
+   echo "If that's below 5000, you might want to raise it."
    cd "$DRIVE_C/chromium/src"
    case $1 in
    base_unittests|net_unittests|unit_tests) ;;
