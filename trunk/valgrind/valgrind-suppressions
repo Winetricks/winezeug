@@ -1074,3 +1074,9 @@
    fun:CryptVerifyDetachedMessageSignature
    fun:test_verify_detached_message_signature
 }
+{
+   expected_heap_tests
+   Memcheck:Addr1
+   ...
+   fun:test_heap_checks
+}
