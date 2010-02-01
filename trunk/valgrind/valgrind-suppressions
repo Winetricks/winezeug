@@ -1074,9 +1074,29 @@
    fun:CryptVerifyDetachedMessageSignature
    fun:test_verify_detached_message_signature
 }
+# wine's kernel32/tests/heap.c does lots of crazy stuff,
+# suppress that whole file.
 {
    expected_heap_tests
    Memcheck:Addr1
    ...
-   fun:test_heap_checks
+   fun:func_heap
+}
+{
+   expected_heap_tests
+   Memcheck:Addr2
+   ...
+   fun:func_heap
+}
+{
+   expected_heap_tests
+   Memcheck:Cond
+   ...
+   fun:func_heap
+}
+{
+   expected_heap_tests
+   Memcheck:Free
+   ...
+   fun:func_heap
 }
