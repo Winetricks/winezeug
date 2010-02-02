@@ -72,20 +72,31 @@ esac
 
 #---- Functions -------------------------------------------------
 
-# Check for known desktop environments
-# Set variable DE to the desktop environment's name, lowercase
-detectDE() {
-    if [ x"$KDE_FULL_SESSION" = x"true" ]
+# Detect which sudo to use
+detect_sudo() {
+    SUDO=sudo
+    if test x"$DISPLAY" != x""
     then
-        DE=kde
-    elif [ x"$GNOME_DESKTOP_SESSION_ID" != x"" ]
+        if test -x "`which gksudo`"
+        then
+            SUDO=gksudo
+        elif test -x "`which kdesudo`"
+        then
+            SUDO=kdesudo
+        fi
+    fi
+}
+
+# Detect which menu program to use
+detect_menu() {
+    # TODO: add 'dialog'
+    MENU=xmessage
+    if test -x "`which zzenity`"
     then
-        DE=gnome
-    elif [ x"$DISPLAY" != x"" ]
+        MENU=zenity
+    elif test -x "`which kdialog`"
     then
-        DE=x
-    else
-        DE=none
+        MENU=kdialog
     fi
 }
 
@@ -96,10 +107,10 @@ warn() {
 
     # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
     msg="`echo $@ | tr '\000' ' '`"
-    case $DE in
-    gnome) zenity --error --title=Winetricks --text="$msg" --no-wrap;;
-    kde) kdialog --title Winetricks --error "$msg" ;;
-    x) xmessage -title Winetricks -center "  Error: $msg  " ;;
+    case $MENU in
+    *zenity) zenity --error --title=Winetricks --text="$msg" --no-wrap;;
+    *kdialog) kdialog --title Winetricks --error "$msg" ;;
+    *xmessage) xmessage -title Winetricks -center "  Error: $msg  " ;;
     esac
 }
 
@@ -299,7 +310,7 @@ usage() {
 #----------------------------------------------------------------
 # Trivial GUI just to handle case where user tries running without commandline
 
-kde_showmenu() {
+kdialog_showmenu() {
     title="$1"
     shift
     text="$1"
@@ -316,7 +327,7 @@ kde_showmenu() {
     kdialog --title "$title" --separate-output --checklist "$text" $args
 }
 
-x_showmenu() {
+xmessage_showmenu() {
     title="$1"
     shift
     text="$1"
@@ -341,24 +352,21 @@ x_showmenu() {
 
 showmenu()
 {
-    case $DE in
-    kde) kde_showmenu "$@" ;;
-    gnome|x) x_showmenu "$@" ;;
-    none) usage 1>&2; exit 1;;
-    esac
-}
-
-dogui()
-{
-    if [ $DE = gnome ]
-    then
+    case $MENU in
+    zenity)
         echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
         usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
         todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
-    else
+        ;;
+    kdialog)
         packages=`usage | awk '/^ [a-z]/ {print $1}'`
-        todo="`showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
-    fi
+        todo="`kdialog_showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
+        ;;
+    xmessage) 
+        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        todo="`xmessage_showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
+        ;;
+    esac
 
     if test "$todo"x = x
     then
@@ -2836,14 +2844,14 @@ iso_mount()
         done
     else 
         # Linux
-        case "$GUI-$DE" in
-        1-gnome) 
-          try gksudo "mkdir -p $ISO_MOUNT_ROOT"
-          try gksudo "mount -o ro,loop $my_img $ISO_MOUNT_ROOT"
+        case "$SUDO" in
+        gksudo) 
+          try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
+          try $SUDO "mount -o ro,loop $my_img $ISO_MOUNT_ROOT"
           ;;
         *)
-          try sudo mkdir -p $ISO_MOUNT_ROOT
-          try sudo mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
+          try $SUDO mkdir -p $ISO_MOUNT_ROOT
+          try $SUDO mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
           ;;
         esac
     fi
@@ -2859,14 +2867,14 @@ iso_umount()
         vcdmount /u
         cd "$olddir"
     else
-        case "$GUI-$DE" in
-        1-gnome) 
-          gksudo "umount $ISO_MOUNT_ROOT"
-          try gksudo "rm -rf $ISO_MOUNT_ROOT"
+        case "$SUDO" in
+        gksudo) 
+          $SUDO "umount $ISO_MOUNT_ROOT"
+          try $SUDO "rm -rf $ISO_MOUNT_ROOT"
           ;;
         *)
-          sudo umount $ISO_MOUNT_ROOT
-          try sudo rm -rf $ISO_MOUNT_ROOT
+          $SUDO umount $ISO_MOUNT_ROOT
+          try $SUDO rm -rf $ISO_MOUNT_ROOT
           ;;
         esac
     fi
@@ -3275,7 +3283,8 @@ case "$1" in
     ;;
 esac
 
-detectDE
+detect_menu
+detect_sudo
 
 GUI=0
 case x"$1" in
@@ -3305,7 +3314,7 @@ esac
 mkdir -p "$WINETRICKS_TMP"
 
 case $GUI in
-1) dogui ; set $todo ;;
+1) showmenu ; set $todo ;;
 esac
 
 mkdir -p "$WINETRICKS_CACHE"
