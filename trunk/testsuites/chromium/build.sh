@@ -7,12 +7,8 @@
 # First patch wine for the following problems (each has an attached patch):
 #  %~dp0 doesn't work properly
 #    http://bugs.winehq.org/show_bug.cgi?id=21382
-#  PATH screwed up
-#    http://bugs.winehq.org/show_bug.cgi?id=21322 
 #  reg can't set DWORD values
 #    http://bugs.winehq.org/show_bug.cgi?id=19533
-#  Debug build of Chromium aborts on startup because GdiInitializeLanguagePack() returns failure
-#    http://bugs.winehq.org/show_bug.cgi?id=21490
 # and do
 #  sudo apt-get install cabextract winbind
 # or winetricks and svn will complain.
@@ -71,6 +67,8 @@ usage() {
    echo " vcsave: save a copy of Visual C++ to the file vc8.tgz"
    exit 1
 }
+
+mode=Debug
 
 do_init=0
 if test "$1"x = "--init"x
@@ -247,12 +245,12 @@ do_build() {
    esac
 
    rm -f $1.log
-   time $WINE "$IDEDIR\\devenv" /build Debug /out $1.log /project $1 chrome\\chrome.sln
+   time $WINE "$IDEDIR\\devenv" /build $mode /out $1.log /project $1 chrome\\chrome.sln
 }
 
 do_clean() {
    cd "$DRIVE_C/chromium/src"
-   rm -rf "$DRIVE_C/chromium/src/chrome/Debug" 
+   rm -rf "$DRIVE_C/chromium/src/chrome/$mode" 
 }
 
 do_gclient() {
@@ -281,7 +279,7 @@ do_all() {
   do_clean
   #do_gclient sync
   #do_gclient runhooks --force
-  do_build chrome
+  do_build base
   do_kill
 }
 
@@ -305,26 +303,32 @@ mkdir -p "$DRIVE_C/chromium"
 # For my convenience while developing this script, maybe useful for others
 # though the symlink won't be much use until svn creates that directory
 ln -sf "$DRIVE_C/chromium/src" "$OLDDIR"
-cd "$DRIVE_C/chromium"
 
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
-case "$1" in
-all)      do_all ;;
-build)    shift; do_build $1;;
-clean)    do_clean ;;
-run)      $WINE c:\\chromium\\src\\chrome\\Debug\\chrome.exe --no-sandbox ;;
-cmd)      $WINE cmd ;;
-sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
-ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
-gclient)  shift; do_gclient "$@" ;;
-bareide)  $WINE "$IDEDIR\\devenv" ;;
-ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
-kill)     do_kill;;
-source)   check_source;;
-tools)    check_tools;;
-vcinst)   check_visualc;;
-vcsave)   sh -x "$OLDDIR/../../winetricks" vc2005save ;;
-vcload)   sh -x "$OLDDIR/../../winetricks" vc2005load ;;
-start)    do_start ;;
-*)        usage ;;
-esac
+while test "$1" != ""
+do
+    cd "$DRIVE_C/chromium"
+    case "$1" in
+    all)      do_all ;;
+    bench)    do_bench ;;
+    build)    shift; do_build $1;;
+    clean)    do_clean ;;
+    run)      $WINE c:\\chromium\\src\\chrome\\$mode\\chrome.exe --no-sandbox ;;
+    cmd)      $WINE cmd $*; exit;;
+    sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
+    ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
+    gclient)  shift; do_gclient "$@" ;;
+    bareide)  $WINE "$IDEDIR\\devenv" ;;
+    ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
+    kill)     do_kill;;
+    release)  mode=Release;;
+    source)   check_source;;
+    tools)    check_tools;;
+    vcinst)   check_visualc;;
+    vcsave)   sh -x "$OLDDIR/../../winetricks" vc2005save ;;
+    vcload)   sh -x "$OLDDIR/../../winetricks" vc2005load ;;
+    start)    do_start ;;
+    *)        usage ;;
+    esac
+    shift
+done
