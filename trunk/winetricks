@@ -153,6 +153,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
+    echo " adobeair      Adobe AIR runtime"
     echo " art2kmin      MS Access 2007 runtime"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
@@ -694,6 +695,16 @@ helper_directx_dl() {
 }
 
 #----- One function per package, in alphabetical order ----------
+
+load_adobeair() {
+    # corefonts is necessary to avoid an installer crash.
+    load_corefonts
+
+    # Adobe AIR 1.5.3 runtime
+    # 2010-02-02: sha1sum 5c95f51a680f8c175a92755238127be4ad22c53b
+    download . http://airdownload.adobe.com/air/win/download/latest/AdobeAIRInstaller.exe 5c95f51a680f8c175a92755238127be4ad22c53b
+    try $WINE "$WINETRICKS_CACHE"/AdobeAIRInstaller.exe $WINETRICKS_UNIXSILENT
+}
 
 load_art2kmin() {
     # See http://www.microsoft.com/downloads/details.aspx?familyid=d9ae78d9-9dc6-4b38-9fa6-2c745a175aed&displaylang=en
@@ -3378,11 +3389,13 @@ do
         WINETRICKS_QUIET_T="/qt" # Microsoft Control Pad
         WINETRICKS_UNIXQUIET="-q"
         WINETRICKS_SILENT="/silent"
+        WINETRICKS_UNIXSILENT="-silent"
         WINETRICKS_S="/S"                 # for NSIS installers
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
         ;;
     -v) set -x;;
+    adobeair) load_adobeair;;
     art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;
     autohotkey|ahk) load_autohotkey;;
