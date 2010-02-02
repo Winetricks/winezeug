@@ -14,7 +14,7 @@
 +
 +rem cscript //nologo //e:jscript "%~dp0get_file.js" %WIN_TOOLS_ROOT_URL%/third_party/svn_bin.zip "%~dp0svn.zip"
 +c:\cygwin\bin\wget %WIN_TOOLS_ROOT_URL%/third_party/svn_bin.zip
-+ren svn_bin.zip svn.zip
++move svn_bin.zip "%~dp0svn.zip"
 +
  if errorlevel 1 goto :SVN_FAIL
  :: Cleanup svn directory if it was existing.
@@ -25,7 +25,7 @@
 +
 +rem Work around cscript not working on wine
 +rem cscript //nologo //e:jscript "%~dp0unzip.js" "%~dp0svn.zip" "%WIN_TOOLS_ROOT_DIR%"
-+c:\cygwin\bin\unzip svn.zip -d depot_tools
++c:\cygwin\bin\unzip "%~dp0svn.zip" -d depot_tools
 +
  if errorlevel 1 goto :SVN_FAIL
  if not exist "%WIN_TOOLS_ROOT_DIR%\svn_bin\." goto :SVN_FAIL
