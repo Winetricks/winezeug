@@ -3,8 +3,8 @@
 # redistributable runtime libraries
 #
 # Current maintainers: Austin English, Dan Kegel
-# Copyright 2007, 2008, 2009 Google (Dan Kegel, dank@kegel.com)
-# Copyright 2008, 2009 Austin English (austinenglish@gmail.com)
+# Copyright 2007, 2008, 2009, 2010 Google (Dan Kegel, dank@kegel.com)
+# Copyright 2008, 2009, 2010 Austin English (austinenglish@gmail.com)
 # Thanks to Detlef Riekenberg for lots of updates
 # Thanks to Saulius Krasuckas for corrections and suggestions
 # Thanks to Erik Inge Bolsø for several patches
@@ -19,7 +19,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20091213
+VERSION=20100201
 
 early_wine()
 {
