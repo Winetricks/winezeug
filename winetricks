@@ -91,7 +91,7 @@ detect_sudo() {
 detect_menu() {
     # TODO: add 'dialog'
     MENU=xmessage
-    if test -x "`which zzenity`"
+    if test -x "`which zenity`"
     then
         MENU=zenity
     elif test -x "`which kdialog`"
