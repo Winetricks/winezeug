@@ -1187,7 +1187,15 @@ load_dotnet30() {
     # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
     download dotnet30 http://download.microsoft.com/download/3/F/0/3F0A922C-F239-4B9B-9CB0-DF53621C57D9/dotnetfx3.exe f3d2c3c7e4c0c35450cf6dab1f9f2e9e7ff50039
 
-    export _SFX_CAB_SHUTDOWN_REQUEST=1
+    # AF's workaround to avoid long pause
+    LANGPACKS_BASE_PATH="${WINDIR}/SYSMSICache/Framework/v3.0" 
+    test -d "${LANGPACKS_BASE_PATH}" || mkdir -p "${LANGPACKS_BASE_PATH}" 
+    for lang in ar cs da de el es fi fr he it jp ko nb nl pl pt-BR pt-PT ru \
+                sv tr zh-CHS zh-CHT
+    do
+       ln -sf "${WINDIR}/system32/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
+    done 
+
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
        try $WINE "$WINETRICKS_CACHE"/dotnet30/dotnetfx3.exe
@@ -1199,7 +1207,7 @@ load_dotnet30() {
 #----------------------------------------------------------------
 
 load_dotnet35() {
-    warn "This does not work yet"
+    warn "This does not work yet, see bug 20110"
 
     # According to AF's recipe, installing dotnet30 first works around msi bugs
     load_dotnet30
@@ -1207,12 +1215,11 @@ load_dotnet35() {
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6
     download dotnet35 http://download.microsoft.com/download/6/0/f/60fc5854-3cb8-4892-b6db-bd4f42510f28/dotnetfx35.exe 
 
-    if [ "$WINETRICKS_QUIET"x = ""x ]
-    then
-       try $WINE "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe
-    else
-       try $WINE "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe /q /c:"install.exe /q"
-    fi
+    # See also http://blogs.msdn.com/astebner/archive/2008/07/17/8745415.aspx
+    cd "$DRIVE_C"
+    cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe
+    cd wcu/dotNetFramework
+    try $WINE dotNetFx35setup.exe /lang:ENU
 }
 
 #----------------------------------------------------------------
