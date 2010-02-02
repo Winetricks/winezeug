@@ -2861,11 +2861,11 @@ iso_umount()
     else
         case "$GUI-$DE" in
         1-gnome) 
-          try gksudo "umount $ISO_MOUNT_ROOT"
+          gksudo "umount $ISO_MOUNT_ROOT"
           try gksudo "rm -rf $ISO_MOUNT_ROOT"
           ;;
         *)
-          try sudo umount $ISO_MOUNT_ROOT
+          sudo umount $ISO_MOUNT_ROOT
           try sudo rm -rf $ISO_MOUNT_ROOT
           ;;
         esac
