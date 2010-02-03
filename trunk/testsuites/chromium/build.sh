@@ -132,14 +132,16 @@ check_visualc() {
  if test ! -f "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcvarsall.bat"
  then
    time sh "$OLDDIR"/../../winetricks -q vcrun2005
-   time sh "$OLDDIR"/../../winetricks vc2005trial
-   # The following two fail in Wine; use vcsave/vcload verbs for now.
+   time sh "$OLDDIR"/../../winetricks -q vc2005trial
+   echo "Let Visual Studio start up, then quit.  This is needed to let it register itself."
+   $WINE "$IDEDIR\\devenv"
+   # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
+   # says to install a bunch of service packs and hotfixes, but they don't install in wine yet
+   echo "In Wine, this will take fifteen minutes and then fail, so press ^C now, "
+   echo "put the vc8.tgz you made on windows into src/, do 'sh build.sh vcload', then run again."
    time sh "$OLDDIR"/../../winetricks vc2005sp1
    time sh "$OLDDIR"/../../winetricks vc2005hotfix
  fi
-
- # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
- # says to install a bunch of service packs and hotfixes, but they don't install in wine yet
 
  # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
  # says "install Windows 7 SDK"
@@ -147,29 +149,12 @@ check_visualc() {
  then
    echo "Be sure to only select the minimum options needed for C development in the Platform SDK!"
    sh "$OLDDIR"/../../winetricks -q vcrun2008
-   # Work around http://bugs.winehq.org/show_bug.cgi?id=21509 by making native gdiplus the default
-   sh "$OLDDIR"/../../winetricks -q gdiplus
    sh "$OLDDIR"/../../winetricks -v psdkwin7
-
-   # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
-   # says "integrate windows SDK into Visual C++ 2005 by running windowssdkver -version:v7 -legacy",
-   # but that fails because of http://bugs.winehq.org/show_bug.cgi?id=21362
-   # So instead, I did it once by hand per
-   # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Manually-registering-the-Platform-S
-   # then simply copied the resulting
-   # C:\Program Files\Microsoft Visual Studio 8\VC\vcpackages\VCProjectEngine.dll.config
-   # thereafter.
-   # 
-   # NOTE: on Vista, this copy doesn't seem to work; the file lands in a virtual
-   # overlay directory which is ignored by visual studio.  You have to
-   # copy the file using Explorer to override the virtual overlay.
-   
-   case "$OS" in
-   Windows_NT) echo "Please copy VCProjectEngine.dll.config to $PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcpackages/" ;;
-   *) cp "$OLDDIR"/VCProjectEngine.dll.config "$PROGRAM_FILES_x86/Microsoft Visual Studio 8/VC/vcpackages/" ;;
-   esac
-   
  fi
+
+ # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
+ # says "integrate windows SDK into Visual C++ 2005 by running windowssdkver -version:v7 -legacy",
+ $WINE "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Setup/windowssdkver" -version:v7        
 }
 
 check_tools() {
@@ -304,6 +289,8 @@ mkdir -p "$DRIVE_C/chromium"
 # though the symlink won't be much use until svn creates that directory
 ln -sf "$DRIVE_C/chromium/src" "$OLDDIR"
 
+sh "$OLDDIR"/../../winetricks nocrashdialog
+
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 while test "$1" != ""
 do
@@ -318,15 +305,15 @@ do
     sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
     ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
     gclient)  shift; do_gclient "$@" ;;
-    bareide)  $WINE "$IDEDIR\\devenv" ;;
-    ide)      $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
+    bareide)  cd src; $WINE "$IDEDIR\\devenv" ;;
+    ide)      cd src; $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
     kill)     do_kill;;
     release)  mode=Release;;
     source)   check_source;;
     tools)    check_tools;;
     vcinst)   check_visualc;;
-    vcsave)   sh -x "$OLDDIR/../../winetricks" vc2005save ;;
-    vcload)   sh -x "$OLDDIR/../../winetricks" vc2005load ;;
+    vcsave)   cd src; sh -x "$OLDDIR/../../winetricks" vc2005save ;;
+    vcload)   cd src; sh -x "$OLDDIR/../../winetricks" vc2005load ;;
     start)    do_start ;;
     *)        usage ;;
     esac
