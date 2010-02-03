@@ -441,7 +441,7 @@ do
         LOG=$LOGSDIR/$suite-$test-$i.log
         $dry_run alarm `get_expected_runtime $suite` \
                   $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | eval reduce_verbosity | tee $LOG || errors=yes true
-        egrep -q "$PATTERN" tmp.log && errors=yes
+        egrep -q "$PATTERN" $LOG && errors=yes
         test "$logfiles" = yes || rm $LOG
       done
       ;;
