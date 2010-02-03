@@ -24,6 +24,9 @@
 # option in wine, so skip test suites that invoke it directly until I
 # figure out how to jam that in there.
 
+# The bot that runs this script seemed to ignore stderr, so redirect stderr to stdout by default
+2>&1
+
 usage() {
   cat <<_EOF_
 Usage: sh chromium-runtests.sh [--options] [suite ...]
@@ -68,7 +71,8 @@ SUITES_100="media_unittests net_unittests"
 SUITES_1000="base_unittests unit_tests"
 #SUITES_10000="ui_tests startup_tests"
 
-THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
+# Point to the version of valgrind you built
+THE_VALGRIND_CMD="/usr/local/valgrind-11036/bin/valgrind \
 --gen-suppressions=all \
 --leak-check=full \
 --num-callers=25 \
@@ -79,6 +83,10 @@ THE_VALGRIND_CMD="/usr/local/valgrind-10903/bin/valgrind \
 -v \
 --workaround-gcc296-bugs=yes \
 "
+
+LANG=C
+
+PATTERN="are definitely|uninitialised|Unhandled exception|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86|impossible|Assertion |INTERNAL ERROR|Terminated|Test failed|Alarm clock|Command exited with non-zero status"
 
 reduce_verbosity() {
   # Filter out valgrind's extra -v output except for the 'used_suppression' lines
@@ -114,8 +122,16 @@ base_unittests        flaky-dontcare       StatsTableTest.MultipleProcesses     
 base_unittests        hang-dontcare        DirectoryWatcherTest.*
 base_unittests        hang-valgrind        JSONReaderTest.Reading                               # not really a hang, takes 400 seconds
 base_unittests        hang-valgrind        RSAPrivateKeyUnitTest.InitRandomTest                 # not really a hang, takes 300 seconds
+base_unittests        flaky-valgrind       TimeTicks.Deltas                                     # fails half the time under valgrind, timing issue?
 base_unittests        hang-valgrind        TimerTest.RepeatingTimer*
 base_unittests        hang-valgrind        TimeTicks.WinRollover                                # not really a hang, takes 1000 seconds
+base_unittests        fail-valgrind        ConditionVariableTest.LargeFastTaskTest              # fails under wine + valgrind TODO(thestig): investigate
+base_unittests        fail-valgrind        ProcessUtilTest.CalcFreeMemory                       # fails under wine + valgrind TODO(thestig): investigate
+base_unittests        fail-valgrind        ProcessUtilTest.KillSlowChild                        # fails under wine + valgrind TODO(thestig): investigate
+base_unittests        fail-valgrind        ProcessUtilTest.SpawnChild                           # fails under wine + valgrind TODO(thestig): investigate
+base_unittests        flaky-valgrind       StatsTableTest.StatsCounterTimer                     # flaky, timing issues? TODO(thestig): investigate
+base_unittests        fail-valgrind        StatsTableTest.StatsRate                             # fails under wine + valgrind TODO(thestig): investigate
+base_unittests        fail-valgrind        StatsTableTest.StatsScope                            # fails under wine + valgrind TODO(thestig): investigate
 ipc_tests             flaky                IPCChannelTest.ChannelTest                           http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             flaky                IPCChannelTest.SendMessageInChannelConnected         http://bugs.winehq.org/show_bug.cgi?id=20628
 ipc_tests             hang                 IPCSyncChannelTest.*                                 http://bugs.winehq.org/show_bug.cgi?id=20390
@@ -126,6 +142,14 @@ media_unittests       crash                FFmpegGlueTest.Write
 media_unittests       fail_wine_vmware     WinAudioTest.PCMWaveStreamTripleBuffer
 media_unittests       hang-valgrind        WinAudioTest.PCMWaveSlowSource
 net_unittests         fail                 SSLClientSocketTest.Read_Interrupted                 http://bugs.winehq.org/show_bug.cgi?id=20748
+net_unittests         fail                 HTTPSRequestTest.HTTPSExpiredTest                    # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 HTTPSRequestTest.HTTPSGetTest                        # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 HTTPSRequestTest.HTTPSMismatchedTest                 # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 SSLClientSocketTest.Connect                          # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 SSLClientSocketTest.Read                             # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 SSLClientSocketTest.Read_FullDuplex                  # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 SSLClientSocketTest.Read_SmallChunks                 # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
+net_unittests         fail                 URLRequestTestHTTP.HTTPSToHTTPRedirectNoRefererTest  # https/ssl failing on the bot, bad Wine? TODO(thestig): investigate
 sbox_unittests        fail                 JobTest.ProcessInJob
 sbox_unittests        fail                 JobTest.TestCreation
 sbox_unittests        fail                 JobTest.TestDetach
@@ -153,16 +177,19 @@ unit_tests            crash-valgrind       DnsMasterTest.MassiveConcurrentLookup
 unit_tests            crash-valgrind       NullModelTableViewTest.*                             http://bugs.winehq.org/show_bug.cgi?id=20553
 unit_tests            crash-valgrind       RenderViewTest.OnPrintPageAsBitmap                   http://bugs.winehq.org/show_bug.cgi?id=20657 (for wine oom)
 unit_tests            crash-valgrind       TableViewTest.*                                      http://bugs.winehq.org/show_bug.cgi?id=20553
-unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker
+unit_tests            dontcare             FirefoxImporterTest.Firefox2NSS3Decryptor            # FF2 dlls without symbols cause leaks
+unit_tests            dontcare             ImporterTest.Firefox2Importer                        # FF2 dlls without symbols cause leaks
 unit_tests            dontcare             SpellCheckTest.SpellCheckText
+unit_tests            dontcare-hangwin     UtilityProcessHostTest.ExtensionUnpacker
 unit_tests            fail                 EncryptorTest.EncryptionDecryption                   http://bugs.winehq.org/show_bug.cgi?id=20495
 unit_tests            fail                 EncryptorTest.String16EncryptionDecryption           http://bugs.winehq.org/show_bug.cgi?id=20495
-unit_tests            hang-valgrind        ExtensionAPIClientTest.*                             Not really a hang, just takes 30 minutes
 unit_tests            fail                 ImporterTest.IEImporter                              http://bugs.winehq.org/show_bug.cgi?id=20625
 unit_tests            fail                 RenderViewTest.InsertCharacters                      http://bugs.winehq.org/show_bug.cgi?id=20624
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyChunkMac   http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail                 SafeBrowsingProtocolParsingTest.TestVerifyUpdateMac  http://bugs.winehq.org/show_bug.cgi?id=20340
 unit_tests            fail_wine_vmware     RenderProcessTest.TestTransportDIBAllocation
+unit_tests            hang-valgrind        ExtensionAPIClientTest.*                             Not really a hang, just takes 30 minutes
+unit_tests            hang-valgrind        Win32WifiDataProviderTest.*                          http://crbug.com/33446
 _EOF_
 }
 
@@ -201,10 +228,10 @@ init_runtime() {
 
   if test "$WINDIR" = ""
   then
-    WINE=${WINE:-$HOME/wine-git/wine}
+    WINE=${WINE:-/usr/local/wine/bin/wine}
     export WINE
-    WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
-    WINEPREFIX=${WINEPREFIX:-$HOME/.wine-chromium-tests}
+    WINESERVER=${WINESERVER:-/usr/local/wine/bin/wineserver}
+    WINEPREFIX=${WINEPREFIX:-$HOME/.wine-chromium-runtests}
     export WINEPREFIX
     WINE_HEAP_REDZONE=16
     export WINE_HEAP_REDZONE
@@ -229,6 +256,9 @@ init_runtime() {
     then
       export DISPLAY=":$VNC"
       vncserver -kill "$DISPLAY" || true
+      # VNC servers don't clean these up if they get a SIGKILL, and would then
+      # refuse to start because these files are there.
+      rm -f "/tmp/.X${VNC}-lock" "/tmp/.X11-unix/X${VNC}"
       vncserver "$DISPLAY" -ac -depth 24 -geometry 1024x768
     fi
     $dry_run rm -rf $WINEPREFIX
@@ -353,6 +383,7 @@ then
     do
       if test -f "$dir/$f"
       then
+        dir="`cd $dir; pwd`"
         suppression_options="$suppression_options --suppressions=$dir/$f"
       fi
     done
@@ -369,6 +400,7 @@ export WINEDEBUG=$winedebug
 set -x
 
 mkdir -p logs
+LOGSDIR=`pwd`/logs
 cd "src/chrome/$TARGET"
 
 i=1
@@ -381,34 +413,45 @@ do
     no)  filterspec=`and_gtest_filters "${extra_gtest_filter}" -${expected_to_fail}` ;;
     yes) filterspec=`and_gtest_filters "${extra_gtest_filter}"  ${expected_to_fail}` ;;
     esac
-    LOGCMD=
 
     case $do_individual in
     no)
       $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec
-      test "$logfiles" = yes && LOGCMD="> ../../../logs/$suite-$i.log" 
+      LOG=$LOGSDIR/$suite-$i.log
       $dry_run alarm `get_expected_runtime $suite` \
-                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | eval reduce_verbosity $LOGCMD || true
+                $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter=$filterspec 2>&1 | eval reduce_verbosity | tee $LOG || errors=yes true
+      egrep -q "$PATTERN" $LOG && errors=yes
+      test "$logfiles" = yes || rm $LOG
       ;;
     yes)
       for test in `expand_test_list $suite $filterspec`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test"
-        test "$logfiles" = yes && LOGCMD="> ../../../logs/$suite-$test-$i.log" 
+        LOG=$LOGSDIR/$suite-$test-$i.log
         $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | eval reduce_verbosity $LOGCMD || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test" 2>&1 | eval reduce_verbosity | tee $LOG || errors=yes true
+        egrep -q "$PATTERN" $LOG && errors=yes
+      test "$logfiles" = yes || rm $LOG
       done
       ;;
     groups)
       for test in `expand_test_list $suite $filterspec | sed 's/\..*//' | sort -u`
       do
         $announce $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}"
-        test "$logfiles" = yes && LOGCMD="> ../../../logs/$suite-$test-$i.log"
+        LOG=$LOGSDIR/$suite-$test-$i.log
         $dry_run alarm `get_expected_runtime $suite` \
-                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | eval reduce_verbosity $LOGCMD || true
+                  $VALGRIND_CMD $WINE ./$suite.exe --gtest_filter="$test.*-${expected_to_fail}" 2>&1 | eval reduce_verbosity | tee $LOG || errors=yes true
+        egrep -q "$PATTERN" tmp.log && errors=yes
+        test "$logfiles" = yes || rm $LOG
       done
       ;;
     esac
   done
   i=`expr $i + 1`
 done
+
+case "$errors" in
+yes) echo "Errors detected, condition red.  Battle stations!" ; exit 1;;
+*) echo "No errors detected." ;;
+esac
+
