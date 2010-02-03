@@ -2293,6 +2293,7 @@ load_psdkwin7()
     load_vcrun6
     load_vcrun2008
     load_dotnet20
+    load_gdiplus     # work around http://bugs.winehq.org/show_bug.cgi?id=21509
 
     # don't have a working unattended recipe.  Maybe we'll have to
     # do an autohotkey script until msft gets its act together:
@@ -2301,6 +2302,25 @@ load_psdkwin7()
     cd "$WINETRICKS_CACHE"/psdkwin7
     try $WINE winsdk_web.exe
     cd "$olddir"
+
+    # FIXME: don't do this if running on real Windows?
+    # Work around bug http://bugs.winehq.org/show_bug.cgi?id=21362
+    # Assume user installed in default location
+    cat > "$WINETRICKS_TMP"/set-psdk7.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows]
+"CurrentVersion"="v7.0"
+"CurrentInstallFolder"="C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0]
+"InstallationFolder"="C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\"
+"ProductVersion"="7.0.7600.16385.40715"
+"ProductName"="Microsoft Windows SDK for Windows 7 (7.0.7600.16385.40715)"
+_EOF_
+    try_regedit "$WINETRICKS_TMP_WIN"\\set-psdk7.reg
 }
 
 #----------------------------------------------------------------
