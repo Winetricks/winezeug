@@ -77,10 +77,10 @@ detect_sudo() {
     SUDO=sudo
     if test x"$DISPLAY" != x""
     then
-        if test -x "`which gksudo`"
+        if test -x "`which gksudo 2>/dev/null`"
         then
             SUDO=gksudo
-        elif test -x "`which kdesudo`"
+        elif test -x "`which kdesudo 2>/dev/null`"
         then
             SUDO=kdesudo
         fi
@@ -91,10 +91,10 @@ detect_sudo() {
 detect_menu() {
     # TODO: add 'dialog'
     MENU=xmessage
-    if test -x "`which zenity`"
+    if test -x "`which zenity 2>/dev/null`"
     then
         MENU=zenity
-    elif test -x "`which kdialog`"
+    elif test -x "`which kdialog 2>/dev/null`"
     then
         MENU=kdialog
     fi
@@ -445,7 +445,7 @@ download() {
         # On Mac, 'which' doesn't return good exit status
         # Need to jam in --header "Accept-Encoding: gzip,deflate" else
         # redhat.com decompresses liberation-fonts.tar.gz!
-        if [ -x "`which wget`" ]
+        if [ -x "`which wget 2>/dev/null`" ]
         then
            # Use -nd to insulate ourselves from people who set -x in WGETRC
            # [*] --retry-connrefused works around the broken sf.net mirroring
@@ -461,7 +461,7 @@ download() {
         fi
         # Need to decompress .exe's that are compressed, else cygwin fails
         # Only affects cygwin, so don't barf if 'file' not installed
-        FILE=`which file`
+        FILE=`which file 2>/dev/null`
         case $FILE-$file in
         /*-*.exe)
             case `file $file` in
@@ -3314,7 +3314,7 @@ case "$OS" in
   die_if_user_not_dirowner "$WINEPREFIX"
   die_if_user_not_dirowner "$WINETRICKS_CACHE"
 
-  if [ ! -x "`which "$WINE"`" ]
+  if [ ! -x "`which "$WINE" 2>/dev/null`" ]
   then
       die "Cannot find wine ($WINE)"
   fi
@@ -3363,22 +3363,22 @@ else
 fi
 
 # Mac folks tend to not have sha1sum, but we can make do with openssl
-if [ -x "`which sha1sum`" ]
+if [ -x "`which sha1sum 2>/dev/null`" ]
 then
    SHA1SUM="sha1sum"
-elif [ -x "`which openssl`" ]
+elif [ -x "`which openssl 2>/dev/null`" ]
 then
    SHA1SUM="openssl dgst -sha1"
 else
    die "No sha1sum utility available."
 fi
 
-if [ ! -x "`which cabextract`" ]
+if [ ! -x "`which cabextract 2>/dev/null`" ]
 then
     die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
 fi
 
-if [ ! -x "`which unzip`" ]
+if [ ! -x "`which unzip 2>/dev/null`" ]
 then
     die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
 fi
