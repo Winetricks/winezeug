@@ -21,7 +21,7 @@
 # Kill any wineserver that was started outside the high-ulimit session.
 #
 # Also, you might want to turn on parallel building
-# by creating the file ~/.wine-chromium-tests/drive_c/users/$YOURUSERNAME/.gyp/include.gypi
+# by creating the file ~/.wine-chromium-tests/drive_c/users/$LOGNAME/.gyp/include.gypi
 # containing the five lines
 #   { 
 #      'variables': { 
@@ -29,6 +29,9 @@
 #      } 
 #   }
 # See http://groups.google.com/group/chromium-dev/msg/0011dfa6dbf335bd
+# If you edit include.gypi after checking out the source, you have to do 
+#   sh build.sh gclient runhooks --force
+# for it to take effect.
 #
 # If running on Windows:
 # First download cygwin's setup.exe to new directory c:/cygpkgs
@@ -366,8 +369,7 @@ do
     run)      $WINE c:\\chromium\\src\\chrome\\$mode\\chrome.exe --no-sandbox --use-nss-for-ssl;;
     cmd)      $WINE cmd $*; exit;;
     sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
-    ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
-    gclient)  shift; do_gclient "$@" ;;
+    gclient)  shift; do_gclient "$@"; exit ;;
     bareide)  cd src; $WINE "$IDEDIR\\devenv" ;;
     ide)      cd src; $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
     kill)     do_kill;;
