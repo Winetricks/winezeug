@@ -84,7 +84,9 @@ THE_VALGRIND_CMD="/usr/local/valgrind-11036/bin/valgrind \
 --workaround-gcc296-bugs=yes \
 "
 
-LANG=C
+# Run in a defined locale 
+# At least one test (ZipTest.UnzipEvil2) fails if LANG=C, so use a real English locale instead
+LANG=en_US.UTF-8
 
 PATTERN="are definitely|uninitialised|Unhandled exception|Invalid read|Invalid write|Invalid free|Source and desti|Mismatched free|unaddressable byte|vex x86|impossible|Assertion |INTERNAL ERROR|Terminated|Test failed|Alarm clock|Command exited with non-zero status"
 
