@@ -4,12 +4,7 @@
 # Simple usage:  sh build.sh all
 #
 # If running on Linux:
-# First patch wine for the following problems (each has an attached patch):
-#  %~dp0 doesn't work properly
-#    http://bugs.winehq.org/show_bug.cgi?id=21382
-#  reg can't set DWORD values
-#    http://bugs.winehq.org/show_bug.cgi?id=19533
-# and do
+# First build the latest wine from svn, then do
 #  sudo apt-get install cabextract winbind
 # or winetricks and svn will complain.
 #
