@@ -1,7 +1,7 @@
 #!/bin/sh
 # Script to set up build envrionment for chromium with visual c++
 # and then build part or all of chromium.
-# Simple usage:  sh build.sh all
+# Simple usage:  sh build.sh chrome
 #
 # If running on Linux:
 # First build the latest wine from svn, then do
@@ -49,6 +49,7 @@ usage() {
    set +x
    echo "Usage: build.sh [--init] tests|chrome|build|clean|cmd|gclient|ide|kill|run|source|sh|start|tools|vcinst|vcload|vcsave"
    echo "Simple usage:"
+   echo " setup      Install any needed tools not yet installed, and if there's no source tree yet, get one."
    echo " chrome     Build chrome."
    echo " run        Run the chrome.exe you built."
    echo " tests      Build most of chrome's unit tests."
@@ -60,10 +61,10 @@ usage() {
    echo " gclient    Run gclient with given arguments"
    echo " ide        Run Visual C++ IDE"
    echo " --init     Wipe out wine bottle and start over"
-   echo " kill       Kill wineserver"
+   echo " kill       Kill wineserver and pdb server"
    echo " sh         Cygwin command prompt"
    echo " source     Check out source code for first time"
-   echo " start      Start persistent pdbserver (else you'll see random hangs)"
+   echo " start      Start persistent pdbserver"
    echo " tools      Install depot_tools"
    echo " vcinst     Install Visual C++ 2005, sp1, hotfixes"
    echo " vcload     Load a copy of Visual C++ saved by vcsave"
@@ -128,11 +129,18 @@ then
    PROGRAM_FILES_x86_WIN="$PROGRAM_FILES_WIN"
 fi
 
-while ! test -f "$DRIVE_C/cygwin/bin/unzip.exe" || ! test -f "$DRIVE_C/cygwin/bin/wget.exe" 
-do
-   echo "Please install unzip and wget in cygwin"
-   time sh "$OLDDIR"/../../winetricks cygwin
-done
+#-------- Functions related to first-time setup ------------
+
+do_vcload() {
+   if test ! -f "$OLDDIR"/vc8.tgz
+   then
+      echo "Can't find $OLDDIR/vc8.tgz.  Please prepare it on Windows (see comments) and put it in $OLDDIR."
+      exit 1
+   fi
+   cp "$OLDDIR"/vc8.tgz "$DRIVE_C/chromium/src"
+   cd "$DRIVE_C/chromium/src"
+   sh -x "$OLDDIR/../../winetricks" vc2005load
+}
 
 check_visualc() {
  # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
@@ -171,7 +179,8 @@ check_visualc() {
 
  # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
  # says "integrate windows SDK into Visual C++ 2005 by running windowssdkver -version:v7 -legacy",
- $WINE "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Setup/windowssdkver" -version:v7.0        
+ # It's a bit wrong, should say v7.0 (not v7), and shouldn't always suggest -legacy (which failed for me).
+ $WINE "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Setup/windowssdkver" -version:v7.0 -q
 }
 
 check_tools() {
@@ -236,6 +245,33 @@ check_source() {
  fi
 }
 
+# Common tasks that need to be done once
+do_setup() {
+   # Avoid wine's crash dialog.
+   # Creates $DRIVE_C if it didn't exist yet, too.
+   sh "$OLDDIR"/../../winetricks nocrashdialog
+
+   mkdir -p "$DRIVE_C/chromium"
+   # For my convenience while developing this script, maybe useful for others
+   # though the symlink won't be much use until svn creates that directory
+   ln -sf "$DRIVE_C/chromium/src" "$OLDDIR"
+
+   cd "$DRIVE_C/chromium"
+
+   while ! test -f "$DRIVE_C/cygwin/bin/unzip.exe" || ! test -f "$DRIVE_C/cygwin/bin/wget.exe" 
+   do
+      echo "Please install unzip and wget in cygwin"
+      time sh "$OLDDIR"/../../winetricks cygwin
+   done
+
+   # tools must come before source
+   check_tools
+   check_source
+   check_visualc
+}
+
+#-------- Functions related to building ------------
+
 do_kill() {
    $WINESERVER -k || true
    killall mspdbsrv
@@ -247,6 +283,7 @@ do_start() {
 }
 
 do_build() {
+   cd "$DRIVE_C/chromium/src"
    nfiles=`ulimit -n`
    echo "File descriptor limit is $nfiles"
    if test $nfiles -lt 5000
@@ -255,7 +292,6 @@ do_build() {
        echo "Please do something like sudo bash; ulimit -n 5000; su $USERNAME and run again."
        exit 1
    fi
-   cd "$DRIVE_C/chromium/src"
    if ! ps augxw | grep -v grep | grep mspdbsrv > /dev/null
    then
       do_start
@@ -272,27 +308,6 @@ do_clean() {
 do_gclient() {
    cd "$DRIVE_C/chromium/src"
    $WINE cmd /c "c:\\chromium\\depot_tools\\gclient.bat" "$@"
-}
-
-# Common tasks that need to be done once
-do_setup() {
-   sh "$OLDDIR"/../../winetricks nocrashdialog
-
-   # tools must come before source
-   check_tools
-   check_source
-   check_visualc
-}
-
-do_vcload() {
-   if test ! -f "$OLDDIR"/vc8.tgz
-   then
-      echo "Can't find $OLDDIR/vc8.tgz.  Please prepare it on Windows (see comments) and put it in $OLDDIR."
-      exit 1
-   fi
-   cp "$OLDDIR"/vc8.tgz "$DRIVE_C/chromium/src"
-   cd "$DRIVE_C/chromium/src"
-   sh -x "$OLDDIR/../../winetricks" vc2005load
 }
 
 # Show how to build a whole bunch of the tests
@@ -321,6 +336,8 @@ demo_chrome() {
   do_kill
 }
 
+#---------- end of functions ------------
+
 if test "$OS" != Windows_NT
 then
    # gyp needs to know username and domain for some reason (see http://code.google.com/p/gyp/issues/detail?id=100 )
@@ -336,11 +353,6 @@ export GYP_MSVS_VERSION=2005
 # and http://bugs.winehq.org/show_bug.cgi?id=21484
 # (though we'll need a new workaround for 21484 once 21174 is fixed)
 export NUMBER_OF_PROCESSORS_PLUS_1=1
-
-mkdir -p "$DRIVE_C/chromium"
-# For my convenience while developing this script, maybe useful for others
-# though the symlink won't be much use until svn creates that directory
-ln -sf "$DRIVE_C/chromium/src" "$OLDDIR"
 
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 while test "$1" != ""
@@ -360,6 +372,7 @@ do
     ide)      cd src; $WINE "$IDEDIR\\devenv" chrome\\chrome.sln ;;
     kill)     do_kill;;
     release)  mode=Release;;
+    setup)    do_setup;;
     source)   check_source;;
     tools)    check_tools;;
     vcinst)   check_visualc;;
