@@ -75,6 +75,7 @@ esac
 # Detect which sudo to use
 detect_sudo() {
     SUDO=sudo
+    test "$GUI" = 1 || return
     if test x"$DISPLAY" != x""
     then
         if test -x "`which gksudo 2>/dev/null`"
@@ -101,7 +102,9 @@ detect_menu() {
 }
 
 warn() {
+    echo "------------------------------------------------------"
     echo "$@"
+    echo "------------------------------------------------------"
 
     test "$GUI" = 1 || return
 
@@ -1599,7 +1602,10 @@ _EOF_
 load_gdiplus() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=6A63AB9C-DF12-4D41-933C-BE590FEAA05A&displaylang=en
     download . http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
-    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$WINETRICKS_TMP_WIN $WINETRICKS_QUIET
+    # Used to use $WINETRICKS_QUIET, but that mean that in non-q
+    # mode, a mysterious "Extraction Complete" dialog was all user saw.
+    # Showing that isn't useful, so always use /q.
+    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$WINETRICKS_TMP_WIN /q
     # And then make it globally available.
     try cp "$WINETRICKS_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$WINDIR"/system32/
 
@@ -2289,7 +2295,6 @@ load_psdkvista()
 load_psdkwin7()
 {
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
-    warn "When given a choice, select only C++ compilers and headers, the other options don't work yet."
     load_vcrun6
     load_vcrun2008
     load_dotnet20
@@ -2300,6 +2305,7 @@ load_psdkwin7()
     # http://social.msdn.microsoft.com/Forums/en-US/windowssdk/thread/c053b616-7d5b-405d-9841-ec465a8e21d5
     download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
     cd "$WINETRICKS_CACHE"/psdkwin7
+    warn "When given a choice, select only C++ compilers and headers, the other options don't work yet.  See http://bugs.winehq.org/show_bug.cgi?id=21596"
     try $WINE winsdk_web.exe
     cd "$olddir"
 
