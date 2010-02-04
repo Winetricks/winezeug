@@ -16,6 +16,10 @@
 #    su YOURNAME
 # Then run the build in that session.
 #
+# If you get assertion failures in ld.so, or visual studio crashes, you
+# may well have accidentally started wineserver with a low ulimit.
+# Kill any wineserver that was started outside the high-ulimit session.
+#
 # Also, you might want to turn on parallel building
 # by creating the file ~/.wine-chromium-tests/drive_c/users/$YOURUSERNAME/.gyp/include.gypi
 # containing the five lines
@@ -350,7 +354,7 @@ do
     clean)    do_clean ;;
     tests)    demo_tests ;;
     chrome)   demo_chrome ;;
-    run)      $WINE c:\\chromium\\src\\chrome\\$mode\\chrome.exe --no-sandbox ;;
+    run)      $WINE c:\\chromium\\src\\chrome\\$mode\\chrome.exe --no-sandbox --use-nss-for-ssl;;
     cmd)      $WINE cmd $*; exit;;
     sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
     ash)      shift; $WINE c:\\cygwin\\bin\\ash.exe "$@";;
