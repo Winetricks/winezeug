@@ -155,10 +155,10 @@ check_visualc() {
    # says to install a bunch of service packs and hotfixes, but they don't install in wine yet
    if test "$OS" != Windows_NT
    then
-     if test ! -f vc8.tgz
+     if test ! -f "$OLDDIR"/vc8.tgz
      then
        echo "Wine can't handle installing vc2005sp1 or vc2005hotfix, so"
-       echo "put the vc8.tgz you made on windows into src/, do 'sh build.sh vcload', then run again."
+       echo "put the vc8.tgz you made on windows into $OLDDIR, do 'sh build.sh vcload', then run again."
        exit 1
      fi
      do_vcload
@@ -172,9 +172,8 @@ check_visualc() {
  # says "install Windows 7 SDK"
  if test ! -f "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Lib/windowscodecs.lib"
  then
-   echo "Be sure to only select the minimum options needed for C development in the Platform SDK!"
    sh "$OLDDIR"/../../winetricks -q vcrun2008
-   sh "$OLDDIR"/../../winetricks -v psdkwin7
+   sh "$OLDDIR"/../../winetricks -q psdkwin7
  fi
 
  # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
@@ -357,7 +356,8 @@ export NUMBER_OF_PROCESSORS_PLUS_1=1
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 while test "$1" != ""
 do
-    cd "$DRIVE_C/chromium"
+    # FIXME: might not exist yet.  Remove this once all verbs cd as needed.
+    cd "$DRIVE_C/chromium" > /dev/null 2>&1 || true
     case "$1" in
     build)    shift; do_build $1;;
     clean)    do_clean ;;
