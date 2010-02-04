@@ -43,27 +43,34 @@
 
 usage() {
    set +x
-   echo "Usage: build.sh [--init] all|build|clean|cmd|gclient|ide|kill|run|source|sh|start|tools|vcinst|vcload|vcsave"
-   echo " --init: wipe out wine bottle and start over"
-   echo " all: everything from soup to nuts.  The other commands are for advanced users."
-   echo " build XXX: build project XXX (e.g. base_unittests, net_unittests, unit_tests)"
-   echo " clean: remove built objects and binaries in src/chrome/Debug"
-   echo " cmd: windows command prompt"
-   echo " gclient: run gclient with given arguments"
-   echo " ide: run Visual C++ IDE"
-   echo " kill: kill wineserver"
-   echo " run: run the chrome.exe you built"
-   echo " source: check out source code for first time"
-   echo " sh: cygwin command prompt"
-   echo " start: start persistent pdbserver (else you'll see random hangs)"
-   echo " tools: install depot_tools"
-   echo " vcinst: install Visual C++ 2005, sp1, hotfixes"
-   echo " vcload: load a copy of Visual C++ saved by vcsave"
-   echo " vcsave: save a copy of Visual C++ to the file vc8.tgz"
+   echo "Usage: build.sh [--init] tests|chrome|build|clean|cmd|gclient|ide|kill|run|source|sh|start|tools|vcinst|vcload|vcsave"
+   echo "Simple usage:"
+   echo " chrome     Build chrome."
+   echo " run        Run the chrome.exe you built."
+   echo " tests      Build most of chrome's unit tests."
+   echo ""
+   echo "Low-level usage:"
+   echo " build XXX  Build project XXX (e.g. base_unittests, net_unittests, unit_tests)"
+   echo " clean      Remove built objects and binaries in src/chrome/Debug"
+   echo " cmd        Windows command prompt"
+   echo " gclient    Run gclient with given arguments"
+   echo " ide        Run Visual C++ IDE"
+   echo " --init     Wipe out wine bottle and start over"
+   echo " kill       Kill wineserver"
+   echo " sh         Cygwin command prompt"
+   echo " source     Check out source code for first time"
+   echo " start      Start persistent pdbserver (else you'll see random hangs)"
+   echo " tools      Install depot_tools"
+   echo " vcinst     Install Visual C++ 2005, sp1, hotfixes"
+   echo " vcload     Load a copy of Visual C++ saved by vcsave"
+   echo " vcsave     Save a copy of Visual C++ to the file vc8.tgz"
    exit 1
 }
 
-mode=Debug
+if test "$1"x = ""x
+then
+  usage
+fi
 
 do_init=0
 if test "$1"x = "--init"x
@@ -71,6 +78,8 @@ then
   do_init=1
   shift
 fi
+
+mode=Debug
 
 set -e
 
@@ -132,10 +141,19 @@ check_visualc() {
    $WINE "$IDEDIR\\devenv"
    # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
    # says to install a bunch of service packs and hotfixes, but they don't install in wine yet
-   echo "In Wine, this will take fifteen minutes and then fail, so press ^C now, "
-   echo "put the vc8.tgz you made on windows into src/, do 'sh build.sh vcload', then run again."
-   time sh "$OLDDIR"/../../winetricks vc2005sp1
-   time sh "$OLDDIR"/../../winetricks vc2005hotfix
+   if test "$OS" != Windows_NT
+   then
+     if test ! -f vc8.tgz
+     then
+       echo "Wine can't handle installing vc2005sp1 or vc2005hotfix, so"
+       echo "put the vc8.tgz you made on windows into src/, do 'sh build.sh vcload', then run again."
+       exit 1
+     fi
+     do_vcload
+   else
+     time sh "$OLDDIR"/../../winetricks vc2005sp1
+     time sh "$OLDDIR"/../../winetricks vc2005hotfix
+   fi
  fi
 
  # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
@@ -149,7 +167,7 @@ check_visualc() {
 
  # http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Prerequisite-software
  # says "integrate windows SDK into Visual C++ 2005 by running windowssdkver -version:v7 -legacy",
- $WINE "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Setup/windowssdkver" -version:v7        
+ $WINE "$PROGRAM_FILES/Microsoft SDKs/Windows/v7.0/Setup/windowssdkver" -version:v7.0        
 }
 
 check_tools() {
@@ -215,9 +233,14 @@ check_source() {
 }
 
 do_build() {
-   echo -n "File descriptor limit is  "
-   ulimit -n
-   echo "If that's below 5000, you might want to raise it."
+   nfiles=`ulimit -n`
+   echo "File descriptor limit is $nfiles"
+   if test $nfiles -lt 5000
+   then
+       echo "File descriptor limit needs to be 5000 or higher to make devenv happy during big builds."
+       echo "Please do something like sudo bash; ulimit -n 5000; su $USERNAME and run again."
+       exit 1
+   fi
    cd "$DRIVE_C/chromium/src"
    case $1 in
    base_unittests|net_unittests|unit_tests) ;;
@@ -247,19 +270,53 @@ do_start() {
    $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 > start.log 2>&1 &
 }
 
-# Example of how to do it all from start to finish
-do_all() {
+# Common tasks that need to be done once
+do_setup() {
+   do_kill
+
+   sh "$OLDDIR"/../../winetricks nocrashdialog
+
+   # tools must come before source
+   check_tools
+   check_source
+   check_visualc
+   do_start
+}
+
+do_vcload() {
+   if test ! -f "$OLDDIR"/vc8.tgz
+   then
+      echo "Can't find $OLDDIR/vc8.tgz.  Please prepare it on Windows (see comments) and put it in $OLDDIR."
+      exit 1
+   fi
+   cp "$OLDDIR"/vc8.tgz "$DRIVE_C/chromium/src"
+   cd "$DRIVE_C/chromium/src"
+   sh -x "$OLDDIR/../../winetricks" vc2005load
+}
+
+# Show how to build a whole bunch of the tests
+demo_tests() {
+  do_setup
+  do_build app_unittests
+  do_build base_unittests
+  do_build courgette_unittests
+  do_build googleurl_unittests
+  do_build ipc_tests
+  do_build media_unittests
+  do_build net_unittests
+  do_build printing_unittests
+  do_build sbox_unittests
+  do_build sbox_validation_tests
+  do_build setup_unittests
+  do_build tcmalloc_unittests
+  do_build unit_tests
   do_kill
-  # tools must come before source
-  check_tools
-  check_source
-  check_visualc
-  # and if running on Linux, ^C when sp1 install hangs, do vcload, and run again.
-  do_start
-  do_clean
-  #do_gclient sync
-  #do_gclient runhooks --force
-  do_build base
+}
+
+# Show how to build the browser
+demo_chrome() {
+  do_setup
+  do_build chrome
   do_kill
 }
 
@@ -284,17 +341,15 @@ mkdir -p "$DRIVE_C/chromium"
 # though the symlink won't be much use until svn creates that directory
 ln -sf "$DRIVE_C/chromium/src" "$OLDDIR"
 
-sh "$OLDDIR"/../../winetricks nocrashdialog
-
 IDEDIR="$PROGRAM_FILES_x86_WIN\\Microsoft Visual Studio 8\\Common7\\IDE" 
 while test "$1" != ""
 do
     cd "$DRIVE_C/chromium"
     case "$1" in
-    all)      do_all ;;
-    bench)    do_bench ;;
     build)    shift; do_build $1;;
     clean)    do_clean ;;
+    tests)    demo_tests ;;
+    chrome)   demo_chrome ;;
     run)      $WINE c:\\chromium\\src\\chrome\\$mode\\chrome.exe --no-sandbox ;;
     cmd)      $WINE cmd $*; exit;;
     sh)       $WINE cmd /c c:\\cygwin\\cygwin.bat ;;
@@ -308,7 +363,7 @@ do
     tools)    check_tools;;
     vcinst)   check_visualc;;
     vcsave)   cd src; sh -x "$OLDDIR/../../winetricks" vc2005save ;;
-    vcload)   cd src; sh -x "$OLDDIR/../../winetricks" vc2005load ;;
+    vcload)   do_vcload;;
     start)    do_start ;;
     *)        usage ;;
     esac
