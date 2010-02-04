@@ -236,6 +236,16 @@ check_source() {
  fi
 }
 
+do_kill() {
+   $WINESERVER -k || true
+   killall mspdbsrv
+}
+
+do_start() {
+   cd "$DRIVE_C/chromium/src"
+   $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 > start.log 2>&1 &
+}
+
 do_build() {
    nfiles=`ulimit -n`
    echo "File descriptor limit is $nfiles"
@@ -246,11 +256,10 @@ do_build() {
        exit 1
    fi
    cd "$DRIVE_C/chromium/src"
-   case $1 in
-   base_unittests|net_unittests|unit_tests) ;;
-   *) echo unknown project $1, might explode;;
-   esac
-
+   if ! ps augxw | grep -v grep | grep mspdbsrv > /dev/null
+   then
+      do_start
+   fi
    rm -f $1.log
    time $WINE "$IDEDIR\\devenv" /build $mode /out $1.log /project $1 chrome\\chrome.sln
 }
@@ -265,26 +274,14 @@ do_gclient() {
    $WINE cmd /c "c:\\chromium\\depot_tools\\gclient.bat" "$@"
 }
 
-do_kill() {
-   $WINESERVER -k || true
-}
-
-do_start() {
-   cd "$DRIVE_C/chromium/src"
-   $WINE "$IDEDIR\\mspdbsrv" -start -spawn -shutdowntime -1 > start.log 2>&1 &
-}
-
 # Common tasks that need to be done once
 do_setup() {
-   do_kill
-
    sh "$OLDDIR"/../../winetricks nocrashdialog
 
    # tools must come before source
    check_tools
    check_source
    check_visualc
-   do_start
 }
 
 do_vcload() {
