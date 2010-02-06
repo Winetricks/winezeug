@@ -147,22 +147,27 @@ else
     exit 1
 fi
 
-# Make sure wget is available:
-if [ `which wget` ]
+GET() {
+    file=`basename "$1"`
+
+    # Make sure wget is available:
+    if [ -x "`which wget`" ]
+        then
+           wget "$1"
+    # Or curl...silly Mac kids:
+    elif [ `which curl` ]
     then
-        GET="wget"
-# If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
-# to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
-elif [ `which curl` ]
-    then
-        GET="curl -L -O"
-elif [ `which ftp` ]
-    then
-        GET="ftp"
-else
-    echo "You don't have wget, curl or ftp installed. I can't download needed files. Please report this as a bug."
-    exit 1
-fi
+           curl -L -o "$file" "$1"
+    # If not, use ftp. TODO: Find a better fix. This doesn't work on Ubuntu's ftp, possibly others. The only reason
+    # to use this is for machines that don't have wget. The only ones I've seen that on is the BSD's, and this works fine there.
+    elif [ `which ftp` ]
+        then
+            ftp "$1"
+    else
+        echo "You don't have wget, curl or ftp installed. I can't download needed files. Please report this as a bug."
+        exit 1
+    fi
+}
 
 # Fetch an updated tree
 newtree() {
@@ -238,12 +243,12 @@ sleep 10s
 # TODO: get winetest-SHA1SUM. If not available, wait/exit?
 get_tests_32() {
     rm -rf winetest-*.exe ;
-    $GET http://test.winehq.org/builds/winetest-latest.exe
+    GET http://test.winehq.org/builds/winetest-latest.exe
 }
 
 get_tests_64() {
     rm -rf winetest64-*.exe ;
-    $GET http://test.winehq.org/builds/winetest64-latest.exe
+    GET http://test.winehq.org/builds/winetest64-latest.exe
 }
 
 # FIXME: Should be more generic for gecko version, and maybe should support using 
@@ -263,7 +268,7 @@ get_gecko() (
         then
             cp /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../gecko/
     else
-        $GET http://downloads.sourceforge.net/wine/wine_gecko-1.0.0-x86.cab
+        GET http://downloads.sourceforge.net/wine/wine_gecko-1.0.0-x86.cab
         mv wine_gecko-1.0.0-x86.cab ../gecko/
     fi
 )
@@ -781,7 +786,7 @@ mkdir -p $WINETESTDIR
 
 # Get winetricks, used in below tests:
 (cd $WINETESTDIR && 
-$GET "http://winezeug.googlecode.com/svn/trunk/winetricks")
+GET "http://winezeug.googlecode.com/svn/trunk/winetricks")
 
 # Get new tree, if it wasn't disabled.
 if [ $NEWTREE = 1 ]
