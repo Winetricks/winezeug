@@ -52,6 +52,19 @@ NAME=${NAME:-`whoami`}
 # Set your machine name here. Again, used for the test data. If none is given, your hostname is used.
 MACHINE=${MACHINE:-`uname -n`}
 
+# Set your e-mail here. Again, used for the test data. If none is given, it will
+# be retrieved from your git tree (if available) or your username@hostname will be used.
+if [ ! $EMAIL ]
+then
+    cd $WINEGIT 
+    if [ "`git config --get user.email`" ]
+    then
+        EMAIL="`git config --get user.email`"
+    elif
+        EMAIL="$USER"\@"`uname -n`"
+    cd -
+fi
+
 # This is the time between retrying to fetch the updated git tree. Default is 30 minutes. Adjust to your taste.
 # Be sure you put it in seconds. Not all OS's support the d/h/m options (OpenSolaris, I'm looking at you!)
 WAITTIME=${WAITTIME:-1800}
@@ -293,7 +306,7 @@ runtests() {
     fi
     
     echo "About to start $tag test run. Expect no output for a while..." &&
-    $WINE $TESTBINARY -c -t $tag 1>/dev/null 2>&1 &&
+    $WINE $TESTBINARY -c -m $EMAIL -t $tag 1>/dev/null 2>&1 &&
     rm -rf $WINEPREFIX
 }
 
