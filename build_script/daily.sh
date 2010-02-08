@@ -60,9 +60,10 @@ then
     if [ "`git config --get user.email`" ]
     then
         EMAIL="`git config --get user.email`"
-    elif
+    else
         EMAIL="$USER"\@"`uname -n`"
     cd -
+    fi
 fi
 
 # This is the time between retrying to fetch the updated git tree. Default is 30 minutes. Adjust to your taste.
