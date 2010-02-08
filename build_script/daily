@@ -15,7 +15,15 @@ export NAME="yournamegoeshere"
 
 # This should describe your particular machine, in case you have multiple computers.
 # Typically, put your distribution/architecture. If blank, your hostname is used.
+
 export MACHINE="machinename"
+
+# winetest now requires an e-mail address, so developers can contact you for more
+# information if needed (which it usually is). If you're a well-known developer/
+# contributor, you can use your IRC nick/real name. Otherwise, feel free to obfuscate
+# your e-mail so spambots have more trouble with it.
+
+export EMAIL="username@domain.com"
 
 cd $WINEGIT &&
 rm daily.sh || true
