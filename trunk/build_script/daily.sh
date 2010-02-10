@@ -195,7 +195,18 @@ else
 
     # Some people just want to run the tests, others (me) want to wait for new commits.
     # Let them have their cake and eat it too...
-    if [ $WAIT_FOR_COMMITS != 1 ]
+    # While we're at it, have an option to wait for a new release (for release days,
+    # so the build isn't triggered in the time between the first git push and the
+    # git push for the release).
+    if [ $WAIT_FOR_RELEASE = 1 ]
+        then
+            while true
+            do
+                echo "Attempting to fetch new release." &&
+                git fetch -v 2>&1 | grep "\[new\ \tag\]" && break
+                sleep $WAITTIME
+            done
+    elif [ $WAIT_FOR_COMMITS != 1 ]
         then
             git fetch
     else
@@ -743,6 +754,7 @@ HEAP_TEST=0
 JACK_TEST=0
 MESSAGE_TEST=0
 MULTISAMPLING_TEST=0
+NAS_TEST=0
 NOGLSL_TEST=0
 NOWIN16_TEST=0
 OSS_TEST=0
@@ -750,12 +762,13 @@ PBUFFER_TEST=0
 RElAY_TEST=0
 RTLM_DISABLED=0
 RTLM_READDRAW=0
-RTLM_READTEX=0zz
+RTLM_READTEX=0
 RTLM_TEXDRAW=0
 RTLM_TEXTEX=0
 SEH_TEST=0
 VD_TEST=0
 WAIT_FOR_COMMITS=0
+WAIT_FOR_RELEASE=0
 WERROR_TEST=0
 WIN64_TEST=0
 WITH64_TEST=0
@@ -794,6 +807,7 @@ do
     --seh) export SEH_TEST=1;;
     --virtual-desktop) export VD_TEST=1;;
     --wait-for-commits) export WAIT_FOR_COMMITS=1;;
+    --wait-for-release) export WAIT_FOR_RELEASE=1;;
     --werror) export WERROR_TEST=1;;
     --win64|--win-64|--wine64|--wine-64) export WIN64_TEST=1;;
     --with64|--with-64) export WITH64_TEST=1;;
