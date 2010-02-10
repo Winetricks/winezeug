@@ -193,15 +193,20 @@ else
     cd "$WINEGIT"
     git show > /dev/null 2>&1 || die "$WINEGIT exists but is not a git directory. Exiting!"
 
-    # This is used for our loop to check for updated git tree.
-    TREESTATUS=0
-    while [ $TREESTATUS = "0" ]
-    do
-        echo "Attempting to fetch updated tree." &&
-        # Should perhaps be [::alphanum::] instead of '.'?
-        git fetch -v 2>&1 | grep ".......\.\........\ \ master" && break
-        sleep $WAITTIME
-    done
+    # Some people just want to run the tests, others (me) want to wait for new commits.
+    # Let them have their cake and eat it too...
+    if [ $WAIT_FOR_COMMITS != 1 ]
+        then
+            git fetch
+    else
+        while true
+        do
+            echo "Attempting to fetch updated tree." &&
+            # Should perhaps be [::alphanum::] instead of '.'?
+            git fetch -v 2>&1 | grep ".......\.\........\ \ master" && break
+            sleep $WAITTIME
+        done
+    fi
 fi
 }
 
@@ -712,6 +717,7 @@ echo "--rtlm-texdraw - Runs winetest.exe with RenderTargetLockMode set to texdra
 echo "--rtlm-textex - Runs winetest.exe with RenderTargetLockMode set to textex"
 echo "--seh - Runs winetest.exe with WINEDEBUG=+seh"
 echo "--virtual-desktop - Runs winetest.exe in a virtual desktop"
+echo "--wait-for-commits - Wait for a git push upstream, before building/running winetest.exe"
 echo "--werror - Builds Wine with -Werror and runs winetest.exe"
 echo "--win64 - Builds 64-bit Wine and runs winetest64.exe"
 echo "--with64 - Builds 32-bit Wine alongside 64-bit Wine, then runs winetest.exe"
@@ -749,6 +755,7 @@ RTLM_TEXDRAW=0
 RTLM_TEXTEX=0
 SEH_TEST=0
 VD_TEST=0
+WAIT_FOR_COMMITS=0
 WERROR_TEST=0
 WIN64_TEST=0
 WITH64_TEST=0
@@ -786,6 +793,7 @@ do
     --rtlm-textex) export RTLM_TEXTEX=1;;
     --seh) export SEH_TEST=1;;
     --virtual-desktop) export VD_TEST=1;;
+    --wait-for-commits) export WAIT_FOR_COMMITS=1;;
     --werror) export WERROR_TEST=1;;
     --win64|--win-64|--wine64|--wine-64) export WIN64_TEST=1;;
     --with64|--with-64) export WITH64_TEST=1;;
