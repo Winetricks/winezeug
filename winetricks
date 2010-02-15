@@ -2175,7 +2175,7 @@ load_msxml4() {
     # download . http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
     # SP3 (2009): http://www.microsoft.com/downloads/details.aspx?familyid=7F6C0CB4-7A5E-4790-A7CF-9E139E6819C0
     download msxml4sp3 http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi aa70c5c1a7a069af824947bcda1d9893a895318b
-
+    override_dlls native,builtin msxml4
     try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml4sp3/msxml.msi $WINETRICKS_QUIET
 }
 
@@ -2194,7 +2194,7 @@ load_msxml6() {
     # Service Pack 1
     # http://www.microsoft.com/downloads/details.aspx?familyid=D21C292C-368B-4CE1-9DAB-3E9827B70604
     download . http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi
-
+    override_dlls native,builtin msxml6
     try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml6_x86.msi $WINETRICKS_QUIET
 }
 
