@@ -42,7 +42,7 @@ case "$OS" in
  *)
     WINE=${WINE:-wine}
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
-    DRIVE_C="$WINEPREFIX/drive_c"
+    DRIVE_C="$WINEPREFIX/dosdevices/c:"
     XXXPATH="early_wine winepath"
     ;;
 esac
