@@ -720,7 +720,8 @@ load_adobeair() {
 
     # Adobe AIR 1.5.3 runtime
     # 2010-02-02: sha1sum 5c95f51a680f8c175a92755238127be4ad22c53b
-    download . http://airdownload.adobe.com/air/win/download/1.5.3/AdobeAIRInstaller.exe 5c95f51a680f8c175a92755238127be4ad22c53b
+    # 2010-02-20: sha1sum 6f03e723bd855abbe00eb8fdf22da54fb49c62db
+    download . http://airdownload.adobe.com/air/win/download/1.5.3/AdobeAIRInstaller.exe 6f03e723bd855abbe00eb8fdf22da54fb49c62db
     try $WINE "$WINETRICKS_CACHE"/AdobeAIRInstaller.exe $WINETRICKS_UNIXSILENT
 }
 
@@ -1359,8 +1360,9 @@ load_flash() {
     # 2009-02-27: sha1sum 86745020a25edc9695a1a6a4d59eae375665a0b3
     # 2009-07-31: sha1sum 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
     # 2009-12-09: sha1sum f4ec0e95099e354fd01cd3bb27c202f54932dc70
+    # 2010-02-20: sha1sum e05ca1999e820b3fa2ca16fc27bc65183d275681
 
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe f4ec0e95099e354fd01cd3bb27c202f54932dc70
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe e05ca1999e820b3fa2ca16fc27bc65183d275681
     try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe $WINETRICKS_S
 
     # Mozilla / Firefox plugin
@@ -1369,8 +1371,9 @@ load_flash() {
     # 2009-02-27: sha1sum 770db9ad471ffd4357358bc16ff0bb6c98d71e5d
     # 2009-07-31: sha1sum 9590fb87cc33d3a3a1f2f42a1918f06b9f0fd88d
     # 2009-12-09: sha1sum ccb4811b1cc26721c4abb2e5a080868acdee7b87
+    # 2010-02-20: sha1sum f1df1ab84b61e7f2c3eea0a959d2115dd001816b
     
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe ccb4811b1cc26721c4abb2e5a080868acdee7b87
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe f1df1ab84b61e7f2c3eea0a959d2115dd001816b
     try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe $WINETRICKS_S
 }
 
