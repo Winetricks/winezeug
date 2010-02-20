@@ -935,10 +935,10 @@ load_d3dx9() {
     helper_directx_dl
 
     # Kinder, less invasive directx - only extract and override d3dx9_??.dll
-    cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx9*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx9*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
     for x in `ls "$WINETRICKS_TMP"/*.cab`
     do
-      cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
+      try_cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
@@ -953,10 +953,10 @@ load_d3dx10() {
     helper_directx_dl
 
     # Kinder, less invasive directx10 - only extract and override d3dx10_??.dll
-    cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx10*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx10*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
     for x in `ls "$WINETRICKS_TMP"/*.cab`
     do
-      cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
+      try_cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
@@ -968,8 +968,8 @@ load_d3dx10() {
 load_dinput8() {
     helper_directx_dl
 
-    cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    cabextract -d "$WINDIR"/system32 -L -F 'dinput8.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dinput8.dll' "$WINETRICKS_TMP/dxnt.cab"
 
     try $WINE regsvr32 dinput8
 
@@ -988,12 +988,12 @@ load_dirac08() {
 load_directplay() {
     helper_directx_dl
 
-    cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    cabextract -d "$WINDIR"/system32 -L -F 'dplaysvr.exe' "$WINETRICKS_TMP/dxnt.cab"
-    cabextract -d "$WINDIR"/system32 -L -F 'dplayx.dll' "$WINETRICKS_TMP/dxnt.cab"
-    cabextract -d "$WINDIR"/system32 -L -F 'dpnet.dll' "$WINETRICKS_TMP/dxnt.cab"
-    cabextract -d "$WINDIR"/system32 -L -F 'dpnhpast.dll' "$WINETRICKS_TMP/dxnt.cab"
-    cabextract -d "$WINDIR"/system32 -L -F 'dpwsockx.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dplaysvr.exe' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dplayx.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dpnet.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dpnhpast.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dpwsockx.dll' "$WINETRICKS_TMP/dxnt.cab"
 
     try $WINE regsvr32 dplayx.dll
     try $WINE regsvr32 dpnet.dll
@@ -1257,7 +1257,7 @@ load_dotnet35() {
 
     # See also http://blogs.msdn.com/astebner/archive/2008/07/17/8745415.aspx
     cd "$DRIVE_C"
-    cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe
+    try_cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe
     cd wcu/dotNetFramework
     try $WINE dotNetFx35setup.exe /lang:ENU
 }
@@ -2793,7 +2793,7 @@ load_vc2005express()
         rm -rf vc2005express.tmp || true
         mkdir vc2005express.tmp
         cd vc2005express.tmp
-        cabextract "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
+        try_cabextract "$WINETRICKS_CACHE"/vc2005express/vcsetup.exe
         cp "$WINETRICKS_CACHE"/vc2005express/Ixpvc.exe .
         chmod +x Ixpvc.exe
         # Add /qn after ReallySuppress for a really silent install (but then you won't see any errors)
@@ -2953,11 +2953,12 @@ load_vc2005trial()
     # FIXME: do this right
     rm -f /cygdrive/c/Users/$USER/AppData/local/temp/dd_vsinstall80.txt
 
-    if false && [ $WINETRICKS_QUIET ]
+    if [ $WINETRICKS_QUIET ]
     then
-      # Thanks to http://blogs.msdn.com/astebner/archive/2005/05/24/421314.aspx for unattended install method
-      # See also http://support.microsoft.com/?kbid=913445
-      die "not implemented yet"
+        download . "http://winezeug.googlecode.com/svn/trunk/winetricks_files/vc2005trial.ahk" e22a01c0c6f92dabd3d6d471798357b8c5c01272
+        download . "http://winezeug.googlecode.com/svn/trunk/appinstall/tools/autohotkey/autohotkey.exe" 7af551a851da5ccb8a98ba980b6b19ec5892884d
+        cd "$ISO_MOUNT_ROOT/vs/Setup"
+        try $WINE "$WINETRICKS_CACHE_WIN"/autohotkey.exe "$WINETRICKS_CACHE_WIN"/vc2005trial.ahk
     else
       try cd "$ISO_MOUNT_ROOT/vs/Setup"
       try $WINE setup.exe
@@ -3293,12 +3294,12 @@ load_xact() {
     helper_directx_dl ;
 
     # xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll - extract
-    cabextract -d "$WINETRICKS_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    cabextract -d "$WINETRICKS_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    cabextract -d "$WINETRICKS_TMP" -L -F '*_xaudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_xaudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
     for x in `ls "$WINETRICKS_TMP"/*.cab`
     do
-      cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
+      try_cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
     done
 
     # xactengine?_?.dll, xaudio?_?.dll - register
