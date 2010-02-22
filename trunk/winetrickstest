@@ -18,6 +18,7 @@ for verb in \
     corefonts \
     d3dx9 \
     d3dx10 \
+    d3dxof \
     dcom98 \
     dinput8 \
     dirac \
