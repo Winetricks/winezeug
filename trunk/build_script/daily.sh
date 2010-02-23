@@ -447,7 +447,7 @@ runtests
 }
 
 heap_test() {
-WINEDEBUG="warn+heap"
+WINEDEBUG="err+heap"
 TESTNAME="-heap"
 TESTBINARY="winetest-latest.exe"
 export WINEDEBUG
