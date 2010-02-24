@@ -2957,11 +2957,21 @@ load_vc2005trial()
     load_msxml6
     load_vcdmount
 
-    warn "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
-    download vc2005trial http://download.microsoft.com/download/6/f/5/6f5f7a01-50bb-422d-8742-c099c8896969/En_vs_2005_vsts_180_Trial.img f66ae07618d67e693ca0524d3582208c20e07823
+    if test ! -x "$programfilesdir_unix/7-Zip/7z.exe"
+    then
+        warn "Installing 7-zip file archiver for vc2005trial image extraction"
+        load_7zip
+    fi
 
-    iso_umount
-    iso_mount "$WINETRICKS_CACHE"/vc2005trial/En_vs_2005_vsts_180_Trial.img
+    # This is the last file that 7-zip extracts.
+    if test ! -f "$WINETRICKS_CACHE/vc2005trial/vs/wcu/runmsi.exe"
+    then
+        warn "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
+        download . http://download.microsoft.com/download/6/f/5/6f5f7a01-50bb-422d-8742-c099c8896969/En_vs_2005_vsts_180_Trial.img f66ae07618d67e693ca0524d3582208c20e07823
+        try $WINE "$programfilesdir_win"/7-Zip/7z.exe x -y -o"$WINETRICKS_CACHE_WIN"/vc2005trial "$WINETRICKS_CACHE_WIN"/En_vs_2005_vsts_180_Trial.img
+    fi
+
+    verify_sha1sum 15433993ab7573c5154dbea2dcb65450f2adbf5c "$WINETRICKS_CACHE/vc2005trial/vs/wcu/runmsi.exe"
 
     # FIXME: do this right
     rm -f /cygdrive/c/Users/$USER/AppData/local/temp/dd_vsinstall80.txt
@@ -2970,10 +2980,10 @@ load_vc2005trial()
     then
         download . "http://winezeug.googlecode.com/svn/trunk/winetricks_files/vc2005trial.ahk" e22a01c0c6f92dabd3d6d471798357b8c5c01272
         download . "http://winezeug.googlecode.com/svn/trunk/appinstall/tools/autohotkey/autohotkey.exe" 7af551a851da5ccb8a98ba980b6b19ec5892884d
-        cd "$ISO_MOUNT_ROOT/vs/Setup"
+        try cd "$WINETRICKS_CACHE"/vc2005trial/vs/Setup
         try $WINE "$WINETRICKS_CACHE_WIN"/autohotkey.exe "$WINETRICKS_CACHE_WIN"/vc2005trial.ahk
     else
-      try cd "$ISO_MOUNT_ROOT/vs/Setup"
+      try cd "$WINETRICKS_CACHE"/vc2005trial/vs/Setup
       try $WINE setup.exe
 
       # FIXME: unify these and make the windows one right
@@ -2993,8 +3003,6 @@ load_vc2005trial()
       fi
       cd "$olddir"
     fi
-
-    iso_umount
 }
 
 #----------------------------------------------------------------
