@@ -1174,7 +1174,7 @@ load_dotnet20() {
     load_fontfix
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != dotnet20 && test -f "$WINDIR"/system32/l_intl.nls
+    if test $PACKAGE != dotnet20 && test -f "$WINDIR"/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll
     then
         echo "prerequisite dotnet20 already installed, skipping"
         return
