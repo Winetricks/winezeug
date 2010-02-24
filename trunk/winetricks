@@ -156,6 +156,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
+    echo " 7zip          7-zip file archiver"
     echo " adobeair      Adobe AIR runtime"
     echo " art2kmin      MS Access 2007 runtime"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
@@ -715,6 +716,13 @@ a97c820915dc20929e84b49646ec275760012a42
 }
 
 #----- One function per package, in alphabetical order ----------
+
+load_7zip() {
+    download . $SOURCEFORGE/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
+    try $WINE "$WINETRICKS_CACHE"/7z465.exe $WINETRICKS_S
+}
+
+#----------------------------------------------------------------
 
 load_adobeair() {
     # corefonts is necessary to avoid an installer crash.
@@ -3440,6 +3448,7 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
+    7zip|7-zip) load_7zip;;
     adobeair) load_adobeair;;
     art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;

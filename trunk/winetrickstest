@@ -9,6 +9,7 @@ rm -rf $HOME/.winetrickscache
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 for verb in \
+    7zip \
     adobeair \
     art2kmin \
     atmlib \
