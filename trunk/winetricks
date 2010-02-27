@@ -2074,15 +2074,16 @@ load_mozillabuild() {
 #----------------------------------------------------------------
 
 load_mpc() {
-    download . $SOURCEFORGE/guliverkli2/Media%20Player%20Classic/6.4.9.1/mplayerc_20090706.zip 9b8e06a3997a786dccfb5739e0cc1a34f17905b6
+    download . $SOURCEFORGE/mpc-hc/MPC%20HomeCinema%20-%20Win32/MPC-HC%20v1.3.1249.0_32%20bits/MPC-Homecinema.1.3.1249.0.%28x86%29.zip 6c46846b5298f35ccc81925aa5304546b9a7e513
     mkdir -p "$programfilesdir_unix/Media Player Classic"
     cd "$programfilesdir_unix/Media Player Classic"
-    try unzip "$WINETRICKS_CACHE"/mplayerc_20090706.zip
+    try unzip "$WINETRICKS_CACHE/MPC-Homecinema.1.3.1249.0.%28x86%29.zip"
+
 
     append_path "$programfilesdir_win"'\\Media Player Classic'
 
     cd "$olddir"
-    warn "MPC now available as $programfilesdir_win\Media Player Classic\mplayerc.exe"
+    warn "MPC now available as $programfilesdir_win\Media Player Classic\mpc-hc.exe"
 }
 
 #----------------------------------------------------------------
