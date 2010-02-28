@@ -30,6 +30,47 @@ then
 
 fi
 
+if test `uname -s` = 'OpenBSD'
+then
+    if test ! -w /
+    then
+        echo "You must run $0 as root"
+        exit 1
+    fi
+    
+    if test ! $PKG_PATH
+    then
+        echo "\$PKG_PATH is undefined, don't know where to get packages"
+        exit 1
+    fi
+    
+    for pkg in \
+        git
+        lcms
+        gsm
+        openldap-client
+        sane-backends
+        gnutls
+        mpg123
+        jpeg
+        png
+        libxml
+        libxslt
+        bison
+    do
+        pkg_add $pkg
+    done
+    
+    if test -d /usr/ports/devel/flex
+        cd /usr/ports/devel/flex
+        make
+        make install
+    else
+        echo "Flex wasn't found in ports (or you don't have ports installed)."
+        echo "You'll need to build/install flex manually. You need at least version 2.5.33."
+    exit
+fi
+    
 # Regular Linux distros. Currently just Ubuntu :-/.
 
 if test ! -w /
