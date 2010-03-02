@@ -457,6 +457,18 @@ preptests
 runtests
 }
 
+heap_check_test() {
+WINEDEBUG="warn+heap"
+TESTNAME="-heapcheck"
+TESTBINARY="winetest-latest.exe"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+sh $WINETESTDIR/winetricks heapcheck
+runtests
+}
+
 jack_test() {
 WINEDEBUG=""
 TESTNAME="-jack"
@@ -713,7 +725,8 @@ echo "--backbuffer - Runs winetest.exe with offscreen rendering mode set to back
 echo "--ddr-opengl - Runs winetest.exe with DirectDrawRenderer set to OpenGL"
 echo "--esound - Runs winetest.exe with ESound sound system"
 echo "--fbo - Runs winetest.exe with offscreen rendering mode set to FBO"
-echo "--heap - Runs winetest.exe with WINEDEBUG=+heap"
+echo "--heap - Runs winetest.exe with WINEDEBUG=warn+heap"
+echo "--heapcheck - Runs winetest.exe with WINEDEBUG=warn+heap and heapchecking enabled"
 echo "--jack - Runs winetest.exe with JACK sound system"
 echo "--message - Runs winetest.exe with WINEDEBUG=+message"
 echo "--multisamping - Runs winetest.exe with multisampling enabled"
@@ -751,6 +764,7 @@ DDR_OPENGL_TEST=0
 ESOUND_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
+HEAPCHECK_TEST=0
 JACK_TEST=0
 MESSAGE_TEST=0
 MULTISAMPLING_TEST=0
@@ -790,6 +804,7 @@ do
     --esound) export ESOUND_TEST=1;;
     --fbo) export FBO_TEST=1;;
     --heap) export HEAP_TEST=1;;
+    --heapcheck) export HEAP_CHECK_TEST=1;;
     --jack) export JACK_TEST=1;;
     --message) export MESSAGE_TEST=1;;
     --multisampling) export MULTISAMPLING_TEST=1;;
@@ -950,6 +965,11 @@ fi
 if [ $HEAP_TEST = 1 ]
     then
         heap_test
+fi
+
+if [ $HEAP_CHECK_TEST = 1 ]
+    then
+        heap_check_test
 fi
 
 if [ $JACK_TEST = 1 ]
