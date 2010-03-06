@@ -245,7 +245,7 @@ exit 1
 # TODO: determine if logs are wanted, and if so, store in buildlog-date.txt
 build() {
 echo "Starting $BUILDNAME build." && 
-echo "Running configure." && ./configure --disable-tests $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
+echo "Running configure." && ./configure $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
 echo "Running make depend." && make -j$CORES depend 1>/dev/null 2>&1 &&
 echo "Running make." && make -j$CORES 1>/dev/null 2>&1 &&
 echo "$BUILDNAME build was fine. Coolio"
@@ -270,15 +270,26 @@ echo "sleeping for 10 seconds...regedit bug?"
 sleep 10s
 }
 
-# TODO: get winetest-SHA1SUM. If not available, wait/exit?
 get_tests_32() {
-    rm -rf winetest-*.exe ;
-    GET http://test.winehq.org/builds/winetest-latest.exe
+    rm -rf winetest-*.exe || true
+if [ $BINARY_TEST = 1 ]
+then
+    WINETEST32="winetest-$githead.exe"
+    GET "http://test.winehq.org/builds/$WINETEST32"
+else
+    WINETEST32="winetest"
+fi
 }
 
 get_tests_64() {
-    rm -rf winetest64-*.exe ;
-    GET http://test.winehq.org/builds/winetest64-latest.exe
+    rm -rf winetest64-*.exe || true
+if [ $BINARY_TEST = 1 ]
+then
+    WINETEST64="winetest-$githead.exe"
+    GET "http://test.winehq.org/builds/$WINETEST64"
+else
+    WINETEST32="winetest"
+fi
 }
 
 # FIXME: Should be more generic for gecko version, and maybe should support using 
@@ -330,7 +341,7 @@ runtests() {
 all_test() {
 WINEDEBUG="+all"
 TESTNAME="-all"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -341,7 +352,7 @@ runtests
 alsa_test() {
 WINEDEBUG=""
 TESTNAME="-alsa"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -353,7 +364,7 @@ runtests
 audioio_test() {
 WINEDEBUG=""
 TESTNAME="-audioio"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -389,7 +400,7 @@ build || build_failed
 backbuffer_test() {
 WINEDEBUG=""
 TESTNAME="-bckbuf"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -401,7 +412,7 @@ runtests
 coreaudioio_test() {
 WINEDEBUG=""
 TESTNAME="-all"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -413,7 +424,7 @@ runtests
 ddr_opengl_test() {
 WINEDEBUG=""
 TESTNAME="-ddr-opengl"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -425,7 +436,7 @@ runtests
 esound_test() {
 WINEDEBUG=""
 TESTNAME="-esound"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -437,7 +448,7 @@ runtests
 fbo_test() {
 WINEDEBUG=""
 TESTNAME="-fbo"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -449,7 +460,7 @@ runtests
 heap_test() {
 WINEDEBUG="warn+heap"
 TESTNAME="-heap"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -460,7 +471,7 @@ runtests
 heap_check_test() {
 WINEDEBUG="warn+heap"
 TESTNAME="-heapcheck"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -472,7 +483,7 @@ runtests
 jack_test() {
 WINEDEBUG=""
 TESTNAME="-jack"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -484,7 +495,7 @@ runtests
 message_test() {
 WINEDEBUG="+message"
 TESTNAME="-message"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -495,7 +506,7 @@ runtests
 multisampling_test() {
 WINEDEBUG=""
 TESTNAME="-mltsmp"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -507,17 +518,19 @@ runtests
 nas_test() {
 WINEDEBUG=""
 TESTNAME="-nas"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
+export TESTBINARY
 preptests
-sh winetricks nas
+sh $WINETESTDIR/winetricks nas
 runtests
 }
 
 noglsl_test() {
 WINEDEBUG=""
 TESTNAME="-noglsl"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -529,7 +542,7 @@ runtests
 nowin16_test() {
 WINEDEBUG=""
 TESTNAME="-nowin16"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -541,7 +554,7 @@ runtests
 oss_test() {
 WINEDEBUG=""
 TESTNAME="-oss"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -553,7 +566,7 @@ runtests
 pbuffer_test() {
 WINEDEBUG=""
 TESTNAME="-pbuffer"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -565,7 +578,7 @@ runtests
 regular_test() {
 WINEDEBUG=""
 TESTNAME=""
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -576,7 +589,7 @@ runtests
 relay_test() {
 WINEDEBUG="+relay"
 TESTNAME="-relay"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -587,7 +600,7 @@ runtests
 rtlm_disabled_test() {
 WINEDEBUG=""
 TESTNAME="-no-rtlm"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -599,7 +612,7 @@ runtests
 rtlm_readdraw_test() {
 WINEDEBUG=""
 TESTNAME="-readdraw"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -611,7 +624,7 @@ runtests
 rtlm_readtex_test() {
 WINEDEBUG=""
 TESTNAME="-readtex"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -623,7 +636,7 @@ runtests
 rtlm_texdraw_test() {
 WINEDEBUG=""
 TESTNAME="-texdraw"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -635,7 +648,7 @@ runtests
 rtlm_textex_test() {
 WINEDEBUG=""
 TESTNAME="-textex"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -647,7 +660,7 @@ runtests
 seh_test() {
 WINEDEBUG="+seh"
 TESTNAME="-seh"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -658,7 +671,7 @@ runtests
 virtual_desktop_test() {
 WINEDEBUG=""
 TESTNAME="-virtdesktop"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -670,7 +683,7 @@ runtests
 werror_test() {
 WINEDEBUG=""
 TESTNAME="-werror"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -682,7 +695,7 @@ runtests
 win64_test() {
 WINEDEBUG=""
 TESTNAME="-x64"
-TESTBINARY="winetest64-latest.exe"
+TESTBINARY="$WINETEST64"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -694,7 +707,7 @@ runtests
 with64_test() {
 WINEDEBUG=""
 TESTNAME="-with64"
-TESTBINARY="winetest-latest.exe"
+TESTBINARY="$WINETEST32"
 export WINEDEBUG
 export TESTNAME
 export TESTBINARY
@@ -717,6 +730,7 @@ echo "The script, however, has many more options:"
 echo "--no-newtree - Disables updating your git tree."
 echo "--rebase-tree - Run 'git rebase origin' in $WINEGIT, rather than making a new temp tree"
 echo "--no-tests - Disables downloading/running winetest.exe"
+echo "--binary-tests - Get the binary winetest.exe from http://test.winehq.org/ rather than the builtin version"
 echo "--no-regular - Skip running winetest.exe without special options"
 echo "--alldebug - Runs winetest.exe with WINEDEBUG=+all"
 echo "--alsa - Runs winetest.exe with ALSA sound system"
@@ -759,12 +773,13 @@ ALLDEBUG_TEST=0
 ALSA_TEST=0
 AUDIOIO_TEST=0
 BACKBUFFER_TEST=0
+BINARY_TEST=0
 COREAUDIO_TEST=0
 DDR_OPENGL_TEST=0
 ESOUND_TEST=0
 FBO_TEST=0
 HEAP_TEST=0
-HEAPCHECK_TEST=0
+HEAP_CHECK_TEST=0
 JACK_TEST=0
 MESSAGE_TEST=0
 MULTISAMPLING_TEST=0
@@ -773,7 +788,7 @@ NOGLSL_TEST=0
 NOWIN16_TEST=0
 OSS_TEST=0
 PBUFFER_TEST=0
-RElAY_TEST=0
+RELAY_TEST=0
 RTLM_DISABLED=0
 RTLM_READDRAW=0
 RTLM_READTEX=0
@@ -799,6 +814,7 @@ do
     --alsa) export ALSA_TEST=1;;
     --audioio) export AUDIOIO_TEST=1;;
     --backbuffer) export BACKBUFFER_TEST=1;;
+    --binary-tests|--binary-test) export BINARY_TEST=1;;
     --coreaudio) export COREAUDIO_TEST=1;;
     --ddr-opengl) export DDR_OPENGL_TEST=1;;
     --esound) export ESOUND_TEST=1;;
@@ -858,6 +874,9 @@ else
     cd "$WINETESTGIT"
 fi
 
+# Figure out the git revision. Used to get the right winetest:
+githead="`git rev-parse --short=12 HEAD`"
+
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
 # Currently, just win16/win64. But could be used for other things, e.g., disabling dlls.
@@ -884,14 +903,14 @@ if [ $WITH64_TEST = 1 ]
         # FIXME: Should probably be a more proper build function, a la above.
         # Though, right now, 64-bit only works on Linux, so not a huge deal.
         cd $WINETESTDIR/wine64
-        ./configure --enable-win64 --disable-tests --prefix=$WINETESTDIR/install
+        ./configure --enable-win64 --prefix=$WINETESTDIR/install
         make -j$CORES depend
         make -j$CORES
         make install
         
         WINETESTGIT=$WINETESTDIR/wine32 clone_tree
         cd $WINETESTDIR/wine32
-        ./configure --with-wine64=$WINETESTDIR/wine64 --disable-tests --without-mpg123 --prefix=$WINETESTDIR/install
+        ./configure --with-wine64=$WINETESTDIR/wine64 --without-mpg123 --prefix=$WINETESTDIR/install
         make -j$CORES depend
         make -j$CORES
         make install
