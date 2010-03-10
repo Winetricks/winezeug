@@ -45,30 +45,33 @@ then
     fi
     
     for pkg in \
-        git
-        lcms
-        gsm
-        openldap-client
-        sane-backends
-        gnutls
-        mpg123
-        jpeg
-        png
-        libxml
-        libxslt
+        git \
+        lcms \
+        gsm \
+        openldap-client \
+        sane-backends \
+        gnutls \
+        mpg123 \
+        jpeg \
+        png \
+        libxml \
+        libxslt \
         bison
     do
         pkg_add $pkg
     done
     
-    if test -d /usr/ports/devel/flex
+    if test -d /usr/ports/devel/flex/
+    then
         cd /usr/ports/devel/flex
         make
         make install
     else
         echo "Flex wasn't found in ports (or you don't have ports installed)."
         echo "You'll need to build/install flex manually. You need at least version 2.5.33."
-    exit
+        exit 2
+    fi
+
 fi
     
 # Regular Linux distros. Currently just Ubuntu :-/.
