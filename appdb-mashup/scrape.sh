@@ -34,7 +34,9 @@ perl missing.pl > missing.txt
 ranked=`wc -l < gamerank-ids.txt`
 matched=`wc -l < joined-ids.txt`
 missing=`wc -l < missing.txt`
-scored=`wc -l < joined-scores.txt`
-#echo Of $ranked ranked games, $matched were found in the appdb, and $missing were not.
-#echo "And $scored had scores found (should be same as $matched)".
+echo Of $ranked ranked games, $matched were found in the appdb, and $missing were not.
+echo The most common reason for mismatches is the appdb using a different name for the game than gamerankings.com.
+echo To fix this, add a correction to corrections.sed.
 
+# And finally generate a pretty html report of good apps.
+perl report.pl > good-apps.html
