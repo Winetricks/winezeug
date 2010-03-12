@@ -45,7 +45,7 @@ foreach (<FILE>) {
 </tr>\n";
   }
 }
-print HTML "<html><body><h1>Gamerankings.com hits not found in wine appdb</h1><table border=1>\n";
+print HTML "<html><body><h1>Gamerankings.com hits not found in wine appdb</h1>(Often these <b>are</b> in the appdb, but as versions, not as freestanding apps; clicking on 'search appdb' should help.)\n<table border=1>\n";
 foreach $key (sort(keys(%rows))) {
   print HTML $rows{$key};
 }

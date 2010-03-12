@@ -33,9 +33,9 @@ join  -i -t"$TAB" -1 2 joined-ids-sorted.tmp appdb-scores-sorted.tmp > joined-sc
 perl missing.pl
 ranked=`wc -l < gamerank-ids.txt`
 matched=`wc -l < joined-ids.txt`
-missing=`wc -l < missing.txt`
+missing=`wc -l < missing-games.txt`
 echo Of $ranked ranked games, $matched were found in the appdb, and $missing were not.
-echo The most common reason for mismatches is the appdb using a different name for the game than gamerankings.com.
+echo Some mismatches are because the appdb is using a slightly different name for the game than gamerankings.com.
 echo To fix this, add a correction to corrections.sed.
 
 # And finally generate a pretty html report of good apps.
