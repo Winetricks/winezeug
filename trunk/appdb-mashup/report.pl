@@ -1,6 +1,8 @@
 #!/usr/bin/perl
-# Generates an html report with one row for each highly rated app that works well in Wine.
+# Generates an html report with one row for each highly rated app that matches the appdb rating(s) given in $1.
 # Has columns linking to the appdb, the source of rating info, and various searches about the app.
+
+$criteria = $ARGV[0];
 
 # Load in various tables
 
@@ -42,7 +44,7 @@ foreach (<JOINEDSCORES>) {
   foreach $score (sort(keys(%dedup))) {
     $appdb_scores .= "$score ";
   }
-  next if ($appdb_scores !~ /Gold|Platinum/);
+  next if ($appdb_scores !~ /$criteria/);
 
   $purename = $title;
   $purename =~ s/&//;
@@ -57,9 +59,9 @@ foreach (<JOINEDSCORES>) {
 <td><a href=\"http://www.amazon.com/gp/search/ref=sr_nr_i_1?rh=i:software,k:PC+$purename\">Amazon</a></td> \
 <td><a href=\"http://en.wikipedia.org/w/index.php?title=Special:Search&search=$purename&go=Go\">Wikipedia</a></td> \
 <td><a href=\"http://google.com/search?q=PC+$purename+walkthrough\">Walkthroughs</a></td> \
-";
+</tr>\n";
 }
-print "<html><body><h1>Highly rated apps that work well in Wine</h1><table border=1>\n";
+print "<html><body><h1>Highly rated apps that were rated $criteria in appdb.winehq.org</h1><table border=1>\n";
 foreach $key (sort(keys(%rows))) {
   print $rows{$key};
 }
