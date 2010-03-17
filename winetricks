@@ -19,7 +19,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20100201
+VERSION=20100316
 
 early_wine()
 {
