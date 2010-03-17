@@ -1183,7 +1183,7 @@ load_dotnet20() {
     warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
-    test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || load_gecko
+    load_gecko
     set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
@@ -1205,7 +1205,7 @@ load_dotnet20sp2() {
     warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
-    test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || load_gecko
+    load_gecko
     #set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
@@ -1371,6 +1371,13 @@ load_ffdshow() {
 #----------------------------------------------------------------
 
 load_flash() {
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != flash && test -f "$WINDIR"/system32/Macromed/Flash/flashplayer.xpt
+    then
+        echo "prerequisite flash already installed, skipping"
+        return
+    fi
+
     # www.adobe.com/products/flashplayer/
 
     # Active X plugin
@@ -1508,6 +1515,14 @@ _EOF_
 #----------------------------------------------------------------
 
 load_gecko() {
+    # If this is just a dependency check, don't re-install
+    WINEDIR=`dirname $WINE`
+    if test $PACKAGE != ie6 && ( test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || test -d $WINEDIR/../gecko)
+    then
+        echo "prerequisite gecko already installed, skipping"
+        return
+    fi
+
     # Load the HTML rendering Engine (Gecko)
     # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
@@ -1714,6 +1729,13 @@ _EOF_
 #----------------------------------------------------------------
 
 load_ie6() {
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != ie6 && test -f "$WINDIR"/system32/plugin.ocx
+    then
+        echo "prerequisite ie6 (or ie7) already installed, skipping"
+        return
+    fi
+
     load_msls31
 
     # Unregister Wine IE
