@@ -241,6 +241,7 @@ usage() {
     echo " riched30      MS riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
     echo " shockwave     Adobe Shockwave Player"
+    echo " steam         Valve's Steam Client App"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
     echo " usp10         MS usp10.dll (Uniscribe)"
@@ -2532,6 +2533,20 @@ load_shockwave() {
 
 #----------------------------------------------------------------
 
+load_steam() {
+    load_flash
+    load_fontfix
+    load_gecko
+    load_ie6
+    load_liberation
+    load_tahoma
+    download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
+    try $WINE msiexec /i "$WINETRICKS_CACHE"/SteamInstall.msi $WINETRICKS_QUIET
+    warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
+}
+
+#----------------------------------------------------------------
+
 load_tahoma() {
     # The tahoma and tahomabd fonts are needed by e.g. Steam
 
@@ -3566,6 +3581,7 @@ do
     riched30) load_riched30;;
     richtx32) load_richtx32;;
     shockwave) load_shockwave;;
+    steam) load_steam;;
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
     usp10) load_usp10;;
