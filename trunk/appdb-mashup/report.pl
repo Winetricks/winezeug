@@ -22,6 +22,15 @@ while (<FILE>) {
 }
 close(FILE);
 
+open(FILE, "gamerank-publishers.txt") || die;
+while (<FILE>) {
+   chomp;
+   #55416	Outrage Games/Interplay, 2000		
+   /(\d*)	([^	]*), \d*/ || die;
+   $gamerank_publishers{$1} = $2;
+}
+close(FILE);
+
 open(JOINEDSCORES, "joined-scores.txt") || die;
 foreach (<JOINEDSCORES>) {
   chomp;
@@ -48,11 +57,13 @@ foreach (<JOINEDSCORES>) {
 
   $purename = $title;
   $purename =~ s/&//;
+  $publisher = $gamerank_publishers{$gamerankings_id};
   $year = $gamerank_years{$gamerankings_id};
   $gamerank_score = $gamerank_scores{$gamerankings_id};
 
   $rows{$title} = "<tr>\
 <td>$title</td> \
+<td>$publisher</td> \
 <td>$year</td> \
 <td><a href=\"http://www.gamerankings.com/pc/$gamerankings_id-/\">$gamerank_score</a></td> \
 <td><a href=\"http://appdb.winehq.org/appview.php?appId=$appdb_id\">$appdb_scores</a></td> \
