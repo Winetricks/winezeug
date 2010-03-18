@@ -61,7 +61,7 @@ s/Tales of Monkey Island: Chapter 1 - Launch of the Screaming Narwhal/Tales of M
 s/Tales of Monkey Island: Chapter 2 - The Siege of Spinner Cay/Tales of Monkey Island Chapter 2: The Siege of Spinner Cay/
 s/Tales of Monkey Island: Chapter 3 - Lair of the Leviathan/Tales of Monkey Island Chapter 3: Lair of the Leviathan/
 s/Tales of Monkey Island: Chapter 4 - The Trial and Execution of Guybrush Threepwood/Tales of Monkey Island Chapter 4: The Trial and Execution of Guybrush Threepwood/
-s/The Chronicles of Riddick - Assault on Dark Athena/The Chronicles of Riddick: Assault on Dark Athena
+s/The Chronicles of Riddick - Assault on Dark Athena/The Chronicles of Riddick: Assault on Dark Athena/
 s/The Settlers II: 10th Anniversary/The Settlers II: The Next Generation (10th Anniversary)/
 s/The Sims 3 World Adventures/The Sims 3: World Adventures/
 s/Tom Clancy's Ghost Recon: Advanced Warfighter/Tom Clancy's Ghost Recon Advanced Warfighter/
