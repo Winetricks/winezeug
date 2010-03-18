@@ -241,7 +241,7 @@ usage() {
     echo " riched30      MS riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
     echo " shockwave     Adobe Shockwave Player"
-    echo " steam         Valve's Steam Client App"
+    echo " steam         Steam Client App from Valve"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
     echo " usp10         MS usp10.dll (Uniscribe)"
