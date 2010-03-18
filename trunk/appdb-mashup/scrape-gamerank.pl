@@ -24,7 +24,7 @@ sub parse_file
            $purename =~ s/&//;
         } elsif ($line == 2) {
            #            </td>
-           /\s(.*)\s*</ || die;
+           /\s*(.*)\s*</ || die;
            $publisher = $1;
         } elsif ($line == 1) {
            # <td><span style="font-size: 35px"><b>91.00%</b></span><br clear="left" />8 Reviews</td>
@@ -33,6 +33,7 @@ sub parse_file
            $titles{$grid} = $title;
            $scores{$grid} = $score;
            $years{$grid} = $year;
+           $publishers{$grid} = $publisher;
         }
         $line--;
       }
@@ -44,7 +45,7 @@ sub parse_file
 
 system("mkdir -p gamerank-cache");
 
-foreach $year (2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010)
+foreach $year (1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010)
 {
     if (! -f "gamerank-cache/gamerank-$year.rawdat") {
         system("wget -O gamerank-cache/gamerank-$year.rawdat \"http://www.gamerankings.com/browse.html?site=pc&year=$year\"") || die;
@@ -70,5 +71,11 @@ close(FILE);
 open(FILE, "> gamerank-years.txt") || die;
 foreach (sort numerically(keys(%years))) {
     print FILE "$_	".$years{$_}."\n";
+}
+close(FILE);
+
+open(FILE, "> gamerank-publishers.txt") || die;
+foreach (sort numerically(keys(%publishers))) {
+    print FILE "$_	".$publishers{$_}."\n";
 }
 close(FILE);
