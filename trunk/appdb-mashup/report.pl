@@ -72,8 +72,12 @@ foreach (<JOINEDSCORES>) {
 <td><a href=\"http://google.com/search?q=PC+$purename+walkthrough\">Walkthroughs</a></td> \
 </tr>\n";
 }
-print "<html><body><h1>Highly rated apps that were rated $criteria in appdb.winehq.org</h1><table border=1>\n";
+print "<html>\n";
+print "<head><script src=\"sorttable.js\"></script></head>\n";
+print "<body><h1>Highly rated apps that were rated $criteria in appdb.winehq.org</h1><table border=1 class=sortable>\n";
+print "<tr><th>Title<th>Publisher<th>Year<th>Gameranking<th>Appdb<th>Amazon search<th>Wikipedia<th>Walkthrough search</tr>\n";
 foreach $key (sort(keys(%rows))) {
   print $rows{$key};
 }
+print scalar(keys(%rows))." rows.";
 print "</table></body></html>\n";
