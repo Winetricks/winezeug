@@ -45,7 +45,7 @@ sub parse_file
 
 system("mkdir -p gamerank-cache");
 
-foreach $year (1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010)
+foreach $year (1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010)
 {
     if (! -f "gamerank-cache/gamerank-$year.rawdat") {
         system("wget -O gamerank-cache/gamerank-$year.rawdat \"http://www.gamerankings.com/browse.html?site=pc&year=$year\"") || die;
