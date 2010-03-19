@@ -41,3 +41,4 @@ echo To fix this, add a correction to corrections.sed.
 # And finally generate a pretty html report of good apps.
 perl report.pl 'Gold|Platinum' > good-games.html
 perl report.pl 'Garbage|Bronze|Silver' > bad-games.html
+perl report.pl '.' > games.html
