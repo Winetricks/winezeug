@@ -75,7 +75,7 @@ foreach (<JOINEDSCORES>) {
 
 print "<html>\n";
 print "<head><script src=\"sorttable.js\"></script></head>\n";
-print "<body><h1>Gamerankings.com's top 50 games for each year 1999-2010";
+print "<body><h1>Gamerankings.com's top 50 games for each year 1998-2010";
 if ($criteria ne '.') {
     print " whose AppDB rating is matches $criteria"
 }
