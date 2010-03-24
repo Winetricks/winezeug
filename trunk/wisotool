@@ -1,0 +1,640 @@
+#!/bin/sh
+# Quick and dirty script to install apps from .iso files
+# Adapted from winetricks as of r995
+# Copyright 2007, 2008, 2009, 2010 Google (Dan Kegel, dank@kegel.com)
+# Copyright 2008, 2009, 2010 Austin English (austinenglish@gmail.com)
+# Please report problems at http://code.google.com/p/winezeug/issues
+# Note to contributors: please avoid gnu extensions in this shell script,
+# as it has to run on MacOSX and Solaris, too.  A good book on the topic is
+# "Portable Shell Programming" by Bruce Blinn
+
+#---- Constants -------------------------------------------------
+
+# Name of this version of wisotool (YYYYMMDD)
+VERSION=20100323
+
+early_wine()
+{
+    WINEDLLOVERRIDES=mshtml= $WINE "$@"
+}
+
+# Default values for important settings if not already in environment.
+# These settings should not need editing here.
+case "$OS" in
+ "Windows_NT")
+    # Cheezy fix for getting rid of double slashes when running cygwin in wine
+    case $HOME in
+      /) HOME="" ;;
+    esac
+    WINE=""
+    WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+    DRIVE_C="C:/"
+    XXXPATH=cygpath
+    ;;
+ *)
+    WINE=${WINE:-wine}
+    WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+    DRIVE_C="$WINEPREFIX/dosdevices/c:"
+    XXXPATH="early_wine winepath"
+    ;;
+esac
+
+# Internal variables; these locations are not too important
+WISOTOOL_CACHE="$HOME/wisotoolcache"
+# Default to hiding the directory, by popular demand
+test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE=$HOME/.wisotoolcache
+WISOTOOL_CACHE_WIN="`$XXXPATH -w $WISOTOOL_CACHE | tr '\012' ' ' | sed 's/ $//'`"
+WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
+WISOTOOL_TMP_WIN='c:\wisotooltmp'
+mkdir -p $WISOTOOL_TMP
+
+# Overridden for windows
+ISO_MOUNT_ROOT=/mnt/wisotool
+
+WINDIR="$DRIVE_C/windows"
+
+# Which sourceforge mirror to use.  Rotate based on time, since
+# their mirror picker sometimes persistantly sends you to a broken
+# mirror.
+case `date +%S` in
+*[01]) SOURCEFORGE=http://internap.dl.sourceforge.net/sourceforge ;;
+*[23]) SOURCEFORGE=http://easynews.dl.sourceforge.net/sourceforge ;;
+*)     SOURCEFORGE=http://downloads.sourceforge.net;;
+esac
+
+#---- Functions -------------------------------------------------
+
+# Detect which sudo to use
+detect_sudo() {
+    SUDO=sudo
+    test "$GUI" = 1 || return
+    if test x"$DISPLAY" != x""
+    then
+        if test -x "`which gksudo 2>/dev/null`"
+        then
+            SUDO=gksudo
+        elif test -x "`which kdesudo 2>/dev/null`"
+        then
+            SUDO=kdesudo
+        fi
+    fi
+}
+
+# Detect which menu program to use
+detect_menu() {
+    # TODO: add 'dialog'
+    MENU=xmessage
+    if test -x "`which zenity 2>/dev/null`"
+    then
+        MENU=zenity
+    elif test -x "`which kdialog 2>/dev/null`"
+    then
+        MENU=kdialog
+    fi
+}
+
+warn() {
+    echo "------------------------------------------------------"
+    echo "$@"
+    echo "------------------------------------------------------"
+
+    test "$GUI" = 1 || return
+
+    # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
+    msg="`echo $@ | tr '\000' ' '`"
+    case $MENU in
+    *zenity) zenity --error --title=Winetricks --text="$msg" --no-wrap;;
+    *kdialog) kdialog --title Winetricks --error "$msg" ;;
+    *xmessage) xmessage -title Winetricks -center "  Error: $msg  " ;;
+    esac
+}
+
+die() {
+    warn "$@"
+
+    exit 1
+}
+
+# Abort if user doesn't own the given directory (or its parent, if it doesn't exist yet)
+die_if_user_not_dirowner() {
+    if test -d "$1"
+    then
+        checkdir="$1"
+    else
+        # fixme: quoting problem?
+        checkdir=`dirname "$1"`
+    fi
+    nuser=`id -u`
+    nowner=`ls -l -n -d -L "$checkdir" | awk '{print $3}'`
+    if test x$nuser != x$nowner
+    then
+        die "You (`id -un`) don't own $checkdir. Don't run wisotool as another user!"
+    fi
+}
+
+#----------------------------------------------------------------
+
+usage() {
+    set +x
+    # WARNING: do not use single quote in any package description; that breaks the gui menu.
+    echo "Usage: $0 [options] package [package] ..."
+    echo "This script can catalong your .iso files, and later install"
+    echo "Windows apps from them."
+    echo ""
+    echo "Options:"
+    echo " -q         quiet.  You must have already agreed to the EULAs."
+    echo " -v         verbose"
+    echo " -V         display Version"
+    echo "Packages:"
+    echo " diablo2       Diablo II (Blizzard, 2000)"
+    echo "Pseudopackages:"
+    echo " load          Load a new iso"
+    echo " load=KEY      Load a new iso (with given key)"
+}
+
+#----------------------------------------------------------------
+# Trivial GUI just to handle case where user tries running without commandline
+
+kdialog_showmenu() {
+    title="$1"
+    shift
+    text="$1"
+    shift
+    col1name="$1"
+    shift
+    col2name="$1"
+    shift
+    while test $# -gt 0
+    do
+        args="$args $1 $1 off"
+        shift
+    done
+    kdialog --title "$title" --separate-output --checklist "$text" $args
+}
+
+xmessage_showmenu() {
+    title="$1"
+    shift
+    text="$1"
+    shift
+    col1name="$1"
+    shift
+    col2name="$1"
+    shift
+    if test $# -gt 0
+    then
+        args="$1"
+        shift
+    fi
+    while test $# -gt 0
+    do
+        args="$args,$1"
+        shift
+    done
+    (echo "$title"; echo ""; echo "$text") | \
+    xmessage -print -file - -buttons "Cancel,$args" | sed 's/Cancel//'
+}
+
+showmenu()
+{
+    case $MENU in
+    zenity)
+        echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WISOTOOL_TMP"/zenity.sh
+        usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WISOTOOL_TMP/zenity.sh
+        todo="`sh "$WISOTOOL_TMP"/zenity.sh | tr '|' ' '`"
+        ;;
+    kdialog)
+        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        todo="`kdialog_showmenu "wisotool" "Select a package to install" "Install?" "Package" $packages`"
+        ;;
+    xmessage)
+        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        todo="`xmessage_showmenu "wisotool" "Select a package to install" "Install?" "Package" $packages`"
+        ;;
+    esac
+
+    if test "$todo"x = x
+    then
+       exit 0
+    fi
+}
+
+#-----  Helpers  ------------------------------------------------
+
+# Execute with error checking
+try() {
+    # "VAR=foo try cmd" fails to put VAR in the environment
+    # with some versions of bash if try is a shell function?!
+    # Adding this explicit export works around it.
+    export WINEDLLOVERRIDES
+    echo Executing "$@"
+    # Mark executable - needed if running on windows vista
+    case "$1" in
+    *.exe) chmod +x "$1" || true
+      cmd /c "$@"
+      ;;
+    *)
+      "$@"
+      ;;
+    esac
+    status=$?
+    if test $status -ne 0
+    then
+        die "Note: command '$@' returned status $status.  Aborting."
+    fi
+}
+
+try_regedit() {
+    # on windows, doesn't work without cmd /c
+    case "$OS" in
+    "Windows_NT") cmdc="cmd /c";;
+    *) unset cmdc
+    esac
+
+    try early_wine $cmdc regedit "$@"
+}
+
+regedit() {
+    die oops, bug, please report
+}
+
+try_cabextract() {
+    # Not always installed, but shouldn't be fatal unless it's being used
+    CABEXTRACT="`which cabextract 2>/dev/null`"
+    if test ! -x "$CABEXTRACT"
+    then
+        die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+    fi
+
+    try $CABEXTRACT "$@"
+}
+
+cabextract() {
+    die oops, bug, please report
+}
+
+
+# verify an sha1sum
+verify_sha1sum() {
+    wantsum=$1
+    file=$2
+
+    gotsum=`$SHA1SUM < $file | sed 's/ .*//'`
+    if [ "$gotsum"x != "$wantsum"x ]
+    then
+       die "sha1sum mismatch!  Rename $file and try again."
+    fi
+}
+
+# Download a file
+# Usage: package url [sha1sum [filename]]
+# Caches downloads in wisotoolcache/$package
+download() {
+    if [ "$4"x != ""x ]
+    then
+        file="$4"
+    else
+        file=`basename "$2"`
+    fi
+    cache="$WISOTOOL_CACHE/$1"
+    mkdir -p "$cache"
+    if test ! -f "$cache/$file"
+    then
+        cd "$cache"
+        # Mac folks tend to have curl rather than wget
+        # On Mac, 'which' doesn't return good exit status
+        # Need to jam in --header "Accept-Encoding: gzip,deflate" else
+        # redhat.com decompresses liberation-fonts.tar.gz!
+        if [ -x "`which wget 2>/dev/null`" ]
+        then
+           # Use -nd to insulate ourselves from people who set -x in WGETRC
+           # [*] --retry-connrefused works around the broken sf.net mirroring
+           # system when downloading corefonts
+           # [*] --read-timeout is useful on the adobe server that doesn't
+           # close the connection unless you tell it to (control-C or closing
+           # the socket)
+           try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" "$2"
+        else
+           # curl doesn't get filename from the location given by the server!
+           # fortunately, we know it
+           try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
+        fi
+        # Need to decompress .exe's that are compressed, else cygwin fails
+        # Only affects cygwin, so don't barf if 'file' not installed
+        FILE=`which file 2>/dev/null`
+        case $FILE-$file in
+        /*-*.exe)
+            case `file $file` in
+            *gzip*) mv $file $file.gz; gunzip < $file.gz > $file;;
+            esac
+        esac
+
+        cd "$olddir"
+    fi
+    if [ "$3"x != ""x ]
+    then
+        verify_sha1sum $3  "$cache/$file"
+    fi
+}
+
+set_winver() {
+    echo "Setting Windows version to $1"
+    cat > "$WISOTOOL_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine]
+"Version"="$1"
+
+_EOF_
+    try_regedit "$WISOTOOL_TMP_WIN"\\set-winver.reg
+}
+
+set_app_winver() {
+    app="$1"
+    version="$2"
+    echo "Setting $app to $version mode"
+    (
+    echo REGEDIT4
+    echo ""
+    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app]"
+    echo "\"Version\"=\"$version\""
+    ) > "$WISOTOOL_TMP"/set-winver.reg
+
+    try_regedit "$WISOTOOL_TMP_WIN"\\set-winver.reg
+    rm "$WISOTOOL_TMP"/set-winver.reg
+}
+
+
+load_vcdmount()
+{
+    if test "$WINE" != ""
+    then
+        return
+    fi
+
+    # Call only on real Windows.
+    # Sets VCD_DIR and ISO_MOUNT_ROOT
+
+    # The only free mount tool I know for Windows Vista is Virtual CloneDrive,
+    # which can be downloaded at
+    # http://www.slysoft.com/en/virtual-clonedrive.html
+    # FIXME: actually install it here
+
+    # Locate vcdmount.exe.
+    VCD_DIR="Elaborate Bytes/VirtualCloneDrive"
+    if test ! -x "$programfilesdir_unix/$VCD_DIR/vcdmount.exe" && test ! -x "$programfilesdir_x86_unix/$VCD_DIR/vcdmount.exe"
+    then
+        warn "Installing Virtual CloneDrive"
+        download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
+        # have to use cmd else vista won't let cygwin run .exe's?
+        chmod +x "$WISOTOOL_CACHE"/SetupVirtualCloneDrive.exe
+        cd "$WISOTOOL_CACHE"
+        cmd /c SetupVirtualCloneDrive.exe
+        cd "$olddir"
+    fi
+    if test -x "$programfilesdir_unix/$VCD_DIR/vcdmount.exe"
+    then
+        VCD_DIR="$programfilesdir_unix/$VCD_DIR"
+    elif test -x "$programfilesdir_x86_unix/$VCD_DIR/vcdmount.exe"
+    then
+        VCD_DIR="$programfilesdir_x86_unix/$VCD_DIR"
+    else
+        die "can't find Virtual CloneDrive?"
+    fi
+
+    # FIXME: Use WMI to locate the drive named
+    # "ELBY CLONEDRIVE..." using WMI as described in
+    # http://delphihaven.wordpress.com/2009/07/05/using-wmi-to-get-a-drive-friendly-name/
+    # For now, you just have to hardcode it for your system :-(
+    warn "You probably need to edit the script to tell it which drive VirtualCloneDrive picked"
+    for letter in e f g h
+    do
+        ISO_MOUNT_ROOT=/cygdrive/$letter
+        test -d $ISO_MOUNT_ROOT || break
+    done
+    test -d $ISO_MOUNT_ROOT && die "cannot find the VirtualCloneDrive"
+}
+
+iso_mount()
+{
+    my_img="$1"
+
+    if test "$WINE" = ""
+    then
+        load_vcdmount
+        my_img_win="`$XXXPATH -w $my_img | tr '\012' ' ' | sed 's/ $//'`"
+        cd "$VCD_DIR"
+        try vcdmount.exe /l=$letter "$my_img_win"
+        cd "$olddir"
+        while ! test -d "$ISO_MOUNT_ROOT"
+        do
+            echo "Waiting for mount to finish"
+            sleep 1
+        done
+    else
+        # Linux
+        case "$SUDO" in
+        gksudo)
+          try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
+          try $SUDO "mount -o ro,loop $my_img $ISO_MOUNT_ROOT"
+          ;;
+        *)
+          try $SUDO mkdir -p $ISO_MOUNT_ROOT
+          try $SUDO mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
+          ;;
+        esac
+    fi
+}
+
+iso_umount()
+{
+    if test "$WINE" = ""
+    then
+        # Windows
+        load_vcdmount
+        cd "$VCD_DIR"
+        vcdmount /u
+        cd "$olddir"
+    else
+        case "$SUDO" in
+        gksudo)
+          $SUDO "umount $ISO_MOUNT_ROOT"
+          try $SUDO "rm -rf $ISO_MOUNT_ROOT"
+          ;;
+        *)
+          $SUDO umount $ISO_MOUNT_ROOT
+          try $SUDO rm -rf $ISO_MOUNT_ROOT
+          ;;
+        esac
+    fi
+}
+
+#----------------------------------------------------------------
+
+load_iso() {
+   # Copy ISO
+   test -r /dev/sr0 || sudo chmod 666 /dev/sr0
+   while ! dd if=/dev/sr0 of=/dev/null count=1
+   do
+     sleep 1
+   done
+   dd if=/dev/sr0 of=temp.iso & pid=$!
+   while ps -p $pid
+   do
+     kill -USR1 $pid
+     sleep 5
+   done
+
+   # Compute SHA1sum
+   sum=`sha1sum temp.iso | awk '{print $1}'`
+
+   mv temp.iso "$WISOTOOL_CACHE"/$sum.iso
+   # FIXME: in gui, prompt user for key?
+   echo "key: $1" > "$WISOTOOL_CACHE"/$sum.txt
+
+   eject
+}
+
+#----------------------------------------------------------------
+
+load_diablo2() {
+ true;
+}
+
+#----------------------------------------------------------------
+
+print_version() {
+    echo "$VERSION"
+}
+
+#--------- Main program -----------------------------------------
+
+# On Solaris, choose more modern commands (needed for id -u).
+case `uname -s` in
+SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
+      ;;
+esac
+
+case "$1" in
+-V|--version)
+    echo "wisotool version $VERSION.  (C) 2007-2010 Dan Kegel et al.  LGPL."
+    exit 0
+    ;;
+esac
+
+detect_menu
+detect_sudo
+
+GUI=0
+case x"$1" in
+x) GUI=1 ;;
+x-h|x--help|xhelp) usage ; exit 1 ;;
+esac
+
+case "$OS" in
+ "Windows_NT")
+  ;;
+ *)
+  # Prevent running with wrong user id.
+  # It's bad to create files as the wrong user!
+  die_if_user_not_dirowner "$WINEPREFIX"
+  die_if_user_not_dirowner "$WISOTOOL_CACHE"
+
+  if [ ! -x "`which "$WINE" 2>/dev/null`" ]
+  then
+      die "Cannot find wine ($WINE)"
+  fi
+
+  # Create wineprefix if not already there
+  test -d "$WINEPREFIX" || WINEDLLOVERRIDES=mshtml= $WINE cmd /c echo yes > /dev/null 2>&1
+  ;;
+esac
+
+mkdir -p "$WISOTOOL_TMP"
+
+case $GUI in
+1) showmenu ; set $todo ;;
+esac
+
+mkdir -p "$WISOTOOL_CACHE"
+olddir=`pwd`
+# Clean up after failed runs, if needed
+rm -rf "$WISOTOOL_TMP"/*
+
+# The folder-name is localized!
+programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
+test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
+wisotool_tmp_win="`$XXXPATH -w "$WISOTOOL_TMP"`"
+
+# 64 bit windows has a second directory for program files
+programfilesdir_x86_win="${programfilesdir_win} (x86)"
+programfilesdir_x86_unix="${programfilesdir_unix} (x86)"
+if ! test -d "$programfilesdir_x86_unix"
+then
+    programfilesdir_x86_win="${programfilesdir_win}"
+    programfilesdir_x86_unix="${programfilesdir_unix}"
+fi
+
+# (Fixme: get fonts path from SHGetFolderPath
+# See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
+#
+# Did the user rename Fonts to fonts?
+if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts
+then
+    winefontsdir="$WINDIR"/fonts
+else
+    winefontsdir="$WINDIR"/Fonts
+fi
+
+# Mac folks tend to not have sha1sum, but we can make do with openssl
+if [ -x "`which sha1sum 2>/dev/null`" ]
+then
+   SHA1SUM="sha1sum"
+elif [ -x "`which openssl 2>/dev/null`" ]
+then
+   SHA1SUM="openssl dgst -sha1"
+else
+   die "No sha1sum utility available."
+fi
+
+if [ ! -x "`which unzip 2>/dev/null`" ]
+then
+    die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
+fi
+
+while test "$1" != ""
+do
+    PACKAGE=$1
+    case $1 in
+    -q) WISOTOOL_QUIET="/q"
+        WISOTOOL_QUIET_T="/qt" # Microsoft Control Pad
+        WISOTOOL_UNIXQUIET="-q"
+        WISOTOOL_SILENT="/silent"
+        WISOTOOL_UNIXSILENT="-silent"
+        WISOTOOL_S="/S"                 # for NSIS installers
+        WINEDEBUG=${WINEDEBUG:-"fixme-all"}
+        export WINEDEBUG
+        ;;
+    -v) set -x;;
+    load) load_iso;;
+    load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
+    version) print_version;;
+    *) echo Unknown arg $1; usage ; exit 1;;
+    esac
+    # Provide a bit of feedback
+    test "$WISOTOOL_QUIET" = "" && case $1 in
+    -q) echo Setting quiet mode;;
+    -v) echo Setting verbose mode;;
+    *) echo "Install of $1 done" ;;
+    esac
+    shift
+    # cleanup
+    rm -rf "$WISOTOOL_TMP"/*
+done
+
+    # remove the temp directory
+    rm -rf "$WISOTOOL_TMP"
+
+test "$WISOTOOL_QUIET" = "" && echo wisotool done. || true
