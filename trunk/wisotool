@@ -138,7 +138,7 @@ usage() {
     set +x
     # WARNING: do not use single quote in any package description; that breaks the gui menu.
     echo "Usage: $0 [options] package [package] ..."
-    echo "This script can catalong your .iso files, and later install"
+    echo "This script can catalog your .iso files, and later install"
     echo "Windows apps from them."
     echo ""
     echo "Options:"
