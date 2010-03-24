@@ -418,6 +418,7 @@ load_vcdmount()
 iso_mount()
 {
     my_img="$1"
+    iso_umount
 
     if test "$WINE" = ""
     then
@@ -443,6 +444,9 @@ iso_mount()
           try $SUDO mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
           ;;
         esac
+        echo "Mounting as drive i:"
+        ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/i:"
+        ls -l "$WINEPREFIX/dosdevices/i:/"
     fi
 }
 
@@ -456,6 +460,7 @@ iso_umount()
         vcdmount /u
         cd "$olddir"
     else
+        echo "Running $SUDO umount $ISO_MOUNT_ROOT"
         case "$SUDO" in
         gksudo)
           $SUDO "umount $ISO_MOUNT_ROOT"
@@ -466,6 +471,7 @@ iso_umount()
           try $SUDO rm -rf $ISO_MOUNT_ROOT
           ;;
         esac
+        rm -f "$WINEPREFIX"/dosdevices/i:
     fi
 }
 
@@ -498,7 +504,14 @@ load_iso() {
 #----------------------------------------------------------------
 
 load_diablo2() {
- true;
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winezeug/winetricks -q autohotkey
+    download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
+
+    iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+    $WINE i:setup.exe
+    # Wait for installer to finish.  FIXME: use autohotkey
+    sleep 6000
+    iso_umount
 }
 
 #----------------------------------------------------------------
@@ -618,6 +631,7 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
+    diablo2) load_diablo2;;
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     version) print_version;;
