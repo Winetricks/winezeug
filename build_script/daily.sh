@@ -285,10 +285,10 @@ get_tests_64() {
     rm -rf winetest64-*.exe || true
 if [ $BINARY_TEST = 1 ]
 then
-    WINETEST64="winetest-$githead.exe"
+    WINETEST64="winetest64-$githead.exe"
     GET "http://test.winehq.org/builds/$WINETEST64"
 else
-    WINETEST32="winetest"
+    WINETEST64="winetest"
 fi
 }
 
