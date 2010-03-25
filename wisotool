@@ -503,14 +503,22 @@ load_iso() {
 
 #----------------------------------------------------------------
 
+ahk_do() {
+   echo "$@" | tr ';' '\012' | sed "s/\$//" > tmp.ahk
+   $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" tmp.ahk
+}
+
+#----------------------------------------------------------------
+
 load_diablo2() {
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winezeug/winetricks -q autohotkey
+set -x
+ls -l "$programfilesdir_unix"
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
     iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
-    $WINE i:setup.exe
-    # Wait for installer to finish.  FIXME: use autohotkey
-    sleep 6000
+    ahk_do "run i:setup.exe; winwait, Diablo II Setup; send {i}; winwait, Choose Installation Size; send {u}; send {Enter}"
+    sleep 20
     iso_umount
 }
 
