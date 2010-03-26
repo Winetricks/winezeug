@@ -147,6 +147,7 @@ usage() {
     echo " -V         display Version"
     echo "Packages:"
     echo " diablo2       Diablo II (Blizzard, 2000)"
+    echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo "Pseudopackages:"
     echo " load          Load a new iso"
     echo " load=KEY      Load a new iso (with given key)"
@@ -508,6 +509,42 @@ ahk_do() {
    $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" tmp.ahk
 }
 
+# Put any helper functions needed here:
+ahk_helpers() {
+   cat > helper_tmp << __EOF__
+   SetControlDelay, -1
+   WINDOW_CLICK_LOOP(windowname, button, windowtext="", loops=10, wintimeout=10)
+{
+    WinWait, %windowname%, %windowtext%, %wintimeout%
+    if ErrorLevel
+    {
+        exit 1
+    }
+    IfWinNotActive, %windowname%, %windowtext%
+    {
+        WinActivate, %windowname%, %windowtext%
+    }
+
+    Loop, %loops%
+    {
+        IfWinExist, %windowname%, %windowtext%
+        {
+            ControlClick, %button%, %windowname%, %windowtext%
+        }
+        Else
+        {
+            break
+        }
+        sleep 1000
+    }
+
+}
+__EOF__
+
+cat helper_tmp | tr ';' '\012' | sed "s/\$//" > helpers.ahk
+
+}
+
 #----------------------------------------------------------------
 
 load_diablo2() {
@@ -520,6 +557,57 @@ ls -l "$programfilesdir_unix"
     ahk_do "run i:setup.exe; winwait, Diablo II Setup; send {i}; winwait, Choose Installation Size; send {u}; send {Enter}"
     sleep 20
     iso_umount
+}
+
+#----------------------------------------------------------------
+
+load_morrowind_goty() {
+    cd $WISOTOOL_TMP
+    # FIXME: Untested on Windows!
+
+    # FIXME: Only supports the main installer, and the construction set (which follows automatically)
+    # eventually should support the expansions as well
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh $HOME/gits/winezeug/winetricks -q autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
+    ahk_helpers
+    cat > morrowind.tmp << __EOF__
+#include helpers.ahk
+Run, I:\Setup.exe
+
+WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Yes", "The Elder Scrolls III:  Morrowind (License Agreement)", 10, 100)
+WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Please read the following important information.", 10, 100)
+WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Setup will install Morrowind in the following folder.", 10, 100)
+WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Setup has enough information to start copying the program files.", 10, 100)
+
+; Then launched construction set setup
+WINDOW_CLICK_LOOP("The Elder Scrolls Construction Set Setup", "&Yes", "The Elder Scrolls Construction Set (License Agreement)", 10, 500)
+
+; No confirm screen? (FIXME: verify on windows)
+WINDOW_CLICK_LOOP("The Elder Scrolls Construction Set Setup", "&Next >", "Setup has enough information to start copying the program files", 10, 100)
+WINDOW_CLICK_LOOP("The Elder Scrolls Construction Set Setup", "Finish", "Setup has finished installing TES Construction Set on your computer.", 10, 100)
+
+; Exits the Construction set setup on its own, and goes back to main installer
+; The text box is split into two lines separately, not using word wrap, hence the weird sentence..
+WINDOW_CLICK_LOOP("Question", "&No", "Would you like to register Morrowind online now?  Make sure", 10, 100)
+
+; Sometimes finicky here, short sleep here works around it
+Sleep 10000
+WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "Finish", "Setup has finished installing Morrowind on your computer.", 10, 100)
+WINDOW_CLICK_LOOP("Information", "&OK", "You have installed Windows XP, which includes DirectX 8.1", 10, 100)
+
+exit 0
+__EOF__
+sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
+    try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" morrowind.ahk
+
+    sleep 30s
+    iso_umount
+    if [ -f "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b_postinstall.ahk ]
+    then
+        try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b_postinstall.ahk
+    fi
+    cd $olddir
 }
 
 #----------------------------------------------------------------
@@ -642,6 +730,7 @@ do
     diablo2) load_diablo2;;
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
+    morrowind|morrowind_goty) load_morrowind_goty;;
     version) print_version;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
