@@ -447,7 +447,6 @@ iso_mount()
         esac
         echo "Mounting as drive i:"
         ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/i:"
-        ls -l "$WINEPREFIX/dosdevices/i:/"
     fi
 }
 
@@ -497,7 +496,7 @@ load_iso() {
 
    mv temp.iso "$WISOTOOL_CACHE"/$sum.iso
    # FIXME: in gui, prompt user for key?
-   echo "key: $1" > "$WISOTOOL_CACHE"/$sum.txt
+   echo "$1" > "$WISOTOOL_CACHE"/$sum.txt
 
    eject
 }
@@ -548,15 +547,33 @@ cat helper_tmp | tr ';' '\012' | sed "s/\$//" > helpers.ahk
 #----------------------------------------------------------------
 
 load_diablo2() {
-set -x
-ls -l "$programfilesdir_unix"
+    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other two discs." 
     test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
+    # Force clean-ish install
+    test -d "$programfilesdir_unix/Diablo II" && rm -rf "$programfilesdir_unix/Diablo II"
+
+    # Get user's key
+    DIABLOIIKEY=`cat "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.txt | tr -d -`
+
     iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
-    ahk_do "run i:setup.exe; winwait, Diablo II Setup; send {i}; winwait, Choose Installation Size; send {u}; send {Enter}"
-    sleep 20
+    ls "$ISO_MOUNT_ROOT"
+    ahk_do "run i:setup.exe; winwait, Diablo II Setup; send {i}; winwait, Choose Installation Size; send {u}; send {Enter}; send {Raw}$USERNAME; send {Tab}{Raw}$DIABLOIIKEY; send {Enter}; winwait, Diablo II - choose install directory; send {Enter}; winwait, Desktop Shortcut; send {N}; winwait, Insert Disc"
+    iso_mount "$WISOTOOL_CACHE"/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
+    # Needed by patch 1.13c to avoid disc swapping
+    cp "$ISO_MOUNT_ROOT"/d2music.mpq "$programfilesdir_unix/Diablo II/"
+    ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
+    iso_mount "$WISOTOOL_CACHE"/382ea98f270e39855b558b8fac0d609712a54ae8.iso
+    ls "$ISO_MOUNT_ROOT"
+    ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
+    iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+    ls "$ISO_MOUNT_ROOT"
+    ahk_do "send, {Enter}; Sleep 1000; winwait, View ReadMe?; ControlClick &No, View ReadMe?; winwait, Register Diablo II Electronically?; send {N}; winwait, Diablo II Setup - Video Test; ControlClick &Cancel, Diablo II Setup - Video Test; winclose, Diablo II Setup"
     iso_umount
+
+    try "$WINE" "$WISOTOOL_CACHE"/diablo2/D2Patch_113c.exe
+    ahk_do "winwait Blizzard Updater v2.72; send {Enter}; Sleep 1000; winwait Blizzard Updater v2.72; send {Enter}; winwait Diablo II; ControlClick &Cancel, Diablo II"
 }
 
 #----------------------------------------------------------------
