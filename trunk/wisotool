@@ -572,6 +572,8 @@ load_diablo2() {
     try "$WINE" "$WISOTOOL_CACHE"/diablo2/D2Patch_113c.exe
     # Dagnabbit, the darn updater starts the game after it updates, no matter what I do?
     ahk_do "winwait Blizzard Updater v2.72; send {Enter}; winwait Diablo II; ControlClick &Cancel, Diablo II"
+
+    warn "When starting the game, be patient, wait until the menu appears.  The game seems to hang if it looses focus, see bug 14456, you may need to set winecfg to virtual desktop."
 }
 
 #----------------------------------------------------------------
