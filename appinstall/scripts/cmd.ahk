@@ -180,13 +180,13 @@ FileDelete, %TEMPFILE%
 Runwait, %comspec% /c %commandtotest% > %TEMPFILE%
 FileRead, result, %TEMPFILE%
 FileDelete, %TEMPFILE%
-If (result = expectedresult)
+If (result != expectedresult)
     {
-        FileAppend, expected "%expectedresult%" got "%result%". Check bug 21142. TODO_FIXED.`n, %OUTPUT%
+        FileAppend, expected "%expectedresult%" got "%result%". Bug 21142 regressed. TEST FAILED.`n, %OUTPUT%
     }
 else
     {
-        FileAppend, expected "%expectedresult%" got "%result%". Bug 21142 TODO_FAILED.`n, %OUTPUT%
+        FileAppend, expected "%expectedresult%" got "%result%". TEST PASSED.`n, %OUTPUT%
     }
 
 
