@@ -148,6 +148,7 @@ usage() {
     echo "Packages:"
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
+    echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
     echo "Pseudopackages:"
     echo " load          Load a new iso"
     echo " load=KEY      Load a new iso (with given key)"
@@ -446,6 +447,8 @@ iso_mount()
           ;;
         esac
         echo "Mounting as drive i:"
+        # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
+        ln -sf "$my_img" "$WINEPREFIX/dosdevices/i::"
         ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/i:"
     fi
 }
@@ -644,6 +647,27 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
 #----------------------------------------------------------------
 
+load_starcraft() {
+    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
+
+    # Force clean-ish install
+    test -d "$programfilesdir_unix/StarCraft" && rm -rf "$programfilesdir_unix/StarCraft"
+
+    # Get user's key
+    KEY=`cat "$WISOTOOL_CACHE"/8d6cc11bc76b8af22868a95e17e0282277e9c53c.txt`
+
+    iso_mount "$WISOTOOL_CACHE"/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
+    ahk_do "run i:StarCraft (Windows).exe; winwait, StarCraft - Brood War; send {i}; winwait, End User License Agreement; Sleep 2000; send {a}; winwait, CD-Key; send {Raw}$USERNAME; send {Tab}{Raw}$KEY; send {Enter}; winwait, Installation Destination Directory; send {Enter}; winwait,,Please insert"
+    iso_mount "$WISOTOOL_CACHE"/966bae1f2e2035e066139e78137e623c92838254.iso
+    ahk_do "send, {Enter}; SetTitleMatchMode, 2; winwait, - StarCraft; winwaitclose, - StarCraft; Sleep 1000; send {e}"
+    iso_umount
+
+    # FIXME: apply patch, follow instructions in http://us.blizzard.com/support/article.xml?articleId=21150
+}
+
+#----------------------------------------------------------------
+
 print_version() {
     echo "$VERSION"
 }
@@ -763,6 +787,7 @@ do
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     morrowind|morrowind_goty) load_morrowind_goty;;
+    starcraft) load_starcraft;;
     version) print_version;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
