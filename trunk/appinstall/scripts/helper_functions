@@ -363,7 +363,7 @@ TODO_SHA1(badsha1, todosha1, filename)
 
 ; Similar to WINDOW_WAIT below, except, instead of erroring out if the window doesn't appear, consider it a test failure.
 ; Should be used for windows that appear on Windows, but not on Wine, e.g., the Import Wizard for Mozilla Firefox
-TODO_WINDOW_WAIT(windowname, bug, windowtext="", wintimeout=10)
+TODO_WINDOW_WAIT(windowname, bug, windowtext="", wintimeout=60)
 {
     global 
     WinWait, %windowname%, %windowtext%, %wintimeout%
@@ -382,11 +382,11 @@ TODO_WINDOW_WAIT(windowname, bug, windowtext="", wintimeout=10)
 }
 
 ; Crash handler for programs that crash on wine (but not windows). Give it the program name (as a string!),
-; and the bug number (no quotes needed), and optionally a timeout period to wait (10 second default). 
+; and the bug number (no quotes needed), and optionally a timeout period to wait (60 second default). 
 ; The function waits (until the timeout) for the gui debugger to pop up. If it does, it clicks 'Ok' and exits
 ; the test (since the program fatally crashed). If not, it outputs a message to the log files letting you know
 ; that the bug is likely fixed.
-WAIT_CRASH_FATAL(program, bug, timeout=10)
+WAIT_CRASH_FATAL(program, bug, timeout=60)
 {
 global 
 
@@ -425,8 +425,8 @@ WIN_EXIST_TEST(windowname, windowtext="")
 
 ; Some applications don't take focus when started, or have a delay. Work around this. 
 ; Windowname is required, but you can optionally supply a string of text in the window,
-; or override the time to wait for the window to show before reporting failure (default, 10s).
-WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
+; or override the time to wait for the window to show before reporting failure (default, 60s).
+WINDOW_WAIT(windowname, windowtext="", wintimeout=60)
 {
     global 
     WinWait, %windowname%, %windowtext%, %wintimeout%
@@ -446,7 +446,7 @@ WINDOW_WAIT(windowname, windowtext="", wintimeout=10)
 ; that don't always accept a click like they should (Adobe Photoshop, I'm looking at you!)
 ; Also requires a button to click, for obvious reasons.
 ; Wintimeout is the time for the original window to appear. Loops is how many attempts to click.
-WINDOW_CLICK_LOOP(windowname, button, windowtext="", loops=10, wintimeout=10)
+WINDOW_CLICK_LOOP(windowname, button, windowtext="", loops=10, wintimeout=60)
 {
     global 
 
