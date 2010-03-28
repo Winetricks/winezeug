@@ -477,6 +477,18 @@ iso_umount()
 
 #----------------------------------------------------------------
 
+# Only needed so dd doesn't live on if user kills script
+cleanup()
+{
+  echo "Caught signal, cleaning up."
+  case "$pid" in
+  "") ;;
+  *) kill $pid ;;
+  esac
+  echo "Done cleanup, quitting."
+  exit 1
+}
+
 load_iso() {
    # Copy ISO
    test -r /dev/sr0 || sudo chmod 666 /dev/sr0
@@ -484,12 +496,15 @@ load_iso() {
    do
      sleep 1
    done
+   trap cleanup 1 2 3 6
    dd if=/dev/sr0 of=temp.iso & pid=$!
-   while ps -p $pid
+   while ps -p $pid > /dev/null
    do
-     kill -USR1 $pid
      sleep 5
+     # dd will output status to stderr when it receives a USR1 signal
+     kill -USR1 $pid
    done
+   pid=""
 
    # Compute SHA1sum
    sum=`sha1sum temp.iso | awk '{print $1}'`
