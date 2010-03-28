@@ -636,6 +636,10 @@ sed -e 's/$/\r/' dragonage.tmp > dragonage.ahk
     try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" dragonage.ahk
     iso_umount
 
+    if [ -f "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4_postinstall.sh ]
+    then
+        sh "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4_postinstall.sh
+    fi
 }
 
 #----------------------------------------------------------------
@@ -787,6 +791,7 @@ then
     programfilesdir_x86_win="${programfilesdir_win}"
     programfilesdir_x86_unix="${programfilesdir_unix}"
 fi
+export programfilesdir_x86_unix
 
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
