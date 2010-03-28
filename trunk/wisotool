@@ -567,7 +567,7 @@ cat helper_tmp | tr ';' '\012' | sed "s/\$//" > helpers.ahk
 
 load_diablo2() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other two discs." 
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$srcdir"/winetricks -q autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
     # Force clean-ish install
@@ -599,13 +599,13 @@ load_diablo2() {
 
 load_dragonage() {
     #warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$srcdir"/winetricks -q autohotkey
 
     # Get user's key
     DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
 
     # Installer has a non-fatal crash on exit, so ignore it.
-    sh winetricks -q nocrashdialog physx vcrun2005
+    sh "$srcdir"/winetricks -q nocrashdialog physx vcrun2005
     iso_mount "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
     ahk_helpers
@@ -646,7 +646,7 @@ load_morrowind_goty() {
 
     # FIXME: Only supports the main installer, and the construction set (which follows automatically)
     # eventually should support the expansions as well
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh $HOME/gits/winezeug/winetricks -q autohotkey
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$srcdir"/winetricks -q autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
     ahk_helpers
@@ -693,7 +693,7 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$srcdir"/winetricks -q autohotkey
 
     # Force clean-ish install
     test -d "$programfilesdir_unix/StarCraft" && rm -rf "$programfilesdir_unix/StarCraft"
@@ -767,6 +767,8 @@ esac
 
 mkdir -p "$WISOTOOL_CACHE"
 olddir=`pwd`
+srcdir=`dirname $0`
+srcdir=`cd $srcdir; pwd`
 # Clean up after failed runs, if needed
 rm -rf "$WISOTOOL_TMP"/*
 
