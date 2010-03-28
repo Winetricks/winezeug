@@ -147,6 +147,7 @@ usage() {
     echo " -V         display Version"
     echo "Packages:"
     echo " diablo2       Diablo II (Blizzard, 2000)"
+    echo " dragonage     Dragon Age: Origins (Bioware, 2009"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
     echo "Pseudopackages:"
@@ -596,6 +597,49 @@ load_diablo2() {
 
 #----------------------------------------------------------------
 
+load_dragonage() {
+    #warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh winetricks -q autohotkey
+
+    # Get user's key
+    DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
+
+    # Installer has a non-fatal crash on exit, so ignore it.
+    sh winetricks -q nocrashdialog physx vcrun2005
+    iso_mount "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+
+    ahk_helpers
+    cat > dragonage.tmp << __EOF__
+#include helpers.ahk
+Run, I:\Setup.exe
+
+WINDOW_CLICK_LOOP("Installer Language", "OK", "Please select a language.", 10, 100)
+WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "&Next >", "Welcome to the Dragon Age: Origins Installer", 10, 100)
+WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "Button4", "Please read the End User License Agreement:", 10, 100)
+WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "I agree", "Please read the End User License Agreement:", 10, 100)
+sleep 10000 ; Give the key window time to appear, it can be slow
+send {Raw}$DRAGONAGEKEY
+send {Enter}
+
+WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "&Install", "Express Install", 10, 100)
+
+; Installer takes a while, then crashes on completion (need to test Windows to see if it needs a 'confirm' or not)
+; For now, just wait for the window to no longer exist and consider that good.
+loop 100
+{
+    IfWinExist, Dragon Age: Origins Setup
+    sleep 60000
+}
+exit 0
+__EOF__
+sed -e 's/$/\r/' dragonage.tmp > dragonage.ahk
+    try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" dragonage.ahk
+    iso_umount
+
+}
+
+#----------------------------------------------------------------
+
 load_morrowind_goty() {
     cd $WISOTOOL_TMP
     # FIXME: Untested on Windows!
@@ -784,6 +828,7 @@ do
         ;;
     -v) set -x;;
     diablo2) load_diablo2;;
+    dragonage) load_dragonage;;
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     morrowind|morrowind_goty) load_morrowind_goty;;
