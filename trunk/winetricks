@@ -2781,7 +2781,7 @@ load_vcrun2005() {
     download vcrun2005-ms09-035 http://download.microsoft.com/download/6/B/B/6BB661D6-A8AE-4819-B79F-236472F6070C/vcredist_x86.exe e052789ebad7dc8d6f8505a9295b0576babd125e
     cd "$WINETRICKS_CACHE"
     cd vcrun2005-ms09-035
-    override_dlls native,builtin msvcrt80
+    override_dlls native,builtin msvcr80
     try $WINE vcredist_x86.exe $WINETRICKS_QUIET
     cd "$olddir"
 }
