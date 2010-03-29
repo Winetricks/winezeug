@@ -598,7 +598,7 @@ load_diablo2() {
 #----------------------------------------------------------------
 
 load_dragonage() {
-    #warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
+    warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
     test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$srcdir"/winetricks -q autohotkey
 
     # Get user's key
