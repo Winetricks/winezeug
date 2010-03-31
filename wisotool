@@ -577,7 +577,20 @@ load_diablo2() {
     DIABLOIIKEY=`cat "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.txt | tr -d -`
 
     iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
-    ahk_do "run i:setup.exe; winwait, Diablo II Setup; send {i}; winwait, Choose Installation Size; send {u}; send {Enter}; send {Raw}$USERNAME; send {Tab}{Raw}$DIABLOIIKEY; send {Enter}; winwait, Diablo II - choose install directory; send {Enter}; winwait, Desktop Shortcut; send {N}; winwait, Insert Disc"
+    ahk_do "
+        run i:setup.exe
+        winwait, Diablo II Setup
+        send {i}
+        winwait, Choose Installation Size
+        send {u}
+        send {Enter}
+        send {Raw}$USERNAME
+        send {Tab}{Raw}$DIABLOIIKEY
+        send {Enter}
+        winwait, Diablo II - choose install directory
+        send {Enter}
+        winwait, Desktop Shortcut
+        send {N}; winwait, Insert Disc"
     iso_mount "$WISOTOOL_CACHE"/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
     # Needed by patch 1.13c to avoid disc swapping
     cp "$ISO_MOUNT_ROOT"/d2music.mpq "$programfilesdir_unix/Diablo II/"
@@ -585,12 +598,25 @@ load_diablo2() {
     iso_mount "$WISOTOOL_CACHE"/382ea98f270e39855b558b8fac0d609712a54ae8.iso
     ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
     iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
-    ahk_do "send, {Enter}; Sleep 1000; winwait, View ReadMe?; ControlClick &No, View ReadMe?; winwait, Register Diablo II Electronically?; send {N}; winwait, Diablo II Setup - Video Test; ControlClick &Cancel, Diablo II Setup - Video Test; winclose, Diablo II Setup"
+    ahk_do "
+        send, {Enter}
+        Sleep 1000
+        winwait, View ReadMe?
+        ControlClick &No, View ReadMe?
+        winwait, Register Diablo II Electronically?
+        send {N}
+        winwait, Diablo II Setup - Video Test
+        ControlClick &Cancel, Diablo II Setup - Video Test
+        winclose, Diablo II Setup"
     iso_umount
 
     try "$WINE" "$WISOTOOL_CACHE"/diablo2/D2Patch_113c.exe
     # Dagnabbit, the darn updater starts the game after it updates, no matter what I do?
-    ahk_do "winwait Blizzard Updater v2.72; send {Enter}; winwait Diablo II; ControlClick &Cancel, Diablo II"
+    ahk_do "
+        winwait Blizzard Updater v2.72
+        send {Enter}
+        winwait Diablo II
+        ControlClick &Cancel, Diablo II"
 
     warn "When starting the game, be patient, wait until the menu appears.  The game seems to hang if it looses focus, see bug 14456, you may need to set winecfg to virtual desktop."
 }
@@ -697,9 +723,28 @@ load_starcraft() {
     KEY=`cat "$WISOTOOL_CACHE"/8d6cc11bc76b8af22868a95e17e0282277e9c53c.txt`
 
     iso_mount "$WISOTOOL_CACHE"/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
-    ahk_do "run i:StarCraft (Windows).exe; winwait, StarCraft - Brood War; send {i}; winwait, End User License Agreement; Sleep 2000; send {a}; winwait, CD-Key; send {Raw}$USERNAME; send {Tab}{Raw}$KEY; send {Enter}; winwait, Installation Destination Directory; send {Enter}; winwait,,Please insert"
+    ahk_do "
+        run i:StarCraft (Windows).exe
+        winwait, StarCraft - Brood War
+        send {i}
+        winwait, End User License Agreement
+        Sleep 2000
+        send {a}
+        winwait, CD-Key
+        send $USERNAME
+        send {Tab}$KEY
+        send {Enter}
+        winwait, Installation Destination Directory
+        send {Enter}
+        winwait,,Please insert"
     iso_mount "$WISOTOOL_CACHE"/966bae1f2e2035e066139e78137e623c92838254.iso
-    ahk_do "send, {Enter}; SetTitleMatchMode, 2; winwait, - StarCraft; winwaitclose, - StarCraft; Sleep 1000; send {e}"
+    ahk_do "
+        send, {Enter}
+        SetTitleMatchMode, 2
+        winwait, - StarCraft
+        winwaitclose, - StarCraft
+        Sleep 2000
+        send {e}"
     iso_umount
 
     # FIXME: apply patch, follow instructions in http://us.blizzard.com/support/article.xml?articleId=21150
