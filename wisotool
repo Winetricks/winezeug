@@ -635,11 +635,6 @@ __EOF__
 sed -e 's/$/\r/' dragonage.tmp > dragonage.ahk
     try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" dragonage.ahk
     iso_umount
-
-    if [ -f "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4_postinstall.sh ]
-    then
-        sh "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4_postinstall.sh
-    fi
 }
 
 #----------------------------------------------------------------
@@ -686,10 +681,6 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
     sleep 30s
     iso_umount
-    if [ -f "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b_postinstall.ahk ]
-    then
-        try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b_postinstall.ahk
-    fi
     cd $olddir
 }
 
@@ -850,6 +841,14 @@ do
     *) echo "Install of $1 done" ;;
     esac
     shift
+
+    # User-specific postinstall hook.  
+    # Source it so the script can call download() if needed.
+    if [ -f "$WISOTOOL_CACHE"/$PACKAGE-postinstall.sh ]
+    then
+        ( . "$WISOTOOL_CACHE"/$PACKAGE-postinstall.sh )
+    fi
+
     # cleanup
     rm -rf "$WISOTOOL_TMP"/*
 done
