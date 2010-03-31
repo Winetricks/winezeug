@@ -152,7 +152,6 @@ __EOF__
         wineserver -k || true
         rm -rf $WINEPREFIX
         sh winetricks  -q -v $verb
-        # wget http://winezeug.googlecode.com/svn/trunk/winetricks_files/dotnettest.exe
         wine dotnet_test.exe | grep "Dotnet works!"
     done
     rm dotnet_test.{c,exe}
