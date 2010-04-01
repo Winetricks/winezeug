@@ -150,6 +150,7 @@ usage() {
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
+    echo " wog           World of Goo demo (2D Boy, 2008)"
     echo "Pseudopackages:"
     echo " load          Load a new iso"
     echo " load=KEY      Load a new iso (with given key)"
@@ -752,6 +753,37 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
+load_wog() {
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/wog/WorldOfGooDemo.1.0.exe"
+    then
+        # Get temporary download location
+        download wog "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+        URL=`cat "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" | 
+           grep WorldOfGooDemo.1.0.exe | sed 's,.*http,http,;s,".*,,'`
+        rm "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+       
+        download wog "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
+    fi
+
+    cd "$WISOTOOL_CACHE/wog"
+    ahk_do "
+        run WorldOfGooDemo.1.0.exe
+        winwait, World of Goo Setup, License Agreement
+	send {Enter}
+        winwait, World of Goo Setup, Choose Components
+	send {Enter}
+        winwait, World of Goo Setup, Choose Install Location
+	send {Enter}
+        winwait, World of Goo Setup, Thank you
+	ControlClick, Make me dirty right now, World of Goo Setup, Thank you
+	send {Enter}
+        "
+}
+
+#----------------------------------------------------------------
+
 print_version() {
     echo "$VERSION"
 }
@@ -885,6 +917,7 @@ do
     morrowind|morrowind_goty) load_morrowind_goty;;
     starcraft) load_starcraft;;
     version) print_version;;
+    wog) load_wog;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
