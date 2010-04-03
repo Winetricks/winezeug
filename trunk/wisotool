@@ -149,6 +149,7 @@ usage() {
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
+    echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
     echo " wog           World of Goo demo (2D Boy, 2008)"
     echo "Pseudopackages:"
@@ -713,6 +714,55 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
 #----------------------------------------------------------------
 
+load_sims3() {
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+
+    # Get user's key
+    KEY=`cat "$WISOTOOL_CACHE"/8a82a067f3bb8f68d034a06954e9a16ea381958a.txt | tr -d -`
+
+    echo KEY is $KEY
+    iso_mount "$WISOTOOL_CACHE"/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
+    # Default lang, USA, accept defaults, uncheck EA dl mgr, uncheck readme
+    ahk_do "
+        run i:Sims3Setup.exe
+        winwait, Choose Setup Language
+        send {Enter}
+        SetTitleMatchMode, 2
+        winwait, - InstallShield Wizard
+        sleep 1000
+        ControlClick &Next >, - InstallShield Wizard
+        sleep 1000
+        send uuuuuu{Tab}{Tab}{Enter}
+        sleep 1000
+        send a{Enter}
+        sleep 1000
+        send {Raw}$KEY
+        send {Enter}
+        winwait, - InstallShield Wizard, Setup Type
+        send {Enter}
+        winwait, - InstallShield Wizard, Click Install to begin
+        send {Enter}
+        winwait, - InstallShield Wizard, EA Download Manager
+        ControlClick Yes, - InstallShield Wizard
+        send {Enter}
+        winwait, - InstallShield Wizard, Complete
+        ControlClick View the readme file, - InstallShield Wizard
+        ControlClick Finish, - InstallShield Wizard
+    "
+    iso_umount
+    # You may want to download the 1.6.6 patch from
+    # http://download.cnet.com/The-Sims-3/3000-7551_4-11122245.html
+    # 02703d296417750005326ff0d37295fa434a3f49  Sims3_1.6.6.002001_from_1.0.631.00001.exe
+    # and apply it in ~/.wisotoolcache/sims3-postinstall.sh
+    #
+    # TODO: check $PROGRAMFILES/Electronic Arts/$TYTUL/Game/Bin/skuversion.txt for
+    # existing version, and download patch from
+    # http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_${PATCHVERSION}${IMPORTANTNUMBER}_from_${PATCHFROMVER}.exe
+    # See http://www.playonlinux.com/repository/?script=414 for details.
+}
+
+#----------------------------------------------------------------
+
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
     test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
@@ -915,6 +965,7 @@ do
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     morrowind|morrowind_goty) load_morrowind_goty;;
+    sims3) load_sims3;;
     starcraft) load_starcraft;;
     version) print_version;;
     wog) load_wog;;
