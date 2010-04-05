@@ -782,8 +782,10 @@ load_atmlib() {
 #----------------------------------------------------------------
 
 load_autohotkey() {
+    cd "$WINETRICKS_CACHE"
     download . http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
-    try $WINE "$WINETRICKS_CACHE"/AutoHotkey104805_Install.exe $WINETRICKS_S
+    try $WINE AutoHotkey104805_Install.exe $WINETRICKS_S
+    cd -
 }
 
 #----------------------------------------------------------------
