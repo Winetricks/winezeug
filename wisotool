@@ -503,7 +503,7 @@ load_iso() {
      sleep 1
    done
    trap cleanup 1 2 3 6
-   dd if=/dev/sr0 of=temp.iso & pid=$!
+   dd if=/dev/sr0 of=temp.iso bs=2048 conv=noerror,sync & pid=$!
    while ps -p $pid > /dev/null
    do
      sleep 5
