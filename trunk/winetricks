@@ -437,6 +437,20 @@ cabextract() {
     die oops, bug, please report
 }
 
+try_unzip() {
+    # Not always installed, but shouldn't be fatal unless it's being used
+    UNZIP="`which unzip 2>/dev/null`" 
+    if test ! -x "$UNZIP"
+    then
+        die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
+    fi
+    
+    try $UNZIP "$@"
+}
+
+unzip() {
+    die oops, bug, please report
+}
 
 # verify an sha1sum
 verify_sha1sum() {
@@ -779,7 +793,7 @@ load_cc580() {
     download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
     try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
     try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
     try cp "$WINETRICKS_TMP"/comcnt.dll "$WINDIR"/system32/comctl32.dll
 
@@ -815,7 +829,7 @@ load_comctl32ocx() {
 
 load_colorprofile() {
     download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
     mkdir -p "$WINDIR"/system32/spool/drivers/color
     try cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
 }
@@ -1991,7 +2005,7 @@ load_mdac28() {
 load_mfc40() {
     # See http://support.microsoft.com/kb/122244
     download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ole2v.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ole2v.exe
     try cp -f "$WINETRICKS_TMP"/MFC40.DLL "$WINDIR"/system32/
 
     rm -rf "$WINETRICKS_TMP"/*
@@ -2147,7 +2161,7 @@ load_mpc() {
     download . $SOURCEFORGE/mpc-hc/MPC%20HomeCinema%20-%20Win32/MPC-HC%20v1.3.1249.0_32%20bits/MPC-Homecinema.1.3.1249.0.%28x86%29.zip 6c46846b5298f35ccc81925aa5304546b9a7e513
     mkdir -p "$programfilesdir_unix/Media Player Classic"
     cd "$programfilesdir_unix/Media Player Classic"
-    try unzip "$WINETRICKS_CACHE/MPC-Homecinema.1.3.1249.0.%28x86%29.zip"
+    try_unzip "$WINETRICKS_CACHE/MPC-Homecinema.1.3.1249.0.%28x86%29.zip"
 
 
     append_path "$programfilesdir_win"'\\Media Player Classic'
@@ -2217,7 +2231,7 @@ load_msmask() {
 load_mspaint() {
     # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
     download . http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
-    try unzip "$WINETRICKS_CACHE"/paintnt.exe -d "$WINDIR"
+    try_unzip "$WINETRICKS_CACHE"/paintnt.exe -d "$WINDIR"
     warn "Paint is now installed to $WINDIR/MSPAINT.EXE"
 }
 
@@ -2305,7 +2319,7 @@ load_ogg() {
 load_ole2() {
     # http://support.microsoft.com/kb/123087/EN-US/
     download . http://download.microsoft.com/download/win31/update/2.03/win/en-us/ww1116.exe b803991c40f387464b61f606536b7c98a88245d2
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
     set_winver win31
     cd "$WINETRICKS_TMP"
     try $WINE setup.exe
@@ -2348,7 +2362,7 @@ load_pdh() {
     # http://support.microsoft.com/kb/284996
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
     try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/pdhinst.exe
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/pdh.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/pdh.exe
     try cp -f "$WINETRICKS_TMP"/x86/Pdh.Dll "$WINDIR"/system32/pdh.dll
 }
 
@@ -2457,7 +2471,7 @@ load_python_comtypes() {
     
     download . $SOURCEFORGE/project/comtypes/comtypes/0.6.1/comtypes-0.6.1-1.zip 814318cdae0ab2471a9cd500847bf12f4df9a57c
     cd "$WINETRICKS_CACHE"
-    try unzip comtypes-0.6.1-1.zip
+    try_unzip comtypes-0.6.1-1.zip
     cd comtypes-0.6.1
     try $WINE "C:\Python26\python.exe" setup.py install
     cd "$olddir"
@@ -2628,7 +2642,7 @@ load_vb2run() {
     # Not referenced on MS web anymore. But the old Microsoft Software Library FTP still has it.
     # See ftp://ftp.microsoft.com/Softlib/index.txt
     download . ftp://ftp.microsoft.com/Softlib/MSLFILES/VBRUN200.EXE ac0568b73ee375408778e9b505df995f79ab907e
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
     try cp -f "$WINETRICKS_TMP/VBRUN200.DLL" "$WINDIR"/system32/
 
 }
@@ -2638,7 +2652,7 @@ load_vb2run() {
 load_vb3run() {
     # See http://support.microsoft.com/kb/196285
     download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb3run.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb3run.exe
     try cp -f "$WINETRICKS_TMP/Vbrun300.dll" "$WINDIR"/system32/
 
 }
@@ -2648,7 +2662,7 @@ load_vb3run() {
 load_vb4run() {
     # See http://support.microsoft.com/kb/196286
     download . http://download.microsoft.com/download/vb40ent/sample27/1/w9xnt4/en-us/vb4run.exe 83e968063272e97bfffd628a73bf0ff5f8e1023b
-    try unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb4run.exe
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb4run.exe
     try cp -f "$WINETRICKS_TMP/Vb40032.dll" "$WINDIR"/system32/
     try cp -f "$WINETRICKS_TMP/Vb40016.dll" "$WINDIR"/system32/
 
@@ -3136,7 +3150,7 @@ load_one_hotfix()
     done
     if test ! -f $hotfix
     then
-       unzip -o $downloadfile
+       try_unzip -o $downloadfile
     fi
     try $WINE $hotfix
     cd "$olddir"
@@ -3521,11 +3535,6 @@ then
    SHA1SUM="openssl dgst -sha1"
 else
    die "No sha1sum utility available."
-fi
-
-if [ ! -x "`which unzip 2>/dev/null`" ]
-then
-    die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
 fi
 
 while test "$1" != ""
