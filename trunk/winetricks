@@ -471,17 +471,20 @@ download() {
         # redhat.com decompresses liberation-fonts.tar.gz!
         if [ -x "`which wget 2>/dev/null`" ]
         then
-           # Use -nd to insulate ourselves from people who set -x in WGETRC
-           # [*] --retry-connrefused works around the broken sf.net mirroring
-           # system when downloading corefonts
-           # [*] --read-timeout is useful on the adobe server that doesn't
-           # close the connection unless you tell it to (control-C or closing
-           # the socket)
-           try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" "$2"
+            # Use -nd to insulate ourselves from people who set -x in WGETRC
+            # [*] --retry-connrefused works around the broken sf.net mirroring
+            # system when downloading corefonts
+            # [*] --read-timeout is useful on the adobe server that doesn't
+            # close the connection unless you tell it to (control-C or closing
+            # the socket)
+            try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" "$2"
+        elif [ -x "`which curl 2>/dev/null`" ]
+        then
+            # curl doesn't get filename from the location given by the server!
+            # fortunately, we know it
+            try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
         else
-           # curl doesn't get filename from the location given by the server!
-           # fortunately, we know it
-           try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
+            die "wget/curl not found, cannot download any files. Please install either wget or curl."
         fi
         # Need to decompress .exe's that are compressed, else cygwin fails
         # Only affects cygwin, so don't barf if 'file' not installed
@@ -492,7 +495,7 @@ download() {
             *gzip*) mv $file $file.gz; gunzip < $file.gz > $file;;
             esac
         esac
-           
+
         cd "$olddir"
     fi
     if [ "$3"x != ""x ]
