@@ -48,6 +48,8 @@ WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
 WISOTOOL_TMP_WIN='c:\wisotooltmp'
 mkdir -p $WISOTOOL_TMP
 
+USERNAME=${USERNAME:-$LOGNAME}
+
 # Overridden for windows
 ISO_MOUNT_ROOT=/mnt/wisotool
 
@@ -642,7 +644,7 @@ load_dragonage() {
     ahk_helpers
     cat > dragonage.tmp << __EOF__
 #include helpers.ahk
-Run, I:\Setup.exe
+Run, ${ISO_MOUNT_LETTER}:Setup.exe
 
 WINDOW_CLICK_LOOP("Installer Language", "OK", "Please select a language.", 10, 100)
 WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "&Next >", "Welcome to the Dragon Age: Origins Installer", 10, 100)
@@ -682,7 +684,7 @@ load_morrowind_goty() {
     ahk_helpers
     cat > morrowind.tmp << __EOF__
 #include helpers.ahk
-Run, I:\Setup.exe
+Run, ${ISO_MOUNT_LETTER}:Setup.exe
 
 WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Yes", "The Elder Scrolls III:  Morrowind (License Agreement)", 10, 100)
 WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Please read the following important information.", 10, 100)
