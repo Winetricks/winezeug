@@ -668,32 +668,30 @@ load_dragonage() {
     sh "$WINETRICKS" -q nocrashdialog physx vcrun2005
     iso_mount "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
-    ahk_helpers
-    cat > dragonage.tmp << __EOF__
-#include helpers.ahk
-Run, ${ISO_MOUNT_LETTER}:Setup.exe
-
-WINDOW_CLICK_LOOP("Installer Language", "OK", "Please select a language.", 10, 100)
-WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "&Next >", "Welcome to the Dragon Age: Origins Installer", 10, 100)
-WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "Button4", "Please read the End User License Agreement:", 10, 100)
-WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "I agree", "Please read the End User License Agreement:", 10, 100)
-sleep 10000 ; Give the key window time to appear, it can be slow
-send {Raw}$DRAGONAGEKEY
-send {Enter}
-
-WINDOW_CLICK_LOOP("Dragon Age: Origins Setup", "&Install", "Express Install", 10, 100)
-
-; Installer takes a while, then crashes on completion (need to test Windows to see if it needs a 'confirm' or not)
-; For now, just wait for the window to no longer exist and consider that good.
-loop 100
-{
-    IfWinExist, Dragon Age: Origins Setup
-    sleep 60000
-}
-exit 0
-__EOF__
-sed -e 's/$/\r/' dragonage.tmp > dragonage.ahk
-    try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" dragonage.ahk
+    ahk_do "
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        SetTitleMatchMode, 2
+        winwait, Installer Language
+        send {Enter}
+        winwait, Dragon Age: Origins Setup
+        ControlClick Next, Dragon Age: Origins Setup
+        winwait, Dragon Age: Origins Setup, End User License
+        ControlClick Button4, Dragon Age: Origins Setup
+        ControlClick I agree, Dragon Age: Origins Setup
+        SetTitleMatchMode, 1
+        winwait, Dragon Age: Origins, Registration
+        send $DRAGONAGEKEY
+        send {Enter}
+        winwait, Dragon Age: Origins Setup, Install Type
+        Sleep 1000
+        send {Enter}
+        loop 100
+        {
+            IfWinExist, Dragon Age: Origins Setup
+                sleep 60000
+        }
+        exit 0
+    "
     iso_umount
 }
 
