@@ -301,7 +301,7 @@ usage() {
     echo " sound=alsa       Set sound driver to ALSA"
     echo " sound=audioio    Set sound driver to AudioIO"
     echo " sound=coreaudio  Set sound driver to CoreAudio"
-    echo " sound=esound     Set sound driver to Esound"
+    echo " sound=esd        Set sound driver to Esound"
     echo " sound=jack       Set sound driver to Jack"
     echo " sound=nas        Set sound driver to Nas"
     echo " sound=oss        Set sound driver to OSS"
@@ -3700,7 +3700,7 @@ do
     sound=alsa|alsa) set_sound_driver alsa;;
     sound=audioio|audioio) set_sound_driver audioio;;
     sound=coreaudio|coreaudio) set_sound_driver coreaudio;;
-    sound=esound|esound) set_sound_driver esound;;
+    sound=esound|sound=esd|esd|esound) set_sound_driver esd;;
     sound=jack|jack) set_sound_driver jack;;
     sound=nas|nas) set_sound_driver nas;;
     sound=oss|oss) set_sound_driver oss;;
