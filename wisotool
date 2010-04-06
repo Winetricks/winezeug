@@ -146,6 +146,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
+    echo " assassinscreed Assassins Creed (Ubisoft, 2008)"
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
@@ -763,6 +764,35 @@ load_sims3() {
 
 #----------------------------------------------------------------
 
+load_assassinscreed() {
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
+    ahk_do "
+        run i:setup.exe
+        SetTitleMatchMode, 2
+        winwait, InstallShield Wizard, Language
+        ControlClick Next, InstallShield Wizard
+        winwait, InstallShield Wizard, Welcome
+        ControlClick Next, InstallShield Wizard
+        winwait, InstallShield Wizard, License
+        sleep 500
+        send a{Enter}
+        winwait, InstallShield Wizard, begin
+        sleep 1000
+        ControlClick &Install, InstallShield Wizard
+        winwait, Product Registration, register
+        ControlClick Never, Product Registration
+        ControlClick Button1, Product Registration
+        winwait, InstallShield Wizard, inish
+        send {Enter}
+    "
+    iso_umount
+}
+
+#----------------------------------------------------------------
+
+
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
     test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
@@ -967,6 +997,7 @@ do
     morrowind|morrowind_goty) load_morrowind_goty;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
+    assassinscreed) load_assassinscreed;;
     version) print_version;;
     wog) load_wog;;
     *) echo Unknown arg $1; usage ; exit 1;;
