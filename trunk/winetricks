@@ -2344,9 +2344,9 @@ load_openwatcom() {
         # Pick smallest installation that supports 16 bit C and C++
         cd "$WINETRICKS_TMP"
         cp "$WINETRICKS_CACHE"/open-watcom-c-win32-1.8.exe .
-        unzip open-watcom-c-win32-1.8.exe setup.inf
+        try_unzip open-watcom-c-win32-1.8.exe setup.inf
         sed -i 's/tools16=.*/tools16=true/' setup.inf
-        zip -f open-watcom-c-win32-1.8.exe
+        try zip -f open-watcom-c-win32-1.8.exe
         try $WINE open-watcom-c-win32-1.8.exe -s
         cd "$olddir"
     else
