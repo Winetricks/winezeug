@@ -531,7 +531,7 @@ load_iso() {
 
 ahk_do() {
    echo "$@" | tr ';' '\012' | sed "s/\$//" > tmp.ahk
-   $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" tmp.ahk
+   $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" tmp.ahk
 }
 
 # Put any helper functions needed here:
@@ -572,8 +572,15 @@ cat helper_tmp | tr ';' '\012' | sed "s/\$//" > helpers.ahk
 
 #----------------------------------------------------------------
 
+load_autohotkey()
+{
+    test -f "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" || sh "$WINETRICKS" -q autohotkey
+}
+
+#----------------------------------------------------------------
+
 load_assassinscreed() {
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
     ahk_do "
@@ -601,7 +608,7 @@ load_assassinscreed() {
 
 load_diablo2() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other two discs." 
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
     # Force clean-ish install
@@ -659,7 +666,7 @@ load_diablo2() {
 
 load_dragonage() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     # Get user's key
     DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
@@ -703,7 +710,7 @@ load_morrowind_goty() {
 
     # FIXME: Only supports the main installer, and the construction set (which follows automatically)
     # eventually should support the expansions as well
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
     ahk_helpers
@@ -745,7 +752,7 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 #----------------------------------------------------------------
 
 load_sims3() {
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     # Get user's key
     KEY=`cat "$WISOTOOL_CACHE"/8a82a067f3bb8f68d034a06954e9a16ea381958a.txt | tr -d -`
@@ -797,7 +804,7 @@ load_sims3() {
 
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     # Force clean-ish install
     test -d "$programfilesdir_unix/StarCraft" && rm -rf "$programfilesdir_unix/StarCraft"
@@ -836,7 +843,7 @@ load_starcraft() {
 #----------------------------------------------------------------
 
 load_wog() {
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     if ! test -f "$WISOTOOL_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
