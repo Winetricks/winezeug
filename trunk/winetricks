@@ -3375,7 +3375,7 @@ load_wenquanyi() {
 
 #----------------------------------------------------------------
 
-load_wsh56() {
+load_wsh57() {
     # If this is just a dependency check, don't re-install
     if test $PACKAGE != wsh56 && test -f "$WINDIR"/system32/wscript.exe
     then
@@ -3383,12 +3383,21 @@ load_wsh56() {
         return
     fi
 
-    load_vcrun6
+    # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
+    download . http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
 
-    # See also http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=C717D943-7E4B-4622-86EB-95A22B832CAA
-    download . http://download.microsoft.com/download/2/8/a/28a5a346-1be1-4049-b554-3bc5f3174353/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe f4692766caa3ee9b38d4166845486c6199a33457
+    try_cabextract -d "$WINDIR"/system32 "$WINETRICKS_CACHE"/scripten.exe 
+    
+    # Wine doesn't provide the other dll's (yet?)
+    override_dlls native,builtin jscript.dll
+}
 
-    try $WINE "$WINETRICKS_CACHE"/WindowsXP-Windows2000-Script56-KB917344-x86-enu.exe $WINETRICKS_QUIET
+#----------------------------------------------------------------
+
+load_wsh56() {
+
+    load_wsh57
+
 }
 
 #----------------------------------------------------------------
@@ -3670,7 +3679,7 @@ do
     wme9) load_wme9;;
     wmp9) load_wmp9;;
     wmp10) load_wmp10;;
-    wsh56) load_wsh56;;
+    wsh56|wsh57) load_wsh57;;
     wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
     xact|xactengine|x3daudio) load_xact;;
