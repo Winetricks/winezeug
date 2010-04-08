@@ -813,7 +813,7 @@ WINDOW_CLICK_LOOP("Information", "&OK", "You have installed Windows XP, which in
 exit 0
 __EOF__
 sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
-    try $WINE "$programfilesdir_unix/AutoHotkey/autohotkey.exe" morrowind.ahk
+    try $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" morrowind.ahk
 
     sleep 30s
     iso_umount
@@ -825,7 +825,7 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 load_plantsvszombies() {
     load_autohotkey
 
-    if ! test -f "$WISOTOOL_CACHE/plants/PlantsVsZombiesSetup.exe"
+    if ! test -f "$WISOTOOL_CACHE/plantsvszombies/PlantsVsZombiesSetup.exe"
     then
         download plantsvszombies "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" fcae7b8c63d9a5b5f6ed783232bc5f612fd5c963
     fi
@@ -937,7 +937,7 @@ load_starcraft() {
 #----------------------------------------------------------------
 
 load_stfu() {
-    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
     ahk_do "
