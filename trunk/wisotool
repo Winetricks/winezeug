@@ -152,6 +152,7 @@ usage() {
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
+    echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
     echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
     echo " stfu          Starwars: The Force Unleashed (Aspyr, 2009)"
@@ -603,6 +604,9 @@ e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso)
 c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso)
        echo morrowind_goty ;;
 
+PlantsVsZombiesSetup.exe)
+       echo plantsvszombies ;;
+
 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso)
        echo sims3 ;;
 
@@ -814,6 +818,29 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
     sleep 30s
     iso_umount
     cd $olddir
+}
+
+#----------------------------------------------------------------
+
+load_plantsvszombies() {
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/plants/PlantsVsZombiesSetup.exe"
+    then
+        download plants "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" fcae7b8c63d9a5b5f6ed783232bc5f612fd5c963
+    fi
+
+    cd "$WISOTOOL_CACHE/plants"
+    ahk_do "
+        run PlantsVsZombiesSetup.exe
+        winwait, Plants vs. Zombies Installer
+        send {Enter}
+        winwait, Plants vs. Zombies License Agreement
+        ControlClick Button1
+        winwait, Plants vs. Zombies Installation Complete!
+        send {Space}{Enter}
+        ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
+    "
 }
 
 #----------------------------------------------------------------
@@ -1104,6 +1131,7 @@ do
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     migrate) migrate_files;;
     morrowind|morrowind_goty) load_morrowind_goty;;
+    plantsvszombies) load_plantsvszombies;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
     stfu) load_stfu;;
