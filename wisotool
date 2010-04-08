@@ -939,7 +939,7 @@ load_starcraft() {
 load_stfu() {
     load_autohotkey
 
-    iso_mount "$WISOTOOL_CACHE"/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
@@ -959,9 +959,16 @@ load_stfu() {
         winwait, Setup, begin
         sleep 1000
         ControlClick &Install, Setup
+        winwait, Setup Needs the Next Disk
     "
-    # TODO: script second disc, etc.
-    #iso_umount
+    iso_umount
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
+    ahk_do "
+        send {Enter}
+        winwait, Setup, Completing
+        ControlClick Finish
+    "
+    iso_umount
 }
 
 #----------------------------------------------------------------
