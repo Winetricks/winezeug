@@ -970,6 +970,21 @@ load_stfu() {
         ControlClick Finish
     "
     iso_umount
+
+    # Patch to 1.2
+    # FIXME: add a commandline option to disable patching in general
+    # URL from http://www.lucasfiles.com/index.php?s=&action=download&id=1537&agree=true 
+    # See also http://www.forceunleashed.net/news/force-unleashed-patch-1-2/
+    download stfu http://xfer.lfnetwork.com/lucasfiles.com/downloads/1537/SWTFU_PC_EF_1.2_Update.exe cfd8043c4b86f4dc0ff0acd4c108b11c4b76e716
+    cd "$WISOTOOL_CACHE/stfu"
+    ahk_do "
+        run SWTFU_PC_EF_1.2_Update.exe
+        SetTitleMatchMode, 2
+        winwait, Patch
+        send {Enter}
+        winwait, Patch, Successful
+        send {Enter}
+    "
 }
 
 #----------------------------------------------------------------
