@@ -154,6 +154,7 @@ usage() {
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
+    echo " stfu          Starwars: The Force Unleashed (Aspyr, 2009)"
     echo " wog           World of Goo demo (2D Boy, 2008)"
     echo "Pseudopackages:"
     echo " load          Load a new iso"
@@ -521,8 +522,13 @@ load_iso() {
    sum=`sha1sum "$WISOTOOL_CACHE"/temp.iso | awk '{print $1}'`
 
    mv "$WISOTOOL_CACHE"/temp.iso "$WISOTOOL_CACHE"/$sum.iso
-   # FIXME: in gui, prompt user for key?
-   echo "$1" > "$WISOTOOL_CACHE"/$sum.txt
+   if test "$1" != ""
+   then
+       # FIXME: in gui, prompt user for key if load= was chosen?
+       echo "$1" > "$WISOTOOL_CACHE"/$sum.txt
+   fi
+
+   migrate_files
 
    eject
 }
@@ -599,6 +605,10 @@ c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso)
 
 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso)
        echo sims3 ;;
+
+0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso|\
+5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso)
+       echo stfu ;;
 
 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso|\
 966bae1f2e2035e066139e78137e623c92838254.iso)
@@ -899,6 +909,36 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
+load_stfu() {
+    test -f "$programfilesdir_unix/AutoHotkey/autohotkey.exe" || sh "$WINETRICKS" -q autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
+    ahk_do "
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        SetTitleMatchMode, 2
+        winwait, Select Setup Language
+        send {Enter}
+        winwait, Setup, Welcome
+        send {Enter}
+        winwait, Setup, License
+        sleep 500
+        send {Tab}a{Space}{Enter}
+        winwait, Setup, Destination
+        send {Enter}
+        winwait, Setup, Menu
+        send {Enter}
+        winwait, Setup, Tasks
+        send {Space}{Enter}
+        winwait, Setup, begin
+        sleep 1000
+        ControlClick &Install, Setup
+    "
+    # TODO: script second disc, etc.
+    #iso_umount
+}
+
+#----------------------------------------------------------------
+
 load_wog() {
     load_autohotkey
 
@@ -1066,6 +1106,7 @@ do
     morrowind|morrowind_goty) load_morrowind_goty;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
+    stfu) load_stfu;;
     version) print_version;;
     wog) load_wog;;
     *) echo Unknown arg $1; usage ; exit 1;;
