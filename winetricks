@@ -1551,17 +1551,10 @@ REGEDIT4
 _EOF_
     try_regedit "$WINETRICKS_TMP_WIN"\\fs_rgb.reg
 }
+
 #----------------------------------------------------------------
 
 load_gecko() {
-    # If this is just a dependency check, don't re-install
-    WINEDIR=`dirname $WINE`
-    if test $PACKAGE != ie6 && ( test -d "$WINDIR/gecko" || test -d "$WINDIR/system32/gecko" || test -d $WINEDIR/../gecko)
-    then
-        echo "prerequisite gecko already installed, skipping"
-        return
-    fi
-
     # Load the HTML rendering Engine (Gecko)
     # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
@@ -1592,11 +1585,32 @@ load_gecko() {
         ;;
     esac
 
-    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
+    # If this is just a dependency check, don't re-install
+    if test $PACKAGE != ie6 && test -f "$GECKO_DIR/gecko/$GECKO_VERSION/wine_gecko/nspr4.dll"
     then
-       # FIXME: busted if using curl!
-       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab" \
+        echo "prerequisite gecko already installed, skipping"
+        return
+    fi
+
+    WINEDIR="`dirname $WINE`"
+    GECKOCAB="wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab"
+
+    for candidate in "$WINEDIR/../share/wine/gecko/$GECKOCAB" "$WINEDIR/../gecko/$GECKOCAB"
+    do
+        gotsum=`$SHA1SUM 2>/dev/null < "$candidate" | sed 's/ .*//'`
+        if [ "$gotsum"x = "$GECKO_SHA1SUM"x ]
+        then
+            GECKOPATH="$candidate"
+            break
+        fi
+    done
+
+    if test -z "$GECKOPATH"
+    then
+        # FIXME: busted if using curl!
+        download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab" \
                 $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
+        GECKOPATH="$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
     fi
 
     cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
@@ -1620,7 +1634,7 @@ _EOF_
     # extract the files
     mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
-    try_cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
+    try_cabextract $WINETRICKS_UNIXQUIET "$GECKOPATH"
     cd "$olddir"
 
     # set install-path
