@@ -624,7 +624,7 @@ PlantsVsZombiesSetup.exe)
 
 list_available_verbs()
 {
-    find $WISOTOOL_CACHE -type f | sed 's,.*/,,' > /tmp/wfiles
+    find $WISOTOOL_CACHE/. -type f | sed 's,.*/,,' > /tmp/wfiles
     for file in `cat /tmp/wfiles`
     do
         map_file_to_verb $file
