@@ -964,6 +964,7 @@ load_stfu() {
     iso_umount
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
     ahk_do "
+        SetTitleMatchMode, 2
         send {Enter}
         winwait, Setup, Completing
         ControlClick Finish
