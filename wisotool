@@ -617,12 +617,29 @@ list_available_verbs()
     done | sort -u
 }
 
+migrate_files()
+{
+    # Only needed if you load an iso before wisotools supports it, and you then update wisotools
+    for file in $WISOTOOL_CACHE/*.iso
+    do
+        barefile=`basename $file`
+        verb=`map_file_to_verb $barefile`
+        if test "$verb" != ""
+        then
+            mkdir -p $WISOTOOL_CACHE/$verb
+            movee=`echo $file | sed 's/.iso$/.*/' `
+            echo Moving $movee to $WISOTOOL_CACHE/$verb/
+            mv $movee $WISOTOOL_CACHE/$verb/
+        fi
+    done
+}
+
 #----------------------------------------------------------------
 
 load_assassinscreed() {
     load_autohotkey
 
-    iso_mount "$WISOTOOL_CACHE"/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
@@ -655,9 +672,9 @@ load_diablo2() {
     test -d "$programfilesdir_unix/Diablo II" && rm -rf "$programfilesdir_unix/Diablo II"
 
     # Get user's key
-    DIABLOIIKEY=`cat "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.txt | tr -d -`
+    DIABLOIIKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.txt | tr -d -`
 
-    iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         winwait, Diablo II Setup
@@ -672,13 +689,13 @@ load_diablo2() {
         send {Enter}
         winwait, Desktop Shortcut
         send {N}; winwait, Insert Disc"
-    iso_mount "$WISOTOOL_CACHE"/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
     # Needed by patch 1.13c to avoid disc swapping
     cp "$ISO_MOUNT_ROOT"/d2music.mpq "$programfilesdir_unix/Diablo II/"
     ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
-    iso_mount "$WISOTOOL_CACHE"/382ea98f270e39855b558b8fac0d609712a54ae8.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/382ea98f270e39855b558b8fac0d609712a54ae8.iso
     ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
-    iso_mount "$WISOTOOL_CACHE"/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
     ahk_do "
         send, {Enter}
         Sleep 1000
@@ -709,11 +726,11 @@ load_dragonage() {
     load_autohotkey
 
     # Get user's key
-    DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
+    DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
 
     # Installer has a non-fatal crash on exit, so ignore it.
     sh "$WINETRICKS" -q nocrashdialog physx vcrun2005
-    iso_mount "$WISOTOOL_CACHE"/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -752,7 +769,7 @@ load_morrowind_goty() {
     # eventually should support the expansions as well
     load_autohotkey
 
-    iso_mount "$WISOTOOL_CACHE"/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
     ahk_helpers
     cat > morrowind.tmp << __EOF__
 #include helpers.ahk
@@ -795,10 +812,10 @@ load_sims3() {
     load_autohotkey
 
     # Get user's key
-    KEY=`cat "$WISOTOOL_CACHE"/8a82a067f3bb8f68d034a06954e9a16ea381958a.txt | tr -d -`
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.txt | tr -d -`
 
     echo KEY is $KEY
-    iso_mount "$WISOTOOL_CACHE"/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
     # Default lang, USA, accept defaults, uncheck EA dl mgr, uncheck readme
     ahk_do "
         run ${ISO_MOUNT_LETTER}:Sims3Setup.exe
@@ -850,9 +867,9 @@ load_starcraft() {
     test -d "$programfilesdir_unix/StarCraft" && rm -rf "$programfilesdir_unix/StarCraft"
 
     # Get user's key
-    KEY=`cat "$WISOTOOL_CACHE"/8d6cc11bc76b8af22868a95e17e0282277e9c53c.txt`
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.txt`
 
-    iso_mount "$WISOTOOL_CACHE"/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:StarCraft (Windows).exe
         winwait, StarCraft - Brood War
@@ -867,7 +884,7 @@ load_starcraft() {
         winwait, Installation Destination Directory
         send {Enter}
         winwait,,Please insert"
-    iso_mount "$WISOTOOL_CACHE"/966bae1f2e2035e066139e78137e623c92838254.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/966bae1f2e2035e066139e78137e623c92838254.iso
     ahk_do "
         send, {Enter}
         SetTitleMatchMode, 2
@@ -1045,6 +1062,7 @@ do
     ls) list_available_verbs;;
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
+    migrate) migrate_files;;
     morrowind|morrowind_goty) load_morrowind_goty;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
@@ -1062,9 +1080,9 @@ do
 
     # User-specific postinstall hook.  
     # Source it so the script can call download() if needed.
-    if [ -f "$WISOTOOL_CACHE"/$PACKAGE-postinstall.sh ]
+    if [ -f "$WISOTOOL_CACHE"/$PACKAGE/$PACKAGE-postinstall.sh ]
     then
-        ( . "$WISOTOOL_CACHE"/$PACKAGE-postinstall.sh )
+        ( . "$WISOTOOL_CACHE"/$PACKAGE/$PACKAGE-postinstall.sh )
     fi
 
     # cleanup
