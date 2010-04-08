@@ -827,10 +827,10 @@ load_plantsvszombies() {
 
     if ! test -f "$WISOTOOL_CACHE/plants/PlantsVsZombiesSetup.exe"
     then
-        download plants "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" fcae7b8c63d9a5b5f6ed783232bc5f612fd5c963
+        download plantsvszombies "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" fcae7b8c63d9a5b5f6ed783232bc5f612fd5c963
     fi
 
-    cd "$WISOTOOL_CACHE/plants"
+    cd "$WISOTOOL_CACHE/plantsvszombies"
     ahk_do "
         run PlantsVsZombiesSetup.exe
         winwait, Plants vs. Zombies Installer
