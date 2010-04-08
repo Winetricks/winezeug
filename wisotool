@@ -579,6 +579,46 @@ load_autohotkey()
 
 #----------------------------------------------------------------
 
+map_file_to_verb()
+{
+   case $1 in
+a62112860423b32bf3ea77df6f5fe0b60c772de2.iso)
+       echo assassinscreed ;;
+
+e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso|\
+51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso|\
+382ea98f270e39855b558b8fac0d609712a54ae8.iso|\
+e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso)
+       echo diablo2 ;;
+
+705a6b06d0dd807bf62b4391d278649d728ebda4.iso)
+       echo dragonage ;;
+
+c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso)
+       echo morrowind_goty ;;
+
+8a82a067f3bb8f68d034a06954e9a16ea381958a.iso)
+       echo sims3 ;;
+
+8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso|\
+966bae1f2e2035e066139e78137e623c92838254.iso)
+       echo starcraft ;;
+*)
+       ;;
+    esac
+}
+
+list_available_verbs()
+{
+    find $WISOTOOL_CACHE -type f | sed 's,.*/,,' > /tmp/wfiles
+    for file in `cat /tmp/wfiles`
+    do
+        map_file_to_verb $file
+    done | sort -u
+}
+
+#----------------------------------------------------------------
+
 load_assassinscreed() {
     load_autohotkey
 
@@ -1002,6 +1042,7 @@ do
     assassinscreed) load_assassinscreed;;
     diablo2) load_diablo2;;
     dragonage) load_dragonage;;
+    ls) list_available_verbs;;
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     morrowind|morrowind_goty) load_morrowind_goty;;
@@ -1015,7 +1056,7 @@ do
     test "$WISOTOOL_QUIET" = "" && case $1 in
     -q) echo Setting quiet mode;;
     -v) echo Setting verbose mode;;
-    *) echo "Install of $1 done" ;;
+    *) #echo "$1 done" ;;
     esac
     shift
 
@@ -1030,7 +1071,7 @@ do
     rm -rf "$WISOTOOL_TMP"/*
 done
 
-    # remove the temp directory
-    rm -rf "$WISOTOOL_TMP"
+# remove the temp directory
+rm -rf "$WISOTOOL_TMP"
 
-test "$WISOTOOL_QUIET" = "" && echo wisotool done. || true
+#test "$WISOTOOL_QUIET" = "" && echo wisotool done. || true
