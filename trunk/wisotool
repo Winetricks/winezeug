@@ -586,40 +586,25 @@ load_autohotkey()
 
 #----------------------------------------------------------------
 
+# Must precede first call to announce_verb
+file_map="case \$1 in "
+
+announce_verb()
+{
+    # Usage: announce_verb verbname "description" file1 file2 ...
+    verbname=$1
+    shift
+    description="$1"
+    shift
+    for file
+    do
+       file_map="$file_map $file) echo $verbname;; "
+    done
+}
+
 map_file_to_verb()
 {
-   case $1 in
-a62112860423b32bf3ea77df6f5fe0b60c772de2.iso)
-       echo assassinscreed ;;
-
-e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso|\
-51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso|\
-382ea98f270e39855b558b8fac0d609712a54ae8.iso|\
-e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso)
-       echo diablo2 ;;
-
-705a6b06d0dd807bf62b4391d278649d728ebda4.iso)
-       echo dragonage ;;
-
-c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso)
-       echo morrowind_goty ;;
-
-PlantsVsZombiesSetup.exe)
-       echo plantsvszombies ;;
-
-8a82a067f3bb8f68d034a06954e9a16ea381958a.iso)
-       echo sims3 ;;
-
-0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso|\
-5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso)
-       echo stfu ;;
-
-8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso|\
-966bae1f2e2035e066139e78137e623c92838254.iso)
-       echo starcraft ;;
-*)
-       ;;
-    esac
+   eval $file_map
 }
 
 list_available_verbs()
@@ -650,6 +635,8 @@ migrate_files()
 
 #----------------------------------------------------------------
 
+announce_verb assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
+
 load_assassinscreed() {
     load_autohotkey
 
@@ -676,6 +663,12 @@ load_assassinscreed() {
     iso_umount
 }
 #----------------------------------------------------------------
+
+announce_verb diablo2       "Diablo II (Blizzard, 2000)" \
+  e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
+  51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
+  382ea98f270e39855b558b8fac0d609712a54ae8.iso \
+  e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
 
 load_diablo2() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other two discs." 
@@ -735,6 +728,8 @@ load_diablo2() {
 
 #----------------------------------------------------------------
 
+announce_verb dragonage     "Dragon Age: Origins (Bioware, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+
 load_dragonage() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
     load_autohotkey
@@ -774,6 +769,9 @@ load_dragonage() {
 }
 
 #----------------------------------------------------------------
+
+announce_verb morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
+  c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
 
 load_morrowind_goty() {
     cd $WISOTOOL_TMP
@@ -822,6 +820,8 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
 #----------------------------------------------------------------
 
+announce_verb plantsvszombies "Plants vs. Zombies (PopCap Games, 2009)" PlantsVsZombiesSetup.exe
+
 load_plantsvszombies() {
     load_autohotkey
 
@@ -844,6 +844,8 @@ load_plantsvszombies() {
 }
 
 #----------------------------------------------------------------
+
+announce_verb sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
 
 load_sims3() {
     load_autohotkey
@@ -899,9 +901,9 @@ load_sims3() {
 
 }
 
-
 #----------------------------------------------------------------
 
+announce_verb starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
@@ -942,6 +944,8 @@ load_starcraft() {
 }
 
 #----------------------------------------------------------------
+
+announce_verb stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso 5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
 
 load_stfu() {
     load_autohotkey
@@ -996,6 +1000,8 @@ load_stfu() {
 
 #----------------------------------------------------------------
 
+announce_verb wog           "World of Goo demo (2D Boy, 2008)" WorldOfGooDemo.1.0.exe
+
 load_wog() {
     load_autohotkey
 
@@ -1032,6 +1038,9 @@ print_version() {
 }
 
 #--------- Main program -----------------------------------------
+
+# Must follow last announce_verb
+file_map="$file_map esac"
 
 # On Solaris, choose more modern commands (needed for id -u).
 case `uname -s` in
