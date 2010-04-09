@@ -581,7 +581,7 @@ cat helper_tmp | tr ';' '\012' | sed "s/\$//" > helpers.ahk
 
 load_autohotkey()
 {
-    test -f "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" || sh "$WINETRICKS" -q autohotkey
+    test -f "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" || try sh "$WINETRICKS" -q autohotkey
 }
 
 #----------------------------------------------------------------
