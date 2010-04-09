@@ -881,15 +881,22 @@ load_sims3() {
         ControlClick Finish, - InstallShield Wizard
     "
     iso_umount
-    # You may want to download the 1.6.6 patch from
-    # http://download.cnet.com/The-Sims-3/3000-7551_4-11122245.html
-    # 02703d296417750005326ff0d37295fa434a3f49  Sims3_1.6.6.002001_from_1.0.631.00001.exe
-    # and apply it in ~/.wisotoolcache/sims3-postinstall.sh
-    #
-    # TODO: check $PROGRAMFILES/Electronic Arts/$TYTUL/Game/Bin/skuversion.txt for
-    # existing version, and download patch from
-    # http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_${PATCHVERSION}${IMPORTANTNUMBER}_from_${PATCHFROMVER}.exe
-    # See http://www.playonlinux.com/repository/?script=414 for details.
+    cd "$programfilesdir_unix/Electronic Arts/The Sims 3/Game/Bin"
+    
+    currentversion=$(head -n 1 skuversion.txt | awk '{print $3}' | tr -d '\r\n')
+    # FIXME: Find a way of determining the newest version from ea.com. The below code works, but the xml is outdated, and returns 1.4.6.00002. For now, hardcode it.
+    # newestversion=$(wget -O - http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/sims3_sku2_update_manifest.xml | grep NewVersion= | head -n1 | awk -F\" '{print $2}')
+    newestversion=1.6.6.002001
+    download sims3 http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_${newestversion}_from_${currentversion}.exe
+
+    cd "$WISOTOOL_CACHE"/sims3
+    ahk_do "
+    run Sims3_${newestversion}_from_${currentversion}.exe
+    SetTitleMatchMode, 2
+    winwait, - InstallShield Wizard, Complete
+    ControlClick Finish, - InstallShield Wizard
+    "
+
 }
 
 
