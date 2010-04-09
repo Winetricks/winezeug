@@ -891,10 +891,10 @@ load_sims3() {
 
     cd "$WISOTOOL_CACHE"/sims3
     ahk_do "
-    run Sims3_${newestversion}_from_${currentversion}.exe
-    SetTitleMatchMode, 2
-    winwait, - InstallShield Wizard, Complete
-    ControlClick Finish, - InstallShield Wizard
+        run Sims3_${newestversion}_from_${currentversion}.exe
+        SetTitleMatchMode, 2
+        winwait, - InstallShield Wizard, Complete
+        ControlClick Finish, - InstallShield Wizard
     "
 
 }
