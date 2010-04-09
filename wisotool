@@ -1185,7 +1185,7 @@ do
     fi
 
     # cleanup
-    rm -rf "$WISOTOOL_TMP"/*
+    rm -rf "$WISOTOOL_TMP"/* tmp.ahk
 done
 
 # remove the temp directory
