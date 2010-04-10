@@ -365,15 +365,15 @@ showmenu()
     case $MENU in
     zenity)
         echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
-        usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
+        usage | grep '^ [0-9a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
         todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
         ;;
     kdialog)
-        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        packages=`usage | awk '/^ [0-9a-z]/ {print $1}'`
         todo="`kdialog_showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
         ;;
     xmessage) 
-        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        packages=`usage | awk '/^ [0-9a-z]/ {print $1}'`
         todo="`xmessage_showmenu "winetricks" "Select a package to install" "Install?" "Package" $packages`"
         ;;
     esac
