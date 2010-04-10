@@ -2877,6 +2877,7 @@ load_vcrun2008() {
         return
     fi
     download vcrun2008-ms09-035 http://download.microsoft.com/download/9/7/7/977B481A-7BA6-4E30-AC40-ED51EB2028F2/vcredist_x86.exe bd18409cfe75b88c2a9432d36d96f4bf125a3237
+    override_dlls native,builtin msvcr90
     try $WINE "$WINETRICKS_CACHE"/vcrun2008-ms09-035/vcredist_x86.exe $WINETRICKS_QUIET
 
 }
