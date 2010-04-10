@@ -715,6 +715,51 @@ WINE=wine preptests
 WINE=$WINETESTDIR/install/bin/wine32 runtests
 }
 
+xephyr8_test() {
+WINEDEBUG=""
+TESTNAME="-xephyr8"
+TESTBINARY="$WINETEST32"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+# Use a really high display to avoid conflicts.
+# FIXME: need a way to find used display numbers and do this better...
+Xephyr :97 -ac -screen 800x600x8 & xephyrpid=$!
+DISPLAY=:97 runtests
+kill $xephyrpid
+}
+
+xephyr16_test() {
+WINEDEBUG=""
+TESTNAME="-xephyr16"
+TESTBINARY="$WINETEST32"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+# Use a really high display to avoid conflicts.
+# FIXME: need a way to find used display numbers and do this better...
+Xephyr :98 -ac -screen 800x600x16 & xephyrpid=$!
+DISPLAY=:98 runtests
+kill $xephyrpid
+}
+
+xephyr24_test() {
+WINEDEBUG=""
+TESTNAME="-xephyr24"
+TESTBINARY="$WINETEST32"
+export WINEDEBUG
+export TESTNAME
+export TESTBINARY
+preptests
+# Use a really high display to avoid conflicts.
+# FIXME: need a way to find used display numbers and do this better...
+Xephyr :99 -ac -screen 800x600x24 & xephyrpid=$!
+DISPLAY=:99 runtests
+kill $xephyrpid
+}
+
 #######################################################
 ##    Now to use the functions :-)
 #######################################################
@@ -759,6 +804,9 @@ echo "--wait-for-commits - Wait for a git push upstream, before building/running
 echo "--werror - Builds Wine with -Werror and runs winetest.exe"
 echo "--win64 - Builds 64-bit Wine and runs winetest64.exe"
 echo "--with64 - Builds 32-bit Wine alongside 64-bit Wine, then runs winetest.exe"
+echo "--xephyr8 - Runs winetest.exe inside an 8-bit display (emulated with Xephyr)"
+echo "--xephyr16 - Runs winetest.exe inside an 16-bit display (emulated with Xephyr)"
+echo "--xephyr24 - Runs winetest.exe inside an 24-bit display (emulated with Xephyr)"
 echo "You probably don't need any of the special options, though"
 echo "The exception is --no-newtree in case you want to run tests again without waiting for a git push."
 }
@@ -801,6 +849,9 @@ WAIT_FOR_RELEASE=0
 WERROR_TEST=0
 WIN64_TEST=0
 WITH64_TEST=0
+XEPHYR8_TEST=0
+XEPHYR16_TEST=0
+XEPHYR24_TEST=0
 
 while test "$1" != ""
 do
@@ -842,6 +893,9 @@ do
     --werror) export WERROR_TEST=1;;
     --win64|--win-64|--wine64|--wine-64) export WIN64_TEST=1;;
     --with64|--with-64) export WITH64_TEST=1;;
+    --xephyr8) export XEPHYR8_TEST=1;;
+    --xephyr16) export XEPHYR16_TEST=1;;
+    --xephyr24) export XEPHYR24_TEST=1;;
     *) echo Unknown arg $1; usage; exit 1;;
     esac
     shift
@@ -1064,6 +1118,21 @@ fi
 if [ $VD_TEST = 1 ]
     then
         virtual_desktop_test
+fi
+
+if [ $XEPHYR8_TEST = 1 -a -x "`which Xephyr`" ]
+    then
+        xephyr8_test
+fi
+
+if [ $XEPHYR16_TEST = 1 -a -x "`which Xephyr`" ]
+    then
+        xephyr16_test
+fi
+
+if [ $XEPHYR24_TEST = 1 -a -x "`which Xephyr`" ]
+    then
+        xephyr24_test
 fi
 
 # Cleanup
