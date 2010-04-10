@@ -279,6 +279,7 @@ usage() {
     echo " allcodecs     All listed codecs (xvid, ffdshow)"
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
     echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
+    echo " dsoundbug9612 Use DirectSound MaxShadowSize=0 workaround for bug #9612"
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
@@ -1345,6 +1346,20 @@ load_droid() {
     do_droid DroidSerif-Bold.ttf       "Droid Serif Bold"        d7896b9c0723299553e95a00d27cbe52f7515c8c
     do_droid DroidSerif-Italic.ttf     "Droid Serif Italic"      117941be102c8f38a86a70ebccaecb8078f7027e
     do_droid DroidSerif-Regular.ttf    "Droid Serif"             7f243858e496ed1bb1faca9f3a7bbe52defcbb5d
+}
+
+#----------------------------------------------------------------
+
+load_dsoundbug9612() {
+    echo "Enabling DirectSound workaround for bug #9612"
+    cat > "$WINETRICKS_TMP"/dsoundmaxshadow.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\DirectSound]
+"MaxShadowSize"="0"
+
+_EOF_
+    try $WINE regedit "$WINETRICKS_TMP"/dsoundmaxshadow.reg
 }
 
 #----------------------------------------------------------------
@@ -3703,6 +3718,7 @@ do
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
     ddr=gdi) set_ddr gdi;;
     ddr=opengl) set_ddr opengl;;
+    dsoundbug9612) load_dsoundbug9612;;
     fakeie6) set_fakeie6;;
     heapcheck) set_heapcheck;;
     multisampling=enabled|multisampling=on) set_multisampling enabled;;
