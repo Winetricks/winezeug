@@ -155,6 +155,7 @@ usage() {
     echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
     echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
+    echo " starcraft2    Starcraft II beta (Blizzard, 2010)"
     echo " stfu          Starwars: The Force Unleashed (Aspyr, 2009)"
     echo " wog           World of Goo demo (2D Boy, 2008)"
     echo "Pseudopackages:"
@@ -945,6 +946,47 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
+announce_verb starcraft2    "Starcraft II beta (Blizzard, 2010)" 
+
+load_starcraft2() {
+    warn "You must have run the downloader and told it to save in $WISOTOOL_CACHE/$PACKAGE"
+    load_autohotkey
+
+    # Force clean-ish install
+    test -d "$programfilesdir_unix/StarCraft II Beta" && rm -rf "$programfilesdir_unix/StarCraft II Beta"
+
+    cd "$WISOTOOL_CACHE/$PACKAGE/StarCraft II Beta enUS 13891 Installer"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run Installer.exe
+        winwait, StarCraft II Beta Installer
+        ControlClick, x300 y200
+        winwait, End User License Agreement
+        Sleep 1000
+        ControlClick, Agree
+        winwait, Installation Destination Directory
+        send {Enter}
+        winwait, StarCraft II Beta Installer, COMPLETED
+        SetTitleMatchMode, 1
+        winwait, StarCraft II
+        send {Enter}
+        winwait, StarCraft II
+        send {Enter}
+        winwait, StarCraft II
+        send {Enter}
+        winwait, StarCraft II
+        send {Enter}
+        winwait, StarCraft II
+        send {Enter}
+        winwait, StarCraft II
+        send {Enter}
+        winwait, StarCraft II
+        send {Enter}
+    "
+}
+
+#----------------------------------------------------------------
+
 announce_verb stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso 5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
 
 load_stfu() {
@@ -1173,6 +1215,7 @@ do
     plantsvszombies) load_plantsvszombies;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
+    starcraft2) load_starcraft2;;
     stfu) load_stfu;;
     version) print_version;;
     wog) load_wog;;
