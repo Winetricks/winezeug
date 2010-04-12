@@ -288,8 +288,13 @@ cabextract() {
 # commandline option so we can see if we still need the workaround.
 workaround_wine_bug()
 {
+    if test "$WINE" = ""
+    then
+        echo No need to work around wine bug $1 on windows
+        return 1
+    fi
     warn Working around wine bug $1
-    true
+    return 0
 }
 
 # verify an sha1sum
@@ -989,7 +994,6 @@ load_starcraft2() {
         winwait, Installation Destination Directory
         send {Enter}
         winwait, StarCraft II v, update was successful
-        msgbox, got update successful
         winclose
     "
 }
