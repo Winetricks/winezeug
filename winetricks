@@ -1951,9 +1951,7 @@ load_ie6() {
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
-    set -x
     cd "$WINDIR"/system32/
-    export WINEDEBUG=+file,+seh
     for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
       dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
       imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
