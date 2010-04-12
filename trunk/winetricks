@@ -1797,6 +1797,12 @@ _EOF_
 #----------------------------------------------------------------
 
 load_ie6() {
+    if test "$WINE" = ""
+    then
+        echo "No need to install ie6 on real windows"
+        return 0
+    fi
+
     # If this is just a dependency check, don't re-install
     if test $PACKAGE != ie6 && test -f "$WINDIR"/system32/plugin.ocx
     then
