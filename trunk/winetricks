@@ -175,6 +175,7 @@ usage() {
     echo " dcom98        MS DCOM (ole32, oleaut32); requires Windows 98 license, but does not check for one"
     echo " dinput8       MS dinput8.dll (from DirectX 9 user redistributable)"
     echo " dirac0.8      the obsolete Dirac 0.8 directshow filter"
+    echo " directmusic   MS DirectMusic (from DirectX 9 user redistributable)"
     echo " directplay    MS DirectPlay (from DirectX 9 user redistributable)"
     echo " directx9      MS DirectX 9 user redistributable (not recommended! use d3dx9 instead)"
     echo " directx9-beta MS DirectX 9 user redistributable - beta verb (not recommended! use d3dx9 instead)"
@@ -1044,6 +1045,39 @@ load_dinput8() {
 load_dirac08() {
     download . http://codecpack.nl/dirac_dsfilter_080.exe aacfcddf6b2636de5f0a50422ba9155e395318af
     try $WINE "$WINETRICKS_CACHE"/dirac_dsfilter_080.exe $WINETRICKS_SILENT
+}
+
+#----------------------------------------------------------------
+
+load_directmusic() {
+# Untested. Based off http://bugs.winehq.org/show_bug.cgi?id=4805
+    helper_directx_dl
+
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmband.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmcompos.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmime.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmloader.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmscript.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmstyle.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmsynth.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmusic.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dmusic32.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dswave.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$WINDIR"/system32 -L -F 'streamci.dll' "$WINETRICKS_TMP/dxnt.cab"
+
+    try $WINE regsvr32 dmband
+    try $WINE regsvr32 dmcompos
+    try $WINE regsvr32 dmime 
+    try $WINE regsvr32 dmloader
+    try $WINE regsvr32 dmscript
+    try $WINE regsvr32 dmstyle
+    try $WINE regsvr32 dmsynth
+    try $WINE regsvr32 dmusic
+    try $WINE regsvr32 dswave
+
+    override_dlls native dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci
+
 }
 
 #----------------------------------------------------------------
@@ -3617,9 +3651,10 @@ do
     dcom98) load_dcom98;;
     dinput8) load_dinput8;;
     dirac|dirac0.8) load_dirac08;;
+    directmusic) load_directmusic;;
     directplay|dxplay|dplay) load_directplay;;
     directx9) DIRECTX_WINDOWS=win2k ; load_directx9;;
-    directx9-beta) DIRECTX_WINDOWS=winxp ; load_directx9;;
+    directx9-beta) DIRECTX_WINDOWS=winxp ; load_directx9 ; load_directmusic ; load_directplay ;;
     divx) load_divx;;
     dotnet1|dotnet11) load_dotnet11; load_fontfix;;
     dotnet11sdk) load_dotnet11sdk;;

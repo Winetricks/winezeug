@@ -23,6 +23,7 @@ for verb in \
     dcom98 \
     dinput8 \
     dirac \
+    directmusic \
     directplay \
     dotnet11 \
     dotnet20 \
