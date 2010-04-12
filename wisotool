@@ -284,6 +284,13 @@ cabextract() {
     die oops, bug, please report
 }
 
+# At some point, make the return value controllable by a global 
+# commandline option so we can see if we still need the workaround.
+workaround_wine_bug()
+{
+    warn Working around wine bug $1
+    true
+}
 
 # verify an sha1sum
 verify_sha1sum() {
@@ -949,11 +956,23 @@ load_starcraft() {
 announce_verb starcraft2    "Starcraft II beta (Blizzard, 2010)" 
 
 load_starcraft2() {
-    warn "You must have run the downloader and told it to save in $WISOTOOL_CACHE/$PACKAGE"
     load_autohotkey
 
-    # Force clean-ish install
-    test -d "$programfilesdir_unix/StarCraft II Beta" && rm -rf "$programfilesdir_unix/StarCraft II Beta"
+    if test -d "$programfilesdir_unix/StarCraft II Beta"
+    then
+        warn "$PACKAGE already installed, skipping."
+        return 0
+    fi
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/StarCraft II Beta enUS 13891 Installer/Installer.exe"
+    then
+        die "You must have run the downloader and told it to save in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    if ! test -f "$WINDIR"/system32/plugin.ocx && workaround_wine_bug 22089
+    then
+        try sh "$WINETRICKS" -q ie6
+    fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE/StarCraft II Beta enUS 13891 Installer"
     ahk_do "
@@ -962,26 +981,16 @@ load_starcraft2() {
         winwait, StarCraft II Beta Installer
         ControlClick, x300 y200
         winwait, End User License Agreement
-        Sleep 1000
+        winactivate
+        MouseMove, 300, 300
+        Click WheelDown, 70
+        Sleep, 1000
         ControlClick, Agree
         winwait, Installation Destination Directory
         send {Enter}
-        winwait, StarCraft II Beta Installer, COMPLETED
-        SetTitleMatchMode, 1
-        winwait, StarCraft II
-        send {Enter}
-        winwait, StarCraft II
-        send {Enter}
-        winwait, StarCraft II
-        send {Enter}
-        winwait, StarCraft II
-        send {Enter}
-        winwait, StarCraft II
-        send {Enter}
-        winwait, StarCraft II
-        send {Enter}
-        winwait, StarCraft II
-        send {Enter}
+        winwait, StarCraft II v, update was successful
+        msgbox, got update successful
+        winclose
     "
 }
 
