@@ -2500,8 +2500,10 @@ load_pdh() {
 load_physx()
 {
     # http://www.nvidia.com/object/physx_9.09.0814.html
-    download . http://us.download.nvidia.com/Windows/9.09.0814/PhysX_9.09.0814_SystemSoftware.exe e19f7c3385a4a68e7acb85301bb4d2d0d1eaa1e2
-    try $WINE "$WINETRICKS_CACHE"/PhysX_9.09.0814_SystemSoftware.exe $WINETRICKS_QUIET
+    # download . http://us.download.nvidia.com/Windows/9.09.0814/PhysX_9.09.0814_SystemSoftware.exe e19f7c3385a4a68e7acb85301bb4d2d0d1eaa1e2
+    # http://www.nvidia.com/object/physx_9.10.0129.html
+    download . http://us.download.nvidia.com/Windows/9.10.0129/PhysX_9.10.0129_SystemSoftware.exe 33a8b54d842c7246946de15b1a48209c386c9c4b
+    try $WINE "$WINETRICKS_CACHE"/PhysX_9.10.0129_SystemSoftware.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
