@@ -861,8 +861,11 @@ announce_verb sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9
 
 load_sims3() {
     load_autohotkey
-    
-    try sh "$WINETRICKS" -q dotnet20
+
+    if workaround_wine_bug 22350
+    then
+        try sh "$WINETRICKS" -q dotnet20
+    fi
 
     if workaround_wine_bug 21517
     then
