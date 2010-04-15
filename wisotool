@@ -539,7 +539,8 @@ load_iso() {
    echo "Computing sha1sum..."
    # FIXME: can't handle spaces in "$WISOTOOL_CACHE"
    sum=`sha1sum "$WISOTOOL_CACHE"/temp.iso | awk '{print $1}'`
-
+   echo "Sha1sum of iso is $sum"
+   
    mv "$WISOTOOL_CACHE"/temp.iso "$WISOTOOL_CACHE"/$sum.iso
    if test "$1" != ""
    then
