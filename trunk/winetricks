@@ -664,6 +664,32 @@ _EOF_
     try_regedit "$WINETRICKS_TMP_WIN"\\set-sound.reg
 }
 
+set_videomemorysize() {
+    echo "Setting video memory size to $1"
+
+    case $1 in
+    default)
+
+    cat > "$WINETRICKS_TMP"/set-video.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"VideoMemorySize"=-
+
+_EOF_
+    ;;
+    *)
+    cat > "$WINETRICKS_TMP"/set-video.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"VideoMemorySize"="$1"
+
+_EOF_
+    esac
+    try_regedit "$WINETRICKS_TMP_WIN"\\set-video.reg
+}
+
 disable_crashdialog() {
     echo "Disabling graphical crash dialog"
     cat > "$WINETRICKS_TMP"/crashdialog.reg <<_EOF_
@@ -3847,6 +3873,9 @@ do
     sound=oss|oss) set_sound_driver oss;;
     sound=disabled|sound=) set_sound_driver "";;
     version) print_version;;
+    videomemorysize=512) set_videomemorysize 512;;
+    videomemorysize=1024) set_videomemorysize 1024;;
+    videomemorysize=default) set_videomemorysize default;;
     volnum) volnum;;
     mwo=force)set_mwo force;;
     mwo=disabled) set_mwo disabled;;
