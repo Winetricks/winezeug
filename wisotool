@@ -151,6 +151,8 @@ usage() {
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
+    echo " jedioutcast   Star Wars Jedi Knight II: Jedi Outcast (LucasArts, 2002)"
+    echo " kotor         Star Wars: Knights of the Old Republic (LucasArts, 2003)"
     echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
     echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
@@ -905,6 +907,70 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 }
 
 #----------------------------------------------------------------
+announce_verb jedioutcast    "Star Wars Jedi Knight II: Jedi Outcast (LucasArts, 2002)" \
+  ddc8380b9464f007cabe66aa6a45c49900a3321a.iso
+
+load_jedioutcast() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/ddc8380b9464f007cabe66aa6a45c49900a3321a.iso
+    ahk_do "
+        run i:/jo//setup.exe
+        SetTitleMatchMode 2
+        winwait, Jedi Outcast, Welcome
+        ControlClick &Next, Jedi Outcast, Welcome
+        winwait, Jedi Outcast, License
+        ControlClick Button3, Jedi Outcast, License
+        ControlClick Button1, Jedi Outcast, License
+        winwait, Jedi Outcast, Select Features
+        ControlClick Button1, Jedi Outcast, Select Features
+        winwait, Jedi Outcast, Ready to Install
+        ControlClick Button1, Jedi Outcast, Ready to Install
+        winwait, Jedi Outcast, Complete
+        ControlClick Button1, Jedi Outcast, Complete
+        ControlClick Button2, Jedi Outcast, Complete
+        ControlClick Button4, Jedi Outcast, Complete
+        winwait, Best of PC
+        winkill, Best of PC
+    "
+    iso_unmount
+    warn "Due to SecuROM restrictions, you must insert the disc to play this game."
+}
+
+#----------------------------------------------------------------
+announce_verb kotor    "Star Wars: Knights of the Old Republic (LucasArts, 2003)" \
+  dafb9858123c3f2dbff1688363313fdfe59cd25d.iso
+
+load_kotor() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/dafb9858123c3f2dbff1688363313fdfe59cd25d.iso
+    ahk_do "
+        run, i:\KOTOR\\setup.exe
+        SetTitleMatchMode, 2
+        winwait, Knights of, Welcome to
+        ControlClick Button1 , Knights of
+        winwait, Knights of, License Agreement
+        sleep 1000
+        ControlClick &accept, Knights of, License Agreement
+        ControlClick &Next, Knights of, License Agreement
+        winwait, Knights of, Select Features
+        ControlClick Button1, Knights of, Select Features
+        winwait, Knights of, The wizard is ready to begin
+        sleep 1000
+        send {Enter}
+        winwait, Knights of, Wizard Complete
+        ControlClick Button1, Knights of, Wizard Complete
+        ControlClick Button2, Knights of, Wizard Complete
+        ControlClick Button4, Knights of, Wizard Complete
+        winwait, Best of PC
+        winkill, Best of PC
+    "
+    iso_unmount
+    warn "Due to SecuROM restrictions, you must insert the disc to play this game."
+}
+
+#----------------------------------------------------------------
 
 announce_verb plantsvszombies "Plants vs. Zombies (PopCap Games, 2009)" PlantsVsZombiesSetup.exe
 
@@ -1304,6 +1370,8 @@ do
     baldursgate2) load_baldursgate2;;
     diablo2) load_diablo2;;
     dragonage) load_dragonage;;
+    jedioutcast) load_jedioutcast;;
+    kotor) load_kotor;;
     ls) list_available_verbs;;
     load) load_iso;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
