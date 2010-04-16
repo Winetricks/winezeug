@@ -576,7 +576,7 @@ load_iso() {
 #----------------------------------------------------------------
 
 ahk_do() {
-   echo "$@" | tr ';' '\012' | sed "s/\$//" > "$WISOTOOL_TMP"/tmp.ahk
+   echo "$@" | sed "s/\$//" > "$WISOTOOL_TMP"/tmp.ahk
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
 }
 
@@ -802,13 +802,20 @@ load_diablo2() {
         winwait, Diablo II - choose install directory
         send {Enter}
         winwait, Desktop Shortcut
-        send {N}; winwait, Insert Disc"
+        send {N}
+        winwait, Insert Disc"
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
     # Needed by patch 1.13c to avoid disc swapping
     cp "$ISO_MOUNT_ROOT"/d2music.mpq "$programfilesdir_unix/Diablo II/"
-    ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
+    ahk_do "
+        send, {Enter}
+        Sleep 1000
+        winwait, Insert Disc"
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/382ea98f270e39855b558b8fac0d609712a54ae8.iso
-    ahk_do "send, {Enter}; Sleep 1000; winwait, Insert Disc"
+    ahk_do "
+        send, {Enter}
+        Sleep 1000
+        winwait, Insert Disc"
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
     ahk_do "
         send, {Enter}
