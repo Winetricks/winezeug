@@ -521,14 +521,28 @@ cleanup()
 }
 
 load_iso() {
-   # Copy ISO
-   test -r /dev/sr0 || sudo chmod 666 /dev/sr0
-   while ! dd if=/dev/sr0 of=/dev/null count=1
+   # Detect raw device
+   dev=/dev/null
+   for dev in /dev/cdrom /dev/sr0
+   do
+       test -b $dev && break
+   done
+   test $dev = /dev/null && die "can't find cd/dvd drive"
+
+   # Hack for Gentoo - make sure we can read from the drive
+   test -r $dev || sudo chmod 666 $dev
+
+   # Wait for user to insert disc
+   while ! dd if=$dev of=/dev/null count=1
    do
      sleep 1
    done
-   trap cleanup 1 2 3 6
+
+   # Copy disc to .iso file, display progress every 5 seconds
+   # Use conv=noerror,sync to replace unreadable blocks with zeroes
    dd if=/dev/sr0 of="$WISOTOOL_CACHE"/temp.iso bs=2048 conv=noerror,sync & pid=$!
+   # Since we're running dd in the background, register a handler to kill it if user presses ^C
+   trap cleanup 1 2 3 6
    while ps -p $pid > /dev/null 2>&1
    do
      sleep 5
@@ -548,6 +562,12 @@ load_iso() {
        echo "$1" > "$WISOTOOL_CACHE"/$sum.txt
    fi
 
+   # Note: if you haven't written the verb for this disc yet,
+   # the .iso won't be moved to the right directory.  
+   # So when writing a new verb, first run 'sh wisotool load',
+   # then write just the announce_verb part (including sha1sum), then
+   # run 'sh wisotool migrate' to move the iso into the right directory,
+   # and then write the rest of the verb.
    migrate_files
 
    eject
