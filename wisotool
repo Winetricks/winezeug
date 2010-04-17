@@ -148,6 +148,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
+    echo " 3dmark03      3D Mark 03 (Futuremark, 2003)"
     echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
     echo " assassinscreed Assassins Creed (Ubisoft, 2008)"
     echo " diablo2       Diablo II (Blizzard, 2000)"
@@ -679,6 +680,51 @@ migrate_files()
 
 #----------------------------------------------------------------
 
+announce_verb 3dmark03 "3D Mark 03 (Futuremark, 2003)" 3DMark03_v360_1901.exe
+
+load_3dmark03() {
+    load_autohotkey
+
+    # http://www.futuremark.com/benchmarks/3dmark03/download/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark03_v360_1901.exe"
+    then
+        download $PACKAGE "http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    warn "Don't use mouse while this installer is running.  Sorry..."
+    # This old installer doesn't seem to be scriptable the usual way, so spray and pray.
+    ahk_do "
+        run 3DMark03_v360_1901.exe
+        Sleep 4000
+        ; Welcome
+        Send {Enter}
+        Sleep 2000
+        ; Accept license
+        Send a
+        Send {Enter}
+        Sleep 2000
+        ; Choose Destination
+        Send {Enter}
+        Sleep 2000
+        ; Begin install
+        Send {Enter}
+        ; Wait for install to finish
+        Sleep 35000
+        ; Purchase later
+        Send {Tab}
+        Send {Tab}
+        Send {Enter}
+        ; Uncheck readme
+        Send {Space}
+        Send {Tab}
+        Send {Tab}
+        Send {Enter}
+    "
+}
+
+#----------------------------------------------------------------
+
 announce_verb 3dmark06 "3D Mark 06 (Futuremark, 2006)" 3DMark06_v120_1901.exe
 
 load_3dmark06() {
@@ -712,6 +758,16 @@ load_3dmark06() {
         ControlClick Button1 ; Uncheck view readme
         ControlClick Button3 ; Finish
     "
+
+    if workaround_wine_bug 22393
+    then
+        # "Demo" button doesn't work without this
+        sh "$WINETRICKS" -q d3dx9
+    fi
+    if workaround_wine_bug 22392
+    then
+        warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
+    fi
 }
 
 #----------------------------------------------------------------
@@ -1471,6 +1527,7 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
+    3dmark03) load_3dmark03;;
     3dmark06) load_3dmark06;;
     assassinscreed) load_assassinscreed;;
     baldursgate2) load_baldursgate2;;
