@@ -149,6 +149,7 @@ usage() {
     echo " -V         display Version"
     echo "Packages:"
     echo " 3dmark03      3D Mark 03 (Futuremark, 2003)"
+    echo " 3dmark05      3D Mark 05 (Futuremark, 2005)"
     echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
     echo " assassinscreed Assassins Creed (Ubisoft, 2008)"
     echo " diablo2       Diablo II (Blizzard, 2000)"
@@ -721,6 +722,43 @@ load_3dmark03() {
         Send {Tab}
         Send {Enter}
     "
+}
+
+#----------------------------------------------------------------
+
+announce_verb 3dmark05 "3D Mark 05 (Futuremark, 2005)" 3DMark05_v130_1901.exe
+
+load_3dmark05() {
+    load_autohotkey
+
+    # http://www.futuremark.com/download/3dmark05/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark05_v130_1901.exe"
+    then
+        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run 3DMark05_v130_1901.exe
+        WinWait ahk_class #32770, Welcome
+        Send {Enter}
+        WinWait, ahk_class #32770, License
+        ControlClick Button1 ; Accept
+        ControlClick Button4 ; Next
+        WinWait, ahk_class #32770, Destination
+        ControlClick Button1 ; Next
+        WinWait, ahk_class #32770, Install
+        ControlClick Button1 ; Install
+        WinWait, ahk_class #32770, Purchase
+        ControlClick Button4 ; Later
+        WinWait, ahk_class #32770, Complete
+        ControlClick Button1 ; Uncheck view readme
+        ControlClick Button3 ; Finish
+    "
+    if workaround_wine_bug 22392
+    then
+        warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
+    fi
 }
 
 #----------------------------------------------------------------
@@ -1528,6 +1566,7 @@ do
         ;;
     -v) set -x;;
     3dmark03) load_3dmark03;;
+    3dmark05) load_3dmark05;;
     3dmark06) load_3dmark06;;
     assassinscreed) load_assassinscreed;;
     baldursgate2) load_baldursgate2;;
