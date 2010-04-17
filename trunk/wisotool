@@ -1174,6 +1174,26 @@ load_pcmark05() {
 
 #----------------------------------------------------------------
 
+announce_verb passmark7 "Performance Test 7 (Passmark, 2010)" petst.exe
+
+load_passmark7() {
+    load_autohotkey
+
+    # http://www.passmark.com/download/pt_download.htm
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/petst.exe"
+    then
+        download $PACKAGE http://www.passmark.com/ftp/petst.exe
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run petst.exe
+    "
+    warn "TODO: finish."
+}
+
+#----------------------------------------------------------------
+
 announce_verb plantsvszombies "Plants vs. Zombies (PopCap Games, 2009)" PlantsVsZombiesSetup.exe
 
 load_plantsvszombies() {
@@ -1681,6 +1701,7 @@ do
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     migrate) migrate_files;;
     morrowind|morrowind_goty) load_morrowind_goty;;
+    passmark7) load_passmark7;;
     pcmark04) load_pcmark04;;
     pcmark05) load_pcmark05;;
     plantsvszombies) load_plantsvszombies;;
