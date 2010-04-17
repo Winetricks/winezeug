@@ -159,6 +159,7 @@ usage() {
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
     echo " starcraft2    Starcraft II beta (Blizzard, 2010)"
     echo " stfu          Starwars: The Force Unleashed (Aspyr, 2009)"
+    echo " unigine_heaven Unigen Heaven 2 Benchmark (Unigen, 2010)"
     echo " wog           World of Goo demo (2D Boy, 2008)"
     echo "Pseudopackages:"
     echo " load          Load a new iso"
@@ -1235,6 +1236,42 @@ load_stfu() {
 
 #----------------------------------------------------------------
 
+announce_verb unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010)" Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+
+load_unigine_heaven() {
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Unigine_Heaven-2.0.msi"
+    then
+        echo "This download is slow, you may want to do a manual download from"
+        echo "http://downloads.guru3d.com/Unigine-Heaven-DirectX-11-benchmark-2.0-download-2414.html"
+        #download $PACKAGE http://www.techpowerup.com/downloads/1775e/Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+        download $PACKAGE http://unigine.com/download/files/Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run msiexec /i Unigine_Heaven-2.0.msi
+        WinWait ahk_class MsiDialogCloseClass 
+        Send {Enter}
+        WinWait ahk_class MsiDialogCloseClass, License
+        ControlClick Button1 ; Accept
+        ControlClick Button3 ; Accept
+        WinWait ahk_class MsiDialogCloseClass, Choose
+        ControlClick Button1 ; Typical
+        WinWait ahk_class MsiDialogCloseClass, Ready
+        ControlClick Button2 ; Install
+        WinWait ahk_class OpenAL Installer
+        ControlClick Button2 ; OK
+        WinWait ahk_class #32770
+        ControlClick Button1 ; OK
+        WinWait ahk_class MsiDialogCloseClass, Completed
+        ControlClick Button1 ; Finish
+    "
+}
+
+#----------------------------------------------------------------
+
 announce_verb wog           "World of Goo demo (2D Boy, 2008)" WorldOfGooDemo.1.0.exe
 
 load_wog() {
@@ -1413,6 +1450,7 @@ do
     starcraft) load_starcraft;;
     starcraft2) load_starcraft2;;
     stfu) load_stfu;;
+    unigine_heaven) load_unigine_heaven;;
     version) print_version;;
     wog) load_wog;;
     *) echo Unknown arg $1; usage ; exit 1;;
