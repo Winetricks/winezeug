@@ -800,7 +800,7 @@ load_3dmark06() {
     if workaround_wine_bug 22393
     then
         # "Demo" button doesn't work without this
-        sh "$WINETRICKS" -q d3dx9
+        sh "$WINETRICKS" -q d3dx9_28 d3dx9_36
     fi
     if workaround_wine_bug 22392
     then
@@ -1066,6 +1066,106 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
     sleep 30s
     iso_umount
     cd $olddir
+}
+
+#----------------------------------------------------------------
+
+announce_verb pcmark04 "PC Mark 04 (Futuremark, 2004)" PCMark04_v130_installer.exe
+
+load_pcmark04() {
+    load_autohotkey
+
+    # http://www.futuremark.com/download/pcmark04/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark04_v130_installer.exe"
+    then
+        die "Sorry, you have to download PCMark04_v130_installer.exe yourself and put it in $WISOTOOL_CACHE/$PACKAGE/PCMark04_v130_installer.exe"
+    fi
+
+    warn "Please don't use mouse while this installer is running.  Sorry..."
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run PCMark04_v130_installer.exe
+        ; Skip past the two windows warning about WMP9 etc.
+        WinWait, Information
+        Send {Enter}
+        WinWaitClose, Information
+        WinWait, Information
+        Send {Enter}
+
+        WinWait ahk_class #32770, Welcome
+        Send {Enter}
+        WinWait, ahk_class #32770, License
+        Send a ; Accept
+        Send {Enter} ; Next
+        Sleep 3000 ; Wait for Destination window
+        Send {Enter}
+        Sleep 3000 ; Wait for Install window
+        Send {Enter}
+        ; Wait for install to finish
+        WinWait, PCMark04, Registration
+        ; Purchase later
+        ; This window won't activate any other way!
+        MsgBox, 32, , Preparing your dungeon.  Why not enjoy a delicious slime mold while you wait?, 1
+        Send {Enter}
+        Sleep 3000
+        ; Uncheck readme
+        Send {Space}
+        Send {Tab}
+        Send {Tab}
+        Send {Enter}
+    "
+}
+
+#----------------------------------------------------------------
+
+announce_verb pcmark05 "PC Mark 05 (Futuremark, 2005)" PCMark05_v130_1901.exe
+
+load_pcmark05() {
+    load_autohotkey
+
+    # http://www.futuremark.com/download/pcmark05/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark05_v120_1901.exe"
+    then
+        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe
+    fi
+
+    warn "Don't use mouse while this installer is running.  Sorry..."
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run PCMark05_v120_1901.exe
+        ; Skip past the two windows warning about WMP10 etc.
+        WinWait, Information
+        Send {Enter}
+        WinWaitClose, Information
+        WinWait, Information
+        Send {Enter}
+
+        WinWait ahk_class #32770, Welcome
+        Send {Enter}
+        WinWait, ahk_class #32770, License
+        Send a ; Accept
+        Send {Enter} ; Next
+        Sleep 3000 ; Wait for 2nd Welcome window
+        Send {Enter}
+        Sleep 3000 ; Wait for Destination window
+        Send {Enter}
+        Sleep 3000 ; Wait for Install window
+        Send {Enter}
+        ; Wait for install to finish
+        WinWait, PCMark05, Registration
+        ; Purchase later
+        ; This window won't activate any other way!
+        MsgBox, 32, , Preparing your dungeon.  Why not enjoy a delicious slime mold while you wait?, 1
+        Send {Enter}
+        Sleep 2000
+        ; Uncheck readme
+        Send {Space}
+        Send {Tab}
+        Send {Tab}
+        Send {Enter}
+    "
 }
 
 #----------------------------------------------------------------
@@ -1577,6 +1677,8 @@ do
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     migrate) migrate_files;;
     morrowind|morrowind_goty) load_morrowind_goty;;
+    pcmark04) load_pcmark04;;
+    pcmark05) load_pcmark05;;
     plantsvszombies) load_plantsvszombies;;
     quake3) load_quake3;;
     re5bench) load_re5bench;;

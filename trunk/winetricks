@@ -169,6 +169,7 @@ usage() {
     echo " corefonts     MS Arial, Courier, Times fonts"
     echo " cygwin        Unix apps for Windows (needed by some build scripts)"
     echo " d3dx9         MS d3dx9_??.dll (from DirectX 9 user redistributable)"
+    echo " d3dx9_28      MS d3dx9_28.dll"
     echo " d3dx9_36      MS d3dx9_36.dll"
     echo " d3dx10        MS d3dx10_??.dll (from DirectX user redistributable)"
     echo " d3dxof        MS d3dxof.dll (from DirectX user redistributable)"
@@ -3732,6 +3733,7 @@ do
     corefonts) load_corefonts;;
     cygwin) load_cygwin;;
     d3dx9) load_d3dx9;;
+    d3dx9_28) load_d3dx9_xx 28;;
     d3dx9_36) load_d3dx9_xx 36;;
     d3dx10) load_d3dx10;;
     d3dxof) load_d3dxof;;
