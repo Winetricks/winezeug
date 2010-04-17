@@ -3,6 +3,7 @@
 # Adapted from winetricks as of r995
 # Copyright 2007, 2008, 2009, 2010 Google (Dan Kegel, dank@kegel.com)
 # Copyright 2008, 2009, 2010 Austin English (austinenglish@gmail.com)
+# License: LGPL (for compatibility with winehq)
 # Please report problems at http://code.google.com/p/winezeug/issues
 # Note to contributors: please avoid gnu extensions in this shell script,
 # as it has to run on MacOSX and Solaris, too.  A good book on the topic is
