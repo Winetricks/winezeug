@@ -148,6 +148,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
+    echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
     echo " assassinscreed Assassins Creed (Ubisoft, 2008)"
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
@@ -214,15 +215,15 @@ showmenu()
     case $MENU in
     zenity)
         echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WISOTOOL_TMP"/zenity.sh
-        usage | grep '^ [a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WISOTOOL_TMP/zenity.sh
+        usage | grep '^ [3a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WISOTOOL_TMP/zenity.sh
         todo="`sh "$WISOTOOL_TMP"/zenity.sh | tr '|' ' '`"
         ;;
     kdialog)
-        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        packages=`usage | awk '/^ [3a-z]/ {print $1}'`
         todo="`kdialog_showmenu "wisotool" "Select a package to install" "Install?" "Package" $packages`"
         ;;
     xmessage)
-        packages=`usage | awk '/^ [a-z]/ {print $1}'`
+        packages=`usage | awk '/^ [3a-z]/ {print $1}'`
         todo="`xmessage_showmenu "wisotool" "Select a package to install" "Install?" "Package" $packages`"
         ;;
     esac
@@ -674,6 +675,43 @@ migrate_files()
             mv $movee $WISOTOOL_CACHE/$verb/
         fi
     done
+}
+
+#----------------------------------------------------------------
+
+announce_verb 3dmark06 "3D Mark 06 (Futuremark, 2006)" 3DMark06_v120_1901.exe
+
+load_3dmark06() {
+    load_autohotkey
+
+    # http://www.futuremark.com/benchmarks/3dmark06/download/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark06_v120_1901.exe"
+    then
+        download $PACKAGE "http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe" 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run 3DMark06_v120_1901.exe
+        WinWait ahk_class #32770, Welcome
+        Send {Enter}
+        WinWait, ahk_class #32770, License
+        ControlClick Button1 ; Accept
+        ControlClick Button4 ; Next
+        WinWait, ahk_class #32770, Destination
+        ControlClick Button1 ; Next
+        WinWait, ahk_class #32770, Install
+        ControlClick Button1 ; Install
+        WinWait ahk_class OpenAL Installer
+        ControlClick Button2 ; OK
+        WinWait ahk_class #32770
+        ControlClick Button1 ; OK
+        WinWait, ahk_class #32770, Purchase
+        ControlClick Button4 ; Later
+        WinWait, ahk_class #32770, Complete
+        ControlClick Button1 ; Uncheck view readme
+        ControlClick Button3 ; Finish
+    "
 }
 
 #----------------------------------------------------------------
@@ -1243,8 +1281,7 @@ load_unigine_heaven() {
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Unigine_Heaven-2.0.msi"
     then
-        echo "This download is slow, you may want to do a manual download from"
-        echo "http://downloads.guru3d.com/Unigine-Heaven-DirectX-11-benchmark-2.0-download-2414.html"
+        warn "This download is slow, you may want to do a manual download from http://downloads.guru3d.com/Unigine-Heaven-DirectX-11-benchmark-2.0-download-2414.html instead"
         #download $PACKAGE http://www.techpowerup.com/downloads/1775e/Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
         download $PACKAGE http://unigine.com/download/files/Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
     fi
@@ -1434,6 +1471,7 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
+    3dmark06) load_3dmark06;;
     assassinscreed) load_assassinscreed;;
     baldursgate2) load_baldursgate2;;
     diablo2) load_diablo2;;
