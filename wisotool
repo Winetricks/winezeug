@@ -152,6 +152,7 @@ usage() {
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
+    echo " re5bench      Resident Evil 5 Benchmark (Capcom, 2009)"
     echo " quake3        Quake 3 (ID Software, 1999)"
     echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
@@ -960,6 +961,41 @@ load_plantsvszombies() {
 
 #----------------------------------------------------------------
 
+announce_verb re5bench "Resident Evil 5 Benchmark (Capcom, 2009)" nzd_ResidentEvil5_Benchmark.exe
+
+load_re5bench() {
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
+    then
+        download $PACKAGE "http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run nzd_ResidentEvil5_Benchmark.exe
+        WinWait ahk_class MsiDialogCloseClass 
+        ControlClick Button1 ; Next
+        WinWait ahk_class MsiDialogCloseClass, License
+        ControlClick Button3 ; Accept
+        ControlClick Button5 ; Next
+        WinWait ahk_class MsiDialogCloseClass, Destination
+        ControlClick Button1 ; Next
+        WinWait ahk_class MsiDialogCloseClass, Ready
+        ControlClick Button1 ; Install
+        WinWait ahk_class MsiDialogCloseClass, Completed
+        ControlClick Button3 ; Uncheck Launch
+        ControlClick Button1 ; Finish
+    "
+
+    if workaround_wine_bug 21939
+    then
+        try sh "$WINETRICKS" -q wmp9
+    fi
+}
+
+#----------------------------------------------------------------
+
 announce_verb quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
 
 load_quake3() {
@@ -1371,6 +1407,7 @@ do
     morrowind|morrowind_goty) load_morrowind_goty;;
     plantsvszombies) load_plantsvszombies;;
     quake3) load_quake3;;
+    re5bench) load_re5bench;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
     starcraft2) load_starcraft2;;
