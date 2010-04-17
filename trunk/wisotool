@@ -152,6 +152,7 @@ usage() {
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
+    echo " quake3        Quake 3 (ID Software, 1999)"
     echo " sims3         The Sims 3 (EA, 2009)"
     echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
     echo " starcraft2    Starcraft II beta (Blizzard, 2010)"
@@ -959,6 +960,37 @@ load_plantsvszombies() {
 
 #----------------------------------------------------------------
 
+announce_verb quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
+
+load_quake3() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
+    ahk_do "
+        Run ${ISO_MOUNT_LETTER}:Setup.exe
+        WinWait, Quake III Arena
+        ControlClick, x532 y206 ; Click Install
+        WinWait, Welcome
+        ControlClick, Button1 ; Click Next
+        WinWait, Software License Agreement
+        ControlClick, Button2 ; Click Yes
+        WinWait, Setup Type
+        ControlClick, Button2 ; Click Next
+        WinWait, Choose Destination Location
+        ControlClick, Button1 ; Click Next
+        WinWait, Select Program Folder
+        ControlClick, Button2 ; Click Next
+        WinWait, Question, Would you like to place a Shortcut on your Desktop?
+        ControlClick, Button7 ; Click No
+        WinWait, Setup Complete
+        ControlClick, Button3 ; Click No I will restart my computer later.
+        ControlClick, Button5 ; Click Finish
+    "
+    iso_umount
+}
+
+#----------------------------------------------------------------
+
 announce_verb sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
 
 load_sims3() {
@@ -1338,6 +1370,7 @@ do
     migrate) migrate_files;;
     morrowind|morrowind_goty) load_morrowind_goty;;
     plantsvszombies) load_plantsvszombies;;
+    quake3) load_quake3;;
     sims3) load_sims3;;
     starcraft) load_starcraft;;
     starcraft2) load_starcraft2;;
