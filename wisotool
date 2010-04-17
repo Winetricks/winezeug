@@ -1115,6 +1115,10 @@ load_pcmark04() {
         Send {Tab}
         Send {Enter}
     "
+    if workaround_wine_bug 22402
+    then
+        warn "You may need to apply the patch from bug 22402 to avoid a crash in the tumbling blocks test."
+    fi
 }
 
 #----------------------------------------------------------------
