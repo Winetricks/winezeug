@@ -5,6 +5,7 @@
 # Current maintainers: Austin English, Dan Kegel
 # Copyright 2007, 2008, 2009, 2010 Google (Dan Kegel, dank@kegel.com)
 # Copyright 2008, 2009, 2010 Austin English (austinenglish@gmail.com)
+# License: LGPL (for compatibility with winehq)
 # Thanks to Detlef Riekenberg for lots of updates
 # Thanks to Saulius Krasuckas for corrections and suggestions
 # Thanks to Erik Inge Bolsø for several patches
