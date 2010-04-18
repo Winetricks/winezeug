@@ -709,7 +709,7 @@ verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000)" 3dmark2000_v11_100308.
 load_3dmark2000() {
     load_autohotkey
 
-    # http://www.futuremark.com/benchmarks/3dmark2000/download/
+    # http://www.futuremark.com/download/3dmark2000/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3dmark2000_v11_100308.exe"
     then
         download $PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
@@ -735,6 +735,44 @@ load_3dmark2000() {
         WinWait Registration
         ControlClick Button1  ; Next
         WinWait Complete
+        ControlClick Button1  ; Unclick View Readme
+        ControlClick Button4  ; Finish
+    "
+}
+
+#----------------------------------------------------------------
+
+verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001)" 3dmark2000_v11_100308.exe
+
+load_3dmark2001() {
+    load_autohotkey
+
+    # http://www.futuremark.com/download/3dmark2001/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/3dmark2001se_330_100308.exe
+    then
+        download $PACKAGE http://www.ocinside.de/download/3dmark2001se_330_100308.exe 643bacbcc1615bb4f46d3b045b1b8d78371a6b54
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run 3dmark2001se_330_100308.exe
+        WinWait ahk_class #32770 ; welcome
+        MsgBox, 64, , clicking Next on welcome, 1
+        ControlClick Button2  ; Next
+        sleep 5000
+        WinWait ahk_class #32770 ; License
+        MsgBox, 64, , clicking Next on license, 1
+        ControlClick Button2  ; Next
+        WinWait ahk_class #32770 ; Destination
+        MsgBox, 64, , clicking Next on Destination, 1
+        ControlClick Button1  ; Next
+        WinWait ahk_class #32770 ; Start
+        MsgBox, 64, , clicking Next on Start, 1
+        ControlClick Button1  ; Next
+        WinWait,, Registration
+        ControlClick Button1  ; Next
+        WinWait,, Complete
         ControlClick Button1  ; Unclick View Readme
         ControlClick Button4  ; Finish
     "
@@ -1752,6 +1790,7 @@ do
 
 # TODO: call verblist_handle_verb, or something like that, instead of hardcoding list here
     3dmark2000) load_3dmark2000;;
+    3dmark2001) load_3dmark2001;;
     3dmark03) load_3dmark03;;
     3dmark05) load_3dmark05;;
     3dmark06) load_3dmark06;;
