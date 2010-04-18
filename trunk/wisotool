@@ -144,7 +144,7 @@ usage() {
     echo "Windows apps from them."
     echo ""
     echo "Options:"
-    echo " -q         quiet.  You must have already agreed to the EULAs."
+    echo " -q         quieter"
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
@@ -1740,11 +1740,6 @@ do
     PACKAGE=$1
     case $1 in
     -q) WISOTOOL_QUIET="/q"
-        WISOTOOL_QUIET_T="/qt" # Microsoft Control Pad
-        WISOTOOL_UNIXQUIET="-q"
-        WISOTOOL_SILENT="/silent"
-        WISOTOOL_UNIXSILENT="-silent"
-        WISOTOOL_S="/S"                 # for NSIS installers
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
         ;;
@@ -1801,5 +1796,3 @@ done
 
 # remove the temp directory
 rm -rf "$WISOTOOL_TMP"
-
-#test "$WISOTOOL_QUIET" = "" && echo wisotool done. || true
