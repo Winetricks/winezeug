@@ -148,6 +148,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
+# TODO: call verblist_get_descriptions instead of hardcoding list here
     echo " 3dmark03      3D Mark 03 (Futuremark, 2003)"
     echo " 3dmark05      3D Mark 05 (Futuremark, 2005)"
     echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
@@ -155,6 +156,8 @@ usage() {
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
+    echo " pcmark04      PC Mark 04 (Futuremark, 2004)"
+    echo " pcmark05      PC Mark 05 (Futuremark, 2005)"
     echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
     echo " re5bench      Resident Evil 5 Benchmark (Capcom, 2009)"
     echo " quake3        Quake 3 (ID Software, 1999)"
@@ -166,7 +169,7 @@ usage() {
     echo " wog           World of Goo demo (2D Boy, 2008)"
     echo "Pseudopackages:"
     echo " load          Load a new iso"
-    echo " load=KEY      Load a new iso (with given key)"
+    echo " load=KEY      Load a new iso (with given key; only works from commandline at moment)"
 }
 
 #----------------------------------------------------------------
@@ -214,6 +217,7 @@ xmessage_showmenu() {
 
 showmenu()
 {
+    # FIXME: call verblist_get_descriptions instead of scraping usage() ?
     case $MENU in
     zenity)
         echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WISOTOOL_TMP"/zenity.sh
@@ -572,7 +576,7 @@ load_iso() {
    # Note: if you haven't written the verb for this disc yet,
    # the .iso won't be moved to the right directory.  
    # So when writing a new verb, first run 'sh wisotool load',
-   # then write just the announce_verb part (including sha1sum), then
+   # then write just the verblist_add part (including sha1sum), then
    # run 'sh wisotool migrate' to move the iso into the right directory,
    # and then write the rest of the verb.
    migrate_files
@@ -632,12 +636,22 @@ load_autohotkey()
 
 #----------------------------------------------------------------
 
-# Must precede first call to announce_verb
-file_map="case \$1 in "
-
-announce_verb()
+verblist_init()
 {
-    # Usage: announce_verb verbname "description" file1 file2 ...
+    # Must call this before first call to verblist_add
+    file_map="case \$1 in "
+}
+
+verblist_finish()
+{
+    # Must follow last call to verblist_add
+    file_map="$file_map esac"
+}
+
+# Update list of known verbs and what file each uses
+verblist_add()
+{
+    # Usage: verblist_add verbname "description" file1 file2 ...
     verbname=$1
     shift
     description="$1"
@@ -648,11 +662,13 @@ announce_verb()
     done
 }
 
+# Given a file, output the verb it belongs to
 map_file_to_verb()
 {
    eval $file_map
 }
 
+# Output a list of the verbs for which the needed files are in the cache
 list_available_verbs()
 {
     find $WISOTOOL_CACHE/. -type f | sed 's,.*/,,' > /tmp/wfiles
@@ -662,9 +678,9 @@ list_available_verbs()
     done | sort -u
 }
 
+# Move any/all *.iso still at top level into the proper subdirectory
 migrate_files()
 {
-    # Only needed if you load an iso before wisotools supports it, and you then update wisotools
     for file in $WISOTOOL_CACHE/*.iso
     do
         barefile=`basename $file`
@@ -679,9 +695,15 @@ migrate_files()
     done
 }
 
+#----- Verbs ----------------------------------------------------
+
+verblist_init
+
+# TODO: load any external verbs from $srcdir/wisotool.d/*.verb
+
 #----------------------------------------------------------------
 
-announce_verb 3dmark03 "3D Mark 03 (Futuremark, 2003)" 3DMark03_v360_1901.exe
+verblist_add 3dmark03 "3D Mark 03 (Futuremark, 2003)" 3DMark03_v360_1901.exe
 
 load_3dmark03() {
     load_autohotkey
@@ -726,7 +748,7 @@ load_3dmark03() {
 
 #----------------------------------------------------------------
 
-announce_verb 3dmark05 "3D Mark 05 (Futuremark, 2005)" 3DMark05_v130_1901.exe
+verblist_add 3dmark05 "3D Mark 05 (Futuremark, 2005)" 3DMark05_v130_1901.exe
 
 load_3dmark05() {
     load_autohotkey
@@ -763,7 +785,7 @@ load_3dmark05() {
 
 #----------------------------------------------------------------
 
-announce_verb 3dmark06 "3D Mark 06 (Futuremark, 2006)" 3DMark06_v120_1901.exe
+verblist_add 3dmark06 "3D Mark 06 (Futuremark, 2006)" 3DMark06_v120_1901.exe
 
 load_3dmark06() {
     load_autohotkey
@@ -810,7 +832,7 @@ load_3dmark06() {
 
 #----------------------------------------------------------------
 
-announce_verb assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
+verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
 
 load_assassinscreed() {
     load_autohotkey
@@ -841,7 +863,7 @@ load_assassinscreed() {
 #----------------------------------------------------------------
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=408
-announce_verb baldursgate2       "Baldur's Gate 2 - Shadows of Amn (Bioware, 2000)" \
+verblist_add baldursgate2       "Baldur's Gate 2 - Shadows of Amn (Bioware, 2000)" \
   cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso \
   429872605dad10433c3c581a1c11eba4d0988c46.iso \
   a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso \
@@ -907,7 +929,7 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
-announce_verb diablo2       "Diablo II (Blizzard, 2000)" \
+verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
   51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
   382ea98f270e39855b558b8fac0d609712a54ae8.iso \
@@ -978,7 +1000,7 @@ load_diablo2() {
 
 #----------------------------------------------------------------
 
-announce_verb dragonage     "Dragon Age: Origins (Bioware, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+verblist_add dragonage     "Dragon Age: Origins (Bioware, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
@@ -1020,7 +1042,7 @@ load_dragonage() {
 
 #----------------------------------------------------------------
 
-announce_verb morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
+verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
   c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
 
 load_morrowind_goty() {
@@ -1070,7 +1092,7 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
 #----------------------------------------------------------------
 
-announce_verb pcmark04 "PC Mark 04 (Futuremark, 2004)" PCMark04_v130_installer.exe
+verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004)" PCMark04_v130_installer.exe
 
 load_pcmark04() {
     load_autohotkey
@@ -1123,7 +1145,7 @@ load_pcmark04() {
 
 #----------------------------------------------------------------
 
-announce_verb pcmark05 "PC Mark 05 (Futuremark, 2005)" PCMark05_v130_1901.exe
+verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005)" PCMark05_v130_1901.exe
 
 load_pcmark05() {
     load_autohotkey
@@ -1174,7 +1196,7 @@ load_pcmark05() {
 
 #----------------------------------------------------------------
 
-announce_verb passmark7 "Performance Test 7 (Passmark, 2010)" petst.exe
+verblist_add passmark7 "Performance Test 7 (Passmark, 2010)" petst.exe
 
 load_passmark7() {
     load_autohotkey
@@ -1194,7 +1216,7 @@ load_passmark7() {
 
 #----------------------------------------------------------------
 
-announce_verb plantsvszombies "Plants vs. Zombies (PopCap Games, 2009)" PlantsVsZombiesSetup.exe
+verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009)" PlantsVsZombiesSetup.exe
 
 load_plantsvszombies() {
     load_autohotkey
@@ -1219,7 +1241,7 @@ load_plantsvszombies() {
 
 #----------------------------------------------------------------
 
-announce_verb re5bench "Resident Evil 5 Benchmark (Capcom, 2009)" nzd_ResidentEvil5_Benchmark.exe
+verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009)" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
     load_autohotkey
@@ -1254,7 +1276,7 @@ load_re5bench() {
 
 #----------------------------------------------------------------
 
-announce_verb quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
+verblist_add quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
 
 load_quake3() {
     load_autohotkey
@@ -1285,7 +1307,7 @@ load_quake3() {
 
 #----------------------------------------------------------------
 
-announce_verb sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
+verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
 
 load_sims3() {
     load_autohotkey
@@ -1353,7 +1375,7 @@ load_sims3() {
 
 #----------------------------------------------------------------
 
-announce_verb starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
+verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
@@ -1395,7 +1417,7 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
-announce_verb starcraft2    "Starcraft II beta (Blizzard, 2010)" 
+verblist_add starcraft2    "Starcraft II beta (Blizzard, 2010)" 
 
 load_starcraft2() {
     load_autohotkey
@@ -1437,7 +1459,7 @@ load_starcraft2() {
 
 #----------------------------------------------------------------
 
-announce_verb stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso 5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
+verblist_add stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso 5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
 
 load_stfu() {
     load_autohotkey
@@ -1492,7 +1514,7 @@ load_stfu() {
 
 #----------------------------------------------------------------
 
-announce_verb unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010)" Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010)" Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
 
 load_unigine_heaven() {
     load_autohotkey
@@ -1527,7 +1549,7 @@ load_unigine_heaven() {
 
 #----------------------------------------------------------------
 
-announce_verb wog           "World of Goo demo (2D Boy, 2008)" WorldOfGooDemo.1.0.exe
+verblist_add wog           "World of Goo demo (2D Boy, 2008)" WorldOfGooDemo.1.0.exe
 
 load_wog() {
     load_autohotkey
@@ -1566,8 +1588,7 @@ print_version() {
 
 #--------- Main program -----------------------------------------
 
-# Must follow last announce_verb
-file_map="$file_map esac"
+verblist_finish
 
 # On Solaris, choose more modern commands (needed for id -u).
 case `uname -s` in
@@ -1689,6 +1710,13 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
+    ls) list_available_verbs;;
+    load) load_iso;;
+    load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
+    migrate) migrate_files;;
+    version) print_version;;
+
+# TODO: call verblist_handle_verb, or something like that, instead of hardcoding list here
     3dmark03) load_3dmark03;;
     3dmark05) load_3dmark05;;
     3dmark06) load_3dmark06;;
@@ -1696,10 +1724,6 @@ do
     baldursgate2) load_baldursgate2;;
     diablo2) load_diablo2;;
     dragonage) load_dragonage;;
-    ls) list_available_verbs;;
-    load) load_iso;;
-    load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
-    migrate) migrate_files;;
     morrowind|morrowind_goty) load_morrowind_goty;;
     passmark7) load_passmark7;;
     pcmark04) load_pcmark04;;
@@ -1712,8 +1736,8 @@ do
     starcraft2) load_starcraft2;;
     stfu) load_stfu;;
     unigine_heaven) load_unigine_heaven;;
-    version) print_version;;
     wog) load_wog;;
+
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
