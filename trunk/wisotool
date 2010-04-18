@@ -149,6 +149,7 @@ usage() {
     echo " -V         display Version"
     echo "Packages:"
 # TODO: call verblist_get_descriptions instead of hardcoding list here
+    echo " 3dmark2000    3DMark2000 (MadOnion.com, 2000)"
     echo " 3dmark03      3D Mark 03 (Futuremark, 2003)"
     echo " 3dmark05      3D Mark 05 (Futuremark, 2005)"
     echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
@@ -700,6 +701,44 @@ migrate_files()
 verblist_init
 
 # TODO: load any external verbs from $srcdir/wisotool.d/*.verb
+
+#----------------------------------------------------------------
+
+verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000)" 3dmark2000_v11_100308.exe
+
+load_3dmark2000() {
+    load_autohotkey
+
+    # http://www.futuremark.com/benchmarks/3dmark2000/download/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3dmark2000_v11_100308.exe"
+    then
+        download $PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
+    fi
+
+    cd "$WISOTOOL_TMP"
+    mkdir $PACKAGE
+    cd $PACKAGE
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/3dmark2000_v11_100308.exe
+    ahk_do "
+        SetTitleMatchMode, 2
+        run Setup.exe
+        WinWait Welcome
+        ControlClick Button1  ; Next
+        WinWait License
+        ControlClick Button2  ; Yes
+        WinWaitClose ahk_class #32770 ; License
+        WinWait ahk_class #32770 ; Destination
+        ControlClick Button1  ; Next
+        WinWaitClose ahk_class #32770 ; Destination
+        WinWait ahk_class #32770 ; Start
+        ControlClick Button1  ; Next
+        WinWait Registration
+        ControlClick Button1  ; Next
+        WinWait Complete
+        ControlClick Button1  ; Unclick View Readme
+        ControlClick Button4  ; Finish
+    "
+}
 
 #----------------------------------------------------------------
 
@@ -1717,6 +1756,7 @@ do
     version) print_version;;
 
 # TODO: call verblist_handle_verb, or something like that, instead of hardcoding list here
+    3dmark2000) load_3dmark2000;;
     3dmark03) load_3dmark03;;
     3dmark05) load_3dmark05;;
     3dmark06) load_3dmark06;;
