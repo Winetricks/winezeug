@@ -46,7 +46,9 @@ WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
 WISOTOOL_CACHE_WIN="`$XXXPATH -w $WISOTOOL_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
 WISOTOOL_TMP_WIN='c:\wisotooltmp'
-mkdir -p $WISOTOOL_TMP
+# Clean up after failed runs, if needed
+rm -rf "$WISOTOOL_TMP"
+mkdir -p "$WISOTOOL_TMP"
 
 USERNAME=${USERNAME:-$LOGNAME}
 
@@ -1776,9 +1778,6 @@ then
     WINETRICKS="$WISOTOOL_CACHE/winetricks"
     wget -o "$WINETRICKS" http://kegel.com/wine/winetricks
 fi
-
-# Clean up after failed runs, if needed
-rm -rf "$WISOTOOL_TMP"/*
 
 # The folder-name is localized!
 programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
