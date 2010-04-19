@@ -240,6 +240,7 @@ usage() {
     echo " psdkwin7      MS Windows 7 SDK (installing just headers and c++ compiler works)"
     echo " python26      Python 2.6.2 (and pywin32)"
     echo " python-comtypes Python 0.6.1-1 comtypes package"
+    echo " quartz        quartz.dll (from Directx 9 user redistributable)"
     echo " quicktime72   Apple Quicktime 7.2"
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
@@ -2637,6 +2638,20 @@ load_python_comtypes() {
 
 #----------------------------------------------------------------
 
+load_quartz() {
+    helper_directx_dl
+
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINDIR"/system32 -L -F 'quartz.dll' "$WINETRICKS_TMP/dxnt.cab"
+    
+    try $WINE regsvr32 quartz.dll
+    
+    override_dlls native quartz
+    
+}
+
+#----------------------------------------------------------------
+
 load_quicktime72() {
     echo "Quicktime needs gdiplus..."
     load_gdiplus
@@ -3802,6 +3817,7 @@ do
     psdkwin7) load_psdkwin7;;
     python|python26) load_python26;;
     python-comtypes|pythoncom|python-com|pythoncomtypes) load_python_comtypes;;
+    quartz) load_quartz;;
     quicktime72) load_quicktime72;;
     riched20) load_riched20;;
     riched30) load_riched30;;
