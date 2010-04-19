@@ -156,6 +156,7 @@ usage() {
     echo " assassinscreed Assassins Creed (Ubisoft, 2008)"
     echo " diablo2       Diablo II (Blizzard, 2000)"
     echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
+    echo " gta_vc        Grand Theft Auto: Vice City (Rockstar, 2003)"
     echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
     echo " pcmark04      PC Mark 04 (Futuremark, 2004)"
     echo " pcmark05      PC Mark 05 (Futuremark, 2005)"
@@ -1117,6 +1118,60 @@ load_dragonage() {
     iso_umount
 }
 
+ #----------------------------------------------------------------
+ 
+verblist_add gta-vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
+  e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
+  d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
+
+load_gta_vc() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
+    ahk_do "
+    SetTitleMatchMode, 2
+    Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    winwait, Choose Setup Language
+    sleep 1000
+    Send {enter}
+    winwait, Grand Theft Auto Vice City, Welcome to the InstallShield Wizard
+    sleep 1000
+    Send {enter}
+    winwait, Grand Theft Auto Vice City, License Agreement
+    sleep 1000
+    Send !a
+    send {enter}
+    winwait, Grand Theft Auto Vice City, Customer Information
+    sleep 1000
+    controlclick, edit1
+    send user ; username...perhaps we should use $USER instead?
+    send {tab}
+    send company ; installer won't proceed without something here
+    send {enter}
+    winwait, Grand Theft Auto Vice City, Choose Destination Location
+    sleep 1000
+    controlclick, Button1
+    winwait, Grand Theft Auto Vice City, Select Components
+    sleep 1000
+    controlclick, Button2
+    winwait, Grand Theft Auto Vice City, Ready to Install the Program
+    sleep 1000
+    send {enter}
+    winwait, Setup Needs The Next Disk, Please insert disk 2
+    sleep 1000"
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
+    ahk_do "
+    sleep 1000
+    send {enter}
+    winwait, Grand Theft Auto Vice City, InstallShield Wizard Complete
+    sleep 1000
+    send {enter}
+    "
+
+    iso_umount
+}
+
+
 #----------------------------------------------------------------
 
 verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
@@ -1798,6 +1853,7 @@ do
     baldursgate2) load_baldursgate2;;
     diablo2) load_diablo2;;
     dragonage) load_dragonage;;
+    gta_vc) load_gta_vc;;
     morrowind|morrowind_goty) load_morrowind_goty;;
     passmark7) load_passmark7;;
     pcmark04) load_pcmark04;;
