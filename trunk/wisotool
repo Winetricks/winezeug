@@ -1120,7 +1120,7 @@ load_dragonage() {
 
  #----------------------------------------------------------------
  
-verblist_add gta-vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
+verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
 
@@ -1144,7 +1144,7 @@ load_gta_vc() {
     winwait, Grand Theft Auto Vice City, Customer Information
     sleep 1000
     controlclick, edit1
-    send user ; username...perhaps we should use $USER instead?
+    send $USERNAME
     send {tab}
     send company ; installer won't proceed without something here
     send {enter}
@@ -1167,8 +1167,12 @@ load_gta_vc() {
     sleep 1000
     send {enter}
     "
-
     iso_umount
+    
+    if workaround_wine_bug 22414
+    then
+        try "$WINETRICKS" -q quartz
+    fi
 }
 
 
