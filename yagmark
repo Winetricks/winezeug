@@ -1,0 +1,60 @@
+#!/bin/sh
+# Yet Another Graphics Benchmark
+# Automated script to measure Win32 graphics performance
+# Copyright 2010 Dan Kegel.
+# Licence: LGPL (for winehq compatibility)
+
+# TODO: make these work on Windows, too.  For now use abbreviated, wine-only settings.
+WINE="${WINEPREFIX:-wine}"
+WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+DRIVE_C="$WINEPREFIX/drive_c"
+programfilesdir_x86_unix="$DRIVE_C/Program Files"
+
+run_3dmark2000()
+{
+    exe="$programfilesdir_x86_unix/MadOnion.com/3DMark2000/3DMark2000.exe"
+    # Install if needed
+    if ! test -f "$exe"
+    then
+        sh wisotool 3dmark2000
+    fi
+
+    # Use Autohotkey to start app, click 'Change', clear all, select just one test,
+    # 'ok', 'Benchmark', wait for it to finish, then click Details...
+    # and scrape results from non-copyable syslist in dialog.
+    $WINE "$exe"
+}
+
+run_3dmark2001()
+{
+    exe="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE/3DMark2001SE.exe"
+    # Install if needed
+    if ! test -f "$exe"
+    then
+        sh wisotool 3dmark2001
+    fi
+
+    # Use Autohotkey to start app, click 'custom', 'Change', clear all, select 
+    # just one test, 'ok', 'Benchmark', wait for it to finish, then click Details...
+    # and scrape results from non-copyable syslist in dialog.
+    $WINE "$exe"
+}
+
+run_re5bench()
+{
+    exedir="$programfilesdir_x86_unix/CAPCOM/RESIDENT EVIL 5 Benchmark Version"
+    exe="$exedir/RE5DX9.EXE"
+
+    # Install if needed
+    if ! test -f "$exe"
+    then
+        sh wisotool re5bench
+    fi
+
+    # Can this be scraped/controlled at all with autohotkey?  Maybe if run in window...
+    cd "$exedir"
+    $WINE "$exe"
+}
+
+# TODO: add a wisotool-style menu
+run_re5bench
