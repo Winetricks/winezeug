@@ -150,6 +150,7 @@ usage() {
     echo "Packages:"
 # TODO: call verblist_get_descriptions instead of hardcoding list here
     echo " 3dmark2000    3DMark2000 (MadOnion.com, 2000)"
+    echo " 3dmark2001    3DMark2001 (MadOnion.com, 2001)"
     echo " 3dmark03      3D Mark 03 (Futuremark, 2003)"
     echo " 3dmark05      3D Mark 05 (Futuremark, 2005)"
     echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
@@ -789,7 +790,7 @@ load_3dmark03() {
     # http://www.futuremark.com/benchmarks/3dmark03/download/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark03_v360_1901.exe"
     then
-        download $PACKAGE "http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe"
+        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe 46a439101ddbbe3c9563b5e9651cb61b46ce0619
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -834,7 +835,7 @@ load_3dmark05() {
     # http://www.futuremark.com/download/3dmark05/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark05_v130_1901.exe"
     then
-        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe
+        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe 8ad6bc2917e22edf5fc95d1fa96cc82515093fb2
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -871,7 +872,7 @@ load_3dmark06() {
     # http://www.futuremark.com/benchmarks/3dmark06/download/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark06_v120_1901.exe"
     then
-        download $PACKAGE "http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe" 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
+        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -1289,7 +1290,7 @@ load_pcmark05() {
     # http://www.futuremark.com/download/pcmark05/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark05_v120_1901.exe"
     then
-        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe
+        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe 8636fce0e4023cd59bcf7f3e1a027e233ee81193
     fi
 
     warn "Don't use mouse while this installer is running.  Sorry..."
@@ -1340,7 +1341,7 @@ load_passmark7() {
     # http://www.passmark.com/download/pt_download.htm
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/petst.exe"
     then
-        download $PACKAGE http://www.passmark.com/ftp/petst.exe
+        download $PACKAGE http://www.passmark.com/ftp/petst.exe 6d9db9c1bc53452cf7a2d3ad07a1195218095f8f
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -1384,7 +1385,7 @@ load_re5bench() {
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
     then
-        download $PACKAGE "http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe"
+        download $PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -1496,6 +1497,7 @@ load_sims3() {
     currentversion=$(head -n 1 skuversion.txt | awk '{print $3}' | tr -d '\r\n')
     # FIXME: Find a way of determining the newest version from ea.com. The below code works, but the xml is outdated, and returns 1.4.6.00002. For now, hardcode it.
     # newestversion=$(wget -O - http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/sims3_sku2_update_manifest.xml | grep NewVersion= | head -n1 | awk -F\" '{print $2}')
+    # FIXME: include a table of sha1sums so we can check the download
     newestversion=1.6.6.002001
     download sims3 http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_${newestversion}_from_${currentversion}.exe
 
