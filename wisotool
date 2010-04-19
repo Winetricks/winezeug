@@ -37,6 +37,8 @@ case "$OS" in
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
     DRIVE_C="$WINEPREFIX/dosdevices/c:"
     XXXPATH="early_wine winepath"
+    # FIXME: does id work on mac/solaris?
+    USERID=`id -u`
     ;;
 esac
 
@@ -470,16 +472,17 @@ iso_mount()
         case "$SUDO" in
         gksudo)
           try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
-          try $SUDO "mount -o ro,loop $my_img $ISO_MOUNT_ROOT"
+          try $SUDO "mount -o ro,loop,uid=$USERID,unhide $my_img $ISO_MOUNT_ROOT"
           ;;
         *)
           try $SUDO mkdir -p $ISO_MOUNT_ROOT
-          try $SUDO mount -o ro,loop "$my_img" $ISO_MOUNT_ROOT
+          try $SUDO mount -o ro,loop,uid=$USERID,unhide "$my_img" $ISO_MOUNT_ROOT
           ;;
         esac
         ISO_MOUNT_LETTER=i
         echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
+        # FIXME: one of these gives a warning frequently, possibly on second run
         ln -sf "$my_img" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}::"
         ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}:"
     fi
