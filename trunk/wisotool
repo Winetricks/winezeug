@@ -136,6 +136,16 @@ die_if_user_not_dirowner() {
 
 #----------------------------------------------------------------
 
+# Clear menu
+rm -f "$WISOTOOL_TMP"/menutext
+
+# Call this to add a verb to the menu
+menu_add() {
+    verbname=$1
+    description="$2"
+    printf " %-16s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
+}
+
 usage() {
     set +x
     # WARNING: do not use single quote in any package description; that breaks the gui menu.
@@ -148,28 +158,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
-# TODO: call verblist_get_descriptions instead of hardcoding list here
-    echo " 3dmark2000    3DMark2000 (MadOnion.com, 2000)"
-    echo " 3dmark2001    3DMark2001 (MadOnion.com, 2001)"
-    echo " 3dmark03      3D Mark 03 (Futuremark, 2003)"
-    echo " 3dmark05      3D Mark 05 (Futuremark, 2005)"
-    echo " 3dmark06      3D Mark 06 (Futuremark, 2006)"
-    echo " assassinscreed Assassins Creed (Ubisoft, 2008)"
-    echo " diablo2       Diablo II (Blizzard, 2000)"
-    echo " dragonage     Dragon Age: Origins (Bioware, 2009)"
-    echo " gta_vc        Grand Theft Auto: Vice City (Rockstar, 2003)"
-    echo " morrowind     The Elder Scrolls III: Morrowind (Bethesda, 2002)"
-    echo " pcmark04      PC Mark 04 (Futuremark, 2004)"
-    echo " pcmark05      PC Mark 05 (Futuremark, 2005)"
-    echo " plantsvszombies Plants vs. Zombies (PopCap Games, 2009)"
-    echo " re5bench      Resident Evil 5 Benchmark (Capcom, 2009)"
-    echo " quake3        Quake 3 (ID Software, 1999)"
-    echo " sims3         The Sims 3 (EA, 2009)"
-    echo " starcraft     Starcraft Battle Chest (Blizzard, 1998)"
-    echo " starcraft2    Starcraft II beta (Blizzard, 2010)"
-    echo " stfu          Starwars: The Force Unleashed (Aspyr, 2009)"
-    echo " unigine_heaven Unigen Heaven 2 Benchmark (Unigen, 2010)"
-    echo " wog           World of Goo demo (2D Boy, 2008)"
+    sort "$WISOTOOL_TMP"/menutext
     echo "Pseudopackages:"
     echo " load          Load a new iso"
     echo " load=KEY      Load a new iso (with given key; only works from commandline at moment)"
@@ -659,6 +648,7 @@ verblist_add()
     shift
     description="$1"
     shift
+    menu_add $verbname "$description"
     for file
     do
        file_map="$file_map $file) echo $verbname;; "
@@ -942,7 +932,7 @@ load_assassinscreed() {
 #----------------------------------------------------------------
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=408
-verblist_add baldursgate2       "Baldur's Gate 2 - Shadows of Amn (Bioware, 2000)" \
+verblist_add baldursgate2       "Baldurs Gate 2 - Shadows of Amn (Bioware, 2000)" \
   cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso \
   429872605dad10433c3c581a1c11eba4d0988c46.iso \
   a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso \
