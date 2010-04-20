@@ -40,6 +40,21 @@ run_3dmark2001()
     $WINE "$exe"
 }
 
+run_3dmark06()
+{
+    exe="$programfilesdir_x86_unix/Futuremark/3DMark6/3DMark06.exe"
+    # Install if needed
+    if ! test -f "$exe"
+    then
+        sh wisotool 3dmark2006
+    fi
+
+    # Use Autohotkey to start app, click 'custom', 'Change', clear all, select 
+    # just one test, 'ok', 'Benchmark', wait for it to finish, then click Details...
+    # and scrape results from non-copyable syslist in dialog.
+    $WINE "$exe"
+}
+
 run_re5bench()
 {
     exedir="$programfilesdir_x86_unix/CAPCOM/RESIDENT EVIL 5 Benchmark Version"
@@ -57,4 +72,4 @@ run_re5bench()
 }
 
 # TODO: add a wisotool-style menu
-run_re5bench
+run_3dmark06
