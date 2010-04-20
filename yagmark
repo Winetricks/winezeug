@@ -5,7 +5,7 @@
 # Licence: LGPL (for winehq compatibility)
 
 # TODO: make these work on Windows, too.  For now use abbreviated, wine-only settings.
-WINE="${WINEPREFIX:-wine}"
+WINE="${WINE:-wine}"
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
 DRIVE_C="$WINEPREFIX/drive_c"
 programfilesdir_x86_unix="$DRIVE_C/Program Files"
@@ -71,5 +71,22 @@ run_re5bench()
     $WINE "$exe"
 }
 
+run_unigine_heaven()
+{
+    exedir="$programfilesdir_x86_unix/Unigine/Heaven"
+    exe="$exedir/Heaven_d3d9.bat"
+    commandline="cmd /c Heaven_d3d9.bat"
+
+    # Install if needed
+    if ! test -f "$exe"
+    then
+        sh wisotool unigine_heaven
+    fi
+
+    # Can this be scraped/controlled at all with autohotkey?  Maybe if run in window...
+    cd "$exedir"
+    $WINE $commandline
+}
+
 # TODO: add a wisotool-style menu
-run_3dmark06
+run_$1
