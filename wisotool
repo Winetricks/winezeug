@@ -140,16 +140,6 @@ die_if_user_not_dirowner() {
 
 #----------------------------------------------------------------
 
-# Clear menu
-rm -f "$WISOTOOL_TMP"/menutext
-
-# Call this to add a verb to the menu
-menu_add() {
-    verbname=$1
-    description="$2"
-    printf " %-16s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
-}
-
 usage() {
     set +x
     # WARNING: do not use single quote in any package description; that breaks the gui menu.
@@ -637,6 +627,8 @@ verblist_init()
 {
     # Must call this before first call to verblist_add
     file_map="case \$1 in "
+    # Clear menu
+    rm -f "$WISOTOOL_TMP"/menutext
 }
 
 verblist_finish()
@@ -645,7 +637,14 @@ verblist_finish()
     file_map="$file_map esac"
 }
 
-# Update list of known verbs and what file each uses
+# Add a verb's description to the menu
+menu_add() {
+    verbname=$1
+    description="$2"
+    printf " %-16s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
+}
+
+# Add a new verb
 verblist_add()
 {
     # Usage: verblist_add verbname "description" file1 file2 ...
@@ -658,6 +657,19 @@ verblist_add()
     do
        file_map="$file_map $file) echo $verbname;; "
     done
+}
+
+# Returns true if given verb is in the list
+verblist_is_legal_verb()
+{
+  verb=$1
+  awk '{print $1}' < "$WISOTOOL_TMP"/menutext > "$WISOTOOL_TMP"/verbs
+  if grep "^$verb$" "$WISOTOOL_TMP"/verbs > /dev/null
+  then
+      return 0
+  else
+      return 1
+  fi
 }
 
 # Given a file, output the verb it belongs to
@@ -1841,32 +1853,13 @@ do
     migrate) migrate_files;;
     version) print_version;;
 
-# TODO: call verblist_handle_verb, or something like that, instead of hardcoding list here
-    3dmark2000) load_3dmark2000;;
-    3dmark2001) load_3dmark2001;;
-    3dmark03) load_3dmark03;;
-    3dmark05) load_3dmark05;;
-    3dmark06) load_3dmark06;;
-    assassinscreed) load_assassinscreed;;
-    baldursgate2) load_baldursgate2;;
-    diablo2) load_diablo2;;
-    dragonage) load_dragonage;;
-    gta_vc) load_gta_vc;;
-    morrowind|morrowind_goty) load_morrowind_goty;;
-    passmark7) load_passmark7;;
-    pcmark04) load_pcmark04;;
-    pcmark05) load_pcmark05;;
-    plantsvszombies) load_plantsvszombies;;
-    quake3) load_quake3;;
-    re5bench) load_re5bench;;
-    sims3) load_sims3;;
-    starcraft) load_starcraft;;
-    starcraft2) load_starcraft2;;
-    stfu) load_stfu;;
-    unigine_heaven) load_unigine_heaven;;
-    wog) load_wog;;
-
-    *) echo Unknown arg $1; usage ; exit 1;;
+    *) if verblist_is_legal_verb $1
+       then
+           load_$1
+       else
+           echo Unknown arg $1; usage ; exit 1;
+       fi
+       ;;
     esac
     # Provide a bit of feedback
     test "$WISOTOOL_QUIET" = "" && case $1 in
