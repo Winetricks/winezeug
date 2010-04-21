@@ -42,8 +42,12 @@ case "$OS" in
     ;;
 esac
 
+# You can add your own verb to wisotool by creating $WISOTOOL_VERBS/foo.verb
+WISOTOOL_VERBS="${WISOTOOL_VERBS:-$HOME/.wisotool/verbs}"
+
 # Internal variables; these locations are not too important
 WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
+test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE="$HOME/.wisotool/cache"
 # Note: this won't work if WISOTOOL_CACHE isn't accesible via a drive letter mapping in wine.
 WISOTOOL_CACHE_WIN="`$XXXPATH -w $WISOTOOL_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
@@ -708,8 +712,6 @@ migrate_files()
 #----- Verbs ----------------------------------------------------
 
 verblist_init
-
-# TODO: load any external verbs from $srcdir/wisotool.d/*.verb
 
 #----------------------------------------------------------------
 
@@ -1732,6 +1734,16 @@ print_version() {
 }
 
 #--------- Main program -----------------------------------------
+
+# Load external verbs.  Filenames may not contain spaces.
+if cd "$WISOTOOL_VERBS"
+then
+    for file in `find . -type f -name '*.verb' 2>/dev/null` 
+    do
+       . $file
+    done
+fi
+cd "$olddir"
 
 verblist_finish
 
