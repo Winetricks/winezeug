@@ -48,13 +48,29 @@ WISOTOOL_VERBS="${WISOTOOL_VERBS:-$HOME/.wisotool/verbs}"
 # Internal variables; these locations are not too important
 WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
 test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE="$HOME/.wisotool/cache"
-# Note: this won't work if WISOTOOL_CACHE isn't accesible via a drive letter mapping in wine.
 WISOTOOL_CACHE_WIN="`$XXXPATH -w $WISOTOOL_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
 WISOTOOL_TMP_WIN='c:\wisotooltmp'
+
 # Clean up after failed runs, if needed
 rm -rf "$WISOTOOL_TMP"
 mkdir -p "$WISOTOOL_TMP"
+
+# Handle case where z: doesn't exist
+if test "$WISOTOOL_CACHE_WIN" = ""
+then
+    # WISOTOOL_CACHE isn't accessible via a drive letter mapping, so make one,
+    # but be sure to clean it up later.
+    for letter in y x w v u t s r q
+    do
+        if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
+        then
+            WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+            ln -sf "$WISOTOOL_CACHE" "$WISOTOOL_CACHE_SYMLINK"
+            break
+        fi
+    done
+fi
 
 USERNAME=${USERNAME:-$LOGNAME}
 
@@ -510,7 +526,7 @@ iso_umount()
 
 #----------------------------------------------------------------
 
-# Only needed so dd doesn't live on if user kills script
+# Executed if user kills script
 cleanup()
 {
   echo "Caught signal, cleaning up."
@@ -518,6 +534,8 @@ cleanup()
   "") ;;
   *) kill $pid ;;
   esac
+  # TODO: merge this with cleanup code at end of script
+  test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
   echo "Done cleanup, quitting."
   exit 1
 }
@@ -1892,6 +1910,8 @@ do
     # cleanup
     rm -rf "$WISOTOOL_TMP"/* "$WISOTOOL_TMP/tmp.ahk"
 done
+
+test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
 
 # remove the temp directory
 rm -rf "$WISOTOOL_TMP"
