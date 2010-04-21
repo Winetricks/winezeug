@@ -1735,6 +1735,10 @@ print_version() {
 
 #--------- Main program -----------------------------------------
 
+olddir=`pwd`
+srcdir=`dirname $0`
+srcdir=`cd $srcdir; /bin/pwd`
+
 # Load external verbs.  Filenames may not contain spaces.
 if cd "$WISOTOOL_VERBS"
 then
@@ -1795,9 +1799,6 @@ case $GUI in
 esac
 
 mkdir -p "$WISOTOOL_CACHE"
-olddir=`pwd`
-srcdir=`dirname $0`
-srcdir=`cd $srcdir; pwd`
 
 WINETRICKS="$srcdir/winetricks"
 if ! test -f "$WINETRICKS"
