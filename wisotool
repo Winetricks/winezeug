@@ -44,6 +44,7 @@ esac
 
 # You can add your own verb to wisotool by creating $WISOTOOL_VERBS/foo.verb
 WISOTOOL_VERBS="${WISOTOOL_VERBS:-$HOME/.wisotool/verbs}"
+mkdir -p "$WISOTOOL_VERBS"
 
 # Internal variables; these locations are not too important
 WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
@@ -172,7 +173,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
-    sort "$WISOTOOL_TMP"/menutext
+    sort "$WISOTOOL_VERBS"/menutext
     echo "Pseudopackages:"
     echo " load          Load a new iso"
     echo " load=KEY      Load a new iso (with given key; only works from commandline at moment)"
@@ -650,7 +651,7 @@ verblist_init()
     # Must call this before first call to verblist_add
     file_map="case \$1 in "
     # Clear menu
-    rm -f "$WISOTOOL_TMP"/menutext
+    rm -f "$WISOTOOL_VERBS"/menutext
 }
 
 verblist_finish()
@@ -663,7 +664,7 @@ verblist_finish()
 menu_add() {
     verbname=$1
     description="$2"
-    printf " %-16s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
+    printf " %-16s %s\n" $verbname "$description" >> "$WISOTOOL_VERBS"/menutext
 }
 
 # Add a new verb
@@ -685,7 +686,7 @@ verblist_add()
 verblist_is_legal_verb()
 {
   verb=$1
-  awk '{print $1}' < "$WISOTOOL_TMP"/menutext > "$WISOTOOL_TMP"/verbs
+  awk '{print $1}' < "$WISOTOOL_VERBS"/menutext > "$WISOTOOL_TMP"/verbs
   if grep "^$verb$" "$WISOTOOL_TMP"/verbs > /dev/null
   then
       return 0
