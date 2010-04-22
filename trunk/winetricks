@@ -739,7 +739,7 @@ sandbox() {
     mkdir -p "$WINEPREFIX/drive_c/users/$USER/My Videos"
 
     # Disable unixfs
-    # Unfortunately, when you run with a different version of wine, will recreate this key.
+    # Unfortunately, when you run with a different version of wine, wine will recreate this key.
     # See http://bugs.winehq.org/show_bug.cgi?id=22450
     $WINE regedit /d 'HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{9D20AAE8-0625-44B0-9CA7-71889C2254D9}'
 }
