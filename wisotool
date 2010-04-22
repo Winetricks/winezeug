@@ -1144,6 +1144,11 @@ load_dragonage() {
         exit 0
     "
     iso_umount
+    
+    if workaround_wine_bug 22383
+    then
+        try "$WINETRICKS" -q strictdrawordering=disabled
+    fi
 }
 
  #----------------------------------------------------------------
