@@ -721,24 +721,27 @@ _EOF_
 }
 
 sandbox() {
+    # Unmap drive Z
     # Might want to unpack gecko first, since Wine won't be able to get to /usr/lib/wine after this
-
-    # remove symlinks
     rm -f "$WINEPREFIX/dosdevices/z:"
+
+    # remove symlinks (won't do anything if they're already directories)
     rm -f "$WINEPREFIX/drive_c/users/$USER/Desktop"
     rm -f "$WINEPREFIX/drive_c/users/$USER/My Documents"
     rm -f "$WINEPREFIX/drive_c/users/$USER/My Music"
     rm -f "$WINEPREFIX/drive_c/users/$USER/My Pictures"
     rm -f "$WINEPREFIX/drive_c/users/$USER/My Videos"
-    # create replacement directories (won't wine create these itself?)
-    #try mkdir "$WINEPREFIX/drive_c/users/$USER/Desktop"
-    #try mkdir "$WINEPREFIX/drive_c/users/$USER/My Documents"
-    #try mkdir "$WINEPREFIX/drive_c/users/$USER/My Music"
-    #try mkdir "$WINEPREFIX/drive_c/users/$USER/My Pictures"
-    #try mkdir "$WINEPREFIX/drive_c/users/$USER/My Videos"
+    # create replacement directories if needed
+    mkdir -p "$WINEPREFIX/drive_c/users/$USER/Desktop"
+    mkdir -p "$WINEPREFIX/drive_c/users/$USER/My Documents"
+    mkdir -p "$WINEPREFIX/drive_c/users/$USER/My Music"
+    mkdir -p "$WINEPREFIX/drive_c/users/$USER/My Pictures"
+    mkdir -p "$WINEPREFIX/drive_c/users/$USER/My Videos"
 
-    # This does no good, wine tends to recreate it, have to disable it harder :-(
-    #$WINE regedit /d 'HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{9D20AAE8-0625-44B0-9CA7-71889C2254D9}'
+    # Disable unixfs
+    # Unfortunately, when you run with a different version of wine, will recreate this key.
+    # See http://bugs.winehq.org/show_bug.cgi?id=22450
+    $WINE regedit /d 'HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{9D20AAE8-0625-44B0-9CA7-71889C2254D9}'
 }
 
 unset_winver() {
