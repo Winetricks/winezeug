@@ -325,6 +325,8 @@ usage() {
     echo " sound=nas        Set sound driver to Nas"
     echo " sound=oss        Set sound driver to OSS"
     echo " sound=disabled   Disable sound"
+    echo " strictdrawordering=enabled Enable StrictDrawOrdering (default)"
+    echo " strictdrawordering=disabled Disable StrictDrawOrdering"
     echo " nt40          Set windows version to nt40"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
@@ -606,6 +608,19 @@ REGEDIT4
 
 _EOF_
     try_regedit "$WINETRICKS_TMP"/set-rtlm.reg
+}
+
+set_sdo() {
+    echo "Setting StrictDrawOrdering to $1"
+    cat > "$WINETRICKS_TMP"/set-sdo.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"StrictDrawOrdering"="$1"
+
+_EOF_
+    try_regedit "$WINETRICKS_TMP"/set-sdo.reg
+
 }
 
 set_vsm() {
@@ -3914,6 +3929,8 @@ do
     sound=nas|nas) set_sound_driver nas;;
     sound=oss|oss) set_sound_driver oss;;
     sound=disabled|sound=) set_sound_driver "";;
+    strictdrawordering=enabled) set_sdo enabled;;
+    strictdrawordering=disabled) set_sdo disabled;;
     version) print_version;;
     videomemorysize=512) set_videomemorysize 512;;
     videomemorysize=1024) set_videomemorysize 1024;;
