@@ -944,6 +944,12 @@ verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3
 load_assassinscreed() {
     load_autohotkey
 
+    if workaround_wine_bug 22392
+    then
+        # Don't hang at a dialog box when Detection crashes
+        sh "$WINETRICKS" nocrashdialog
+    fi
+
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
