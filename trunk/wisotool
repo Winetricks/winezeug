@@ -1533,9 +1533,15 @@ load_sims3() {
         ControlClick Finish, - InstallShield Wizard
     "
     iso_umount
+
     cd "$programfilesdir_unix/Electronic Arts/The Sims 3/Game/Bin"
-    
+    echo "Sims3 version info:"
+    cat skuversion.txt
+
+    if false
+    then
     currentversion=$(head -n 1 skuversion.txt | awk '{print $3}' | tr -d '\r\n')
+
     # FIXME: Find a way of determining the newest version from ea.com. The below code works, but the xml is outdated, and returns 1.4.6.00002. For now, hardcode it.
     # newestversion=$(wget -O - http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/sims3_sku2_update_manifest.xml | grep NewVersion= | head -n1 | awk -F\" '{print $2}')
     # FIXME: include a table of sha1sums so we can check the download
@@ -1549,7 +1555,7 @@ load_sims3() {
         winwait, - InstallShield Wizard, Complete
         ControlClick Finish, - InstallShield Wizard
     "
-
+    fi
 }
 
 #----------------------------------------------------------------
