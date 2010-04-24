@@ -196,6 +196,7 @@ Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Linux*Mint*7|Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
 Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
+Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Fedora*release*10*\(Cambridge\)) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
