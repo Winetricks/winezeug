@@ -672,14 +672,19 @@ verblist_add()
 {
     # Usage: verblist_add verbname "description" file1 file2 ...
     verbname=$1
+    description="$2"
     shift
-    description="$1"
     shift
-    menu_add $verbname "$description"
+    present=' [loaded]'
     for file
     do
        file_map="$file_map $file) echo $verbname;; "
+       if ! test -f "$WISOTOOL_CACHE"/$verbname/$file
+       then
+           present=''
+       fi
     done
+    menu_add $verbname "$description$present"
 }
 
 # Returns true if given verb is in the list
@@ -734,7 +739,7 @@ verblist_init
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000)" 3dmark2000_v11_100308.exe
+verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000) [download]" 3dmark2000_v11_100308.exe
 
 load_3dmark2000() {
     load_autohotkey
@@ -772,7 +777,7 @@ load_3dmark2000() {
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001)" 3dmark2000_v11_100308.exe
+verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001) [download]" 3dmark2000_v11_100308.exe
 
 load_3dmark2001() {
     load_autohotkey
@@ -810,7 +815,7 @@ load_3dmark2001() {
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark03 "3D Mark 03 (Futuremark, 2003)" 3DMark03_v360_1901.exe
+verblist_add 3dmark03 "3D Mark 03 (Futuremark, 2003) [download]" 3DMark03_v360_1901.exe
 
 load_3dmark03() {
     load_autohotkey
@@ -855,7 +860,7 @@ load_3dmark03() {
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark05 "3D Mark 05 (Futuremark, 2005)" 3DMark05_v130_1901.exe
+verblist_add 3dmark05 "3D Mark 05 (Futuremark, 2005) [download]" 3DMark05_v130_1901.exe
 
 load_3dmark05() {
     load_autohotkey
@@ -892,7 +897,7 @@ load_3dmark05() {
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark06 "3D Mark 06 (Futuremark, 2006)" 3DMark06_v120_1901.exe
+verblist_add 3dmark06 "3D Mark 06 (Futuremark, 2006) [download]" 3DMark06_v120_1901.exe
 
 load_3dmark06() {
     load_autohotkey
@@ -1271,7 +1276,7 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
 #----------------------------------------------------------------
 
-verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004)" PCMark04_v130_installer.exe
+verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
 
 load_pcmark04() {
     load_autohotkey
@@ -1324,7 +1329,7 @@ load_pcmark04() {
 
 #----------------------------------------------------------------
 
-verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005)" PCMark05_v130_1901.exe
+verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005) [download]" PCMark05_v130_1901.exe
 
 load_pcmark05() {
     load_autohotkey
@@ -1376,7 +1381,7 @@ load_pcmark05() {
 #----------------------------------------------------------------
 
 # Not finished
-#verblist_add passmark7 "Performance Test 7 (Passmark, 2010)" petst.exe
+#verblist_add passmark7 "Performance Test 7 (Passmark, 2010) [download]" petst.exe
 
 load_passmark7() {
     load_autohotkey
@@ -1396,7 +1401,7 @@ load_passmark7() {
 
 #----------------------------------------------------------------
 
-verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009)" PlantsVsZombiesSetup.exe
+verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009) [download]" PlantsVsZombiesSetup.exe
 
 load_plantsvszombies() {
     load_autohotkey
@@ -1421,7 +1426,7 @@ load_plantsvszombies() {
 
 #----------------------------------------------------------------
 
-verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009)" nzd_ResidentEvil5_Benchmark.exe
+verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
     load_autohotkey
@@ -1698,7 +1703,7 @@ load_stfu() {
 
 #----------------------------------------------------------------
 
-verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010)" Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
 
 load_unigine_heaven() {
     load_autohotkey
@@ -1734,7 +1739,7 @@ load_unigine_heaven() {
 
 #----------------------------------------------------------------
 
-verblist_add wog           "World of Goo demo (2D Boy, 2008)" WorldOfGooDemo.1.0.exe
+verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
 
 load_wog() {
     load_autohotkey
