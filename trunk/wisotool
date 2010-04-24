@@ -178,6 +178,9 @@ usage() {
     echo "Pseudopackages:"
     echo " load          Load a disc into the iso cache"
     echo " load=KEY      Load a disc with given key; only works from commandline at moment"
+
+    # Show the other help message, too
+    load_help
 }
 
 #----------------------------------------------------------------
