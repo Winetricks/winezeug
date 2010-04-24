@@ -1538,24 +1538,17 @@ load_sims3() {
     echo "Sims3 version info:"
     cat skuversion.txt
 
-    if false
-    then
-    currentversion=$(head -n 1 skuversion.txt | awk '{print $3}' | tr -d '\r\n')
-
-    # FIXME: Find a way of determining the newest version from ea.com. The below code works, but the xml is outdated, and returns 1.4.6.00002. For now, hardcode it.
-    # newestversion=$(wget -O - http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/sims3_sku2_update_manifest.xml | grep NewVersion= | head -n1 | awk -F\" '{print $2}')
-    # FIXME: include a table of sha1sums so we can check the download
-    newestversion=1.6.6.002001
-    download sims3 http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_${newestversion}_from_${currentversion}.exe
+    download sims3 http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_1.6.6.002001_from_1.0.631.00001.exe 02703d296417750005326ff0d37295fa434a3f49
 
     cd "$WISOTOOL_CACHE"/sims3
     ahk_do "
-        run Sims3_${newestversion}_from_${currentversion}.exe
+        run Sims3_1.6.6.002001_from_1.0.631.00001.exe
         SetTitleMatchMode, 2
         winwait, - InstallShield Wizard, Complete
         ControlClick Finish, - InstallShield Wizard
     "
-    fi
+
+    # FIXME: apply next patch, too
 }
 
 #----------------------------------------------------------------
@@ -1677,7 +1670,9 @@ load_stfu() {
         SetTitleMatchMode, 2
         send {Enter}
         winwait, Setup, Completing
-        ControlClick Finish
+        send {Space}{Tab} ; don't show readme
+        send {Space}{Tab} ; don't start app
+        send {Enter}
     "
     iso_umount
 
@@ -1715,6 +1710,7 @@ load_unigine_heaven() {
     ahk_do "
         run msiexec /i Unigine_Heaven-2.0.msi
         WinWait ahk_class MsiDialogCloseClass 
+        Sleep 1000
         Send {Enter}
         WinWait ahk_class MsiDialogCloseClass, License
         ControlClick Button1 ; Accept
