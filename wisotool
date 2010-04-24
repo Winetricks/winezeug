@@ -165,8 +165,6 @@ usage() {
     set +x
     # WARNING: do not use single quote in any package description; that breaks the gui menu.
     echo "Script to install games automatically."
-    echo "If the game is not marked with [download] or [loaded], you have to load each disc first."
-    echo ""
     echo "Usage: $0 [options] package [package] ..."
     echo ""
     echo "Options:"
@@ -180,7 +178,9 @@ usage() {
     echo " load=KEY      Load a disc with given key; only works from commandline at moment"
 
     # Show the other help message, too
-    load_help
+    case $GUI in
+    0) load_help ;;
+    esac
 }
 
 #----------------------------------------------------------------
@@ -1666,6 +1666,7 @@ load_stfu() {
     load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
+    warn "Starting installer.  This can be very slow, please be patient."
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
