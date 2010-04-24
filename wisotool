@@ -1375,7 +1375,8 @@ load_pcmark05() {
 
 #----------------------------------------------------------------
 
-verblist_add passmark7 "Performance Test 7 (Passmark, 2010)" petst.exe
+# Not finished
+#verblist_add passmark7 "Performance Test 7 (Passmark, 2010)" petst.exe
 
 load_passmark7() {
     load_autohotkey
