@@ -1,0 +1,26 @@
+#!/bin/sh
+# Verify that wisotool verbs run to completion
+
+set -x
+export WINE=$HOME/wine-git/wine
+wineserver=$HOME/wine-git/server/wineserver
+srcdir=`basename $0`
+srcdir=`cd $srcdir; pwd`
+
+# verbs known to not work yet
+BLACKLIST="starcraft$|passmark7"
+
+for app in `sh wisotool ls | egrep -v "$BLACKLIST" `
+do
+    export WINEPREFIX=$HOME/.wine-wisotooltest-$app
+    rm -rf $WINEPREFIX
+    # Isolate us from the user's home directory
+    sh winetricks sandbox
+    echo "Installing $app"
+    time sh wisotool $app
+    echo -n "Done installing $app, disk usage "
+    du -sh $WINEPREFIX
+    $wineserver -w
+    echo "Wineserver done."
+    ps augxw | grep exe
+done
