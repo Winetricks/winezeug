@@ -164,9 +164,10 @@ die_if_user_not_dirowner() {
 usage() {
     set +x
     # WARNING: do not use single quote in any package description; that breaks the gui menu.
+    echo "Script to install games automatically."
+    echo "If the game is not marked with [download] or [loaded], you have to load each disc first."
+    echo ""
     echo "Usage: $0 [options] package [package] ..."
-    echo "This script can catalog your .iso files, and later install"
-    echo "Windows apps from them."
     echo ""
     echo "Options:"
     echo " -q         quieter"
@@ -175,8 +176,8 @@ usage() {
     echo "Packages:"
     sort "$WISOTOOL_VERBS"/menutext
     echo "Pseudopackages:"
-    echo " load          Load a new iso"
-    echo " load=KEY      Load a new iso (with given key; only works from commandline at moment)"
+    echo " load          Load a disc into the iso cache"
+    echo " load=KEY      Load a disc with given key; only works from commandline at moment"
 }
 
 #----------------------------------------------------------------
@@ -675,7 +676,8 @@ verblist_add()
     description="$2"
     shift
     shift
-    present=' [loaded]'
+    present=''
+    test $verbname != 'help' && present=' [loaded]'
     for file
     do
        file_map="$file_map $file) echo $verbname;; "
@@ -1223,6 +1225,15 @@ load_gta_vc() {
     fi
 }
 
+
+#----------------------------------------------------------------
+
+verblist_add help     "How to use this tool"
+
+load_help() {
+    warn "If the game is not marked with {download} or {loaded} in the menu, you have to insert its disc and give the 'load' command before you can choose that game in the menu.  If the game has multiple discs, you have to do this for each disc."
+    warn "If the game has an install key, you have to enter that when loading the first disc.  (You have to do that from the commandline, e.g. sh wisotool load=XXXX-YYYY-ZZZZ.)"
+}
 
 #----------------------------------------------------------------
 
