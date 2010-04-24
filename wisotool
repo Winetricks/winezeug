@@ -1435,7 +1435,8 @@ load_re5bench() {
         run nzd_ResidentEvil5_Benchmark.exe
         WinWait ahk_class MsiDialogCloseClass 
         Sleep 1000
-        ControlClick Button1 ; Next
+        Send {Enter}
+        ; ControlClick Button1 ; Next.  Doesn't work?
         WinWait ahk_class MsiDialogCloseClass, License
         ControlClick Button3 ; Accept
         ControlClick Button5 ; Next
