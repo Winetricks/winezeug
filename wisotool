@@ -955,7 +955,9 @@ load_assassinscreed() {
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
         winwait, InstallShield Wizard, Language
-        ControlClick Next, InstallShield Wizard
+        ; wine bug? - clicking on Next does nothing until you move the mouse over the installer window
+        ;ControlClick Next, InstallShield Wizard
+        Send {Enter}
         winwait, InstallShield Wizard, Welcome
         ControlClick Next, InstallShield Wizard
         winwait, InstallShield Wizard, License
