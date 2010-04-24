@@ -1696,7 +1696,7 @@ load_stfu() {
         SetTitleMatchMode, 2
         winwait, Patch
         send {Enter}
-        winwait, Patch, Successful
+        winwait, Patch, Finish
         send {Enter}
     "
 }
