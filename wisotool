@@ -1049,7 +1049,7 @@ load_baldursgate2() {
         winwait, Baldur's Gate, Setup has finished installing
         Send {Enter}
         "
-    try rm -rf "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    try sudo rm -rf "$WISOTOOL_CACHE"/$PACKAGE/tempcd
 }
 
 #----------------------------------------------------------------
