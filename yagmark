@@ -159,6 +159,9 @@ do_report() {
     echo "> glxinfo | egrep 'vendor|renderer|version'"
     glxinfo | egrep 'vendor|renderer|version'
 
+    echo "> cat /var/log/messages | grep NVIDIA"
+    cat /var/log/messages | grep NVIDIA
+
     cd "$YAGMARK_TMP"
     for file in *.txt
     do
