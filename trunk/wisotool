@@ -1021,35 +1021,62 @@ load_baldursgate2() {
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
     
     ahk_do "
+        SetTitleMatchMode, 2
         run "$WISOTOOL_CACHE"/$PACKAGE/tempcd/setup.exe
         winwait, Baldur's Gate, Welcome to the Baldur's Gate
-        send {N}
+        sleep 1000
+        ControlClick, Button1, Baldur's Gate, Welcome to the Baldur's Gate
         winwait, Baldur's Gate, Please read the following License Agreement
-        sleep 500
-        ControlClick, &Yes, Baldur's Gate, Please read the following License Agreement
+        sleep 1000
+        ControlClick, Button2, Baldur's Gate, Please read the following License Agreement
         winwait, Baldur's Gate, Setup will install Baldur's Gate
-        send {N}
+        sleep 1000
+        ControlClick, Button1, Baldur's Gate, Setup will install Baldur's Gate
         winwait, Baldur's Gate, Click the type of Setup you prefer
+        sleep 1000
+        ControlClick, Listbox1, Baldur's Gate, Click the type of Setup you prefer
         send {F}
-        send {Enter}
+        ControlClick, Button2, Baldur's Gate, Click the type of Setup you prefer
         winwait, Baldur's Gate, Setup will add program icons
-        sleep 500
-        send {Enter}
+        sleep 1000
+        ControlClick, Button2, Baldur's Gate, Setup will add program icons
         winwait, Setup Needs The Next Disk
+        sleep 1000
         Send {Home}
         Send {Shift down}
         Send {End}
         Send I:{Enter}
         winwait, Information
-        Send {Enter}
+        sleep 1000
+        ControlClick, Button1, Information
         Sleep 5000
         process, wait, Promo.exe, 5
         promopid = %ErrorLevel%
         winclose, ahk_pid %promopid%
         winwait, Baldur's Gate, Setup has finished installing
-        Send {Enter}
+        sleep 1000
+        ControlClick, Button4, Baldur's Gate, Setup has finished installing
         "
     try sudo rm -rf "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+
+    # Install latest patch
+    download baldursgate2 http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
+    # AHK doesn't like its name...
+    try cp -f "$WISOTOOL_CACHE/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_CACHE/baldursgate2/baldurs_gate_2_patch.exe"
+
+    cd $WISOTOOL_CACHE/baldursgate2
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, baldurs_gate_2_patch.exe
+        winwait InstallShield Wizard, Welcome to the InstallShield Wizard
+        sleep 1000
+        ControlClick Button1, InstallShield Wizard, Welcome to the InstallShield Wizard
+        winwait InstallShield Wizard, InstallShield Wizard Complete
+        sleep 1000
+        ControlClick Button4, InstallShield Wizard, InstallShield Wizard Complete
+        exit"
+    cd -
+    try rm "$WISOTOOL_CACHE/baldursgate2/baldurs_gate_2_patch.exe"
 }
 
 #----------------------------------------------------------------
