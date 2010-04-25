@@ -15,6 +15,8 @@ programfilesdir_x86_unix="$DRIVE_C/Program Files"
 YAGMARK_TMP="$DRIVE_C"/yagmarktmp
 YAGMARK_TMP_WIN='c:\yagmarktmp'
 
+olddir=`pwd`
+
 rm -rf "$YAGMARK_TMP"
 mkdir -p "$YAGMARK_TMP"
 
@@ -63,6 +65,7 @@ run_3dmark2000()
         send {Enter}
         "
     cat "$YAGMARK_TMP"/3dmark2000.txt
+    cd "$olddir"
 }
 
 run_3dmark2001()
@@ -109,6 +112,7 @@ run_re5bench()
     # Can this be scraped/controlled at all with autohotkey?  Maybe if run in window...
     cd "$exedir"
     $WINE "$exe"
+    cd "$olddir"
 }
 
 run_unigine_heaven()
@@ -126,6 +130,7 @@ run_unigine_heaven()
     # Can this be scraped/controlled at all with autohotkey?  Maybe if run in window...
     cd "$exedir"
     $WINE $commandline
+    cd "$olddir"
 }
 
 do_report() {
@@ -155,8 +160,6 @@ do_report() {
     glxinfo | egrep 'vendor|renderer|version'
 
     cd "$YAGMARK_TMP"
-    pwd
-    ls
     for file in *.txt
     do
        echo "> cat $file"
@@ -166,6 +169,8 @@ do_report() {
 }
 
 # TODO: add a wisotool-style menu
+echo running run_$1
 run_$1
+echo running do_report
 do_report > yagmark-`hostname`-`date +%F`.txt
-
+echo done
