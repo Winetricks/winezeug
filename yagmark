@@ -9,20 +9,57 @@ WINE="${WINE:-wine}"
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
 DRIVE_C="$WINEPREFIX/drive_c"
 programfilesdir_x86_unix="$DRIVE_C/Program Files"
+YAGMARK_TMP="$DRIVE_C"/yagmarktmp
+YAGMARK_TMP_WIN='c:\yagmarktmp'
+
+rm -rf "$YAGMARK_TMP"
+mkdir -p "$YAGMARK_TMP"
+
+#----------------------------------------------------------------
+
+ahk_do() {
+   echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
+   cd "$programfilesdir_x86_unix"/AutoHotkey
+   $WINE "AutoHotkey.exe" "$YAGMARK_TMP"/tmp.ahk
+   cd "$olddir"
+}
+
+#----------------------------------------------------------------
 
 run_3dmark2000()
 {
-    exe="$programfilesdir_x86_unix/MadOnion.com/3DMark2000/3DMark2000.exe"
+    exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2000"
+    rm -f "$YAGMARK_TMP"/3dmark2000.txt
+
     # Install if needed
-    if ! test -f "$exe"
+    if ! test -f "$exe_dir/3DMark2000.exe"
     then
         sh wisotool 3dmark2000
     fi
-
-    # Use Autohotkey to start app, click 'Change', clear all, select just one test,
-    # 'ok', 'Benchmark', wait for it to finish, then click Details...
-    # and scrape results from non-copyable syslist in dialog.
-    $WINE "$exe"
+    cd "$exe_dir"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, 3DMark2000.exe
+        winwait, 3DMark2000, Welcome
+        Send B
+        winwait, Overall Score, Congratulations
+        ControlClick, Button7, Overall Score, Congratulations
+        winactivate, 3DMark2000
+        sleep 500
+        send ^s
+        winwait, Save As
+        send {DEL 8}
+        send $YAGMARK_TMP_WIN\\\\3dmark2000
+        send !t3
+        send {Enter}
+        sleep 500
+        send !fx
+        sleep 1000
+        send n
+        WinClose
+        send {Enter}
+        "
+    cat "$YAGMARK_TMP"/3dmark2000.txt
 }
 
 run_3dmark2001()
