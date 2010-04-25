@@ -6,7 +6,7 @@
 
 # TODO: make these work on Windows, too.  For now use abbreviated, wine-only settings.
 WINE="${WINE:-wine}"
-WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 DRIVE_C="$WINEPREFIX/drive_c"
 programfilesdir_x86_unix="$DRIVE_C/Program Files"
 YAGMARK_TMP="$DRIVE_C"/yagmarktmp
@@ -125,5 +125,44 @@ run_unigine_heaven()
     $WINE $commandline
 }
 
+do_report() {
+    echo ">-------- begin yagmark report ---------"
+    echo "> hostname"
+    hostname
+
+    echo "> uname -a"
+    uname -a
+
+    echo "> echo $WINE"
+    echo $WINE
+
+    echo "> $WINE --version"
+    $WINE --version
+
+    echo "> cat /etc/issue"
+    cat /etc/issue
+
+    echo "> cat /proc/cpuinfo"
+    cat /proc/cpuinfo
+
+    echo "> lspci | grep VGA"
+    lspci | grep VGA 
+
+    echo "> glxinfo | egrep 'vendor|renderer|version'"
+    glxinfo | egrep 'vendor|renderer|version'
+
+    cd "$YAGMARK_TMP"
+    pwd
+    ls
+    for file in *.txt
+    do
+       echo "> cat $file"
+       cat "$file"
+    done
+    echo ">-------- end yagmark report ---------"
+}
+
 # TODO: add a wisotool-style menu
 run_$1
+do_report > yagmark-`hostname`-`date +%F`.txt
+
