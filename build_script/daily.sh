@@ -726,6 +726,7 @@ preptests
 # Use a really high display to avoid conflicts.
 # FIXME: need a way to find used display numbers and do this better...
 Xephyr :97 -ac -screen 800x600x8 & xephyrpid=$!
+sleep 10s
 DISPLAY=:97 runtests
 kill $xephyrpid
 }
@@ -741,6 +742,7 @@ preptests
 # Use a really high display to avoid conflicts.
 # FIXME: need a way to find used display numbers and do this better...
 Xephyr :98 -ac -screen 800x600x16 & xephyrpid=$!
+sleep 10s
 DISPLAY=:98 runtests
 kill $xephyrpid
 }
@@ -756,6 +758,7 @@ preptests
 # Use a really high display to avoid conflicts.
 # FIXME: need a way to find used display numbers and do this better...
 Xephyr :99 -ac -screen 800x600x24 & xephyrpid=$!
+sleep 10s
 DISPLAY=:99 runtests
 kill $xephyrpid
 }
