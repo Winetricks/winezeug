@@ -6,7 +6,10 @@
 
 # TODO: make these work on Windows, too.  For now use abbreviated, wine-only settings.
 WINE="${WINE:-wine}"
+export WINE
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
+export WINEPREFIX
+
 DRIVE_C="$WINEPREFIX/drive_c"
 programfilesdir_x86_unix="$DRIVE_C/Program Files"
 YAGMARK_TMP="$DRIVE_C"/yagmarktmp
