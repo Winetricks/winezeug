@@ -992,7 +992,7 @@ verblist_add baldursgate2       "Baldurs Gate 2 - Shadows of Amn (Bioware, 2000)
   cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso \
   429872605dad10433c3c581a1c11eba4d0988c46.iso \
   a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso \
-  94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso.iso
+  94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
 
 load_baldursgate2() {
     load_autohotkey
@@ -1057,7 +1057,8 @@ load_baldursgate2() {
         sleep 1000
         ControlClick, Button4, Baldur's Gate, Setup has finished installing
         "
-    try sudo rm -rf "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    try chmod +w -R "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    try rm -rf "$WISOTOOL_CACHE"/$PACKAGE/tempcd
 
     # Install latest patch
     download baldursgate2 http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
@@ -1077,6 +1078,17 @@ load_baldursgate2() {
         exit"
     cd -
     try rm "$WISOTOOL_CACHE/baldursgate2/baldurs_gate_2_patch.exe"
+    
+    if workaround_wine_bug 22482
+    then
+        sh "$WINETRICKS" -q ddr=opengl
+        warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
+    fi
+    
+    if workaround_wine_bug 22493
+    then
+        warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
+    fi
 }
 
 #----------------------------------------------------------------
