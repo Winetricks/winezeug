@@ -1093,6 +1093,50 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
+verblist_add bioshock       "Bioshock (2K Games, 2007)" \
+  deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+
+load_bioshock() {
+    load_autohotkey
+    
+    # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
+    sh "$WINETRICKS" -q vcrun2005sp1
+    
+    # Will perform a full install, so no cd's needed
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+    
+    # FIXME: fails unless the real DVD is in the drive. Fails on the iso.
+    ahk_do "
+        SetTitleMatchMode, 2
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        winwait, BioShock - InstallShield Wizard, Choose Setup Language
+        sleep 2000
+        ControlClick, Button3, BioShock - InstallShield Wizard, Choose Setup Language
+        ControlClick, Button3, BioShock - InstallShield Wizard, Choose Setup Language ; Installer seems fidgety
+        winwait, BioShock - InstallShield Wizard, Welcome to the InstallShield Wizard for BioShock
+        sleep 1000
+        ControlClick, Button1, BioShock - InstallShield Wizard, Welcome to the InstallShield Wizard for BioShock
+        winwait, BioShock - InstallShield Wizard, Please read the following license agreement carefully
+        sleep 1000
+        ControlClick, Button5, BioShock - InstallShield Wizard, Please read the following license agreement carefully
+        sleep 1000
+        ControlClick, Button2, BioShock - InstallShield Wizard, Please read the following license agreement carefully
+        winwait, BioShock - InstallShield Wizard, Select the setup type to install
+        sleep 1000
+        ControlClick, Button2, BioShock - InstallShield Wizard, Select the setup type to install
+        winwait, BioShock - InstallShield Wizard, Click Install to begin the installation
+        ControlClick, Button1, BioShock - InstallShield Wizard, Click Install to begin the installation
+        winwait, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        sleep 1000
+        ControlClick, Button6, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        sleep 1000
+        ControlClick, Button4, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        "
+}
+
+#----------------------------------------------------------------
+
 verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
   51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
