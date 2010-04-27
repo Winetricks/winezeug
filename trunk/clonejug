@@ -1,0 +1,28 @@
+#!/bin/sh
+# Usage: clonejug JUGNAME
+# Clones a master jug for a wineprefix containing zero or more wine applications.
+# The wineprefix is cloned to $WINEPREFIX or ~/.wine-jug-$JUGNAME if that's not set.
+# The clone links readonly files from the master, and copies files that must be read-write.
+
+set -x
+set -e
+
+JUGNAME=$1
+
+WINEPREFIX=${WINEPREFIX:-$HOME/.wine-jug-$JUGNAME}
+WINEJUGS=${WINEJUGS:-/usr/lib/wine/jugs}
+JUG="${WINEJUGS}/${JUGNAME}"
+
+# Create all directories from $JUG in $WINEPREFIX
+mkdir $WINEPREFIX
+cd $JUG
+find . -type d -print0 | (cd $WINEPREFIX; xargs -0 mkdir -p )
+
+# Create symlinks for all non-user files
+find drive_c -type d -iname users -prune -o -type f -exec ln -s "$JUG/{}" "$WINEPREFIX/{}" \;
+
+# Copy all user files
+find .update-timestamp *.reg drive_c/users -type f -exec cp -a "{}" "$WINEPREFIX/{}" \;
+
+# Create drives
+ln -s ../drive_c "$WINEPREFIX/dosdevices/c:"
