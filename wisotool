@@ -565,7 +565,21 @@ load_iso() {
 
    # Copy disc to .iso file, display progress every 5 seconds
    # Use conv=noerror,sync to replace unreadable blocks with zeroes
-   dd if=/dev/sr0 of="$WISOTOOL_CACHE"/temp.iso bs=2048 conv=noerror,sync & pid=$!
+   case $1 in
+   dd) 
+     dd if=$dev of="$WISOTOOL_CACHE"/temp.iso bs=2048 conv=noerror,sync &
+     pid=$!
+     ;;
+   ddrescue) 
+     if test `which ddrescue` = ""
+     then
+         die "Please install ddrescue first."
+     fi
+     ddrescue -v -b 2048 $dev "$WISOTOOL_CACHE"/temp.iso &
+     pid=$!
+     ;;
+   esac
+
    # Since we're running dd in the background, register a handler to kill it if user presses ^C
    trap cleanup 1 2 3 6
    while ps -p $pid > /dev/null 2>&1
@@ -1323,6 +1337,29 @@ load_help() {
 
 #----------------------------------------------------------------
 
+# Note: may require load_harder.  Result may vary in length and checksum.
+
+verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
+  39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
+
+load_manhole() {
+    cd $WISOTOOL_TMP
+
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
+    mkdir -p "$DRIVE_C"/manhole
+    try cp -r "$ISO_MOUNT_ROOT"/* "$DRIVE_C"/manhole
+    iso_umount
+
+    if workaround_wine_bug 22502
+    then
+        warn "Run with wine-1.0 to avoid crash on startup.  Also cancel when prompted to install Quicktime."
+    fi
+}
+
+#----------------------------------------------------------------
+
 verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
   c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
 
@@ -2002,7 +2039,8 @@ do
         ;;
     -v) set -x;;
     ls) list_available_verbs;;
-    load) load_iso;;
+    load) load_iso dd;;
+    load_harder) load_iso ddrescue;;
     load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
     migrate) migrate_files;;
     version) print_version;;
