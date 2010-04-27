@@ -1115,10 +1115,16 @@ load_bioshock() {
     load_autohotkey
     
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
-    sh "$WINETRICKS" -q vcrun2005sp1
+    if workaround_wine_bug 22501
+    then
+        sh "$WINETRICKS" -q vcrun2005
+    fi
     
     # Will perform a full install, so no cd's needed
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+    
+    # Don't trim the hyphen's "-", the installer won't proceed without them.
+    BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.txt`
     
     # FIXME: fails unless the real DVD is in the drive. Fails on the iso.
     ahk_do "
@@ -1146,7 +1152,44 @@ load_bioshock() {
         ControlClick, Button6, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
         sleep 1000
         ControlClick, Button4, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        winwait, Welcome, &Next
+        Sleep 1000
+        ControlClick, Button2, Welcome, &Next
+        winwait, Enter your serial number, &Activate
+        Sleep 1000
+        ControlClick, Edit1, Enter your serial number, &Activate
+        send {Raw}$BIOSHOCK_KEY
+        Sleep 1000
+        ControlClick, Button1, Enter your serial number, &Activate
+        winwait, Activation Successful
+        Sleep 1000
+        Controlclick, Button3, Activation Successful
         "
+    # According to the AppDB, 1.1 may have problems with Wine. For now, don't run it.
+    # FIXME: Test and if there's a Wine bug, file one/put this in an if workaround_wine_bug().
+    #
+    #download $PACKAGE http://downloads.2kgames.com/bioshock/patch/Bioshock_Version_11_Patch_Worldwide_Retail.zip
+    #cd $WISOTOOL_TMP
+    #unzip "$WISOTOOL_CACHE/$PACKAGE/Bioshock_Version_11_Patch_Worldwide_Retail.zip"
+    #ahk_do "
+    #    run Bioshock Version 1.1 Patch Worldwide Retail.exe
+    #    winwait, BioShock 1.1 Patch, This patch is to be applied ONLY to the Uncensored Retail Version of BioShock
+    #    sleep 1000
+    #    ControlClick, Button1, BioShock 1.1 Patch, This patch is to be applied ONLY to the Uncensored Retail Version of BioShock
+    #    winwait, Location Confirmation, Is located at
+    #    sleep 1000
+    #    ControlClick, Button1, Location Confirmation, Is located at
+    #    winwait, License Agreement, Please read the following license agreement carefully.
+    #    sleep 1000
+    #    ControlClick, Button1, License Agreement, Please read the following license agreement carefully.
+    #    winwait, BioShock Patched Successfully!, BioShock patched to version 1.1 successfully!
+    #    sleep 1000
+    #    ControlClick, Button1, BioShock Patched Successfully!, BioShock patched to version 1.1 successfully!
+    #    "
+    if workaround_wine_bug 6971
+    then
+        sh "$WINETRICKS" -q mwo=force
+    fi
 }
 
 #----------------------------------------------------------------
