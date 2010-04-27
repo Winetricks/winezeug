@@ -1,0 +1,15 @@
+#!/bin/sh
+# Install the apps saved by savejugtest.
+# Assumes that savejugtest was run as user bravo.
+set -x
+set -e
+WINEJUGS=/home/bravo/jugs 
+export WINEJUGS
+
+for verb in wog 3dmark2000
+do
+   WINEPREFIX=$HOME/.wine-cloned-$verb
+   export WINEPREFIX
+   rm -rf $WINEPREFIX
+   time sh clonejug $verb
+done

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Install a few apps, then save them in jugs
+set -x
+set -e
+WINEJUGS=$HOME/jugs 
+export WINEJUGS
+rm -rf $WINEJUGS
+mkdir $WINEJUGS
+
+WINESERVER=${WINESERVER:-wineserver}
+
+for verb in wog 3dmark2000
+do
+   WINEPREFIX=$HOME/.wine-staging-$verb
+   export WINEPREFIX
+   rm -rf $WINEPREFIX
+   time sh winetricks sandbox
+   time sh wisotool $verb
+   time sh $WINESERVER -w
+   time sh savejug $verb
+done
