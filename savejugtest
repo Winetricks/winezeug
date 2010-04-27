@@ -16,6 +16,6 @@ do
    rm -rf $WINEPREFIX
    time sh winetricks sandbox
    time sh wisotool $verb
-   sh $WINESERVER -w
+   time $WINESERVER -w
    time sh savejug $verb
 done
