@@ -1,0 +1,28 @@
+#!/bin/sh
+# Usage: savejug JUGNAME
+# Saves a master jug for a wineprefix containing zero or more wine applications.
+# The wineprefix to save is $WINEPREFIX or ~/.wine if that's not set.
+# Later, to use the saved master jug, run clonejug JUGNAME.  That creates a wineprefix 
+# that links readonly files from the master, and copies files that must be read-write.
+# If you need root to write to the destination (true by default), run this script as root.
+
+set -x
+set -e
+
+JUGNAME=$1
+
+WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+WINEJUGS=${WINEJUGS:-/usr/lib/wine/jugs}
+JUG="${WINEJUGS}/${JUGNAME}"
+
+# Just copies $WINEPREFIX to $JUG, but skips known cache directories
+cd $WINEPREFIX
+mkdir $JUG
+rsync -a --perms \
+  --exclude 'Temporary Internet Files'  \
+  --exclude 'Temp'  \
+  --exclude 'temp'  \
+    * $JUG/
+mkdir -p $JUG/drive_c/windows/temp
+echo disable > $JUG/.update-timestamp
+
