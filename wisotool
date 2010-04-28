@@ -669,7 +669,7 @@ load_autohotkey()
 verblist_init()
 {
     # Must call this before first call to verblist_add
-    file_map="case \$1 in "
+    file_map="case \"\$1\" in "
     # Clear menu
     rm -f "$WISOTOOL_TMP"/menutext
 }
@@ -699,8 +699,8 @@ verblist_add()
     test $verbname != 'help' && present=' [loaded]'
     for file
     do
-       file_map="$file_map $file) echo $verbname;; "
-       if ! test -f "$WISOTOOL_CACHE"/$verbname/$file
+       file_map="$file_map \"$file\") echo $verbname;; "
+       if ! test -f "$WISOTOOL_CACHE/$verbname/$file"
        then
            present=''
        fi
@@ -730,10 +730,11 @@ map_file_to_verb()
 # Output a list of the verbs for which the needed files are in the cache
 list_available_verbs()
 {
-    find "$WISOTOOL_CACHE/." -type f | sed 's,.*/,,' > /tmp/wfiles
-    for file in `cat /tmp/wfiles`
+    # Find files in cache, output pathnames without top level directory.
+    # Use "while read" rather than "for", since we have some filenames with spaces.
+    (cd "$WISOTOOL_CACHE"; find . -type f) | sed 's,^./[^/]*/,,' | while read file
     do
-        map_file_to_verb $file
+        map_file_to_verb "$file"
     done | sort -u
 }
 
@@ -1783,7 +1784,7 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
-verblist_add starcraft2    "Starcraft II beta (Blizzard, 2010)" 
+verblist_add starcraft2    "Starcraft II beta (Blizzard, 2010)" "StarCraft II Beta enUS 13891 Installer/Installer.exe"
 
 load_starcraft2() {
     load_autohotkey
@@ -1821,6 +1822,11 @@ load_starcraft2() {
         winwait, StarCraft II v, update was successful
         winclose
     "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\StarCraft II Beta"
+"StarCraft II.exe"
+__EOF__
 }
 
 #----------------------------------------------------------------
