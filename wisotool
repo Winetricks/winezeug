@@ -1137,6 +1137,11 @@ load_baldursgate2() {
     then
         warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
     fi
+
+    if workaround_wine_bug 22511
+    then
+        warn "Until wine bug 22511 is fixed, you should use a virtual desktop, or baldur's gate will only take up part of your screen in full screen mode."
+    fi
 }
 
 #----------------------------------------------------------------
