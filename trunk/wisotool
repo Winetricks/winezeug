@@ -1048,21 +1048,21 @@ load_baldursgate2() {
     # Possible wine bug: cd is still in use, even if wine eject is used. Workaround it by
     # copying all the cd's to a directory, and running the installer from there.
     # You still need the first CD mounted at the end, however...
-    if test ! -d "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    if test ! -d "$WISOTOOL_TMP"/$PACKAGE/tempcd
     then
-        try mkdir -p "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try mkdir -p "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
         sleep 5s
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
         sleep 5s
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
         sleep 5s
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
         sleep 5s
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
     fi
     
     # Will perform a full install, so no cd's needed
@@ -1070,7 +1070,7 @@ load_baldursgate2() {
     
     ahk_do "
         SetTitleMatchMode, 2
-        run "$WISOTOOL_CACHE"/$PACKAGE/tempcd/setup.exe
+        run "$WISOTOOL_TMP"/$PACKAGE/tempcd/setup.exe
         winwait, Baldur's Gate, Welcome to the Baldur's Gate
         sleep 1000
         ControlClick, Button1, Baldur's Gate, Welcome to the Baldur's Gate
@@ -1105,15 +1105,15 @@ load_baldursgate2() {
         sleep 1000
         ControlClick, Button4, Baldur's Gate, Setup has finished installing
         "
-    try chmod +w -R "$WISOTOOL_CACHE"/$PACKAGE/tempcd
-    try rm -rf "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    try chmod +w -R "$WISOTOOL_TMP"/$PACKAGE/tempcd
+    try rm -rf "$WISOTOOL_TMP"/$PACKAGE/tempcd
 
     # Install latest patch
     download baldursgate2 http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
     # AHK doesn't like its name...
-    try cp -f "$WISOTOOL_CACHE/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_CACHE/baldursgate2/baldurs_gate_2_patch.exe"
+    try cp -f "$WISOTOOL_CACHE/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
 
-    cd $WISOTOOL_CACHE/baldursgate2
+    cd "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
         run, baldurs_gate_2_patch.exe
@@ -1125,7 +1125,7 @@ load_baldursgate2() {
         ControlClick Button4, InstallShield Wizard, InstallShield Wizard Complete
         exit"
     cd -
-    try rm "$WISOTOOL_CACHE/baldursgate2/baldurs_gate_2_patch.exe"
+    try rm "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
     
     if workaround_wine_bug 22482
     then
