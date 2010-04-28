@@ -795,6 +795,13 @@ load_3dmark2000() {
         ControlClick Button1  ; Unclick View Readme
         ControlClick Button4  ; Finish
     "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\MadOnion.com\3DMark2000"
+REM possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
+.\3DMark2000
+__EOF__
+
 }
 
 #----------------------------------------------------------------
@@ -878,6 +885,10 @@ load_3dmark03() {
         Send {Tab}
         Send {Enter}
     "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Futuremark\3DMark03"
+3DMark03
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -911,10 +922,16 @@ load_3dmark05() {
         ControlClick Button1 ; Uncheck view readme
         ControlClick Button3 ; Finish
     "
+    ARGS=""
     if workaround_wine_bug 22392
     then
         warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
+        ARGS="-nosysteminfo"
     fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Futuremark\3DMark05"
+3DMark05 $ARGS
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -958,10 +975,17 @@ load_3dmark06() {
         # "Demo" button doesn't work without this
         sh "$WINETRICKS" -q d3dx9_28 d3dx9_36
     fi
+    ARGS=""
     if workaround_wine_bug 22392
     then
         warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
+        ARGS="-nosysteminfo"
     fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Futuremark\3DMark06"
+3DMark06 $ARGS
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1000,6 +1024,13 @@ load_assassinscreed() {
         send {Enter}
     "
     iso_umount
+
+    # Should run AssassinsCreed_Launcher.exe, but that fails on Wine
+    # Should give option to run AssassinsCreed_Dx10.exe, but that fails on Wine
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Ubisoft\Assassin's Creed"
+AssassinsCreed_Dx9.exe
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1265,6 +1296,11 @@ load_diablo2() {
     killall "Game.exe"
 
     warn "When starting the game, be patient, wait until the menu appears.  The game seems to hang if it looses focus, see bug 14456, you may need to set winecfg to virtual desktop."
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Diablo II"
+"Diablo II.exe"
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1312,6 +1348,11 @@ load_dragonage() {
     then
         try "$WINETRICKS" -q strictdrawordering=disabled
     fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Dragon Age"
+bin_ship\daorigins.exe
+__EOF__
 }
 
  #----------------------------------------------------------------
@@ -1505,6 +1546,11 @@ load_pcmark04() {
     then
         warn "You may need to apply the patch from bug 22402 to avoid a crash in the tumbling blocks test."
     fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Futuremark\PCMark04"
+PCMark04
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1556,6 +1602,11 @@ load_pcmark05() {
         Send {Tab}
         Send {Enter}
     "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Futuremark\PCMark05"
+PCMark05
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1602,6 +1653,11 @@ load_plantsvszombies() {
         send {Space}{Enter}
         ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
     "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\PopCap Games\Plants vs. Zombies"
+PlantsVsZombies
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1639,6 +1695,13 @@ load_re5bench() {
     then
         try sh "$WINETRICKS" -q wmp9
     fi
+
+    # Should run launcher.exe, but that requires .net and doesn't run on Wine
+    # Should give choice of running RE5DX10.EXE, but that requires dx10, which doesn't work on Wine yet
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\CAPCOM\RESIDENT EVIL 5 Benchmark Version"
+RE5DX9.EXE
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1738,6 +1801,11 @@ load_sims3() {
     "
 
     # FIXME: apply next patch, too
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\CAPCOM\RESIDENT EVIL 5 Benchmark Version"
+RE5DX9.EXE
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1885,6 +1953,17 @@ load_stfu() {
         winwait, Patch, Finish
         send {Enter}
     "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\StarCraft II Beta"
+"StarCraft II.exe"
+__EOF__
+
+    # Should start SWTFU Launcher.exe, but that doesn't run in Wine?
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Aspyr\Star Wars The Force Unleashed"
+SWTFU.exe
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1921,6 +2000,14 @@ load_unigine_heaven() {
         WinWait ahk_class MsiDialogCloseClass, Completed
         ControlClick Button1 ; Finish
     "
+
+    # Should start Heaven.exe, but that doesn't run in Wine
+    # Should give option to run Heaven_gl.bat (even works in Wine)
+    # or the dx10 or dx11 versions (doesn't).
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Unigine\Heaven"
+cmd /c Heaven_d3d9.bat
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1954,6 +2041,10 @@ load_wog() {
 	ControlClick, Make me dirty right now, World of Goo Setup, Thank you
 	send {Enter}
         "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\WorldOfGooDemo"
+WorldOfGoo.exe
+__EOF__
 }
 
 #----------------------------------------------------------------
