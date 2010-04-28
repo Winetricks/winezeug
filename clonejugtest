@@ -5,7 +5,7 @@ set -e
 WINEJUGS=${WINEJUGS:-$HOME/jugs}
 export WINEJUGS
 
-for verb in wog 3dmark2000
+for verb in `cd $WINEJUGS; ls`
 do
    WINEPREFIX=$HOME/.wine-cloned-$verb
    export WINEPREFIX
