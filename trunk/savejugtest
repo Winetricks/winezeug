@@ -9,7 +9,10 @@ mkdir $WINEJUGS
 
 WINESERVER=${WINESERVER:-wineserver}
 
-for verb in wog 3dmark2000
+# verbs known to not work yet
+BLACKLIST="starcraft$"
+
+for verb in `sh wisotool ls | egrep -v "$BLACKLIST" `
 do
    WINEPREFIX=$HOME/.wine-staging-$verb
    export WINEPREFIX
