@@ -546,6 +546,9 @@ cleanup()
 }
 
 load_iso() {
+   method=$1
+   key="$2"
+
    die_if_user_not_dirowner "$WISOTOOL_CACHE"
 
    # Detect raw device
@@ -567,7 +570,7 @@ load_iso() {
 
    # Copy disc to .iso file, display progress every 5 seconds
    # Use conv=noerror,sync to replace unreadable blocks with zeroes
-   case $1 in
+   case $method in
    dd) 
      dd if=$dev of="$WISOTOOL_CACHE"/temp.iso bs=2048 conv=noerror,sync &
      pid=$!
@@ -597,10 +600,10 @@ load_iso() {
    echo "Sha1sum of iso is $sum"
    
    mv "$WISOTOOL_CACHE"/temp.iso "$WISOTOOL_CACHE"/$sum.iso
-   if test "$1" != ""
+   if test "$key" != ""
    then
        # FIXME: in gui, prompt user for key if load= was chosen?
-       echo "$1" > "$WISOTOOL_CACHE"/$sum.txt
+       echo "$key" > "$WISOTOOL_CACHE"/$sum.txt
    fi
 
    # Note: if you haven't written the verb for this disc yet,
@@ -2187,7 +2190,7 @@ do
     ls) list_available_verbs;;
     load) load_iso dd;;
     load_harder) load_iso ddrescue;;
-    load=*) key="`echo $1 | sed 's/load=//'`"; load_iso "$key";;
+    load=*) key="`echo $1 | sed 's/load=//'`"; load_iso dd "$key";;
     migrate) migrate_files;;
     version) print_version;;
 
