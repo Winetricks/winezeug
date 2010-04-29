@@ -24,5 +24,8 @@ find drive_c -type d -iname users -prune -o -type f -exec ln -s "$JUG/{}" "$WINE
 # Copy all user files
 find .update-timestamp *.reg drive_c/users -type f -exec cp -a "{}" "$WINEPREFIX/{}" \;
 
+# Make user's temp directory (some apps crash without this)
+mkdir "$WINEPREFIX/drive_c/users/$LOGNAME/Temp"
+
 # Create drives
 ln -s ../drive_c "$WINEPREFIX/dosdevices/c:"
