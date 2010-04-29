@@ -46,6 +46,9 @@ esac
 WISOTOOL_VERBS="${WISOTOOL_VERBS:-$HOME/.wisotool/verbs}"
 mkdir -p "$WISOTOOL_VERBS"
 
+# Postinstall scripts, if any, go here
+WISOTOOL_POST="${WISOTOOL_POST:-$HOME/.wisotool/postinstall}"
+
 # Internal variables; these locations are not too important
 WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
 test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE="$HOME/.wisotool/cache"
@@ -2246,9 +2249,9 @@ do
 
     # User-specific postinstall hook.  
     # Source it so the script can call download() if needed.
-    if [ -f "$WISOTOOL_CACHE"/$PACKAGE/$PACKAGE-postinstall.sh ]
+    if [ -f "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh ]
     then
-        ( . "$WISOTOOL_CACHE"/$PACKAGE/$PACKAGE-postinstall.sh )
+        ( . "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh )
     fi
 done
 
