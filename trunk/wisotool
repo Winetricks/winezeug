@@ -1432,6 +1432,40 @@ load_help() {
 
 #----------------------------------------------------------------
 
+verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
+
+load_lswcs() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
+    ahk_do "
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        SetTitleMatchMode, 2
+        winwait, Choose Setup Language
+        send {Enter}
+        winwait, LEGO, License Agreement
+	send a{Enter}
+        winwait, LEGO, method
+        ControlClick Easy Installation
+        sleep 1000
+        winwaitclose, LEGO
+    "
+    # Installer crashes at end (http://bugs.winehq.org/show_bug.cgi?id=22529) but this doesn't seem to hurt.
+    # Wait for all processes to exit, else unmount will fail
+    # FIXME: use right wineserver
+    wineserver -w
+    iso_umount
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\LucasArts\\LEGO Star Wars - The Complete Saga"
+LEGOStarWarsSaga.exe
+__EOF__
+
+    warn "This game is copy-protected, and requires the real disc in a real drive to run."
+}
+
+#----------------------------------------------------------------
+
 # Note: may require load_harder.  Result may vary in length and checksum.
 
 verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
