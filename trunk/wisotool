@@ -382,6 +382,11 @@ download() {
             esac
         esac
 
+        # On cygwin, .exe's must be marked +x
+        case $file in
+        *.exe) chmod +x $file ;;
+        esac
+
         cd "$olddir"
     fi
     if [ "$3"x != ""x ]
