@@ -49,6 +49,12 @@ run_3dmark2000()
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2000"
     rm -f "$YAGMARK_TMP"/3dmark2000.txt
 
+    # Mysterious workaround for difference in quoting between cygwin and linux
+    SAVE_PATH="$YAGMARK_TMP_WIN\\\\3dmark2000"
+    case "$OS" in
+    "Windows_NT") SAVE_PATH="$YAGMARK_TMP_WIN\3dmark2000" ;;
+    esac
+
     # Install if needed
     if ! test -f "$exe_dir/3DMark2000.exe"
     then
@@ -59,15 +65,24 @@ run_3dmark2000()
         SetTitleMatchMode, 2
         run, 3DMark2000.exe
         winwait, 3DMark2000, Welcome
-        Send B
-        winwait, Overall Score, Congratulations
-        ControlClick, Button7, Overall Score, Congratulations
-        winactivate, 3DMark2000
+        ControlClick, New, 3DMark2000, Welcome
+        sleep 1000
+        send c
+        winwait, Select Tests
+        send c
+        send !p
+        send {Enter}
+        sleep 1000
+        send b
+        winwait, Overall Score
+        ControlClick, Button7, Overall Score
+        sleep 500
+        winwaitactive, 3DMark2000
         sleep 500
         send ^s
         winwait, Save As
         send {DEL 8}
-        send $YAGMARK_TMP_WIN\\\\3dmark2000
+        send $SAVE_PATH
         send !t3
         send {Enter}
         sleep 500
@@ -83,32 +98,100 @@ run_3dmark2000()
 
 run_3dmark2001()
 {
-    exe="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE/3DMark2001SE.exe"
-    # Install if needed
-    if ! test -f "$exe"
+    exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE"
+
+    # Mysterious workaround for difference in quoting between cygwin and linux
+    SAVE_PATH="$YAGMARK_TMP_WIN\\\\3dmark2001"
+    case "$OS" in
+    "Windows_NT") SAVE_PATH="$YAGMARK_TMP_WIN\3dmark2001" ;;
+    esac
+
+ # Install if needed
+    if ! test -f "$exe_dir/3DMark2001SE.exe"
     then
         sh wisotool 3dmark2001
     fi
+    cd "$exe_dir"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, 3DMark2001SE.exe
+        winwait, 3DMark2001
+        send c
+        winwait, Select Tests
+        send c
+        send f
+        send {Enter}
+        sleep 500
+        send b
+        winwaitactive, Overall Score
+        sleep 1000
+        send l
+        sleep 500
+        send ^s
+        winwait, Save As
+        send {DEL 8}
+        send $SAVE_PATH
+        send !t3
+        send {Enter}
+        sleep 500
+        send !fx
+        sleep 1000
+        "
+    cat "$YAGMARK_TMP"/3dmark2001.txt
+    cd "$olddir"
 
-    # Use Autohotkey to start app, click 'custom', 'Change', clear all, select 
-    # just one test, 'ok', 'Benchmark', wait for it to finish, then click Details...
-    # and scrape results from non-copyable syslist in dialog.
-    $WINE "$exe"
 }
 
 run_3dmark06()
 {
-    exe="$programfilesdir_x86_unix/Futuremark/3DMark6/3DMark06.exe"
+    exe_dir="$programfilesdir_x86_unix/Futuremark/3DMark06"
+
+    # Mysterious workaround for difference in quoting between cygwin and linux
+    SAVE_PATH="$YAGMARK_TMP_WIN\\\\3dmark06"
+    case "$OS" in
+    "Windows_NT") SAVE_PATH="$YAGMARK_TMP_WIN\3dmark06" ;;
+    esac
+
+    # TODO: add an "if workaround_wine_bug" around -nosysteminfo
+    ARGS="-nosysteminfo"
+    case "$OS" in
+    "Windows_NT") ARGS="" ;;
+    esac
+
     # Install if needed
-    if ! test -f "$exe"
+    if ! test -f "$exe_dir/3DMark06.exe"
     then
-        sh wisotool 3dmark2006
+        sh wisotool 3dmark06
     fi
 
-    # Use Autohotkey to start app, click 'custom', 'Change', clear all, select 
-    # just one test, 'ok', 'Benchmark', wait for it to finish, then click Details...
-    # and scrape results from non-copyable syslist in dialog.
-    $WINE "$exe"
+    cd "$exe_dir"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, 3DMark06.exe $ARGS, $exe_dir
+        winwait, Please Register
+        sleep 7000
+        ControlClick, Button3, Please Register
+        winwait, Tip Of The Day
+        send {ESC}
+        sleep 500
+        send {Enter}
+        winwait, 3DMark Score
+        sleep 500
+        send {tab}
+        send {space}
+        winwait, Save As
+        send {DEL 8}
+        send $SAVE_PATH
+        send {Enter}
+        sleep 500
+        send {ESC}
+        winkill 3DMark06
+        "
+    mv "$YAGMARK_TMP"/3dmark06.3dr "$YAGMARK_TMP"/3dmark06.zip
+    unzip -o "$YAGMARK_TMP"/3dmark06.zip Result.xml
+    # fixme: Parse xml file!!
+    # cat "$YAGMARK_TMP"/3dmark06.txt
+    cd "$olddir"
 }
 
 run_re5bench()
@@ -172,7 +255,7 @@ do_report() {
         cat /proc/cpuinfo
 
         echo "> lspci | grep VGA"
-        lspci | grep VGA 
+        lspci | grep VGA
 
         echo "> glxinfo | egrep 'vendor|renderer|version'"
         glxinfo | egrep 'vendor|renderer|version'
