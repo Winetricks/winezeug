@@ -2249,7 +2249,7 @@ WINETRICKS="$srcdir/winetricks"
 if ! test -f "$WINETRICKS"
 then
     WINETRICKS="$WISOTOOL_CACHE/winetricks"
-    wget -o "$WINETRICKS" http://kegel.com/wine/winetricks
+    download . http://kegel.com/wine/winetricks
 fi
 
 # The folder-name is localized!
