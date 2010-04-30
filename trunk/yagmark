@@ -11,20 +11,31 @@ case "$OS" in
  "Windows_NT")
     WINE=""
     DRIVE_C="C:/"
+    XXXPATH=cygpath
     ;;
  *)
     WINE=${WINE:-wine}
     DRIVE_C="$WINEPREFIX/drive_c"
+    XXXPATH="$WINE winepath"
     ;;
 esac
 export WINE
-programfilesdir_x86_unix="$DRIVE_C/Program Files"
-programfilesdir_win="$DRIVE_C/Program Files"
-programfilesdir_win_x86="$programfilesdir_win (x86)"
-if ! test -d "$programfilesdir_win_x86"
+
+# The folder-name is localized!
+programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
+test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
+
+# 64 bit windows has a second directory for program files
+programfilesdir_x86_win="${programfilesdir_win} (x86)"
+programfilesdir_x86_unix="${programfilesdir_unix} (x86)"
+if ! test -d "$programfilesdir_x86_unix"
 then
-    programfilesdir_win_x86="$programfilesdir_win"
+    programfilesdir_x86_win="${programfilesdir_win}"
+    programfilesdir_x86_unix="${programfilesdir_unix}"
 fi
+
 YAGMARK_TMP="$DRIVE_C"/yagmarktmp
 YAGMARK_TMP_WIN='c:\yagmarktmp'
 YAGMARK_RESULTS="$DRIVE_C"/yagmarkresults
@@ -41,9 +52,7 @@ mkdir -p "$YAGMARK_RESULTS"
 ahk_do()
 {
    echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
-   cd "$programfilesdir_x86_unix"/AutoHotkey
-   $WINE ./AutoHotkey.exe "$YAGMARK_TMP"/tmp.ahk
-   cd "$olddir"
+   $WINE "$programfilesdir_x86_unix/AutoHotkey/AutoHotkey.exe" "$YAGMARK_TMP"/tmp.ahk
 }
 
 #----------------------------------------------------------------
