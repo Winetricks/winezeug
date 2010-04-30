@@ -979,6 +979,7 @@ load_3dmark06() {
         WinWait, ahk_class #32770, Complete
         ControlClick Button1 ; Uncheck view readme
         ControlClick Button3 ; Finish
+        WinWaitClose, ahk_class #32770, Complete
     "
 
     if workaround_wine_bug 22393
