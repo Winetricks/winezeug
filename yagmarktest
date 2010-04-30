@@ -1,0 +1,6 @@
+#!/bin/sh
+# Run yagmark in a loop
+while true
+do
+   sh yagmark clear 3dmark2000 3dmark2001 3dmark06
+done
