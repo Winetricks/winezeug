@@ -191,7 +191,7 @@ run_3dmark06()
         sleep 500
         send {tab}
         send {space}
-        winwait, Save As
+        winwait, Save
         send {DEL 8}
         send $SAVE_PATH
         send {Enter}
@@ -199,8 +199,8 @@ run_3dmark06()
         send {ESC}
         winkill 3DMark06
         "
-    mv "$YAGMARK_TMP"/3dmark06.3dr "$YAGMARK_TMP"/3dmark06.zip
-    unzip -o "$YAGMARK_TMP"/3dmark06.zip Result.xml
+    mv "$YAGMARK_RESULTS"/3dmark06.3dr "$YAGMARK_RESULTS"/3dmark06.zip
+    unzip -o "$YAGMARK_RESULTS"/3dmark06.zip Result.xml
     # fixme: Parse xml file!!
     mv Result.xml "$YAGMARK_RESULTS"/3dmark06.txt
     # cat "$YAGMARK_TMP"/3dmark06.txt
