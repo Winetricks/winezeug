@@ -4,14 +4,27 @@
 # Copyright 2010 Dan Kegel.
 # Licence: LGPL (for winehq compatibility)
 
-# TODO: make these work on Windows, too.  For now use abbreviated, wine-only settings.
-WINE="${WINE:-wine}"
-export WINE
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
 
-DRIVE_C="$WINEPREFIX/drive_c"
+case "$OS" in
+ "Windows_NT")
+    WINE=""
+    DRIVE_C="C:/"
+    ;;
+ *)
+    WINE=${WINE:-wine}
+    DRIVE_C="$WINEPREFIX/drive_c"
+    ;;
+esac
+export WINE
 programfilesdir_x86_unix="$DRIVE_C/Program Files"
+programfilesdir_win="$DRIVE_C/Program Files"
+programfilesdir_win_x86="$programfilesdir_win (x86)"
+if ! test -d "$programfilesdir_win_x86"
+then
+    programfilesdir_win_x86="$programfilesdir_win"
+fi
 YAGMARK_TMP="$DRIVE_C"/yagmarktmp
 YAGMARK_TMP_WIN='c:\yagmarktmp'
 
@@ -25,7 +38,7 @@ mkdir -p "$YAGMARK_TMP"
 ahk_do() {
    echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
    cd "$programfilesdir_x86_unix"/AutoHotkey
-   $WINE "AutoHotkey.exe" "$YAGMARK_TMP"/tmp.ahk
+   $WINE ./AutoHotkey.exe "$YAGMARK_TMP"/tmp.ahk
    cd "$olddir"
 }
 
@@ -141,26 +154,32 @@ do_report() {
     echo "> uname -a"
     uname -a
 
-    echo "> echo $WINE"
-    echo $WINE
-
-    echo "> $WINE --version"
-    $WINE --version
-
-    echo "> cat /etc/issue"
-    cat /etc/issue
-
     echo "> cat /proc/cpuinfo"
     cat /proc/cpuinfo
 
-    echo "> lspci | grep VGA"
-    lspci | grep VGA 
+    if test "$OS" != "Windows_NT"
+    then
+        echo "> echo $WINE"
+        echo $WINE
 
-    echo "> glxinfo | egrep 'vendor|renderer|version'"
-    glxinfo | egrep 'vendor|renderer|version'
+        echo "> $WINE --version"
+        $WINE --version
 
-    echo "> cat /var/log/messages | grep NVIDIA"
-    cat /var/log/messages | grep NVIDIA
+        echo "> cat /etc/issue"
+        cat /etc/issue
+
+        echo "> cat /proc/cpuinfo"
+        cat /proc/cpuinfo
+
+        echo "> lspci | grep VGA"
+        lspci | grep VGA 
+
+        echo "> glxinfo | egrep 'vendor|renderer|version'"
+        glxinfo | egrep 'vendor|renderer|version'
+
+        echo "> cat /var/log/messages | grep NVIDIA"
+        cat /var/log/messages | grep NVIDIA
+    fi
 
     cd "$YAGMARK_TMP"
     for file in *.txt
