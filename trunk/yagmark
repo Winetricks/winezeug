@@ -90,10 +90,15 @@ run_3dmark2000()
         send {ESC}
         winwaitactive, 3DMark2000
         sleep 500
+        ; Save it once with default type so we don't get the kamikaze dialog box on exit
         send ^s
-        winwait, Save As
+        winwait, Save
         send {DEL 8}
         send $SAVE_PATH
+        send {Enter}
+        ; Save it again with .txt, which is what we really want
+        send !fa
+        winwait, Save
         send !t3
         send {Enter}
         sleep 500
@@ -103,6 +108,7 @@ run_3dmark2000()
         WinClose
         sleep 500
         send {Enter}
+        WinWaitClose, 3DMark2000
         "
     cat "$YAGMARK_RESULTS"/3dmark2000.txt
     cd "$olddir"
@@ -148,6 +154,7 @@ run_3dmark2001()
         sleep 500
         send !fx
         sleep 1000
+        WinWaitClose, 3DMark2001
         "
     cat "$YAGMARK_RESULTS"/3dmark2001.txt
     cd "$olddir"
