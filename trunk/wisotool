@@ -1423,6 +1423,75 @@ load_gta_vc() {
     fi
 }
 
+ #----------------------------------------------------------------
+ 
+verblist_add half_life_goty     "Half Life: Game of the Year Edition (Sierra, 2000) " \
+  dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
+
+load_half_life_goty() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
+    
+    ahk_do "
+    SetTitleMatchMode, 2
+    Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    winwait, System Test, Did you hear the sound file?
+    sleep 1000
+    ControlClick, Button6, System Test, Did you hear the sound file?
+    winwait, Welcome, Welcome to the Half-Life Setup program.  This program will install Half-Life on your computer.
+    sleep 1000
+    ControlClick, Button1, Welcome, Welcome to the Half-Life Setup program.  This program will install Half-Life on your computer.
+    winwait, Software License Agreement, Please read the following License Agreement.  Press the PAGE DOWN key to see the rest of the agreement.
+    sleep 1000
+    ControlClick, Button2, Software License Agreement, Please read the following License Agreement.  Press the PAGE DOWN key to see the rest of the agreement.
+    winwait, Choose Destination Location, Setup will install Half-Life in the following folder.
+    sleep 1000
+    ControlClick, Button1, Choose Destination Location, Setup will install Half-Life in the following folder.
+    winwait, Install, Setup has placed the Sierra Utilities in your Start Menu.
+    sleep 1000
+    ControlClick, Button1, Install, Setup has placed the Sierra Utilities in your Start Menu.
+    winwait, Install, Setup has determined that there may be updates to your product available.
+    sleep 1000
+    ControlClick, Button7, Install, Setup has determined that there may be updates to your product available.
+    winwait, Install, Please Register Now!
+    sleep 1000
+    ControlClick, Button1, Install, Please Register Now!
+    winwait, Choose Method of Registration, Please choose a registration method
+    sleep 1000
+    ControlClick, Button8, Choose Method of Registration, Please choose a registration method
+    winwait, Select Components, Please ensure you are running the latest drivers appropriate for your hardware
+    sleep 1000
+    ControlClick, Button11, Select Components, Please ensure you are running the latest drivers appropriate for your hardware
+    winwait, Setup Complete, Setup has finished installing Half-Life on your computer.
+    sleep 1000
+    ControlClick, Button1, Setup Complete, Setup has finished installing Half-Life on your computer.
+    Sleep 1000
+    ControlClick, Button4, Setup Complete, Setup has finished installing Half-Life on your computer.
+    "
+    
+    # The key is put in on first run:
+    HALF_LIFE_GOTY_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.txt`
+    cd $DRIVE_C/SIERRA/Half-Life
+    
+    # Forcefully closing the process later will screw up the screen resolution, so store the user's current resolution so we can restore it later:
+    current_res=`xrandr -q | awk -F'current' -F',' 'NR==1 {gsub("( |current)","");print $2}'`
+
+    # FIXME: Not sure how reliable the ahk_class designation is...
+    ahk_do "
+    Run, hl.exe
+    winwait, ahk_class #32770
+    sleep 1000
+    ControlClick, Edit1, ahk_class #32770
+    Send {RAW}$HALF_LIFE_GOTY_KEY
+    sleep 1000
+    ControlClick, Button1, ahk_class #32770
+    sleep 5000
+    ; I tried closing it the nice way, with either PostMessage or Win_close, but neither worked
+    process, close, hl.exe
+    "
+    xrandr -s $current_res
+}
 
 #----------------------------------------------------------------
 
