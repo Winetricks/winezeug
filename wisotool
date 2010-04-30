@@ -982,11 +982,17 @@ load_3dmark06() {
         WinWaitClose, ahk_class #32770, Complete
     "
 
+    if workaround_wine_bug 9210
+    then
+        warn "You may need to apply the patch in http://bugs.winehq.org/show_bug.cgi?id=9210 to fix pCaps->MaxPointSize, or the benchmark will warn that shader model 2.0 is not present, and refuse to run."
+    fi
+
     if workaround_wine_bug 22393
     then
         # "Demo" button doesn't work without this
         sh "$WINETRICKS" -q d3dx9_28 d3dx9_36
     fi
+
     ARGS=""
     if workaround_wine_bug 22392
     then
