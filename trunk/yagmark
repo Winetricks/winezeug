@@ -86,8 +86,8 @@ run_3dmark2000()
         sleep 1000
         send b
         winwait, Overall Score
-        ControlClick, Button7, Overall Score
-        sleep 500
+        sleep 1000
+        send {ESC}
         winwaitactive, 3DMark2000
         sleep 500
         send ^s
