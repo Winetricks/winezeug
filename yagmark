@@ -27,15 +27,19 @@ then
 fi
 YAGMARK_TMP="$DRIVE_C"/yagmarktmp
 YAGMARK_TMP_WIN='c:\yagmarktmp'
+YAGMARK_RESULTS="$DRIVE_C"/yagmarkresults
+YAGMARK_RESULTS_WIN='c:\yagmarkresults'
 
 olddir=`pwd`
 
 rm -rf "$YAGMARK_TMP"
 mkdir -p "$YAGMARK_TMP"
+mkdir -p "$YAGMARK_RESULTS"
 
 #----------------------------------------------------------------
 
-ahk_do() {
+ahk_do()
+{
    echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
    cd "$programfilesdir_x86_unix"/AutoHotkey
    $WINE ./AutoHotkey.exe "$YAGMARK_TMP"/tmp.ahk
@@ -44,15 +48,22 @@ ahk_do() {
 
 #----------------------------------------------------------------
 
+run_clear()
+{
+    rm -f "$YAGMARK_RESULTS"/*
+}
+
+#----------------------------------------------------------------
+
 run_3dmark2000()
 {
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2000"
-    rm -f "$YAGMARK_TMP"/3dmark2000.txt
+    rm -f "$YAGMARK_RESULTS"/3dmark2000.txt
 
     # Mysterious workaround for difference in quoting between cygwin and linux
-    SAVE_PATH="$YAGMARK_TMP_WIN\\\\3dmark2000"
+    SAVE_PATH="$YAGMARK_RESULTS_WIN\\\\3dmark2000"
     case "$OS" in
-    "Windows_NT") SAVE_PATH="$YAGMARK_TMP_WIN\3dmark2000" ;;
+    "Windows_NT") SAVE_PATH="$YAGMARK_RESULTS_WIN\3dmark2000" ;;
     esac
 
     # Install if needed
@@ -90,9 +101,10 @@ run_3dmark2000()
         sleep 1000
         send n
         WinClose
+        sleep 500
         send {Enter}
         "
-    cat "$YAGMARK_TMP"/3dmark2000.txt
+    cat "$YAGMARK_RESULTS"/3dmark2000.txt
     cd "$olddir"
 }
 
@@ -101,9 +113,9 @@ run_3dmark2001()
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE"
 
     # Mysterious workaround for difference in quoting between cygwin and linux
-    SAVE_PATH="$YAGMARK_TMP_WIN\\\\3dmark2001"
+    SAVE_PATH="$YAGMARK_RESULTS_WIN\\\\3dmark2001"
     case "$OS" in
-    "Windows_NT") SAVE_PATH="$YAGMARK_TMP_WIN\3dmark2001" ;;
+    "Windows_NT") SAVE_PATH="$YAGMARK_RESULTS_WIN\3dmark2001" ;;
     esac
 
  # Install if needed
@@ -137,7 +149,7 @@ run_3dmark2001()
         send !fx
         sleep 1000
         "
-    cat "$YAGMARK_TMP"/3dmark2001.txt
+    cat "$YAGMARK_RESULTS"/3dmark2001.txt
     cd "$olddir"
 
 }
@@ -147,9 +159,9 @@ run_3dmark06()
     exe_dir="$programfilesdir_x86_unix/Futuremark/3DMark06"
 
     # Mysterious workaround for difference in quoting between cygwin and linux
-    SAVE_PATH="$YAGMARK_TMP_WIN\\\\3dmark06"
+    SAVE_PATH="$YAGMARK_RESULTS_WIN\\\\3dmark06"
     case "$OS" in
-    "Windows_NT") SAVE_PATH="$YAGMARK_TMP_WIN\3dmark06" ;;
+    "Windows_NT") SAVE_PATH="$YAGMARK_RESULTS_WIN\3dmark06" ;;
     esac
 
     # TODO: add an "if workaround_wine_bug" around -nosysteminfo
@@ -190,6 +202,7 @@ run_3dmark06()
     mv "$YAGMARK_TMP"/3dmark06.3dr "$YAGMARK_TMP"/3dmark06.zip
     unzip -o "$YAGMARK_TMP"/3dmark06.zip Result.xml
     # fixme: Parse xml file!!
+    mv Result.xml "$YAGMARK_RESULTS"/3dmark06.txt
     # cat "$YAGMARK_TMP"/3dmark06.txt
     cd "$olddir"
 }
@@ -229,53 +242,58 @@ run_unigine_heaven()
     cd "$olddir"
 }
 
+announce() {
+   echo ">> $*"
+   eval $1 $2 $3 $4 $5 $6 $7 $8 $9
+}
+
+do_system_description() {
+    echo ">>-------- begin system description ---------"
+    announce hostname
+    announce uname -a
+    announce "cat /proc/cpuinfo | sort | egrep 'model|cpu|bogo' | uniq -c"
+
+    case "$OS" in
+    "Windows_NT")
+        systeminfo | tee "$WISOTOOL_TMP"/sysinfo.txt
+        # Dirty code to simplify os name
+        osname=`grep "OS Name" sysinfo.txt | sed 's/.*Microsoft.*Windows //;s/VistaT/Vista/;s/ .*//'`
+        rm "$WISOTOOL_TMP"/sysinfo.txt
+        ;;
+    *) 
+        announce lsb_release -a
+        announce $WINE --version
+        announce lspci \| grep VGA
+        announce glxinfo \| egrep 'vendor\|renderer\|version'
+        announce cat /var/log/messages \| grep NVIDIA | grep loading | tail -n 1
+        # note: next line contains a tab
+        osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/'`
+        ;;
+    esac
+    echo ">>-------- end system description ---------"
+}
+
 do_report() {
-    echo ">-------- begin yagmark report ---------"
-    echo "> hostname"
-    hostname
-
-    echo "> uname -a"
-    uname -a
-
-    echo "> cat /proc/cpuinfo"
-    cat /proc/cpuinfo
-
-    if test "$OS" != "Windows_NT"
-    then
-        echo "> echo $WINE"
-        echo $WINE
-
-        echo "> $WINE --version"
-        $WINE --version
-
-        echo "> cat /etc/issue"
-        cat /etc/issue
-
-        echo "> cat /proc/cpuinfo"
-        cat /proc/cpuinfo
-
-        echo "> lspci | grep VGA"
-        lspci | grep VGA
-
-        echo "> glxinfo | egrep 'vendor|renderer|version'"
-        glxinfo | egrep 'vendor|renderer|version'
-
-        echo "> cat /var/log/messages | grep NVIDIA"
-        cat /var/log/messages | grep NVIDIA
-    fi
-
-    cd "$YAGMARK_TMP"
-    for file in *.txt
+    echo ">>-------- begin yagmark report ---------"
+    announce date
+    for file in "$YAGMARK_RESULTS"/*.txt
     do
-       echo "> cat $file"
-       cat "$file"
+       announce cat "$file"
     done
-    echo ">-------- end yagmark report ---------"
+
+    do_system_description
+
+    echo ">>-------- end yagmark report ---------"
 }
 
 # TODO: add a wisotool-style menu
-echo running run_$1
-run_$1
+for cmd
+do
+   echo running run_$cmd
+   run_$cmd
+done
+
 echo running do_report
-do_report > yagmark-`hostname`-`date +%F`.txt
+do_report > tmp.txt
+mv tmp.txt yagmark-`hostname`-$osname-`date +%F-%H:%M`.txt
 echo done
