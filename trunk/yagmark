@@ -83,7 +83,7 @@ run_3dmark2000()
     cd "$exe_dir"
     ahk_do "
         SetTitleMatchMode, 2
-        run, 3DMark2000.exe
+        run, .\3DMark2000.exe
         winwait, 3DMark2000, Welcome
         ControlClick, New, 3DMark2000, Welcome
         sleep 1000
@@ -143,8 +143,10 @@ run_3dmark2001()
         SetTitleMatchMode, 2
         run, 3DMark2001SE.exe
         winwait, 3DMark2001
+        sleep 500
         send c
         winwait, Select Tests
+        sleep 500
         send c
         send f
         send {Enter}
@@ -195,11 +197,13 @@ run_3dmark06()
     cd "$exe_dir"
     ahk_do "
         SetTitleMatchMode, 2
-        run, 3DMark06.exe $ARGS, $exe_dir
+        run, 3DMark06.exe $ARGS
         winwait, Please Register
-        sleep 7000
-        ControlClick, Button3, Please Register
+        sleep 10000
+        ;ControlClick, Button3
+        send {tab 2}{space}
         winwait, Tip Of The Day
+        sleep 500
         send {ESC}
         sleep 500
         send {Enter}
