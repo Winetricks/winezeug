@@ -833,17 +833,13 @@ load_3dmark2001() {
         SetTitleMatchMode, 2
         run 3dmark2001se_330_100308.exe
         WinWait ahk_class #32770 ; welcome
-        MsgBox, 64, , clicking Next on welcome, 1
         ControlClick Button2  ; Next
         sleep 5000
         WinWait ahk_class #32770 ; License
-        MsgBox, 64, , clicking Next on license, 1
         ControlClick Button2  ; Next
         WinWait ahk_class #32770 ; Destination
-        MsgBox, 64, , clicking Next on Destination, 1
         ControlClick Button1  ; Next
         WinWait ahk_class #32770 ; Start
-        MsgBox, 64, , clicking Next on Start, 1
         ControlClick Button1  ; Next
         WinWait,, Registration
         ControlClick Button1  ; Next
