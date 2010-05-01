@@ -351,6 +351,11 @@ download() {
     fi
     cache="$WISOTOOL_CACHE/$1"
     mkdir -p "$cache"
+    if test ! -s "$cache/$file" && test -f "$cache/$file"
+    then
+        # zero size - bad download?
+        rm "$cache/$file"
+    fi
     if test ! -f "$cache/$file"
     then
         cd "$cache"
