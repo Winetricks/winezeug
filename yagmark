@@ -269,10 +269,10 @@ do_system_description() {
 
     case "$OS" in
     "Windows_NT")
-        systeminfo | tee "$WISOTOOL_TMP"/sysinfo.txt
+        systeminfo | tee "$YAGMARK_TMP"/sysinfo.txt
         # Dirty code to simplify os name
-        osname=`grep "OS Name" sysinfo.txt | sed 's/.*Microsoft.*Windows //;s/VistaT/Vista/;s/ .*//'`
-        rm "$WISOTOOL_TMP"/sysinfo.txt
+        osname=`grep "OS Name" "$YAGMARK_TMP"/sysinfo.txt | sed 's/.*Microsoft.*Windows //;s/VistaT/Vista/;s/ .*//'`
+        rm "$YAGMARK_TMP"/sysinfo.txt
         ;;
     *) 
         announce lsb_release -a
@@ -292,7 +292,9 @@ do_report() {
     announce date
     for file in "$YAGMARK_RESULTS"/*.txt
     do
-       announce cat "$file"
+       echo ">>-------- begin $file ---------"
+       tr -d '\000' < "$file"
+       echo ">>-------- end $file ---------"
     done
 
     do_system_description
