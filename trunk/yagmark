@@ -216,8 +216,9 @@ run_3dmark06()
     mv "$YAGMARK_RESULTS"/3dmark06.3dr "$YAGMARK_RESULTS"/3dmark06.zip
     unzip -o "$YAGMARK_RESULTS"/3dmark06.zip Result.xml
     # fixme: Parse xml file!!
-    mv Result.xml "$YAGMARK_RESULTS"/3dmark06.txt
-    # cat "$YAGMARK_TMP"/3dmark06.txt
+    tr -d '\000' < Result.xml > "$YAGMARK_RESULTS"/3dmark06.xml
+    grep 3DMarks < "$YAGMARK_RESULTS"/3dmark06.xml | sed 's,</.*,,;s,.*>,,;s,\..*,,' > "$YAGMARK_RESULTS"/3dmark06.txt
+    cat "$YAGMARK_RESULTS"/3dmark06.txt
     cd "$olddir"
 }
 
@@ -269,6 +270,7 @@ do_system_description() {
 
     case "$OS" in
     "Windows_NT")
+        echo ">> systeminfo"
         systeminfo | tee "$YAGMARK_TMP"/sysinfo.txt
         # Dirty code to simplify os name
         osname=`grep "OS Name" "$YAGMARK_TMP"/sysinfo.txt | sed 's/.*Microsoft.*Windows //;s/VistaT/Vista/;s/ .*//'`
