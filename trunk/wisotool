@@ -704,6 +704,9 @@ verblist_add()
     # Usage: verblist_add verbname "description" file1 file2 ...
     verbname=$1
     description="$2"
+    case "$description" in
+    *\'*) die "bug in call to verblist_add($verbname $description): you can't use apostrophes in game descriptions, it breaks the zenity menu.  Please remove." ;;
+    esac
     shift
     shift
     present=''
