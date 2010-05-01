@@ -143,13 +143,14 @@ run_3dmark2001()
         run, 3DMark2001SE.exe
         winwait, 3DMark2001
         sleep 500
-        send c
-        winwait, Select Tests
-        sleep 500
-        send c
-        send f
-        send {Enter}
-        sleep 500
+        ; Uncomment next 7 lines to do just a tiny benchmark during debugging
+        ;send c
+        ;winwait, Select Tests
+        ;sleep 500
+        ;send c
+        ;send f
+        ;send {Enter}
+        ;sleep 500
         send b
         winwaitactive, Overall Score
         sleep 1000
