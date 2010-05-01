@@ -286,7 +286,7 @@ do_system_description() {
         announce glxinfo \| egrep 'vendor\|renderer\|version'
         announce cat /var/log/messages \| grep NVIDIA | grep loading | tail -n 1
         # note: next line contains a tab
-        osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/'`
+        osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/g'`
         ;;
     esac
     echo ">>-------- end system description ---------"
