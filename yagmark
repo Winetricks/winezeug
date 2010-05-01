@@ -12,11 +12,15 @@ case "$OS" in
     WINE=""
     DRIVE_C="C:/"
     XXXPATH=cygpath
+    # Mysterious workaround for quoting difference between cygwin and linux
+    backslash='\'
     ;;
  *)
     WINE=${WINE:-wine}
     DRIVE_C="$WINEPREFIX/drive_c"
     XXXPATH="$WINE winepath"
+    # Mysterious workaround for quoting difference between cygwin and linux
+    backslash='\\'
     ;;
 esac
 export WINE
@@ -67,13 +71,9 @@ run_clear()
 run_3dmark2000()
 {
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2000"
-    rm -f "$YAGMARK_RESULTS"/3dmark2000.txt
+    rm -f "$YAGMARK_RESULTS"/3dmark2000.*
 
-    # Mysterious workaround for difference in quoting between cygwin and linux
-    SAVE_PATH="$YAGMARK_RESULTS_WIN\\\\3dmark2000"
-    case "$OS" in
-    "Windows_NT") SAVE_PATH="$YAGMARK_RESULTS_WIN\3dmark2000" ;;
-    esac
+    SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark2000"
 
     # Install if needed
     if ! test -f "$exe_dir/3DMark2000.exe"
@@ -83,10 +83,12 @@ run_3dmark2000()
     cd "$exe_dir"
     ahk_do "
         SetTitleMatchMode, 2
-        run, .\3DMark2000.exe
+        run, .${backslash}3DMark2000.exe
         winwait, 3DMark2000, Welcome
         ControlClick, New, 3DMark2000, Welcome
         sleep 1000
+        send {escape}
+        send !fn
         send c
         winwait, Select Tests
         send c
@@ -127,11 +129,7 @@ run_3dmark2001()
 {
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE"
 
-    # Mysterious workaround for difference in quoting between cygwin and linux
-    SAVE_PATH="$YAGMARK_RESULTS_WIN\\\\3dmark2001"
-    case "$OS" in
-    "Windows_NT") SAVE_PATH="$YAGMARK_RESULTS_WIN\3dmark2001" ;;
-    esac
+    SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark2001"
 
  # Install if needed
     if ! test -f "$exe_dir/3DMark2001SE.exe"
@@ -176,11 +174,7 @@ run_3dmark06()
 {
     exe_dir="$programfilesdir_x86_unix/Futuremark/3DMark06"
 
-    # Mysterious workaround for difference in quoting between cygwin and linux
-    SAVE_PATH="$YAGMARK_RESULTS_WIN\\\\3dmark06"
-    case "$OS" in
-    "Windows_NT") SAVE_PATH="$YAGMARK_RESULTS_WIN\3dmark06" ;;
-    esac
+    SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark06"
 
     # TODO: add an "if workaround_wine_bug" around -nosysteminfo
     ARGS="-nosysteminfo"
