@@ -3598,9 +3598,10 @@ load_wsh57() {
     download . http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
 
     try_cabextract -d "$WINDIR"/system32 "$WINETRICKS_CACHE"/scripten.exe 
-    
+
     # Wine doesn't provide the other dll's (yet?)
     override_dlls native,builtin jscript.dll
+    try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
 }
 
 #----------------------------------------------------------------
