@@ -2179,6 +2179,154 @@ __EOF__
 
 #----------------------------------------------------------------
 
+# Generic GOG.com installer
+# Usage: game_id game_title [other_files [reader_control [run_command [download_id]]]]
+# game_id
+#     Used for main installer name and download url.
+# game_title
+#     Used for AutoHotKey and installation path in bat script.
+# other_files
+#     Extra installer files, in one string, space-separated.
+# reader_control
+#     If set, the control id of the configuration pannel checkbox controling
+#     Adobe Reader installation.
+#     Some games don't have it, some games do with different ids.
+# run_command
+#     Used for bat script, relative to installation path.
+# download_id
+#     For games which download url doesn't match their game_id
+_load_gog()
+{
+    # TODO: support SHA1 checks ? (installer verifies files)
+    # TODO: finish download support (it is done, but wasn't quite working for everyone, so not merged)
+    load_autohotkey
+
+    game_id="$1"
+    game_title="$2"
+    other_files="$3"
+    reader_control="$4"
+    run_command="$5"
+    download_id="$6"
+
+    installer_path="$WISOTOOL_CACHE/$PACKAGE"
+    installer="setup_$game_id.exe"
+    cookie="$auth_path/cookie.txt"
+
+    file_id=0
+    for file in $installer $other_files
+    do
+        file_path="$installer_path/$file"
+        if ! test -s "$file_path"
+        then
+            die "Please download $file to $installer_path"
+        fi
+        file_id=`expr $file_id + 1`
+    done
+
+    cd "$installer_path"
+    ahk_do "
+        run $installer
+        WinWait, Setup - $game_title, Start installation
+        ControlGet, checkbox_state, Checked,, TCheckBox1 ; EULA
+        if (checkbox_state != 1) {
+            ControlClick, TCheckBox1
+        }
+        if (\"$reader_control\") {
+            ControlClick, TMCoPShadowButton1 ; Options
+            Loop, 10
+            {
+                ControlGet, visible, Visible,, $reader_control
+                if (visible)
+                {
+                    break
+                }
+                Sleep, 1000
+            }
+            ControlGet, checkbox_state, Checked,, $reader_control ; Unckeck Adobe/Foxit Reader
+            if (checkbox_state != 0) {
+                ControlClick, $reader_control
+            }
+        }
+        ControlClick, TMCoPShadowButton2 ; Start Installation
+        WinWait, Setup - $game_title, Exit Installer
+        ControlClick, TMCoPShadowButton1 ; Exit Installer
+        "
+
+    if [ "$run_command"x != ""x ]
+    then
+        cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\GOG.com\\$game_title"
+$run_command
+__EOF__
+    fi
+}
+
+verblist_add dukenukem3d_gog "Duke Nukem 3D (GOG.com)" setup_duke3d.exe
+
+load_dukenukem3d_gog()
+{
+    _load_gog "duke3d" "Duke Nukem 3D" "" "TsCheckBox2" "DOSBOX\dosbox.exe -conf dosboxDuke3D.conf -noconsole -c \"exit\"" "duke_nukem_3d_atomic_edition"
+}
+
+verblist_add dukenukemmp_gog "Duke Nukem Manhattan Project (GOG.com)" setup_duke_nukem_manhattan_project.exe
+
+load_dukenukemmp_gog()
+{
+    _load_gog "duke_nukem_manhattan_project" "Duke Nukem - Manhattan Project" "" "TsCheckBox2" "DukeNukemMP.exe"
+}
+
+verblist_add ut2004_gog "Unreal Tournament 2004 (GOG.com)" setup_ut2004.exe
+
+load_ut2004_gog()
+{
+    _load_gog "ut2004" "Unreal Tournament 2004" "setup_ut2004-1.bin setup_ut2004-2.bin" "TsCheckBox2" "system\ut2004.exe"
+}
+
+verblist_add abes_oddysee_gog "Abes Oddysee (GOG.com)" AbeWin.exe setup_abes_oddysee.exe
+
+load_abes_oddysee_gog()
+{
+    _load_gog "abes_oddysee" "Abe's Oddysee" "" "TsCheckBox2" "AbeWin.exe"
+}
+
+verblist_add abes_exoddus_gog "Abes Exoddus (GOG.com)" Exoddus.exe setup_abes_exodus.exe
+
+load_abes_exoddus_gog()
+{
+    _load_gog "abes_exoddus" "Abe's Exoddus" "" "TsCheckBox2" "Exoddus.exe"
+}
+
+verblist_add beyond_good_and_evil_gog "Beyond Good and Evil (GOG.com)" setup_beyond_good_and_evil.exe
+
+load_beyond_good_and_evil_gog()
+{
+    _load_gog "beyond_good_and_evil" "Beyond Good and Evil" "" "TsCheckBox2" "gogwrap.exe GOGBEYONDGOODANDEVIL"
+}
+
+verblist_add far_cry_gog "Far Cry (GOG.com)" setup_far_cry.exe setup_far_cry-1.bin setup_far_cry-2.bin
+
+load_far_cry_gog()
+{
+    _load_gog "far_cry" "Far Cry" "setup_far_cry-1.bin setup_far_cry-2.bin" "TsCheckBox2" "Bin32\FarCry.exe"
+}
+
+verblist_add descent_1_2_gog "Descent and Descent 2 (GOG.com)" setup_descent_1_2.exe
+
+load_descent_1_2_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    _load_gog "descent_1_2" "Descent and Descent 2" "" "TsCheckBox5" ""
+}
+
+verblist_add evil_genius_gog "Evil Genius (GOG.com)" setup_evil_genius.exe
+
+load_evil_genius_gog()
+{
+    _load_gog "evil_genius" "Evil Genius" "" "TsCheckBox2" "ReleaseExe\EvilGeniusExeStub-Release.exe"
+}
+
+#----------------------------------------------------------------
+
 print_version() {
     echo "$VERSION"
 }
