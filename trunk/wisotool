@@ -340,7 +340,7 @@ verify_sha1sum() {
 }
 
 # Download a file
-# Usage: package url [sha1sum [filename]]
+# Usage: package url [sha1sum [filename [cookie jar]]]
 # Caches downloads in wisotoolcache/$package
 download() {
     if [ "$4"x != ""x ]
@@ -371,11 +371,11 @@ download() {
            # [*] --read-timeout is useful on the adobe server that doesn't
            # close the connection unless you tell it to (control-C or closing
            # the socket)
-           try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" "$2"
+           try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${5:+--load-cookies "$5"} "$2"
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
-           try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
+           try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" ${5:+--cookie "$5"} "$2"
         fi
         # Need to decompress .exe's that are compressed, else cygwin fails
         # Only affects cygwin, so don't barf if 'file' not installed
@@ -2180,7 +2180,7 @@ __EOF__
 #----------------------------------------------------------------
 
 # Generic GOG.com installer
-# Usage: game_id game_title [other_files [reader_control [run_command [download_id]]]]
+# Usage: game_id game_title [other_files [reader_control [run_command [download_id [install_dir]]]]]
 # game_id
 #     Used for main installer name and download url.
 # game_title
@@ -2195,6 +2195,8 @@ __EOF__
 #     Used for bat script, relative to installation path.
 # download_id
 #     For games which download url doesn't match their game_id
+# install_dir
+#     If different from game_title
 _load_gog()
 {
     # TODO: support SHA1 checks ? (installer verifies files)
@@ -2207,8 +2209,21 @@ _load_gog()
     reader_control="$4"
     run_command="$5"
     download_id="$6"
+    install_dir="$7"
+
+    if [ "$download_id"x = ""x ]
+    then
+        download_id="$game_id"
+    fi
+    if [ "$install_dir"x = ""x ]
+    then
+        install_dir="$game_title"
+    fi
 
     installer_path="$WISOTOOL_CACHE/$PACKAGE"
+    mkdir -p "$installer_path"
+    auth_path="$WISOTOOL_CACHE/gog_auth"
+    mkdir -p "$auth_path"
     installer="setup_$game_id.exe"
     cookie="$auth_path/cookie.txt"
 
@@ -2218,7 +2233,32 @@ _load_gog()
         file_path="$installer_path/$file"
         if ! test -s "$file_path"
         then
-            die "Please download $file to $installer_path"
+            if ! test -f "$cookie"
+            then
+                login_file="$auth_path/login.txt"
+                password_file="$auth_path/password.txt"
+                if ! test -f "$login_file" -a -f "$password_file"
+                then
+                    die "Please put your GOG.com login in '$login_file' and password in '$password_file' or put '$file' in '$installer_path'."
+                fi
+                base_url="https://www.gog.com"
+                login_url="/en/login/ajax/"
+                next_url="$WISOTOOL_TMP/gog_redir_url"
+                post_data="$WISOTOOL_TMP/gog_post_data"
+                # Note: just write login & password to a file so they don't appear in "ps"
+                echo "a=check&t=old&u=`cat \"$login_file\" | sed 's/&/%26/g'`&p=`cat \"$password_file\" | sed 's/&/%26/g'`&r=frontpage" > "$post_data"
+                if test -x "`which wget 2>/dev/null`"
+                then
+                    try wget -O "$next_url" --save-cookies "$cookie" --post-file "$post_data" "$base_url$login_url"
+                    try wget -O /dev/null --load-cookies "$cookie" --save-cookies "$cookie" "$base_url`cat \"$next_url\"`"
+                else
+                    try curl -o "$next_url" --cookie-jar "$cookie" --data "@$post_data" "$base_url$login_url"
+                    try curl -o /dev/null --cookie "$cookie" --cookie-jar "$cookie" "$base_url`cat \"$next_url\"`"
+                fi
+                rm -f "$post_data"
+                rm -f "$next_url"
+            fi
+            download "$PACKAGE" "https://www.gog.com/en/download/game/$download_id/$file_id" "" "$file" "$cookie"
         fi
         file_id=`expr $file_id + 1`
     done
@@ -2255,7 +2295,7 @@ _load_gog()
     if [ "$run_command"x != ""x ]
     then
         cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-cd "$programfilesdir_x86_win\GOG.com\\$game_title"
+cd "$programfilesdir_x86_win\\GOG.com\\$install_dir"
 $run_command
 __EOF__
     fi
@@ -2265,7 +2305,7 @@ verblist_add dukenukem3d_gog "Duke Nukem 3D (GOG.com)" setup_duke3d.exe
 
 load_dukenukem3d_gog()
 {
-    _load_gog "duke3d" "Duke Nukem 3D" "" "TsCheckBox2" "DOSBOX\dosbox.exe -conf dosboxDuke3D.conf -noconsole -c \"exit\"" "duke_nukem_3d_atomic_edition"
+    _load_gog "duke3d" "Duke Nukem 3D" "" "TsCheckBox2" "DOSBOX\\dosbox.exe -conf dosboxDuke3D.conf -noconsole -c \"exit\"" "duke_nukem_3d_atomic_edition"
 }
 
 verblist_add dukenukemmp_gog "Duke Nukem Manhattan Project (GOG.com)" setup_duke_nukem_manhattan_project.exe
@@ -2279,21 +2319,21 @@ verblist_add ut2004_gog "Unreal Tournament 2004 (GOG.com)" setup_ut2004.exe
 
 load_ut2004_gog()
 {
-    _load_gog "ut2004" "Unreal Tournament 2004" "setup_ut2004-1.bin setup_ut2004-2.bin" "TsCheckBox2" "system\ut2004.exe"
+    _load_gog "ut2004" "Unreal Tournament 2004" "setup_ut2004-1.bin setup_ut2004-2.bin" "TsCheckBox2" "system\\ut2004.exe" "unreal_tournament_2004_ece"
 }
 
 verblist_add abes_oddysee_gog "Abes Oddysee (GOG.com)" AbeWin.exe setup_abes_oddysee.exe
 
 load_abes_oddysee_gog()
 {
-    _load_gog "abes_oddysee" "Abe's Oddysee" "" "TsCheckBox2" "AbeWin.exe"
+    _load_gog "abes_oddysee" "Abe's Oddysee" "" "TsCheckBox2" "AbeWin.exe" "oddworld_abes_oddysee"
 }
 
 verblist_add abes_exoddus_gog "Abes Exoddus (GOG.com)" Exoddus.exe setup_abes_exodus.exe
 
 load_abes_exoddus_gog()
 {
-    _load_gog "abes_exoddus" "Abe's Exoddus" "" "TsCheckBox2" "Exoddus.exe"
+    _load_gog "abes_exoddus" "Abe's Exoddus" "" "TsCheckBox2" "Exoddus.exe" "oddworld_abes_exoddus"
 }
 
 verblist_add beyond_good_and_evil_gog "Beyond Good and Evil (GOG.com)" setup_beyond_good_and_evil.exe
@@ -2307,7 +2347,7 @@ verblist_add far_cry_gog "Far Cry (GOG.com)" setup_far_cry.exe setup_far_cry-1.b
 
 load_far_cry_gog()
 {
-    _load_gog "far_cry" "Far Cry" "setup_far_cry-1.bin setup_far_cry-2.bin" "TsCheckBox2" "Bin32\FarCry.exe"
+    _load_gog "far_cry" "Far Cry" "setup_far_cry-1.bin setup_far_cry-2.bin" "TsCheckBox2" "Bin32\\FarCry.exe"
 }
 
 verblist_add descent_1_2_gog "Descent and Descent 2 (GOG.com)" setup_descent_1_2.exe
@@ -2315,14 +2355,244 @@ verblist_add descent_1_2_gog "Descent and Descent 2 (GOG.com)" setup_descent_1_2
 load_descent_1_2_gog()
 {
     # XXX: this installs 2 games, how should bat script be ?
-    _load_gog "descent_1_2" "Descent and Descent 2" "" "TsCheckBox5" ""
+    _load_gog "descent_1_2" "Descent and Descent 2" "" "TsCheckBox5" "" "descent_1_descent_2"
+}
+
+verblist_add descent_3_gog "Descent 3 (GOG.com)" setup_descent_3.exe
+
+load_descent_3_gog()
+{
+    _load_gog "descent_3" "Descent 3 and Mercenary Expansion" "" "TsCheckBox4" "Descent 3.exe" "descent_3_expansion" "Descent 3"
 }
 
 verblist_add evil_genius_gog "Evil Genius (GOG.com)" setup_evil_genius.exe
 
 load_evil_genius_gog()
 {
-    _load_gog "evil_genius" "Evil Genius" "" "TsCheckBox2" "ReleaseExe\EvilGeniusExeStub-Release.exe"
+    _load_gog "evil_genius" "Evil Genius" "" "TsCheckBox2" "ReleaseExe\\EvilGeniusExeStub-Release.exe"
+}
+
+verblist_add psychonauts_gog "Psychonauts (GOG.com)"  setup_psychonauts.exe
+
+load_psychonauts_gog()
+{
+    _load_gog "psychonauts" "Psychonauts" "setup_psychonauts-1.bin setup_psychonauts-2.bin" "TsCheckBox2" "Psychonauts.exe"
+}
+
+verblist_add ut_goty_gog "Unreal Tournament GOTY (GOG.com)" setup_ut_goty.exe
+
+load_ut_goty_gog()
+{
+    # XXX: Installer window contains: "Unreal Tournament", 2 spaces, a long dash, 1 space "Game Of The Year Edition"
+    _load_gog "ut_goty" "Unreal Tournament  " "" "TsCheckBox2" "gogwrap.exe GOGUT" "unreal_tournament_goty" "Unreal Tournament GOTY"
+}
+
+verblist_add unreal_gold_gog "Unreal Gold Edition (GOG.com)" setup_unreal_gold.exe
+
+load_unreal_gold_gog()
+{
+    _load_gog "unreal_gold" "Unreal Gold" "" "TsCheckBox2" "gogwrap.exe GOGUNREAL"
+}
+
+verblist_add unreal_2_se_gog "Unreal 2: The awakening Special Edition (GOG.com)" setup_unreal2_se.exe
+
+load_unreal_2_se_gog()
+{
+    # \x96 is ansi-1250 for "en dash"
+    _load_gog "unreal2_se" "Unreal 2 `echo -e '\x96'` The Awakening Special Edition" "" "TsCheckBox4" "gogwrap.exe GOGUNREAL2" "unreal_2_the_awakening_se"
+}
+
+verblist_add battle_chess_gog "Battle Chess (GOG.com)" setup_battle_chess.exe
+
+load_battle_chess_gog()
+{
+    # XXX: this installs 3 games, how should bat script be ?
+    _load_gog "battle_chess" "Battle Chess Special Edition" "" "TsCheckBox5" "" "battle_chess_special_edition"
+}
+
+verblist_add earth_2150_trilogy_gog "Earth 2150 trilogy (GOG.com)" setup_earth_2150_trilogy.exe
+
+load_earth_2150_trilogy_gog()
+{
+    # XXX: this installs 3 games, how should bat script be ?
+    _load_gog "earth_2150_trilogy" "Earth 2150 Trilogy" "" "TsCheckBox4" ""
+}
+
+verblist_add earth_2160_gog "Earth 2160 (GOG.com)" setup_earth_2160.exe
+
+load_earth_2160_gog()
+{
+    _load_gog "earth_2160" "Earth 2160" "" "TsCheckBox2" "Earth2160_START.exe"
+}
+
+verblist_add empire_earth_gold_gog "Empire Earth Gold (GOG.com)" setup_empire_earth_gold.exe
+
+load_empire_earth_gold_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    _load_gog "empire_earth_gold" "Empire Earth Gold Edition" "" "TsCheckBox4" "" "empire_earth_gold_edition"
+}
+
+verblist_add earthworm_jim_1_2_gog "Earthworm Jim 1 & 2 (GOG.com)" setup_ewj_1_2.exe
+
+load_earthworm_jim_1_2_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    _load_gog "ewj_1_2" "Earthworm Jim 1 and 2" "" "TsCheckBox5" "" "earthworm_jim_1_2"
+}
+
+verblist_add shogo_gog "Shogo Mobile Armor Division (GOG.com)" setup_shogo.exe
+
+load_shogo_gog()
+{
+    # \x96 is ansi-1250 for "en dash"
+    _load_gog "shogo" "Shogo `echo -e '\x96'` Mobile Armor Division" "" "TsCheckBox2" "Shogo.exe" "shogo_mobile_armor_division"
+}
+
+verblist_add settlers_2_gold_gog "The Settlers 2 Gold (GOG.com)" setup_settlers_2_gold.exe
+
+load_settlers_2_gold_gog()
+{
+    _load_gog "settlers_2_gold" "Settlers 2 GOLD" "" "TsCheckBox2" "DOSBOX\\dosbox.exe -conf dosboxSettlers2.conf -noconsole -c \"exit\"" "the_settlers_2_gold_edition"
+}
+
+verblist_add robinson_requiem_collection_gog "Robinson Requiem & Deus (GOG.com)" setup_robinson_requiem_collection.exe
+
+load_robinson_requiem_collection_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    _load_gog "robinson_requiem_collection" "Robinson's Requiem Collection" "" "TsCheckBox5" "" "robinsons_requiem_collection"
+}
+
+verblist_add redneck_rampage_gog "Redneck Rampage (GOG.com)" setup_redneck_rampage.exe
+
+load_redneck_rampage_gog()
+{
+    # XXX: this installs 3 games, how should bat script be ?
+    _load_gog "redneck_rampage" "Redneck Rampage Collection" "" "TsCheckbox5" "" "redneck_rampage_collection"
+}
+
+verblist_add praetorians_gog "Praetorians (GOG.com)" setup_praetorians.exe
+
+load_praetorians_gog()
+{
+    _load_gog "praetorians" "Praetorians" "" "TsCheckBox2" "Praetorians.exe"
+}
+
+verblist_add perimeter_gog "Perimeter (GOG.com)" setup_perimeter.exe
+
+load_perimeter_gog()
+{
+    _load_gog "perimeter" "Perimeter" "" "TsCheckBox2" "perimeter.exe"
+}
+
+verblist_add painkiller_black_gog "Painkiller Black (GOG.com)" setup_painkiller_black.exe setup_painkiller_black-1.bin setup_painkiller_black-2.bin
+
+load_painkiller_black_gog()
+{
+    _load_gog "painkiller_black" "Painkiller Black" "setup_painkiller_black-1.bin setup_painkiller_black-2.bin" "TsCheckBox2" "bin\\Painkiller.exe" "painkiller"
+}
+
+verblist_add operation_flashpoint_goty_gog "Operation Flashpoint GOTY (GOG.com)" setup_operation_flashpoint_goty.exe
+
+load_operation_flashpoint_goty_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    # \x96 is ansi-1250 for "en dash"
+    _load_gog "operation_flashpoint_goty" "Operation Flashpoint `echo -e '\x96'` Game of the Year Edition" "" "TsCheckBox2" "" "" "Operation Flashpoint - GOTY"
+}
+
+verblist_add neighbours_from_hell_compilation_gog "Neighbours From Hell 1 & 2 (GOG.com)" setup_neighbours_from_hell_compilation.exe
+
+load_neighbours_from_hell_compilation_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    _load_gog "neighbours_from_hell_compilation" "Neighbours From Hell Compilation" "" "TsCheckBox4"
+}
+
+verblist_add mdk_gog "MDK (GOG.com)" setup_mdk.exe
+
+load_mdk_gog()
+{
+    _load_gog "mdk" "MDK" "" "TsCheckBox4" "gogwrap.exe GOGMDK"
+}
+
+verblist_add mdk2_gog "MDK 2 (GOG.com)" setup_mdk_2.exe
+
+load_mdk2_gog()
+{
+    _load_gog "mdk_2" "MDK 2" "" "TsCheckBox2" "MDK2.exe"
+}
+
+verblist_add ground_control_2_gog "Ground Control 2 (GOG.com)" setup_ground_control_2.exe
+
+load_ground_control_2_gog()
+{
+    _load_gog "ground_control_2" "Ground Control II" "" "TsCheckBox2" "gcii.exe" "ground_control_2_operation_exodus"
+}
+
+verblist_add ghost_master_gog "Ghost Master (GOG.com)" setup_ghost_master.exe
+
+load_ghost_master_gog()
+{
+    _load_gog "ghost_master" "Ghost Master" "" "TsCheckBox2" "ghost.exe"
+}
+
+verblist_add freespace_gog "Freespace (GOG.com)" setup_freespace.exe
+
+load_freespace_gog()
+{
+    _load_gog "freespace" "Freespace with Silent Threat Expansion" "" "TsCheckBox4" "fs.exe" "freespace_expansion" "Freespace"
+}
+
+verblist_add freespace_2_gog "Freespace 2 (GOG.com)" setup_freespace_2.exe
+
+load_freespace_2_gog()
+{
+    _load_gog "freespace_2" "Freespace 2" "" "TsCheckBox2" "fs2.exe"
+}
+
+verblist_add flatout_gog "FlatOut (GOG.com)" setup_flatout.exe
+
+load_flatout_gog()
+{
+    _load_gog "flatout" "FlatOut" "" "TsCheckBox2" "flatout.exe"
+}
+
+verblist_add earthworm_jim_3d_gog "Earthworm Jim 3D (GOG.com)" setup_ewj3d.exe
+
+load_earthworm_jim_3d_gog()
+{
+    _load_gog "ewj3d" "Earthworm Jim 3D" "" "TsCheckBox2" "gogwrap.exe GOGEARTHWORMJIM3D" "earthworm_jim_3d"
+}
+
+verblist_add fallout_gog "Fallout (GOG.com)" setup_fallout.exe
+
+load_fallout_gog()
+{
+    _load_gog "fallout" "Fallout" "" "TsCheckBox2" "falloutw.exe"
+}
+
+verblist_add fallout_2_gog "Fallout 2 (GOG.com)" setup_fallout_2.exe
+
+load_fallout_2_gog()
+{
+    _load_gog "fallout_2" "Fallout 2" "" "TsCheckBox2" "fallout2.exe"
+}
+
+verblist_add fallout_tactics_gog "Fallout Tactics (GOG.com)" setup_fallout_tactics.exe
+
+load_fallout_tactics_gog()
+{
+    _load_gog "fallout_tactics" "Fallout Tactics" "" "TsCheckBox2" "BOS.exe"
+}
+
+verblist_add tex_murphy_1_and_2_gog "Tex Murphy 1 & 2 (GOG.com)" setup_tex_murphy_1_and_2.exe
+
+load_tex_murphy_1_and_2_gog()
+{
+    # XXX: this installs 2 games, how should bat script be ?
+    _load_gog "tex_murphy_1_and_2" "Tex Murphy 1 and 2" "" "TsCheckBox5" "" "tex_murphy_1_2"
 }
 
 #----------------------------------------------------------------
