@@ -51,6 +51,36 @@ rm -rf "$YAGMARK_TMP"
 mkdir -p "$YAGMARK_TMP"
 mkdir -p "$YAGMARK_RESULTS"
 
+cputype=`cat /proc/cpuinfo | egrep 'model name' | 
+        awk '{print $8}' | uniq`
+
+host=`hostname | sed 's/\..*//'`    
+
+case "$OS" in
+"Windows_NT")
+    systeminfo | tee "$YAGMARK_TMP"/sysinfo.txt
+    # Dirty code to simplify os name
+    osname=`grep "OS Name" "$YAGMARK_TMP"/sysinfo.txt | sed 's/.*Microsoft.*Windows //;s/VistaT/Vista/;s/ .*//'`
+    wineversion=""
+    dxdiag -t "$YAGMARK_TMP_WIN"\\dxdiaginfo.txt
+    echo "--------------- dxdiag ---------------" >> "$YAGMARK_TMP"/sysinfo.txt
+    cat "$YAGMARK_TMP"/dxdiaginfo.txt >> "$YAGMARK_TMP"/sysinfo.txt
+    gputype=`grep 'Card name' < "$YAGMARK_TMP"/dxdiaginfo.txt |
+            awk '{print $5"_"$6}'`
+    ;;
+*) 
+    # note: next line contains a tab
+    osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/g'`
+    wineversion=`$WINE --version`
+    (lspci || /sbin/lspci) > "$YAGMARK_TMP"/sysinfo.txt
+    gputype=`cat "$YAGMARK_TMP"/sysinfo.txt | grep VGA |
+             sed -e 's/.*\[//;s/]\.*//;s/ (.*//;s/GeForce //;s/ /_/g'`
+    
+    ;;
+esac
+
+SYSTEMID="$cputype-"$gputype"-$osname-$wineversion-$host"
+
 #----------------------------------------------------------------
 
 ahk_do()
@@ -267,26 +297,18 @@ announce() {
 
 do_system_description() {
     echo ">>-------- begin system description ---------"
-    announce hostname
-    announce uname -a
-    announce "cat /proc/cpuinfo | sort | egrep 'model|cpu|bogo' | uniq -c"
+    echo "Host Name: $host"
+    echo "CPU Type: $cputype"
+    echo "Graphics Card: $gputype"
+    echo "Operating System: $osname"
+    echo "Wine Version: $wineversion"
+
+    cat "$YAGMARK_TMP"/sysinfo.txt
 
     case "$OS" in
     "Windows_NT")
-        echo ">> systeminfo"
-        systeminfo | tee "$YAGMARK_TMP"/sysinfo.txt
-        # Dirty code to simplify os name
-        osname=`grep "OS Name" "$YAGMARK_TMP"/sysinfo.txt | sed 's/.*Microsoft.*Windows //;s/VistaT/Vista/;s/ .*//'`
-        rm "$YAGMARK_TMP"/sysinfo.txt
-        ;;
-    *) 
-        announce lsb_release -a
-        announce $WINE --version
-        announce lspci \| grep VGA
         announce glxinfo \| egrep 'vendor\|renderer\|version'
         announce cat /var/log/messages \| grep NVIDIA | grep loading | tail -n 1
-        # note: next line contains a tab
-        osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/g'`
         ;;
     esac
     echo ">>-------- end system description ---------"
@@ -316,5 +338,6 @@ done
 
 echo running do_report
 do_report > tmp.txt
-mv tmp.txt yagmark-`hostname`-$osname-`date +%F-%H:%M`.txt
+mkdir -p results/"$SYSTEMID"
+mv tmp.txt results/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
 echo done
