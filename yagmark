@@ -152,14 +152,26 @@ run_3dmark2000()
         send {Enter}
         WinWaitClose, 3DMark2000
         "
-    cat "$YAGMARK_RESULTS"/3dmark2000.txt
+    cd "$YAGMARK_RESULTS"
+    # Parse results, add prefix, and make parse-friendly
+    sed '1,/Platform/d;
+        /Fill Rate/,$d;
+        s/^/3dmark2000_/;
+        s/[- _][- _]*/_/g' 3dmark2000.txt > 3dmark2000.parsed
+    if test -s 3dmark2000.parsed
+    then
+        cat 3dmark2000.parsed
+    else
+        echo "No results?"
+        rm 3dmark2000.parsed
+    fi
     cd "$olddir"
 }
 
 run_3dmark2001()
 {
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE"
-
+    rm "$YAGMARK_RESULTS"/3dmark2001.*
     SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark2001"
 
  # Install if needed
@@ -197,9 +209,21 @@ run_3dmark2001()
         sleep 1000
         WinWaitClose, 3DMark2001
         "
-    cat "$YAGMARK_RESULTS"/3dmark2001.txt
+    cd "$YAGMARK_RESULTS"
+    # Parse results, add prefix, and make parse-friendly
+    sed '1,/RESULTS/d;
+        /Fill Rate/,$d;
+        s/^/3dmark2001_/;
+        s/[- _][- _]*/_/g;
+        s/_fps/ fps/' 3dmark2001.txt > 3dmark2001.parsed
+    if test -s 3dmark2001.parsed
+    then
+        cat 3dmark2001.parsed
+    else
+        echo "No results?"
+        rm 3dmark2001.parsed
+    fi
     cd "$olddir"
-
 }
 
 run_3dmark06()
@@ -249,8 +273,8 @@ run_3dmark06()
     unzip -o "$YAGMARK_RESULTS"/3dmark06.zip Result.xml
     # fixme: Parse more results out of the xml file!!
     tr -d '\000' < Result.xml > "$YAGMARK_RESULTS"/3dmark06.xml
-    grep 3DMarks < "$YAGMARK_RESULTS"/3dmark06.xml | sed 's,</.*,,;s,.*>,,;s,\..*,,' > "$YAGMARK_RESULTS"/3dmark06.txt
-    echo -n "3DMarks06: "
+    echo -n "3DMarks06: " > 3dmark06.txt
+    grep 3DMarks < "$YAGMARK_RESULTS"/3dmark06.xml | sed 's,</.*,,;s,.*>,,;s,\..*,,' >> "$YAGMARK_RESULTS"/3dmark06.txt
     cat "$YAGMARK_RESULTS"/3dmark06.txt
     cd "$olddir"
 }
@@ -307,9 +331,11 @@ do_system_description() {
 
     case "$OS" in
     "Windows_NT")
-        announce glxinfo \| egrep 'vendor\|renderer\|version'
-        announce cat /var/log/messages \| grep NVIDIA | grep loading | tail -n 1
         ;;
+    *)
+       announce glxinfo \| egrep 'vendor\|renderer\|version'
+       announce cat /var/log/messages \| grep NVIDIA | grep loading | tail -n 1
+    ;;
     esac
     echo ">>-------- end system description ---------"
 }
@@ -317,6 +343,12 @@ do_system_description() {
 do_report() {
     echo ">>-------- begin yagmark report ---------"
     announce date
+    echo ">>-------- begin summary ---------"
+    for file in "$YAGMARK_RESULTS"/*.parsed
+    do
+       cat $file
+    done
+    echo ">>-------- end summary ---------"
     for file in "$YAGMARK_RESULTS"/*.txt
     do
        echo ">>-------- begin $file ---------"
