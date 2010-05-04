@@ -82,7 +82,7 @@ case "$OS" in
     # note: next line contains a tab
     osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/g'`
     wineversion=`$WINE --version`
-    (lspci || /sbin/lspci) > "$YAGMARK_TMP"/sysinfo.txt
+    (lspci || /sbin/lspci || /usr/sbin/lspci) > "$YAGMARK_TMP"/sysinfo.txt
     gputype=`cat "$YAGMARK_TMP"/sysinfo.txt | grep VGA |
              sed -e 's/.*\[//;s/]\.*//;s/ (.*//;s/GeForce //;s/ /_/g'`
     
@@ -345,7 +345,7 @@ do_system_description() {
         ;;
     *)
        announce glxinfo \| egrep 'vendor\|renderer\|version'
-       announce cat /var/log/messages \| grep NVIDIA | grep loading | tail -n 1
+       announce dmesg \| grep NVIDIA | grep loading | tail -n 1
     ;;
     esac
     echo ">>-------- end system description ---------"
