@@ -273,7 +273,7 @@ run_3dmark06()
     unzip -o "$YAGMARK_RESULTS"/3dmark06.zip Result.xml
     # fixme: Parse more results out of the xml file!!
     tr -d '\000' < Result.xml > "$YAGMARK_RESULTS"/3dmark06.xml
-    echo -n "3DMarks06: " > 3dmark06.txt
+    echo -n "3DMark06_result: " > "$YAGMARK_RESULTS"/3dmark06.txt
     grep 3DMarks < "$YAGMARK_RESULTS"/3dmark06.xml | sed 's,</.*,,;s,.*>,,;s,\..*,,' >> "$YAGMARK_RESULTS"/3dmark06.txt
     cat "$YAGMARK_RESULTS"/3dmark06.txt
     cd "$olddir"
