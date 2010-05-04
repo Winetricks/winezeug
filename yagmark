@@ -3,6 +3,16 @@
 # Automated script to measure Win32 graphics performance
 # Copyright 2010 Dan Kegel.
 # Licence: LGPL (for winehq compatibility)
+#
+# To run on Windows, please use cygwin.
+# When running on Windows Vista or 7, disable UAC and reboot, or Autohotkey won't be able to script the installers.
+# On any OS, you'll want to install the packages
+#  svn cabextract unzip wget
+# and then do something like
+#  svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
+#  cd winezeug
+#  sh yagmark 3dmark2000
+# On Windows 7, you have to mark the installed 3dmark2000/3dmark2001/3dmark06 executables as needing Windows XP compatibility mode, or they will not run.
 
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
