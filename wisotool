@@ -356,7 +356,7 @@ download() {
         # zero size - bad download?
         rm "$cache/$file"
     fi
-    if test ! -f "$cache/$file"
+    if test "$nosizecheck" != "" || test ! -f "$cache/$file"
     then
         cd "$cache"
         # Mac folks tend to have curl rather than wget
@@ -371,7 +371,8 @@ download() {
            # [*] --read-timeout is useful on the adobe server that doesn't
            # close the connection unless you tell it to (control-C or closing
            # the socket)
-           try wget -O "$file" -nd -c --read-timeout=300 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${5:+--load-cookies "$5"} "$2"
+           # Disable retries for gog.com (which requires higher level retries)
+           try wget -O "$file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${5:+--load-cookies "$5"} "$2"
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
@@ -2180,7 +2181,7 @@ __EOF__
 #----------------------------------------------------------------
 
 # Generic GOG.com installer
-# Usage: game_id game_title [other_files [reader_control [run_command [download_id [install_dir]]]]]
+# Usage: game_id game_title [other_files,size [reader_control [run_command [download_id [install_dir]]]]]
 # game_id
 #     Used for main installer name and download url.
 # game_title
@@ -2228,10 +2229,20 @@ _load_gog()
     cookie="$auth_path/cookie.txt"
 
     file_id=0
-    for file in $installer $other_files
+    for file_and_size in $installer $other_files
     do
+        case "$file_and_size" in
+        *,*) 
+            minsize=`echo $file_and_size | sed 's/.*,//'`
+            file=`echo $file_and_size | sed 's/,.*//'`
+            ;;
+        *)
+            minsize=1
+            file=$file_and_size
+            ;;
+        esac
         file_path="$installer_path/$file"
-        if ! test -s "$file_path"
+        if ! test -s "$file_path" || test `stat -c%s "$file_path"` -lt $minsize
         then
             if ! test -f "$cookie"
             then
@@ -2258,7 +2269,9 @@ _load_gog()
                 rm -f "$post_data"
                 rm -f "$next_url"
             fi
+            nosizecheck=1
             download "$PACKAGE" "https://www.gog.com/en/download/game/$download_id/$file_id" "" "$file" "$cookie"
+            unset nosizecheck
         fi
         file_id=`expr $file_id + 1`
     done
@@ -2347,7 +2360,7 @@ verblist_add far_cry_gog "Far Cry (GOG.com)" setup_far_cry.exe setup_far_cry-1.b
 
 load_far_cry_gog()
 {
-    _load_gog "far_cry" "Far Cry" "setup_far_cry-1.bin setup_far_cry-2.bin" "TsCheckBox2" "Bin32\\FarCry.exe"
+    _load_gog "far_cry" "Far Cry" "setup_far_cry-1.bin,2097392384 setup_far_cry-2.bin,437651497" "TsCheckBox2" "Bin32\\FarCry.exe"
 }
 
 verblist_add descent_1_2_gog "Descent and Descent 2 (GOG.com)" setup_descent_1_2.exe
