@@ -79,7 +79,8 @@ case "$OS" in
     ;;
 esac
 
-SYSTEMID="$cputype-"$gputype"-$osname-$wineversion-$host"
+# Put wine version last, since it's so long
+SYSTEMID="$cputype-"$gputype"-$osname-$host-$wineversion"
 
 #----------------------------------------------------------------
 
