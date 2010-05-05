@@ -293,6 +293,8 @@ usage() {
     echo " xact          MS XACT Engine (x3daudio?_?.dll, xactengine?_?.dll)"
     echo " xvid          xvid video codec"
     echo "Pseudopackages:"
+    echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
+    echo " alldlls=default  Remove all DLL overrides"
     echo " allfonts      All listed fonts (corefonts, tahoma, liberation)"
     echo " allcodecs     All listed codecs (xvid, ffdshow)"
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
@@ -787,12 +789,59 @@ _EOF_
            rm -rf "$WINDIR"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
-        echo "\"$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
+
+        # Note: if you want to override even DLLs loaded with an absolute path,
+        # you need to add an asterisk:
+        echo "\"*$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
+        #echo "\"$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
+
         shift
     done
 
     try_regedit "$WINETRICKS_TMP_WIN"\\override-dll.reg
+    cat "$WINETRICKS_TMP"/override-dll.reg
     rm "$WINETRICKS_TMP"/override-dll.reg
+}
+
+override_no_dlls() {
+    $WINE regedit /d 'HKEY_CURRENT_USER\Software\Wine\DllOverrides'
+}
+
+override_all_dlls() {
+    # Disable all but the commonly used DLLs Wine doesn't have a credible alternative for
+    # i.e. Don't disallow msvcp80 or d3dx9_* for now
+    override_dlls builtin \
+        acledit aclui activeds actxprxy advapi32 advpack amstream atl authz avicap32 \
+        avifil32 avifilebavrt bcrypt browseui cabinet capi2032 cards cfgmgr32 clusapi \
+        comcat comctl32 comdlg32 commdlg compobj compstui credui crtdll crypt32 cryptdlg \
+        cryptdll cryptnet cryptui ctapi32 ctl3d ctl3d32 ctl3dv2 d3d10 \
+        d3d10core d3d8 d3d9 d3dim d3drm \
+        d3dxof dbghelp dciman32 ddeml ddraw ddrawex \
+        devenum dinput dinput8 dispdib dispex dmband dmcompos dmime dmloader dmscript \
+        dmstyle dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast \
+        dpnlobby dpwsockx drmclien dsound dssenh dswave dwmapi dxdiagn dxgi faultrep \
+        fltlib fusion fwpuclnt gdi32 gdiplus glu32 gpkcsp hal hid hlink \
+        hnetcfg httpapi iccvid icmp imagehlp imm imm32 inetcomm inetmib1 infosoft \
+        initpki inkobj inseng iphlpapi itircl itss jscript kernel32 loadperf localspl \
+        localui lz32 lzexpand mapi32 mapistub mciavi32 mcicda mciqtz32 mciseq mciwave \
+        midimap mlang mmdevapi mmsystem mpr mprapi msacm msacm32 mscat32 mscms \
+        mscoree msctf msdaps msdmo msftedit mshtml msi msimg32 msimtf msisip \
+        msnet32 msrle32 mssign32 mssip32 mstask msvcirt msvcr70 msvcr71 msvcr80 \
+        msvcr90 msvcrt msvcrt20 msvcrt40 msvcrtd msvfw32 msvidc32 msvideo mswsock msxml3 \
+        msxml4 nddeapi netapi32 newdev ntdll ntdsapi ntprint objsel odbc32 odbccp32 \
+        ole2 ole2conv ole2disp ole2nls ole2prox ole2thk ole32 oleacc oleaut32 olecli \
+        olecli32 oledb32 oledlg olepro32 olesvr olesvr32 olethk32 openal32 opengl32 pdh \
+        pidgen powrprof printui propsys psapi pstorec qcap qedit qmgr qmgrprxy \
+        quartz query rasapi16 rasapi32 rasdlg resutils riched20 riched32 rpcrt4 rsabase \
+        rsaenh rtutils sccbase schannel secur32 security sensapi serialui setupapi setupx \
+        sfc sfc_os shdoclc shdocvw shell shell32 shfolder shlwapi slbcsp slc \
+        snmpapi softpub spoolss sti storage stress svrapi sxs t2embed tapi32 \
+        toolhelp traffic twain twain_32 typelib unicows updspapi url urlmon user32 \
+        userenv usp10 uxtheme vdmdbg ver version w32skrnl w32sys wbemprox wiaservc \
+        win32s16 win87em winaspi windebug windowscodecs wined3d winedos winemapi wing wing32 \
+        winhttp wininet winmm winnls winnls32 winscard winsock wintab wintab32 wintrust \
+        wldap32 wmi wmiutils wnaspi32 wow32 ws2_32 wsock32 wtsapi32 wuapi wuaueng \
+        xinput1_1 xinput1_2 xinput1_3 xinput9_1_0 xmllite
 }
 
 override_app_dlls() {
@@ -2522,8 +2571,8 @@ load_ole2() {
     cd "$olddir"
     unset_winver
 
-    override_dlls native,builtin COMPOBJ.DLL OLE2CONV.DLL OLE2DISP.DLL OLE2.DLL
-    override_dlls native,builtin OLE2NLS.DLL OLE2PROX.DLL STORAGE.DLL TYPELIB.DLL
+    override_dlls native,builtin COMPOBJ OLE2CONV OLE2DISP OLE2
+    override_dlls native,builtin OLE2NLS OLE2PROX STORAGE TYPELIB
 }
 
 #----------------------------------------------------------------
@@ -3902,6 +3951,8 @@ do
 
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
     allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
+    alldlls=builtin) override_all_dlls;;
+    alldlls=default) override_no_dlls;;
     ddr=gdi) set_ddr gdi;;
     ddr=opengl) set_ddr opengl;;
     dsoundbug9612) load_dsoundbug9612;;
