@@ -102,9 +102,9 @@ ahk_do()
 
 #----------------------------------------------------------------
 
-run_clear()
+do_clear()
 {
-    rm -f "$YAGMARK_RESULTS"/*
+    rm -f "$YAGMARK_RESULTS"/* 2> /dev/null
 }
 
 #----------------------------------------------------------------
@@ -112,7 +112,6 @@ run_clear()
 run_3dmark2000()
 {
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2000"
-    rm -f "$YAGMARK_RESULTS"/3dmark2000.*
 
     SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark2000"
 
@@ -182,7 +181,6 @@ run_3dmark2000()
 run_3dmark2001()
 {
     exe_dir="$programfilesdir_x86_unix/MadOnion.com/3DMark2001 SE"
-    rm "$YAGMARK_RESULTS"/3dmark2001.*
     SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark2001"
 
  # Install if needed
@@ -241,7 +239,6 @@ run_3dmark06()
 {
     exe_dir="$programfilesdir_x86_unix/Futuremark/3DMark06"
 
-    rm "$YAGMARK_RESULTS"/3dmark06.*
     SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark06"
 
     # TODO: add an "if workaround_wine_bug" around -nosysteminfo
@@ -390,14 +387,12 @@ do_report() {
 }
 
 # TODO: add a wisotool-style menu
+
+do_clear
 for cmd
 do
    echo running run_$cmd
    run_$cmd
 done
-
-echo running do_report
-do_report > tmp.txt
 mkdir -p results/"$SYSTEMID"
-mv tmp.txt results/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
-echo done
+do_report > results/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
