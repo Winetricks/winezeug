@@ -418,20 +418,17 @@ median()
     '
 }
 
-run_stats()
+# Show statistics over all results from given system
+do_stats()
 {
-    for dir in results/*
+    dir="$1"
+    for file in $dir/*.txt
     do
-       for file in $dir/*.txt
-       do
-           sed '1,/begin summary/d;/end summary/,$d' < $file | grep '[ 	]-*[0-9]'
-       done | median > $dir/stats.dat
-    done
-    more results/*/stats.dat
+        sed '1,/begin summary/d;/end summary/,$d' < $file | grep '[ 	]-*[0-9]'
+    done | median 
 }
 
 # TODO: add a wisotool-style menu
-# TODO: add way to get statistics including current run
 
 do_clear
 
@@ -446,5 +443,7 @@ if test `find "$YAGMARK_RESULTS" -type f | wc -l` -gt 0
 then
     mkdir -p results/"$SYSTEMID"
     do_report > results/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
+    echo "New medians in results/$SYSTEMID/stats.dat":
+    do_stats results/"$SYSTEMID" | tee results/"$SYSTEMID"/stats.dat
 fi
 
