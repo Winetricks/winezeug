@@ -342,12 +342,14 @@ run_unigine_heaven()
     cd "$olddir"
 }
 
-announce() {
+announce()
+{
    echo ">> $*"
    eval $1 $2 $3 $4 $5 $6 $7 $8 $9
 }
 
-do_system_description() {
+do_system_description()
+{
     echo ">>-------- begin system description ---------"
     echo "Host Name: $host"
     echo "CPU Type: $cputype"
@@ -368,7 +370,8 @@ do_system_description() {
     echo ">>-------- end system description ---------"
 }
 
-do_report() {
+do_report()
+{
     echo ">>-------- begin yagmark report ---------"
     announce date
     echo ">>-------- begin summary ---------"
