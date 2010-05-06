@@ -167,7 +167,8 @@ run_3dmark2000()
     sed '1,/Platform/d;
         /Fill Rate/,$d;
         s/^/3dmark2000_/;
-        s/[- _][- _]*/_/g' 3dmark2000.txt > 3dmark2000.parsed
+        s/[- _][- _]*/_/g;
+        s,:,,' 3dmark2000.txt > 3dmark2000.parsed
     if test -s 3dmark2000.parsed
     then
         cat 3dmark2000.parsed
@@ -297,9 +298,11 @@ run_3dmark06()
       sed 's,SM2.0,SM2_0,' |                                  # make variable names legal identifiers
       sed 's,/SM3.0,_SM3_0,' |                                # make variable names legal identifiers
       sed 's, ,_,g' |                                         # make variable names legal identifiers
+      tr = '\011' |                                           # use tab as field separator
       grep . > 3dmark06.txt                                   # remove blank lines
 
-    sed 's/^/3dmark06_/' < 3dmark06.txt > 3dmark06.parsed     # add test name to each record
+    sed 's/^/3dmark06_/' < 3dmark06.txt |                     # add test name to each record
+      egrep -v "Frequency|Run_Length|_Profile|Width|Height|_Level|_Quality" > 3dmark06.parsed       # Remove less interesting results and non-results
     cat 3dmark06.parsed
     cd "$olddir"
 }
