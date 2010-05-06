@@ -12,7 +12,7 @@
 #  svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
 #  cd winezeug
 #  sh yagmark 3dmark2000
-# On Windows 7, you have to mark the installed 3dmark2000/3dmark2001/3dmark06 executables as needing Windows XP compatibility mode, or they will not run.
+# On Windows 7, you have to mark the installed 3dmark2000/3dmark2001 executables as needing Windows XP compatibility mode, or they will not run.
 
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
@@ -241,6 +241,7 @@ run_3dmark06()
 {
     exe_dir="$programfilesdir_x86_unix/Futuremark/3DMark06"
 
+    rm "$YAGMARK_RESULTS"/3dmark06.*
     SAVE_PATH="$YAGMARK_RESULTS_WIN${backslash}3dmark06"
 
     # TODO: add an "if workaround_wine_bug" around -nosysteminfo
@@ -280,13 +281,29 @@ run_3dmark06()
         send {ESC}
         winkill 3DMark06
         "
-    mv "$YAGMARK_RESULTS"/3dmark06.3dr "$YAGMARK_RESULTS"/3dmark06.zip
-    unzip -o "$YAGMARK_RESULTS"/3dmark06.zip Result.xml
-    # fixme: Parse more results out of the xml file!!
-    tr -d '\000' < Result.xml > "$YAGMARK_RESULTS"/3dmark06.xml
-    echo -n "3DMark06_result: " > "$YAGMARK_RESULTS"/3dmark06.txt
-    grep 3DMarks < "$YAGMARK_RESULTS"/3dmark06.xml | sed 's,</.*,,;s,.*>,,;s,\..*,,' >> "$YAGMARK_RESULTS"/3dmark06.txt
-    cat "$YAGMARK_RESULTS"/3dmark06.txt
+    cd "$YAGMARK_RESULTS"
+    unzip -o 3dmark06.3dr Result.xml
+    xmllint --format --nocdata --encode ascii Result.xml |    # convert to ascii and canonicalize
+      tr '\012' ' ' |                                         # remove all line breaks
+      sed 's,</Result>,|,g;s,</Setting>,|,g' |                # put record separator after each result or setting
+      tr '|' '\012' |                                         # turn record separators into line breaks
+      sed 's,</Name>,=,g' |                                   # add field separator between variable and value
+      sed 's,<Category.*,,' |                                 # remove fields we don't care about
+      sed 's,<Plain>[^<]*</Plain>,,g' |                       # remove fields we don't care about
+      egrep -v "\.dll|\.exe|Posted|N/A" |                     # remove records we don't care about
+      sed 's,<[^>]*>,,g' |                                    # remove remaining tags, leaving just content
+      sed 's,^  *,,;s,  *$,,' |                               # remove extra whitespace at start and end of lines
+      sed 's, *= *,=,g' |                                     # remove extra whitespace between fields
+      sed 's, - , ,' |                                        # make variable names legal identifiers
+      sed 's,Anti-Aliasing,AntiAliasing,' |                   # make variable names legal identifiers
+      sed 's,post-processing,postprocessing,' |               # make variable names legal identifiers
+      sed 's,SM2.0,SM2_0,' |                                  # make variable names legal identifiers
+      sed 's,/SM3.0,_SM3_0,' |                                # make variable names legal identifiers
+      sed 's, ,_,g' |                                         # make variable names legal identifiers
+      grep . > 3dmark06.txt                                   # remove blank lines
+
+    sed 's/^/3dmark06_/' < 3dmark06.txt > 3dmark06.parsed     # add test name to each record
+    cat 3dmark06.parsed
     cd "$olddir"
 }
 
