@@ -2129,8 +2129,16 @@ load_unigine_heaven() {
         WinWait ahk_class #32770
         ControlClick Button1 ; OK
         WinWait ahk_class MsiDialogCloseClass, Completed
+        Sleep 500
         ControlClick Button1 ; Finish
+        Send {Enter}
     "
+
+    if workaround_wine_bug 22614
+    then
+        # hope your card actually has 1GB of RAM
+        sh "$WINETRICKS" videomemorysize=1024
+    fi
 
     # Should start Heaven.exe, but that doesn't run in Wine
     # Should give option to run Heaven_gl.bat (even works in Wine)
