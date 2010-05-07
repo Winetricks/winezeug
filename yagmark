@@ -332,29 +332,31 @@ run_re5bench()
     cd "$olddir"
 }
 
-run_unigine_heaven()
+run_heaven2_d3d9()
 {
     exedir="$programfilesdir_x86_unix/Unigine/Heaven"
-    exe="$exedir/Heaven_d3d9.bat"
+    exe="$exedir/Heaven.exe"
     commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app direct3d9 -sound_app openal "
 
     # Install if needed
+    pwd
+    ls -l "$exe"
     if ! test -f "$exe"
     then
         sh wisotool unigine_heaven
     fi
 
     cd "$exedir"
-    $WINE $commandline > "$YAGMARK_RESULTS"/heaven2.log 2>&1
+    $WINE $commandline > "$YAGMARK_RESULTS"/$verb.log 2>&1
     cd "$YAGMARK_RESULTS"
-    egrep -v 'fixme|connection' < heaven2.log | uniq > heaven2.txt
-    cat heaven2.txt | 
+    egrep -v 'fixme|connection' < $verb.log | uniq > $verb.txt
+    cat $verb.txt | 
         egrep ":[ 	]" |                  # ignore non key/value lines
         grep -v " path:" |                    # ignore uninteresting records
         sed 's/  */ /g' |                     # remove runs of spaces
         tr ' ' _ |                            # make key names legal identifiers
         sed 's/:[_	]/	/' |          # use tab as field separator
-        sed 's/^/heaven2_/' > heaven2.parsed  # add test name to each record
+        sed "s/^/$verb_/" > $verb.parsed      # add test name to each record
     cd "$olddir"
 }
 
@@ -474,10 +476,10 @@ run_rank()
 
 do_clear
 
-for cmd
+for verb
 do
-   echo running run_$cmd
-   run_$cmd
+   echo running run_$verb
+   run_$verb
 done
 
 mkdir -p results/"$SYSTEMID"
