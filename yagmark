@@ -328,7 +328,7 @@ run_unigine_heaven()
 {
     exedir="$programfilesdir_x86_unix/Unigine/Heaven"
     exe="$exedir/Heaven_d3d9.bat"
-    commandline="cmd /c Heaven_d3d9.bat"
+    commandline="Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app direct3d9 -sound_app openal "
 
     # Install if needed
     if ! test -f "$exe"
@@ -336,9 +336,17 @@ run_unigine_heaven()
         sh wisotool unigine_heaven
     fi
 
-    # Can this be scraped/controlled at all with autohotkey?  Maybe if run in window...
     cd "$exedir"
-    $WINE $commandline
+    $WINE $commandline > "$YAGMARK_RESULTS"/heaven2.log 2>&1
+    cd "$YAGMARK_RESULTS"
+    egrep -v 'fixme|connection' < heaven2.log | uniq > heaven2.txt
+    cat heaven2.txt | 
+        egrep ":[ 	]" |                  # ignore non key/value lines
+        grep -v " path:" |                    # ignore uninteresting records
+        sed 's/  */ /g' |                     # remove runs of spaces
+        tr ' ' _ |                            # make key names legal identifiers
+        sed 's/:[_	]/	/' |          # use tab as field separator
+        sed 's/^/heaven2_/' > heaven2.parsed  # add test name to each record
     cd "$olddir"
 }
 
