@@ -29,7 +29,7 @@ do
 
    if test "$1" != ""
    then
-       rsync -a results/* $1
+       rsync -a results/* $1 || rsync -a results/* $1 || echo "oh, well, can't upload"
    fi
 done
 
