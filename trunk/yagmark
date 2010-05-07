@@ -332,15 +332,14 @@ run_re5bench()
     cd "$olddir"
 }
 
-run_heaven2_d3d9()
+# Heaven2 has lots of variants.
+# Set commandline and then call this to do the work.
+do_heaven2()
 {
     exedir="$programfilesdir_x86_unix/Unigine/Heaven"
     exe="$exedir/Heaven.exe"
-    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app direct3d9 -sound_app openal "
 
     # Install if needed
-    pwd
-    ls -l "$exe"
     if ! test -f "$exe"
     then
         sh wisotool unigine_heaven
@@ -348,6 +347,9 @@ run_heaven2_d3d9()
 
     cd "$exedir"
     $WINE $commandline > "$YAGMARK_RESULTS"/$verb.log 2>&1
+    # FIXME: sometimes it hangs on exit without having flushed stdout;
+    # if we have to kill it, look instead in c:/users/$LOGNAME/Unigine Heaven/log.html
+
     cd "$YAGMARK_RESULTS"
     egrep -v 'fixme|connection' < $verb.log | uniq > $verb.txt
     cat $verb.txt | 
@@ -358,6 +360,18 @@ run_heaven2_d3d9()
         sed 's/:[_	]/	/' |          # use tab as field separator
         sed "s/^/$verb_/" > $verb.parsed      # add test name to each record
     cd "$olddir"
+}
+
+run_heaven2_d3d9()
+{
+    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app direct3d9 -sound_app openal "
+    do_heaven2
+}
+
+run_heaven2_gl()
+{
+    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app opengl -sound_app openal "
+    do_heaven2
 }
 
 announce()
