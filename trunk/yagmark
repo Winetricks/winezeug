@@ -102,6 +102,31 @@ echo SYSTEMID is $SYSTEMID
 
 #----------------------------------------------------------------
 
+warn() {
+    echo "------------------------------------------------------"
+    echo "$@"
+    echo "------------------------------------------------------"
+}
+
+# At some point, make the return value controllable by a global 
+# commandline option so we can see if we still need the workaround.
+workaround_wine_bug()
+{
+    if test "$WINE" = ""
+    then
+        echo No need to work around wine bug $1 on windows
+        return 1
+    fi
+    case $1 in
+    "$YAGMARK_BLACKLIST") 
+        echo wine bug $1 workaround blacklisted, skipping
+        return 1
+        ;;
+    esac
+    warn Working around wine bug $1
+    return 0
+}
+
 ahk_do()
 {
    echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
@@ -346,19 +371,41 @@ do_heaven2()
     fi
 
     cd "$exedir"
-    $WINE $commandline > "$YAGMARK_RESULTS"/$verb.log 2>&1
-    # FIXME: sometimes it hangs on exit without having flushed stdout;
-    # if we have to kill it, look instead in c:/users/$LOGNAME/Unigine Heaven/log.html
+    if workaround_wine_bug 22622
+    then
+        # heaven usually hangs on exit without having flushed stdout,
+        # so run it in background and watch its other log file
+        FILE="$DRIVE_C/users/$LOGNAME/Unigine Heaven/log.html"
+        rm -f "$FILE" 2> /dev/null
+        $WINE $commandline > "$YAGMARK_RESULTS"/$verb.log 2>&1 & pid=$!
+        while ! grep "Benchmark finished" "$FILE"
+        do
+            sleep 10
+        done
+        kill $pid
+        # Munge the html log file into something like the normal one
+        cat "$FILE" |
+            sed '1,/log file/d' |             # remove html header
+            grep -v '::' |                    # remove debugging messages
+            grep -v '\{' |                    # remove css
+            sed 's,&nbsp;, ,g;s,</div>,,;s,<div[^<]*>,,' |  # remove html tags
+            sed 's,<br/>,|,g' |               # add record separator
+            tr '|' '\012' |                   # one record per line
+            sed 's/^[^ ]* //' |               # remove timestamp
+            cat > "$YAGMARK_RESULTS"/$verb.log
+    else
+        $WINE $commandline > "$YAGMARK_RESULTS"/$verb.log 2>&1
+    fi
 
     cd "$YAGMARK_RESULTS"
-    egrep -v 'fixme|connection' < $verb.log | uniq > $verb.txt
+    egrep -v 'fixme:|Connection' < $verb.log | uniq > $verb.txt
     cat $verb.txt | 
         egrep ":[ 	]" |                  # ignore non key/value lines
         grep -v " path:" |                    # ignore uninteresting records
         sed 's/  */ /g' |                     # remove runs of spaces
         tr ' ' _ |                            # make key names legal identifiers
         sed 's/:[_	]/	/' |          # use tab as field separator
-        sed "s/^/$verb_/" > $verb.parsed      # add test name to each record
+        sed "s/^/${verb}_/" > $verb.parsed    # add test name to each record
     cd "$olddir"
 }
 
