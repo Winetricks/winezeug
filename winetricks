@@ -301,6 +301,7 @@ usage() {
     echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
     echo " dsoundbug9612 Use DirectSound MaxShadowSize=0 workaround for bug #9612"
     echo " fakeie6       Set registry to claim IE6sp1 is installed"
+    echo " forcemono     Force using mono instead of .Net (for debugging)"
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
     echo " heapcheck     Enable heap checking"
@@ -775,6 +776,10 @@ _EOF_
 
 override_dlls() {
     mode=$1
+    if [ $mode = "disabled" ]
+    then
+        mode=""
+    fi
     shift
     echo Using $mode override for following DLLs: $@
     cat > "$WINETRICKS_TMP"/override-dll.reg <<_EOF_
@@ -1713,6 +1718,13 @@ load_fontfix() {
     then
         die "Please uninstall the Samyak/Oriya font, e.g. 'sudo dpkg -r ttf-oriya-fonts', then log out and log in again.  That font causes strange crashes in .net programs."
     fi
+}
+
+#----------------------------------------------------------------
+load_forcemono() {
+# For wine/mono debugging
+override_dlls native mscoree.dll
+override_dlls disabled mscorsvw.exe
 }
 
 #----------------------------------------------------------------
@@ -3957,6 +3969,7 @@ do
     ddr=opengl) set_ddr opengl;;
     dsoundbug9612) load_dsoundbug9612;;
     fakeie6) set_fakeie6;;
+    forcemono|force_mono) load_forcemono;;
     heapcheck) set_heapcheck;;
     multisampling=enabled|multisampling=on) set_multisampling enabled;;
     multisampling=disabled|multisampling=off) set_multisampling disabled;;
