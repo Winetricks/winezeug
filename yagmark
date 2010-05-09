@@ -7,7 +7,8 @@
 # To run on Windows, please use cygwin.
 # When running on Windows Vista or 7, disable UAC and reboot, or Autohotkey won't be able to script the installers.
 # On any OS, you'll want to install the packages
-#  svn cabextract unzip wget
+#  cabextract subversion unzip wget 
+# and also libxml2 or libxml2-utils (for xmllint)
 # and then do something like
 #  svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
 #  cd winezeug
