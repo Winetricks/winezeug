@@ -36,6 +36,7 @@ for verb in \
     fontsmooth-disable \
     fontsmooth-gray \
     fontsmooth-rgb \
+    forcemono \
     gdiplus \
     gecko \
     gecko-dbg \
