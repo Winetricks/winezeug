@@ -13,7 +13,10 @@
 #  svn checkout http://winezeug.googlecode.com/svn/trunk/ winezeug
 #  cd winezeug
 #  sh yagmark 3dmark2000
-# On Windows 7, you have to mark the installed 3dmark2000/3dmark2001 executables as needing Windows XP compatibility mode, or they will not run.
+# On Windows 7, you have to mark the installed 3dmark2000/3dmark2001 executables as 
+# needing Windows XP compatibility mode, or they will not run.
+
+VERSION=20100509
 
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
