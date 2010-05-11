@@ -1385,7 +1385,7 @@ bin_ship\daorigins.exe
 __EOF__
 }
 
- #----------------------------------------------------------------
+#----------------------------------------------------------------
  
 verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
@@ -1442,7 +1442,7 @@ load_gta_vc() {
     fi
 }
 
- #----------------------------------------------------------------
+#----------------------------------------------------------------
  
 verblist_add half_life_goty     "Half Life: Game of the Year Edition (Sierra, 2000) " \
   dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
