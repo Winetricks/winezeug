@@ -479,6 +479,8 @@ load_vcdmount()
     test -d $ISO_MOUNT_ROOT && die "cannot find the VirtualCloneDrive"
 }
 
+ISO_MOUNT_LETTER=i
+
 iso_mount()
 {
     my_img="$1"
@@ -508,7 +510,6 @@ iso_mount()
           try $SUDO mount -o ro,loop,uid=$USERID,unhide "$my_img" $ISO_MOUNT_ROOT
           ;;
         esac
-        ISO_MOUNT_LETTER=i
         echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         # FIXME: one of these gives a warning frequently, possibly on second run
@@ -530,11 +531,12 @@ iso_umount()
         echo "Running $SUDO umount $ISO_MOUNT_ROOT"
         case "$SUDO" in
         gksudo)
-          $SUDO "umount $ISO_MOUNT_ROOT"
+          # -l lazy unmount in case executable still running
+          $SUDO "umount -l $ISO_MOUNT_ROOT"
           try $SUDO "rm -rf $ISO_MOUNT_ROOT"
           ;;
         *)
-          $SUDO umount $ISO_MOUNT_ROOT
+          $SUDO umount -l $ISO_MOUNT_ROOT
           try $SUDO rm -rf $ISO_MOUNT_ROOT
           ;;
         esac
@@ -2782,4 +2784,5 @@ done
 test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
 
 # remove the temp directory
+chmod -R 700 "$WISOTOOL_TMP"
 rm -rf "$WISOTOOL_TMP"
