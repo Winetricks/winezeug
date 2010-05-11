@@ -42,16 +42,18 @@ case "$OS" in
     ;;
 esac
 
+WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.wisotool}
+
 # You can add your own verb to wisotool by creating $WISOTOOL_VERBS/foo.verb
-WISOTOOL_VERBS="${WISOTOOL_VERBS:-$HOME/.wisotool/verbs}"
+WISOTOOL_VERBS="${WISOTOOL_VERBS:-$WISOTOOL_DIR/verbs}"
 mkdir -p "$WISOTOOL_VERBS"
 
 # Postinstall scripts, if any, go here
-WISOTOOL_POST="${WISOTOOL_POST:-$HOME/.wisotool/postinstall}"
+WISOTOOL_POST="${WISOTOOL_POST:-$WISOTOOL_DIR/postinstall}"
 
 # Internal variables; these locations are not too important
 WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
-test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE="$HOME/.wisotool/cache"
+test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE="$WISOTOOL_DIR/cache"
 WISOTOOL_CACHE_WIN="`$XXXPATH -w $WISOTOOL_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
 WISOTOOL_TMP_WIN='c:\wisotooltmp'
