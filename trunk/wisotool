@@ -2185,10 +2185,14 @@ load_unigine_heaven() {
         ControlClick Button1 ; Typical
         WinWait ahk_class MsiDialogCloseClass, Ready
         ControlClick Button2 ; Install
+        ; FIXME: on systems with OpenAL already (Win7?), the next four lines
+        ; are not needed.  We should somehow wait for either OpenAL window
+        ; *or* Completed window.
         WinWait ahk_class OpenAL Installer
         ControlClick Button2 ; OK
         WinWait ahk_class #32770
         ControlClick Button1 ; OK
+
         WinWait ahk_class MsiDialogCloseClass, Completed
         Sleep 500
         ControlClick Button1 ; Finish
