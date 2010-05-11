@@ -1628,6 +1628,65 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
     cd $olddir
 }
 
+verblist_add orangebox     "Orange Box (Valve, 2007) " \
+    976f67eec4b84331de8f6695272bc9192466da6a.iso \
+    b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
+
+load_orangebox() {
+    load_autohotkey
+
+    test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || sh $WINETRICKS -q steam
+    # Have to log in before you can install orangebox!
+    $WINE 'c:\Program Files\Steam\Steam' -login $STEAMUSER $STEAMPW
+    # Now, um, let it log in for a few seconds.  Anyone know how to tell when it's done?
+    sleep 45
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.iso
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.txt | tr -d -`
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        winwait, ahk_class #32770
+        MouseMove, 300, 365
+        ; user has to click Install; I can't script it!
+
+        ; FIXME: only do these steps on first run; if you've
+        ; already activated Orange Box on your account,
+        ; these don't show up.
+        ;winwait, Activation
+        ;MouseMove, 60, 400
+        ;Click
+        ;Sleep 300
+        ;setKeyDelay, 300
+        ;sendEvent {Raw}$KEY
+        ;; Skip notice about Team Fortress guest passes
+        ;winwait, News
+        ;MouseMove, 650, 800
+        ;Click
+        ;winwait, Activation
+        ;MouseMove, 310, 565
+        ;Click
+
+        winwait, Install
+        sendEvent {Enter}
+        ; wait for "create start menu and install" question
+        sleep 5000
+        sendEvent {Enter}
+        winwait, Insert
+    "
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Send {Enter}
+        winwait, ahk_class MsiDialogCloseClass, Please insert
+    "
+    iso_umount
+
+    # FIXME: how to tell when update is done?  Probably have to launch all games once 
+    # the the commandline option to exit immediately.
+}
+
 #----------------------------------------------------------------
 
 verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
