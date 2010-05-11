@@ -2865,12 +2865,6 @@ load_shockwave() {
 #----------------------------------------------------------------
 
 load_steam() {
-    load_flash
-    load_fontfix
-    load_gecko
-    load_ie6
-    load_liberation
-    load_tahoma
     download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
     try $WINE msiexec /i "$WINETRICKS_CACHE"/SteamInstall.msi $WINETRICKS_QUIET
     warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
