@@ -341,6 +341,20 @@ verify_sha1sum() {
     fi
 }
 
+# Escape entities for URL usage
+# Usage: url_encode < to_filter > filtered
+# See RFC3986.
+url_encode() {
+    perl -e '
+        while (<>) {
+            s/\n//;
+            s/([^A-Za-z0-9\-\._~])/sprintf("%%%02X", ord($1))/ge;
+            print;
+        }
+    '
+    return $?
+}
+
 # Download a file
 # Usage: package url [sha1sum [filename [cookie jar]]]
 # Caches downloads in wisotoolcache/$package
@@ -2334,8 +2348,20 @@ _load_gog()
                 login_url="/en/login/ajax/"
                 next_url="$WISOTOOL_TMP/gog_redir_url"
                 post_data="$WISOTOOL_TMP/gog_post_data"
+                login="`url_encode < \"$login_file\"`"
+                status=$?
+                if test $status -ne 0
+                then
+                     die "Note: login escaping failed with status $status.  Aborting"
+                fi
+                password="`url_encode < \"$password_file\"`"
+                status=$?
+                if test $status -ne 0
+                then
+                     die "Note: password escaping failed with status $status.  Aborting"
+                fi
                 # Note: just write login & password to a file so they don't appear in "ps"
-                echo "a=check&t=old&u=`cat \"$login_file\" | sed 's/&/%26/g'`&p=`cat \"$password_file\" | sed 's/&/%26/g'`&r=frontpage" > "$post_data"
+                echo "a=check&t=old&u=$login&p=$password&r=frontpage" > "$post_data"
                 if test -x "`which wget 2>/dev/null`"
                 then
                     try wget -O "$next_url" --save-cookies "$cookie" --post-file "$post_data" "$base_url$login_url"
