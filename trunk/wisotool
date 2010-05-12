@@ -2270,7 +2270,7 @@ __EOF__
 #----------------------------------------------------------------
 
 # Generic GOG.com installer
-# Usage: game_id game_title [other_files,size [reader_control [run_command [download_id [install_dir]]]]]
+# Usage: game_id game_title [other_files,size [reader_control [run_command [download_id [install_dir [installer_size_and_sha1]]]]]]
 # game_id
 #     Used for main installer name and download url.
 # game_title
@@ -2287,9 +2287,10 @@ __EOF__
 #     For games which download url doesn't match their game_id
 # install_dir
 #     If different from game_title
+# installer_size_and_sha1
+#     exe file SHA1.
 _load_gog()
 {
-    # TODO: support SHA1 checks ? (installer verifies files)
     load_autohotkey
 
     game_id="$1"
@@ -2299,6 +2300,7 @@ _load_gog()
     run_command="$5"
     download_id="$6"
     install_dir="$7"
+    installer_size_and_sha1="$8"
 
     if [ "$download_id"x = ""x ]
     then
@@ -2316,17 +2318,31 @@ _load_gog()
     installer="setup_$game_id.exe"
     cookie="$auth_path/cookie.txt"
 
+    if test "$installer_size_and_sha1"x == ""x
+    then
+        files="$installer $other_files"
+    else
+        files="$installer,$installer_size_and_sha1 $other_files"
+    fi
+
     file_id=0
-    for file_and_size in $installer $other_files
+    for file_and_size_and_sha1 in $files
     do
-        case "$file_and_size" in
+        case "$file_and_size_and_sha1" in
+        *,*,*)
+            sha1sum=`echo $file_and_size_and_sha1 | sed "s/.*,//"`
+            minsize=`echo $file_and_size_and_sha1 | sed 's/[^,]*,\([^,]*\),.*/\1/'`
+            file=`echo $file_and_size_and_sha1 | sed 's/,.*//'`
+            ;;
         *,*) 
-            minsize=`echo $file_and_size | sed 's/.*,//'`
-            file=`echo $file_and_size | sed 's/,.*//'`
+            sha1sum=""
+            minsize=`echo $file_and_size_and_sha1 | sed 's/.*,//'`
+            file=`echo $file_and_size_and_sha1 | sed 's/,.*//'`
             ;;
         *)
+            sha1sum=""
             minsize=1
-            file=$file_and_size
+            file=$file_and_size_and_sha1
             ;;
         esac
         file_path="$installer_path/$file"
@@ -2376,6 +2392,17 @@ _load_gog()
             nosizecheck=1
             download "$PACKAGE" "https://www.gog.com/en/download/game/$download_id/$file_id" "" "$file" "$cookie"
             unset nosizecheck
+            check_sha1=1
+            filesize=`stat -Lc%s "$file_path"`
+            if test $minsize -gt 1 -a $filesize -ne $minsize
+            then
+                check_sha1=""
+                warn "Expected file size $minsize, please report new size $filesize."
+            fi
+            if test "$check_sha1" != "" -a "$sha1sum"x != ""x
+            then
+                verify_sha1sum "$sha1sum" "$file_path"
+            fi
         fi
         file_id=`expr $file_id + 1`
     done
