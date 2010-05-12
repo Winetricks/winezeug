@@ -2276,7 +2276,6 @@ __EOF__
 _load_gog()
 {
     # TODO: support SHA1 checks ? (installer verifies files)
-    # TODO: finish download support (it is done, but wasn't quite working for everyone, so not merged)
     load_autohotkey
 
     game_id="$1"
