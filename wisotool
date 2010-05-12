@@ -2326,6 +2326,10 @@ _load_gog()
                 then
                     die "Please put your GOG.com login in '$login_file' and password in '$password_file' or put '$file' in '$installer_path'."
                 fi
+                if ! grep "@" "$login_file" > /dev/null 2>&1
+                then
+                    die "$login_file must contain your GOG.com login, which is an e-mail address (as opposed to account name)."
+                fi
                 base_url="https://www.gog.com"
                 login_url="/en/login/ajax/"
                 next_url="$WISOTOOL_TMP/gog_redir_url"
