@@ -2446,7 +2446,7 @@ load_abes_oddysee_gog()
     _load_gog "abes_oddysee" "Abe's Oddysee" "" "TsCheckBox2" "AbeWin.exe" "oddworld_abes_oddysee"
 }
 
-verblist_add abes_exoddus_gog "Abes Exoddus (GOG.com)" Exoddus.exe setup_abes_exodus.exe
+verblist_add abes_exoddus_gog "Abes Exoddus (GOG.com)" Exoddus.exe setup_abes_exoddus.exe
 
 load_abes_exoddus_gog()
 {
