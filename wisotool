@@ -2330,7 +2330,7 @@ _load_gog()
             ;;
         esac
         file_path="$installer_path/$file"
-        if ! test -s "$file_path" || test `stat -c%s "$file_path"` -lt $minsize
+        if ! test -s "$file_path" || test `stat -Lc%s "$file_path"` -lt $minsize
         then
             if ! grep "GOGcom_usr" "$cookie" > /dev/null 2>&1
             then
