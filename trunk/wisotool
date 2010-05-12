@@ -2318,7 +2318,7 @@ _load_gog()
         file_path="$installer_path/$file"
         if ! test -s "$file_path" || test `stat -c%s "$file_path"` -lt $minsize
         then
-            if ! test -f "$cookie"
+            if ! grep "GOGcom_usr" "$cookie" > /dev/null 2>&1
             then
                 login_file="$auth_path/login.txt"
                 password_file="$auth_path/password.txt"
