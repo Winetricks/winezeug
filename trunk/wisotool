@@ -2432,7 +2432,7 @@ load_dukenukemmp_gog()
     _load_gog "duke_nukem_manhattan_project" "Duke Nukem - Manhattan Project" "" "TsCheckBox2" "DukeNukemMP.exe"
 }
 
-verblist_add ut2004_gog "Unreal Tournament 2004 (GOG.com)" setup_ut2004.exe
+verblist_add ut2004_gog "Unreal Tournament 2004 (GOG.com)" setup_ut2004.exe setup_ut2004-1.bin setup_ut2004-2.bin
 
 load_ut2004_gog()
 {
