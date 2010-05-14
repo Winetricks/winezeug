@@ -95,7 +95,7 @@ OS=`uname -s`
 # TODO: Differentiate between Solaris and OpenSolaris here...not sure how though :-/
 if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
     then
-        export CFLAGS="-I/usr/sfw/include -I/usr/X11/include -g" 
+        export CFLAGS="-O2 -I/usr/sfw/include -I/usr/X11/include -g" 
         export CPPFLAGS="-I/usr/sfw/include" 
         export CC="/usr/gnu/bin/cc" 
         export LDFLAGS="-L/usr/sfw/lib -R/usr/sfw/lib -L/usr/X11/lib -R/usr/X11/lib" 
@@ -105,7 +105,7 @@ if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
         CORES=$(/usr/sbin/psrinfo| grep -c on-line)
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
-        export CFLAGS="-Wno-unused -g"
+        export CFLAGS="-O2 -Wno-unused -g"
         CORES=$(cat /proc/cpuinfo | grep -c processor)
         # Are we on 64-bit?
         if [ "`uname -m`" = "x86_64" ]
@@ -136,7 +136,7 @@ elif [ $OS = 'Darwin' ]
         # very broken for wine. Use install-osx-deps.sh from Winezeug to install this stuff in the right place.
         export BUILD_DIR=$HOME/.winedeps
         export CPPFLAGS="-I$BUILD_DIR/usr/include"
-        export CFLAGS="-I$BUILD_DIR/usr/include -g"
+        export CFLAGS="-O2 -I$BUILD_DIR/usr/include -g"
         export LDFLAGS="-L$BUILD_DIR/usr/lib"
         export PATH=$PATH:"$BUILD_DIR/usr/bin"
         export PKG_CONFIG_PATH="$BUILD_DIR/usr/lib/pkgconfig"
@@ -151,7 +151,7 @@ elif [ $OS = 'NetBSD' ]
         CORES=$(/sbin/sysctl -n hw.ncpu)
 elif [ $OS = 'OpenBSD' ]
     then
-        export CFLAGS="-I/usr/local/include -I/usr/local/include/libpng -g"
+        export CFLAGS="-O2 -I/usr/local/include -I/usr/local/include/libpng -g"
         export LDFLAGS="-lm -lz -lcrypto -L/usr/local/lib"
         export X_EXTRA_LIBS="-lXau -lXdmcp"
         export CPPFLAGS="-I/usr/local/include"
