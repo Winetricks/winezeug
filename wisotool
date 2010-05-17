@@ -1187,6 +1187,22 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
+verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010) [unfinished]" \
+  9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
+
+load_bfbc2() {
+    load_autohotkey
+    
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
+    
+    ahk_do "
+        SetTitleMatchMode, 2
+        run ${ISO_MOUNT_LETTER}:setup.exe
+    "
+}
+
+#----------------------------------------------------------------
+
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
 verblist_add bioshock       "Bioshock (2K Games, 2007)" \
   deaf00ebee6e73aecf38f704c3f516008a68d888.iso
