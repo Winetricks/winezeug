@@ -1187,18 +1187,70 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
-verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010) [unfinished]" \
+verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010)" \
   9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
 
 load_bfbc2() {
     load_autohotkey
-    
+    exedir="$programfilesdir_x86_unix/Electronic Arts/Battlefield Bad Company 2"
+
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
-    
+    BFBC2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.txt | tr -d -`
     ahk_do "
         SetTitleMatchMode, 2
         run ${ISO_MOUNT_LETTER}:setup.exe
+        winwait, Bad Company, English
+        ControlClick, Next, Bad Company
+        winwait, Bad Company, Registration Code
+        send {RAW}$BFBC2_KEY
+        ControlClick, Next, Bad Company, Registration Code
+        winwait, Bad Company, Setup Wizard will install
+        ControlClick, Button1, Bad Company, Setup Wizard
+        winwait, Bad Company, License Agreement
+        ControlClick, Button1, Bad Company, License Agreement
+        ControlClick, Button3, Bad Company, License Agreement
+        winwait, Bad Company, End-User License Agreement
+        ControlClick, Button1, Bad Company, License Agreement
+        ControlClick, Button3, Bad Company, License Agreement
+        winwait, Bad Company, Destination Folder
+        ControlClick, Button1, Bad Company, Destination Folder
+        winwait, Bad Company, Ready to install
+        ControlClick, Install, Bad Company, Ready to install
+        winwait, Authenticate Battlefield
+        ControlClick, Disc authentication, Authenticate Battlefield
+        ControlClick, Button4, Authenticate Battlefield
+        winwait, Bad Company, PunkBuster
+        ControlClick, Button4, Bad Company, PunkBuster
+        ControlClick, Finish, Bad Company
     "
+    iso_umount
+
+    warn "Patching to latest version..."
+    cd "$exedir"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, BFBC2Updater.exe
+        winwait, Updater, have to update to
+        ControlClick, Yes, Updater, have to update
+        winwait, Updater, successfully updated
+        ControlClick,No, Updater, successfully updated
+    "
+
+    if workaround_wine_bug 22762
+    then
+        cd "$DRIVE_C/users/$USERNAME/My Documents"
+        if test -f BFBC2/settings.ini
+        then
+            mv BFBC2/settings.ini BFBC2/oldsettings.ini
+            sed 's,DxVersion=auto,DxVersion=9,;
+                 s,Fullscreen=true,Fullscreen=false,' BFBC2/oldsettings.ini > BFBC2/settings.ini 
+        else
+            mkdir -p BFBC2
+            echo "[Graphics]" > BFBC2/settings.ini
+            echo "DxVersion=9" >> BFBC2/settings.ini
+        fi
+    fi
+    cd $olddir
 }
 
 #----------------------------------------------------------------
