@@ -3760,7 +3760,7 @@ case "$OS" in
   # Prevent running with wrong user id.
   # It's bad to create files as the wrong user!
   die_if_user_not_dirowner "$WINEPREFIX"
-  die_if_user_not_dirowner "$WINETRICKS_CACHE"
+  #die_if_user_not_dirowner "$WINETRICKS_CACHE"
 
   if [ ! -x "`which "$WINE" 2>/dev/null`" ]
   then
