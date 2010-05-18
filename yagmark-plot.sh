@@ -143,7 +143,7 @@ cat << EOF
 <h2>$previous_short vs $latest_short</h2>
 <pre>
 EOF
-    cat vista-vs-$latest_short.txt 
+    cat $previous_short-vs-$latest_short.txt 
 cat << EOF
 </pre>
 
