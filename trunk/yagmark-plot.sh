@@ -6,9 +6,9 @@ cd results
 
 WINEDIR=$HOME/wine-git
 
-latest=`ls -d *Ubuntu* | sort -n -t- -k +7 | tail -n 1`
-previous=`ls -d *Ubuntu* | sort -n -t- -k +7 | tail -n 2 | head -n 1`
-vista=`ls -d *Vista*`
+latest=`ls -d *Ubuntu*/stats.dat | sort -n -t- -k +7 | tail -n 1 | sed 's,/stats.dat,,'`
+previous=`ls -d *Ubuntu*/stats.dat | sort -n -t- -k +7 | tail -n 2 | head -n 1 | sed 's,/stats.dat,,'`
+vista=`ls -d *Vista*/stats.dat | sed 's,/stats.dat,,'`
 
 latest_short=`echo $latest | sed 's/.*wine/wine/;s/-[^-]*$//'`
 previous_short=`echo $previous | sed 's/.*wine/wine/;s/-[^-]*$//'`
@@ -127,24 +127,22 @@ run_plot()
 
 gen_HTML()
 {
-cat << EOF
+    cat << EOF
 <html>
 <head>
 <title>Yagmark Results for $latest_short</title>
 </head>
 <body>
 <h1>Yagmark Results for $latest_short</h1>
-<h2>vista vs $latest_short</h2>
+<h2>vista and $previous_short vs $latest_short</h2>
 <pre>
 EOF
-    cat vista-vs-$latest_short.txt 
-cat << EOF
-</pre>
-<h2>$previous_short vs $latest_short</h2>
-<pre>
-EOF
-    cat $previous_short-vs-$latest_short.txt 
-cat << EOF
+    join vista-vs-$latest_short.txt $previous_short-vs-$latest_short.txt |
+      grep -v Comparing |
+      awk '{printf("%-36s %-15s %-15s %-15s  %-15s %-15s %-15s\n",
+                   $1, $2, $3, $4, $5, $6, $7);}'
+
+    cat << EOF
 </pre>
 
 <h2>Graphs of key results across all versions</h2>
@@ -152,15 +150,40 @@ EOF
 
     for f in `ls $SYSTEMID-*.svg`
     do
+        #echo "<object data=\"$f\" type=\"image/svg+xml\">" 
         echo "<img src=\"$f\">" 
     done
-cat << EOF
+    cat << EOF
 </body>
 </html>
 EOF
+
 }
+
+# Generate table of contents
+gen_TOC()
+{
+    cat << EOF
+<html>
+<head>
+<title>Yagmark Results Index</title>
+</head>
+<body>
+<h1>Yagmark Results Index</h1>
+<ul>
+EOF
+
+    ls *wine*html | sed 's,\(.*\),<li><a href="\1">\1</a></li>,'
+    cat << EOF
+</ul>
+</body>
+</html>
+EOF
+
+}
+
 compare $vista vista $latest $latest_short > vista-vs-$latest_short.txt
 compare $previous $previous_short $latest $latest_short > $previous_short-vs-$latest_short.txt
 run_plot
-gen_HTML > $latest_short.html
-
+gen_HTML > $SYSTEMID-$latest_short.html
+gen_TOC > 00index.html
