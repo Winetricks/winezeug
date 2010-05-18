@@ -815,6 +815,7 @@ override_no_dlls() {
 override_all_dlls() {
     # Disable all but the commonly used DLLs Wine doesn't have a credible alternative for
     # i.e. Don't disallow msvcp80 or d3dx9_* for now
+    # d3dx9_24.dll d3dx9_25.dll d3dx9_26.dll d3dx9_27.dll d3dx9_28.dll d3dx9_29.dll d3dx9_30.dll d3dx9_31.dll d3dx9_32.dll d3dx9_33.dll d3dx9_34.dll d3dx9_35.dll d3dx9_36.dll d3dx9_37.dll d3dx9_38.dll d3dx9_39.dll d3dx9_40.dll d3dx9_41.dll d3dx9_42.dll d3dxof.dll 
     override_dlls builtin \
         acledit aclui activeds actxprxy advapi32 advpack amstream atl authz avicap32 \
         avifil32 avifilebavrt bcrypt browseui cabinet capi2032 cards cfgmgr32 clusapi \
@@ -2868,6 +2869,7 @@ load_shockwave() {
 load_steam() {
     download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
     try $WINE msiexec /i "$WINETRICKS_CACHE"/SteamInstall.msi $WINETRICKS_QUIET
+    warn "Before running Steam, make sure you have corefonts installed, or it may crash; see wine bug 22751"
     warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
 }
 
