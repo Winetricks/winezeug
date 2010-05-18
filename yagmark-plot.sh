@@ -162,5 +162,5 @@ EOF
 compare $vista vista $latest $latest_short > vista-vs-$latest_short.txt
 compare $previous $previous_short $latest $latest_short > $previous_short-vs-$latest_short.txt
 run_plot
-gen_HTML > vista-vs-$latest_short.html
+gen_HTML > $latest_short.html
 
