@@ -1342,6 +1342,74 @@ load_bioshock() {
 
 #----------------------------------------------------------------
 
+verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
+  6f572261ed954733806daf5b42edf92b3127cd14.iso \
+  3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
+
+load_codmw2()
+{
+    warn "This verb isn't quite ready for prime time."
+    load_autohotkey
+    test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || sh $WINETRICKS -q steam
+
+    # Get user's key
+    CODMW2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.txt | tr -d -`
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.iso
+    cd "$programfilesdir_x86_unix"/Steam
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, Steam.exe -login $STEAMUSER $STEAMPW -install ${ISO_MOUNT_LETTER}:
+
+	; Uncomment these lines if you haven't activated this game via steam on this account before.
+        ;winwait, Activation
+        ;MouseMove, 30, 400
+        ;Click
+        ;Sleep 300
+        ;send {Raw}$CODMW2_KEY
+        ;MouseMove, 306, 566
+        ;Click
+        ;winwait, Activation
+        ;sleep 10000
+        ;MouseMove, 310, 565
+        ;Click
+
+        winwait, Install
+        sendEvent {Enter}
+        ; wait for "create start menu and install" question
+        sleep 5000
+        sendEvent {Enter}
+        winwait, Insert
+    "
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        Send {Enter}
+	; Need to wait for install to finish.  This isn't the way to do it.  Ideally we could watch some log file.
+	; The last file created seems to be
+	; "Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf"
+	; so wait for that and then another 20 seconds, say.
+        winwait, ahk_class USurface_, Install
+	; Now that install has finished, say "don't start app" and "finish".
+        Send {Space}
+        Send {Enter}
+	; Now wait for the main steam interface to pop up, and close it
+        winwait, ahk_class USurface_, Steam
+        WinClose
+
+	; If you choose to start the game above, you could wait for it to be ready to play here.  
+        ;winwait, ahk_class USurface_8390, Ready
+        ;Send {Tab}            # select Close
+        ;Send {Enter}
+	;winwait, Steam Login
+        ;WinClose
+    "
+    iso_umount
+    
+}
+
+#----------------------------------------------------------------
+
 verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
   51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
