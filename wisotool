@@ -2053,7 +2053,7 @@ load_popsot_demo()
         ControlClick, Finish, Prince of Persia, View the Readme 
     "
     cd $olddir
-    warn "Once you're in the Prince of Persia game, turn off fog or you won't be able to see anything."
+    warn "Once you're in the Prince of Persia game, turn off fog or you won't be able to see anything (see wine bug 17423 for explanation, but this isn't a wine bug)"
 }
 
 #----------------------------------------------------------------
