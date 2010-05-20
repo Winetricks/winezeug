@@ -2006,6 +2006,58 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add popsot_demo "Prince of Persia Sands of Time Demo (Ubisoft, 2003)" \
+POP_Demo_Eng.exe
+
+load_popsot_demo()
+{
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/POP_Demo_Eng.exe" && ! test -f "$WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        warn "You must manually download the Prince of Persia Sands of Time Demo to $WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe; expected sha1sum ed62f4da1f898c661ca09bd4e3a22e4a983a822b"
+    fi
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, POP_Demo_Eng.exe
+        winwait, Prince of Persia, To continue
+        ControlClick, Next, Prince of Persia, To continue
+        winwait, Prince of Persia, License Agreement
+        ControlClick, Button3, Prince of Persia
+        ControlClick, Next, Prince of Persia
+        sleep 1000
+        IfWinExist, Minimum Configuration
+        {
+          send {Enter}
+        }
+        winwait, Prince of Persia, Choose Destination
+        ControlClick, Next, Prince of Persia, Choose Destination
+        winwait, Question
+        ControlClick, Yes, Question
+        winwait, Prince of Persia, Installing game
+        winwaitclose, Prince of Persia, Installing game
+        sleep 3000
+        IfWinExist, Prince of Persia, Setup has detected
+        {
+          ControlClick, Button2, Prince of Persia, Setup has detected
+          ControlClick, Next, Prince of Persia, Setup has detected
+        }
+        sleep 6000
+        IfWinExist, register
+        {
+          ControlClick, OK, register
+        }
+        winwait, Prince of Persia, View the Readme
+        ControlClick, Button1, Prince of Persia, View the Readme
+        ControlClick, Finish, Prince of Persia, View the Readme 
+    "
+    cd $olddir
+    warn "Once you're in the Prince of Persia game, turn off fog or you won't be able to see anything."
+}
+
+#----------------------------------------------------------------
+
 verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
