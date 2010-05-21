@@ -1250,7 +1250,7 @@ load_bfbc2() {
             echo "DxVersion=9" >> BFBC2/settings.ini
         fi
     fi
-    cd $olddir
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1777,7 +1777,7 @@ sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
 
     sleep 30s
     iso_umount
-    cd $olddir
+    cd "$olddir"
 }
 
 verblist_add orangebox     "Orange Box (Valve, 2007) " \
@@ -2052,8 +2052,49 @@ load_popsot_demo()
         ControlClick, Button1, Prince of Persia, View the Readme
         ControlClick, Finish, Prince of Persia, View the Readme 
     "
-    cd $olddir
+    cd "$olddir"
     warn "Once you're in the Prince of Persia game, turn off fog or you won't be able to see anything (see wine bug 17423 for explanation, but this isn't a wine bug)"
+}
+
+#----------------------------------------------------------------
+
+verblist_add procycling08_demo "Pro Cycling Manager 2008 Demo (Cyanide, 2008) [download, broken in wine]" ProCyclingManager08_Demo.exe
+
+load_procycling08_demo()
+{
+    load_autohotkey
+    # FIXME sha1sum 008b91a16c388c9965faaeaaa8242409b9db56b9
+    # FIXME homepage http://www.cycling-manager.com/
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        warn "Please download the game to $WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
+    fi
+
+    cd $WISOTOOL_CACHE/$PACKAGE
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ProCyclingManager08_Demo.exe
+        winwait, Pro Cycling Manager, This will
+        ControlClick, TButton1, Pro Cycling Manager, This will ; Next
+        winwait, Pro Cycling, License
+        ControlClick, TRadioButton1, Pro Cycling, License ; Accept License
+        ControlClick, TButton2, Pro Cycling, License ; Next
+        winwait, Pro Cycling, following folder
+        ControlClick, TButton3, Pro Cycling, following folder ; Next
+        winwait, Pro Cycling, shortcuts
+        ControlClick, TButton4, Pro Cycling, shortcuts ; Next
+        winwait, Pro Cycling, Click Install
+        ControlClick, TButton4, Pro Cycling, Click Install ; Install
+        winwait, Pro Cycling, finished
+        ControlClick, TButton4, Pro Cycling,  finished ; Finish
+    "
+    cd "$olddir"
+
+    if workaround_wine_bug 17512
+    then
+        warn "This game crashes under Wine; see http://bugs.winehq.org/show_bug.cgi?id=17512"
+    fi
 }
 
 #----------------------------------------------------------------
