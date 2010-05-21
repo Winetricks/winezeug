@@ -844,7 +844,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001) [download]" 3dmark2000_v11_100308.exe
+verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001) [download]" 3dmark2001se_330_100308.exe
 
 load_3dmark2001() {
     load_autohotkey
@@ -1899,7 +1899,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005) [download]" PCMark05_v130_1901.exe
+verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005) [download]" PCMark05_v120_1901.exe
 
 load_pcmark05() {
     load_autohotkey
@@ -2405,7 +2405,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
 
 load_unigine_heaven() {
     load_autohotkey
