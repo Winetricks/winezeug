@@ -776,17 +776,17 @@ list_available_verbs()
     done | sort -u
 }
 
-# Move any/all *.iso still at top level into the proper subdirectory
+# Move any/all *.iso or *.exe still at top level into the proper subdirectory
 migrate_files()
 {
-    for file in "$WISOTOOL_CACHE"/*.iso
+    for file in "$WISOTOOL_CACHE"/*.iso "$WISOTOOL_CACHE"/*.exe
     do
         barefile=`basename $file`
         verb=`map_file_to_verb $barefile`
         if test "$verb" != ""
         then
             mkdir -p "$WISOTOOL_CACHE"/$verb
-            movee=`echo $file | sed 's/.iso$/.*/' `
+            movee=`echo $file | sed 's,\(\.iso\)$\|\(\.exe\)$,.*,g'`
             echo Moving $movee to $WISOTOOL_CACHE/$verb/
             mv $movee "$WISOTOOL_CACHE"/$verb/
         fi
