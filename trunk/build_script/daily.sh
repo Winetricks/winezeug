@@ -110,8 +110,8 @@ elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
         # Are we on 64-bit?
         if [ "`uname -m`" = "x86_64" ]
             then
-            # Are we on Ubuntu?
-            if [ "`lsb_release -i -s`" = "Ubuntu" ]
+            # Are we on Ubuntu? Lucid is fine...
+            if [ "`lsb_release -i -s`" = "Ubuntu" -a "`lsb_release -r -s`" != "10.04" ]
                 then
                     export CONFIGUREFLAGS="--without-mpg123"
             fi
