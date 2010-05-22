@@ -1525,7 +1525,7 @@ load_dragonage() {
     
     if workaround_wine_bug 22383
     then
-        try "$WINETRICKS" -q strictdrawordering=disabled
+        try "$WINETRICKS" -q strictdrawordering=enabled
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
