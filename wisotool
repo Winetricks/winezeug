@@ -1672,6 +1672,46 @@ load_help() {
 
 #----------------------------------------------------------------
 
+honexe=HoNClient-1.0.0.1.exe
+verblist_add hon "Heroes of Newerth (S2 Games, 2010) [download]" \
+$honexe
+
+load_hon()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$honexe"
+    then
+        download $PACKAGE http://dl2.heroesofnewerth.com/$honexe
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, $honexe
+        winwait, Heroes of Newerth
+        controlclick, Button2, Heroes of Newerth
+        winwait, Heroes of Newerth, License
+        controlclick, Button2, Heroes of Newerth, License
+        winwait, Heroes of Newerth, Components
+        controlclick, Button2, Heroes of Newerth, Components
+        winwait, Heroes of Newerth, Install Location
+        controlclick, Button2, Heroes of Newerth, Install Location
+        winwait, Heroes of Newerth, Start Menu
+        controlclick, Button2, Heroes of Newerth, Start Menu
+        winwait, Heroes of Newerth, Finish
+        controlclick, Button2, Heroes of Newerth, Finish
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Heroes of Newerth"
+hon.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
 
 load_lswcs() {
