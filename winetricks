@@ -265,6 +265,7 @@ usage() {
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " urlmon        MS urlmon.dll"
     echo " usp10         MS usp10.dll (Uniscribe)"
+    echo " utorrent      uTorrent"
     echo " vb2run        MS Visual Basic 2 runtime"
     echo " vb3run        MS Visual Basic 3 runtime"
     echo " vb4run        MS Visual Basic 4 runtime"
@@ -2911,6 +2912,16 @@ load_usp10() {
 
 #----------------------------------------------------------------
 
+load_utorrent() {
+    # Torrent client supported on Windows,Mac OSX, Linux through WINE 
+    download . http://download.utorrent.com/2.0.2/utorrent.exe dfec781877aa86afa941d512c3fc9e95c2b2bdea
+
+    try cp -f "$WINETRICKS_CACHE"/utorrent.exe "$WINDIR"/utorrent.exe
+    warn "utorrent is now installed to $WINDIR/utorrent.exe"
+}
+
+#----------------------------------------------------------------
+
 load_vb2run() {
     # Not referenced on MS web anymore. But the old Microsoft Software Library FTP still has it.
     # See ftp://ftp.microsoft.com/Softlib/index.txt
@@ -3928,6 +3939,7 @@ do
     tahoma) load_tahoma;;
     urlmon) load_urlmon;;
     usp10) load_usp10;;
+    utorrent) load_utorrent;;
     vbrun200|vb2run) load_vb2run;;
     vbrun300|vb3run) load_vb3run;;
     vbrun400|vb4run) load_vb4run;;
