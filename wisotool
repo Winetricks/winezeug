@@ -726,42 +726,6 @@ ahk_do() {
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
 }
 
-# Put any helper functions needed here:
-ahk_helpers() {
-   cat > helper_tmp << __EOF__
-   SetControlDelay, -1
-   WINDOW_CLICK_LOOP(windowname, button, windowtext="", loops=10, wintimeout=10)
-{
-    WinWait, %windowname%, %windowtext%, %wintimeout%
-    if ErrorLevel
-    {
-        exit 1
-    }
-    IfWinNotActive, %windowname%, %windowtext%
-    {
-        WinActivate, %windowname%, %windowtext%
-    }
-
-    Loop, %loops%
-    {
-        IfWinExist, %windowname%, %windowtext%
-        {
-            ControlClick, %button%, %windowname%, %windowtext%
-        }
-        Else
-        {
-            break
-        }
-        sleep 1000
-    }
-
-}
-__EOF__
-
-cat helper_tmp | tr ';' '\012' | sed "s/\$//" > helpers.ahk
-
-}
-
 #----------------------------------------------------------------
 
 load_autohotkey()
@@ -1857,7 +1821,7 @@ load_manhole() {
 verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
   c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
 
-load_morrowind_goty() {
+load_morrowind() {
     cd $WISOTOOL_TMP
     # FIXME: Untested on Windows!
 
@@ -1866,37 +1830,50 @@ load_morrowind_goty() {
     load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
-    ahk_helpers
-    cat > morrowind.tmp << __EOF__
-#include helpers.ahk
-Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    ahk_do "
+    SetTitleMatchMode, 2
+    Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    winwait, The Elder Scrolls III:  Morrowind Setup, The Elder Scrolls III:  Morrowind (License Agreement)
+    sleep 1000
+    controlclick, Button2
+    winwait, The Elder Scrolls III:  Morrowind Setup, Please read the following important information.
+    sleep 1000
+    controlclick, Button1
+    winwait, The Elder Scrolls III:  Morrowind Setup, Setup will install Morrowind in the following folder.
+    sleep 1000
+    controlclick, Button1
+    winwait, The Elder Scrolls III:  Morrowind Setup, Setup has enough information to start copying the program files.
+    sleep 1000
+    controlclick, Button1
 
-WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Yes", "The Elder Scrolls III:  Morrowind (License Agreement)", 10, 100)
-WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Please read the following important information.", 10, 100)
-WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Setup will install Morrowind in the following folder.", 10, 100)
-WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "&Next >", "Setup has enough information to start copying the program files.", 10, 100)
+    ; Then launched construction set setup
+    winwait, The Elder Scrolls Construction Set Setup, The Elder Scrolls Construction Set (License Agreement)
+    sleep 1000
+    Controlclick, Button2
+    ; No confirm screen? (FIXME: verify on windows)
+    winwait, The Elder Scrolls Construction Set Setup, Setup has enough information to start copying the program files
+    sleep 1000
+    controlclick, Button1
+    winwait, The Elder Scrolls Construction Set Setup, Setup has finished installing TES Construction Set on your computer.
+    sleep 1000
+    controlclick, Button4
 
-; Then launched construction set setup
-WINDOW_CLICK_LOOP("The Elder Scrolls Construction Set Setup", "&Yes", "The Elder Scrolls Construction Set (License Agreement)", 10, 500)
-
-; No confirm screen? (FIXME: verify on windows)
-WINDOW_CLICK_LOOP("The Elder Scrolls Construction Set Setup", "&Next >", "Setup has enough information to start copying the program files", 10, 100)
-WINDOW_CLICK_LOOP("The Elder Scrolls Construction Set Setup", "Finish", "Setup has finished installing TES Construction Set on your computer.", 10, 100)
-
-; Exits the Construction set setup on its own, and goes back to main installer
-; The text box is split into two lines separately, not using word wrap, hence the weird sentence..
-WINDOW_CLICK_LOOP("Question", "&No", "Would you like to register Morrowind online now?  Make sure", 10, 100)
-
-; Sometimes finicky here, short sleep here works around it
-Sleep 10000
-WINDOW_CLICK_LOOP("The Elder Scrolls III:  Morrowind Setup", "Finish", "Setup has finished installing Morrowind on your computer.", 10, 100)
-WINDOW_CLICK_LOOP("Information", "&OK", "You have installed Windows XP, which includes DirectX 8.1", 10, 100)
-
-exit 0
-__EOF__
-sed -e 's/$/\r/' morrowind.tmp > morrowind.ahk
-    try $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" morrowind.ahk
-
+    ; Exits the Construction set setup on its own, and goes back to main installer
+    ; The text box is split into two lines separately, not using word wrap, hence the weird sentence..
+    winwait, Question, Would you like to register Morrowind online now?  Make sure
+    sleep 1000
+    controlclick, Button7
+    ; Sometimes finicky here, short sleep here works around it
+    Sleep 10000
+    winwait, The Elder Scrolls III:  Morrowind Setup, Setup has finished installing Morrowind on your computer.
+    sleep 1000
+    controlclick, Button4
+    winwait, Information, You have installed Windows XP, which includes DirectX 8.1
+    sleep 1000
+    ControlClick, Button1
+    
+    exit 0"
+    
     sleep 30s
     iso_umount
     cd "$olddir"
