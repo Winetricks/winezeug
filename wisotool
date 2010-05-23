@@ -558,6 +558,78 @@ iso_umount()
     fi
 }
 
+mds_mount()
+{
+    my_img="$1"
+    mds_umount
+
+    # FIXME: will vcdmount work for mds/mdf files on windows, or do we need to use Alcohol here as well?
+    if test "$WINE" = ""
+    then
+        load_vcdmount
+        my_img_win="`$XXXPATH -w $my_img | tr '\012' ' ' | sed 's/ $//'`"
+        cd "$VCD_DIR"
+        try vcdmount.exe /l=$letter "$my_img_win"
+        cd "$olddir"
+        while ! test -d "$ISO_MOUNT_ROOT"
+        do
+            echo "Waiting for mount to finish"
+            sleep 1
+        done
+    else
+        # Wine
+        # FIXME: Need to check that cdemu is installed.
+        # If installed, must it run as a daemon?
+        # FIXME: Does this need sudo if not run as a daemon?
+        cdemu load 0 $my_img
+
+        # FIXME: How long to wait?
+        sleep 5s
+
+        # FIXME: This is messy, but AFAICT, there's no way in advance to know where the drive will be mounted,
+        # since it depends on the cd/dvd title from the origial media, which is embedded in the mdf/mds file.
+        # Unfortunately, cdemu doesn't give an easy way to determine it, so find it with a combination of
+        # cdemu, mount, and grep
+        device_name=`cdemu device-mapping | grep ^0 | awk '{print $2}'`
+        ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
+
+        echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
+        # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
+        # FIXME: one of these gives a warning frequently, possibly on second run
+        ln -sf "$my_img" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}::"
+        ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}:"
+    fi
+}
+
+mds_umount()
+{
+    if test "$WINE" = ""
+    then
+        # Windows
+        load_vcdmount
+        cd "$VCD_DIR"
+        try vcdmount.exe /u
+        cd "$olddir"
+    else
+        # FIXME: just running 'cdemu unload 0' doesn't seem to unload, but running 'eject /media/foo' does?
+        cdemu unload 0
+        # Check that nothing is loaded there:
+        img_name=`cdemu status | grep ^0 | awk '{print $3}'`
+        if [ "$img_name" != "N/A" ]
+        then
+            echo "$img_name is mounted in cdemu, forcing an eject"
+            device_name=`cdemu device-mapping | grep ^0 | awk '{print $2}'`
+            ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
+            # FIXME: Does this need sudo?
+            eject $ISO_MOUNT_ROOT
+            sleep 10s # Give devices time to settle
+        fi
+
+        rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}:
+        rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}::
+    fi
+}
+
 #----------------------------------------------------------------
 
 # Executed if user kills script
@@ -574,6 +646,7 @@ cleanup()
   exit 1
 }
 
+# FIXME: add support for ripping mdf/mds with Alcohol 120%
 load_iso() {
    method=$1
    key="$2"
@@ -1253,8 +1326,14 @@ load_bfbc2() {
 #----------------------------------------------------------------
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
+# Fails to install with an iso, need to use an mdf/mds from Alcohol 120% on Windows
+# FIXME: mds/mdf files have different sha1sum's, and depending on the rip settings, the mds might as well?
+# Sha1sum's:
+# plain iso, from dd: deaf00ebee6e73aecf38f704c3f516008a68d888
+# mds: 391042ea19b4eace5d532dbade10931ebbc4def6
+# mdf: deaf00ebee6e73aecf38f704c3f516008a68d888
 verblist_add bioshock       "Bioshock (2K Games, 2007)" \
-  deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+  391042ea19b4eace5d532dbade10931ebbc4def6.mds
 
 load_bioshock() {
     load_autohotkey
@@ -1266,12 +1345,16 @@ load_bioshock() {
     fi
     
     # Will perform a full install, so no cd's needed
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
-    
+    mds_mount "$WISOTOOL_CACHE/$PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.mds"
+
+    # Setup cdemu for Bioshock (dpm on, tr off):
+    # FIXME: I'm assuming different programs may want different emulation settings. If not, move up to mds_mount().
+    cdemu dpm-emulation 0 1
+    cdemu tr-emulation 0 0
+
     # Don't trim the hyphen's "-", the installer won't proceed without them.
-    BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.txt`
+    BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.txt`
     
-    # FIXME: fails unless the real DVD is in the drive. Fails on the iso.
     ahk_do "
         SetTitleMatchMode, 2
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -1335,6 +1418,8 @@ load_bioshock() {
     then
         sh "$WINETRICKS" -q mwo=force
     fi
+
+    mds_umount
 }
 
 #----------------------------------------------------------------
