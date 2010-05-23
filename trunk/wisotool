@@ -892,10 +892,10 @@ load_3dmark2000() {
         WinWait License
         ControlClick Button2  ; Yes
         ;WinWaitClose ahk_class #32770 ; License
-        WinWait ahk_class #32770 ; Destination
+        WinWait ahk_class #32770, Destination
         ControlClick Button1  ; Next
         ;WinWaitClose ahk_class #32770 ; Destination
-        WinWait ahk_class #32770 ; Start
+        WinWait, Start
         ControlClick Button1  ; Next
         WinWait Registration
         ControlClick Button1  ; Next
@@ -934,12 +934,12 @@ load_3dmark2001() {
         sleep 5000
         WinWait ahk_class #32770 ; License
         ControlClick Button2  ; Next
-        WinWait ahk_class #32770 ; Destination
+        WinWait ahk_class #32770, Destination
         ControlClick Button1  ; Next
-        WinWait ahk_class #32770 ; Start
+        WinWait ahk_class #32770, Start
         ControlClick Button1  ; Next
         WinWait,, Registration
-        ControlClick Button1  ; Next
+        ControlClick Button2  ; Next
         WinWait,, Complete
         ControlClick Button1  ; Unclick View Readme
         ControlClick Button4  ; Finish
