@@ -560,6 +560,7 @@ iso_umount()
 
 mds_mount()
 {
+
     my_img="$1"
     mds_umount
 
@@ -578,12 +579,9 @@ mds_mount()
         done
     else
         # Wine
-        # FIXME: Need to check that cdemu is installed.
-        # If installed, must it run as a daemon?
-        # FIXME: Does this need sudo if not run as a daemon?
+
         cdemu load 0 $my_img
 
-        # FIXME: How long to wait?
         sleep 5s
 
         # FIXME: This is messy, but AFAICT, there's no way in advance to know where the drive will be mounted,
@@ -611,6 +609,26 @@ mds_umount()
         try vcdmount.exe /u
         cd "$olddir"
     else
+        if [ ! -x "`which cdemu 2>/dev/null`" ]
+        then
+            die "cdemu is not installed, can't mount .mds files!"
+        fi
+        
+        # Initialize cdemu, if not already:
+
+        # FIXME: Not sure this is 100% accurate...
+        # FIXME: Should kill the cdemud session when done...
+        pgrep cdemud
+        cdemud_run=$?
+        case $cdemud_run in
+        0) echo "cdemud is already running" ;;
+        1) echo "cdemud is not running, let's start one" ;
+           ( cdemud -b session & ) ;
+           # FIXME: grep for "cdemu0: Daemon: error while performing ioctl" and die if it shows up ;
+        ;;
+        *) die "unknown error in cdemud_run" ;;
+        esac
+
         # FIXME: just running 'cdemu unload 0' doesn't seem to unload, but running 'eject /media/foo' does?
         cdemu unload 0
         # Check that nothing is loaded there:
