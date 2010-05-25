@@ -2346,6 +2346,53 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [broken]" SplitSecond_Demo.exe
+
+load_splitsecond_demo()
+{
+    load_autohotkey
+
+    if test ! -f "$WISOTOOL_CACHE/$PACKAGE"/SplitSecond*.exe
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "You must download the demo to $WISOTOOL_CACHE/$PACKAGE before running this script.  See http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo"
+    fi
+
+    if workaround_wine_bug 22774
+    then
+        echo "On wine, install takes an extra 7 minutes at the end, please be patient."
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    exe=`ls SplitSecond*.exe`
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, "$exe"
+        winwait, Split, Language
+        ControlClick, Next, Split, Language
+        winwait, Split, game installation
+        ControlClick, Button1, Split, game installation
+        winwait, Split, license
+        ControlClick, Button5, Split, license
+        ControlClick, Button2, Split, license
+        winwait, Split, DirectX
+        ControlClick, Button5, Split, DirectX
+        ControlClick, Button2, Split, DirectX
+        winwait, Split, installation path
+        ControlClick, Button1, Split, installation path
+        winwait, Split, Game features
+        ControlClick, Button2, Split, Game features
+        winwait, Split, start copying
+        ControlClick, Button1, Split, start copying 
+        winwait, Split, completed
+        ControlClick, Button1, Split, completed
+        ControlClick, Button4, Split, completed
+    "
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
