@@ -2364,7 +2364,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [broken]" SplitSecond_Demo.exe
+verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [wine bug 22865]" SplitSecond_Demo.exe
 
 load_splitsecond_demo()
 {
@@ -2379,6 +2379,11 @@ load_splitsecond_demo()
     if workaround_wine_bug 22774
     then
         echo "On wine, install takes an extra 7 minutes at the end, please be patient."
+    fi
+
+    if workaround_wine_bug 22865
+    then
+        echo "This game is currently unplayable on wine due to rendering problems; see winehq bug 22865."
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -2405,6 +2410,57 @@ load_splitsecond_demo()
         winwait, Split, completed
         ControlClick, Button1, Split, completed
         ControlClick, Button4, Split, completed
+    "
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+verblist_add splitsecond    "Split Second (Black Rock Studios, 2010) [wine bug 22865]" 15548fabe350e1b65432400aae8c3acfb1c930d8.iso
+
+load_splitsecond()
+{
+    load_autohotkey
+
+    if workaround_wine_bug 22774
+    then
+        echo "On wine, install takes an extra 7 minutes at the end, please be patient."
+    fi
+
+    if workaround_wine_bug 22865
+    then
+        echo "This game is currently unplayable on wine due to rendering problems; see winehq bug 22865."
+    fi
+
+    #KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.txt`
+    # Key is used in first run activation.  TODO: script first run activation.
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.iso
+
+    # Aborts with dialog about FirewallInstallHelper.dll if that's not on the path (e.g. in current dir)
+    cd "$ISO_MOUNT_ROOT"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run setup.exe
+        winwait, Split, Language
+        ControlClick, Next, Split, Language
+        winwait, Split, game installation
+        ControlClick, Button1, Split, game installation
+        winwait, Split, license
+        ControlClick, Button5, Split, license
+        ControlClick, Button2, Split, license
+        winwait, Split, DirectX
+        ControlClick, Button5, Split, DirectX
+        ControlClick, Button2, Split, DirectX
+        winwait, Split, installation method
+        send {Enter}
+        winwait, DirectX needs to be updated
+        send {Enter}
+        winwait, Split, begin
+        ControlClick, Button1
+        winwait, Split, completed
+        ControlClick, Button1, Split
+        ControlClick, Button4, Split
     "
     cd "$olddir"
 }
