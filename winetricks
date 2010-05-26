@@ -602,6 +602,12 @@ _EOF_
     try_regedit "$WINETRICKS_TMP_WIN"\\set-orm.reg
 }
 
+set_mmdevapi() {
+    echo "Setting mmdevapi to $1"
+    
+    override_dlls $1 mmdevapi
+}
+
 set_rtlm() {
     echo "Setting RenderTargetLockMode to $1"
     cat > "$WINETRICKS_TMP"/set-rtlm.reg <<_EOF_
@@ -3983,6 +3989,9 @@ do
     fakeie6) set_fakeie6;;
     forcemono|force_mono) load_forcemono;;
     heapcheck) set_heapcheck;;
+    mmdevapi=builtin) set_mmdevapi builtin ;;
+    mmdevapi=native) set_mmdevapi native ;;
+    mmdevapi=disabled) set_mmdevapi disabled ;;
     multisampling=enabled|multisampling=on) set_multisampling enabled;;
     multisampling=disabled|multisampling=off) set_multisampling disabled;;
     native_mdac) set_native_mdac;;
