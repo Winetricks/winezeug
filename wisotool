@@ -2718,6 +2718,153 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add wowbc       "World of Warcraft: Battle Chest (Blizzard, 2008)" \
+  c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
+
+load_wowbc() {
+    load_autohotkey
+    test -f "$WINDIR"/utorrent.exe || try sh $WINETRICKS utorrent
+
+    case "$LANG" in
+    en_US*) ;;
+    *) die "This script probably only works for World of Warcraft in the enUS locale."
+    esac
+
+    # Torrent file URLs found on http://www.wowwiki.com/Patch_mirrors
+    # Patch 3.3.2.11403-to-3.3.3.11685-enUS-patch.exe is downloaded from http://alexsmith.im/wow-patches/enus-patches
+
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" 
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" 
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" 
+    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe"
+    download $PACKAGE "http://server1.fiberdownload.com/7_kituri/World-of-Warcraft.zip" 
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    try unzip -quo World-of-Warcraft.zip
+    patch1=`stat -Lc%s WoW-3.2.0-enUS-patch.exe`
+    patch2=`stat -Lc%s WoW-3.2.0.10192-to-3.3.0.10958-enUS-patch.exe`
+    patch3=`stat -Lc%s WoW-3.3.0.10958-to-3.3.0.11159-enUS-patch.exe`
+    patch4=`stat -Lc%s WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.exe`
+    patch5=`stat -Lc%s WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe`
+    patch6=`stat -Lc%s WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe`
+
+    if  [ $patch5 -ne 128600432 ] || [ $patch6 -ne 4959280 ]
+    then
+        die "Failed to download patch 3.3.3.11685 or patch 3.3.3.11723"
+    fi
+
+    if [ $patch1 -eq 1323316774 ] && [ $patch2 -eq 572045930 ] && [ $patch3 -eq 5101376 ] && [ $patch4 -eq 167050587 ]
+    then
+        echo "All patches have been downloaded"
+    else
+        UT_WINPATH="$WISOTOOL_CACHE_WIN\\wowbc"
+        for torrent in `ls *.torrent`
+        do
+            try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
+        done
+    
+        # Start uTorrent, have it wait until all downloads are finished
+        ahk_do "
+            SetTitleMatchMode, 2
+            winwait, Torrent
+            winwait, Torrent, default
+            controlclick, Button7, Torrent, default
+            send !o
+            send a{Down}{Enter}
+            winwaitclose, Torrent
+        "
+    fi
+    cd "$olddir"
+
+    if ! test -d "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    then
+        try mkdir -p "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
+        sleep 5s
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    fi
+
+    # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
+    if ! test -d "$DRIVE_C/Program Files/World of Warcraft"
+    then
+      ahk_do "
+          run "$WISOTOOL_CACHE"/$PACKAGE/tempcd/Installer.exe
+          SetTitleMatchMode, 2
+          winwait, Burning Crusade Installer
+          sleep 4000
+          send b
+          sleep 2000
+          send o
+          winwait, License Agreement
+          winactivate
+          MouseMove, 300, 300
+          Click WheelDown, 90
+          Sleep, 2000
+          ControlClick, Button1
+          winwait, Installation Destination Directory
+          send {Enter}
+          winwait, Manage
+          ControlClick, Button2
+	  Loop
+          {
+              ; World Of Warcraft directory is created as .temp, then renamed when done
+              ifExist, C:\Program Files\World of Warcraft\Logs\Burning Crusade Install Log.html
+                   break
+              Sleep 10000
+          }
+          "
+       killall Launcher.exe
+       killall Installer.exe
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    for file in \
+        WoW-3.2.0-enUS-patch.exe\
+        WoW-3.2.0.10192-to-3.3.0.10958-enUS-patch.exe\
+        WoW-3.3.0.10958-to-3.3.0.11159-enUS-patch.exe\
+        WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.exe\
+        WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe\
+        WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe
+
+    do
+        ahk_do "
+           run "$WISOTOOL_CACHE"/$PACKAGE/$file
+           SetTitleMatchMode, 2
+           winwait, Blizzard Updater
+           IfWinExist, Blizzard Updater, unable to start ;Exit if patch is already applied 
+           {
+             ControlClick, Button1, Blizzard Updater, unable to start
+             exit
+           }
+           else
+           {
+             winwait, Blizzard Updater, The update was successful
+             ControlClick, Button1
+             winwait, Launcher
+             winkill, Launcher
+             winwait, World of Warcraft
+             sleep 5000 ; Give time for Play button to appear
+             IfWinExist, World of Warcraft, Play ;Exit if last patch is applied
+             {
+               ; Done!  No more patches.
+               winkill, World of Warcraft, Play
+             }
+             else
+             {
+               ; Don't let it download the next patch
+               winwait, World of Warcraft, Estimated time
+               winkill, World of Warcraft, Estimated time
+             }
+           }
+        "
+        echo "Patched $file"
+        sleep 5
+    done
+}
+
+#----------------------------------------------------------------
+
 # Generic GOG.com installer
 # Usage: game_id game_title [other_files,size [reader_control [run_command [download_id [install_dir [installer_size_and_sha1]]]]]]
 # game_id
