@@ -2732,13 +2732,12 @@ load_wowbc() {
 
     # Torrent file URLs found on http://www.wowwiki.com/Patch_mirrors
     # Patch 3.3.2.11403-to-3.3.3.11685-enUS-patch.exe is downloaded from http://alexsmith.im/wow-patches/enus-patches
-
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" 
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" 
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" 
-    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe"
-    download $PACKAGE "http://server1.fiberdownload.com/7_kituri/World-of-Warcraft.zip" 
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" f9e96e7b4edc6a4c22faad084eef147853e3ebb5
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 33bdf8749b3c3781451b5f6ac2a59ba29d6c61bd
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" b7ad37a75713f6d8e578558ca1e321927192c6c6
+    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" f73763541197fecdcca9b9f8cf91e83cde989a49
+    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe" ce73a0a8aa9f6eaf00b5e7cd0a34eb928738fd36
+    download $PACKAGE "http://server1.fiberdownload.com/7_kituri/World-of-Warcraft.zip" 76d3c7f1c034e5533132e610b2e1b8f376893fdc
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     try unzip -quo World-of-Warcraft.zip
