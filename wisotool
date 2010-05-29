@@ -1842,12 +1842,15 @@ verblist_add masseffect2       "Mass Effect 2 (BioWare, 2010)" \
 
 load_masseffect2() {
     load_autohotkey
-    if ! test -d "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
+    ME2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
+
+    if workaround_wine_bug 22091
     then
-        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
+        # Make crash during PhysX install slightly less annoying?
+        try sh "$WINETRICKS" -q nocrashdialog
     fi
 
-    ME2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -1869,11 +1872,16 @@ load_masseffect2() {
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
     ahk_do "
         ControlClick, Button4, Insert Disc
+        ; Some installs may not get to this point due to an installer hang/crash
+        ; The hang/crash happens after the Physx install but does not seem to affect gameplay
         winwait, Mass Effect, Finish
+        winkill, Mass Effect
     "
-
-    # TODO: file bugs, add workarounds
-    warn "Doesn't quite work on Wine yet; see appdb."
+    if workaround_wine_bug 6971
+    then
+        # Work around mouse leaving the window during gameplay
+        try sh "$WINETRICKS" -q mwo=force
+    fi
 }
 
 #----------------------------------------------------------------
