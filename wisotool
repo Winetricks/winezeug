@@ -1879,8 +1879,7 @@ load_masseffect2() {
     "
     if workaround_wine_bug 6971
     then
-        # Work around mouse leaving the window during gameplay
-        try sh "$WINETRICKS" -q mwo=force
+        echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
     fi
 }
 
