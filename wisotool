@@ -12,7 +12,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of wisotool (YYYYMMDD)
-VERSION=20100424
+VERSION=20100530
 
 early_wine()
 {
