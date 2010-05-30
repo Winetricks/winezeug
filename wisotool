@@ -1847,8 +1847,8 @@ load_masseffect2() {
 
     if workaround_wine_bug 22091
     then
-        # Make crash during PhysX install slightly less annoying?
-        try sh "$WINETRICKS" -q nocrashdialog
+        warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
+        #try sh "$WINETRICKS" -q nocrashdialog
     fi
 
     ahk_do "
@@ -1872,7 +1872,7 @@ load_masseffect2() {
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
     ahk_do "
         ControlClick, Button4, Insert Disc
-        ; Some installs may not get to this point due to an installer hang/crash
+        ; Some installs may not get to this point due to an installer hang/crash (bug 22091)
         ; The hang/crash happens after the Physx install but does not seem to affect gameplay
         winwait, Mass Effect, Finish
         winkill, Mass Effect
