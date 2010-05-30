@@ -1305,8 +1305,10 @@ load_bfbc2() {
     fi
     cd "$olddir"
     
-    warn "Battlefield Bad Company 2's Securom (7.4) check fails on wine."
-    warn "You'll need a crack until http://bugs.winehq.org/show_bug.cgi?id=22961 is fixed."
+    if workaround_wine_bug 22961
+    then
+        warn "This game uses securom 7.4, which wine doesn't not yet support, see http://bugs.winehq.org/show_bug.cgi?id=22961.  No public fix is available."
+    fi
 }
 
 #----------------------------------------------------------------
