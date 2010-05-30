@@ -582,7 +582,7 @@ mds_mount()
 
         cdemu load 0 $my_img
 
-        sleep 5s
+        sleep 1m
 
         # FIXME: This is messy, but AFAICT, there's no way in advance to know where the drive will be mounted,
         # since it depends on the cd/dvd title from the origial media, which is embedded in the mdf/mds file.
@@ -594,7 +594,7 @@ mds_mount()
         echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         # FIXME: one of these gives a warning frequently, possibly on second run
-        ln -sf "$my_img" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}::"
+        ln -sf "$device_name" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}::"
         ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}:"
     fi
 }
@@ -624,6 +624,7 @@ mds_umount()
         0) echo "cdemud is already running" ;;
         1) echo "cdemud is not running, let's start one" ;
            ( cdemud -b session & ) ;
+           sleep 1m ;
            # FIXME: grep for "cdemu0: Daemon: error while performing ioctl" and die if it shows up ;
         ;;
         *) die "unknown error in cdemud_run" ;;
@@ -640,7 +641,7 @@ mds_umount()
             ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
             # FIXME: Does this need sudo?
             eject $ISO_MOUNT_ROOT
-            sleep 10s # Give devices time to settle
+            sleep 1m # Give devices time to settle
         fi
 
         rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}:
@@ -1303,6 +1304,9 @@ load_bfbc2() {
         fi
     fi
     cd "$olddir"
+    
+    warn "Battlefield Bad Company 2's Securom (7.4) check fails on wine."
+    warn "You'll need a crack until http://bugs.winehq.org/show_bug.cgi?id=22961 is fixed."
 }
 
 #----------------------------------------------------------------
