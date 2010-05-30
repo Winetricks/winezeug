@@ -2604,6 +2604,46 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+verblist_add sto           "Star Trek Online (Cryptic, 2010)" f891dab46d05d771e0123a1e7ec969f3601064a6.iso
+
+load_sto()
+{
+    load_autohotkey
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f891dab46d05d771e0123a1e7ec969f3601064a6.iso
+
+    if workaround_wine_bug 22943
+    then
+        # Install is fine without ie6, but can't log in or download patch without ie6,
+        # and the installer launches the app when it's done.
+        # Even with ie6, it's not perfect, there are lots of annoying script error prompts.
+        sh "$WINETRICKS" -q ie6
+    fi
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        winwait, Installer
+        Send {Enter}                        ; Accept English as default language
+        winwait, Star Trek Online
+        ControlClick, Button2
+        winwait, Star Trek, License
+        ControlClick, Button2,
+        winwait, Star Trek, Location
+        ControlClick, Button2
+        winwait, Star Trek, shortcuts
+        ControlClick, Button2
+        winwait, Star Trek, additional
+        ControlClick, Button2
+        winwait, Star Trek, Launch
+        ControlClick, Button2
+    " 
+    iso_umount
+    # FIXME: register using the key that came with the DVD?
+    # FIXME: log in and download patch?
+    # FIXME: kill game?
+}
+
+#----------------------------------------------------------------
 
 verblist_add stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso 5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
 
