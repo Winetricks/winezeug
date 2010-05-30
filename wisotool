@@ -2610,6 +2610,8 @@ load_sto()
 {
     load_autohotkey
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f891dab46d05d771e0123a1e7ec969f3601064a6.iso
+    # Note: http://www.startrekonline.com/download shows how to download the
+    # client using bittorrent.  If the iso is not present, we should try that path.
 
     if workaround_wine_bug 22943
     then
