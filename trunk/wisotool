@@ -772,7 +772,7 @@ verblist_finish()
 menu_add() {
     verbname=$1
     description="$2"
-    printf " %-16s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
+    printf " %-24s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
 }
 
 # Add a new verb
