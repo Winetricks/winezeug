@@ -582,7 +582,7 @@ mds_mount()
 
         cdemu load 0 $my_img
 
-        sleep 1m
+        sleep 60
 
         # FIXME: This is messy, but AFAICT, there's no way in advance to know where the drive will be mounted,
         # since it depends on the cd/dvd title from the origial media, which is embedded in the mdf/mds file.
@@ -624,7 +624,7 @@ mds_umount()
         0) echo "cdemud is already running" ;;
         1) echo "cdemud is not running, let's start one" ;
            ( cdemud -b session & ) ;
-           sleep 1m ;
+           sleep 60
            # FIXME: grep for "cdemu0: Daemon: error while performing ioctl" and die if it shows up ;
         ;;
         *) die "unknown error in cdemud_run" ;;
@@ -641,7 +641,7 @@ mds_umount()
             ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
             # FIXME: Does this need sudo?
             eject $ISO_MOUNT_ROOT
-            sleep 1m # Give devices time to settle
+            sleep 60 # Give devices time to settle
         fi
 
         rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}:
@@ -1146,16 +1146,16 @@ load_baldursgate2() {
     then
         try mkdir -p "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
-        sleep 5s
+        sleep 5
         try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
-        sleep 5s
+        sleep 5
         try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
-        sleep 5s
+        sleep 5
         try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
-        sleep 5s
+        sleep 5
         try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
     fi
     
@@ -2875,7 +2875,7 @@ load_wowbc() {
     then
         try mkdir -p "$WISOTOOL_CACHE"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
-        sleep 5s
+        sleep 5
         try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
     fi
 
