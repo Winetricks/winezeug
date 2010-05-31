@@ -1232,7 +1232,7 @@ load_baldursgate2() {
         warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
     fi
 
-    if workaround_wine_bug 22511
+    if test ! "$WINE" = ""
     then
         warn "Until wine bug 22511 is fixed, you should use a virtual desktop, or baldur's gate will only take up part of your screen in full screen mode."
     fi
@@ -1307,7 +1307,7 @@ load_bfbc2() {
     
     if workaround_wine_bug 22961
     then
-        warn "This game uses securom 7.4, which wine doesn't not yet support, see http://bugs.winehq.org/show_bug.cgi?id=22961.  No public fix is available."
+        warn "If you get a Securom 'No CD/DVD error', check your mount settings. See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info."
     fi
 }
 
