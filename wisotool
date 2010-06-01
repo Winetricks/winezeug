@@ -1457,6 +1457,37 @@ load_bioshock_demo() {
 
 #----------------------------------------------------------------
 
+verblist_add blur       "Blur (Activision, 2010)" \
+  30fdaf3aad82be846f26b7908c703598d5c3443d.iso
+
+load_blur() {
+    load_autohotkey
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
+
+    ahk_do "
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        SetTitleMatchMode, 2
+        winwait, Activision, Select the language
+        send {Enter}
+        winwait, Blur, install Blur
+        send {Enter}
+        winwait, Blur, License
+        ControlClick Button5
+        send {Enter}
+        winwait, Blur, Minimum System
+        send {Enter}
+        winwait, Blur, Setup Type
+        send {Enter}
+        ; Installer seems to crash at end on Win7 and Wine
+        ; FIXME: loop waiting for some other event ("Finalizing installation"?)
+        winwait, Blur, Finish
+        send {Enter}
+    "
+    iso_umount
+}
+
+#----------------------------------------------------------------
+
 verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
   6f572261ed954733806daf5b42edf92b3127cd14.iso \
   3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
