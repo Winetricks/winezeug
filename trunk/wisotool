@@ -478,21 +478,10 @@ load_vcdmount()
     else
         die "can't find Virtual CloneDrive?"
     fi
-
     # FIXME: Use WMI to locate the drive named
     # "ELBY CLONEDRIVE..." using WMI as described in
     # http://delphihaven.wordpress.com/2009/07/05/using-wmi-to-get-a-drive-friendly-name/
-    # For now, you just have to hardcode it for your system :-(
-    warn "You probably need to edit the script to tell it which drive VirtualCloneDrive picked"
-    for ISO_MOUNT_LETTER in e f g h
-    do
-        ISO_MOUNT_ROOT=/cygdrive/$ISO_MOUNT_LETTER
-        test -d $ISO_MOUNT_ROOT || break
-    done
-    test -d $ISO_MOUNT_ROOT && die "cannot find the VirtualCloneDrive"
 }
-
-ISO_MOUNT_LETTER=i
 
 iso_mount()
 {
@@ -506,9 +495,20 @@ iso_mount()
         cd "$VCD_DIR"
         try vcdmount.exe /l=$letter "$my_img_win"
         cd "$olddir"
-        while ! test -d "$ISO_MOUNT_ROOT"
+
+        tries=0
+        while test $tries -lt 20
         do
-            echo "Waiting for mount to finish"
+            for ISO_MOUNT_LETTER in e f g h i j k
+            do
+                ISO_MOUNT_ROOT=/cygdrive/$ISO_MOUNT_LETTER
+                if find $ISO_MOUNT_ROOT -iname 'setup*' -o -iname '*.exe' -o -iname '*.msi' 
+                then
+                    break 2
+                fi
+            done
+            tries=`expr $tries + 1`
+            echo "Waiting for mount to finish mounting"
             sleep 1
         done
     else
@@ -735,7 +735,7 @@ load_iso() {
    # and then write the rest of the verb.
    migrate_files
 
-   eject
+   eject || true    # punt if eject not found (as on cygwin)
 }
 
 #----------------------------------------------------------------
