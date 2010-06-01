@@ -1412,6 +1412,51 @@ load_bioshock() {
 
 #----------------------------------------------------------------
 
+verblist_add bioshock_demo       "Bioshock Demo (2K Games, 2007)" \
+  nzd_BioShockPC.zip
+
+load_bioshock_demo() {
+    load_autohotkey
+    download $PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
+    cd "$DRIVE_C"
+    rm -rf bioshock-temp
+    mkdir bioshock-temp
+    cd bioshock-temp
+    try unzip -q "$WISOTOOL_CACHE/$PACKAGE"/nzd_BioShockPC.zip
+    try cd "BioShock PC Demo"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run setup.exe
+        winwait, BioShock Demo - InstallShield Wizard, Choose Setup Language
+        sleep 2000
+        ControlClick, Button3
+        ControlClick, Button3
+        winwait, BioShock Demo - InstallShield Wizard, Welcome
+        sleep 1000
+        ControlClick, Button1
+        winwait, BioShock Demo - InstallShield Wizard, Please read
+        sleep 1000
+        ControlClick, Button5
+        sleep 1000
+        ControlClick, Button2
+        winwait, BioShock Demo - InstallShield Wizard, Select the setup type
+        sleep 1000
+        ControlClick, Button2
+        winwait, BioShock Demo - InstallShield Wizard, Click Install to begin
+        ControlClick, Button1
+        winwait, BioShock Demo - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        sleep 1000
+        ControlClick, Button2     ; don't launch
+        ControlClick, Button6     ; don't show readme
+        send {Enter}              ; finish
+    "
+    cd ..
+    rm -rf bioshock-temp
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
   6f572261ed954733806daf5b42edf92b3127cd14.iso \
   3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
