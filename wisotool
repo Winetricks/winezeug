@@ -82,6 +82,7 @@ USERNAME=${USERNAME:-$LOGNAME}
 
 # Overridden for windows
 ISO_MOUNT_ROOT=/mnt/wisotool
+ISO_MOUNT_LETTER=i
 
 WINDIR="$DRIVE_C/windows"
 
