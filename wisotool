@@ -2594,7 +2594,7 @@ load_splitsecond()
         ControlClick, Button1, Split
         ControlClick, Button4, Split
     "
-    cd "$olddir"
+    iso_umount
 }
 
 #----------------------------------------------------------------
