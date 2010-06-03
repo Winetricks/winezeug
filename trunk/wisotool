@@ -3508,6 +3508,32 @@ load_tex_murphy_1_and_2_gog()
     _load_gog "tex_murphy_1_and_2" "Tex Murphy 1 and 2" "" "TsCheckBox5" "" "tex_murphy_1_2" "" "29082356,7aaaa686fdf424fd403bc972cbc94464a2693ce3"
 }
 
+verblist_add beneath_a_steel_sky_gog "Beneath a Steel Sky (GOG.com, free)" setup_beneath_a_steel_sky.exe
+
+load_beneath_a_steel_sky_gog()
+{
+    _load_gog "beneath_a_steel_sky" "Beneath a Steel Sky" "" "TsCheckBox4" "ScummVM\\scummvm.exe -c \"C:\\Program Files\\GOG.com\\Beneath a Steel Sky\\beneath.ini\" beneath" "" "" "75176395,1f99e12643529baa91fecfb206139a8921d9589c"
+}
+
+# Brief HOWTO for adding a GOG game:
+# - "beneath_a_steel_sky" is the installer exe name, minus "setup_" and ".exe"
+# - "Beneath a Steel Sky" is installer window title, minus "Setup - "
+# - There are no other files for this game, so this parameter is empty.
+#   Otherwise it should be of the following form:
+#   file_name[,length[,sha1sum]] [...]
+# - "TsCheckBox4" is the control name for the checkbox deciding whether it will
+#   install some reader (Foxit in this case, could be acrobat reader). That
+#   installation is enabled by default, and would just bloat the generic
+#   AutoHotKey script, so it gets disabled.
+# - "ScummVM\\[...]" is the command line to run the game, as fetched from the
+#   shortcut/launcher installer/wine creates, which will be used in BAT scripts
+#   created by wisotool
+# - The part in the url which is specific to this game is identical to its "id"
+#   (first parameter), so this parameter is left out.
+# - The install directory is the same as installer window title (second
+#   parameter), so this parameter is left out.
+# - Main installer size and sha1sum, separated by a comma.
+
 #----------------------------------------------------------------
 
 print_version() {
