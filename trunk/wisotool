@@ -2088,19 +2088,15 @@ load_orangebox() {
     load_autohotkey
 
     test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || sh $WINETRICKS -q steam
-    # Have to log in before you can install orangebox!
-    $WINE 'c:\Program Files\Steam\Steam' -login $STEAMUSER $STEAMPW
-    # Now, um, let it log in for a few seconds.  Anyone know how to tell when it's done?
-    sleep 45
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.iso
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.txt | tr -d -`
+    cd "$programfilesdir_x86_unix"/Steam
     ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, Steam.exe -login $STEAMUSER $STEAMPW -install ${ISO_MOUNT_LETTER}:
         winwait, ahk_class #32770
         MouseMove, 300, 365
-        ; user has to click Install; I can't script it!
 
         ; FIXME: only do these steps on first run; if you've
         ; already activated Orange Box on your account,
@@ -2131,7 +2127,8 @@ load_orangebox() {
     ahk_do "
         SetTitleMatchMode, 2
         Send {Enter}
-        winwait, ahk_class MsiDialogCloseClass, Please insert
+	; FIXME: does this work?  cf. codmw2 verb.
+        winwait, ahk_class USurface_, Install
     "
     iso_umount
 
