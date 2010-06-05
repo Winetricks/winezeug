@@ -1523,7 +1523,7 @@ load_codmw2()
 
         winwait, Install
         sendEvent {Enter}
-        ; wait for "create start menu and install" question
+        ; wait for 'create start menu and install' question
         sleep 5000
         sendEvent {Enter}
         winwait, Insert
@@ -1534,10 +1534,10 @@ load_codmw2()
         Send {Enter}
 	; Need to wait for install to finish.  This isn't the way to do it.  Ideally we could watch some log file.
 	; The last file created seems to be
-	; "Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf"
+	; 'Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf'
 	; so wait for that and then another 20 seconds, say.
         winwait, ahk_class USurface_, Install
-	; Now that install has finished, say "don't start app" and "finish".
+	; Now that install has finished, say 'don't start app' and 'finish'.
         Send {Space}
         Send {Enter}
 	; Now wait for the main steam interface to pop up, and close it
