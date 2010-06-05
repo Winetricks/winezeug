@@ -1557,6 +1557,57 @@ load_codmw2()
 
 #----------------------------------------------------------------
 
+verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
+
+load_darknesswithin2_demo()
+{
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Download the demo from http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo/ and place it in the $WISOTOOL_CACHE/$PACKAGE directory."
+    fi
+
+    if workaround_wine_bug 23041
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, DarknessWithin2Demo.exe
+        winwait, Darkness Within, will install
+        ControlClick, TNewButton1
+        winwait, Darkness, License
+        ControlClick, TNewRadioButton1
+        ControlClick, TNewButton2
+        winwait, Darkness, Location
+        ControlClick, TNewButton3
+        winwait, Darkness, shortcuts
+        ControlClick, TNewButton4
+        winwait, Darkness, additional
+        ControlClick, TNewButton4
+        winwait, Darkness, Ready to Install
+        ControlClick, TNewButton4
+        winwait, PhysX, License
+        ControlClick, Button3
+        ControlClick, Button4
+        winwait, PhysX, successfully
+        ControlClick, Button1
+        winwait, Darkness
+        ControlClick, TNewListBoxButton1
+        ControlClick, TNewButton4
+    "
+    cd "$olddir"
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Iceberg Interactive\Darkness Within 2 Demo"
+"DarkLineage.exe"
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
   51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
