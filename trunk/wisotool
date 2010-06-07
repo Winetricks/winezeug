@@ -1523,7 +1523,7 @@ load_codmw2()
 
         winwait, Install
         sendEvent {Enter}
-        ; wait for 'create start menu and install' question
+        ; wait for "create start menu and install" question
         sleep 5000
         sendEvent {Enter}
         winwait, Insert
@@ -1534,10 +1534,10 @@ load_codmw2()
         Send {Enter}
 	; Need to wait for install to finish.  This isn't the way to do it.  Ideally we could watch some log file.
 	; The last file created seems to be
-	; 'Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf'
+	; "Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf"
 	; so wait for that and then another 20 seconds, say.
         winwait, ahk_class USurface_, Install
-	; Now that install has finished, say 'don't start app' and 'finish'.
+	; Now that install has finished, say "don't start app" and "finish".
         Send {Space}
         Send {Enter}
 	; Now wait for the main steam interface to pop up, and close it
@@ -1553,57 +1553,6 @@ load_codmw2()
     "
     iso_umount
     
-}
-
-#----------------------------------------------------------------
-
-verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
-
-load_darknesswithin2_demo()
-{
-    load_autohotkey
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe"
-    then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Download the demo from http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo/ and place it in the $WISOTOOL_CACHE/$PACKAGE directory."
-    fi
-
-    if workaround_wine_bug 23041
-    then
-        sh "$WINETRICKS" -q d3dx9_36
-    fi
-
-    cd "$WISOTOOL_CACHE/$PACKAGE"
-    ahk_do "
-        SetTitleMatchMode, 2
-        run, DarknessWithin2Demo.exe
-        winwait, Darkness Within, will install
-        ControlClick, TNewButton1
-        winwait, Darkness, License
-        ControlClick, TNewRadioButton1
-        ControlClick, TNewButton2
-        winwait, Darkness, Location
-        ControlClick, TNewButton3
-        winwait, Darkness, shortcuts
-        ControlClick, TNewButton4
-        winwait, Darkness, additional
-        ControlClick, TNewButton4
-        winwait, Darkness, Ready to Install
-        ControlClick, TNewButton4
-        winwait, PhysX, License
-        ControlClick, Button3
-        ControlClick, Button4
-        winwait, PhysX, successfully
-        ControlClick, Button1
-        winwait, Darkness
-        ControlClick, TNewListBoxButton1
-        ControlClick, TNewButton4
-    "
-    cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Iceberg Interactive\Darkness Within 2 Demo"
-"DarkLineage.exe"
-__EOF__
 }
 
 #----------------------------------------------------------------
@@ -2088,15 +2037,19 @@ load_orangebox() {
     load_autohotkey
 
     test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || sh $WINETRICKS -q steam
+    # Have to log in before you can install orangebox!
+    $WINE 'c:\Program Files\Steam\Steam' -login $STEAMUSER $STEAMPW
+    # Now, um, let it log in for a few seconds.  Anyone know how to tell when it's done?
+    sleep 45
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.iso
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.txt | tr -d -`
-    cd "$programfilesdir_x86_unix"/Steam
     ahk_do "
         SetTitleMatchMode, 2
-        Run, Steam.exe -login $STEAMUSER $STEAMPW -install ${ISO_MOUNT_LETTER}:
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
         winwait, ahk_class #32770
         MouseMove, 300, 365
+        ; user has to click Install; I can't script it!
 
         ; FIXME: only do these steps on first run; if you've
         ; already activated Orange Box on your account,
@@ -2127,8 +2080,7 @@ load_orangebox() {
     ahk_do "
         SetTitleMatchMode, 2
         Send {Enter}
-	; FIXME: does this work?  cf. codmw2 verb.
-        winwait, ahk_class USurface_, Install
+        winwait, ahk_class MsiDialogCloseClass, Please insert
     "
     iso_umount
 
@@ -2273,159 +2225,6 @@ load_passmark7() {
 
 #----------------------------------------------------------------
 
-verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010)" \
-    Photoshop_12_LS1.7z \
-    Photoshop_12_LS1.exe
-
-
-load_pscs5() {
-    load_autohotkey
-    try cd "$WISOTOOL_CACHE/$PACKAGE/"
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.7z" ]
-    then
-        die "You must download Photoshop CS5 trial files and put them in $WISOTOOL_CACHE/$PACKAGE"
-    else
-        verify_sha1sum 0d8fac96f32963194add553b8ca072c40ca4b912 Photoshop_12_LS1.7z
-    fi
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.exe" ]
-    then
-        die "You must download Photoshop CS5 trial files and put them in $WISOTOOL_CACHE/$PACKAGE"
-    else
-        verify_sha1sum abbfeeef9348c79b6cdde5f8762f5c3f96d32f6e Photoshop_12_LS1.exe
-    fi
-
-    try Photoshop_12_LS1.exe /s /x /d .
-    try cd "Adobe CS5"
-    
-    if workaround_wine_bug 22679
-    then
-        try sh "$WINETRICKS" -q msxml3
-    fi
-
-    warn "Try not to have anything else running, cs5 will complain if firefox is running, and the mouse clicks here are sensitive"
-    
-    # Doesn't have clickable buttons, resorting to window positions. May break on non standard dpi settings.    
-    # Not sure how to detect when the window changes. They all have the same title, and no text is visible to AHK.
-    # As a dirty workaround, may try detecting the color on the left side which shows the menu. The current step is darker
-    # than the rest.
-    ahk_do "
-        SetTitleMatchMode, 2
-        run Set-up.exe
-        winwait, Adobe Photoshop CS5
-        sleep 2000
-        ControlClick, X750 Y550, Adobe Photoshop CS5
-        sleep 2000
-        winwait, Adobe Photoshop CS5
-        sleep 2000
-        ControlClick, X300 Y350, Adobe Photoshop CS5
-        sleep 2000
-        ControlClick, X700 Y340, Adobe Photoshop CS5
-        Send, {Down}{Down}{Enter} ; Choose US English
-        sleep 2000
-        ControlClick, X750 Y550, Adobe Photoshop CS5
-        sleep 2000
-        winwait, Adobe Photoshop CS5
-        sleep 2000
-        ControlClick, X750 Y550, Adobe Photoshop CS5
-        ; Installs in about 5 minutes here, but that's not a reliable number.
-        ; The final window is indistinguishable from the previous, except that it has a button that the former does not.
-        ; Exploit that to close the installer gracefully.
-        Loop
-            {
-                ; Loop every 30 seconds while the installer window is present, and try to click the 'Done' button.
-                ; If the window doesn't exist, installer is finally done.
-                IfWinExist, Adobe Photoshop CS5
-                {
-                    ControlClick, X750 Y550, Adobe Photoshop CS5
-                    Sleep 30000
-                }
-                else break
-            }
-    "
-    try cd ..
-    # Remove installer temp files:
-    try cd "$WISOTOOL_CACHE/$PACKAGE/"
-    try rm -rf "Photoshop CS5 Read Me.pdf" "Adobe CS5"
-    try cd "$olddir"
-}
-
-verblist_add pscs5_pickle       "Photoshop CS5 Demo (Adobe, 2010)"
-
-load_pscs5_pickle() {
-    warn "This will tar up Photoshop CS5's files from a Windows install, along with needed registry entries, for use in wine with load_pscs5_unpickle()"
-    
-    if [ ! -d "$programfilesdir_x86_win/Adobe/Adobe Photoshop CS5/" ]
-    then
-        load_pscs5
-    fi
-
-    try cd "$WISOTOOL_TMP"
-
-    # Setup a skeleton file structure:
-    try rm -rf cs5_temp
-    try mkdir -p cs5_temp/"Common Files"
-    try mkdir -p cs5_temp/"Program Files"
-    try mkdir -p cs5_temp/"userhome"
-
-    try cd cs5_temp
-
-    try sleep 1 # Potential race condition, caught me a couple times
-    
-    # First, the registry entries:
-    try reg.exe export HKLM\\Software\\Adobe adobe_cs5.reg
-
-    # Then the files:
-    userprofile_unix="`cygpath $USERPROFILE`"
-    system32_unix="`cygpath $WINDIR/system32`"
-
-    try cd "Common Files"
-    try cp -r "$programfilesdir_x86_unix/Common Files/Adobe" .
-    try cd ../"Program Files"
-    try cp -r "$programfilesdir_x86_unix/Adobe" .
-    try cd ../userhome
-    try cp -r "$userprofile_unix/Application Data/Adobe" .
-    try cd ..
-    try cp "$system32_unix/odbc32.dll" .
-    try cp "$system32_unix/odbcint.dll" .
-    
-    try cd "$WISOTOOL_TMP"/cs5_temp
-    try tar -c -f "$olddir/adobe_cs5.tar" *
-    try cd ..
-    try rm -rf cs5_temp
-    try cd "$olddir"
-    
-}
-
-verblist_add pscs5_unpickle       "Photoshop CS5 Demo (Adobe, 2010)" \
-    adobe_cs5.tar
-
-load_pscs5_unpickle() {
-    warn "This will install Photoshop CS5's files from a Windows install made with pscs5_pickle()"
-    
-    # Install dependencies:
-    try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008 
-
-    try cd "$WISOTOOL_TMP"
-    try tar xf "$WISOTOOL_CACHE/$PACKAGE/adobe_cs5.tar"
-    try $WINE regedit adobe_cs5.reg
-    try cd "$programfilesdir_x86_unix"
-    try mv "$WISOTOOL_TMP/Program Files/Adobe" .
-    try cd "Common Files"
-    try mv "$WISOTOOL_TMP/Common Files/Adobe" .
-    try cd "$DRIVE_C/users/$USER/Application Data/"
-    try mv "$WISOTOOL_TMP/userhome"/* .
-    try cd "$WINDIR/system32"
-    try mv "$WISOTOOL_TMP/odbc32.dll" .
-    try mv "$WISOTOOL_TMP/odbcint.dll" .
-    try $WINE regsvr32 odbc32.dll
-    try $WINE regsvr32 odbcint.dll
-    
-    warn "Do not report bugs to wine with an installation done this way. Wait until the installer bugs are fixed or have patches to workaround them!"
-    warn "On the first run, it will tell you your trial has 0 days left. On the second run and after, it will say 30 days."
-}
-
-#----------------------------------------------------------------
-
 verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009) [download]" PlantsVsZombiesSetup.exe
 
 load_plantsvszombies() {
@@ -2452,44 +2251,6 @@ load_plantsvszombies() {
 cd "$programfilesdir_x86_win\PopCap Games\Plants vs. Zombies"
 PlantsVsZombies
 __EOF__
-}
-
-#----------------------------------------------------------------
-
-verblist_add popsot "Prince of Persia Sands of Time (Ubisoft, 2003)" \
-a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso
-
-load_popsot()
-{
-    load_autohotkey
-    iso_mount "$WISOTOOL_CACHE/$PACKAGE/a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso"
-    ahk_do "
-        SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:Setup.exe
-        winwait, Prince of Persia, Language
-        ControlClick, Button3
-        winwait, Prince of Persia, Welcome
-        ControlClick, Button1
-        winwait, Prince of Persia, License
-        ControlClick, Button3
-        ControlClick, Button1
-        winwait, Prince of Persia, Destination
-        ControlClick, Button1
-        winwait, Question, Proceed
-        ControlClick, Button6
-        winwait, Prince of Persia, Acrobat Reader
-        ControlClick, Button2
-        ControlClick, Button11
-        winwait, Prince of Persia, Complete
-        ControlClick, Button1
-        ControlClick, Button4
-        sleep 6000
-        IfWinExist, register
-        {
-          ControlClick, OK, register
-        }
-    "
-    iso_umount
 }
 
 #----------------------------------------------------------------
@@ -2728,8 +2489,8 @@ load_sims3() {
     # FIXME: apply next patch, too
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Electronic Arts\The Sims 3\Game\Bin"
-TS3.EXE
+cd "$programfilesdir_x86_win\CAPCOM\RESIDENT EVIL 5 Benchmark Version"
+RE5DX9.EXE
 __EOF__
 }
 
@@ -3826,6 +3587,8 @@ case "$OS" in
   # Prevent running with wrong user id.
   # It's bad to create files as the wrong user!
   die_if_user_not_dirowner "$WINEPREFIX"
+  # Wine misbehaves strangely if user doesn't own the parent of $WINEPREFIX.
+  die_if_user_not_dirowner "$WINEPREFIX/.."
 
   if [ ! -x "`which "$WINE" 2>/dev/null`" ]
   then
@@ -3855,6 +3618,9 @@ fi
 # The folder-name is localized!
 programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+case "$programfilesdir_win" in
+%*) die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?"
+esac
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
 wisotool_tmp_win="`$XXXPATH -w "$WISOTOOL_TMP"`"
