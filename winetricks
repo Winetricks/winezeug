@@ -3827,6 +3827,7 @@ then
 else
     winefontsdir="$WINDIR"/Fonts
 fi
+mkdir -p "${winefontsdir}"
 
 # Mac folks tend to not have sha1sum, but we can make do with openssl
 if [ -x "`which sha1sum 2>/dev/null`" ]
