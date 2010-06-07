@@ -2273,12 +2273,12 @@ load_passmark7() {
 
 #----------------------------------------------------------------
 
-verblist_add photoshop_cs5       "Photoshop CS5 Demo (Adobe, 2010)" \
+verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010)" \
     Photoshop_12_LS1.7z \
     Photoshop_12_LS1.exe
 
 
-load_photoshop_cs5() {
+load_pscs5() {
     load_autohotkey
     cd "$WISOTOOL_CACHE/$PACKAGE/"
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.7z" ]
