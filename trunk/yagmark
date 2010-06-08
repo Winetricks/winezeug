@@ -496,6 +496,90 @@ run_heaven2_gl()
     do_heaven2
 }
 
+do_halflife2()
+{
+    if ! test "$STEAMUSER"
+    then
+        echo "Must set STEAMUSER and STEAMPW"
+        exit 1
+    fi
+
+    STEAMDIR="${STEAMDIR:-$programfilesdir_x86_unix/Steam}"
+    STEAMUSER=`echo $STEAMUSER | tr A-Z a-z`
+    exe="$STEAMDIR/steamapps/$STEAMUSER/half-life 2/hl2.exe"
+
+    if ! test -d "$exedir" || ! test -f "$exe"
+    then
+        echo "Please install halflife 2 first"
+        exit 1
+    fi
+
+    rm -f "$STEAMDIR/steamapps/$STEAMUSER/half-life 2/hl2/sourcebench.csv"
+    $WINE "$STEAMDIR/Steam.exe" -login $STEAMUSER $STEAMPW -silent -applaunch 220 $commandline $PARAMS  &
+
+    # wait for results file
+    while( test ! -e "$STEAMDIR/steamapps/$STEAMUSER/half-life 2/hl2/sourcebench.csv" ) ; do
+        sleep 10                                                                         
+    done                                                                                     
+    killall hl2.exe
+
+    #parse the results
+    hl2result=`cat "$STEAMDIR/steamapps/$STEAMUSER/half-life 2/hl2/sourcebench.csv" | grep $DEMO.dem | cut -f 2 -d ,`
+    sleep 10 # give Hl2 some time to exit
+    echo "result: " $hl2result " fps"
+}
+
+run_halflife2()
+{
+    DEMO=mydemo
+    PARAMS="-window -console -novid -nosound -width 640 -height 480 +cl_showfps 2 +timedemo $DEMO"
+
+    # Make sure GLSL is used
+    sh winetricks glsl-enable
+
+    commandline="-dxlevel 81"
+    do_halflife2
+    result81glsl=$hl2result
+    echo "result: " $hl2result " fps"
+
+    commandline="-dxlevel 90"
+    do_halflife2
+    result90glsl=$hl2result
+
+    commandline="-dxlevel 95"
+    do_halflife2
+    result95glsl=$hl2result
+
+    # Make sure ARB is used
+    sh winetricks glsl-disable
+    commandline="-dxlevel 81"
+    do_halflife2
+    result81arb=$hl2result
+
+    commandline="-dxlevel 90"
+    do_halflife2
+    result90arb=$hl2result
+
+    # This may not actually run in dxlevel 95 on ATI cards. ARB supports SM 2.0 only
+    # on ATI. Dxlevel 95 uses SM 2.0, but only activates itself when SM 3.0 is available
+    commandline="-dxlevel 95"
+    do_halflife2
+    result95arb=$hl2result
+
+    sh winetricks glsl-enable
+
+    killall Steam.exe
+
+    cd "$YAGMARK_RESULTS"
+    echo "halflife2_dxlevel_81_glsl " $result81glsl > halflife2.parsed
+    echo "halflife2_dxlevel_90_glsl " $result90glsl >> halflife2.parsed
+    echo "halflife2_dxlevel_95_glsl " $result95glsl >> halflife2.parsed
+    echo "halflife2_dxlevel_81_arb " $result81arb >> halflife2.parsed
+    echo "halflife2_dxlevel_90_arb " $result90arb >> halflife2.parsed
+    echo "halflife2_dxlevel_95_arb " $result95arb >> halflife2.parsed
+    cd "$olddir"
+}
+
 announce()
 {
    echo ">> $*"
