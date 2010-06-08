@@ -1489,6 +1489,47 @@ load_blur() {
 
 #----------------------------------------------------------------
 
+verblist_add braid_demo    "Braid Demo (Number None, 2009) [download]" braid_windows_r3.exe
+
+load_braid_demo()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
+    then
+        download $PACKAGE "http://www.playgreenhouse.com/php/public/tracking/downloads.php?sku=NNONE-000001-01&platform=win" 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+    fi
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    mv downloads.php* braid_windows_r3.exe 2>/dev/null
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, braid_windows_r3.exe
+        winwait, Braid, install
+        controlclick, TButton1
+        winwait, Braid, Destination
+        controlclick, TButton3
+        winwait, Braid, Ready to Install
+        controlclick, TButton3
+        winwait, Setup, Finishing installation
+        sleep 5000
+        ; Workaround_winebug 21761
+        ifwinactive, Setup, ShellExecuteEx failed 
+        {
+            controlclick, Button1
+        }
+        winwait, Braid, finished
+        controlclick, TButton3
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Braid"
+braid.exe
+__EOF__
+} 
+
+#----------------------------------------------------------------
+
 verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
   6f572261ed954733806daf5b42edf92b3127cd14.iso \
   3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
