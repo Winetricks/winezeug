@@ -1364,7 +1364,18 @@ load_bioshock() {
         ControlClick, Button2, BioShock - InstallShield Wizard, Select the setup type to install
         winwait, BioShock - InstallShield Wizard, Click Install to begin the installation
         ControlClick, Button1, BioShock - InstallShield Wizard, Click Install to begin the installation
-        winwait, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        Loop
+        {
+            ; Detect if Securom likes the mounted ISO or not. If so, continue the install. If not, exit since the install will fail.
+            SetTitleMatchMode, Slow
+            IfWinExist, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+                break
+            IfWinExist, Bioshock, Please insert the original disc instead of a backup (1000)
+            {
+                exit 1
+            }
+            sleep 10000
+        }
         sleep 1000
         ControlClick, Button6, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
         sleep 1000
@@ -1381,7 +1392,8 @@ load_bioshock() {
         winwait, Activation Successful
         Sleep 1000
         Controlclick, Button3, Activation Successful
-        "
+        " || (  wineserver -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
+
     # According to the AppDB, 1.1 may have problems with Wine. For now, don't run it.
     # FIXME: Test and if there's a Wine bug, file one/put this in an if workaround_wine_bug().
     #
