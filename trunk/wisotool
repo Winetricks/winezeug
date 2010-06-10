@@ -1690,7 +1690,6 @@ __EOF__
 verblist_add dragonage     "Dragon Age: Origins (Bioware, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
-    warn "You must have already done 'wisotool load=YOURKEY' on the install disc." 
     load_autohotkey
 
     # Get user's key
@@ -3763,7 +3762,13 @@ fi
 while test "$1" != ""
 do
     PACKAGE=$1
-    case $1 in
+    # Kludge: shorthand synonyms.  Find some more elegant way of doing this.
+    case $PACKAGE in
+    dao) PACKAGE=dragonage ;;
+    sc2) PACKAGE=starcraft2 ;;
+    esac
+
+    case $PACKAGE in
     -q) WISOTOOL_QUIET="/q"
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
@@ -3772,23 +3777,23 @@ do
     ls) list_available_verbs;;
     load) load_iso dd;;
     load_harder) load_iso ddrescue;;
-    load=*) key="`echo $1 | sed 's/load=//'`"; load_iso dd "$key";;
+    load=*) key="`echo $PACKAGE | sed 's/load=//'`"; load_iso dd "$key";;
     migrate) migrate_files;;
     version) print_version;;
 
-    *) if verblist_is_legal_verb $1
+    *) if verblist_is_legal_verb $PACKAGE
        then
-           load_$1
+           load_$PACKAGE
        else
-           echo Unknown arg $1; usage ; exit 1;
+           echo Unknown arg $PACKAGE; usage ; exit 1;
        fi
        ;;
     esac
     # Provide a bit of feedback
-    test "$WISOTOOL_QUIET" = "" && case $1 in
+    test "$WISOTOOL_QUIET" = "" && case $PACKAGE in
     -q) echo Setting quiet mode;;
     -v) echo Setting verbose mode;;
-    *) #echo "$1 done" ;;
+    *) #echo "$PACKAGE done" ;;
     esac
     shift
 
