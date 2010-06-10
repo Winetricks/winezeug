@@ -2401,6 +2401,51 @@ load_procycling08_demo()
 
 #----------------------------------------------------------------
 
+verblist_add proevolution2010_demo "Pro Evolution Soccer 2010 Demo (Konami, 2009) [download]" PES2010_PC_DEMO_Setup.exe
+
+load_proevolution2010_demo()
+{
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PES2010_PC_DEMO_Setup.exe"
+    then
+        download $PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
+    fi
+
+    cd $WISOTOOL_CACHE/$PACKAGE
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, PES2010_PC_DEMO_Setup.exe
+        winwait, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, WARNING: This program is protected
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, WARNING: This program is protected ; Next
+        winwait, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, Please read the following
+        sleep 1000
+        ControlClick, Button3, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, Please read the ; Accept license
+        sleep 1000
+        ControlClick, Button5, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, Please read the following license ; Next
+        winwait, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, Click Next to install to this folder
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, Click Next to install to this folder ; Next
+        winwait, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, The wizard is ready to begin installation
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, The wizard is ready to begin installation. ; Install
+        winwait, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, InstallShield Wizard Completed
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, InstallShield Wizard Completed ; Finished
+    "
+    cd "$olddir"
+
+    if workaround_wine_bug 23104
+    then
+        try sh "$WINETRICKS" -q d3dx9
+    fi
+}
+
+
+
+#----------------------------------------------------------------
+
 verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
