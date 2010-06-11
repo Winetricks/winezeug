@@ -2045,6 +2045,19 @@ load_masseffect2() {
         #try sh "$WINETRICKS" -q nocrashdialog
     fi
 
+    if workaround_wine_bug 23126
+    then
+        try sh "$WINETRICKS" -q vcrun2005
+    fi
+    if workaround_wine_bug 23125
+    then
+        try sh "$WINETRICKS" d3dx10
+    fi
+    if workaround_wine_bug 22919
+    then
+        try sh "$WINETRICKS" -q physx
+    fi
+
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -2066,8 +2079,9 @@ load_masseffect2() {
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
     ahk_do "
         ControlClick, Button4, Insert Disc
-        ; Some installs may not get to this point due to an installer hang/crash (bug 22091)
+        ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
         ; The hang/crash happens after the Physx install but does not seem to affect gameplay
+        ; TODO: work around this by waiting in some other way for install to finish
         winwait, Mass Effect, Finish
         winkill, Mass Effect
     "
@@ -2075,6 +2089,11 @@ load_masseffect2() {
     then
         echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
     fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\Mass Effect 2\Binaries"
+MassEffect2.EXE
+__EOF__
+
 }
 
 #----------------------------------------------------------------
