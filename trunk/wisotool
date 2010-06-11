@@ -2140,6 +2140,52 @@ load_morrowind() {
     cd "$olddir"
 }
 
+#----------------------------------------------------------------
+
+verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007)" nfsps_pcdemo.exe
+
+load_nfsps_demo()
+{
+    load_autohotkey
+    
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ps_pcdemo.exe"
+    then
+        download $PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, nfsps_pcdemo.exe
+        winwait, ProStreet, folder
+        controlclick, Button2
+        winwait, ProStreet, View the readme
+        controlclick, Button1
+        winwait, ProStreet, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, ProStreet, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, ProStreet, Destination
+        controlclick, Button1
+        winwait, ProStreet, Ready
+        controlclick, Button1
+        winwait, ProStreet, Finish
+        controlclick, Button1
+        winwait, ProStreet, completed,
+        controlclick, Button7
+        controlclick, Button4
+    "
+    cd "$olddir"
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Electronic Arts\Need for Speed ProStreet Demo"
+nfsdemo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add orangebox     "Orange Box (Valve, 2007) " \
     976f67eec4b84331de8f6695272bc9192466da6a.iso \
     b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
