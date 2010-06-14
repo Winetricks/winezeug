@@ -1324,6 +1324,7 @@ load_directx9() {
     override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle
     override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby
     override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
+    override_dlls native dxdiag.exe
     override_dlls builtin d3d8 d3d9 dinput dinput8 dsound
 
     # Should be below, but fails on Wine when used silently.
