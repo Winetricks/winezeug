@@ -736,7 +736,7 @@ load_iso() {
    # and then write the rest of the verb.
    migrate_files
 
-   eject $ISO_MOUNT_ROOT || true    # punt if eject not found (as on cygwin)
+   eject $dev || true    # punt if eject not found (as on cygwin)
 }
 
 #----------------------------------------------------------------
