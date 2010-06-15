@@ -2569,6 +2569,75 @@ load_proevolution2010_demo()
 
 #----------------------------------------------------------------
 
+verblist_add rom "Runes of Magic (Frogster Interactive, 2009) [download]" \
+  Runes_of_Magic_3.0.1.2153.part1.exe \
+  Runes_of_Magic_3.0.1.2153.part2.rar
+
+load_rom()
+{
+    load_autohotkey
+
+    if workaround_wine_bug 22002
+    then
+        warn "Runes of Magic requires vc2005, IE6, and wininet"
+        try sh "$WINETRICKS" -q ie6 wininet vcrun2005
+    fi
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
+    then
+        download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
+        download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG//Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
+    fi
+    # manual updates from http://forum.runesofmagic.com/showthread.php?t=79267
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2172.en_3.0.1.2175.en.exe ed120bc8140f8c3b2481a78f504a7a9e76c8642f
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2175.en_3.0.1.2178.en.exe 012e679402f2165effbf2aaaffe41a5d9405d319
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, Runes_of_Magic_3.0.1.2153.part1.exe
+        winwait, Runes of Magic, This will install
+        ControlClick, TNewButton1
+        winwait, Runes of Magic, License
+        ControlClick, TNewRadioButton1
+        ControlClick, TNewButton2
+        winwait, Runes of Magic, Destination
+        ControlClick, TNewButton3
+        winwait, Runes of Magic, shortcuts
+        ControlClick, TNewButton4
+        winwait, Runes of Magic, Additional Tasks
+        ControlClick, TNewButton4
+        winwait, Runes of Magic, Ready
+        ControlClick, TNewButton4
+        winwait, Runes of Magic, finished
+        ControlClick, TNewCheckListBox1
+        ControlClick, TNewButton4
+    "
+
+    cd "$WISOTOOL_CACHE"/$PACKAGE
+    for patch in patch_*
+    do
+        ahk_do "
+            run $patch
+            SetTitleMatchMode, 2
+            winwait, RomUpdate
+            winwaitclose, RomUpdate
+        "
+    done
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Runes of Magic"
+"Runes of Magic.exe"
+__EOF__
+
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
