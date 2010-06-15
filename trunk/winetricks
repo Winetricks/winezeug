@@ -3153,7 +3153,7 @@ load_vjrun20() {
     then
         try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe /q /C:"install /QNT"
     else
-        try $WINE vjrun20/vjredist.exe
+        try $WINE "$WINETRICKS_CACHE"/vjrun20/vjredist.exe
     fi
 }
 
