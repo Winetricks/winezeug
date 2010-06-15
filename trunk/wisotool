@@ -1924,6 +1924,44 @@ load_half_life_goty() {
 
 #----------------------------------------------------------------
 
+verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Games, 2010) [download]" Hegemony_Philip_of_Macedon_Installer.exe 
+
+load_hegemonypom_demo()
+{
+    load_autohotkey
+
+    mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Hegemony_Philip_of_Macedon_Installer.exe"
+    then
+        download $PACKAGE http://www.longbowgames.com/downloads/Hegemony%20Philip%20of%20Macedon%20Installer.exe d3d2aa020d38b594d112360ae40871662d35dea4
+        # Get rid of spaces in exe name, since download leaves them as %20's, and ahk_do might not make it easy to use quotes
+        mv Hegemony* Hegemony_Philip_of_Macedon_Installer.exe
+    fi
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, Hegemony_Philip_of_Macedon_Installer.exe
+        winwait, Hegemony, installation
+        controlclick, Button2
+        winwait, Hegemony, License
+        controlclick, Button2
+        winwait, Hegemony, Components
+        controlclick, Button2
+        winwait, Hegemony, Install Location
+        controlclick, Button2
+        winwait, Hegemony, shortcuts
+        controlclick, Button2
+        winwait, Hegemony, has been installed
+        controlclick, Button4
+        controlclick, Button2
+    "
+    cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
 verblist_add help     "How to use this tool"
 
 load_help() {
