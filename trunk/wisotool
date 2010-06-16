@@ -1957,9 +1957,13 @@ load_hphbp_demo()
     "
     cd "$olddir"
 
+    # Not sure I trust putting \U2122 in a batch file, so use a wild card to cd to the right dir.
+    # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
+    # Have to be in the pc directory for the app to find its files.
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince* Demo"
-pc\hp6_demo.exe
+cd pc
+hp6_demo.exe
 __EOF__
 }
 
