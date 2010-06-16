@@ -2669,7 +2669,7 @@ load_rom()
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
     then
         download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
-        download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG//Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
+        download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
     fi
     # manual updates from http://forum.runesofmagic.com/showthread.php?t=79267
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
