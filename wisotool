@@ -1491,12 +1491,28 @@ load_blur() {
         send {Enter}
         winwait, Blur, Setup Type
         send {Enter}
-        ; Installer seems to crash at end on Win7 and Wine
-        ; FIXME: loop waiting for some other event ("Finalizing installation"?)
-        winwait, Blur, Finish
-        send {Enter}
     "
+    # Installer seems to crash at end on Win7 and Wine
+    # Wait for last file to be created(Blur.exe?), then kill wineserver
+    # and do the d3dx physx install by using winetricks.
+    while [ ! -f "$programfilesdir_x86_unix"/Activision/Blur*/Blur.exe ]
+    do
+        sleep 5
+    done
+    # Sleep for 30 seconds to ensure that all files have been created
+    # before killing the wineserver.
+    sleep 30
+    wineserver -k
+    
+    # We killed the wineserver before(or during) the d3dx9 and physx install
+    # so use winetricks to install them. The game runs without the physx trick
+    # but frame rate improves with physx.
+    try sh "$WINETRICKS" -q d3dx9 physx
     iso_umount
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Activision\Blur*"
+"Blur.exe"
+__EOF__
 }
 
 #----------------------------------------------------------------
