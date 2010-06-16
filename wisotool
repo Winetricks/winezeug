@@ -1481,15 +1481,20 @@ load_blur() {
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
         SetTitleMatchMode, 2
         winwait, Activision, Select the language
+        sleep 1000
         send {Enter}
         winwait, Blur, install Blur
+        sleep 1000
         send {Enter}
         winwait, Blur, License
+        sleep 1000
         ControlClick Button5
         send {Enter}
         winwait, Blur, Minimum System
+        sleep 1000
         send {Enter}
         winwait, Blur, Setup Type
+        sleep 1000
         send {Enter}
     "
     # Installer seems to crash at end on Win7 and Wine
