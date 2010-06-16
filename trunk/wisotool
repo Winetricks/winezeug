@@ -2660,12 +2660,6 @@ load_rom()
 {
     load_autohotkey
 
-    if workaround_wine_bug 22002
-    then
-        warn "Runes of Magic requires vc2005, IE6, and wininet"
-        try sh "$WINETRICKS" -q ie6 wininet vcrun2005
-    fi
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
     then
         download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
@@ -2677,6 +2671,7 @@ load_rom()
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2175.en_3.0.1.2178.en.exe 012e679402f2165effbf2aaaffe41a5d9405d319
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
@@ -2698,7 +2693,13 @@ load_rom()
         winwait, Runes of Magic, finished
         ControlClick, TNewCheckListBox1
         ControlClick, TNewButton4
+	winwait, Territory
+	send {Esc}
+	; Don't let it autoupdate
+	winkill
     "
+    # FIXME: use right wineserver and/or find nicer way to finish
+    wineserver -k
 
     cd "$WISOTOOL_CACHE"/$PACKAGE
     for patch in patch_*
@@ -2710,6 +2711,16 @@ load_rom()
             winwaitclose, RomUpdate
         "
     done
+
+    if workaround_wine_bug 23217
+    then
+        try sh "$WINETRICKS" -q vcrun2005
+    fi
+
+    if workaround_wine_bug 22002
+    then
+        try sh "$WINETRICKS" -q ie6
+    fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\Runes of Magic"
