@@ -1924,6 +1924,47 @@ load_half_life_goty() {
 
 #----------------------------------------------------------------
 
+hbpdemoexe=Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe
+verblist_add hphbp_demo    "Harry Potter & The Half Blood Prince Demo (EA, 2009) [download]" $hbpdemoexe
+
+load_hphbp_demo()
+{
+    load_autohotkey
+    
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$hbpdemoexe"
+    then
+        download $PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, $hbpdemoexe
+        winwait, Harry Potter, Install
+        controlclick, Button1, Harry Potter
+        winwait, Setup, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Setup, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Setup, Destination
+        controlclick, Button1
+        winwait, Setup, begin
+        controlclick, Button1
+        winwait, Setup, Finish
+        controlclick, Button1
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince* Demo"
+pc\hp6_demo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Games, 2010) [download]" Hegemony_Philip_of_Macedon_Installer.exe 
 
 load_hegemonypom_demo()
