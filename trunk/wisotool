@@ -1130,6 +1130,58 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add avatar_demo    "James Camerons Avatar The Game Demo (Ubisoft, 2009) [download]" Avatar_The_Game_Demo.exe
+
+load_avatar_demo()
+{
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Avatar_The_Game_Demo.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "You must first download the demo from http://www.bigdownload.com/games/james-camerons-avatar-the-game/pc/james-camerons-avatar-the-game-demo/ and place the exe in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    if workaround_wine_bug 23094
+    then
+        try sh winetricks -q vcrun2005
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, Avatar_The_Game_Demo.exe
+        winwait, WinRAR, Install
+        controlclick, Button2
+        winwaitclose, WinRAR
+        sleep 1000
+        run, setup.exe
+        winwait, Language
+        controlclick, Button1
+        winwait, AVATAR, Welcome
+        controlclick, Button1
+        winwait, AVATAR, License
+        controlclick, Button5
+        controlclick, Button2
+        winwait, AVATAR, setup type
+        controlclick, Button2
+        ;Strange CRC error workaround. Will check this out. Stay tuned.
+        sleep 1000
+        ifwinactive, CRC Error
+        {
+          controlclick, Button5
+        }
+        winwait, AVATAR, Complete
+        controlclick, Button4 
+    "
+    cd "$olddir"
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Ubisoft\Demo\James Cameron's AVATAR - THE GAME (Demo)\bin"
+"AvatarDemo.exe"
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=408
 verblist_add baldursgate2       "Baldurs Gate 2 - Shadows of Amn (Bioware, 2000)" \
   cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso \
