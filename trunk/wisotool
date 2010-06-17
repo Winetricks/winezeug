@@ -2946,8 +2946,8 @@ load_sims3() {
     # FIXME: apply next patch, too
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\CAPCOM\RESIDENT EVIL 5 Benchmark Version"
-RE5DX9.EXE
+cd "$programfilesdir_x86_win\Electronic Arts\The Sims 3\Game\Bin"
+TS3.EXE
 __EOF__
 }
 
