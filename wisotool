@@ -1708,7 +1708,7 @@ load_codmw2()
 
         winwait, Install
         sendEvent {Enter}
-        ; wait for "create start menu and install" question
+        ; wait for [create start menu and install] question
         sleep 5000
         sendEvent {Enter}
         winwait, Insert
@@ -1719,10 +1719,10 @@ load_codmw2()
         Send {Enter}
 	; Need to wait for install to finish.  This isn't the way to do it.  Ideally we could watch some log file.
 	; The last file created seems to be
-	; "Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf"
+	; Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf
 	; so wait for that and then another 20 seconds, say.
         winwait, ahk_class USurface_, Install
-	; Now that install has finished, say "don't start app" and "finish".
+	; Now that install has finished, say [don't start app] and [finish].
         Send {Space}
         Send {Enter}
 	; Now wait for the main steam interface to pop up, and close it
@@ -1738,6 +1738,59 @@ load_codmw2()
     "
     iso_umount
     
+}
+
+#----------------------------------------------------------------
+
+verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
+
+load_darknesswithin2_demo()
+{
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download $WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe from http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, DarknessWithin2Demo.exe
+        winwait, Darkness Within, will install
+        ControlClick, TNewButton1
+        winwait, Darkness, License
+        ControlClick, TNewRadioButton1
+        ControlClick, TNewButton2
+        winwait, Darkness, Location
+        ControlClick, TNewButton3
+        winwait, Darkness, shortcuts
+        ControlClick, TNewButton4
+        winwait, Darkness, additional
+        ControlClick, TNewButton4
+        winwait, Darkness, Ready to Install
+        ControlClick, TNewButton4
+        winwait, PhysX, License
+        ControlClick, Button3
+        ControlClick, Button4
+        winwait, PhysX, successfully
+        ControlClick, Button1
+        winwait, Darkness
+        ControlClick, TNewListBoxButton1
+        ControlClick, TNewButton4
+    "
+    cd "$olddir"
+
+    if workaround_wine_bug 23041
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+
+    # you have to cd to the directory containing DarkLineage.exe before running it
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Iceberg Interactive\Darkness Within 2 Demo"
+"DarkLineage.exe"
+__EOF__
 }
 
 #----------------------------------------------------------------
