@@ -2587,6 +2587,44 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add popsot "Prince of Persia Sands of Time (Ubisoft, 2003)" \
+a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso
+
+load_popsot()
+{
+    load_autohotkey
+    iso_mount "$WISOTOOL_CACHE/$PACKAGE/a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        winwait, Prince of Persia, Language
+        ControlClick, Button3
+        winwait, Prince of Persia, Welcome
+        ControlClick, Button1
+        winwait, Prince of Persia, License
+        ControlClick, Button3
+        ControlClick, Button1
+        winwait, Prince of Persia, Destination
+        ControlClick, Button1
+        winwait, Question, Proceed
+        ControlClick, Button6
+        winwait, Prince of Persia, Acrobat Reader
+        ControlClick, Button2
+        ControlClick, Button11
+        winwait, Prince of Persia, Complete
+        ControlClick, Button1
+        ControlClick, Button4
+        sleep 6000
+        IfWinExist, register
+        {
+          ControlClick, OK, register
+        }
+    "
+    iso_umount
+}
+
+#----------------------------------------------------------------
+
 verblist_add popsot_demo "Prince of Persia Sands of Time Demo (Ubisoft, 2003)" \
 POP_Demo_Eng.exe
 
