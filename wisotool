@@ -3300,6 +3300,48 @@ load_splitsecond()
 
 #----------------------------------------------------------------
 
+verblist_add spore    "Spore (EA, 2008)" d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso
+
+load_spore()
+{
+    load_autohotkey
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso
+    SPORE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.txt | tr -d -`
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:SPORESetup.exe
+        winwait, Language
+        controlclick, Button1
+        winwait, SPORE, Welcome
+        controlclick, Button1
+        winwait, SPORE, License
+        controlclick, Button3
+        controlclick, Button1
+        winwait, SPORE, Registration Code
+        send {RAW}$SPORE_KEY
+        controlclick, Button2
+        winwait, SPORE, Setup Type
+        controlclick, Button6
+        winwait, SPORE, Shortcut
+        controlclick, Button6
+        winwait, SPORE, begin
+        controlclick, Button1
+        winwait, Question
+        controlclick, Button7
+        winwait, SPORE, complete
+        controlclick, Button1
+        controlclick, Button2
+        controlclick, Button4
+    "
+    iso_umount
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Electronic Arts\SPORE\Sporebin"
+SporeApp.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
