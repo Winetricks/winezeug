@@ -205,6 +205,7 @@ usage() {
     echo " dotnet20sp2   MS .NET 2.0 sp2 (requires Windows license, but does not check for one)"
     echo " dotnet30      MS .NET 3.0 (requires Windows license, but does not check for one, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
+    echo " dxsdk_nov2006 DirectX Software Development Kit, November 2006 version"
     echo " ffdshow       ffdshow video codecs"
     echo " firefox       Firefox web browser"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
@@ -1573,6 +1574,15 @@ load_droid() {
     do_droid DroidSerif-Bold.ttf       "Droid Serif Bold"        d7896b9c0723299553e95a00d27cbe52f7515c8c
     do_droid DroidSerif-Italic.ttf     "Droid Serif Italic"      117941be102c8f38a86a70ebccaecb8078f7027e
     do_droid DroidSerif-Regular.ttf    "Droid Serif"             7f243858e496ed1bb1faca9f3a7bbe52defcbb5d
+}
+
+#----------------------------------------------------------------
+
+load_dxsdk_nov2006() {
+    download . http://download.microsoft.com/download/9/e/5/9e5bfc66-a621-4e0d-8bfe-6688058c3f00/dxsdk_aug2006.exe
+    load_vcrun6   # for mfc42u
+    echo "Be patient, the 'installing new services' step at the end takes about five minutes"
+    try $WINE "$WINETRICKS_CACHE"/dxsdk_aug2006.exe
 }
 
 #----------------------------------------------------------------
@@ -3904,6 +3914,7 @@ do
     dotnet3|dotnet30) load_dotnet30; load_fontfix;;
     dotnet35) load_dotnet35; load_fontfix;;
     droid) load_droid;;
+    dxsdk_nov2006) load_dxsdk_nov2006;;
     ffdshow) load_ffdshow;;
     firefox|firefox3) load_firefox;;
     flash) load_flash;;
