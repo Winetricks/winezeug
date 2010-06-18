@@ -1085,6 +1085,35 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add msaoe_demo  "Age of Empires Demo (Microsoft, 1997) [download]" MSAoE.exe
+
+load_msaoe_demo() {
+    load_autohotkey
+    download $PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run, MSAoE.exe
+        SetTitleMatchMode, 2
+        winwait, Microsoft Age of Empires Trial Version
+        ControlClick, Button1
+        winwait, End User License Agreement
+        ControlClick, Button1
+        winwait, Microsoft Age of Empires Trial Version, Setup will install
+        ControlClick Button2
+        winwait, Microsoft Age of Empires Trial Version, Setup has successfully
+        ControlClick Button1
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Microsoft Games\Age of Empires Trial"
+empires
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
 
 load_assassinscreed() {
@@ -3120,6 +3149,49 @@ load_quake3() {
         ControlClick, Button5 ; Click Finish
     "
     iso_umount
+}
+
+#----------------------------------------------------------------
+
+verblist_add 7million      "7Million (Deep Silver, 2009) [download] [broken on wine]" 7Million_0_17_0-full.exe
+
+load_7million() {
+    load_autohotkey
+    download $PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, 7Million_0_17_0-full.exe
+        winwait, Choose Setup Language
+        ControlClick, Button1
+        SetTitleMatchMode, Slow
+        winwait, 7Million - InstallShield Wizard
+        sleep 2000
+        winactivate, 7Million - InstallShield Wizard
+        Send {Enter}
+        sleep 4000
+        winactivate, 7Million - InstallShield Wizard
+        Send !a
+        Send !n
+        winwait, Age verification
+        winactivate, Age verification
+        Send !y
+        sleep 1000
+        winactivate, 7Million - InstallShield Wizard
+        Send !i
+        winwait, 7Million - InstallShield Wizard, InstallShield Wizard Complete
+        Send {Enter}
+    "
+    cd "$olddir"
+    cat > "$DRIVE_C/run-$PACKAGE.bat" << __EOF__
+cd "users\\$LOGNAME\Local Settings\Application Data\7Million"
+7million
+__EOF__
+   if workaround_wine_bug 23248
+   then
+       warn "This game doesn't work on wine yet"
+   fi
 }
 
 #----------------------------------------------------------------
