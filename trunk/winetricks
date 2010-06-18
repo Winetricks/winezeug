@@ -284,6 +284,7 @@ usage() {
     echo " vjrun20       MS Visual J# 2.0 SE libraries (requires dotnet20)"
     echo " vlc           VLC media player"
     echo " wenquanyi     WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)"
+    echo " windowscodecs MS Windows Imaging Component"
     echo " wininet       MS wininet.dll (requires Windows license, but does not check for one)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license, but does not check for one)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license, but does not check for one)"
@@ -3576,6 +3577,21 @@ load_vlc() {
 
 #----------------------------------------------------------------
 
+load_windowscodecs() {
+    download . http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_enu.exe 53c18652ac2f8a51303deb48a1b7abbdb1db427f
+
+    # Avoid a file existence check.
+    rm -f "$WINDIR"/system32/windowscodecs.dll
+    override_dlls native,builtin windowscodecs
+
+    # Always run the WIC installer in passive mode.
+    # See http://bugs.winehq.org/show_bug.cgi?id=16876 and
+    # http://bugs.winehq.org/show_bug.cgi?id=23232
+    try $WINE "$WINETRICKS_CACHE"/wic_x86_enu.exe /passive
+}
+
+#----------------------------------------------------------------
+
 load_wininet() {
     # This is an updated wininet from IE 5.0.1.
     # (Good enough for Active Worlds browser.  Also helps "Avatar - Legends of the Arena" get to login screen.)
@@ -3972,6 +3988,7 @@ do
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
     wenquanyi) load_wenquanyi;;
+    windowscodecs|wic) load_windowscodecs;;
     wininet) load_wininet;;
     wme9) load_wme9;;
     wmp9) load_wmp9;;
