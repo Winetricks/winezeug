@@ -65,5 +65,8 @@ wait_for_update()
 }
 
 setup
-wait_for_update
+case "$1" in
+"") wait_for_update ;;
+*) git checkout $1 ;;
+esac
 cleanup
