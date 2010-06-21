@@ -4395,6 +4395,116 @@ load_beneath_a_steel_sky_gog()
 
 #----------------------------------------------------------------
 
+# Generic Steam installer
+# Usage: app_id game_title game_folder
+# app_id
+#     Application ID. See http://developer.valvesoftware.com/wiki/Steam_Application_IDs for list.
+# game_title
+#     Used for AutoHotKey. FIXME: is this guaranteed to match the wiki?
+# game_folder 
+#     Folder where files are stored under $STEAMDIR/steamapps/common/ FIXME: guaranteed to match the .ncf file?
+#
+#
+# Note: Requires $STEAMUSER $STEAMPASS to be set in your environment or in
+# "$WISOTOOL_CACHE"/STEAM_USER" and in "$WISOTOOL_CACHE"/STEAM_PASS"
+
+_load_steam_app()
+{
+    if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    then
+        die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
+    elif [ ! "$STEAM_USER" -a -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    then
+        STEAM_USER=`cat "$WISOTOOL_CACHE"/STEAM_USER`
+    fi
+
+    if [ ! "$STEAM_PASS" -a ! -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    then
+        die "You need to set STEAM_PASS variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_PASS"
+    elif [ ! "$STEAM_PASS" -a -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    then
+        STEAM_PASS=`cat "$WISOTOOL_CACHE"/STEAM_PASS`
+    fi
+
+    steam_dir="$programfilesdir_unix/Steam"
+
+    load_autohotkey
+    test -f "$steam_dir/Steam.exe" || sh $WINETRICKS -q steam
+
+    app_id="$1"
+    game_title="$2"
+    game_folder="$3"
+    
+    # If files are already cached, skipped downloading/installing and just restore from cache:
+    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/$game_folder content.ncf" ]
+    then
+        cd "$steam_dir"
+        sleep 5
+        ahk_do "
+        run, Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
+        winwait, Install - $game_title
+        winactivate, Install - $game_title
+        ; FIXME: How long should this take?
+        sleep 10000
+        send {enter}
+        sleep 10000
+
+        ; Install shortcuts?
+        winwait, Install - $game_title
+        winactivate, Install - $game_title
+        ; FIXME: How long should this take?
+        sleep 10000
+        send {enter}
+        sleep 10000
+        
+        winwait, Install - $game_title
+        winactivate, Install - $game_title
+        ; FIXME: How long should this take?
+        sleep 10000
+        send {enter}
+        "
+
+        # now wait for the download to complete. We're lucky, Steam has some nice logging
+        # so we wait until Steam reports the download is complete. Then, to be safe, sleep
+        # and extra 30 seconds, shutdown steam nicely, and finally, cache everything.
+        # These are the lines I found for success:
+        #
+        # $steam_dir/logs/download_log.txt
+        # [2010-06-17 00:53:06]: Got eSteamNotifyAppDownloadingPaused for AppID 6110
+        # [2010-06-17 00:53:06]: AppID 6110 is now marked not downloading
+        # [2010-06-17 00:53:06]: Got eSteamNotifyCacheLoadingCompleted for AppID 6110
+        # [2010-06-17 00:53:06]: SetHasAllLocalContent(true) called for 6110
+        # FIXME: are any of these safe to use?
+
+        dl_log="$steam_dir/logs/download_log.txt"
+        while true
+        do
+            grep "SetHasAllLocalContent(true) called for $app_id" "$dl_log" && break
+            sleep 15
+        done
+
+        sleep 30
+        $WINE Steam.exe -shutdown
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        cp -r "$steam_dir/steamapps/common/$game_folder" "$WISOTOOL_CACHE/$PACKAGE"
+        cp -r "$steam_dir/steamapps/$game_folder content.ncf" "$WISOTOOL_CACHE/$PACKAGE"
+    else
+        mkdir -p "$steam_dir/steamapps/common"
+        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder" "$steam_dir/steamapps/common"
+        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder content.ncf" "$steam_dir/steamapps" 
+    fi
+
+}
+
+verblist_add eets_demo_steam "Eets Demo (Steam, 2006)" "eets content.ncf"
+
+load_eets_demo_steam()
+{
+    _load_steam_app "6110" "Eets Demo" "eets"
+}
+
+#----------------------------------------------------------------
+
 print_version() {
     echo "$VERSION"
 }
