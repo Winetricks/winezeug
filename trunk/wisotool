@@ -2084,6 +2084,10 @@ verblist_add hphbp_demo    "Harry Potter & The Half Blood Prince Demo (EA, 2009)
 
 load_hphbp_demo()
 {
+    case "$LANG" in
+    ""|"C") die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
+    esac
+
     load_autohotkey
     
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$hbpdemoexe"
@@ -2116,9 +2120,49 @@ load_hphbp_demo()
     # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
     # Have to be in the pc directory for the app to find its files.
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince* Demo"
+cd $programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince* Demo
 cd pc
 hp6_demo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
+verblist_add hphbp    "Harry Potter & The Half Blood Prince (EA, 2009)" 9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
+
+load_hphbp()
+{
+    case "$LANG" in
+    ""|"C") die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
+    esac
+
+    load_autohotkey
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
+    HPHBP_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.txt | tr -d -`
+    ahk_do "
+        SetTItleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:EASetup.exe
+        winwait, Harry Potter
+        send {RAW}$HPHBP_KEY
+        controlclick, Button2
+        winwait, Setup, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Setup, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Setup, Destination
+        controlclick, Button1
+        winwait, Setup, begin
+        controlclick, Button1
+        winwait, Setup, Finish
+        controlclick, Button1
+    "
+    iso_umount
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd $programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince*
+cd pc
+hp6.exe
 __EOF__
 }
 
