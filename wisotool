@@ -4444,7 +4444,18 @@ _load_steam_app()
         cd "$steam_dir"
         sleep 5
         ahk_do "
-        run, Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
+        ; Originally used:
+        ; run, Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
+        ; but that doesn't work for all programs. Some would silently fail to start.
+        
+        ; Instead, run steam in the background, sleep for 30s to give it enough time 
+        ; to start, then use the steam:// prototol to install:
+        run, Steam.exe -login $STEAM_USER $STEAM_PASS
+        ; FIXME: should detect steam running properly...
+        sleep 60000
+        run, steam://install/$app_id
+        
+        ; Info screen, disk space required, etc.
         winwait, Install - $game_title
         winactivate, Install - $game_title
         ; FIXME: How long should this take?
