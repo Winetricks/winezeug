@@ -2346,7 +2346,7 @@ load_masseffect2() {
         winwait, Installer Language
         send {Enter}
         winwait, Mass Effect
-        ControlClick, Button2
+        send {Enter}
         winwait, Mass Effect, License
         ControlClick, Button4
         ControlClick, Button2
@@ -2360,7 +2360,12 @@ load_masseffect2() {
     sleep 5
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
     ahk_do "
-        ControlClick, Button4, Insert Disc
+        SetTitleMatchMode, 2
+        winwait, Insert Disc
+        ControlClick, Button4
+        ; on windows, the first click doesn't seem to do it, so press enter, too
+        sleep 1000
+        send {Enter}
         ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
         ; The hang/crash happens after the Physx install but does not seem to affect gameplay
         ; TODO: work around this by waiting in some other way for install to finish
@@ -2500,20 +2505,26 @@ load_nfsshift()
         run, ${ISO_MOUNT_LETTER}:EASetup.exe 
         winwait, SHIFT, Registration Code
         send {RAW}$NFSSHIFT_KEY
+        Sleep 1000
         controlclick, Button2
-        winwait, Microsoft
-        controlclick, Button1
         winwait, Setup, License
+        Sleep 1000
         controlclick, Button1
-        controlclick, Button3
+        Sleep 1000
+        send {Enter}
         winwait, Setup, License
+        Sleep 1000
         controlclick, Button1
-        controlclick, Button3
+        Sleep 1000
+        send {Enter}
         winwait, Setup, Destination
+        Sleep 1000
         controlclick, Button1
         winwait, Setup, begin
+        Sleep 1000
         controlclick, Button1
         winwait, Setup, Finish
+        Sleep 1000
         controlclick, Button5
         controlclick, Button1
     "
