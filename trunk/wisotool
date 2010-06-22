@@ -4515,13 +4515,6 @@ load_arx_fatalis_demo_steam()
     _load_steam_app "1710" "Arx Fatalis" "arx fatalis base.ncf" "arx fatalis"
 }
 
-verblist_add eets_demo_steam "Eets Demo (Steam, 2006)" "eets content.ncf"
-
-load_eets_demo_steam()
-{
-    _load_steam_app "6110" "Eets Demo" "eets content.ncf" "eets"
-}
-
 verblist_add painkiller_demo_steam "Painkiller Demo (Steam, 2004)" "painkiller demo content.ncf"
 
 load_painkiller_demo_steam()
@@ -4529,6 +4522,40 @@ load_painkiller_demo_steam()
     _load_steam_app "3210" "Painkiller Demo" "painkiller demo content.ncf" "painkiller demo"
 }
 
+verblist_add bookworm_adventures_deluxe_demo_steam "Bookworm Adventures Deluxe Demo (Steam, 2007)" "bookworm adventures deluxe content.ncf"
+
+load_bookworm_adventures_deluxe_demo_steam()
+{
+    _load_steam_app "3270" "Bookworm Adventures Deluxe Demo" "bookworm adventures deluxe content.ncf" "bookworm adventures deluxe"
+}
+
+verblist_add zen_of_sudoku_demo_steam "Zen of Sudoku Demo (Steam, 2006)" "zenofsudoku.ncf"
+
+load_zen_of_sudoku_demo_steam()
+{
+    _load_steam_app "4910" "Zen of Sudoku Demo" "zenofsudoku.ncf" "zen of sudoku"
+}
+
+verblist_add eets_demo_steam "Eets Demo (Steam, 2006)" "eets content.ncf"
+
+load_eets_demo_steam()
+{
+    _load_steam_app "6110" "Eets Demo" "eets content.ncf" "eets"
+}
+
+verblist_add longest_journey_demo_steam "The Longest Journey Demo (Steam, 2000)" "the longest journey demo content.ncf"
+
+load_longest_journey_demo_steam()
+{
+    _load_steam_app "6320" "The Longest Journey Demo" "the longest journey demo content.ncf" "the longest journey demo"
+}
+
+verblist_add joint_task_force_demo_steam "Joint Task Force Demo (Steam, 2006)" "joint task force demo content.ncf"
+
+load_joint_task_force_demo_steam()
+{
+    _load_steam_app "6410" "Joint Task Force Demo" "joint task force demo content.ncf" "joint task force demo"
+}
 
 #----------------------------------------------------------------
 
