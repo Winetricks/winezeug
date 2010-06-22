@@ -4401,8 +4401,10 @@ load_beneath_a_steel_sky_gog()
 #     Application ID. See http://developer.valvesoftware.com/wiki/Steam_Application_IDs for list.
 # game_title
 #     Used for AutoHotKey. FIXME: is this guaranteed to match the wiki?
+# game_cache_file
+#     .gcf or .ncf file name. Note: Does _NOT_ always match the game folder name below.
 # game_folder 
-#     Folder where files are stored under $STEAMDIR/steamapps/common/ FIXME: guaranteed to match the .ncf file?
+#     Folder where files are stored under $STEAMDIR/steamapps/common/
 #
 #
 # Note: Requires $STEAMUSER $STEAMPASS to be set in your environment or in
@@ -4433,10 +4435,11 @@ _load_steam_app()
 
     app_id="$1"
     game_title="$2"
-    game_folder="$3"
+    game_cache_file="$3"
+    game_folder="$4"
     
     # If files are already cached, skipped downloading/installing and just restore from cache:
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/$game_folder content.ncf" ]
+    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" ]
     then
         cd "$steam_dir"
         sleep 5
@@ -4487,21 +4490,45 @@ _load_steam_app()
         $WINE Steam.exe -shutdown
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
         cp -r "$steam_dir/steamapps/common/$game_folder" "$WISOTOOL_CACHE/$PACKAGE"
-        cp -r "$steam_dir/steamapps/$game_folder content.ncf" "$WISOTOOL_CACHE/$PACKAGE"
+        cp -r "$steam_dir/steamapps/$game_cache_file" "$WISOTOOL_CACHE/$PACKAGE"
     else
         mkdir -p "$steam_dir/steamapps/common"
         cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder" "$steam_dir/steamapps/common"
-        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder content.ncf" "$steam_dir/steamapps" 
+        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" "$steam_dir/steamapps" 
     fi
 
+}
+
+# Sorted by app_id:
+
+verblist_add multiwinia_demo_steam "Multiwinia: Demo (Steam, 2008)" "multiwinia content.ncf"
+
+load_multiwinia_demo_steam()
+{
+    _load_steam_app "1540" "Multiwinia Demo" "multiwinia content.ncf" "multiwinia"
+}
+
+verblist_add arx_fatalis_demo_steam "Arx Fatalis Demo (Steam, 2008)" "arx fatalis base.ncf"
+
+load_arx_fatalis_demo_steam()
+{
+    _load_steam_app "1710" "Arx Fatalis" "arx fatalis base.ncf" "arx fatalis"
 }
 
 verblist_add eets_demo_steam "Eets Demo (Steam, 2006)" "eets content.ncf"
 
 load_eets_demo_steam()
 {
-    _load_steam_app "6110" "Eets Demo" "eets"
+    _load_steam_app "6110" "Eets Demo" "eets content.ncf" "eets"
 }
+
+verblist_add painkiller_demo_steam "Painkiller Demo (Steam, 2004)" "painkiller demo content.ncf"
+
+load_painkiller_demo_steam()
+{
+    _load_steam_app "3210" "Painkiller Demo" "painkiller demo content.ncf" "painkiller demo"
+}
+
 
 #----------------------------------------------------------------
 
