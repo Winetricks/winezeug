@@ -218,6 +218,7 @@ usage() {
     echo " gdiplus       MS gdiplus.dll"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
     echo " gecko         The HTML rendering Engine (Mozilla)"
+    echo " glut          The glut utility library"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " ie6           Microsoft Internet Explorer 6.0"
     echo " ie7           Microsoft Internet Explorer 7.0"
@@ -2009,6 +2010,15 @@ REGEDIT4
 
 _EOF_
     try_regedit "$WINETRICKS_TMP_WIN"\\enableglsl.reg
+}
+
+#----------------------------------------------------------------
+
+load_glut() {
+    download . http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
+    try_unzip -o $WINETRICKS_UNIXQUIET -d "$DRIVE_C" "$WINETRICKS_CACHE"/glut-3.7.6-bin.zip
+    try cp "$DRIVE_C"/glut-3.7.6-bin/glut32.dll "$WINDIR"/system32
+    warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
 }
 
 #----------------------------------------------------------------
@@ -3928,6 +3938,7 @@ do
     gecko-dbg|geckodbg|gecko_dbg|geckodebug|gecko_debug|gecko-debug) load_gecko_dbg;;
     glsl-disable) load_glsl_disable;;
     glsl-enable) load_glsl_enable;;
+    glut) load_glut;;
     hosts) load_hosts;;
     ie6) load_ie6;;
     ie7) load_ie7;;
