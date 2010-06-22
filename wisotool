@@ -2498,15 +2498,27 @@ load_nfsshift()
 {
     load_autohotkey
 
+    if workaround_wine_bug 23324
+    then
+        msvcrun_me_harder="
+            winwait, Microsoft
+            controlclick, Button1
+            "
+    else
+        msvcrun_me_harder=""
+    fi
+
     NFSSHIFT_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.txt | tr -d -`
     iso_mount "$WISOTOOL_CACHE/$PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.iso"
     ahk_do "
         SetTitleMatchMode, 2
+        ; note: if this is the second run, the installer skips the registration code prompt
         run, ${ISO_MOUNT_LETTER}:EASetup.exe 
         winwait, SHIFT, Registration Code
         send {RAW}$NFSSHIFT_KEY
         Sleep 1000
         controlclick, Button2
+        $msvcrun_me_harder
         winwait, Setup, License
         Sleep 1000
         controlclick, Button1
