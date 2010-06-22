@@ -2487,6 +2487,57 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add nfsshift    "Need For Speed: Shift (EA, 2009)" 83d3b7499742ccf77da11fc2613de422c6f30572.iso
+
+load_nfsshift()
+{
+    load_autohotkey
+
+    NFSSHIFT_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.txt | tr -d -`
+    iso_mount "$WISOTOOL_CACHE/$PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.iso"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:EASetup.exe 
+        winwait, SHIFT, Registration Code
+        send {RAW}$NFSSHIFT_KEY
+        controlclick, Button2
+        winwait, Microsoft
+        controlclick, Button1
+        winwait, Setup, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Setup, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Setup, Destination
+        controlclick, Button1
+        winwait, Setup, begin
+        controlclick, Button1
+        winwait, Setup, Finish
+        controlclick, Button5
+        controlclick, Button1
+    "
+    iso_umount
+
+    download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/SHIFTPCPATCHV1.02_NA.exe 3ec2bf46aeb223c369ffcb0b57c080fba67d5dd9
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run SHIFTPCPATCHV1.02_NA.exe
+        WinWait Updating
+        WinWaitClose Updating
+    "
+
+    # Need path on shift.exe, see bug 23319
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Electronic Arts\Need for Speed SHIFT"
+.\shift.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add orangebox     "Orange Box (Valve, 2007) " \
     976f67eec4b84331de8f6695272bc9192466da6a.iso \
     b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
