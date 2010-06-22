@@ -4557,6 +4557,20 @@ load_joint_task_force_demo_steam()
     _load_steam_app "6410" "Joint Task Force Demo" "joint task force demo content.ncf" "joint task force demo"
 }
 
+verblist_add lost_planet_dx9_demo_steam "Lost Planet Extreme Condition Demo (Steam, 2007)" "lost planet demo dx9 content.ncf"
+
+load_lost_planet_dx9_demo_steam()
+{
+    _load_steam_app "6530" "Lost Planet Extreme Condition Demo" "lost planet demo dx9 content.ncf" "lost planet demo"
+}
+
+verblist_add lost_planet_dx10_demo_steam "Lost Planet Extreme Condition DX10 Demo (Steam, 2007)" "lost planet demo dx10 content.ncf"
+
+load_lost_planet_dx10_demo_steam()
+{
+    _load_steam_app "6540" "Lost Planet Extreme Condition DX10 Demo" "lost planet demo dx10 content.ncf" "lost planet dx10 demo"
+}
+
 #----------------------------------------------------------------
 
 print_version() {
