@@ -3,12 +3,7 @@
 set -e
 set -x
 
-WINEDIR=$HOME/wine-git
-export WINEDIR
-WINE=$WINEDIR/wine
-export WINE
-WINEPREFIX=$HOME/.wine-yagmark-daily
-export WINEPREFIX
+. ./yagmark-vars
 srcdir=`dirname $0`
 srcdir=`cd $srcdir; pwd`
 
