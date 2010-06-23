@@ -1,0 +1,8 @@
+WINEDIR=$HOME/wine-git
+export WINEDIR
+WINEOBJ=$HOME/yagmark-build-temp
+export WINEOBJ
+WINE=$WINEOBJ/wine
+export WINE
+WINEPREFIX=$HOME/.wine-yagmark-daily
+export WINEPREFIX

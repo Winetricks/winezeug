@@ -2,9 +2,11 @@
 # Quick and dirty script for plotting yagmark results
 # And I do mean dirty.
 set -e
-cd results
+set -x
 
-WINEDIR=$HOME/wine-git
+. ./yagmark-vars
+
+cd results
 
 latest=`ls -d *Ubuntu*/stats.dat | sort -n -t- -k +7 | tail -n 1 | sed 's,/stats.dat,,'`
 previous=`ls -d *Ubuntu*/stats.dat | sort -n -t- -k +7 | tail -n 2 | head -n 1 | sed 's,/stats.dat,,'`
@@ -74,6 +76,11 @@ do_plot()
     SYSTEMID=`echo $latest | cut -d- -f1-4`
     # Format variable scores for plotting
     awk  '$1 == '\"$varname\"' { print $2, FILENAME}' $SYSTEMID*/stats.dat | get_wine_date | sort -k 1,8 > /tmp/yagplot-data
+    if ! test -s /tmp/yagplot-data
+    then
+        echo "No $varname found in data"
+        return
+    fi
 
     min=`awk '{print $2}' < /tmp/yagplot-data | sort -n | head -n 1`
     sysprefix=`echo $SYSTEMID | cut -d- -f1-2`

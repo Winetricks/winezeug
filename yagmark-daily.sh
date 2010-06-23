@@ -5,9 +5,10 @@ set -x
 
 build_wine()
 {
-    cd $WINEDIR
-    ./configure --prefix=/usr/local/wine --without-nas
-    make clean
+    rm -rf $WINEOBJ || true
+    mkdir -p $WINEOBJ
+    cd $WINEOBJ
+    $WINEDIR/configure --prefix=/usr/local/wine --without-nas
     ncpus=`awk '/processor/' < /proc/cpuinfo | wc -l`
     njobs=`expr $ncpus + 1`
     make -j$njobs
@@ -18,10 +19,12 @@ case "$OS" in
 "") build_wine ;;
 esac
 
+NRUNS=${NRUNS:-10}
 i=0
-while test $i -lt 10
+while test $i -lt $NRUNS
 do
-   sh yagmark 3dmark2000 3dmark2001 3dmark06 heaven2_d3d9 heaven2_gl
+   #sh yagmark 3dmark2000 3dmark2001 3dmark06 heaven2_d3d9 heaven2_gl
+   sh yagmark 3dmark2001 3dmark06 heaven2_d3d9 heaven2_gl
    sh yagmark-plot.sh
    i=`expr $i + 1`
 

@@ -22,6 +22,15 @@ cleanup()
    status=$?
    cleaned=1
 
+    if test -f sync-git.log
+    then
+       if grep fatal: sync-git.log
+       then
+	  echo sync failed
+	  exit 1
+       fi
+    fi
+
    case $status in
    0) exit 0 ;;
    *) echo "Patch failed"; exit 1
@@ -64,9 +73,10 @@ wait_for_update()
   done
 }
 
+rm -rf git.log
 setup
 case "$1" in
 "") wait_for_update ;;
-*) git checkout $1 ;;
+*) git reset --hard $1 > sync-git.log 2>&1 ; cat sync-git.log ;; 
 esac
 cleanup
