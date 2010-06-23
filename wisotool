@@ -1824,6 +1824,67 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add deadspace       "Dead Space (EA, 2008)" \
+  abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
+
+load_deadspace() {
+    load_autohotkey
+    DEADSPACEKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
+
+    if workaround_wine_bug 23324
+    then
+        msvcrun_me_harder="
+            winwait, Microsoft
+            controlclick, Button1
+            "
+    else
+        msvcrun_me_harder=""
+    fi
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        ; note: if this is the second run, the installer skips the registration code prompt
+        run, ${ISO_MOUNT_LETTER}:EASetup.exe 
+        winwait, Dead
+        send {Enter}
+        winwait, Dead, Registration Code
+        send {RAW}$DEADSPACEKEY
+        Sleep 1000
+        controlclick, Button2
+        $msvcrun_me_harder
+        winwait, Setup, License
+        Sleep 1000
+        controlclick, Button1
+        Sleep 1000
+        send {Enter}
+        winwait, Setup, License
+        Sleep 1000
+        controlclick, Button1
+        Sleep 1000
+        send {Enter}
+        winwait, Setup, Destination
+        Sleep 1000
+        controlclick, Button1
+        winwait, Setup, begin
+        Sleep 1000
+        controlclick, Button1
+        winwait, Setup, Finish
+        Sleep 1000
+        controlclick, Button5
+        controlclick, Button1
+    "
+    iso_umount
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Electronic Arts\\Dead Space"
+Dead Space.exe
+__EOF__
+}
+
+
+#----------------------------------------------------------------
+
 verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
   51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
