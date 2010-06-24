@@ -4540,6 +4540,10 @@ load_beneath_a_steel_sky_gog()
 #     .gcf or .ncf file name. Note: Does _NOT_ always match the game folder name below.
 # game_folder 
 #     Folder where files are stored under $STEAMDIR/steamapps/common/
+# game_extra_files
+#     Most games/demos come with one .gcf or .ncf file, then everything else in the
+#     $STEAMDIR/steamapps/common/$game_folder directory. Some (Total War demos) have several 
+#     more .gcf/.ncf files. This should be a list, separated by commas.
 #
 #
 # Note: Requires $STEAMUSER $STEAMPASS to be set in your environment or in
@@ -4572,6 +4576,7 @@ _load_steam_app()
     game_title="$2"
     game_cache_file="$3"
     game_folder="$4"
+    game_extra_files="$5"
     
     # If files are already cached, skipped downloading/installing and just restore from cache:
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" ]
@@ -4606,6 +4611,36 @@ _load_steam_app()
         send {enter}
         sleep 10000
         
+		; Here, it's getting the .gcf/.ncf files. This is normally quick, but can take a long time.
+		; Most finish in a few seconds, but the Total War demos takes a couple minutes.
+		; So, we'll exit AHK, then wait for all the game files to be present,
+        ; before continuing the install.
+        exit
+		"
+        
+        if test ! "$game_extra_files" = ""
+        then
+            # FIXME: Should we perhaps sha1sum? That would get messy...
+            IFS=$','
+            for x in "$game_extra_files"
+            do
+                while true
+                do
+                    if test -f $x
+                    then
+                        break
+                    else
+                        sleep 5
+                    fi
+                done
+            done
+            unset IFS
+        fi
+
+        # FIXME: Is this a long enough sleep?
+        sleep 30
+        
+        ahk_do "
         winwait, Install - $game_title
         winactivate, Install - $game_title
         ; FIXME: How long should this take?
@@ -4637,10 +4672,28 @@ _load_steam_app()
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
         cp -r "$steam_dir/steamapps/common/$game_folder" "$WISOTOOL_CACHE/$PACKAGE"
         cp -r "$steam_dir/steamapps/$game_cache_file" "$WISOTOOL_CACHE/$PACKAGE"
+        if test ! "$game_extra_files" = ""
+        then
+            IFS=$','
+            for x in $game_extra_files
+            do
+                cp "$steam_dir/steamapps/$x" "$WISOTOOL_CACHE/$PACKAGE"
+            done
+            unset IFS
+        fi
     else
         mkdir -p "$steam_dir/steamapps/common"
         cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder" "$steam_dir/steamapps/common"
         cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" "$steam_dir/steamapps" 
+        if test ! "$game_extra_files" = ""
+        then
+            IFS=$','
+            for x in $game_extra_files
+            do
+                cp "$WISOTOOL_CACHE/$PACKAGE/$x" "$steam_dir/steamapps"
+            done
+            unset IFS
+        fi
     fi
 
 }
@@ -4715,6 +4768,44 @@ verblist_add lost_planet_dx10_demo_steam "Lost Planet Extreme Condition DX10 Dem
 load_lost_planet_dx10_demo_steam()
 {
     _load_steam_app "6540" "Lost Planet Extreme Condition DX10 Demo" "lost planet demo dx10 content.ncf" "lost planet dx10 demo"
+}
+
+verblist_add total_war_and_empire_demo_steam "Empire: Total War Demo (Steam, 2009)" "empire total war demo main.ncf"
+
+load_total_war_and_empire_demo_steam()
+{
+    _load_steam_app "10620" "Empire: Total War" "empire total war demo main.ncf" "empire total war demo" "empire total war demo english.ncf,empire total war demo executable.ncf,empire total war demo redist.ncf"
+
+    if workaround_wine_bug 18490
+    then
+        warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490"
+        warn "Otherwise, the game will crash when starting a battle."
+    fi
+
+}
+
+verblist_add napoleon_total_war_demo_steam "Napoleon: Total War Demo (Steam, 2010)" "napoleon total war demo english.ncf"
+
+load_napoleon_total_war_demo_steam()
+{
+    _load_steam_app "34050" "Napoleon: Total War" "napoleon total war demo english.ncf" "napoleon total war demo" "napoleon total war demo data_34052.ncf,napoleon total war demo exe_34051.ncf,napoleon total war demo redist_34053.ncf"
+
+    if workaround_wine_bug 23126
+    then
+        try sh "$WINETRICKS" -q vcrun2005
+    fi
+
+    if workaround_wine_bug 23356
+    then
+        try sh "$WINETRICKS" -q d3dx9
+    fi
+
+    if workaround_wine_bug 18490
+    then
+        warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490"
+        warn "Otherwise, the game will crash when starting a battle."
+    fi
+
 }
 
 #----------------------------------------------------------------
