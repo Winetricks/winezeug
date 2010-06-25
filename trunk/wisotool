@@ -2622,6 +2622,57 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add nfsshift_demo    "Need For Speed: SHIFT Demo (EA, 2009) [download]" NFSSHIFTPCDEMO.exe
+
+load_nfsshift_demo()
+{
+    load_autohotkey
+    
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe"
+    then
+        download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, NFSSHIFTPCDEMO.exe
+        winwait, WinRAR
+        ControlClick, Button2
+        winwait, SHIFT, View the readme
+        controlclick, Button1
+        winwait, Visual C++
+        controlclick, Button1
+        winwait, Setup, License
+        Sleep 1000
+        controlclick, Button1
+        Sleep 1000
+        send {Enter}
+        winwait, Setup, License
+        Sleep 1000
+        controlclick, Button1
+        Sleep 1000
+        send {Enter}
+        winwait, Setup, Destination
+        Sleep 1000
+        controlclick, Button1
+        winwait, Setup, begin
+        Sleep 1000
+        controlclick, Button1
+        winwait, Setup, Finish
+        Sleep 1000
+        controlclick, Button5
+        controlclick, Button1
+    "
+    cd "$olddir"
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT Demo"
+shiftdemo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add orangebox     "Orange Box (Valve, 2007) " \
     976f67eec4b84331de8f6695272bc9192466da6a.iso \
     b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
