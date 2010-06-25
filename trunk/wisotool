@@ -4643,7 +4643,20 @@ _load_steam_app()
         ; to start, then use the steam:// prototol to install:
         run, Steam.exe -login $STEAM_USER $STEAM_PASS
         ; FIXME: should detect steam running properly...
-        sleep 60000
+        ;
+        ; Give Steam up to a minute to update itself. Once it is, let it update.
+        ; Then give it 30 more seconds.
+        ; FIXME: perhaps there's a log/file showing if steam is up to date...
+        Winwait, Steam - Updating,,60
+        Loop
+        {
+            SetTitleMatchMode, Slow
+            IfWinExist, Steam - Updating
+                sleep 10000
+            IfWinNotExist, Steam - Updating
+                break
+        }
+        sleep 30000
         run, steam://install/$app_id
         
         ; Info screen, disk space required, etc.
@@ -4668,12 +4681,13 @@ _load_steam_app()
         ; before continuing the install.
         exit
 		"
-        
+
         if test ! "$game_extra_files" = ""
         then
             # FIXME: Should we perhaps sha1sum? That would get messy...
+            cd steamapps
             IFS=$','
-            for x in "$game_extra_files"
+            for x in $game_extra_files
             do
                 while true
                 do
@@ -4686,6 +4700,7 @@ _load_steam_app()
                 done
             done
             unset IFS
+            cd ..
         fi
 
         # FIXME: Is this a long enough sleep?
@@ -4829,8 +4844,7 @@ load_total_war_and_empire_demo_steam()
 
     if workaround_wine_bug 18490
     then
-        warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490"
-        warn "Otherwise, the game will crash when starting a battle."
+        warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490. Otherwise, the game will crash when starting a battle."
     fi
 
 }
@@ -4853,8 +4867,7 @@ load_napoleon_total_war_demo_steam()
 
     if workaround_wine_bug 18490
     then
-        warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490"
-        warn "Otherwise, the game will crash when starting a battle."
+        warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490. Otherwise, the game will crash when starting a battle."
     fi
 
 }
