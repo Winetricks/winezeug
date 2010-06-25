@@ -2013,6 +2013,62 @@ __EOF__
 
 #----------------------------------------------------------------
  
+verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download]" FIFAOnlineSetup.exe
+
+load_fifaonline3_beta()
+{
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/FIFAOnlineSetup.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
+        die "Download the FIFAOnlineSetup.exe from http://fifa-online.easports.com/web/beta/welcome \
+	     and place it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, FIFAOnlineSetup.exe
+        winwait, C++, License
+        controlclick, Yes
+        winwait, FIFA, Testing Agreement
+        controlclick, Button1
+        controlclick, Button3
+        winwait, FIFA, Punk
+        controlclick, Button1
+        controlclick, Button3
+        winwait, FIFA, Destination
+        controlclick, Button1
+        winwait, Setup, Please wait
+        sleep 1000
+        winwaitclose, Setup, Please wait
+        sleep 10000
+        send {Right}
+        sleep 1000
+        send {Space}
+        sleep 1000
+        send {Right}
+        sleep 1000
+        send {Space}
+    "
+    # Wait for download to finish
+    while [ `ps a | grep NFE.exe | grep -v grep | wc -l` != "1" ]
+    do
+        sleep 5
+    done
+    # Kill game
+    wineserver -k
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+c:
+cd \Program Files\EA Sports\FIFA Online
+Launch.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+ 
 verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
