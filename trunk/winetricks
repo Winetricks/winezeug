@@ -1567,7 +1567,7 @@ load_droid() {
     DROID_URL='http://android.git.kernel.org/?p=platform/frameworks/base.git;a=blob_plain;f=data/fonts/'
 
     do_droid DroidSans-Bold.ttf        "Droid Sans Bold"         ada4e79c592f3c54546b7587b48f2b232d95ce2f
-    do_droid DroidSansFallback.ttf     "Droid Sans Fallback"     2f8a266389a8e22f68f402b775731eec6b760334
+    do_droid DroidSansFallback.ttf     "Droid Sans Fallback"     5065cce92e8420232db95ab3ba421e462b09b965
     do_droid DroidSansJapanese.ttf     "Droid Sans Japanese"     b3a248c11692aa88a30eb25df425b8910fe05dc5
     do_droid DroidSansMono.ttf         "Droid Sans Mono"         f0815c6f36c72be1d0f2f5e2b82fa85c8bf95655
     do_droid DroidSans.ttf             "Droid Sans"              da5b3c7758a2c8fbc4775beb69d7150493c7d312
