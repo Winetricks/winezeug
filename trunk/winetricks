@@ -206,6 +206,7 @@ usage() {
     echo " dotnet30      MS .NET 3.0 (requires Windows license, but does not check for one, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " dxsdk_nov2006 DirectX Software Development Kit, November 2006 version"
+    echo " eadm          EA Download Manager"
     echo " ffdshow       ffdshow video codecs"
     echo " firefox       Firefox web browser"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
@@ -1598,6 +1599,14 @@ REGEDIT4
 
 _EOF_
     try $WINE regedit "$WINETRICKS_TMP"/dsoundmaxshadow.reg
+}
+
+#----------------------------------------------------------------
+
+load_eadm() {
+    download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 6b3d1a328af2d44033c24b84444992f56107b27f
+    load_adobeair
+    try $WINE "$WINETRICKS_CACHE"/eadm-installer.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
@@ -3935,6 +3944,7 @@ do
     dotnet35) load_dotnet35; load_fontfix;;
     droid) load_droid;;
     dxsdk_nov2006) load_dxsdk_nov2006;;
+    eadm) load_eadm;;
     ffdshow) load_ffdshow;;
     firefox|firefox3) load_firefox;;
     flash) load_flash;;
