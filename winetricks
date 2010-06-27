@@ -3610,8 +3610,8 @@ load_vc2008sp1()
 #----------------------------------------------------------------
 
 load_vlc() {
-    download . http://www.videolan.org/mirror-geo-redirect.php?file=vlc/0.8.6f/win32/vlc-0.8.6f-win32.exe b83558e4232c47a385dbc93ebdc2e6b942fbcfbf
-    try $WINE "$WINETRICKS_CACHE"/vlc-0.8.6f-win32.exe $WINETRICKS_S
+    download . $SOURCEFORGE/vlc/vlc-1.1.0-win32.exe 501b6cb12d4916ed11ec9dac9e394add9227b3be
+    try $WINE "$WINETRICKS_CACHE"/vlc-1.1.0-win32.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
