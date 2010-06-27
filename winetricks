@@ -1652,7 +1652,7 @@ _EOF_
 #----------------------------------------------------------------
 
 load_firefox() {
-    download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.6/win32/en-US/Firefox%20Setup%203.6.6.exe" 16e35488871390cdb7b91bc20b1e85c452b418cb "Firefox Setup 3.6.3.exe"
+    download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.6/win32/en-US/Firefox%20Setup%203.6.6.exe" 16e35488871390cdb7b91bc20b1e85c452b418cb "Firefox Setup 3.6.6.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
        try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.6.6.exe"
