@@ -4853,6 +4853,12 @@ _load_steam_app()
         fi
     fi
 
+    
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Steam"
+.\Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
+__EOF__
+
 }
 
 # Sorted by app_id:
