@@ -28,12 +28,14 @@ case "$OS" in
       /) HOME="" ;;
     esac
     WINE=""
+    WINESERVER=true
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="C:/"
     XXXPATH=cygpath
     ;;
  *)
     WINE=${WINE:-wine}
+    WINESERVER=${WINESERVER:-wineserver}
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="$WINEPREFIX/dosdevices/c:"
     XXXPATH="early_wine winepath"
@@ -2321,6 +2323,7 @@ load_hphbp()
         winwait, Setup, Finish
         controlclick, Button1
     "
+    $WINESERVER -w
     iso_umount
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd $programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince*
