@@ -2372,6 +2372,51 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add lhp    "LEGO Harry Potter [Years 1-4] (Travellers Tales / WB, 2010) [download]" LEGOHarryPotterDEMO.exe
+
+load_lhp()
+{
+    load_autohotkey
+
+    case "$LANG" in
+    *UTF-8*) ;;
+    *) die "This installer fails in non-utf-8 locales.  Try doing export LANG=en_US.UTF-8"
+    esac
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/LEGOHarryPotterDEMO.exe"
+    then
+        download $PACKAGE http://static.kidswb.com/legoharrypottergame/LEGOHarryPotterDEMO.exe bb0a30ad9a7cc51c80e1bb1f3eec22e6ccc1a706
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, LEGOHarryPotterDEMO.exe
+        winwait, LEGO, language
+        controlclick, Button1
+        winwait, LEGO, License
+        controlclick, Button1
+        controlclick, Button2
+        winwait, LEGO, installation method
+        controlclick, Button2
+        winwait, LEGO, Finish
+        controlclick, Button1
+    "
+    cd "$olddir"
+
+    if workaround_wine_bug 23397
+    then
+        warn "If you have sound problems, try switching to OSS sound in winecfg"
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\WB Games\\LEGO*"
+LEGOHarryPotterDEMO.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
 
 load_lswcs() {
