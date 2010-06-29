@@ -2715,6 +2715,39 @@ load_morrowind() {
 
 #----------------------------------------------------------------
 
+mnbw_demo_exe=mb_warband_setup_1113.exe
+verblist_add mnbw_demo "Mount & Blade Warband Demo (Taleworlds, 2010) [download]" ${mnbw_demo_exe}
+
+load_mnbw_demo()
+{
+    load_autohotkey
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/${mnbw_demo_exe}" 
+    then
+        download ${PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
+    fi
+    cd "${WISOTOOL_CACHE}/${PACKAGE}"
+    chmod +x ${mnbw_demo_exe}
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${mnbw_demo_exe}
+        WinWait, Warband
+        ControlClick, Button2, Warband
+        WinWait, Warband
+        ControlClick, Button2, Warband
+        WinWait, Warband, Finish
+        ControlClick, Button4, Warband
+        ControlClick, Button2, Warband
+    "
+    cd "${olddir}"
+    cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+cd "${programfilesdir_x86_win}\\Mount&Blade Warband"
+mb_warband.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007)" nfsps_pcdemo.exe
 
 load_nfsps_demo()
