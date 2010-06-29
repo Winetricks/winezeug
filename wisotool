@@ -700,7 +700,7 @@ load_iso() {
      pid=$!
      ;;
    ddrescue) 
-     if test `which ddrescue` = ""
+     if test "`which ddrescue`" = ""
      then
          die "Please install ddrescue first."
      fi
