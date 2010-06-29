@@ -3835,7 +3835,8 @@ load_spore()
         winwait, SPORE, begin
         controlclick, Button1
         winwait, Question
-        controlclick, Button7
+        ; download managers are usually a pain, so always say no to such questions
+        controlclick, Button2
         winwait, SPORE, complete
         controlclick, Button1
         controlclick, Button2
