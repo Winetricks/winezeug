@@ -757,6 +757,16 @@ load_autohotkey()
 
 #----------------------------------------------------------------
 
+load_gecko()
+{
+    if ! test -f "$windir/system32/gecko/1.0.0/wine_gecko/nspr4.dll"
+    then
+        try sh "$WINETRICKS" gecko
+    fi
+}
+
+#----------------------------------------------------------------
+
 verblist_init()
 {
     # Must call this before first call to verblist_add
@@ -3942,7 +3952,9 @@ load_starcraft2() {
         die "You must have run the downloader and told it to save in $WISOTOOL_CACHE/$PACKAGE"
     fi
 
-    if ! test -f "$WINDIR"/system32/plugin.ocx && workaround_wine_bug 22089
+    load_gecko
+    # no need to work around 22089 with wine-1.2-rc6 and later
+    if false && ! test -f "$WINDIR"/system32/plugin.ocx && workaround_wine_bug 22089
     then
         try sh "$WINETRICKS" -q ie6
     fi
