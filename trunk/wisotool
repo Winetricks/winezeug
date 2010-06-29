@@ -2081,8 +2081,15 @@ load_fifa10_demo() {
     # The installer is a self extracting rar file. Make cleanups easy by using $WISOTOOL_TMP
     mkdir "$WISOTOOL_TMP/fifa10"
     cd "$WISOTOOL_TMP/fifa10"
+
+    if workaround_wine_bug 23433 
+    then
+        fifatitle="DisplayName from default.wxl"
+    else
+        fifatitle="FIFA 10 - Demo"
+    fi
     
-    $WINE "$WISOTOOL_CACHE/$PACKAGE/fifa10_pc_demo_ec.exe" -s
+    try $WINE "$WISOTOOL_CACHE/$PACKAGE/fifa10_pc_demo_ec.exe" -s
     ahk_do "
     winwait, FIFA 10 - Demo, View the readme file
     sleep 1000
@@ -2092,26 +2099,25 @@ load_fifa10_demo() {
     sleep 1000
     controlclick, Button1, Microsoft Visual C++ 2005 Redistributable Package (x86)
     sleep 1000
-    ; FIXME: What does this show on Windows? Wine bug?
-    winwait, DisplayName from default.wxl Setup, I &accept the terms in the End User License Agreement
+    winwait, $fifatitle Setup, I &accept the terms in the End User License Agreement
     sleep 1000
-    controlclick, Button1, DisplayName from default.wxl Setup, Please read the End User License Agreement for DisplayName from default.wxl
+    controlclick, Button1, $fifatitle Setup, Please read the End User License Agreement for $fifatitle
     sleep 1000
-    controlclick, Button3, DisplayName from default.wxl Setup, Please read the End User License Agreement for DisplayName from default.wxl
+    controlclick, Button3, $fifatitle Setup, Please read the End User License Agreement for $fifatitle
     sleep 1000
-    winwait, DisplayName from default.wxl Setup, Please read the following End User License Agreement carefully
+    winwait, $fifatitle Setup, Please read the following End User License Agreement carefully
     sleep 1000
-    controlclick, Button1, DisplayName from default.wxl Setup, Please read the following End User License Agreement carefully
+    controlclick, Button1, $fifatitle Setup, Please read the following End User License Agreement carefully
     sleep 1000
-    controlclick, Button3, DisplayName from default.wxl Setup, Please read the following End User License Agreement carefully
+    controlclick, Button3, $fifatitle Setup, Please read the following End User License Agreement carefully
     sleep 1000
-    winwait, DisplayName from default.wxl Setup, Ready to install DisplayName from default.wxl
+    winwait, $fifatitle Setup, Ready to install $fifatitle
     sleep 1000
-    controlclick, Button1, DisplayName from default.wxl Setup, Ready to install DisplayName from default.wxl
+    controlclick, Button1, $fifatitle Setup, Ready to install $fifatitle
     ; Very slow installer...
-    winwait, DisplayName from default.wxl Setup, Click the Finish button to exit the Setup Wizard.
+    winwait, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
     sleep 1000
-    controlclick, Button1, DisplayName from default.wxl Setup, Click the Finish button to exit the Setup Wizard.
+    controlclick, Button1, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
     "
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\EA Sports\FIFA 10 - Demo"
