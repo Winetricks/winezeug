@@ -1773,6 +1773,52 @@ load_codmw2()
 
 #----------------------------------------------------------------
 
+verblist_add cnc3_demo    "Command and Conquer 3 Demo (EA, 2007) [download]" CnC3Demo.exe
+
+load_cnc3_demo()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/CnC3Demo.exe"
+    then
+        download $PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7 
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, CnC3Demo.exe
+        winwait, Conquer 3, free space to install
+        sleep 1000
+        send y
+        winwait, WinZip, After installation
+        sleep 1000
+        send s
+        winwait, Conquer 3, InstallShield
+        sleep 3000
+        controlclick, Button1
+        winwait, Conquer 3, license
+        controlclick, Button3
+        controlclick, Button5
+        winwait, Conquer 3, setup type
+        controlclick, Button5
+        winwait, Conquer 3, EA Link
+        controlclick, Button1
+        winwait, Conquer 3, GameSpy
+        controlclick, Button1
+        winwait, Conquer 3, Launch the program
+        controlclick, Button1
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 3 Tiberium Wars Demo"
+CNC3Demo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
 
 load_darknesswithin2_demo()
@@ -1964,7 +2010,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add dragonage     "Dragon Age: Origins (Bioware, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+verblist_add dragonage     "Dragon Age: Origins (Bioware / EA, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
     load_autohotkey
