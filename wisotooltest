@@ -1,5 +1,6 @@
 #!/bin/sh
 # Verify that wisotool verbs run to completion
+# Optional arg: which group of verbs to run.  Default is 'all'.
 
 set -x
 export WINE=$HOME/wine-git/wine
@@ -10,7 +11,40 @@ srcdir=`cd $srcdir; pwd`
 # verbs known to not work yet
 BLACKLIST="starcraft$|passmark7"
 
-for app in `sh wisotool ls | egrep -v "$BLACKLIST" `
+case "$1" in
+all|"") verbs="`sh wisotool ls | egrep -v "$BLACKLIST" `" ;;
+activision) verbs="
+	blur
+	codmw2
+	" ;;
+ea) verbs="
+	bfbc2
+	cnc3_demo                
+	deadspace
+	dragonage
+	fifa10_demo
+	fifaonline3_beta         
+	hphbp
+	hphbp_demo
+	nfsps_demo               
+	nfsshift
+	nfsshift_demo
+	sims3
+	spore 
+	" ;;
+	# Hangs:
+	# masseffect2
+
+ubisoft) verbs="
+	assassinscreed
+	avatar_demo  
+	popsot
+	popsot_demo
+	" ;;
+*) echo "Guessing you specified a single verb"; verbs=$1;;
+esac
+
+for app in $verbs
 do
     export WINEPREFIX=$HOME/.wine-wisotooltest-$app
     rm -rf $WINEPREFIX
