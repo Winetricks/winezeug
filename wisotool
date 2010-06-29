@@ -2113,6 +2113,10 @@ load_fifa10_demo() {
     sleep 1000
     controlclick, Button1, DisplayName from default.wxl Setup, Click the Finish button to exit the Setup Wizard.
     "
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\EA Sports\FIFA 10 - Demo"
+FIFA10Demo.exe
+__EOF__
 }
 
 #----------------------------------------------------------------
