@@ -1403,6 +1403,10 @@ load_bfbc2() {
     then
         warn "If you get a Securom 'No CD/DVD error', check your mount settings. See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info."
     fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Electronic Arts\\Battlefield Bad Company 2"
+BFBC2Game.exe
+__EOF__
 }
 
 #----------------------------------------------------------------
@@ -1649,7 +1653,7 @@ load_braid_demo()
     cd "$olddir"
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Braid"
+cd "$programfilesdir_x86_win\\Braid"
 braid.exe
 __EOF__
 } 
@@ -2064,8 +2068,8 @@ load_dragonage() {
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Dragon Age"
-bin_ship\daorigins.exe
+cd "$programfilesdir_x86_win\\Dragon Age"
+bin_ship\\daorigins.exe
 __EOF__
 }
 
@@ -2176,7 +2180,7 @@ load_fifa10_demo() {
     controlclick, Button1, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
     "
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\EA Sports\FIFA 10 - Demo"
+cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10 - Demo"
 FIFA10Demo.exe
 __EOF__
 }
@@ -2351,7 +2355,7 @@ load_hphbp_demo()
     # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
     # Have to be in the pc directory for the app to find its files.
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd $programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince* Demo
+cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince* Demo
 cd pc
 hp6_demo.exe
 __EOF__
@@ -2795,7 +2799,7 @@ load_nfsps_demo()
     "
     cd "$olddir"
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Electronic Arts\Need for Speed ProStreet Demo"
+cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed ProStreet Demo"
 nfsdemo.exe
 __EOF__
 }
@@ -2864,7 +2868,7 @@ load_nfsshift()
 
     # Need path on shift.exe, see bug 23319
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Electronic Arts\Need for Speed SHIFT"
+cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT"
 .\shift.exe
 __EOF__
 }
@@ -3741,7 +3745,7 @@ load_sims3() {
     # FIXME: apply next patch, too
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Electronic Arts\The Sims 3\Game\Bin"
+cd "$programfilesdir_x86_win\\Electronic Arts\\The Sims 3\\Game\\Bin"
 TS3.EXE
 __EOF__
 }
@@ -3887,7 +3891,7 @@ load_spore()
     "
     iso_umount
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Electronic Arts\SPORE\Sporebin"
+cd "$programfilesdir_x86_win\\Electronic Arts\\SPORE\\Sporebin"
 SporeApp.exe
 __EOF__
 }
