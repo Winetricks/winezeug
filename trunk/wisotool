@@ -3754,6 +3754,63 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add singularity         "Singularity (Activision, 2010)" cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
+
+load_singularity() {
+    load_autohotkey
+
+    # Get user's key
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.txt | tr -d -`
+
+    echo KEY is $KEY
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
+    ahk_do "
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        winwait, Activision(R) - InstallShield, Select the language for the installation from the choices below.
+        sleep 1000
+        controlclick, Button1, Activision(R) - InstallShield, Select the language for the installation from the choices below.
+        sleep 1000
+        winwait, Singularity(TM), Keycode Check
+        sleep 1000
+        Send $KEY
+        sleep 1000
+        Send {Enter}
+        ; Well this is annoying...
+        Winwait, Keycode Check, The Keycode you entered appears to be valid.
+        sleep 1000
+        Send {Enter}
+        winwait, Singularity(TM), The InstallShield Wizard will install Singularity(TM) on your computer
+        sleep 1000
+        controlclick, Button1, Singularity(TM), The InstallShield Wizard will install Singularity(TM) on your computer
+        winwait, Singularity(TM), Please read the following license agreement carefully
+        sleep 1000
+        controlclick, Button5, Singularity(TM), Please read the following license agreement carefully
+        sleep 1000
+        controlclick, Button2, Singularity(TM), Please read the following license agreement carefully
+        winwait, Singularity(TM), Minimum System Requirements
+        sleep 1000
+        controlclick, Button1, Singularity(TM), Minimum System Requirements
+        winwait, Singularity(TM), Select the setup type to install
+        controlclick, Button4, Singularity(TM), Select the setup type to install
+        sleep 5000
+        Loop
+        {
+            ifwinexist, Singularity(TM)
+                sleep 15000
+            else
+                break
+        }
+        "
+    iso_umount
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Activision\Singularity(TM)\Binaries"
+Singularity.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [wine bug 22865]" SplitSecond_Demo.exe
 
 load_splitsecond_demo()
