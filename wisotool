@@ -5410,6 +5410,7 @@ do
     # Source it so the script can call download() if needed.
     if [ -f "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh ]
     then
+        chmod +x "$WISOTOOL_POST/$PACKAGE/$PACKAGE-postinstall.sh"
         ( . "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh )
     fi
 done
