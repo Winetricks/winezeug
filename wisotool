@@ -4257,11 +4257,6 @@ verblist_add wowtrial       "World of Warcraft trial(Blizzard, 2009)" TryWoW.exe
 load_wowtrial() {
     load_autohotkey
 
-    if workaround_wine_bug 22092
-    then
-        try sh "$WINETRICKS" -q ie6
-    fi
-
     download $PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
 
     ahk_do "
