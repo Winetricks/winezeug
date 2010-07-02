@@ -2493,6 +2493,41 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005) [download]"  hod3_trial.exe
+
+load_hod3_jp_demo() {
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/hod3_trial.exe"
+    then
+        download $PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
+    fi
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        ; Use slow matching because otherwise autohotkey cant find the 1-2-12 in the Asian text
+        SetTitleMatchMode, slow
+        run hod3_trial.exe
+        winwait, THE HOUSE OF THE DEAD 3,Windows
+        send {Enter}
+        winwait, THE HOUSE OF THE DEAD 3,1-2-12
+        Send {Up}
+        Send {Space}
+        send {Enter}
+        winwait, THE HOUSE OF THE DEAD 3,SEGA
+        send {Enter}
+        winwaitclose
+        winwait, THE HOUSE OF THE DEAD 3
+        send {Enter}
+        ; Installer crashes before putting up finished dialog, but app seems okay anyway
+    "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\SEGA\\THE HOUSE OF THE DEAD3_JP_TRIAL"
+hod3launch.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add lhp    "LEGO Harry Potter [Years 1-4] (Travellers Tales / WB, 2010) [download]" LEGOHarryPotterDEMO.exe
 
 load_lhp()
