@@ -3838,6 +3838,11 @@ load_singularity() {
         "
     iso_umount
 
+    if workaround_wine_bug 6971
+    then
+        sh "$WINETRICKS" -q mwo=force
+    fi
+
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\Activision\Singularity(TM)\Binaries"
 Singularity.exe
