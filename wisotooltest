@@ -5,11 +5,16 @@
 set -x
 export WINE=$HOME/wine-git/wine
 wineserver=$HOME/wine-git/server/wineserver
-srcdir=`basename $0`
+srcdir=`dirname $0`
 srcdir=`cd $srcdir; pwd`
 
 # verbs known to not work yet
 BLACKLIST="starcraft$|passmark7"
+
+
+case "$LANG" in
+""|"C") echo "Some games won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ; exit 1;;
+esac
 
 case "$1" in
 all|"") verbs="`sh wisotool ls | egrep -v "$BLACKLIST" `" ;;
@@ -31,9 +36,9 @@ ea) verbs="
 	nfsshift_demo
 	sims3
 	spore 
+	masseffect2
 	" ;;
-	# Hangs:
-	# masseffect2
+	# masseffect install hangs, so do it last
 
 ubisoft) verbs="
 	assassinscreed
@@ -46,7 +51,7 @@ esac
 
 for app in $verbs
 do
-    export WINEPREFIX=$HOME/.wine-wisotooltest-$app
+    export WINEPREFIX=$HOME/wisotooltest-prefixes/$app
     rm -rf $WINEPREFIX
     # Isolate us from the user's home directory
     sh winetricks sandbox
