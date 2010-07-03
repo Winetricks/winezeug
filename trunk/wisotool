@@ -3843,6 +3843,19 @@ load_singularity() {
         sh "$WINETRICKS" -q mwo=force
     fi
 
+    if workaround_wine_bug 22548
+    then
+    echo "Disabling \'depth of field\'"
+    cat > "$WISOTOOL_TMP"/dof.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Activision\Singularity]
+"DepthOfField"=dword:00000000
+
+_EOF_
+    try_regedit "$WISOTOOL_TMP_WIN"\\dof.reg
+    fi
+
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\Activision\Singularity(TM)\Binaries"
 Singularity.exe
