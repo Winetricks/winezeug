@@ -1886,6 +1886,74 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add daytona_usa_evolutions  "Daytona USA Evolutions (Sony, 1997)" daytonev.exe
+
+# http://appdb.winehq.org/objectManager.php?sClass=application&iId=1136
+load_daytona_usa_evolutions() {
+    # Refuses to run on anything newer...
+    sh "$WINETRICKS" -q win98
+    
+    load_autohotkey    
+    
+    download $PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
+    
+    # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
+    # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, daytonev.exe
+        winwait, WinSFX32 V2.16.2.6, Install &Directory:
+        sleep 1000
+        controlclick, Button2, WinSFX32 V2.16.2.6, Install &Directory:
+        loop
+        {
+            ifwinexist, WinSFX32 V2.16.2.6, Install &Directory:
+                sleep 5000
+            else
+                break
+        }
+    "
+    cd daytonev
+    # There's a lot of unknown characters (presumably Japanese). Should this require user to run in
+    # a Japanese locale?
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, Setup.exe
+        winwait, Welcome, ???? DAYTONA USA Evolution ? !
+        sleep 1000
+        controlclick, Button1, Welcome, ???? DAYTONA USA Evolution ? !
+        winwait, ???????????, ???????? PATH ??????????
+        sleep 1000
+        controlclick, Button1, ???????????, ???????? PATH ??????????
+        winwait, Setup, ??????????????????????
+        sleep 1000
+        controlclick, Button1, Setup, ??????????????????????
+        winwait, DirectX Install
+        sleep 1000
+        ; Damned if you do, damned if you don't...directx install fails if you attempt install, but if you don't, 'joystick.reg setup' fails.
+        controlclick, Button2, DirectX Install
+        sleep 1000
+        winwait, Setup, Joystick.reg setup failed.
+        sleep 1000
+        controlclick, Button1, Setup, Joystick.reg setup failed.
+        winwait, Setup, ???????????????
+        sleep 1000
+        controlclick, Button1, Setup, ???????????????
+    "
+    cd "$olddir"
+
+    warn "Gives an error when closing the game, seems safe to ignore."
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$DRIVE_C\SEGA\DAYTONA USA Evolution Demo CD"
+"DAYTONA USA Evolution Demo CD.exe"
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add deadspace       "Dead Space (EA, 2008)" \
   abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
 
