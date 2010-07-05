@@ -1187,11 +1187,13 @@ load_avatar_demo()
         try sh winetricks -q vcrun2005
     fi
 
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, Avatar_The_Game_Demo.exe
         winwait, WinRAR, Install
+        send $WISOTOOL_TMP_WIN\\$PACKAGE
         controlclick, Button2
         winwaitclose, WinRAR
         sleep 1000
@@ -2878,11 +2880,13 @@ load_nfsps_demo()
         download $PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
     fi
 
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, nfsps_pcdemo.exe
         winwait, ProStreet, folder
+        send $WISOTOOL_TMP_WIN\\$PACKAGE
         controlclick, Button2
         winwait, ProStreet, View the readme
         controlclick, Button1
@@ -2991,11 +2995,13 @@ load_nfsshift_demo()
         download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
     fi
 
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, NFSSHIFTPCDEMO.exe
         winwait, WinRAR
+        send $WISOTOOL_TMP_WIN\\$PACKAGE
         ControlClick, Button2
         winwait, SHIFT, View the readme
         controlclick, Button1
