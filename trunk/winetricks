@@ -219,6 +219,7 @@ usage() {
     echo " gdiplus       MS gdiplus.dll"
     echo " gecko-dbg     The HTML rendering Engine (Mozilla), with debugging symbols"
     echo " gecko         The HTML rendering Engine (Mozilla)"
+    echo " gfw           MS Game For Windows Live (xlive.dll)"
     echo " glut          The glut utility library"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " ie6           Microsoft Internet Explorer 6.0"
@@ -2001,6 +2002,26 @@ load_gdiplus() {
 
     # For some reason, native,builtin isn't good enough...?
     override_dlls native gdiplus
+}
+
+#----------------------------------------------------------------
+
+load_gfw() {
+    # http://www.microsoft.com/games/en-us/live/pages/livejoin.aspx
+    download . http://download.microsoft.com/download/5/5/8/55846E20-4A46-4EF8-B272-7F988BC9090A/gfwlivesetupmin.exe 6f9e0ba052c68c8b51bb0e3ce6024d0e1c7b20b2  
+    
+    # FIXME: Depends on .Net 20, but is it really needed? For now, skip it.
+    try $WINE "$WINETRICKS_CACHE"/gfwlivesetupmin.exe /nodotnet $WINETRICKS_QUIET
+ 
+    # Now get msasn1.dll, which xlive.dll depends on:
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
+    # FIXME: This is a huge download for a single dll.
+    download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
+    cd "$WINETRICKS_TMP"
+    try_cabextract "$WINETRICKS_CACHE"/W2KSP4_EN.EXE i386/msasn1.dl_
+    try cp msasn1.dll "$WINDIR"/system32
+    try rm -rf i386
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3956,6 +3977,7 @@ do
     gdiplus) load_gdiplus;;
     gecko) load_gecko;;
     gecko-dbg|geckodbg|gecko_dbg|geckodebug|gecko_debug|gecko-debug) load_gecko_dbg;;
+    gfw|xlive) load_gfw;;
     glsl-disable) load_glsl_disable;;
     glsl-enable) load_glsl_enable;;
     glut) load_glut;;
