@@ -1126,6 +1126,70 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add apb "APB: All Points Bulletin (Electronic Arts, 2010)" APB_North_America_Installer.exe
+
+load_apb() {
+    load_autohotkey
+
+    download $PACKAGE http://rtworlds.http.internapcdn.net/rtworlds/NA/APB/BETA/INSTALLER/1.1.0.538715/APB_North_America_Installer.exe c40071616096becb72f10a2e7721ef340c48ad4e
+
+    sh "$WINETRICKS" -q dotnet20
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    if workaround_wine_bug 23527
+    then
+        sh "$WINETRICKS" -q gdiplus
+    fi
+
+    ahk_do "
+    SetTitleMatchMode, 2
+    run, APB_North_America_Installer.exe
+    winwait, Installer language, Please select the language you would like the installer to run in
+    sleep 1000
+    controlclick, Button1, Installer language, Please select the language you would like the installer to run in
+    winwait, APB North America v1.1.0.538715, Welcome to the APB All Points Bulletin Setup Wizard
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Welcome to the APB All Points Bulletin Setup Wizard
+    winwait, APB North America v1.1.0.538715, Please review the license terms before installing APB All Points Bulletin.
+    sleep 1000
+    controlclick, Button4, APB North America v1.1.0.538715, Please review the license terms before installing APB All Points Bulletin.
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Please review the license terms before installing APB All Points Bulletin.
+    winwait, APB North America v1.1.0.538715, Third Party Library List
+    sleep 1000
+    controlclick, Button5, APB North America v1.1.0.538715, Third Party Library List
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Third Party Library List
+    winwait, APB North America v1.1.0.538715, System Check
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, System Check
+    winwait, APB North America v1.1.0.538715, Results of the system scan.
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Results of the system scan.
+    winwait, APB North America v1.1.0.538715, Choose the folder in which to install APB All Points Bulletin.
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Choose the folder in which to install APB All Points Bulletin.
+    winwait, APB North America v1.1.0.538715, APB All Points Bulletin will be installed in C:\Program Files\Realtime Worlds\APB North America. Is this okay?
+    sleep 1000
+    controlclick, Button1, APB North America v1.1.0.538715, APB All Points Bulletin will be installed in C:\Program Files\Realtime Worlds\APB North America. Is this okay?
+    winwait, APB North America v1.1.0.538715, Choose a Start Menu folder for the APB All Points Bulletin shortcuts.
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Choose a Start Menu folder for the APB All Points Bulletin shortcuts.
+    winwait, APB North America v1.1.0.538715, Setup was completed successfully.
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, Setup was completed successfully.
+    winwait, APB North America v1.1.0.538715, The APB Launcher has been installed.
+    sleep 1000
+    controlclick, Button2, APB North America v1.1.0.538715, The APB Launcher has been installed.
+    ; Runs after install. However, also crashes in current (1.2-rc6) wine. For now, kill both, just in case...
+    process, close, APBLauncher.exe
+    process, close, BugReport.exe
+    "
+}
+
+#----------------------------------------------------------------
+
 verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
 
 load_assassinscreed() {
