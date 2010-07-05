@@ -40,6 +40,7 @@ for verb in \
     gdiplus \
     gecko \
     gecko-dbg \
+    gfw \
     hosts \
     jet40 \
     liberation \
