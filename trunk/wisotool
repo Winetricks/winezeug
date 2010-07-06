@@ -2213,6 +2213,7 @@ verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2
                                 f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
 
 load_fallout3_goty() {
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
     load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
@@ -2267,6 +2268,11 @@ load_fallout3_goty() {
     if workaround_wine_bug 23532
     then
         try "$WINETRICKS" -q xlive
+    fi
+    
+    if workaround_wine_bug 23535
+    then
+        try "$WINETRICKS" -q sound=oss
     fi
     
 
