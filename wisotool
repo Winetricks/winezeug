@@ -2208,6 +2208,76 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+
+verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2009)" 379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso \
+                                f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
+
+load_fallout3_goty() {
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
+
+    ahk_do "
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        SetTitleMatchMode, 2        
+        winwait, Fallout 3 - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3
+        sleep 1000
+        controlclick, Button1, Fallout 3 - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3
+        winwait, Fallout 3 - InstallShield Wizard, Please read the following license agreement carefully.
+        sleep 1000
+        controlclick, Button3, Fallout 3 - InstallShield Wizard, Please read the following license agreement carefully.
+        sleep 1000
+        controlclick, Button1, Fallout 3 - InstallShield Wizard, Please read the following license agreement carefully.
+        winwait, Fallout 3 - InstallShield Wizard, Please select a setup type.
+        sleep 1000
+        controlclick, Button4, Fallout 3 - InstallShield Wizard, Please select a setup type.
+        winwait, Fallout 3 - InstallShield Wizard, Click Install to begin the installation.
+        sleep 1000
+        controlclick, Button1, Fallout 3 - InstallShield Wizard, Click Install to begin the installation.
+        winwait, Fallout 3 - InstallShield Wizard, InstallShield Wizard Complete
+        sleep 1000
+        controlclick, Button1, Fallout 3 - InstallShield Wizard, InstallShield Wizard Complete
+        sleep 1000
+        controlclick, Button2, Fallout 3 - InstallShield Wizard, InstallShield Wizard Complete
+        sleep 1000
+        controlclick, Button3, Fallout 3 - InstallShield Wizard, InstallShield Wizard Complete
+    "
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
+
+    ahk_do "
+        Run, ${ISO_MOUNT_LETTER}:EN_Fallout_3_DLC.EXE
+        SetTitleMatchMode, 2
+        winwait, Fallout 3 - DLC EN - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3 - DLC EN
+        sleep 1000
+        controlclick, Button1, Fallout 3 - DLC EN - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3 - DLC EN
+        winwait, Fallout 3 - DLC EN - InstallShield Wizard, Please read the following license agreement carefully.
+        sleep 1000
+        controlclick, Button5, Fallout 3 - DLC EN - InstallShield Wizard, Please read the following license agreement carefully.
+        sleep 1000
+        controlclick, Button2, Fallout 3 - DLC EN - InstallShield Wizard, Please read the following license agreement carefully.
+        winwait, Fallout 3 - DLC EN - InstallShield Wizard, Click Install to begin the installation.
+        sleep 1000
+        controlclick, Button1, Fallout 3 - DLC EN - InstallShield Wizard, Click Install to begin the installation.
+        winwait, Fallout 3 - DLC EN - InstallShield Wizard, InstallShield Wizard Complete
+        sleep 1000
+        controlclick, Button4, Fallout 3 - DLC EN - InstallShield Wizard, InstallShield Wizard Complete
+    "
+  
+    if workaround_wine_bug 23532
+    then
+        try "$WINETRICKS" -q xlive
+    fi
+    
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3"
+"Fallout3.exe"
+__EOF__
+
+}
+
+#----------------------------------------------------------------
  
 verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download]" FIFAOnlineSetup.exe
 
