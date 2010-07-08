@@ -2850,6 +2850,54 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add lotsn   "Launch of the Screaming Narwhal (Telltale Games / Lucasarts, 2009)" LaunchOfTheScreamingNarwhal_Setup.exe
+
+load_lotsn()
+{
+    load_autohotkey
+
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe" 
+    then
+        download ${PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
+    fi
+
+    load_gecko
+
+    cd "${WISOTOOL_CACHE}/${PACKAGE}"
+    chmod +x LaunchOfTheScreamingNarwhal_Setup.exe
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, LaunchOfTheScreamingNarwhal_Setup.exe
+        WinWait, Setup
+        ControlClick Button2  ; Next
+        WinWait, Setup, Checking DirectX
+        ControlClick Button5  ; Don't check
+        ControlClick Button2  ; Next
+        WinWait, Setup, License
+        ControlClick Button2  ; Agree
+        WinWait, Setup, Location
+        ControlClick Button2  ; Install
+        WinWait, Setup, has been installed
+        ControlClick Button4  ; uncheck Play Now
+        ControlClick Button2  ; Finish
+        WinWaitClose
+    "
+    cd "${olddir}"
+
+    cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+cd "${programfilesdir_x86_win}\\Telltale Games\\Tales of Monkey Island\\Launch of the Screaming Narwhal"
+MonkeyIsland101.exe
+__EOF__
+
+    if workaround_wine_bug 22161
+    then
+        # Crashes on startup without this
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+}
+
+#----------------------------------------------------------------
+
 verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
 
 load_lswcs() {
