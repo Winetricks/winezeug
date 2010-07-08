@@ -2284,7 +2284,74 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+
+verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f333571c48.iso 
+
+load_fifa10() {
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2038b86319862e1177912949e9f826f333571c48.iso
+
+    # Get user's key
+    fifakey=`cat "$WISOTOOL_CACHE"/$PACKAGE/2038b86319862e1177912949e9f826f333571c48.txt | tr -d -`
+
+    if workaround_wine_bug 23433 
+    then
+        fifatitle="DisplayName from default.wxl"
+    else
+        # FIXME: What is it on Windows?
+        fifatitle="FIFA 10"
+    fi
+    
+
+    ahk_do "
+        Run, ${ISO_MOUNT_LETTER}:AutoRun.exe
+        SetTitleMatchMode, 2        
+        winwait, FIFA 10, View the readme file
+        sleep 1000
+        controlclick, Button1, FIFA 10, View the readme file
+        winwait, FIFA 10, Please enter the entire Registration Code found either
+        sleep 1000
+        send $fifakey
+        send {Enter}
+        winwait, Microsoft Visual C++ 2005, Please read the following license agreement
+        sleep 1000
+        controlclick, Button1, Microsoft Visual C++ 2005, Please read the following license agreement
+        winwait, $fifatitle, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, $fifatitle, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button3, $fifatitle, I &accept the terms in the End User License Agreement
+        ; There are two license agreements...one is for Directx
+        winwait, $fifatitle, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, $fifatitle, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button3, $fifatitle, I &accept the terms in the End User License Agreement
+        winwait, $fifatitle, Ready to install $fifatitle
+        sleep 1000
+        controlclick, Button1, $fifatitle, Ready to install $fifatitle
+        winwait, $fifatitle, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button5, $fifatitle, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button1, $fifatitle, Click the Finish button to exit the Setup Wizard.
+        winwait, Product Registration, Please log into your EA Master Account to continue.
+        sleep 1000
+        controlclick, Button14, Product Registration, Please log into your EA Master Account to continue.
+    "
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10"
+"FIFA10.exe"
+__EOF__
+
+}
+
+#----------------------------------------------------------------
  
+
 verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download]" FIFAOnlineSetup.exe
 
 load_fifaonline3_beta()
