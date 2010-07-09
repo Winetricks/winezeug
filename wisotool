@@ -3028,6 +3028,73 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add moh_beta    "Medal of Honor: Beta (EA, 2010) [download]" MOHMP_Beta_PC_Client_R2_550504_Installer.zip
+
+load_moh_beta()
+{
+    load_autohotkey
+
+    # Archive SHA1SUM 7585700202ec305017038be4f1cb8ee1b43c24a2
+    file="$WISOTOOL_CACHE/$PACKAGE/MOHMP_Beta_PC_Client_R2_550504_Installer.zip"
+    test -f "$file" || file="$WISOTOOL_CACHE/$PACKAGE/MOH-MPBetaClient_R2550504_Installer.zip"
+    if ! test -f "$file"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Download the beta from http://medalofhonor.com/beta or http://www.fileplanet.com/213429/210000/fileinfo/Medal-of-Honor---Multiplayer-Beta-Client and place in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    try unzip -o "$file" -d "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, setup.exe 
+        winwait, Medal of Honor, will install
+        controlclick, Button1
+        winwait, Medal of Honor, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Medal of Honor, License
+        controlclick, Button1
+        controlclick, Button3
+        winwait, Medal of Honor, shortcuts
+        controlclick, Button1
+        winwait, Medal of Honor, Before continuing
+        controlclick, Button1
+        winwait, Medal of Honor, Finish
+        controlclick, Button1
+    "
+
+    # Game defaults to Dx10. Must force DxVersion=9
+    # This is identical to the BFBC2 bug. Should I file an app specific bug?
+    if workaround_wine_bug 22762
+    then
+        cd "$DRIVE_C/users/$USERNAME/My Documents"
+        if test -f "Medal of Honor MP Beta"/settings.ini
+        then
+            mv "Medal of Honor MP Beta"/settings.ini "Medal of Honor MP Beta"/oldsettings.ini
+            sed 's,DxVersion=auto,DxVersion=9,;
+                 s,Fullscreen=true,Fullscreen=false,' "Medal of Honor MP Beta"/oldsettings.ini > "Medal of Honor MP Beta"/settings.ini 
+        else
+            mkdir -p "Medal of Honor MP Beta"
+            echo "[Graphics]" > "Medal of Honor MP Beta"/settings.ini
+            echo "DxVersion=9" >> "Medal of Honor MP Beta"/settings.ini
+        fi
+    fi
+    
+    cd "$olddir"
+
+    # fixme: Try to find a way to script this?
+    warn "After you sign up at http://medalofhonor.com/beta, you will receive a beta key which you will need to enter the first time you run the game."
+    
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Electronic Arts\\Medal of Honor MP Beta"
+MoHMPGame.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
   c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
 
