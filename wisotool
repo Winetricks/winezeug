@@ -4671,6 +4671,64 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+
+load_twfc() {
+    load_autohotkey
+    
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+    
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
+    
+    ahk_do "
+    run ${ISO_MOUNT_LETTER}:setup.exe
+    SetTitleMatchMode, 2
+    winwait, Activision, Select the language for the installation
+    sleep 1000
+    controlclick, Button1, Activision, Select the language for the installation
+    winwait, Transformers, Press NEXT to verify your key
+    sleep 1000
+    send $KEY
+    send {Enter}
+    winwait, Keycode Check, The Keycode you entered appears to be valid
+    sleep 1000
+    send {Enter}
+    winwait, Transformers, The InstallShield Wizard will install Transformers
+    sleep 1000
+    controlclick, Button1, Transformers, The InstallShield Wizard will install Transformers
+    winwait, Transformers, License Agreement
+    sleep 1000
+    controlclick, Button5, Transformers, License Agreement
+    sleep 1000
+    controlclick, Button2, Transformers, License Agreement
+    winwait, Transformers, Minimum System Requirements
+    sleep 1000
+    controlclick, Button1, Transformers, Minimum System Requirements
+    winwait, Transformers, Select the setup type to install
+    sleep 1000
+    controlclick, Button4, Transformers, Select the setup type to install
+    
+    ; Installer exits silently. Prevent an early umount:
+    sleep 5000
+        Loop
+        {
+            ifwinexist, Transformers
+                sleep 15000
+            else
+                break
+        }
+    "
+    iso_umount
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Activision\Transformers - War for Cybertron\Binaries"
+TWFC.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
 
 load_unigine_heaven() {
