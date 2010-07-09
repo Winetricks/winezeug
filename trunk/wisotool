@@ -4371,6 +4371,12 @@ load_splitsecond_demo()
         ControlClick, Button4, Split, completed
     "
     cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second Demo"
+SplitSecondDEMO.exe
+__EOF__
+
 }
 
 #----------------------------------------------------------------
