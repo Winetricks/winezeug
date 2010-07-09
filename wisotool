@@ -4422,6 +4422,12 @@ load_splitsecond()
         ControlClick, Button4, Split
     "
     iso_umount
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second"
+SplitSecond.exe
+__EOF__
+
 }
 
 #----------------------------------------------------------------
