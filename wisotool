@@ -2270,12 +2270,6 @@ load_fallout3_goty() {
         try "$WINETRICKS" -q xlive
     fi
     
-    if workaround_wine_bug 23535
-    then
-        try "$WINETRICKS" -q sound=oss
-    fi
-    
-
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3"
 "Fallout3.exe"
