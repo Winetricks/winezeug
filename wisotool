@@ -4391,7 +4391,8 @@ load_splitsecond_demo()
         SetTitleMatchMode, 2
         run, "$exe"
         winwait, Split, Language
-        ControlClick, Next, Split, Language
+        ;ControlClick, Next, Split, Language  ; does not quite work, have to use {Enter} instead
+        Send {Enter}
         winwait, Split, game installation
         ControlClick, Button1, Split, game installation
         winwait, Split, license
@@ -4448,7 +4449,8 @@ load_splitsecond()
         SetTitleMatchMode, 2
         run setup.exe
         winwait, Split, Language
-        ControlClick, Next, Split, Language
+        ;ControlClick, Next, Split, Language  ; does not quite work, have to use {Enter} instead
+        Send {Enter}
         winwait, Split, game installation
         ControlClick, Button1, Split, game installation
         winwait, Split, license
