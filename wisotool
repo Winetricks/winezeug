@@ -3358,10 +3358,10 @@ load_nfsshift_demo()
     fi
 
     mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ln -fs "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
-        run, NFSSHIFTPCDEMO.exe
+        run, $WISOTOOL_TMP_WIN\\NFSSHIFTPCDEMO.exe
         winwait, WinRAR
         send $WISOTOOL_TMP_WIN\\$PACKAGE
         ControlClick, Button2
