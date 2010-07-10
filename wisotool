@@ -1718,6 +1718,11 @@ load_braid_demo()
     "
     cd "$olddir"
 
+    if workaround_wine_bug 22161
+    then
+        try sh "$WINETRICKS" -q d3dx9_36
+    fi
+    
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\Braid"
 braid.exe
@@ -1760,12 +1765,17 @@ load_braid()
         controlclick, TButton3
     "
 
-    # Enter the key
+    if workaround_wine_bug 22161
+    then
+        try sh "$WINETRICKS" -q d3dx9_36
+    fi
+    
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\Braid\"
 "braid.exe"
 __EOF__
 
+    # Enter the key
     cd "$DRIVE_C"
     ls
     ahk_do "
