@@ -4227,7 +4227,7 @@ load_sims3() {
 
     if workaround_wine_bug 21517
     then
-        try sh "$WINETRICKS" -q d3dx9
+        try sh "$WINETRICKS" -q d3dx9_36
     fi
     
     # Get user's key
