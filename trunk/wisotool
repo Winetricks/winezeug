@@ -2466,6 +2466,52 @@ __EOF__
 
 #----------------------------------------------------------------
  
+verblist_add ffxivbench "Final Fantasy XIV Benchmark (Square Enix, 2010)" FFXIVBenchmark.zip
+
+load_ffxivbench() {
+    download $PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8 
+    
+    cd "$programfilesdir_x86_unix"
+    try unzip "$WISOTOOL_CACHE/$PACKAGE/FFXIVBenchmark.zip"
+
+# Setup two batch files, one for high res, one for low res:
+cat > FFXIVBenchmark/data/config.low <<__EOF__
+[FFXIV_BENCHMARK]
+LANGUAGE=1
+CHARACTER=0
+RESOLUTION=1
+LOOP=0
+__EOF__
+
+cat > FFXIVBenchmark/data/config.high <<__EOF__
+[FFXIV_BENCHMARK]
+LANGUAGE=1
+CHARACTER=0
+RESOLUTION=0
+LOOP=0
+__EOF__
+
+cat > "$DRIVE_C/run-$PACKAGE-low.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\FFXIVBenchmark\\data"
+copy config.low config.ini /y
+FFXivWinBenchmark.exe
+__EOF__
+
+cat > "$DRIVE_C/run-$PACKAGE-high.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\FFXIVBenchmark\\data"
+copy config.high config.ini /y
+FFXivWinBenchmark.exe
+__EOF__
+
+if workaround_wine_bug 22555
+then
+        try "$WINETRICKS" -q d3dx9_36
+fi
+
+}
+    
+#----------------------------------------------------------------
+ 
 verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
