@@ -2855,9 +2855,9 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add lhp    "LEGO Harry Potter [Years 1-4] (Travellers Tales / WB, 2010) [download]" LEGOHarryPotterDEMO.exe
+verblist_add lhp_demo "LEGO Harry Potter Demo [Years 1-4] (Travellers Tales / WB, 2010) [download]" LEGOHarryPotterDEMO.exe
 
-load_lhp()
+load_lhp_demo()
 {
     load_autohotkey
 
