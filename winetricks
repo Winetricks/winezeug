@@ -264,6 +264,7 @@ usage() {
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
+    echo " secur32       MS secur32"
     echo " shockwave     Adobe Shockwave Player"
     echo " steam         Steam Client App from Valve"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
@@ -2923,6 +2924,15 @@ load_richtx32() {
 
 #----------------------------------------------------------------
 
+load_secur32(){
+    # http://www.microsoft.com/downloads/details.aspx?familyid=c4e408d7-6716-4a12-ad3a-8029667f5c84
+    download . http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
+    try_cabextract "$WINETRICKS_CACHE"/Windows2000-KB959426-x86-ENU.EXE -d "$WINDIR"/system32 -F secur32.dll
+    override_dlls native,builtin secur32
+}
+
+#----------------------------------------------------------------
+
 load_shockwave() {
     # Not silent enough, use msi instead
     #download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
@@ -4023,6 +4033,7 @@ do
     riched20) load_riched20;;
     riched30) load_riched30;;
     richtx32) load_richtx32;;
+    secur32) load_secur32;;
     shockwave) load_shockwave;;
     steam) load_steam;;
     tahoma) load_tahoma;;
