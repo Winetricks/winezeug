@@ -2952,7 +2952,11 @@ load_shockwave() {
 load_steam() {
     download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
     try $WINE msiexec /i "$WINETRICKS_CACHE"/SteamInstall.msi $WINETRICKS_QUIET
-    warn "Before running Steam, make sure you have corefonts installed, or it may crash; see wine bug 22751"
+    if ! test -f "$WINDIR/Fonts/Times.TTF"
+    then
+        warn "Installing corefonts to prvent a Steam crash; see wine bug 22751"
+        load_corefonts
+    fi
     warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
 }
 
