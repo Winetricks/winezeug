@@ -1909,6 +1909,40 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add cnc4    "Command and Conquer 4 (EA, 2010) [broken-wine-drm]" f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso
+
+load_cnc4()
+{
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:EASetup.exe
+        winwait, Tiberian Twilight, License
+        controlclick, Button1
+        controlclick, Button2
+        winwait, Tiberian Twilight, Standard Installation
+        controlclick, Button1
+        winwait, Tiberian Twilight, to exit the Setup
+        controlclick, Button5
+        controlclick, Button1
+    "
+    cd "$olddir"
+    iso_umount
+
+    # Bypass the game's launcher: see AppDB
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+"$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\Data\\CNC4.game" -config "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\CNC4_English.SkuDef"
+__EOF__
+
+    # Doesn't work on Wine yet because of DRM?
+}
+
+#----------------------------------------------------------------
+
 verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
 
 load_darknesswithin2_demo()
