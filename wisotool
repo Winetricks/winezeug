@@ -3443,6 +3443,40 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add oblivion    "Elder Scrolls: Oblivion (Bethesda Game Studios, 2006)" 0c6826d55029e7b64150ebe804220284962657e1.iso
+
+load_oblivion()
+{
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/0c6826d55029e7b64150ebe804220284962657e1.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        winwait, Oblivion, Welcome to the
+        controlclick, Button1
+        winwait, Oblivion, License Agreement
+        controlclick, Button3
+        controlclick, Button1
+        winwait, Oblivion, Choose Destination
+        controlclick, Button1
+        winwait, Oblivion, Ready to Install
+        controlclick, Button1
+        winwait, Oblivion, Complete
+        controlclick, Button1
+        controlclick, Button2
+        controlclick, Button3
+        "
+    iso_umount
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Bethesda Softworks Oblivion\\Oblivion"
+Oblivion.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add orangebox     "Orange Box (Valve, 2007) " \
     976f67eec4b84331de8f6695272bc9192466da6a.iso \
     b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
