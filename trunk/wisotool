@@ -1230,7 +1230,7 @@ then
 fi
 
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$DRIVE_C\aa3\Binaries"
+cd "c:\\aa3\\Binaries"
 AA3Game.exe
 __EOF__
 
