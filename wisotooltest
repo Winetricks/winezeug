@@ -3,8 +3,34 @@
 # Optional arg: which group of verbs to run.  Default is 'all'.
 
 set -x
-export WINE=$HOME/wine-git/wine
-wineserver=$HOME/wine-git/server/wineserver
+
+case "$OS" in
+ "Windows_NT")
+    # Mostly unimplemented...
+    # Cheezy fix for getting rid of double slashes when running cygwin in wine
+    case "$HOME" in
+      /) HOME="" ;;
+    esac
+    WINE=""
+    WINESERVER=true
+    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+    DRIVE_C="C:/"
+    XXXPATH=cygpath
+    ;;
+ *)
+    export WINE=${WINE:-$HOME/wine-git/wine}
+    export WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
+    export WINEPREFIX=$HOME/wisotooltest-prefixes/$app
+    export DRIVE_C="$WINEPREFIX/dosdevices/c:"
+    export XXXPATH="early_wine winepath"
+    ;;
+esac
+
+# Used below in the sha1sum check, these directories can change between Wine/Windows version:
+#windir="`$WINE cmd /c echo "%windir%" | cut -c 4- | tr -d '\015'`"
+windir="Windows"
+progdir="`$WINE cmd /c echo "%ProgramFiles%" | cut -c 4- | tr -d '\015'`"
+
 srcdir=`dirname $0`
 srcdir=`cd $srcdir; pwd`
 
@@ -51,7 +77,6 @@ esac
 
 for app in $verbs
 do
-    export WINEPREFIX=$HOME/wisotooltest-prefixes/$app
     rm -rf $WINEPREFIX
     # Isolate us from the user's home directory
     sh winetricks sandbox
@@ -59,7 +84,20 @@ do
     time sh wisotool $app
     echo -n "Done installing $app, disk usage "
     du -sh $WINEPREFIX
-    $wineserver -w
+    $WINESERVER -w
     echo "Wineserver done."
     ps augxw | grep exe
+    # Verify the installation
+    if [ -f "$srcdir/wisotoolverify.d/$app.sha1sum" ]
+    then
+        cd "$DRIVE_C"
+        # Fix up the filenames, which can differ between Windows versions/Wine:
+        # FIXME: we need a way to guarantee that all _original_ .sha1sums are the same.
+        # Preferably generated under 32-bit wine, so that we don't need a really complex sed
+        # substitution here...
+        sed -e "s|/Program\ Files/|/$progdir/|" -e "s|/windows/|/$windir/|" < "$srcdir/wisotoolverify.d/$app.sha1sum" > $app.sha1sum.tmp
+        sha1sum -c $app.sha1sum.tmp || ( echo "sha1sum check failed!" ; exit 1 )
+        rm $app.sha1sum.tmp
+        cd $srcdir
+    fi
 done
