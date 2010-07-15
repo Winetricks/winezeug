@@ -197,6 +197,7 @@ run_3dmark2000()
         WinClose
         sleep 500
         send {Enter}
+        send {ESC}
         WinWaitClose, 3DMark2000
         "
     cd "$YAGMARK_RESULTS"
