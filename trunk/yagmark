@@ -134,7 +134,7 @@ workaround_wine_bug()
 ahk_do()
 {
    echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
-   $WINE "$programfilesdir_x86_unix/AutoHotkey/AutoHotkey.exe" "$YAGMARK_TMP"/tmp.ahk
+   $WINE "$programfilesdir_x86_unix/AutoHotkey/AutoHotkey.exe" "$YAGMARK_TMP_WIN"\\tmp.ahk
 }
 
 #----------------------------------------------------------------
