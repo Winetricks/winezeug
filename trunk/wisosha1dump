@@ -1,0 +1,57 @@
+#!/bin/sh
+# Simple wrapper script to find changes made by an installer.
+# Usage: 
+# sh wisosha1dump preinstall # to get a baseline of the WINEPREFIX/Windows install
+# install your app here, either manually or with wisotool
+# sh wisosha1dump postinstall # used to compare to the preinstall to know what files changed, and get their sha1sum's"
+#
+# Copyright 2010 Austin English (austinenglish@gmail.com)
+# License: LGPL 2.1
+#
+# FIXME: Eventually dump/compare registry too? On Windows, it's easy with reg.exe, Wine's needs work..
+case "$OS" in
+ "Windows_NT")
+    WINE=""
+    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+    DRIVE_C="C:/"
+    ;;
+ *)
+    WINE=${WINE:-wine}
+    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+    DRIVE_C="$WINEPREFIX/dosdevices/c:"
+    ;;
+esac
+
+usage()
+{
+    echo "Usage:"
+    echo "sh wisosha1dump preinstall # to get a baseline of the WINEPREFIX/Windows install"
+    echo "# install your app here, either manually or with wisotool"
+    echo "sh wisosha1dump postinstall # used to compare to the preinstall to know what files changed, and get their sha1sum's"
+}
+
+olddir="`pwd`"
+
+cd $DRIVE_C
+preinstall()
+{
+    find . -type f -exec sha1sum {} \; | sort > "$olddir/preinstall.sha1"
+}
+
+postinstall()
+{
+    find . -type f -exec sha1sum {} \; | sort > "$olddir/postinstall.sha1"
+    cd "$olddir"
+    diff -u preinstall.sha1 postinstall.sha1 | grep ^+ | grep -v +++ | cut -c2- > tmp.sha1sum
+    # Fixup the sha1sum's, to make it consistent for wisotooltest
+    windir="`$WINE cmd /c echo "%windir%" | cut -c 4- | tr -d '\015'`"
+    progdir="`$WINE cmd /c echo "%ProgramFiles%" | cut -c 4- | tr -d '\015'`"
+    sed -i -e "s|/$progdir/|/Program\ Files/|" -e "s|/$windir/|/windows/|" tmp.sha1sum
+    echo "Your sha1sum file is ready for hand editing. File: tmp.sha1sum"
+}
+
+case $1 in
+    preinstall) preinstall ;;
+    postinstall) postinstall ;;
+    *) usage ; exit 1;;
+esac
