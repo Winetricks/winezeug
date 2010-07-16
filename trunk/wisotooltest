@@ -27,8 +27,7 @@ case "$OS" in
 esac
 
 # Used below in the sha1sum check, these directories can change between Wine/Windows version:
-#windir="`$WINE cmd /c echo "%windir%" | cut -c 4- | tr -d '\015'`"
-windir="Windows"
+windir="`$WINE cmd /c echo "%windir%" | cut -c 4- | tr -d '\015'`"
 progdir="`$WINE cmd /c echo "%ProgramFiles%" | cut -c 4- | tr -d '\015'`"
 
 srcdir=`dirname $0`
