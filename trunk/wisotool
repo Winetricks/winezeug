@@ -4944,6 +4944,91 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add sf4bench "Street Fighter 4: Benchmark (CAPCOM, 2009) [download]" StreetFighterIV_Benchmark.exe
+
+load_sf4bench()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/StreetFighterIV_Benchmark.exe"
+    then
+        download $PACKAGE http://gamedaily.newaol.com/pub/StreetFighterIV_Benchmark.exe f7754210308b3a0ff2bb3be3a62b22767519ca62
+    fi
+
+    cd "$WISOTOOL_CACHE"/$PACKAGE
+
+    ahk_do "
+        SetTitleMatchmode, 2 
+        run, StreetFighterIV_Benchmark.exe
+        winwait, Choose
+        controlclick, Button1
+        winwait, STREET, To continue, click Next
+        controlclick, Button1
+        winwait, STREET, license agreement
+        controlclick, Button3
+        controlclick, Button5
+        winwait, STREET, Destination Folder
+        controlclick, Button1
+        winwait, STREET, ready to begin
+        controlclick, Button1
+        winwait, STREET, successfully installed
+        controlclick, Button1
+
+    "
+
+    # The game has a flickering graphics problem when parallel rendering is enabled.
+    # You can disable it and tweak benchmark settings via the config.ini file.
+    if workaround_wine_bug 23647
+    then
+        cd "$DRIVE_C/users/$USERNAME/Local Settings/Application Data"
+        if test -f CAPCOM/STREETFIGHTERIVBENCHMARK/config.ini
+        then
+            cd CAPCOM/STREETFIGHTERIVBENCHMARK
+            mv config.ini config.ini.old
+            sed 's,RenderingThread=ON,RenderingThread=OFF,' config.ini.old > config.ini
+        else
+            mkdir -p "CAPCOM/STREETFIGHTERIVBENCHMARK"
+            cd "CAPCOM/STREETFIGHTERIVBENCHMARK"
+            cat > config.ini <<__EOF__
+[SYSTEM]
+RenderingThread=OFF
+[DISPLAY]
+Resolution=1024x768
+RefreshRate=60Hz
+FullScreen=YES
+VSync=OFF
+FrameRate=VARIABLE
+Aspect=AUTO
+[GRAPHICS]
+MSAA=NONE
+TextureFilter=DEFAULT
+ModelQuality=HIGH
+StageQuality=HIGH
+SoftShadowQuality=LOW
+SelfShadowQuality=LOW
+MotionBlurQuality=LOW
+ParticleQuality=MIDDLE
+ExtraTouch=OFF
+Brightness=50
+[BENCHMARK]
+Type=BATTLE+DEMO
+Loop=OFF
+[GAME]
+FPS=ON
+__EOF__
+        fi
+    fi
+
+    cd "$olddir"
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\CAPCOM\\STREETFIGHTERIV_BENCHMARK"
+StreetFighterIV_Benchmark.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
 load_twfc() {
