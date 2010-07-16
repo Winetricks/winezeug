@@ -3253,6 +3253,71 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010)" MassEffect2DemoEN.exe
+
+load_masseffect2_demo() {
+    load_autohotkey
+
+    file="$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe"
+    if ! test -f "$file"
+    then
+        download ${PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
+    fi
+
+    if workaround_wine_bug 22091
+    then
+        warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
+        #try sh "$WINETRICKS" -q nocrashdialog
+    fi
+
+    if workaround_wine_bug 23126
+    then
+        try sh "$WINETRICKS" -q vcrun2005
+    fi
+    if workaround_wine_bug 23125
+    then
+        try sh "$WINETRICKS" d3dx10
+    fi
+    if workaround_wine_bug 22919
+    then
+        try sh "$WINETRICKS" -q physx
+    fi
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    ln -fs "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, $WISOTOOL_TMP_WIN\\MassEffect2DemoEN.exe
+        winwait, Mass Effect 2 Demo
+        Sleep 1000
+        send {Enter}
+        winwait, Mass Effect 2 Demo, conflicts
+        Sleep 1000
+        send {Enter}
+        winwait, Mass Effect, License
+        ControlClick, Button4
+        ControlClick, Button2
+        winwait, Mass Effect, Install Type
+        ControlClick, Button2
+        ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
+        ; The hang/crash happens after the Physx install but does not seem to affect gameplay
+        ; TODO: work around this by waiting in some other way for install to finish
+        winwait, Mass Effect 2 Demo, Finish
+        winkill
+    "
+    if workaround_wine_bug 6971
+    then
+        echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
+    fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\Mass Effect 2 Demo\\Binaries"
+MassEffect2.EXE
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add moh_beta    "Medal of Honor: Beta (EA, 2010) [download]" MOHMP_Beta_PC_Client_R2_550504_Installer.zip
 
 load_moh_beta()
