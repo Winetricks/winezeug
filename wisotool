@@ -5233,14 +5233,15 @@ load_wog() {
     ahk_do "
         run WorldOfGooDemo.1.0.exe
         winwait, World of Goo Setup, License Agreement
-	send {Enter}
+        sleep 1000
+        send {Enter}
         winwait, World of Goo Setup, Choose Components
-	send {Enter}
+        send {Enter}
         winwait, World of Goo Setup, Choose Install Location
-	send {Enter}
+        send {Enter}
         winwait, World of Goo Setup, Thank you
-	ControlClick, Make me dirty right now, World of Goo Setup, Thank you
-	send {Enter}
+        ControlClick, Make me dirty right now, World of Goo Setup, Thank you
+        send {Enter}
         "
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\WorldOfGooDemo"
