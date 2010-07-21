@@ -2363,8 +2363,11 @@ load_dragonage() {
         winwait, Dragon Age: Origins Setup
         ControlClick Next, Dragon Age: Origins Setup
         winwait, Dragon Age: Origins Setup, End User License
-        ControlClick Button4, Dragon Age: Origins Setup
-        ControlClick I agree, Dragon Age: Origins Setup
+        sleep 1000
+        ;ControlClick Button4, Dragon Age: Origins Setup  ; agree
+        send {Tab}a  ; agree
+        ;ControlClick I agree, Dragon Age: Origins Setup
+        send {Enter} ; continue
         SetTitleMatchMode, 1
         winwait, Dragon Age: Origins, Registration
         send $DRAGONAGEKEY
@@ -3549,14 +3552,28 @@ load_nfsshift()
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
         run, ${ISO_MOUNT_LETTER}:EASetup.exe 
-        winwait, SHIFT, Registration Code
-        send {RAW}$NFSSHIFT_KEY
-        Sleep 1000
-        controlclick, Button2
+        ; Not sure which of two or three dialogs happens next
+        loop
+        {
+            if winexist, SHIFT, Registration Code
+            {
+                send {RAW}$NFSSHIFT_KEY
+                Sleep 1000
+                ;controlclick, Button2
+                send {Enter}
+                break
+            }
+            if winexist, Microsoft
+                break
+            if winexist, Setup, License
+                break
+            sleep 1000
+        }
         $msvcrun_me_harder
         winwait, Setup, License
         Sleep 1000
-        controlclick, Button1
+        ;controlclick, Button1 ; Accept   Doesn't work on vista
+        send a  ; Accept
         Sleep 1000
         send {Enter}
         winwait, Setup, License
@@ -3573,7 +3590,8 @@ load_nfsshift()
         winwait, Setup, Finish
         Sleep 1000
         controlclick, Button5
-        controlclick, Button1
+        ;controlclick, Button1  ; Finish
+        send {Enter}           ; Finish doesn't respond to click on vista?
     "
     iso_umount
 
