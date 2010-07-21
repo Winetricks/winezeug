@@ -5368,19 +5368,19 @@ load_wowbc() {
     fi
     cd "$olddir"
 
-    if ! test -d "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+    if ! test -d "$WISOTOOL_TMP"/$PACKAGE/tempcd
     then
-        try mkdir -p "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try mkdir -p "$WISOTOOL_TMP"/$PACKAGE/tempcd
         iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_CACHE"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
     fi
 
     # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
     if ! test -d "$DRIVE_C/Program Files/World of Warcraft"
     then
       ahk_do "
-          run "$WISOTOOL_CACHE"/$PACKAGE/tempcd/Installer.exe
+          run "$WISOTOOL_TMP_WIN"/$PACKAGE/tempcd/Installer.exe
           SetTitleMatchMode, 2
           winwait, Burning Crusade Installer
           sleep 4000
