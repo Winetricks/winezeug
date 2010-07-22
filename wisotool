@@ -4825,6 +4825,51 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add ssdd2    "SpongeBob SquarePants Diner Dash 2 (Nickelodeon, year?)" InstallSpongeBobDinerDash2.exe
+
+load_ssdd2()
+{
+    load_autohotkey
+    # Main page: http://arcade.nick.com/nick/gameinfo.jsp?s=SpongeBobDinerDash2
+    download $PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 8407dae2c062ce62b38408eeac3a9f95be202b96
+    
+    if workaround_wine_bug 23749
+    then
+        sh "$WINETRICKS" -q ie6
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run InstallSpongeBobDinerDash2.exe
+        winwait, Welcome
+        sleep 1000
+        controlclick, Button1, Welcome
+        sleep 1000
+        winwait, End User License
+        sleep 1000
+        controlclick, Button1, End User License
+        winwait, Choose Destination Location
+        sleep 1000
+        controlclick, Button1, Choose Destination Location
+        winwait, FREE Toolbar
+        sleep 1000
+        controlclick, Button5, FREE Toolbar
+        sleep 1000
+        controlclick, Button1, FREE Toolbar
+        winwait, Start Installation
+        sleep 1000
+        controlclick, Button1, Start Installation
+        winwait, Installation Complete
+        sleep 1000
+        controlclick, Button1, Installation Complete
+    "
+    sleep 5
+    killall winefile.exe
+}
+    
+#----------------------------------------------------------------
+
 verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
