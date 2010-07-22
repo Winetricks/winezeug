@@ -3432,7 +3432,7 @@ load_morrowind() {
     ; The text box is split into two lines separately, not using word wrap, hence the weird sentence..
     winwait, Question, Would you like to register Morrowind online now?  Make sure
     sleep 1000
-    controlclick, Button7
+    controlclick, Button2
     ; Sometimes finicky here, short sleep here works around it
     Sleep 10000
     winwait, The Elder Scrolls III:  Morrowind Setup, Setup has finished installing Morrowind on your computer.
