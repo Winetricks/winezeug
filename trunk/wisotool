@@ -2434,9 +2434,21 @@ load_dragonage() {
     "
     iso_umount
     
+    if workaround_wine_bug 22307
+    then
+        warn "Turn off frame buffer effects to avoid blurry cut scenes.  See http://bugs.winehq.org/show_bug.cgi?id=22307"
+    fi
     if workaround_wine_bug 22383
     then
         try "$WINETRICKS" -q strictdrawordering=enabled
+    fi
+    if workaround_wine_bug 23730
+    then
+        warn "Run with WINEDEBUG=-all to reduce flickering."
+    fi
+    if workaround_wine_bug 23081
+    then
+        warn "If you still see flickering, try applying the patch from http://bugs.winehq.org/show_bug.cgi?id=23081"
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
