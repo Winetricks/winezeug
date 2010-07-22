@@ -2205,6 +2205,56 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, year?)" InstallDorasCarnival2BoardwalkAdventure.exe
+load_dc2ba() {
+    load_autohotkey
+
+    # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
+    download $PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
+    
+    if workaround_wine_bug 23749
+    then
+        sh "$WINETRICKS" -q ie6
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run InstallDorasCarnival2BoardwalkAdventure.exe
+        winwait, Welcome
+        sleep 1000
+        controlclick, Button1, Welcome
+        sleep 1000
+        winwait, End User License
+        sleep 1000
+        controlclick, Button1, End User License
+        winwait, Choose Destination Location
+        sleep 1000
+        controlclick, Button1, Choose Destination Location
+        winwait, FREE Toolbar
+        sleep 1000
+        controlclick, Button5, FREE Toolbar
+        sleep 1000
+        controlclick, Button1, FREE Toolbar
+        winwait, Start Installation
+        sleep 1000
+        controlclick, Button1, Start Installation
+        winwait, Installation Complete
+        sleep 1000
+        controlclick, Button1, Installation Complete
+    "
+    sleep 5
+    killall winefile.exe
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Shockwave.com\Dora's Carnival 2 - Boardwalk Adventure"
+"Dora's Carnival 2 - Boardwalk Adventure.exe"
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add deadspace       "Dead Space (EA, 2008)" \
   abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
 
@@ -4866,6 +4916,12 @@ load_ssdd2()
     "
     sleep 5
     killall winefile.exe
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\Nick Arcade\SpongeBob SquarePants Diner Dash 2"
+"SpongeBob SquarePants Diner Dash 2.exe"
+__EOF__
+
 }
     
 #----------------------------------------------------------------
