@@ -2255,7 +2255,7 @@ load_dc2ba() {
     killall winefile.exe
 
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Shockwave.com\Dora's Carnival 2 - Boardwalk Adventure"
+cd "$programfilesdir_x86_win\\Shockwave.com\\Dora's Carnival 2 - Boardwalk Adventure"
 "Dora's Carnival 2 - Boardwalk Adventure.exe"
 __EOF__
 
@@ -4938,7 +4938,7 @@ load_ssdd2()
     killall winefile.exe
 
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Nick Arcade\SpongeBob SquarePants Diner Dash 2"
+cd "$programfilesdir_x86_win\\Nick Arcade\\SpongeBob SquarePants Diner Dash 2"
 "SpongeBob SquarePants Diner Dash 2.exe"
 __EOF__
 
