@@ -73,6 +73,7 @@ for verb in \
     riched20 \
     riched30 \
     richtx32 \
+    secur32 \
     shockwave \
     steam \
     tahoma \
@@ -103,6 +104,8 @@ for verb in \
     ahk \
     firefox \
     ie6 \
+    ie7 \
+    ie8 \
     mpc \
     vlc \
     allfonts \
@@ -159,7 +162,7 @@ __EOF__
         sh winetricks  -q -v $verb
         wine dotnet_test.exe | grep "Dotnet works!"
     done
-    rm dotnet_test.{c,exe}
+    rm dotnet_test.c dotnet_test.exe
 fi
 
 # Known to have problems
