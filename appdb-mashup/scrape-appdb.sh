@@ -4,10 +4,10 @@
 
 mkdir -p appdb-cache
 cd appdb-cache
-if test ! -f 13906.html
+if test ! -f 14841.html
 then
    i=1
-   while test $i -lt 13907
+   while test $i -lt 14841
    do
       wget "http://appdb.winehq.org/appview.php?appId=$i" -O $i.html
       # Skip deleted apps
