@@ -2695,37 +2695,41 @@ load_fifa10_demo() {
     else
         fifatitle="FIFA 10 - Demo"
     fi
-    
-    try $WINE "$WISOTOOL_CACHE/$PACKAGE/fifa10_pc_demo_ec.exe" -s
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
-    winwait, FIFA 10 - Demo, View the readme file
-    sleep 1000
-    controlclick, Button1, FIFA 10 - Demo, View the readme file
-    sleep 1000
-    ; FIXME: make this block optional so we dont hang if wine vc2005 runtime passes the check and the game does not show this dialog
-    winwait, Microsoft Visual C++ 2005 Redistributable Package (x86)
-    sleep 1000
-    controlclick, Button1, Microsoft Visual C++ 2005 Redistributable Package (x86)
-    sleep 1000
-    winwait, $fifatitle Setup, I &accept the terms in the End User License Agreement
-    sleep 1000
-    controlclick, Button1, $fifatitle Setup, Please read the End User License Agreement for $fifatitle
-    sleep 1000
-    controlclick, Button3, $fifatitle Setup, Please read the End User License Agreement for $fifatitle
-    sleep 1000
-    winwait, $fifatitle Setup, Please read the following End User License Agreement carefully
-    sleep 1000
-    controlclick, Button1, $fifatitle Setup, Please read the following End User License Agreement carefully
-    sleep 1000
-    controlclick, Button3, $fifatitle Setup, Please read the following End User License Agreement carefully
-    sleep 1000
-    winwait, $fifatitle Setup, Ready to install $fifatitle
-    sleep 1000
-    controlclick, Button1, $fifatitle Setup, Ready to install $fifatitle
-    ; Very slow installer...
-    winwait, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
-    sleep 1000
-    controlclick, Button1, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
+        Run fifa10_pc_demo_ec.exe
+        winwait, FIFA 10 PC Demo
+        send $WISOTOOL_TMP_WIN\\${PACKAGE}{ENTER}
+        winwait, FIFA 10 - Demo, View the readme file
+        sleep 1000
+        controlclick, Button1, FIFA 10 - Demo, View the readme file
+        sleep 1000
+        ; FIXME: make this block optional so we dont hang if wine vc2005 runtime passes the check and the game does not show this dialog
+        winwait, Microsoft Visual C++ 2005 Redistributable Package (x86)
+        sleep 1000
+        controlclick, Button1, Microsoft Visual C++ 2005 Redistributable Package (x86)
+        sleep 1000
+        winwait, $fifatitle Setup, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, $fifatitle Setup, Please read the End User License Agreement for $fifatitle
+        sleep 1000
+        controlclick, Button3, $fifatitle Setup, Please read the End User License Agreement for $fifatitle
+        sleep 1000
+        winwait, $fifatitle Setup, Please read the following End User License Agreement carefully
+        sleep 1000
+        controlclick, Button1, $fifatitle Setup, Please read the following End User License Agreement carefully
+        sleep 1000
+        controlclick, Button3, $fifatitle Setup, Please read the following End User License Agreement carefully
+        sleep 1000
+        winwait, $fifatitle Setup, Ready to install $fifatitle
+        sleep 1000
+        controlclick, Button1, $fifatitle Setup, Ready to install $fifatitle
+        ; Very slow installer...
+        winwait, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button1, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
     "
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10 - Demo"
