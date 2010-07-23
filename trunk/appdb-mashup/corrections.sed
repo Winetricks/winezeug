@@ -1,13 +1,17 @@
 # Apdb Game Title Corrections
 # These change titles from how they appear in the appdb to how they appear in gamerankings.com
 # s/AppDB_Name/gamerankings.com_name/
+s/APB: All Points Bulletin/APB/
 s/AaaaaAAaaaAAAaaAAAAaAAAAA!!! -- A Reckless Disregard for Gravity/A Reckless Disregard for Gravity/
+s/Aliens vs. Predator (2010)/Aliens vs. Predator/
 s/America's Army: Special Forces/America's Army/
 s/Anarchy Online: Internet Play/Anarchy Online: Shadowlands/
 s/Anno 1404/Dawn of Discovery/
 s/Anno 1701/1701 A.D. Gold Edition/
+s/Art of Murder 3: Cards of Destiny/Art of Murder: Cards of Destiny/
 s/Assassin's Creed/Assassin's Creed: Director's Cut Edition/
 s/Baldur's Gate II$/Baldur's Gate II: Shadows of Amn/
+s/Battlefield Bad Company 2/Battlefield: Bad Company 2/
 s/Bionic Commando: Rearmed/Bionic Commando Rearmed/
 s/Burnout Paradise - The Perfect Box/Burnout Paradise - The Ultimate Box/
 s/Championship Manager: Season 03\/04/Championship Manager 4/
@@ -17,6 +21,7 @@ s/Combat Mission 2: Barbarossa to Berlin/Combat Mission: Barbarossa to Berlin/
 s/Crazy Machines II/Crazy Machines 2/
 s/DEFCON/DEFCON: Everybody Dies/
 s/Dark Fall: Lost Souls/Dark Fall 3: Lost Souls/
+s/Dragon Age: Origins Awakening/Dragon Age: Origins - Awakening/
 s/Dungeons & Dragons: Dragonshard/Dragonshard/
 s/Everquest 2/EverQuest II/
 s/Evidence, The last Ritual/Evidence: The Last Ritual/
@@ -26,14 +31,17 @@ s/Final Fantasy XI Online/Final Fantasy XI/
 s/GTR 2 - FIA GT Racing Game/GTR 2/
 s/GTR: FIA GT Racing Game/GTR FIA Racing/
 s/Geoff Crammond's Grand Prix 4/Grand Prix 4/
+s/Hamlet/Hamlet, or the last game without MMORPG features, shaders and product placement/
 s/Hostile Waters - Antaeus Rising/Hostile Waters: Antaeus Rising/
 s/King's Bounty: the Legend (new, 2008)/King's Bounty: The Legend/
 s/Lara Croft Tomb Raider/Tomb Raider/
 s/MDK 2/MDK2/
 s/Marvel Ultimate Alliance/Marvel: Ultimate Alliance/
+s/Max and the Magic Marker/Max \& the Magic Marker/
 s/Medal of Honor: Allied Assault/Medal of Honor Allied Assault/
 s/Medieval 2/Medieval II/
 s/Midnight Club 2/Midnight Club II/
+s/Mount and Blade: Warband/Mount \& Blade: Warband/
 s/Nancy Drew - Secret of the Old Clock/Nancy Drew: Secret of the Old Clock/
 s/Need for Speed: Underground 2/Need for Speed Underground 2/
 s/Need for Speed: Underground/Need for Speed Underground/
@@ -42,9 +50,13 @@ s/Puzzle Quest/Puzzle Quest: Challenge of the Warlords/
 s/RACE and Race 07 - The WTCC Game/RACE 07 - The WTCC Game/
 s/Red Faction Guerrilla/Red Faction: Guerrilla/
 s/S2: Silent Storm/Silent Storm/
+s/Sam & Max Episode 301: The Penal Zone/Sam \& Max: The Devil's Playhouse Episode 1: The Penal Zone/
+s/Sam & Max Episode 302: The Tomb of Sammun-Mak/Sam \& Max: The Devil's Playhouse Episode 2: The Tomb of Sammun-Mak/
+s/Sam & Max Episode 303: They Stole Max's Brain!/Sam \& Max: The Devil's Playhouse Episode 3: They Stole Max's Brain!/
 s/Secret Of Monkey Island Special Edition/The Secret of Monkey Island: Special Edition/
 s/Sid Meier's Civilization IV : Colonization/Sid Meier's Civilization IV: Colonization/
 s/Sid Meier's Civilization/Civilization/
+s/Silent Hunter 5/Silent Hunter 5: Battle of the Atlantic/
 s/Splinter Cell Chaos Theory/Tom Clancy's Splinter Cell Chaos Theory/ 
 s/Star Trek: Voyager - Elite Force/Star Trek: Voyager Elite Force/
 s/Star Wars: Jedi Knight II - Jedi Outcast/Star Wars Jedi Knight II: Jedi Outcast/
@@ -57,9 +69,12 @@ s/Tales of Monkey Island: Chapter 4 - The Trial and Execution of Guybrush Threep
 s/The Chronicles of Riddick - Assault on Dark Athena/The Chronicles of Riddick: Assault on Dark Athena/
 s/The Lord of the Rings: The Battle for Middle-Earth/The Lord of the Rings, The Battle for Middle-earth/
 s/The Settlers II: 10th Anniversary/The Settlers II: The Next Generation (10th Anniversary)/
+s/The Settlers 7/The Settlers 7: Paths to a Kingdom/
 s/The Sims 3 World Adventures/The Sims 3: World Adventures/
 s/Tom Clancy's Ghost Recon: Advanced Warfighter/Tom Clancy's Ghost Recon Advanced Warfighter/
-s/Tom Clancy's Splinter Cell: /Tom Clancy's Splinter Cell / 
+s/Tom Clancy's Splinter Cell: Chaos/Tom Clancy's Splinter Cell Chaos/ 
+s/Tom Clancy's Splinter Cell: Double/Tom Clancy's Splinter Cell Double/ 
+s/Tom Clancy's Splinter Cell: Pandora/Tom Clancy's Splinter Cell Pandora/ 
 s/Tomb Raider Anniversary/Tomb Raider: Anniversary/
 s/Train Simulator/Microsoft Train Simulator/
 s/Warlords: Battlecry/Warlords Battlecry/
