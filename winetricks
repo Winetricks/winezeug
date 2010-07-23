@@ -56,8 +56,8 @@ WINETRICKS_TMP_WIN='c:\winetrickstmp'
 mkdir -p $WINETRICKS_TMP
 
 # Handle case where z: doesn't exist
-if test "$WINETRICKS_CACHE_WIN" = ""
-then
+case "$WINETRICKS_CACHE_WIN" in
+""|*\?\\unix*)
     # WINETRICKS_CACHE isn't accessible via a drive letter mapping, so make one,
     # but be sure to clean it up later.
     for letter in y x w v u t s r q
@@ -69,7 +69,8 @@ then
             break
         fi
     done
-fi
+    ;;
+esac
 
 # Overridden for windows
 ISO_MOUNT_ROOT=/mnt/winetricks

@@ -35,6 +35,7 @@ case "$OS" in
     ;;
  *)
     WINE=${WINE:-wine}
+    WINEVERSION=`$WINE --version`
     WINESERVER=${WINESERVER:-wineserver}
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="$WINEPREFIX/dosdevices/c:"
@@ -65,8 +66,8 @@ rm -rf "$WISOTOOL_TMP"
 mkdir -p "$WISOTOOL_TMP"
 
 # Handle case where z: doesn't exist
-if test "$WISOTOOL_CACHE_WIN" = ""
-then
+case "$WISOTOOL_CACHE_WIN" in
+""|*\?\\unix*)
     # WISOTOOL_CACHE isn't accessible via a drive letter mapping, so make one,
     # but be sure to clean it up later.
     for letter in y x w v u t s r q
@@ -78,7 +79,8 @@ then
             break
         fi
     done
-fi
+    ;;
+esac
 
 USERNAME=${USERNAME:-$LOGNAME}
 
@@ -306,12 +308,26 @@ cabextract() {
 
 # At some point, make the return value controllable by a global 
 # commandline option so we can see if we still need the workaround.
+# Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
 workaround_wine_bug()
 {
     if test "$WINE" = ""
     then
         echo No need to work around wine bug $1 on windows
         return 1
+    fi
+    echo "Checking $WINEVERSION against $2"
+    if test "$2" != ""
+    then
+        # Using shell patterns in a variable with case is tricky, need to use eval
+        checkcode="
+            case $WINEVERSION in
+                $2) echo No need to work around wine bug $1 in wine $WINEVERSION
+                return 1
+	        ;;
+            esac
+        "
+        eval "$checkcode"
     fi
     case $1 in
     "$WISOTOOL_BLACKLIST") 
@@ -2548,7 +2564,7 @@ load_fifa10() {
     # Get user's key
     fifakey=`cat "$WISOTOOL_CACHE"/$PACKAGE/2038b86319862e1177912949e9f826f333571c48.txt | tr -d -`
 
-    if workaround_wine_bug 23433 
+    if workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
     then
         fifatitle="DisplayName from default.wxl"
     else
@@ -2673,7 +2689,7 @@ load_fifa10_demo() {
     mkdir "$WISOTOOL_TMP/fifa10"
     cd "$WISOTOOL_TMP/fifa10"
 
-    if workaround_wine_bug 23433 
+    if workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
     then
         fifatitle="DisplayName from default.wxl"
     else
@@ -2686,6 +2702,7 @@ load_fifa10_demo() {
     sleep 1000
     controlclick, Button1, FIFA 10 - Demo, View the readme file
     sleep 1000
+    ; FIXME: make this block optional so we dont hang if wine vc2005 runtime passes the check and the game does not show this dialog
     winwait, Microsoft Visual C++ 2005 Redistributable Package (x86)
     sleep 1000
     controlclick, Button1, Microsoft Visual C++ 2005 Redistributable Package (x86)
