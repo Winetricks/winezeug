@@ -224,6 +224,7 @@ usage() {
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " ie6           Microsoft Internet Explorer 6.0"
     echo " ie7           Microsoft Internet Explorer 7.0"
+    echo " ie8           Microsoft Internet Explorer 8.0"
     echo " jet40         MS Jet 4.0 Service Pack 8"
     echo " kde           KDE for Windows installer"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
@@ -2108,7 +2109,10 @@ load_ie6() {
     load_msls31
 
     # Unregister Wine IE
-    try $WINE iexplore -unregserver
+    if [ ! -f "$WINDIR"/system32/plugin.ocx ]
+    then 
+        try $WINE iexplore -unregserver
+    fi
 
     # Change the override to the native so we are sure we use and register them
     override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
@@ -2179,8 +2183,11 @@ load_ie6() {
 
 load_ie7() {
     # Unregister Wine IE
-    try $WINE iexplore -unregserver
-
+    if [ ! -f "$WINDIR"/system32/plugin.ocx ]
+    then 
+        try $WINE iexplore -unregserver
+    fi
+    
     # Change the override to the native so we are sure we use and register them
     override_dlls native,builtin iexplore.exe itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon xmllite
 
@@ -2235,6 +2242,79 @@ load_ie7() {
         $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
     else
         warn "To start ie7, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+    fi
+}
+
+#----------------------------------------------------------------
+
+load_ie8() {
+    # Unregister Wine IE
+    if [ ! -f "$WINDIR"/system32/plugin.ocx ]
+    then 
+        try $WINE iexplore -unregserver
+    fi
+
+    load_msls31
+    
+    # Change the override to the native so we are sure we use and register them
+    override_dlls native,builtin iexplore.exe itircl itss jscript msctf mshtml shdoclc shdocvw shlwapi urlmon xmllite
+
+    # Bundled updspapi cannot work on wine
+    override_dlls builtin updspapi
+    
+    # Remove the fake dlls from the existing WINEPREFIX
+    for dll in browseui.dll inseng.dll itircl itss jscript msctf mshtml  shdoclc shdocvw shlwapi urlmon
+    do
+        test -f "$WINDIR"/system32/$dll.dll &&
+        mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
+    done
+
+    # See http://bugs.winehq.org/show_bug.cgi?id=16013
+    # Find instructions to create this file in dlls/wintrust/tests/crypt.c
+    download . http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+
+    # Put a dummy catalog file in place
+    mkdir -p "$WINDIR"/system32/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    try cp -f "$WINETRICKS_CACHE"/winetest.cat "$WINDIR"/system32/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+
+    # FIXME: According to http://www.wine-reviews.net/wine-reviews/microsoft/internet-explorer-8-on-linux-with-wine.html
+    # may also need native msctf, msimtf, and uxtheme
+
+    # Install
+    download . http://download.microsoft.com/download/C/C/0/CC0BD555-33DD-411E-936B-73AC6F95AE11/IE8-WindowsXP-x86-ENU.exe e489483e5001f95da04e1ebf3c664173baef3e26 
+    if [ $WINETRICKS_QUIET ]
+    then
+        # FIXME: There's an option for /updates-noupdates to disable checking for updates, but that 
+        # forces the install to fail on Wine. Not sure if it's an IE8 or Wine bug...
+        $WINE "$WINETRICKS_CACHE"/IE8-WindowsXP-x86-ENU.exe /quiet /forcerestart
+    else
+        $WINE "$WINETRICKS_CACHE"/IE8-WindowsXP-x86-ENU.exe
+    fi
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: whittle down this list
+    cd "$WINDIR"/system32/
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll msctf.dll mshtml.dll mshtmled.dll msi.dll msimtf.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx uxtheme.dll webcheck.dll wshom.ocx
+    do
+        $WINE regsvr32 /i $i > /dev/null 2>&1
+    done
+
+    # Seeing is believing
+    if [ "$WINETRICKS_QUIET" = "" ]
+    then
+        warn "Starting ie8. To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.winehq.org/ > /dev/null 2>&1 &
+    else
+        warn "To start ie8, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'. It doesn't work well yet though, see: http://bugs.winehq.org/show_bug.cgi?id=12433"
     fi
 }
 
@@ -3998,6 +4078,7 @@ do
     hosts) load_hosts;;
     ie6) load_ie6;;
     ie7) load_ie7;;
+    ie8) load_ie8;;
     jet40) load_jet40;;
     kde) load_kde;;
     liberation) load_liberation;;
