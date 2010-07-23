@@ -2542,8 +2542,8 @@ _EOF_
 
 load_mono26() {
     # Load Mono, have it handle all .net requests
-    download .  http://ftp.novell.com/pub/mono/archive/2.6.4/windows-installer/3/mono-2.6.4-gtksharp-2.12.10-win32-3.exe 08be379d1fe34c9ae1d389e60647506950cb07ba
-    try $WINE "$WINETRICKS_CACHE"/mono-2.6.4-gtksharp-2.12.10-win32-3.exe $WINETRICKS_SILENT
+    download . http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2 
+    try $WINE "$WINETRICKS_CACHE"/mono-2.6.7-gtksharp-2.12.10-win32-2.exe $WINETRICKS_SILENT
 
     # FIXME: what should this be for mono 2.6?
     cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
