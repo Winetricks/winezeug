@@ -491,6 +491,13 @@ iso_mount()
     my_img="$1"
     iso_umount
 
+    # FIXME: Should we check somehow that the user put in the right disk?
+    if [ ! -f "$my_img" ]
+    then
+        warn "You don't seem to have an iso in $WISOTOOL_CACHE/$PACKAGE. Please insert the disk so I can prepare one for you."
+        load_iso dd
+    fi
+        
     if test "$WINE" = ""
     then
         load_vcdmount
@@ -516,6 +523,7 @@ iso_mount()
         done
     else
         # Linux
+        # FIXME: use fuseiso when posible to avoid needing sudo
         case "$SUDO" in
         gksudo)
           try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
