@@ -32,15 +32,23 @@ usage()
 
 olddir="`pwd`"
 
+# Make find a builtin function so that we can filter out directories we don't want to sha1sum.
+# FIXME: Expand this list
+# FIXME: Should this use find instead? It would save the sha1sum computation time, but the regex would be very messy
+find_exclude()
+{
+    find . -type f -exec sha1sum {} \; 2>&1 | egrep -v "System Volume Information|\$Recycle.bin|hiberfil.sys|pagefile.sys"
+}
+
 cd $DRIVE_C
 preinstall()
 {
-    find . -type f -exec sha1sum {} \; | sort > "$olddir/preinstall.sha1"
+    find_exclude | sort > "$olddir/preinstall.sha1"
 }
 
 postinstall()
 {
-    find . -type f -exec sha1sum {} \; | sort > "$olddir/postinstall.sha1"
+    find_exclude | sort > "$olddir/postinstall.sha1"
     cd "$olddir"
     diff -u preinstall.sha1 postinstall.sha1 | grep ^+ | grep -v +++ | cut -c2- > tmp.sha1sum
     # Fixup the sha1sum's, to make it consistent for wisotooltest
