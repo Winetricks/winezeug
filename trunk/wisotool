@@ -4697,6 +4697,33 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add secondlife_beta      "Second Life Viewer - Beta [Download]" Second_Life_2-1-0-207030_Setup.exe
+
+load_secondlife_beta() {
+    load_autohotkey
+    download $PACKAGE http://download.cloud.secondlife.com/Viewer-2-1/Second_Life_2-1-0-207030_Setup.exe
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, Second_Life_2-1-0-207030_Setup.exe
+        winwait, Installer Language
+	send {Enter}
+        winwait, Installation Folder
+	send {Enter}
+        winwait, Second Life, Start Second Life now
+	send {Tab}{Enter}
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd $programfilesdir_x86_win\\SecondLifeViewer2
+SecondLife.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
 
 load_sims3() {
