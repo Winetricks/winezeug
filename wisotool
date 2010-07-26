@@ -3415,6 +3415,8 @@ __EOF__
 verblist_add metro2033     "Metro 2033 (THQ, 2010)" 3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
 
 load_metro2033() {
+    warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $WISOTOOL_CACHE. You'll also need your cd-key for Metro 2033 already added to your Steam Account."
+    
     if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
     then
         die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
@@ -3443,6 +3445,7 @@ load_metro2033() {
 
     cd "$steam_dir"
 
+    # Run Steam, let it update. Then, in a separate thread, run the installer.
     ahk_do "
     SetTitleMatchMode, 2
     SetControlDelay -1
@@ -3451,56 +3454,39 @@ load_metro2033() {
     ; Close all windows, prevent conflicts with later controlclick's
     winclose, Steam - Update News
     winclose, Steam
-
-    Run, ${ISO_MOUNT_LETTER}:Setup.exe
-    winwait, Setup Language
-    sleep 1000
-    controlclick, Button1
-    winwait, Setup, INSTALL METRO 2033
-    sleep 1000
-
-    ; Oh boy...no button to click. Doesn't seem to respond to a coordinate click either
-    ; Popup a messagebox to warn the user, so they know it's not hung
-    ; I verified on Windows, AHK wouldn't click for me there either, even with mousemove + click, mouseclick, controclick, etc.
-    ;controlclick, X530 Y85, Setup
-    msgbox, "You need to manually click 'Install Metro 2033'"
-    winwait, License Agreement
-    sleep 1000
-    controlclick, Button2, License Agreement
-    sleep 1000
-    controlclick, Button1, License Agreement
-    winwait, Product Activation
-    sleep 1000
-    ; This click doesn't work either. Steam needs to fix their window management to play nice with AHK...
-    controlclick, X50 Y400
-    msgbox, "You need to manually enter your key: $METRO_KEY, then press enter"
-    ;send, $METRO_KEY
-    ;send, {ENTER}
-    ; FIXME: can't really detect when the user has typed in the password.
-    ; I checked $steam_dir/logs/*log, but nothing seems related.
-    ; So, just sleep for a minute and hope for the best.
-    sleep 60000
-    ; Print receipt
-    send {Enter}
-    ; You are about to install
+    "
+    
+    ahk_do "
+    Run, Steam.exe -install I:\\
+    ; Install Metro 2033
+    winwait, Install - Metro 2033
+    send, {Enter}
+    ; Shortcuts
     sleep 10000
-    send {Enter}
-    ; Create shortcuts?
+    winwait, Install - Metro 2033
+    send, {Enter}
+    ; Installing...
     sleep 10000
-    send {Enter}
-    " 
+    winwait, Install - Metro 2033
+    send, {Enter}
+    "
+    
+    # Wait for install to finish
     dl_log="$steam_dir/logs/download_log.txt"
         while true
         do
             grep "SetHasAllLocalContent(true) called for 43110" "$dl_log" && break
             sleep 15
         done
+
     ahk_do "
     send {Enter}
     sleep 1000
     run, Steam.exe -shutdown
     "
-    
+
+    warn "You'll need the Xinput2 patch from http://bugs2.winehq.org/attachment.cgi?id=29313 to be able to use the mouse."
+
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\Steam"
 Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110
