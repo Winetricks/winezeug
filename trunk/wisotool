@@ -2275,6 +2275,11 @@ cd "$programfilesdir_x86_win\\Shockwave.com\\Dora's Carnival 2 - Boardwalk Adven
 "Dora's Carnival 2 - Boardwalk Adventure.exe"
 __EOF__
 
+    # Workarounds needed by the game but not the installer should come at end of verb
+    if workaround_wine_bug 13496
+    then
+        sh "$WINETRICKS" -q vcrun6
+    fi
 }
 
 #----------------------------------------------------------------
