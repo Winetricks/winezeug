@@ -3806,30 +3806,45 @@ load_nfsshift_demo()
     fi
 
     mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    ln -fs "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
+    # FIXME: use ln -s on Linux (in case user has run 'winetricks sandbox'),
+    # but run the package from the cache on Windows
+    cp "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
+        SetTitleMatchMode, slow
         run, $WISOTOOL_TMP_WIN\\NFSSHIFTPCDEMO.exe
         winwait, WinRAR
         send $WISOTOOL_TMP_WIN\\$PACKAGE
         ControlClick, Button2
         winwait, SHIFT, View the readme
         controlclick, Button1
-        winwait, Visual C++
-        controlclick, Button1
-        winwait, Setup, License
+        ; Not all systems need the Visual C++ runtime
+        loop
+        {
+            ifwinexist, Visual C++
+            {
+                controlclick, Button1
+                break
+            }
+            ifwinexist, Setup, SHIFT Demo License
+            {
+                break
+            }
+            sleep 1000
+        }
+        winwait, Setup, SHIFT Demo License
         Sleep 1000
-        controlclick, Button1
+        send {Space}
         Sleep 1000
         send {Enter}
-        winwait, Setup, License
+        winwait, Setup, DirectX
         Sleep 1000
-        controlclick, Button1
+        send {Space}
         Sleep 1000
         send {Enter}
         winwait, Setup, Destination
         Sleep 1000
-        controlclick, Button1
+        send {Enter}
         winwait, Setup, begin
         Sleep 1000
         controlclick, Button1
