@@ -1121,6 +1121,41 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add algodoo_demo  "Algodoo Demo (Algoryx, 2009) [download]" Algodoo_1_7_1-Win32.exe
+
+load_algodoo_demo() {
+    load_autohotkey
+    download $PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run, Algodoo_1_7_1-Win32.exe
+        SetTitleMatchMode, 2
+        winwait, Algodoo
+	send {Enter}
+        winwait, Algodoo, License
+	send {Tab}a{Space}{Enter}
+        winwait, Algodoo, Destination
+	send {Enter}
+        winwait, Algodoo, shortcuts
+	send {Enter}
+        winwait, Algodoo, Select Additional Tasks
+	send {Enter}
+        winwait, Algodoo, Ready to Install
+	send {Enter}
+        winwait, Algodoo, Completing
+	send {Space}{Tab}{Space}{Tab}{Space}{Enter}   ; decline to run app or view tutorials
+    "
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Algodoo"
+algodoo
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add aa3  "Americas Army 3 (U.S. Army, Ubisoft, 2009) [download]" aa3.tar
 
 load_aa3() {
