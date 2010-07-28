@@ -5420,6 +5420,58 @@ StreetFighterIV_Benchmark.exe
 __EOF__
 }
 
+verblist_add smbx  "Super Mario Bros. X (Indie, 2009) [download]"  smbx122.exe
+
+load_smbx() {
+    load_autohotkey
+
+    # Download URL embedded in http://www.supermariobrothers.org/downloads/smbx122.html
+    download $PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
+
+    # This winetricks verb doesn't work on Windows yet, but that's ok-ish, Windows comes with vb6 runtime
+    sh "$WINETRICKS" -q vb6run 
+
+    if workaround_wine_bug 23821
+    then
+        # http://www.supermariobrothers.org/forums/viewtopic.php?f=8&t=6711
+	# claims this works
+        sh "$WINETRICKS" -q quartz
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run smbx122.exe
+
+        WinWait, Setup - Super Mario Bros. X, Welcome
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Information
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Select Destination Location
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Select Start Menu Folder
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Additional Tasks
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Recommended by
+        MouseMove, 36,274
+        Click              ; Don't install recommended (Ad) software
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Ready to Install
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Information
+        Send {Enter}
+        WinWait, Setup - Super Mario Bros. X, Completing
+        Send {Space}   ; Don't run game
+        Send {Enter}
+    "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd C:\\SMBX
+smbx.exe
+__EOF__
+}
+
 #----------------------------------------------------------------
 
 verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
