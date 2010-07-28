@@ -3418,7 +3418,8 @@ load_masseffect2_demo() {
     fi
 
     mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    ln -fs "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP"
+    # FIXME: use ln -fs on linux, cp on windows
+    cp "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
         run, $WISOTOOL_TMP_WIN\\MassEffect2DemoEN.exe
@@ -3430,7 +3431,8 @@ load_masseffect2_demo() {
         send {Enter}
         winwait, Mass Effect, License
         ControlClick, Button4
-        ControlClick, Button2
+        ;ControlClick, Button2
+        send {Enter}
         winwait, Mass Effect, Install Type
         ControlClick, Button2
         ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
