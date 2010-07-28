@@ -2264,7 +2264,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, year?)" InstallDorasCarnival2BoardwalkAdventure.exe
+verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, 2008)" InstallDorasCarnival2BoardwalkAdventure.exe
 load_dc2ba() {
     load_autohotkey
 
@@ -5084,7 +5084,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add ssdd2    "SpongeBob SquarePants Diner Dash 2 (Nickelodeon, year?)" InstallSpongeBobDinerDash2.exe
+verblist_add ssdd2    "SpongeBob SquarePants Diner Dash 2 (Nickelodeon/Big Fish, 2007) [download]" InstallSpongeBobDinerDash2.exe
 
 load_ssdd2()
 {
