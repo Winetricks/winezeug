@@ -801,8 +801,7 @@ verblist_init()
 
 verblist_finish()
 {
-    # Must follow last call to verblist_add
-    file_map="$file_map esac"
+    : # Now a no-op
 }
 
 # Add a verb's description to the menu
@@ -852,7 +851,7 @@ verblist_is_legal_verb()
 # Given a file, output the verb it belongs to
 map_file_to_verb()
 {
-   eval $file_map
+   eval "$file_map esac"
 }
 
 # Output a list of the verbs for which the needed files are in the cache
@@ -6769,6 +6768,14 @@ do
     migrate) migrate_files;;
     version) print_version;;
 
+    *.verb)
+       case $1 in
+       */*) . $1 ;;
+       *) . ./$1 ;;
+       esac
+       PACKAGE=`echo $1 | sed 's,.*/,,;s,.verb,,'`
+       load_$PACKAGE
+       ;;
     *) if verblist_is_legal_verb $PACKAGE
        then
            load_$PACKAGE
