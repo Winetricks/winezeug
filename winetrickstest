@@ -28,6 +28,7 @@ for verb in \
     dotnet11 \
     dotnet20 \
     droid \
+    eufonts \
     fakeie6 \
     ffdshow \
     flash \

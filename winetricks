@@ -208,6 +208,7 @@ usage() {
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " dxsdk_nov2006 DirectX Software Development Kit, November 2006 version"
     echo " eadm          EA Download Manager"
+    echo " eufonts       Updated fonts for Romanian and Bulgarian"
     echo " ffdshow       ffdshow video codecs"
     echo " firefox       Firefox web browser"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
@@ -304,7 +305,7 @@ usage() {
     echo "Pseudopackages:"
     echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
     echo " alldlls=default  Remove all DLL overrides"
-    echo " allfonts      All listed fonts (corefonts, tahoma, liberation)"
+    echo " allfonts      All listed fonts (corefonts, droid, eufonts, tahoma, liberation)"
     echo " allcodecs     All listed codecs (xvid, ffdshow)"
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
     echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
@@ -1612,6 +1613,32 @@ load_eadm() {
     download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 6b3d1a328af2d44033c24b84444992f56107b27f
     load_adobeair
     try $WINE "$WINETRICKS_CACHE"/eadm-installer.exe $WINETRICKS_S
+}
+
+#----------------------------------------------------------------
+
+load_eufonts() {
+    # https://www.microsoft.com/downloads/details.aspx?FamilyID=0ec6f335-c3de-44c5-a13d-a1e7cea5ddea&displaylang=en
+    download . http://download.microsoft.com/download/a/1/8/a180e21e-9c2b-4b54-9c32-bf7fd7429970/EUupdate.EXE 9b076c40cb63aa0d8512aa8e610ba11d3466e441
+    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/EUupdate.EXE
+    try cp -f "$WINETRICKS_TMP"/*.ttf "$winefontsdir"
+
+    register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
+    register_font ArialI.ttf "Arial Italic (TrueType)"
+    register_font Arial.ttf "Arial (TrueType)"
+    register_font TimesBd.ttf "Times New Roman Bold (TrueType)"
+    register_font TimesBI.ttf "Times New Roman Bold Italic (TrueType)"
+    register_font TimesI.ttf "Times New Roman Italic (TrueType)"
+    register_font Times.ttf "Times New Roman (TrueType)"
+    register_font trebucbd.ttf "Trebuchet Bold (TrueType)"
+    register_font trebucbi.ttf "Trebuchet Bold Italic (TrueType)"
+    register_font trebucit.ttf "Trebuchet Italic (TrueType)"
+    register_font trebuc.ttf "Trebuchet (TrueType)"
+    register_font Verdanab.ttf "Verdana Bold (TrueType)"
+    register_font Verdanai.ttf "Verdana Italian (TrueType)"
+    register_font Verdana.ttf "Verdana (TrueType)"
+    register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
+
 }
 
 #----------------------------------------------------------------
@@ -4058,6 +4085,7 @@ do
     droid) load_droid;;
     dxsdk_nov2006) load_dxsdk_nov2006;;
     eadm) load_eadm;;
+    eufonts) load_eufonts;;
     ffdshow) load_ffdshow;;
     firefox|firefox3) load_firefox;;
     flash) load_flash;;
@@ -4158,7 +4186,7 @@ do
     xvid) load_xvid;;
 
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
-    allfonts) load_corefonts; load_tahoma; load_liberation; load_droid; load_wenquanyi;;
+    allfonts) load_corefonts; load_droid; load_eufonts; load_liberation; load_tahoma; load_wenquanyi;;
     alldlls=builtin) override_all_dlls;;
     alldlls=default) override_no_dlls;;
     ddr=gdi) set_ddr gdi;;
