@@ -349,7 +349,7 @@ usage() {
     echo " volnum        Rename drive_c to harddiskvolume0 (needed by some installers)"
     echo " mwo=force	 Set MouseWarpOverride to force (needded by some games"
     echo " mwo=enabled   Set MouseWarpOverride to enabled (default)"
-    echo " mwo=disabled  Set MouseWarpOverride to disabled"
+    echo " mwo=disable  Set MouseWarpOverride to disable"
     echo " npm-repack    Set NonPower2Mode to repack"
     echo " psm=on        Set PixelShaderMode to enabled"
     echo " psm=off       Set PixelShaderMode to disabled"
@@ -4201,7 +4201,7 @@ do
     videomemorysize=default) set_videomemorysize default;;
     volnum) volnum;;
     mwo=force)set_mwo force;;
-    mwo=disabled) set_mwo disabled;;
+    mwo=disable|mwo=disabled) set_mwo disable;;
     mwo=enabled) set_mwo enabled;;
     npm-repack) npm_repack;;
     psm=on) set_psm enabled;;
