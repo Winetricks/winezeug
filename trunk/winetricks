@@ -2713,18 +2713,14 @@ load_msxml6() {
 
 load_ogg() {
     # flac, ogg, speex, vorbis, ogm source, ogg source
-    download . http://cross-lfs.org/~mlankhorst/oggcodecs_0.81.2.exe c9d10a8f1b65b9f3824e227333d66247e14fad4c
-    #try $WINE "$WINETRICKS_CACHE"/oggcodecs_0.81.2.exe $WINETRICKS_QUIET
-    # oh, and the new schroedinger direct show filter, too
     # see following URLs for more info
+    # http://xiph.org/dshow/
     # http://www.diracvideo.org/
     # http://cross-lfs.org/~mlankhorst/direct-schro.txt
     # http://www.diracvideo.org/git?p=direct-schro.git;a=summary
-    # Requires wine-1.1.1
-    download . http://cross-lfs.org/~mlankhorst/direct-schro.dll
-    try cp "$WINETRICKS_CACHE"/direct-schro.dll "$WINDIR"/system32/direct-schro.dll
-    # This is currently broken. Maarten's not sure why.
-    try $WINE regsvr32 direct-schro.dll
+
+    download . http://downloads.xiph.org/releases/oggdsf/opencodecs_0.84.17338.exe 6151ab79e6ae246208cdf707e080f01c93d95deb
+    try $WINE "$WINETRICKS_CACHE"/opencodecs_0.84.17338.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
