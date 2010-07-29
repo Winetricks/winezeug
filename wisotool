@@ -5176,34 +5176,28 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
-verblist_add starcraft2    "Starcraft II beta (Blizzard, 2010)" "StarCraft II Beta enUS 13891 Installer/Installer.exe"
+verblist_add starcraft2    "Starcraft II (Blizzard, 2010)" 044bf7a83b0fc7086a4f89b44ea44d74af320059.iso
+
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=20882
 
 load_starcraft2() {
     load_autohotkey
-
-    if test -d "$programfilesdir_unix/StarCraft II Beta"
-    then
-        warn "$PACKAGE already installed, skipping."
-        return 0
-    fi
-
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/StarCraft II Beta enUS 13891 Installer/Installer.exe"
-    then
-        die "You must have run the downloader and told it to save in $WISOTOOL_CACHE/$PACKAGE"
-    fi
-
     load_gecko
-    # no need to work around 22089 with wine-1.2-rc6 and later
-    if false && ! test -f "$WINDIR"/system32/plugin.ocx && workaround_wine_bug 22089
+
+    # Force clean-ish install
+    test -d "$programfilesdir_unix/StarCraft II" && rm -rf "$programfilesdir_unix/StarCraft II"
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/044bf7a83b0fc7086a4f89b44ea44d74af320059.iso
+
+    if workaround_wine_bug 23824
     then
-        try sh "$WINETRICKS" -q ie6
+        warn "The installer may not run, see http://bugs.winehq.org/show_bug.cgi?id=23824. No known workaround yet."
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE/StarCraft II Beta enUS 13891 Installer"
     ahk_do "
         SetTitleMatchMode, 2
-        run Installer.exe
-        winwait, StarCraft II Beta Installer
+        run ${ISO_MOUNT_LETTER}:Installer.exe
+        winwait, StarCraft II Installer
         ControlClick, x300 y200
         winwait, End User License Agreement
         winactivate
@@ -5211,14 +5205,19 @@ load_starcraft2() {
         Click WheelDown, 70
         Sleep, 1000
         ControlClick, Agree
-        winwait, Installation Destination Directory
-        send {Enter}
+        winwait, StarCraft II Installer
+        sleep 1000
+        ControlClick, x800 y500
+        winwait, StarCraft II Activation
+        sleep 1000
+        ; Skip activation
+        controlclick, Button2, StarCraft II Activation
         winwait, StarCraft II v, update was successful
         winclose
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\StarCraft II Beta"
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\StarCraft II"
 "StarCraft II.exe"
 __EOF__
 }
