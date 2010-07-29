@@ -65,6 +65,7 @@ for verb in \
     msxml3 \
     msxml4 \
     msxml6 \
+    ogg \
     openwatcom \
     pdh \
     physx \
@@ -198,7 +199,6 @@ fi
 #    dotnet20sp2
 #    dotnet30 
 #    fm20
-#    ogg
 #    psdkvista
 #    vc2005express
 #    vc2005expresssp1
