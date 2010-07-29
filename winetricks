@@ -1010,8 +1010,8 @@ load_cc580() {
 #----------------------------------------------------------------
 
 load_cmake() {
-    download . http://www.cmake.org/files/v2.6/cmake-2.6.4-win32-x86.exe 00bd502423546b8bce19ffc180ea78e0e2f396cf
-    try $WINE "$WINETRICKS_CACHE"/cmake-2.6.4-win32-x86.exe
+    download . http://www.cmake.org/files/v2.8/cmake-2.8.2-win32-x86.exe 2c46f4e804787b231c2f45e1b43f1838462e8dfe
+    try $WINE "$WINETRICKS_CACHE"/cmake-2.8.2-win32-x86.exe
 }
 
 #----------------------------------------------------------------
