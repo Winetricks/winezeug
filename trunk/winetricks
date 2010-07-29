@@ -949,10 +949,11 @@ load_adobeair() {
     # corefonts is necessary to avoid an installer crash.
     load_corefonts
 
-    # Adobe AIR 1.5.3 runtime
+    # Adobe AIR 2.0.2 runtime
     # 2010-02-02: sha1sum 5c95f51a680f8c175a92755238127be4ad22c53b
     # 2010-02-20: sha1sum 6f03e723bd855abbe00eb8fdf22da54fb49c62db
-    download . http://airdownload.adobe.com/air/win/download/1.5.3/AdobeAIRInstaller.exe 6f03e723bd855abbe00eb8fdf22da54fb49c62db
+    # 2010-07-29: sha1sum 7b93aedaf48ad7854940e7a4e7d9394a255e888b
+    download . http://airdownload.adobe.com/air/win/download/2.0.2/AdobeAIRInstaller.exe 7b93aedaf48ad7854940e7a4e7d9394a255e888b
     try $WINE "$WINETRICKS_CACHE"/AdobeAIRInstaller.exe $WINETRICKS_UNIXSILENT
 }
 
