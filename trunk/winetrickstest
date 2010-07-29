@@ -22,7 +22,6 @@ for verb in \
     d3dxof \
     dcom98 \
     dinput8 \
-    dirac \
     directmusic \
     directplay \
     dotnet11 \
@@ -176,6 +175,7 @@ then
         allcodecs \
         cmake \
         cygwin \
+        dirac \
         directx9 \
         divx \
         dotnet11sdk \
