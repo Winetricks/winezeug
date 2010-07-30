@@ -267,6 +267,7 @@ usage() {
     echo " riched20      MS riched20 and riched32"
     echo " riched30      MS riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
+    echo " safari         Apple Safari web browser"
     echo " secur32       MS secur32"
     echo " shockwave     Adobe Shockwave Player"
     echo " steam         Steam Client App from Valve"
@@ -3038,6 +3039,36 @@ load_secur32(){
 
 #----------------------------------------------------------------
 
+load_safari() {
+
+    download . http://appldnld.apple.com.edgesuite.net/content.info.apple.com/Safari5/061-7138.20100607.Y7U87/SafariSetup.exe e56d5d79d9cfbb85ac46ac78aa497d7f3d8dbc3d
+    cd "$WINETRICKS_CACHE"
+    # Workaround http://bugs.winehq.org/show_bug.cgi?id=21146
+    # FIXME: is this localized?
+    try mkdir -p "$DRIVE_C/users/$USER/Application Data/Apple Computer/Preferences"
+    cat > "$DRIVE_C/users/$USER/Application Data/Apple Computer/Preferences/com.apple.Safari.plist" <<_EOF_
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>LastDisplayedWelcomePageVersionString</key>
+        <string>4.0</string>
+</dict>
+</plist>
+_EOF_
+
+    if test "$WINETRICKS_QUIET"
+    then
+        warn "Safari's silent install is broken under wine. See http://bugs.winehq.org/show_bug.cgi?id=23493. You should do a regular install if you want to use Safari."
+        try $WINE SafariSetup.exe /qn
+    else
+        try $WINE SafariSetup.exe
+    fi
+}
+
+
+#----------------------------------------------------------------
+
 load_shockwave() {
     # Not silent enough, use msi instead
     #download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
@@ -4144,6 +4175,7 @@ do
     riched20) load_riched20;;
     riched30) load_riched30;;
     richtx32) load_richtx32;;
+    safari) load_safari;;
     secur32) load_secur32;;
     shockwave) load_shockwave;;
     steam) load_steam;;
