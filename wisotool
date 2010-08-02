@@ -1684,7 +1684,8 @@ __EOF__
 # mds: 391042ea19b4eace5d532dbade10931ebbc4def6
 # mdf: deaf00ebee6e73aecf38f704c3f516008a68d888
 verblist_add bioshock       "Bioshock (2K Games, 2007)" \
-  391042ea19b4eace5d532dbade10931ebbc4def6.mds
+  391042ea19b4eace5d532dbade10931ebbc4def6.mds \
+  deaf00ebee6e73aecf38f704c3f516008a68d888.iso
 
 load_bioshock() {
     load_autohotkey
@@ -1693,6 +1694,15 @@ load_bioshock() {
     if workaround_wine_bug 22501
     then
         sh "$WINETRICKS" -q vcrun2005
+    fi
+
+    # If .iso is present, use it rather than the .mds (.mds is still flaky, maybe we should just get rid of mds support)
+    # FIXME: 'wisotool ls' only shows apps as loaded if all files present, so we need a way to
+    # tell it either iso or mds is ok.
+    if test -f "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso 
+    then
+        load_bioshock_iso
+        exit 0
     fi
     
     # Will perform a full install, so no cd's needed
@@ -1783,6 +1793,75 @@ load_bioshock() {
     fi
 
     mds_umount
+}
+
+# sub-verb of bioshock which is used if the user loads from a .iso instead of .mds
+# Doesn't quite work yet unless you have the cd mounted :-(
+load_bioshock_iso()
+{
+
+    BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.txt`
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+    
+    ahk_do "
+        SetTitleMatchMode, 2
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        winwait, BioShock - InstallShield Wizard, Choose Setup Language
+        sleep 2000
+        ControlClick, Button3, BioShock - InstallShield Wizard, Choose Setup Language
+        ControlClick, Button3, BioShock - InstallShield Wizard, Choose Setup Language ; Installer seems fidgety
+        winwait, BioShock - InstallShield Wizard, Welcome to the InstallShield Wizard for BioShock
+        sleep 1000
+        ControlClick, Button1, BioShock - InstallShield Wizard, Welcome to the InstallShield Wizard for BioShock
+        winwait, BioShock - InstallShield Wizard, Please read the following license agreement carefully
+        sleep 1000
+        ControlClick, Button5, BioShock - InstallShield Wizard, Please read the following license agreement carefully
+        sleep 1000
+        ControlClick, Button2, BioShock - InstallShield Wizard, Please read the following license agreement carefully
+        winwait, BioShock - InstallShield Wizard, Select the setup type to install
+        sleep 1000
+        ControlClick, Button2, BioShock - InstallShield Wizard, Select the setup type to install
+        winwait, BioShock - InstallShield Wizard, Click Install to begin the installation
+        ControlClick, Button1, BioShock - InstallShield Wizard, Click Install to begin the installation
+        Loop
+        {
+            ; Detect if Securom likes the mounted ISO or not. If so, continue the install. If not, exit since the install will fail.
+            SetTitleMatchMode, Slow
+            IfWinExist, BioShock, The InstallShield Wizard has successfully installed BioShock
+                break
+            IfWinExist, Bioshock, Please insert the original
+            {
+                exit 1
+            }
+            sleep 10000
+        }
+        sleep 1000
+        ControlClick, Button6, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        sleep 1000
+        ControlClick, Button4, BioShock - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        winwait, Welcome, &Next
+        Sleep 1000
+        ControlClick, Button2, Welcome, &Next
+        winwait, Enter your serial number, &Activate
+        Sleep 1000
+        ControlClick, Edit1, Enter your serial number, &Activate
+        send {Raw}$BIOSHOCK_KEY
+        Sleep 1000
+        ControlClick, Button1, Enter your serial number, &Activate
+        winwait, Activation Successful
+        Sleep 1000
+        Controlclick, Button3, Activation Successful
+        " || (  wineserver -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
+    
+    if workaround_wine_bug 6971
+    then
+        sh "$WINETRICKS" -q mwo=force
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\2K Games\\BioShock\\Builds\\Release"
+bioshock.exe
+__EOF__
 }
 
 #----------------------------------------------------------------
