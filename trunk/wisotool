@@ -1702,7 +1702,7 @@ load_bioshock() {
     if test -f "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso 
     then
         load_bioshock_iso
-        exit 0
+        return 0
     fi
     
     # Will perform a full install, so no cd's needed
@@ -1853,6 +1853,7 @@ load_bioshock_iso()
         Controlclick, Button3, Activation Successful
         " || (  wineserver -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
     
+    iso_umount
     if workaround_wine_bug 6971
     then
         sh "$WINETRICKS" -q mwo=force
