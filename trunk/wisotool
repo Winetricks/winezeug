@@ -1792,6 +1792,11 @@ load_bioshock() {
         sh "$WINETRICKS" -q mwo=force
     fi
 
+    if workaround_wine_bug 23884
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+
     mds_umount
 }
 
@@ -1854,9 +1859,15 @@ load_bioshock_iso()
         " || (  wineserver -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
     
     iso_umount
+
     if workaround_wine_bug 6971
     then
         sh "$WINETRICKS" -q mwo=force
+    fi
+
+    if workaround_wine_bug 23884
+    then
+        sh "$WINETRICKS" -q d3dx9_36
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
