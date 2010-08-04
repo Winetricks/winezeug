@@ -3253,6 +3253,49 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+ 
+verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga40.exe
+
+# http://www.agdinteractive.com/games/kq1/download/download.html
+# http://agdinteractive.com/countdl.php?action=download&game=11
+# See also http://en.wikipedia.org/wiki/AGD_Interactive
+
+load_kq1vga() {
+    load_autohotkey
+   
+    download $PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run Kq1vga40.exe
+        WinWait, King's Quest I Install Program - Welcome
+        Send {Enter}
+        WinWait, King's Quest I Install Program - Information
+        Send {Enter}
+        WinWait, King's Quest I Install Program - Agreement
+        Click 248, 275 ; check agreement
+        Send !n
+        WinWait, King's Quest I Install Program - Directory
+        Send {Enter}
+        IfNotExist, C:\\Program Files\\AGD Interactive\\King's Quest I
+        {
+            WinWait, King's Quest I Install Program, Do you want it to be created
+            Send {Enter}
+        }
+        WinWait, King's Quest I Install Program - Confirmation
+        Send {Enter}
+        WinWait, King's Quest I Install Program - End
+        Sleep 1000
+        Click 184, 232   ; don't start game
+        Send {Esc}
+    "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\AGD Interactive\\King's Quest I"
+Kq1vga.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
 
 verblist_add lhp_demo "LEGO Harry Potter Demo [Years 1-4] (Travellers Tales / WB, 2010) [download]" LEGOHarryPotterDEMO.exe
 
@@ -6881,6 +6924,9 @@ do
     *) #echo "$PACKAGE done" ;;
     esac
     shift
+
+    # if verbs doesn't preserve the working directory, restore it
+    cd "$olddir"
 
     # User-specific postinstall hook.  
     # Source it so the script can call download() if needed.
