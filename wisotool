@@ -3276,7 +3276,7 @@ load_kq1vga() {
         ;Click 248, 275                 ; check agree
         ;Send !n                        ; Next
         Send {Up}{Up}{Up}{Space}        ; check agree
-        Send {Down}{Down}{Down}{Enter}  ; Next
+        Send {Tab}{Enter}               ; Next
         WinWait, King's Quest I Install Program - Directory
         Send {Enter}
         IfNotExist, C:\\Program Files\\AGD Interactive\\King's Quest I
