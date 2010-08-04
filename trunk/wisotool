@@ -3273,8 +3273,10 @@ load_kq1vga() {
         WinWait, King's Quest I Install Program - Information
         Send {Enter}
         WinWait, King's Quest I Install Program - Agreement
-        Click 248, 275 ; check agreement
-        Send !n
+        ;Click 248, 275                 ; check agree
+        ;Send !n                        ; Next
+        Send {Up}{Up}{Up}{Space}        ; check agree
+        Send {Down}{Down}{Down}{Enter}  ; Next
         WinWait, King's Quest I Install Program - Directory
         Send {Enter}
         IfNotExist, C:\\Program Files\\AGD Interactive\\King's Quest I
@@ -3285,10 +3287,21 @@ load_kq1vga() {
         WinWait, King's Quest I Install Program - Confirmation
         Send {Enter}
         WinWait, King's Quest I Install Program - End
-        Sleep 1000
-        Click 184, 232   ; don't start game
-        Send {Esc}
+        ;Sleep 1000
+        ;Click 184, 232   ; don't start game
+        ;Send {Esc}
+        ; Couldn't find a portable way to not start game, so let it start, then kill it
+        Send !x                        ; Exit
+        WinWait King's Quest I Launcher
+        WinClose
     "
+    if workaround_wine_bug 23892
+    then
+        ahk_do "
+            winwait Adventure Game Studio
+            send {Enter}
+        "
+    fi
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\\AGD Interactive\\King's Quest I"
 Kq1vga.exe
