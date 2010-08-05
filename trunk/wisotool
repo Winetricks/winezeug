@@ -4458,6 +4458,51 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add popfs "Prince of Persia The Forgotten Sands (Ubisoft, 2010)" \
+bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso
+
+load_popfs()
+{
+    load_autohotkey
+    iso_mount "$WISOTOOL_CACHE/$PACKAGE/bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        winwait, Prince of Persia, Language
+        ControlClick, Button3
+        winwait, Prince of Persia, Welcome
+        ControlClick, Button1
+        winwait, Prince of Persia, License
+        ControlClick, Button5
+        ControlClick, Button2
+        winwait, Prince of Persia, Click Install
+        ControlClick, Button1
+        ;Avoid error when creating desktop shortcut
+        Loop
+        {
+            IfWinActive, Prince of Persia, Click Finish
+                break
+            IfWinExist, Prince of Persia, desktop shortcut
+            {
+                ControlClick, Button1, Prince of Persia, desktop shortcut
+                break
+            }
+            sleep 5000
+        }
+        winwait, Prince of Persia, Click Finish
+        ControlClick, Button4
+    "
+
+    iso_umount
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia The Forgotten Sands"
+Prince of Persia.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add popsot "Prince of Persia Sands of Time (Ubisoft, 2003)" \
 a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso
 
