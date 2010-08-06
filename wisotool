@@ -4435,7 +4435,7 @@ load_plantsvszombies() {
 
     if ! test -f "$WISOTOOL_CACHE/plantsvszombies/PlantsVsZombiesSetup.exe"
     then
-        download plantsvszombies "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" fcae7b8c63d9a5b5f6ed783232bc5f612fd5c963
+        download plantsvszombies "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
     fi
 
     cd "$WISOTOOL_CACHE/plantsvszombies"
