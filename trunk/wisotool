@@ -302,6 +302,18 @@ try_cabextract() {
     try $CABEXTRACT "$@"
 }
 
+try_unrar() {
+    # Not always installed, but shouldn't be fatal unless it's being used
+    UNRAR="`which unrar 2>/dev/null`"
+    if test ! -x "$UNRAR"
+    then
+        die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install u
+nrar' or 'sudo yum install unrar')."
+    fi
+
+    try $UNRAR "$@"
+}
+
 cabextract() {
     die oops, bug, please report
 }
@@ -2150,6 +2162,29 @@ load_codmw2()
     iso_umount
     
 }
+
+#----------------------------------------------------------------
+
+verblist_add cnc2    "Command and Conquer Tiberian Sun & Firestorm (Westwood, 2000), [download]" OfficialCnCTiberianSun.rar
+
+load_cnc2()
+{
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/OfficialCncTiberianSun.rar"
+    then
+        download $PACKAGE http://na.llnet.cnc3tv.ea.com/u/f/eagames/cnc3/cnc3tv/Classic/OfficialCnCTiberianSun.rar 591aabd639fb9f2d2476a2150f3c00b1162674f5
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    
+    try_unrar x OfficialCnCTiberianSun.rar "$programfilesdir_x86_unix"
+    
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\EA Games\\Command & Conquer The First Decade\\Command & Conquer(tm) Tiberian Sun(tm)\\SUN"
+Game.exe
+__EOF__
+
+}
+
 
 #----------------------------------------------------------------
 
