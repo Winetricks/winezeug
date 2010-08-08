@@ -40,7 +40,6 @@ case "$OS" in
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="$WINEPREFIX/dosdevices/c:"
     XXXPATH="early_wine winepath"
-    # FIXME: does id work on mac/solaris?
     USERID=`id -u`
     ;;
 esac
