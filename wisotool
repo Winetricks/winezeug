@@ -81,6 +81,8 @@ case "$WISOTOOL_CACHE_WIN" in
     ;;
 esac
 
+# Make sure USERNAME is set.
+# (USERNAME isn't quite a standard - some Unixes set LOGNAME instead.)
 USERNAME=${USERNAME:-$LOGNAME}
 
 # Overridden for windows
@@ -2513,7 +2515,7 @@ verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
 
 load_diablo2() {
-    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other two discs." 
+    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs." 
     load_autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
