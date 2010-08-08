@@ -14,6 +14,7 @@
 # Name of this version of wisotool (YYYYMMDD)
 VERSION=20100731
 
+# Run a windows command without triggering wine's mshtml's gecko install dialog
 early_wine()
 {
     WINEDLLOVERRIDES=mshtml= $WINE "$@"
@@ -29,7 +30,6 @@ case "$OS" in
     esac
     WINE=""
     WINESERVER=true
-    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="C:/"
     XXXPATH=cygpath
     ;;
@@ -318,9 +318,12 @@ cabextract() {
     die oops, bug, please report
 }
 
-# At some point, make the return value controllable by a global 
-# commandline option so we can see if we still need the workaround.
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
+# False (nonzero status) on Windows.
+# True (zero status) on Wine unless good-wineversion-shell-pattern is set 
+# and matches the current wine version.
+# For debugging: if you want to skip a bug's workaround, put the bug number in the 
+# environment variable WISOTOOL_BLACKLIST to disable it.
 workaround_wine_bug()
 {
     if test "$WINE" = ""
@@ -328,7 +331,6 @@ workaround_wine_bug()
         echo No need to work around wine bug $1 on windows
         return 1
     fi
-    echo "Checking $WINEVERSION against $2"
     if test "$2" != ""
     then
         # Using shell patterns in a variable with case is tricky, need to use eval
