@@ -5364,6 +5364,50 @@ __EOF__
     
 #----------------------------------------------------------------
 
+verblist_add sonicdxb_demo     "Sonic Adventure Deluxe Trial B (Sega, 2003) [download]" sadx_trial_b.exe
+
+load_sonicdxb_demo() {
+    load_autohotkey
+
+    # http://sega.jp/pc/sonicdx/
+    # http://sega.jp/pc/sonicdx/trial.shtml
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/sadx_trial_b.exe"
+    then
+        download $PACKAGE 'http://sega.jp/cgi-bin/link.cgi?url=sadx_trial_b' f76fc33d3cb1b062437e03ba4e0687be07d903ad
+        mv "$WISOTOOL_CACHE"/$PACKAGE/'link.cgi?url=sadx_trial_b' "$WISOTOOL_CACHE/$PACKAGE/sadx_trial_b.exe"
+    fi
+
+    # Switch to Japanese locale so freedesktop.org menu item works
+    # (This works for Scott, at least)
+    OLDLANG=${LANG}
+    export LANG=ja_JP.utf8
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run, sadx_trial_b.exe
+        WinWait ahk_class SONIC_DX_PC_LC_B
+        ControlClick, x450 y90
+        WinWait ahk_class #32770
+        ControlClick, Button3
+        ControlClick, Button1
+        WinWait ahk_class #32770
+        ControlClick, Button1
+        WinWait ahk_class #32770
+        ControlClick, Button1
+        WinWaitActive ahk_class SONIC_DX_PC_LC_G_B
+        ControlClick, x450 y130
+    "
+    LANG=${OLDLANG}
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Sega\\SONICADVENTUREDX_DEMO_B"
+sonic.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
