@@ -2508,6 +2508,60 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add deusex2_demo   "Deus Ex 2 Demo [download]" dxiw_demo.zip
+load_deusex2_demo()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/dxiw_demo.zip"
+    then
+        download $PACKAGE http://www.techpowerup.com/downloads/1730i/dxiw_demo.zip ccae48fb046d912b3714ea1b4be4294e74bb3092
+    fi
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    try unzip dxiw_demo.zip -d "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+    chmod +x setup.exe
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, setup.exe
+        winwait, Deus Ex - Invisible War Demo - InstallShield
+        winwaitclose
+        winwait, Deus Ex - Invisible War Demo
+        send {Tab}{Enter}
+        winwait, Deus Ex - Invisible War Demo - InstallShield
+        send n
+        winwait, Deus Ex - Invisible War Demo, license
+        send an
+        winwait, Deus Ex - Invisible War Demo, setup type
+        send n
+        winwait, Deus Ex - Invisible War Demo, install
+        send i
+        winwait, Question, ; Readme?
+        send n
+        winwait, Question, ; Play now?
+        send n
+        winwait, Deus Ex - Invisible War Demo, install  ; Done
+        send {Enter}
+        winwaitclose
+    "
+
+    cd "$olddir"
+
+    if workaround_wine_bug 6971
+    then
+        warn "This game suffers from The Mouse Bug, see http://wiki.winehq.org/Bug6971 for tips"
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\Deus Ex - Invisible War Demo\\System\\"
+DX2.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
   51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
@@ -7081,4 +7135,8 @@ test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
 
 # remove the temp directory
 chmod -R 700 "$WISOTOOL_TMP"
-rm -rf "$WISOTOOL_TMP"
+while ! rm -rf "$WISOTOOL_TMP"
+do
+    # Sometimes apps take a while to exit on Vista
+    sleep 1
+done
