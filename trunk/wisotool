@@ -5919,6 +5919,71 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add vf2_demo   "Virtua Fighter 2 demo (Sega, 1997) [download]" vf2_demo.exe
+
+load_vf2_demo()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/vf2_demo.exe"
+    then
+        download $PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
+    fi
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    try unzip vf2_demo.exe -d "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+
+    # installer refuses to run in Windows NT 5 or higher, so set win98 mode
+    # FIXME: undo this when verb is done
+    case "$OS" in 
+    "Windows_NT")
+        export __COMPAT_LAYER=Win95
+        ;;
+    *)
+        sh $WINETRICKS win98
+        ;;
+    esac
+
+    chmod +x SETUP.EXE
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, setup.exe
+        winwait, Welcome, Virtua
+        send {Enter}
+        winwait, Get Destination Path
+        send {Enter}          ; accept default path
+        winwait, Setup
+        send {Enter}          ; yes, create or replace
+        winwaitclose          ; wait for error message window to go away
+        winwaitclose, Get Destination Path
+        winwait, Setup, Play
+        send E                ; Don't play
+        winwaitclose
+        "
+
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd C:\\SEGA\\VF2DEMO
+rem FIXME: __COMPAT_LAYER seems to be needed for XP, but breaks vista
+set __COMPAT_LAYER=Win95
+VF2DEMO.exe
+__EOF__
+
+    case "$OS" in 
+    "Windows_NT")
+        warn "$PACKAGE requires an 8 or 16 bit display, so change desktop settings before running.  Also, on Windows XP, you'll need to set C:\\SEGA\\VF2DEMO\VF2DEMO.exe to Win95 mode."
+        ;;
+    *)
+        warn "$PACKAGE requires an 8 or 16 bit display.  On Linux, try pressing CTRL+ALT+F1, and running 'startx -- :1 -depth 16'. "
+    ;;
+    esac
+}
+
+#----------------------------------------------------------------
+
 verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
 
 load_wog() {
