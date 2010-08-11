@@ -4846,10 +4846,10 @@ load_rom()
         send {Space}                        ; don't start
         ;ControlClick, TNewButton4
         send {Enter}                        ; finish
-	;winwait, Territory        # not needed anymore?
-	;send {Esc}
-	; Don't let it autoupdate (not needed anymore?)
-	winkill
+        ;winwait, Territory        # not needed anymore?
+        ;send {Esc}
+        ; Don't let it autoupdate (not needed anymore?)
+        winkill
     "
     # FIXME: use right wineserver and/or find nicer way to finish
     wineserver -k
@@ -4865,16 +4865,16 @@ load_rom()
             loop
             {
                 ifwinexist, Find game path
-		{
-		    send {Enter}
-		    winwait, Browse for Folder
-		    MouseMove, 76,145   ; on + next to Program Files
-		    Click
-		    MouseMove, 115,207  ; on + next to Runes of Magic
-		    Click
-		    send {Enter}
-		    winwaitclose
-		}
+                {
+                    send {Enter}
+                    winwait, Browse for Folder
+                    MouseMove, 76,145   ; on + next to Program Files
+                    Click
+                    MouseMove, 115,207  ; on + next to Runes of Magic
+                    Click
+                    send {Enter}
+                    winwaitclose
+                }
                 ifwinexist, Error
                     winwaitclose
                 ; Older updaters use title "RomUpdate"
