@@ -340,7 +340,7 @@ workaround_wine_bug()
             case $WINEVERSION in
                 $2) echo No need to work around wine bug $1 in wine $WINEVERSION
                 return 1
-	        ;;
+                ;;
             esac
         "
         eval "$checkcode"
@@ -1147,19 +1147,19 @@ load_algodoo_demo() {
         run, Algodoo_1_7_1-Win32.exe
         SetTitleMatchMode, 2
         winwait, Algodoo
-	send {Enter}
+        send {Enter}
         winwait, Algodoo, License
-	send {Tab}a{Space}{Enter}
+        send {Tab}a{Space}{Enter}
         winwait, Algodoo, Destination
-	send {Enter}
+        send {Enter}
         winwait, Algodoo, shortcuts
-	send {Enter}
+        send {Enter}
         winwait, Algodoo, Select Additional Tasks
-	send {Enter}
+        send {Enter}
         winwait, Algodoo, Ready to Install
-	send {Enter}
+        send {Enter}
         winwait, Algodoo, Completing
-	send {Space}{Tab}{Space}{Tab}{Space}{Enter}   ; decline to run app or view tutorials
+        send {Space}{Tab}{Space}{Tab}{Space}{Enter}   ; decline to run app or view tutorials
     "
     cd "$olddir"
 
@@ -2120,7 +2120,7 @@ load_codmw2()
         SetTitleMatchMode, 2
         Run, Steam.exe -login $STEAMUSER $STEAMPW -install ${ISO_MOUNT_LETTER}:
 
-	; Uncomment these lines if you haven't activated this game via steam on this account before.
+        ; Uncomment these lines if you haven't activated this game via steam on this account before.
         ;winwait, Activation
         ;MouseMove, 30, 400
         ;Click
@@ -2144,23 +2144,23 @@ load_codmw2()
     ahk_do "
         SetTitleMatchMode, 2
         Send {Enter}
-	; Need to wait for install to finish.  This isn't the way to do it.  Ideally we could watch some log file.
-	; The last file created seems to be
-	; Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf
-	; so wait for that and then another 20 seconds, say.
+        ; Need to wait for install to finish.  This isn't the way to do it.  Ideally we could watch some log file.
+        ; The last file created seems to be
+        ; Program Files/Steam/steamapps/call of duty modern warfare 2 content.ncf
+        ; so wait for that and then another 20 seconds, say.
         winwait, ahk_class USurface_, Install
-	; Now that install has finished, say [don't start app] and [finish].
+        ; Now that install has finished, say [don't start app] and [finish].
         Send {Space}
         Send {Enter}
-	; Now wait for the main steam interface to pop up, and close it
+        ; Now wait for the main steam interface to pop up, and close it
         winwait, ahk_class USurface_, Steam
         WinClose
 
-	; If you choose to start the game above, you could wait for it to be ready to play here.  
+        ; If you choose to start the game above, you could wait for it to be ready to play here.  
         ;winwait, ahk_class USurface_8390, Ready
         ;Send {Tab}            # select Close
         ;Send {Enter}
-	;winwait, Steam Login
+        ;winwait, Steam Login
         ;WinClose
     "
     iso_umount
@@ -2852,7 +2852,7 @@ load_fifaonline3_beta()
     then
         mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
         die "Download the FIFAOnlineSetup.exe from http://fifa-online.easports.com/web/beta/welcome \
-	     and place it in $WISOTOOL_CACHE/$PACKAGE"
+             and place it in $WISOTOOL_CACHE/$PACKAGE"
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -3527,7 +3527,7 @@ load_lswcs() {
         winwait, Choose Setup Language
         send {Enter}
         winwait, LEGO, License Agreement
-	send a{Enter}
+        send a{Enter}
         winwait, LEGO, method
         ControlClick Easy Installation
         sleep 1000
@@ -5106,11 +5106,11 @@ load_secondlife_beta() {
         SetTitleMatchMode, 2
         run, Second_Life_2-1-0-207030_Setup.exe
         winwait, Installer Language
-	send {Enter}
+        send {Enter}
         winwait, Installation Folder
-	send {Enter}
+        send {Enter}
         winwait, Second Life, Start Second Life now
-	send {Tab}{Enter}
+        send {Tab}{Enter}
     "
     cd "$olddir"
 
@@ -5130,17 +5130,17 @@ load_segabass() {
     ahk_do "
         SetTitleMatchMode, 2
         run d:setup.exe
-	winwait, SEGA Bass Fishing, License
-	send a
-	sleep 1000
+        winwait, SEGA Bass Fishing, License
+        send a
+        sleep 1000
         send {Enter}
-	winwait, SEGA Bass Fishing, Destination
+        winwait, SEGA Bass Fishing, Destination
         send {Enter}
-	winwait, SEGA Bass Fishing, Ready
+        winwait, SEGA Bass Fishing, Ready
         send {Enter}
-	winwait, SEGA Bass Fishing, Complete
+        winwait, SEGA Bass Fishing, Complete
         send {Enter}
-	winwaitclose
+        winwaitclose
     "
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 cd "$programfilesdir_x86_win\\SEGA\\Sega Bass Fishing"
@@ -5851,7 +5851,7 @@ load_smbx() {
     if workaround_wine_bug 23821
     then
         # http://www.supermariobrothers.org/forums/viewtopic.php?f=8&t=6711
-	# claims this works
+        # claims this works
         sh "$WINETRICKS" -q quartz
     fi
 
@@ -6241,7 +6241,7 @@ load_wowbc() {
           send {Enter}
           winwait, Manage
           ControlClick, Button2
-	  Loop
+          Loop
           {
               ; World Of Warcraft directory is created as .temp, then renamed when done
               ifExist, C:\Program Files\World of Warcraft\Logs\Burning Crusade Install Log.html
@@ -6898,12 +6898,12 @@ _load_steam_app()
         send {enter}
         sleep 10000
         
-		; Here, it's getting the .gcf/.ncf files. This is normally quick, but can take a long time.
-		; Most finish in a few seconds, but the Total War demos takes a couple minutes.
-		; So, we'll exit AHK, then wait for all the game files to be present,
+                ; Here, it's getting the .gcf/.ncf files. This is normally quick, but can take a long time.
+                ; Most finish in a few seconds, but the Total War demos takes a couple minutes.
+                ; So, we'll exit AHK, then wait for all the game files to be present,
         ; before continuing the install.
         exit
-		"
+                "
 
         if test ! "$game_extra_files" = ""
         then
