@@ -2896,6 +2896,25 @@ cd \Program Files\\EA Sports\\FIFA Online
 Launch.exe
 __EOF__
 
+    # Download audio commentary
+    cd "$DRIVE_C"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, cmd /c run-$PACKAGE.bat
+        winwait, EA SPORTS, Download Commentary
+        controlclick, Button1, EA SPORTS, Download Commentary
+        "
+
+    # Wait for download to finish again and game to start
+    while [ `ps a | grep NFE.exe | grep -v grep | wc -l` != "1" ]
+    do
+        sleep 5
+    done
+
+    # Dont kill game immediately
+    sleep 10
+    killall "NFE.exe"
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
