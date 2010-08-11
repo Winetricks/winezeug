@@ -75,6 +75,7 @@ case "$WISOTOOL_CACHE_WIN" in
         then
             WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
             ln -sf "$WISOTOOL_CACHE" "$WISOTOOL_CACHE_SYMLINK"
+            WISOTOOL_CACHE_WIN=${letter}:
             break
         fi
     done
@@ -4816,15 +4817,16 @@ load_rom()
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
+    patches=`ls patch*.exe`
     ahk_do "
         SetTitleMatchMode, 2
         run, Runes_of_Magic_3.0.1.2153.part1.exe
         winwait, Runes of Magic, This will install
         ControlClick, TNewButton1
         winwait, Runes of Magic, License
-        sleep 1000
         ControlClick, TNewRadioButton1
         ;ControlClick, TNewButton2
+        sleep 1000
         send {Enter}
         winwait, Runes of Magic, Destination
         ;ControlClick, TNewButton3
@@ -4852,26 +4854,36 @@ load_rom()
     # FIXME: use right wineserver and/or find nicer way to finish
     wineserver -k
 
-    cd "$WISOTOOL_CACHE"/$PACKAGE
-    # FIXME: I've seen an older version of this loop apply all the patches
-    # at the same time, all paused with an Error dialog box, so there may 
-    # be some error condition this doesn't handle right yet.
-    for patch in patch_*
+    # Try to make it easier for patches to find the game... doesn't help, still get "Find game path" dialog
+    cd "$programfilesdir_x86_unix/Runes of Magic"
+
+    for patch in $patches
     do
         ahk_do "
-            run $patch
+            run $WISOTOOL_CACHE_WIN\\$PACKAGE\\$patch
             SetTitleMatchMode, 2
             loop
             {
+                ifwinexist, Find game path
+		{
+		    send {Enter}
+		    winwait, Browse for Folder
+		    MouseMove, 76,145   ; on + next to Program Files
+		    Click
+		    MouseMove, 115,207  ; on + next to Runes of Magic
+		    Click
+		    send {Enter}
+		    winwaitclose
+		}
                 ifwinexist, Error
                     winwaitclose
-                # Older updaters use title "RomUpdate"
+                ; Older updaters use title "RomUpdate"
                 ifwinexist, RomUpdate
                 {
                     winwaitclose
                     break
                 }
-                # Newer updaters use title "Runes of Magic U" (no fooling)
+                ; Newer updaters use title "Runes of Magic U" (no fooling)
                 ifwinexist, Runes of Magic U
                 {
                     winwaitclose
