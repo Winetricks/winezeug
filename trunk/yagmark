@@ -20,6 +20,7 @@ VERSION=20100509
 
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
+RESULTSDIR="${RESULTSDIR:-results}"
 
 case "$OS" in
  "Windows_NT")
@@ -133,8 +134,8 @@ workaround_wine_bug()
 
 ahk_do()
 {
-   echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
-   $WINE "$programfilesdir_x86_unix/AutoHotkey/AutoHotkey.exe" "$YAGMARK_TMP_WIN"\\tmp.ahk
+   echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
+   $WINE "$programfilesdir_x86_unix/AutoHotkey/AutoHotkey.exe" "$YAGMARK_TMP"\\tmp.ahk
 }
 
 #----------------------------------------------------------------
@@ -675,7 +676,7 @@ do_stats()
 # (for FPS or score variables, rank of 1 is great, rank of N is awful).
 run_rank()
 {
-    cd results
+    cd ${RESULTSDIR}
 
     # Clear all output files (since we build them up by appending)
     rm -f $SYSTEMID1*/stats.dat.rank 2> /dev/null
@@ -703,12 +704,13 @@ do
    run_$verb
 done
 
-mkdir -p results/"$SYSTEMID"
+mkdir -p ${RESULTSDIR}/"$SYSTEMID"
 if test `find "$YAGMARK_RESULTS" -type f | wc -l` -gt 0
 then
-    mkdir -p results/"$SYSTEMID"
-    do_report > results/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
-    echo "New medians in results/$SYSTEMID/stats.dat":
+    mkdir -p ${RESULTSDIR}/"$SYSTEMID"
+    do_report > ${RESULTSDIR}/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
+    echo "New medians in ${RESULTSDIR}/$SYSTEMID/stats.dat":
     do_stats results/"$SYSTEMID" | tee results/"$SYSTEMID"/stats.dat
 fi
 
+exit 0

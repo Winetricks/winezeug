@@ -1,0 +1,6 @@
+This is the upstream for the Wine icon thumbnailer script originally available in Ubuntu as gnome-exe-thumbnailer.
+
+It's just a bash script so it could be ported easily to other distros and desktop environments (provided they have scriptable thumbnailers).  On Gnome it must be enabled via installation of gconf schemas.
+
+
+It requires the icoutils package (which should contain wrestool as well).
