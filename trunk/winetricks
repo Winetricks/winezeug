@@ -1906,7 +1906,8 @@ load_gecko() {
         return
     fi
 
-    WINEDIR="`dirname $WINE`"
+    THEWINE=`which $WINE`
+    WINEDIR="`dirname $THEWINE`"
     GECKOCAB="wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab"
 
     for candidate in "$WINEDIR/../share/wine/gecko/$GECKOCAB" "$WINEDIR/../gecko/$GECKOCAB"
