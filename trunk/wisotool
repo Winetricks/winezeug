@@ -4791,6 +4791,10 @@ load_rom()
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
@@ -4799,35 +4803,63 @@ load_rom()
         winwait, Runes of Magic, This will install
         ControlClick, TNewButton1
         winwait, Runes of Magic, License
+        sleep 1000
         ControlClick, TNewRadioButton1
-        ControlClick, TNewButton2
+        ;ControlClick, TNewButton2
+        send {Enter}
         winwait, Runes of Magic, Destination
-        ControlClick, TNewButton3
+        ;ControlClick, TNewButton3
+        send {Enter}
         winwait, Runes of Magic, shortcuts
-        ControlClick, TNewButton4
+        ;ControlClick, TNewButton4
+        send {Enter}
         winwait, Runes of Magic, Additional Tasks
-        ControlClick, TNewButton4
+        ;ControlClick, TNewButton4
+        send {Enter}
         winwait, Runes of Magic, Ready
-        ControlClick, TNewButton4
+        ;ControlClick, TNewButton4
+        send {Enter}
         winwait, Runes of Magic, finished
-        ControlClick, TNewCheckListBox1
-        ControlClick, TNewButton4
-	winwait, Territory
-	send {Esc}
-	; Don't let it autoupdate
+        sleep 1000
+        ;ControlClick, TNewCheckListBox1
+        send {Space}                        ; don't start
+        ;ControlClick, TNewButton4
+        send {Enter}                        ; finish
+	;winwait, Territory        # not needed anymore?
+	;send {Esc}
+	; Don't let it autoupdate (not needed anymore?)
 	winkill
     "
     # FIXME: use right wineserver and/or find nicer way to finish
     wineserver -k
 
     cd "$WISOTOOL_CACHE"/$PACKAGE
+    # FIXME: I've seen an older version of this loop apply all the patches
+    # at the same time, all paused with an Error dialog box, so there may 
+    # be some error condition this doesn't handle right yet.
     for patch in patch_*
     do
         ahk_do "
             run $patch
             SetTitleMatchMode, 2
-            winwait, RomUpdate
-            winwaitclose, RomUpdate
+            loop
+            {
+                ifwinexist, Error
+                    winwaitclose
+                # Older updaters use title "RomUpdate"
+                ifwinexist, RomUpdate
+                {
+                    winwaitclose
+                    break
+                }
+                # Newer updaters use title "Runes of Magic U" (no fooling)
+                ifwinexist, Runes of Magic U
+                {
+                    winwaitclose
+                    break
+                }
+                sleep 3000
+            }
         "
     done
 
