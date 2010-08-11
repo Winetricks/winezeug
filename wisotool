@@ -5110,6 +5110,34 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add segabass "Sega Bass Fishing 2 (SEGA/Activision, 2001) [requires disc]"
+
+load_segabass() {
+    load_autohotkey
+    # Can't make a .iso of this disc, so assume the disc is in drive d:
+    ahk_do "
+        SetTitleMatchMode, 2
+        run d:setup.exe
+	winwait, SEGA Bass Fishing, License
+	send a
+	sleep 1000
+        send {Enter}
+	winwait, SEGA Bass Fishing, Destination
+        send {Enter}
+	winwait, SEGA Bass Fishing, Ready
+        send {Enter}
+	winwait, SEGA Bass Fishing, Complete
+        send {Enter}
+	winwaitclose
+    "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\SEGA\\Sega Bass Fishing"
+BassFishing.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
 
 load_sims3() {
