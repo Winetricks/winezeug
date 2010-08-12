@@ -784,6 +784,7 @@ load_iso() {
 #----------------------------------------------------------------
 
 ahk_do() {
+   # FIXME: avoid embedded carriage returns, some editors strip them
    echo "$@" | sed "s/\$//" > "$WISOTOOL_TMP"/tmp.ahk
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
 }
@@ -4394,7 +4395,7 @@ verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010)" \
 
 load_pscs5() {
     load_autohotkey
-    try cd "$WISOTOOL_CACHE/$PACKAGE/"
+    try cd "$WISOTOOL_CACHE/$PACKAGE"
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.7z" ]
     then
         die "You must download Photoshop CS5 trial files and put them in $WISOTOOL_CACHE/$PACKAGE"
@@ -4458,7 +4459,7 @@ load_pscs5() {
     "
     try cd ..
     # Remove installer temp files:
-    try cd "$WISOTOOL_CACHE/$PACKAGE/"
+    try cd "$WISOTOOL_CACHE/$PACKAGE"
     try rm -rf "Photoshop CS5 Read Me.pdf" "Adobe CS5"
     try cd "$olddir"
 }
@@ -4718,7 +4719,7 @@ load_procycling08_demo()
         warn "Please download the game to $WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
     fi
 
-    cd $WISOTOOL_CACHE/$PACKAGE
+    cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, ProCyclingManager08_Demo.exe
@@ -4757,7 +4758,7 @@ load_proevolution2010_demo()
         download $PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
     fi
 
-    cd $WISOTOOL_CACHE/$PACKAGE
+    cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, PES2010_PC_DEMO_Setup.exe
@@ -4805,7 +4806,7 @@ load_rom()
         download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
 
     fi
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/cached/romsetup.exe"
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/cached/ROMSetup.exe"
     then
         # Pre-extract files, if unrar is available
         UNRAR="`which unrar 2>/dev/null`"
@@ -4833,8 +4834,8 @@ load_rom()
     ahk_do "
         SetTitleMatchMode, 2
         ; Pre-extracting makes it a lot easier to debug this script!
-        ifexist, cached\\romsetup.exe
-            run, cached\\romsetup.exe
+        ifexist, cached\\ROMSetup.exe
+            run, cached\\ROMSetup.exe
         else
             run, Runes_of_Magic_3.0.1.2153.part1.exe
         winwait, Runes of Magic, This will install
@@ -4875,33 +4876,40 @@ load_rom()
         ; Don't let it autoupdate (not needed anymore?)
         winkill
     "
-    # Need registry entries, so let installer finish normally
+    # Let installer finish normally
     wineserver -w
-
-    # Try to make it easier for patches to find the game...
-    cd "$programfilesdir_x86_unix/Runes of Magic"
+    # Create settings file so patches can find game.  Normally this is created on first run of game.
+    # Use funny tr and | to avoid embedded carriage returns, some editors strip them
+    mkdir -p "$DRIVE_C/users/$USERNAME/Runes of Magic"
+    tr '|' '\015' > "$DRIVE_C/users/$USERNAME/Runes of Magic/GameSettings.ini" <<_EOF_
+[Install]|
+GamePath=$programfilesdir_x86_win\\Runes of Magic\\|
+_EOF_
 
     for patch in $patches
     do
+        echo Running $patch
         ahk_do "
-            run $WISOTOOL_CACHE_WIN\\$PACKAGE\\$patch
+            run $patch,,, patchpid
             SetTitleMatchMode, 2
             loop
             {
-                ; This shouldn't be needed now that we wait for wineserver
-                ; to exit cleanly
-                ifwinexist, Find game path
-                {
-                    send {Enter}
-                    winwait, Browse for Folder
-                    ; these coordinates are brittle and only work on empty wine
-                    MouseMove, 76,145   ; on + next to Program Files
-                    Click
-                    MouseMove, 115,207  ; select Runes of Magic
-                    Click
-                    send {Enter}
-                    winwaitclose
-                }
+                ; patch might exit before we notice it
+                process, exist, %patchpid%
+                if ErrorLevel = 0
+                    break
+                ;ifwinexist, Find game path
+                ;{
+                ;    send {Enter}
+                ;    winwait, Browse for Folder
+                ;    ; these coordinates are brittle and only work on empty wine
+                ;    MouseMove, 76,145   ; on + next to Program Files
+                ;    Click
+                ;    MouseMove, 115,207  ; select Runes of Magic
+                ;    Click
+                ;    send {Enter}
+                ;    winwaitclose
+                ;}
                 ifwinexist, Error
                     winwaitclose
                 ; Older updaters use title "RomUpdate"
@@ -4916,7 +4924,7 @@ load_rom()
                     winwaitclose
                     break
                 }
-                sleep 3000
+                sleep 1000
             }
         "
     done
@@ -4932,7 +4940,7 @@ load_rom()
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Runes of Magic"
+cd "$programfilesdir_x86_win\\Runes of Magic"
 "Runes of Magic.exe"
 __EOF__
 
