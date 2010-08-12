@@ -4825,9 +4825,18 @@ load_rom()
         ControlClick, TNewButton1
         winwait, Runes of Magic, License
         ControlClick, TNewRadioButton1
-        ;ControlClick, TNewButton2
-        sleep 1000
-        send {Enter}
+        loop
+        {
+            ; dangit, not sure which of these methods of dismissing this
+            ; dialog work on which platforms
+            ifwinexist, Runes of Magic, License
+                ControlClick, TNewButton2
+            ifwinexist, Runes of Magic, License
+                send {Enter}
+            ifwinexist, Runes of Magic, License
+                send n
+            sleep 1000
+        }
         winwait, Runes of Magic, Destination
         ;ControlClick, TNewButton3
         send {Enter}
@@ -4851,10 +4860,10 @@ load_rom()
         ; Don't let it autoupdate (not needed anymore?)
         winkill
     "
-    # FIXME: use right wineserver and/or find nicer way to finish
-    wineserver -k
+    # Need registry entries, so let installer finish normally
+    wineserver -w
 
-    # Try to make it easier for patches to find the game... doesn't help, still get "Find game path" dialog
+    # Try to make it easier for patches to find the game...
     cd "$programfilesdir_x86_unix/Runes of Magic"
 
     for patch in $patches
@@ -4864,13 +4873,16 @@ load_rom()
             SetTitleMatchMode, 2
             loop
             {
+                ; This shouldn't be needed now that we wait for wineserver
+                ; to exit cleanly
                 ifwinexist, Find game path
                 {
                     send {Enter}
                     winwait, Browse for Folder
+                    ; these coordinates are brittle and only work on empty wine
                     MouseMove, 76,145   ; on + next to Program Files
                     Click
-                    MouseMove, 115,207  ; on + next to Runes of Magic
+                    MouseMove, 115,207  ; select Runes of Magic
                     Click
                     send {Enter}
                     winwaitclose
