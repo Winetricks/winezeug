@@ -4803,6 +4803,18 @@ load_rom()
     then
         download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
         download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
+
+    fi
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/cached/romsetup.exe"
+    then
+        # Pre-extract files, if unrar is available
+        UNRAR="`which unrar 2>/dev/null`"
+        if test -x "$UNRAR"
+        then
+            mkdir -p "$WISOTOOL_CACHE/$PACKAGE/cached"
+            cd "$WISOTOOL_CACHE/$PACKAGE/cached"
+            try_unrar e ../Runes_of_Magic_3.0.1.2153.part1.exe
+        fi
     fi
     # manual updates from http://forum.runesofmagic.com/showthread.php?t=79267
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
@@ -4820,22 +4832,25 @@ load_rom()
     patches=`ls patch*.exe`
     ahk_do "
         SetTitleMatchMode, 2
-        run, Runes_of_Magic_3.0.1.2153.part1.exe
+        ; Pre-extracting makes it a lot easier to debug this script!
+        ifexist, cached\\romsetup.exe
+            run, cached\\romsetup.exe
+        else
+            run, Runes_of_Magic_3.0.1.2153.part1.exe
         winwait, Runes of Magic, This will install
+        sleep 2000
         ControlClick, TNewButton1
         winwait, Runes of Magic, License
-        ControlClick, TNewRadioButton1
+        sleep 1000
+        ControlClick, TNewRadioButton1      ; Accept
         loop
         {
-            ; dangit, not sure which of these methods of dismissing this
-            ; dialog work on which platforms
+            ; FIXME find some simpler way of making this reliable on vista
             ifwinexist, Runes of Magic, License
-                ControlClick, TNewButton2
-            ifwinexist, Runes of Magic, License
-                send {Enter}
-            ifwinexist, Runes of Magic, License
-                send n
+                ControlClick, TNewButton2   ; Next
             sleep 1000
+            ifwinexist, Runes of Magic, Destination
+                break
         }
         winwait, Runes of Magic, Destination
         ;ControlClick, TNewButton3
