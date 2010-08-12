@@ -4880,8 +4880,8 @@ load_rom()
     wineserver -w
     # Create settings file so patches can find game.  Normally this is created on first run of game.
     # Use funny tr and | to avoid embedded carriage returns, some editors strip them
-    mkdir -p "$DRIVE_C/users/$USERNAME/Runes of Magic"
-    tr '|' '\015' > "$DRIVE_C/users/$USERNAME/Runes of Magic/GameSettings.ini" <<_EOF_
+    mkdir -p "$DRIVE_C/users/$USERNAME/My Documents/Runes of Magic"
+    tr '|' '\015' > "$DRIVE_C/users/$USERNAME/My Documents/Runes of Magic/GameSettings.ini" <<_EOF_
 [Install]|
 GamePath=$programfilesdir_x86_win\\Runes of Magic\\|
 _EOF_
