@@ -4105,12 +4105,13 @@ load_nfsshift_demo()
     # FIXME: use ln -s on Linux (in case user has run 'winetricks sandbox'),
     # but run the package from the cache on Windows
     cp "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
+    cd "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
         SetTitleMatchMode, slow
-        run, $WISOTOOL_TMP_WIN\\NFSSHIFTPCDEMO.exe
+        run, NFSSHIFTPCDEMO.exe
         winwait, WinRAR
-        send $WISOTOOL_TMP_WIN\\$PACKAGE
+        send $PACKAGE
         ControlClick, Button2
         winwait, SHIFT, View the readme
         controlclick, Button1
