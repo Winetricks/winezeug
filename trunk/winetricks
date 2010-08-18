@@ -915,14 +915,14 @@ _EOF_
 append_path() {
     # Prepend $1 to the windows path in the registry.  Caller must use single quotes and double backslashes in argument.
     NEW_PATH="$1"
-    WIN_PATH="`WINEDEBUG= $WINE cmd.exe /c echo "%PATH%" | sed 's,\\\\,\\\\\\\\,g'`"
+    WIN_PATH="`WINEDEBUG= $WINE cmd.exe /c echo "%PATH%" | tr -d '\r' | sed 's,\\\\,\\\\\\\\,g'`"
 
-    cat > "$WINETRICKS_TMP"/path.reg <<_EOF_
+    sed 's/$/\r/' > "$WINETRICKS_TMP"/path.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Environment]
+"PATH"="$NEW_PATH;$WIN_PATH"
 _EOF_
-    echo '"PATH"="'"$NEW_PATH;$WIN_PATH\"" | sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/path.reg
 
     try_regedit "$WINETRICKS_TMP_WIN"\\path.reg
     rm -f "$WINETRICKS_TMP"/path.reg
