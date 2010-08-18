@@ -230,6 +230,7 @@ usage() {
     echo " jet40         MS Jet 4.0 Service Pack 8"
     echo " kde           KDE for Windows installer"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
+    echo " lucida        MS Lucida Console font"
     echo " mdac25        MS MDAC 2.5: Microsoft ODBC drivers, etc."
     echo " mdac27        MS MDAC 2.7"
     echo " mdac28        MS MDAC 2.8"
@@ -306,7 +307,7 @@ usage() {
     echo "Pseudopackages:"
     echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
     echo " alldlls=default  Remove all DLL overrides"
-    echo " allfonts      All listed fonts (corefonts, droid, eufonts, tahoma, liberation)"
+    echo " allfonts      All listed fonts (corefonts, droid, eufonts, liberation, lucida, tahoma, wenquanyi)"
     echo " allcodecs     All listed codecs (xvid, ffdshow)"
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
     echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
@@ -2394,6 +2395,14 @@ load_liberation() {
 
 #----------------------------------------------------------------
 
+load_lucida() {
+    download . ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/NT40TSE/hotfixes-postSP3/Euro-fix/eurofixi.exe 64c47ad92265f6f10b0fd909a703d4fd1b05b2d5
+    try_cabextract -d "$winefontsdir" -L -F 'lucon.ttf' "$WINETRICKS_CACHE"/eurofixi.exe
+    register_font lucon.ttf "Lucida Console" 
+}
+
+#----------------------------------------------------------------
+
 set_native_mdac() {
     # Set those overrides globally so user programs get MDAC's odbc
     # instead of wine's unixodbc
@@ -4142,6 +4151,7 @@ do
     jet40) load_jet40;;
     kde) load_kde;;
     liberation) load_liberation;;
+    lucida) load_lucida;;
     mdac25) load_mdac25;;
     mdac27) load_mdac27;;
     mdac28) load_mdac28;;
@@ -4221,7 +4231,7 @@ do
     xvid) load_xvid;;
 
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
-    allfonts) load_corefonts; load_droid; load_eufonts; load_liberation; load_tahoma; load_wenquanyi;;
+    allfonts) load_corefonts; load_droid; load_eufonts; load_liberation; load_lucida; load_tahoma; load_wenquanyi;;
     alldlls=builtin) override_all_dlls;;
     alldlls=default) override_no_dlls;;
     ddr=gdi) set_ddr gdi;;
