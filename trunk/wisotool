@@ -5001,10 +5001,11 @@ load_rom()
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe c5f6115aeb2e4627dd0428c0024f177dca6f067c
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe bf3183406bcb848826301bba33775a6dfb611859
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe d576596086395ea83cb8c1422877c81ed45a90c9
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe 3d8279c6b426e846cc5becd6dd03efd651f39db6
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2231.en_3.0.3.2241.en.exe e46dbb3d2699ddc34a7885a16224c79f80657749
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     patches=`ls patch*.exe`
