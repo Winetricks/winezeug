@@ -6054,6 +6054,8 @@ StreetFighterIV_Benchmark.exe
 __EOF__
 }
 
+#----------------------------------------------------------------
+
 verblist_add smbx  "Super Mario Bros. X (Indie, 2009) [download]"  smbx122.exe
 
 load_smbx() {
@@ -6104,6 +6106,57 @@ load_smbx() {
 cd C:\\SMBX
 smbx.exe
 __EOF__
+}
+
+#----------------------------------------------------------------
+verblist_add tlrdemo "The Last Remnant Demo (Square Enix, 2009)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+
+load_tlrdemo() {
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
+# http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
+
+    load_autohotkey
+    if ! test -f "$WISOTOOL_CACHE"/$PACKAGE/TheLastRemnant_PC_Demo.zip
+    then
+        download $PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
+    fi
+    
+    cd "$WISOTOOL_TMP"
+    unzip "$WISOTOOL_CACHE/$PACKAGE/TheLastRemnant_PC_Demo.zip"
+    cd "The Last Remnant Trial Version"
+    
+    ahk_do "
+    settitlematchmode, 2
+    run, setup.exe
+    winwait, The Last Remnant Trial Version, Please close all unnecessary running
+    sleep 1000
+    controlclick, Button1, The Last Remnant Trial Version, Please close all unnecessary running
+    winwait, The Last Remnant Trial Version, Welcome to the InstallShield Wizard
+    sleep 1000
+    controlclick, Button1, The Last Remnant Trial Version, Welcome to the InstallShield Wizard
+    winwait, The Last Remnant Trial Version, License Agreement
+    sleep 1000
+    controlclick, Button5, The Last Remnant Trial Version, License Agreement
+    sleep 1000
+    controlclick, Button2, The Last Remnant Trial Version, License Agreement
+    winwait, The Last Remnant Trial Version, Choose Destination Location
+    sleep 1000
+    controlclick, Button1, The Last Remnant Trial Version, Choose Destination Location
+    winwait, The Last Remnant Trial Version, The wizard is ready to begin installation.
+    sleep 1000
+    controlclick, Button1, The Last Remnant Trial Version, The wizard is ready to begin installation.
+    winwait, The Last Remnant Trial Version, InstallShield Wizard Complete
+    sleep 1000
+    controlclick, Button4, The Last Remnant Trial Version, InstallShield Wizard Complete
+    "
+
+    # FIXME: When running, the window has the wrong size. Wine or app bug?
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\SquareEnix\\The Last Remnant Trial Version\\Binaries"
+TLRDemo.exe
+__EOF__
+
+    warn "The mouse seems broken, see bug 6971 for possible workarounds (mwo={force,disabled,enabled} didn't work for me)."
 }
 
 #----------------------------------------------------------------
