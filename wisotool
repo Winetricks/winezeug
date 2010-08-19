@@ -3468,6 +3468,122 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add lol "League of Legends (Riot Games, 2009)" LeagueofLegends.exe
+
+load_lol()
+{
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=19141
+# http://www.leagueoflegends.com/
+
+    load_autohotkey
+
+    # Outer installer, fetches the latest client
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LeagueofLegends.exe"
+    then
+        download ${PACKAGE} http://l3cdn.riotgames.com/Installer/ProdSource.06_29_2010/LeagueofLegends.exe 89cb958c6430c7840c377b61cae7939a0d276249
+    fi
+    
+    # Holy crap this is broken under Wine! Prepare for a workaround orgy
+    if workaround_wine_bug 21870
+    then
+        sh "$WINETRICKS" -q secur32
+    fi
+
+    if workaround_wine_bug 22152
+    then
+        export GC_DONT_GC=1
+    fi
+    
+    if workaround_wine_bug 24017
+    then
+        warn "You'll need the patch from bug 24017 to implement reg query"
+    fi
+
+    if workaround_wine_bug 24015
+    then
+        sh "$WINETRICKS" -q ie6
+    fi
+
+    if workaround_wine_bug 24020
+    then
+        sh "$WINETRICKS" -q vcrun2008
+    fi
+
+    if workaround_wine_bug 24025
+    then
+        warn "The installer's background will be white. Known wine bug, no workaround yet. See http://bugs.winehq.org/show_bug.cgi?id=24025"
+    fi
+
+    if ! test -d "$WISOTOOL_CACHE/$PACKAGE/LeagueofLegends"
+    then
+        cd "${WISOTOOL_CACHE}/${PACKAGE}"
+        ahk_do "
+            settitlematchmode, 2
+            run, LeagueofLegends.exe
+            winwait, League of Legends Downloader, Where would you like to save League of Legends?
+            sleep 1000
+            ; It doesn't always register this click...
+            while true
+            {
+                ifwinexist, League of Legends Downloader, Where would you like to save League of Legends?
+                {
+                    sleep 1000
+                    controlclick, Static21, League of Legends Downloader, Where would you like to save League of Legends?
+                }
+                else
+                    break
+            }
+            ; After it finishing download, move the files from $DRIVE_C/users/$LOGNAME/Desktop to $WISOTOOL_CACHE/$PACKAGE
+            winwaitclose, League of Legends Downloader
+            process, close, setup.exe
+            process, close, PMB.exe
+        "
+        # Cache the game files. Assumes that the Desktop directory is under C:\users\$USERNAME or the equivalent on Windows
+        # FIXME: Make this more generic(move out of this function, so others can use it) / test on XP and Vista+
+        WINEDESKTOP="`$WINE cmd /c echo %USERPROFILE% | tr -d '\r' | sed 's,\\\\,\\\\\\\\,g'`"
+        DESKTOPDIR="`$WINE $XXXPATH -u $WINEDESKTOP`/Desktop"
+        mv "$DESKTOPDIR/LeagueofLegends" "$WISOTOOL_CACHE/$PACKAGE/"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE/LeagueofLegends"
+    ahk_do "
+        settitlematchmode, 2
+        run, Setup.exe
+        winwait, League of Legends, Welcome to the InstallShield Wizard
+        sleep 1000
+        controlclick, Button1, League of Legends, Welcome to the InstallShield Wizard
+        winwait, League of Legends, I &accept the terms of the license agreement
+        sleep 1000
+        controlclick, Button3, League of Legends, I &accept the terms of the license agreement
+        sleep 1000
+        controlclick, Button1, League of Legends, I &accept the terms of the license agreement
+        winwait, League of Legends, Please select a setup type
+        sleep 1000
+        controlclick, Button4, League of Legends, Please select a setup type
+        winwait, League of Legends, Click Install to begin
+        sleep 1000
+        controlclick, Button1, League of Legends, Click Install to begin
+        winwait, League of Legends, Click Finish to exit the wizard
+        sleep 1000
+        controlclick, Button1, League of Legends, Click Finish to exit the wizard
+        sleep 1000
+        controlclick, Button4, League of Legends, Click Finish to exit the wizard
+    "
+
+cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+cd "${DRIVE_C}\\Riot Games\\League of Legends"
+lol.launcher.exe
+__EOF__
+
+    if workaround_wine_bug 20296
+    then
+        warn "You'll need a patch from http://bugs.winehq.org/show_bug.cgi?id=20296 to avoid a crash when starting LoL"
+    fi
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add lotsn   "Launch of the Screaming Narwhal (Telltale Games / Lucasarts, 2009)" LaunchOfTheScreamingNarwhal_Setup.exe
 
 load_lotsn()
