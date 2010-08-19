@@ -3482,7 +3482,7 @@ load_lol()
     then
         download ${PACKAGE} http://l3cdn.riotgames.com/Installer/ProdSource.06_29_2010/LeagueofLegends.exe 89cb958c6430c7840c377b61cae7939a0d276249
     fi
-    
+
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
     if workaround_wine_bug 21870
     then
@@ -3492,11 +3492,6 @@ load_lol()
     if workaround_wine_bug 22152
     then
         export GC_DONT_GC=1
-    fi
-    
-    if workaround_wine_bug 24017
-    then
-        warn "You'll need the patch from bug 24017 to implement reg query"
     fi
 
     if workaround_wine_bug 24015
