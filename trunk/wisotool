@@ -3516,6 +3516,71 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add lp2bench "Lost Planet 2 Benchmark (Telltale Games / Lucasarts, 2009)" LaunchOfTheScreamingNarwhal_Setup.exe
+
+load_lp2bench()
+{
+    # http://news.bigdownload.com/2010/08/16/lost-planet-2-pc-due-out-on-october-15-benchmark-test-released/
+
+    load_autohotkey
+
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.zip" 
+    then
+        download ${PACKAGE} http://gamedaily.newaol.com/pub/LostPlanet2_Benchmark.zip 2c9862adc81974a61a450a1865cd60decd82587c
+    fi
+
+    cd "${WISOTOOL_CACHE}/${PACKAGE}/"
+
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.exe"
+    then
+        try unzip "$WISOTOOL_CACHE/$PACKAGE"/LostPlanet2_Benchmark.zip
+    fi
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run LostPlanet2_Benchmark.exe
+        winwait, LOST PLANET 2 Benchmark
+        sleep 1000
+        controlclick, Button1, LOST PLANET 2 Benchmark
+        winwait, LOST PLANET 2 Benchmark, Capcom and NVIDIA have worked
+        sleep 1000
+        controlclick, Button1, LOST PLANET 2 Benchmark, Capcom and NVIDIA have worked
+        winwait, LOST PLANET 2 Benchmark, license agreement
+        sleep 1000
+        controlclick, Button3, LOST PLANET 2 Benchmark, license agreement
+        sleep 1000
+        controlclick, Button5, LOST PLANET 2 Benchmark, license agreement
+        winwait, LOST PLANET 2 Benchmark, Destination Folder
+        sleep 1000
+        controlclick, Button1, LOST PLANET 2 Benchmark, Destination Folder
+        winwait, LOST PLANET 2 Benchmark, Ready to Install
+        sleep 1000
+        controlclick, Button1, LOST PLANET 2 Benchmark, Ready to Install
+        winwait, LOST PLANET 2 Benchmark, InstallShield Wizard Completed
+        sleep 1000
+        controlclick, Button3, LOST PLANET 2 Benchmark, InstallShield Wizard Completed
+        sleep 1000
+        controlclick, Button1, LOST PLANET 2 Benchmark, InstallShield Wizard Completed
+    "
+    if workaround_wine_bug 21939
+    then
+        sh "$WINETRICKS" -q wmp9
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\CAPCOM\\LOST PLANET 2 Benchmark Version"
+.\LP2DX9.exe
+__EOF__
+
+    if workaround_wine_bug 24043
+    then
+        warn "Benchmark crashes on launch, see http://bugs.winehq.org/show_bug.cgi?id=24043"
+    fi
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
 
 load_lswcs() {
