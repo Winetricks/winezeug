@@ -3516,7 +3516,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add lp2bench "Lost Planet 2 Benchmark (Telltale Games / Lucasarts, 2009)" LaunchOfTheScreamingNarwhal_Setup.exe
+verblist_add lp2bench "Lost Planet 2 Benchmark (Capcom, 2010)" LostPlanet2_Benchmark.zip
 
 load_lp2bench()
 {
