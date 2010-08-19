@@ -1141,7 +1141,7 @@ verblist_add algodoo_demo  "Algodoo Demo (Algoryx, 2009) [download]" Algodoo_1_7
 
 load_algodoo_demo() {
     load_autohotkey
-    download $PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe
+    download $PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
@@ -6109,9 +6109,10 @@ __EOF__
 }
 
 #----------------------------------------------------------------
-verblist_add tlrdemo "The Last Remnant Demo (Square Enix, 2009)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
-load_tlrdemo() {
+verblist_add tlr_demo "The Last Remnant Demo (Square Enix, 2009) [download]" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+
+load_tlr_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
 # http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
 
@@ -6126,28 +6127,28 @@ load_tlrdemo() {
     cd "The Last Remnant Trial Version"
     
     ahk_do "
-    settitlematchmode, 2
-    run, setup.exe
-    winwait, The Last Remnant Trial Version, Please close all unnecessary running
-    sleep 1000
-    controlclick, Button1, The Last Remnant Trial Version, Please close all unnecessary running
-    winwait, The Last Remnant Trial Version, Welcome to the InstallShield Wizard
-    sleep 1000
-    controlclick, Button1, The Last Remnant Trial Version, Welcome to the InstallShield Wizard
-    winwait, The Last Remnant Trial Version, License Agreement
-    sleep 1000
-    controlclick, Button5, The Last Remnant Trial Version, License Agreement
-    sleep 1000
-    controlclick, Button2, The Last Remnant Trial Version, License Agreement
-    winwait, The Last Remnant Trial Version, Choose Destination Location
-    sleep 1000
-    controlclick, Button1, The Last Remnant Trial Version, Choose Destination Location
-    winwait, The Last Remnant Trial Version, The wizard is ready to begin installation.
-    sleep 1000
-    controlclick, Button1, The Last Remnant Trial Version, The wizard is ready to begin installation.
-    winwait, The Last Remnant Trial Version, InstallShield Wizard Complete
-    sleep 1000
-    controlclick, Button4, The Last Remnant Trial Version, InstallShield Wizard Complete
+        settitlematchmode, 2
+        run, setup.exe
+        winwait, The Last Remnant Trial Version, Please close all unnecessary running
+        sleep 1000
+        controlclick, Button1, The Last Remnant Trial Version, Please close all unnecessary running
+        winwait, The Last Remnant Trial Version, Welcome to the InstallShield Wizard
+        sleep 1000
+        controlclick, Button1, The Last Remnant Trial Version, Welcome to the InstallShield Wizard
+        winwait, The Last Remnant Trial Version, License Agreement
+        sleep 1000
+        controlclick, Button5, The Last Remnant Trial Version, License Agreement
+        sleep 1000
+        controlclick, Button2, The Last Remnant Trial Version, License Agreement
+        winwait, The Last Remnant Trial Version, Choose Destination Location
+        sleep 1000
+        controlclick, Button1, The Last Remnant Trial Version, Choose Destination Location
+        winwait, The Last Remnant Trial Version, The wizard is ready to begin installation.
+        sleep 1000
+        controlclick, Button1, The Last Remnant Trial Version, The wizard is ready to begin installation.
+        winwait, The Last Remnant Trial Version, InstallShield Wizard Complete
+        sleep 1000
+        controlclick, Button4, The Last Remnant Trial Version, InstallShield Wizard Complete
     "
 
     # FIXME: When running, the window has the wrong size. Wine or app bug?
@@ -6171,42 +6172,42 @@ load_twfc() {
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
     
     ahk_do "
-    run ${ISO_MOUNT_LETTER}:setup.exe
-    SetTitleMatchMode, 2
-    winwait, Activision, Select the language for the installation
-    sleep 1000
-    controlclick, Button1, Activision, Select the language for the installation
-    winwait, Transformers, Press NEXT to verify your key
-    sleep 1000
-    send $KEY
-    send {Enter}
-    winwait, Keycode Check, The Keycode you entered appears to be valid
-    sleep 1000
-    send {Enter}
-    winwait, Transformers, The InstallShield Wizard will install Transformers
-    sleep 1000
-    controlclick, Button1, Transformers, The InstallShield Wizard will install Transformers
-    winwait, Transformers, License Agreement
-    sleep 1000
-    controlclick, Button5, Transformers, License Agreement
-    sleep 1000
-    controlclick, Button2, Transformers, License Agreement
-    winwait, Transformers, Minimum System Requirements
-    sleep 1000
-    controlclick, Button1, Transformers, Minimum System Requirements
-    winwait, Transformers, Select the setup type to install
-    sleep 1000
-    controlclick, Button4, Transformers, Select the setup type to install
-    
-    ; Installer exits silently. Prevent an early umount:
-    sleep 5000
-        Loop
-        {
-            ifwinexist, Transformers
-                sleep 15000
-            else
-                break
-        }
+        run ${ISO_MOUNT_LETTER}:setup.exe
+        SetTitleMatchMode, 2
+        winwait, Activision, Select the language for the installation
+        sleep 1000
+        controlclick, Button1, Activision, Select the language for the installation
+        winwait, Transformers, Press NEXT to verify your key
+        sleep 1000
+        send $KEY
+        send {Enter}
+        winwait, Keycode Check, The Keycode you entered appears to be valid
+        sleep 1000
+        send {Enter}
+        winwait, Transformers, The InstallShield Wizard will install Transformers
+        sleep 1000
+        controlclick, Button1, Transformers, The InstallShield Wizard will install Transformers
+        winwait, Transformers, License Agreement
+        sleep 1000
+        controlclick, Button5, Transformers, License Agreement
+        sleep 1000
+        controlclick, Button2, Transformers, License Agreement
+        winwait, Transformers, Minimum System Requirements
+        sleep 1000
+        controlclick, Button1, Transformers, Minimum System Requirements
+        winwait, Transformers, Select the setup type to install
+        sleep 1000
+        controlclick, Button4, Transformers, Select the setup type to install
+        
+        ; Installer exits silently. Prevent an early umount:
+        sleep 5000
+            Loop
+            {
+                ifwinexist, Transformers
+                    sleep 15000
+                else
+                    break
+            }
     "
     iso_umount
 
