@@ -1045,7 +1045,7 @@ load_colorprofile() {
 load_controlpad() {
     # http://msdn.microsoft.com/en-us/library/ms968493.aspx
     # Fixes error "Failed to load UniText..."
-    load_wsh56
+    load_wsh57
     download . http://download.microsoft.com/download/activexcontrolpad/install/4.0.0.950/win98mexp/en-us/setuppad.exe 8921e0f52507ca6a373c94d222777c750fb48af7
     try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/setuppad.exe
     echo "If setup says 'Unable to start DDE ...', press Ignore"
@@ -3839,7 +3839,7 @@ load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
 
-    load_wsh56
+    load_wsh57
 
     set_winver win2k
 
@@ -3867,7 +3867,7 @@ load_wmp9() {
 load_wmp10() {
     # See http://appdb.winehq.org/appview.php?iVersionId=3212
 
-    load_wsh56
+    load_wsh57
 
     # See also http://www.microsoft.com/windows/windowsmedia/player/10
     download . http://download.microsoft.com/download/1/2/A/12A31F29-2FA9-4F50-B95D-E45EF7013F87/MP10Setup.exe 69862273a5d9d97b4a2e5a3bd93898d259e86657
@@ -3906,9 +3906,9 @@ load_wenquanyi() {
 
 load_wsh57() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != wsh56 && test -f "$WINDIR"/system32/wscript.exe
+    if test $PACKAGE != wsh56 && test $PACKAGE != wsh57 && test -f "$WINDIR"/system32/scrrun.dll
     then
-        echo "prerequisite wsh56 already installed, skipping"
+        echo "prerequisite wsh57 already installed, skipping"
         return
     fi
 
@@ -3920,14 +3920,6 @@ load_wsh57() {
     # Wine doesn't provide the other dll's (yet?)
     override_dlls native,builtin jscript.dll
     try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
-}
-
-#----------------------------------------------------------------
-
-load_wsh56() {
-
-    load_wsh57
-
 }
 
 #----------------------------------------------------------------
