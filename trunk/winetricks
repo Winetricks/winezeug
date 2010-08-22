@@ -4145,7 +4145,7 @@ do
     liberation) load_liberation;;
     lucida) load_lucida;;
     mdac25) load_mdac25;;
-    mdac27) load_mdac27;;
+    mdac26|mdac27) load_mdac27;;
     mdac28) load_mdac28;;
     mfc40) load_mfc40;;
     mingw|mingw-min|mingw_min) load_mingw_min;;
