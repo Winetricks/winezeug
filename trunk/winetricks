@@ -312,7 +312,6 @@ usage() {
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
     echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
     echo " dsoundbug9612 Use DirectSound MaxShadowSize=0 workaround for bug #9612"
-    echo " fakeie6       Set registry to claim IE6sp1 is installed"
     echo " forcemono     Force using mono instead of .Net (for debugging)"
     echo " glsl-disable  Disable GLSL use by Wine Direct3D"
     echo " glsl-enable   Enable GLSL use by Wine Direct3D (default)"
@@ -1641,46 +1640,6 @@ load_eufonts() {
     register_font Verdana.ttf "Verdana (TrueType)"
     register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
 
-}
-
-#----------------------------------------------------------------
-
-# Fake IE per workaround in http://bugs.winehq.org/show_bug.cgi?id=3453
-# Just the first registry key works for most apps.
-# The App Paths part is required by a few apps, like Quickbooks Pro;
-# see http://windowsxp.mvps.org/ie/qbooks.htm
-set_fakeie6() {
-
-    cat > "$WINETRICKS_TMP"/fakeie6.reg <<"_EOF_"
-REGEDIT4
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer]
-"Version"="6.0.2900.2180"
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\IEXPLORE.EXE]
-_EOF_
-
-    echo -n '@="' >>"$WINETRICKS_TMP"/fakeie6.reg
-    echo -n "${programfilesdir_win}" | sed "s/\\\\/\\\\\\\\/" >>"$WINETRICKS_TMP"/fakeie6.reg
-    echo '\\\\Internet Explorer\\\\iexplore.exe"' >>"$WINETRICKS_TMP"/fakeie6.reg
-
-    echo -n '"PATH"="' >>"$WINETRICKS_TMP"/fakeie6.reg
-    echo -n "${programfilesdir_win}" | sed "s/\\\\/\\\\\\\\/" >>"$WINETRICKS_TMP"/fakeie6.reg
-    echo '\\\\Internet Explorer"' >>"$WINETRICKS_TMP"/fakeie6.reg
-
-    try_regedit "$WINETRICKS_TMP_WIN"\\fakeie6.reg
-
-    # On old wineprefixes iexplore.exe is not created. Create a fake dll using
-    # shdocvw.dll that should have similar VERSIONINFO.
-    if [ ! -f "$programfilesdir_unix/Internet Explorer/iexplore.exe" ]
-    then
-        echo "You have an old wineprefix without iexplore.exe. Will create a fake now"
-        if [ ! -d "$programfilesdir_unix/Internet Explorer/iexplore.exe" ]
-        then
-            try mkdir "$programfilesdir_unix/Internet Explorer";
-        fi
-        try cp -f "$WINDIR/system32/shdocvw.dll" "$programfilesdir_unix/Internet Explorer/iexplore.exe"
-    fi
 }
 
 #----------------------------------------------------------------
@@ -4229,7 +4188,6 @@ do
     ddr=gdi) set_ddr gdi;;
     ddr=opengl) set_ddr opengl;;
     dsoundbug9612) load_dsoundbug9612;;
-    fakeie6) set_fakeie6;;
     forcemono|force_mono) load_forcemono;;
     heapcheck) set_heapcheck;;
     mmdevapi=builtin) set_mmdevapi builtin ;;
