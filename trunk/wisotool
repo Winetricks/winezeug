@@ -2084,7 +2084,6 @@ __EOF__
 
     # Enter the key
     cd "$DRIVE_C"
-    ls
     ahk_do "
         SetTitleMatchMode, 2
         run, run-$PACKAGE.bat
@@ -3484,6 +3483,11 @@ load_lol()
     fi
 
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
+    if workaround_wine_bug 20296
+    then
+        warn "You'll need a patch from http://bugs.winehq.org/show_bug.cgi?id=20296 to avoid a crash when starting LoL"
+    fi
+
     if workaround_wine_bug 21870
     then
         sh "$WINETRICKS" -q secur32
@@ -3494,13 +3498,15 @@ load_lol()
         export GC_DONT_GC=1
     fi
 
-    if workaround_wine_bug 24015
+    if workaround_wine_bug 24019
     then
-        sh "$WINETRICKS" -q ie6
+        # Avoid crash in downloader
+        warn "Please apply patch from wine bug 24019"
     fi
 
     if workaround_wine_bug 24020
     then
+        # Avoid crash in downloader
         sh "$WINETRICKS" -q vcrun2008
     fi
 
@@ -3536,7 +3542,7 @@ load_lol()
         # Cache the game files. Assumes that the Desktop directory is under C:\users\$USERNAME or the equivalent on Windows
         # FIXME: Make this more generic(move out of this function, so others can use it) / test on XP and Vista+
         WINEDESKTOP="`$WINE cmd /c echo %USERPROFILE% | tr -d '\r' | sed 's,\\\\,\\\\\\\\,g'`"
-        DESKTOPDIR="`$WINE $XXXPATH -u $WINEDESKTOP`/Desktop"
+        DESKTOPDIR="`$XXXPATH -u $WINEDESKTOP`/Desktop"
         mv "$DESKTOPDIR/LeagueofLegends" "$WISOTOOL_CACHE/$PACKAGE/"
     fi
 
@@ -3565,16 +3571,56 @@ load_lol()
         controlclick, Button4, League of Legends, Click Finish to exit the wizard
     "
 
+    if workaround_wine_bug 24015
+    then
+        sh "$WINETRICKS" -q ie6
+    fi
+
 cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
-cd "${DRIVE_C}\\Riot Games\\League of Legends"
+cd "C:\\Riot Games\\League of Legends"
 lol.launcher.exe
 __EOF__
 
-    if workaround_wine_bug 20296
-    then
-        warn "You'll need a patch from http://bugs.winehq.org/show_bug.cgi?id=20296 to avoid a crash when starting LoL"
-    fi
+set -x
+    # Run once to accept EULA and start autoupdater
+    rm -f "$DRIVE_C/Riot Games/League of Legends/patcher_lib.log"
+    cd "$DRIVE_C"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, run-$PACKAGE.bat
+        winwait, League of Legends Launcher,Accept
+        send {Enter}
+    "
+    log="$DRIVE_C/Riot Games/League of Legends/patcher_lib.log"
+    # Wait for autoupdate to start
+    while true
+    do
+       sleep 5
+       tail -n 2 "$log"
+       if test -f "$log" && ! tail -n 2 "$log" | grep "to .PATCHER_STATE_ALLTASKSCOMPLETE"
+       then
+           echo Downloader started
+           break
+       fi
+    done
 
+    # Wait for autoupdate to finish
+    while true
+    do
+       sleep 5
+       tail -n 2 "$log"
+       if tail -n 2 "$log" | grep "to .PATCHER_STATE_ALLTASKSCOMPLETE"
+       then
+           echo Downloader finished
+           break
+       fi
+    done
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        winwait, League of Legends Launcher
+        winclose
+    "
 }
 
 #----------------------------------------------------------------
