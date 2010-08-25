@@ -292,25 +292,41 @@ else
 fi
 }
 
-# FIXME: Should be more generic for gecko version, and maybe should support using 
-# the debug version of gecko? Should possibly cleanup the gecko download? 
+# FIXME: Use debug version?
 # For now, leave it, to save bandwidth. I'm deleting it in my wrapper script afterward...
 
 # FIXME: Should probably sha1sum it to ensure correct download...
-get_gecko() (
+get_gecko_32() (
     mkdir -p ../gecko
-    if [ -f ../gecko/wine_gecko-1.0.0-x86.cab ]
+    if [ -f ../gecko/wine_gecko-1.1.0-x86.cab ]
         then
             break
-    elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ]
+    elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86.cab ]
         then
-            cp /usr/local/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../gecko/
-    elif [ -f /usr/gecko/wine_gecko-1.0.0-x86.cab ]
+            cp /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86.cab ../gecko/
+    elif [ -f /usr/gecko/wine_gecko-1.1.0-x86.cab ]
         then
-            cp /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab ../gecko/
+            cp /usr/share/wine/gecko/wine_gecko-1.1.0-x86.cab ../gecko/
     else
-        GET http://downloads.sourceforge.net/wine/wine_gecko-1.0.0-x86.cab
-        mv wine_gecko-1.0.0-x86.cab ../gecko/
+        GET http://downloads.sourceforge.net/wine/wine_gecko-1.1.0-x86.cab
+        mv wine_gecko-1.1.0-x86.cab ../gecko/
+    fi
+)
+
+get_gecko_64() (
+    mkdir -p ../gecko
+    if [ -f ../gecko/wine_gecko-1.1.0-x86_64.cab ]
+        then
+            break
+    elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86_64.cab ]
+        then
+            cp /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86_64.cab ../gecko/
+    elif [ -f /usr/gecko/wine_gecko-1.1.0-x86_64.cab ]
+        then
+            cp /usr/share/wine/gecko/wine_gecko-1.1.0-x86_64.cab ../gecko/
+    else
+        GET http://downloads.sourceforge.net/wine/wine_gecko-1.1.0-x86_64.cab
+        mv wine_gecko-1.1.0-x86_64.cab ../gecko/
     fi
 )
 
@@ -376,18 +392,6 @@ runtests
 build_regular() {
 BUILDNAME=regular
 CONFIGUREFLAGS=${CONFIGUREFLAGS}""
-build || build_failed
-}
-
-build_nowin16() {
-BUILDNAME=nowin16
-CONFIGUREFLAGS=${CONFIGUREFLAGS}" --disable-win16"
-build || build_failed
-}
-
-build_werror() {
-BUILDNAME=werror
-export CFLAGS="-Werror -g"
 build || build_failed
 }
 
@@ -539,18 +543,6 @@ sh $WINETESTDIR/winetricks glsl-disable
 runtests
 }
 
-nowin16_test() {
-WINEDEBUG=""
-TESTNAME="-nowin16"
-TESTBINARY="$WINETEST32"
-export WINEDEBUG
-export TESTNAME
-export TESTBINARY
-build_nowin16
-preptests
-runtests
-}
-
 oss_test() {
 WINEDEBUG=""
 TESTNAME="-oss"
@@ -680,18 +672,6 @@ enable_virtual_desktop
 runtests
 }
 
-werror_test() {
-WINEDEBUG=""
-TESTNAME="-werror"
-TESTBINARY="$WINETEST32"
-export WINEDEBUG
-export TESTNAME
-export TESTBINARY
-build_werror
-preptests
-runtests
-}
-
 win64_test() {
 WINEDEBUG=""
 TESTNAME="-x64"
@@ -793,7 +773,6 @@ echo "--jack - Runs winetest.exe with JACK sound system"
 echo "--message - Runs winetest.exe with WINEDEBUG=+message"
 echo "--multisamping - Runs winetest.exe with multisampling enabled"
 echo "--no-glsl - Runs winetest.exe with glsl disabled"
-echo "--no-win16 - Builds Wine without win16 support and runs winetest.exe"
 echo "--pbuffer - Runs winetest.exe with offscreen rendering mode set to pbuffer"
 echo "--relay - Runs winetest.exe with WINEDEBUG=+relay"
 echo "--rtlm-disabled - Runs winetest.exe with RenderTargetLockMode disabled"
@@ -804,7 +783,6 @@ echo "--rtlm-textex - Runs winetest.exe with RenderTargetLockMode set to textex"
 echo "--seh - Runs winetest.exe with WINEDEBUG=+seh"
 echo "--virtual-desktop - Runs winetest.exe in a virtual desktop"
 echo "--wait-for-commits - Wait for a git push upstream, before building/running winetest.exe"
-echo "--werror - Builds Wine with -Werror and runs winetest.exe"
 echo "--win64 - Builds 64-bit Wine and runs winetest64.exe"
 echo "--with64 - Builds 32-bit Wine alongside 64-bit Wine, then runs winetest.exe"
 echo "--xephyr8 - Runs winetest.exe inside an 8-bit display (emulated with Xephyr)"
@@ -836,7 +814,6 @@ MESSAGE_TEST=0
 MULTISAMPLING_TEST=0
 NAS_TEST=0
 NOGLSL_TEST=0
-NOWIN16_TEST=0
 OSS_TEST=0
 PBUFFER_TEST=0
 RELAY_TEST=0
@@ -849,7 +826,6 @@ SEH_TEST=0
 VD_TEST=0
 WAIT_FOR_COMMITS=0
 WAIT_FOR_RELEASE=0
-WERROR_TEST=0
 WIN64_TEST=0
 WITH64_TEST=0
 XEPHYR8_TEST=0
@@ -880,7 +856,6 @@ do
     --multisampling) export MULTISAMPLING_TEST=1;;
     --nas) export NAS_TEST=1;;
     --no-glsl) export NOGLSL_TEST=1;;
-    --no-win16) export NOWIN16_TEST=1;;
     --oss) export OSS_TEST=1;;
     --pbuffer) export PBUFFER_TEST=1;;
     --relay) export RELAY_TEST=1;;
@@ -893,7 +868,6 @@ do
     --virtual-desktop) export VD_TEST=1;;
     --wait-for-commits) export WAIT_FOR_COMMITS=1;;
     --wait-for-release) export WAIT_FOR_RELEASE=1;;
-    --werror) export WERROR_TEST=1;;
     --win64|--win-64|--wine64|--wine-64) export WIN64_TEST=1;;
     --with64|--with-64) export WITH64_TEST=1;;
     --xephyr8) export XEPHYR8_TEST=1;;
@@ -936,20 +910,12 @@ githead="`git rev-parse --short=12 HEAD`"
 
 # Anything requiring a special build goes here, that way when we recompile for
 # For the regular tests, the tree is left is a 'vanilla' state.
-# Currently, just win16/win64. But could be used for other things, e.g., disabling dlls.
-
-if [ $NOWIN16_TEST = 1 ]
-    then 
-        nowin16_test
-fi
-
-if [ $WERROR_TEST = 1 ]
-    then
-        werror_test
-fi
+# Currently, just win64. But could be used for other things, e.g., disabling dlls.
+# FIXME: add WoW64, wine32 with wine64, running 32bit and 64bit tests
 
 if [ $WIN64_TEST = 1 ]
-    then 
+    then
+        get_gecko_64
         get_tests_64
         win64_test
 fi
@@ -984,11 +950,12 @@ build_regular
 # Exit early, if tests aren't to be run:
 if [ $NOTESTS = 1 ]
     then
-        echo "tests aren't running, exiting"; exit
+        echo "tests aren't running, exiting"
+        exit
 fi
 
 # Make sure we have gecko:
-get_gecko
+get_gecko_32
 get_tests_32
 
 if [ $NOREGULAR_TEST = 1 ]
