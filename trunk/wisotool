@@ -2000,7 +2000,7 @@ load_braid_demo()
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
     then
-        download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe
+        download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
     fi
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
