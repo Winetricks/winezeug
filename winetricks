@@ -4237,6 +4237,7 @@ do
     winver=winxp|winxp) set_winver winxp;;
     winver=vista|vista) set_winver vista;;
     winver=) unset_winver;;
+    *=disabled) arg=`echo $PACKAGE | sed 's/=.*//'`; override_dlls disabled $arg ;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
