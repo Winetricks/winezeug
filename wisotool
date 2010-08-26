@@ -2000,10 +2000,9 @@ load_braid_demo()
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
     then
-        download $PACKAGE "http://www.playgreenhouse.com/php/public/tracking/downloads.php?sku=NNONE-000001-01&platform=win" 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+        download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe
     fi
     cd "$WISOTOOL_CACHE/$PACKAGE"
-    mv downloads.php* braid_windows_r3.exe 2>/dev/null
     ahk_do "
         SetTitleMatchMode, 2
         run, braid_windows_r3.exe
