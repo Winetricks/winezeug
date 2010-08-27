@@ -500,7 +500,7 @@ verify_sha1sum() {
     wantsum=$1
     file=$2
 
-    gotsum=`$SHA1SUM < "$file" | sed 's/ .*//'`
+    gotsum=`$SHA1SUM < "$file" | sed 's/(stdin)= //;s/ .*//'`
     if [ "$gotsum"x != "$wantsum"x ]
     then
        die "sha1sum mismatch!  Rename $file and try again."
