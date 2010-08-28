@@ -4176,7 +4176,7 @@ do
     wmp9) load_wmp9;;
     wmp10) load_wmp10;;
     wsh56|wsh57) load_wsh57;;
-    wsh56js) load_wsh56js;;
+    jscript|wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
     xact|xactengine|x3daudio) load_xact;;
     xvid) load_xvid;;
