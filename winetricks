@@ -1851,11 +1851,17 @@ load_gecko() {
         GECKO_VERSION=0.9.1
         GECKO_SHA1SUM=9a49fc691740596517e381b47096a4bdf19a87d8
         ;;
-    *)
+    wine-1.1.2[789]*|wine-1.1.[34]*|wine-1.2*|wine-1.3|wine-1.3.[01]|wine-1.3.[01]-*)
         GECKO_DIR="$WINDIR/system32"
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
         GECKO_SHA1SUM=afa22c52bca4ca77dcb9edb3c9936eb23793de01
+        ;;
+    *)
+        GECKO_DIR="$WINDIR/system32"
+        GECKO_VERSION=1.1.0
+        GECKO_ARCH=-x86
+        GECKO_SHA1SUM=1b6c637207b6f032ae8a52841db9659433482714
         ;;
     esac
 
@@ -1935,25 +1941,35 @@ load_gecko_dbg() {
     wine-1.1.1[234]*)
         GECKO_DIR="$WINDIR"
         GECKO_VERSION=0.9.0
+        GECKO_EXTENSION=cab
         GECKO_SHA1SUM=23e354a82d7b7e61a6abe0384cc44669fbf92f86
         ;;
     wine-1.1.1[56789]*|wine-1.1.2[0123456]*)
         GECKO_DIR="$WINDIR"
         GECKO_VERSION=0.9.1
+        GECKO_EXTENSION=cab
         GECKO_SHA1SUM=a9b58d3330f8c78524fe4683f348302bfce96ff4
         ;;
-    *)
+    wine-1.1.2[789]*|wine-1.1.[34]*|wine-1.2*|wine-1.3|wine-1.3.[01]|wine-1.3.[01]-*)
         GECKO_DIR="$WINDIR/system32"
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
+        GECKO_EXTENSION=cab
         GECKO_SHA1SUM=2de16b443826295f646cd5d54313ca421fd71210
+        ;;
+    *)
+        GECKO_DIR="$WINDIR/system32"
+        GECKO_VERSION=1.1.0
+        GECKO_ARCH=-x86
+        GECKO_EXTENSION=tar.bz2
+        GECKO_SHA1SUM=647a488b306f3865527ce03df3c16c06afce1677
         ;;
     esac
 
-    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
+    if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.$GECKO_EXTENSION
     then
        # FIXME: busted if using curl!
-       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
+       download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.$GECKO_EXTENSION" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.$GECKO_EXTENSION
     fi
 
     cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
@@ -1973,7 +1989,20 @@ _EOF_
     # extract the files
     mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
-    try_cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
+    if [ "$GECKO_EXTENSION" = "cab" ]
+    then
+        try_cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
+    elif [ "$GECKO_EXTENSION" = "tar.bz2" ]
+    then
+        bunzip2 -cd "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.tar.bz2 | tar -xf -
+        if test $? -ne 0
+        then
+            die Gecko debug redistributable extraction failed
+        fi
+    else
+        die unrecognized Gecko debug redistributable extension
+    fi
+
     cd "$olddir"
 
     # set install-path
