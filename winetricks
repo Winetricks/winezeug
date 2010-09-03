@@ -15,7 +15,7 @@
 #
 # Note to contributors: please avoid gnu extensions in this shell script,
 # as it has to run on MacOSX and Solaris, too.  A good book on the topic is
-# "Portable Shell Programming" by Bruce Blinn
+# "Portable Shell Programming" by Bruce Blinn, ISBN: 0-13-451494-7
 
 #---- Constants -------------------------------------------------
 
