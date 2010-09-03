@@ -289,6 +289,7 @@ usage() {
     echo " vcrun2003     MS Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)"
     echo " vcrun2005     MS Visual C++ 2005 sp1 libraries (mfc80,msvcp80,msvcr80)"
     echo " vcrun2008     MS Visual C++ 2008 libraries (mfc90,msvcp90,msvcr90)"
+    echo " vcrun2010     MS Visual C++ 2010 libraries (mfc100,msvcp100,msvcr100)"
     echo " vcrun6        MS Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)"
     echo " vcrun6sp6     MS Visual C++ 6 sp6 libraries (mfc42, msvcp60, msvcrt; 64 MB download)"
     echo " vjrun20       MS Visual J# 2.0 SE libraries (requires dotnet20)"
@@ -3356,6 +3357,18 @@ load_vcrun2008() {
 
 #----------------------------------------------------------------
 
+load_vcrun2010() {
+    # Load the Visual C++ 2010 runtime libraries
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84
+    download vcrun2010 http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe 372d9c1670343d3fb252209ba210d4dc4d67d358
+    override_dlls native,builtin msvcr100
+    # Workaround Wine bug http://bugs.winehq.org/show_bug.cgi?id=23427
+    load_msxml3
+    try $WINE "$WINETRICKS_CACHE"/vcrun2010/vcredist_x86.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
 load_vjrun20() {
     load_dotnet20
     # See http://www.microsoft.com/downloads/details.aspx?FamilyId=E9D87F37-2ADC-4C32-95B3-B5E3A21BAB2C
@@ -4196,6 +4209,7 @@ do
     vcrun2003) load_vcrun2003;;
     vcrun2005|vcrun2005sp1) load_vcrun2005;;
     vcrun2008|vcrun2008sp1) load_vcrun2008;;
+    vcrun2010) load_vcrun2010;;
     vjrun20) load_vjrun20;;
     vlc) load_vlc;;
     wenquanyi) load_wenquanyi;;
