@@ -42,7 +42,7 @@ foreach $needle (@needles) {
 
 # List all non-placeholder dlls and executables
 $command = "find . \\( -iname '*.dll' -o -iname '*.exe' \\) \\! -exec grep -q 'Wine placeholder DLL' {} \\; -print | grep -v wine_gecko";
-print "Executing $command\n";
+#print "Executing $command\n";
 open(NAMES, "$command |") || die;
 @haystacks = <NAMES>;
 close(NAMES);
@@ -71,9 +71,10 @@ foreach $haystack (@haystacks) {
 if (@bundled) {
     print "Found ".scalar(@bundled)." bundled MS modules:\n";
     foreach $haystack (@bundled) {
-        print "$haystack\n";
+        print "  $haystack\n";
     }
 }
+print "\n";
 
 foreach $haystack (@nonbundled) {
     chomp $haystack;
@@ -114,7 +115,7 @@ foreach $needle (@needles) {
 	if (keys(%found)) {
 	    print "$haystack imports following stub symbols:\n  ";
             print join("\n  ", sort(keys(%found)));
-            print "\n";
+            print "\n\n";
 	}
     }
 }
