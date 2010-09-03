@@ -181,6 +181,7 @@ usage() {
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
     echo " comctl32.ocx  MS comctl32.ocx and mscomctl.ocx, comctl32 wrappers for VB6"
+    echo " comdlg32.ocx  MS comdlg32.ocx for VB6"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
     echo " cygwin        Unix apps for Windows (needed by some build scripts)"
@@ -1035,6 +1036,15 @@ load_colorprofile() {
     try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
     mkdir -p "$WINDIR"/system32/spool/drivers/color
     try cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
+}
+
+#----------------------------------------------------------------
+
+load_comdlg32ocx() {
+    download . http://activex.microsoft.com/controls/vb6/comdlg32.cab d4f3e193c6180eccd73bad53a8500beb5b279cbf
+    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/comdlg32.cab
+    try cp "$WINETRICKS_TMP"/comdlg32.ocx "$WINDIR"/system32/comdlg32.ocx
+    try $WINE regsvr32 comdlg32.ocx
 }
 
 #----------------------------------------------------------------
@@ -4026,6 +4036,7 @@ do
     cmake) load_cmake;;
     comctl32.ocx) load_comctl32ocx;;
     comctl32|cc580) load_cc580;;
+    comdlg32.ocx) load_comdlg32ocx;;
     colorprofile) load_colorprofile;;
     controlpad|fm20) load_controlpad;;
     corefonts) load_corefonts;;

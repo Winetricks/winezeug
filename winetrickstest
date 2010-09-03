@@ -16,6 +16,7 @@ for verb in \
     colorprofile \
     comctl32 \
     comctl32.ocx \
+    comdlg32.ocx \
     corefonts \
     d3dx9 \
     d3dx10 \
