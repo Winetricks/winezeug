@@ -930,11 +930,10 @@ _EOF_
 #----- common download for several verbs
 
 helper_directx_dl() {
-    # February 2010 DirectX 9c User Redistributable
-    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=0cef8180-e94a-4f56-b157-5ab8109cb4f5
-    download . http://download.microsoft.com/download/E/E/1/EE17FF74-6C45-4575-9CF4-7FC2597ACD18/directx_feb2010_redist.exe a97c820915dc20929e84b49646ec275760012a42
-
-    DIRECTX_NAME=directx_feb2010_redist.exe
+    # June 2010 DirectX 9c User Redistributable
+    # https://www.microsoft.com/downloads/en/details.aspx?familyid=3B170B25-ABAB-4BC3-AE91-50CEB6D8FA8D&displaylang=en
+    download . http://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe 3b90e800086f75fdb129bdb3a5d875e381c89736
+    DIRECTX_NAME=directx_Jun2010_redist.exe
 }
 
 #----- One function per package, in alphabetical order ----------
