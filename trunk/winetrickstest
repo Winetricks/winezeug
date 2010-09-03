@@ -51,9 +51,6 @@ for verb in \
     mfc42 \
     mingw \
     mingw-gdb \
-    mono20 \
-    mono22 \
-    mono24 \
     mono26 \
     mozillabuild \
     mshflxgd \

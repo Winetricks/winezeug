@@ -238,9 +238,6 @@ usage() {
     echo " mfc42         MS mfc42 (same as vcrun6 below)"
     echo " mingw-gdb     GDB for MinGW"
     echo " mingw         Minimalist GNU for Windows, including GCC for Windows!"
-    echo " mono20        mono-2.0.1"
-    echo " mono22        mono-2.2"
-    echo " mono24        mono-2.4"
     echo " mono26        mono-2.6"
     echo " mozillabuild  Mozilla build environment"
     echo " mpc           Media Player Classic"
@@ -2506,71 +2503,6 @@ load_mingw_gdb() {
 
 #----------------------------------------------------------------
 
-load_mono20() {
-    # Load Mono, have it handle all .net requests
-    download .  ftp://ftp.novell.com/pub/mono/archive/2.0.1/windows-installer/1/mono-2.0.1-gtksharp-2.10.4-win32-1.exe ccb67ac41b59522846e47d0c423836b9d334c088
-    try $WINE "$WINETRICKS_CACHE"/mono-2.0.1-gtksharp-2.10.4-win32-1.exe $WINETRICKS_SILENT
-
-    cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
-REGEDIT4
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
-"Install"=dword:00000001
-"SP"=dword:00000001
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
-"4322"="3706-4322"
-_EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\mono_2.0.reg
-    rm -f "$WINETRICKS_TMP"/mono_2.0.reg
-}
-
-#----------------------------------------------------------------
-
-load_mono22() {
-    # Load Mono, have it handle all .net requests
-    download .  ftp://ftp.novell.com/pub/mono/archive/2.2/windows-installer/5/mono-2.2-gtksharp-2.12.7-win32-5.exe be977dfa9c49deea1be02ba4a2228e343f1e5840
-    try $WINE "$WINETRICKS_CACHE"/mono-2.2-gtksharp-2.12.7-win32-5.exe $WINETRICKS_SILENT
-
-    # FIXME: what should this be for mono 2.2?
-    cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
-REGEDIT4
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
-"Install"=dword:00000001
-"SP"=dword:00000001
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
-"4322"="3706-4322"
-_EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\mono_2.0.reg
-    rm -f "$WINETRICKS_TMP"/mono_2.0.reg
-}
-
-#----------------------------------------------------------------
-
-load_mono24() {
-    # Load Mono, have it handle all .net requests
-    download .  http://ftp.novell.com/pub/mono/archive/2.4.2.3/windows-installer/3/mono-2.4.2.3-gtksharp-2.12.9-win32-3.exe 4f0d051bcedd7668e63c12903310be0ea38f9654
-    try $WINE "$WINETRICKS_CACHE"/mono-2.4.2.3-gtksharp-2.12.9-win32-3.exe $WINETRICKS_SILENT
-
-    # FIXME: what should this be for mono 2.4?
-    cat > "$WINETRICKS_TMP"/mono_2.0.reg <<_EOF_
-REGEDIT4
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
-"Install"=dword:00000001
-"SP"=dword:00000001
-
-[HKEY_LOCAL_MACHINE\Software\Microsoft\.NETFramework\policy\v2.0]
-"4322"="3706-4322"
-_EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\mono_2.0.reg
-    rm -f "$WINETRICKS_TMP"/mono_2.0.reg
-}
-
-#----------------------------------------------------------------
-
 load_mono26() {
     # Load Mono, have it handle all .net requests
     download . http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2 
@@ -4151,9 +4083,6 @@ do
     mfc40) load_mfc40;;
     mingw|mingw-min|mingw_min) load_mingw_min;;
     mingw-gdb|mingw_gdb) load_mingw_gdb;;
-    mono19|mono20) load_mono20;;
-    mono22) load_mono22;;
-    mono24) load_mono24;;
     mono26) load_mono26;;
     mozillabuild) load_mozillabuild;;
     mpc) load_mpc;;
