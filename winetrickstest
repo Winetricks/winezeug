@@ -91,6 +91,7 @@ for verb in \
     vcrun2003 \
     vcrun2005 \
     vcrun2008 \
+    vcrun2010 \
     vjrun20 \
     wenquanyi \
     windowscodecs \
