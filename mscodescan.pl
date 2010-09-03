@@ -1,9 +1,22 @@
+#!/usr/bin/perl
+# 
+# Script to look for MS DLLs and imports of symbols from them which Wine does not yet have an implementation
+# Copyright 2010 Dan Kegel
+# LGPL
+
 $winesrc = $ENV{"HOME"}."/wine-git";
 
-@needles = (
- "msvcr80",
- "msvcp80",
- "msvcm80",
+# Assumes you've initialized .wine.  It'd be better to look at wine.inf, but that looks hard?
+@needles = split("\n", `grep -l "Wine placeholder DLL" ~/.wine/drive_c/windows/system32/*.dll | sed 's,.*/,,;s/\\.dll\$//'`);
+# Things for which we don't have stub DLLs yet
+push(@needles, 
+   "msvcm70",
+   "msvcm80",
+   "msvcm90",
+   "mfc42",
+   "mfc70",
+   "mfc80",
+   "mfc90",
 );
 
 foreach $needle (@needles) {
