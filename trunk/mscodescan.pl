@@ -77,7 +77,10 @@ if (@bundled) {
 
 foreach $haystack (@nonbundled) {
     chomp $haystack;
-    open(FILE, "winedump -j import '$haystack' |") || die;
+    $escaped_haystack = $haystack;
+    $escaped_haystack =~ s/'/'\\''/;
+    $command = "winedump -j import '$escaped_haystack'";
+    open(FILE, "$command |") || die "running command $command\n";
     $imports{$haystack} = join("", <FILE>);
     close FILE;
 }
