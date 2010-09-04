@@ -348,7 +348,7 @@ usage() {
     echo " win7          Set windows version to Windows 7"
     echo " winver=       Set windows version to default (winxp)"
     echo " volnum        Rename drive_c to harddiskvolume0 (needed by some installers)"
-    echo " mwo=force	 Set MouseWarpOverride to force (needded by some games"
+    echo " mwo=force	 Set MouseWarpOverride to force (needed by some games)"
     echo " mwo=enabled   Set MouseWarpOverride to enabled (default)"
     echo " mwo=disable  Set MouseWarpOverride to disable"
     echo " npm-repack    Set NonPower2Mode to repack"
