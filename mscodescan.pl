@@ -15,6 +15,8 @@ push(@needles,
    "atl70",
    "atl80",
    "atl90",
+   "drmstor",
+   "drmv2clt",
    "mfc42",
    "mfc70",
    "mfc80",
@@ -24,6 +26,7 @@ push(@needles,
    "msident",
    "msidntld",
    "msieftp",
+   "msscp",
    "mstime",
    "msvcm70",
    "msvcm80",
@@ -40,6 +43,7 @@ push(@needles,
    "wmpshell",
    "wmsdmod",
    "wmsdmoe2",
+   "wmvcore",
 );
 # Avoid dups
 @needles = grep !$seen{$_}++, @needles;
@@ -82,14 +86,14 @@ chomp(@haystacks);
 #print "Got haystacks ";
 #print join("\n", @haystacks);
 
-# remove literal needles from haystacks, report as bundled
+# Look for Microsoft DLLs and EXEs - we don't care what *they* import
 foreach $haystack (@haystacks) {
     $found = 0;
-    if ($haystack =~ /\b(winsxs|Microsoft.NET)\b/) {
+    if ($haystack =~ m,\b(winsxs|Microsoft.NET|system32/update/update.exe|system32/spuninst.exe)\b,) {
        $found = 1;
     } else {
         foreach $needle (@needles) {
-            if ($haystack =~ /\b$needle\b/i) {
+            if ($haystack =~ /\b$needle.dll/i) {
                $found = 1;
                break;
             }
@@ -101,7 +105,6 @@ foreach $haystack (@haystacks) {
        push(@nonbundled, $haystack);
     }
 }
-
 
 if (@bundled) {
     print "Found ".scalar(@bundled)." bundled MS modules:\n";
