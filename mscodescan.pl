@@ -89,7 +89,7 @@ chomp(@haystacks);
 # Look for Microsoft DLLs and EXEs - we don't care what *they* import
 foreach $haystack (@haystacks) {
     $found = 0;
-    if ($haystack =~ m,\b(winsxs|Microsoft.NET|system32/update/update.exe|system32/spuninst.exe)\b,) {
+    if ($haystack =~ m,\b(winsxs|Microsoft.NET|assembly/GAC_32|system32/update/update.exe|system32/spuninst.exe)\b,) {
        $found = 1;
     } else {
         foreach $needle (@needles) {
