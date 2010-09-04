@@ -405,7 +405,7 @@ showmenu()
 {
     case $MENU in
     zenity)
-        echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
+        echo "zenity --title 'Winetricks' --text 'Select packages to install' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
         usage | grep '^ [0-9a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
         todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
         ;;
