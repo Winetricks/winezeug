@@ -48,8 +48,19 @@ case "$OS" in
     ;;
 esac
 
+# Decide where to store downloaded files
+if test ! "$WINETRICKS_CACHE" -a -d $HOME/.winetrickscache
+then
+    # For backwards compatibility
+    WINETRICKS_CACHE="$HOME/.winetrickscache"
+else
+    # See http://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
+    XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+    WINETRICKS_CACHE="${WINETRICKS_CACHE:-$XDG_CACHE_HOME/winetricks}"
+fi
+test -d "$WINETRICKS_CACHE" || mkdir -p "$WINETRICKS_CACHE"
+
 # Internal variables; these locations are not too important
-WINETRICKS_CACHE="${WINETRICKS_CACHE:-$HOME/.winetrickscache}"
 WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
