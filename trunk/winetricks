@@ -242,15 +242,15 @@ usage() {
     echo " mono26        mono-2.6"
     echo " mozillabuild  Mozilla build environment"
     echo " mpc           Media Player Classic"
-    echo " mshflxgd      MS Hierarchical Flex Grid Control"
-    echo " msi2          MS Installer 2.0"
+    echo " mshflxgd      MS Hierarchical FlexGrid Control"
+    echo " msi2          MS Windows Installer 2.0"
     echo " msls31        MS Line Services 3.1 (needed by native riched?)"
     echo " msmask        MS Masked Edit Control"
     echo " mspaint       MS Paint (gotta draw stick figures somehow...)"
-    echo " msscript      MS Script Control"
-    echo " msxml3        MS XML version 3"
-    echo " msxml4        MS XML version 4"
-    echo " msxml6        MS XML version 6"
+    echo " msscript      MS Windows Script Control"
+    echo " msxml3        MS XML Core Services 3.0"
+    echo " msxml4        MS XML Core Services 4.0"
+    echo " msxml6        MS XML Core Services 6.0"
     echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, schroedinger"
     echo " ole2          MS 16 bit OLE"
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
@@ -263,8 +263,8 @@ usage() {
     echo " python-comtypes Python 0.6.1-1 comtypes package"
     echo " quartz        quartz.dll (from Directx 9 user redistributable)"
     echo " quicktime72   Apple Quicktime 7.2"
-    echo " riched20      MS riched20 and riched32"
-    echo " riched30      MS riched30"
+    echo " riched20      MS RichEdit Control, riched20 and riched32"
+    echo " riched30      MS RichEdit Control, riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
     echo " safari         Apple Safari web browser"
     echo " secur32       MS secur32"
@@ -1874,7 +1874,7 @@ load_gecko() {
         GECKO_VERSION=0.9.1
         GECKO_SHA1SUM=9a49fc691740596517e381b47096a4bdf19a87d8
         ;;
-    wine-1.1.2[789]*|wine-1.1.[34]*|wine-1.2*|wine-1.3|wine-1.3.[01]|wine-1.3.[01]-*)
+    wine-1.1.2[789]*|wine-1.1.[34]*|wine-1.2*|wine-1.3|wine-1.3.[01]|wine-1.3.[0]-*)
         GECKO_DIR="$WINDIR/system32"
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
