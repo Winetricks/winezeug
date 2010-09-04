@@ -6,17 +6,48 @@
 
 $winesrc = $ENV{"HOME"}."/wine-git";
 
-# Assumes you've initialized .wine.  It'd be better to look at wine.inf, but that looks hard?
+# Create list of know MS dlls
+# Get list of fake DLLs.  Assumes you've initialized .wine.  
+# (It'd be better to look at wine.inf, but that looks hard?)
 @needles = split("\n", `grep -l "Wine placeholder DLL" ~/.wine/drive_c/windows/system32/*.dll | sed 's,.*/,,;s/\\.dll\$//'`);
-# Things for which we don't have stub DLLs yet
+# MS DLLs for which we don't have fake DLLs
 push(@needles, 
-   "msvcm70",
-   "msvcm80",
-   "msvcm90",
+   "atl70",
+   "atl80",
+   "atl90",
    "mfc42",
    "mfc70",
    "mfc80",
    "mfc90",
+   "mshtmled",
+   "mshtmler",
+   "msident",
+   "msidntld",
+   "msieftp",
+   "mstime",
+   "msvcm70",
+   "msvcm80",
+   "msvcm90",
+   "msvcp70",
+   "msvcp80",
+   "msvcp90",
+   "msvcr70",
+   "msvcr80",
+   "msvcr90",
+   "msxml3a",
+   "msxml3r",
+   "wmidx",
+   "wmpshell",
+   "wmsdmod",
+   "wmsdmoe2",
+);
+# Avoid dups
+@needles = grep !$seen{$_}++, @needles;
+
+# Stoplist of functions we don't care about (because they're only called when app crashes)
+%stoplist = (
+   "_crt_debugger_hook" => 1,
+   "_invoke_watson" => 1
 );
 
 foreach $needle (@needles) {
@@ -26,7 +57,7 @@ foreach $needle (@needles) {
            chomp($line);
            # this is messy
            foreach $stub (split(" ", $line)) {
-               if ($stub !~ /-arch=win/) {
+               if ($stub !~ /-arch=win/ && !$stoplist{$stub}) {
                    $stubs{$needle.":".$stub} = 1;
                }
            }
@@ -54,10 +85,14 @@ chomp(@haystacks);
 # remove literal needles from haystacks, report as bundled
 foreach $haystack (@haystacks) {
     $found = 0;
-    foreach $needle (@needles) {
-        if ($haystack =~ /$needle/i) {
-           $found = 1;
-           break;
+    if ($haystack =~ /\b(winsxs|Microsoft.NET)\b/) {
+       $found = 1;
+    } else {
+        foreach $needle (@needles) {
+            if ($haystack =~ /\b$needle\b/i) {
+               $found = 1;
+               break;
+            }
         }
     }
     if ($found) {
