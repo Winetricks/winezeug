@@ -17,6 +17,10 @@ push(@needles,
    "atl90",
    "drmstor",
    "drmv2clt",
+   "dxmasf",
+   "ieaksie",
+   "iepeers",
+   "iesetup",
    "mfc42",
    "mfc70",
    "mfc80",
@@ -26,32 +30,43 @@ push(@needles,
    "msident",
    "msidntld",
    "msieftp",
+   "msoe",
    "msscp",
    "mstime",
    "msvcm70",
+   "msvcm71",
    "msvcm80",
    "msvcm90",
    "msvcp70",
+   "msvcp71",
    "msvcp80",
    "msvcp90",
    "msvcr70",
+   "msvcr71",
    "msvcr80",
    "msvcr90",
    "msxml3a",
    "msxml3r",
+   "webcheck",
    "wmidx",
    "wmpshell",
    "wmsdmod",
    "wmsdmoe2",
    "wmvcore",
+   "wshext",
 );
 # Avoid dups
 @needles = grep !$seen{$_}++, @needles;
 
 # Stoplist of functions we don't care about (because they're only called when app crashes)
+# See also http://bugs.winehq.org/show_bug.cgi?id=22044#c4
+# Note: strings with @'s need to be single-quoted in perl, it seems
 %stoplist = (
+   '?_type_info_dtor_internal_method@type_info@@QAEXXZ' => 1,
+   "__clean_type_info_names_internal" => 1,
    "_crt_debugger_hook" => 1,
-   "_invoke_watson" => 1
+   "_except_handler4_common" => 1,
+   "_invoke_watson" => 1,
 );
 
 foreach $needle (@needles) {
