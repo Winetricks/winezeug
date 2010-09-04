@@ -5,7 +5,7 @@
 
 set -ex
 
-rm -rf $HOME/.winetrickscache
+rm -rf $HOME/.winetrickscache $HOME/.cache/winetricks
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
 for verb in \
@@ -110,7 +110,6 @@ for verb in \
     mpc \
     vlc \
     allfonts \
-    fakeie6 \
     glsl-disable \
     glsl-enable \
     native_mdac \
