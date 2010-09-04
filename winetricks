@@ -20,7 +20,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20100822
+VERSION=20100904
 
 early_wine()
 {
@@ -3958,7 +3958,7 @@ esac
 
 case "$1" in
 -V|--version)
-    echo "Winetricks version $VERSION.  (C) 2007-2009 Dan Kegel et al.  LGPL."
+    echo "Winetricks version $VERSION.  (C) 2007-2010 Dan Kegel et al.  LGPL."
     exit 0
     ;;
 esac
