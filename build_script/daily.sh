@@ -95,18 +95,19 @@ OS=`uname -s`
 # TODO: Differentiate between Solaris and OpenSolaris here...not sure how though :-/
 if [ $OS = 'SunOS' ] || [ $OS = 'Solaris' ]
     then
-        export CFLAGS="-O2 -I/usr/sfw/include -I/usr/X11/include -g" 
-        export CPPFLAGS="-I/usr/sfw/include" 
-        export CC="/usr/gnu/bin/cc" 
-        export LDFLAGS="-L/usr/sfw/lib -R/usr/sfw/lib -L/usr/X11/lib -R/usr/X11/lib" 
-        export LD="/usr/gnu/bin/ld" 
+        CFLAGS=${CFLAGS:-'-O2 -I/usr/sfw/include -I/usr/X11/include -g'}
+        CPPFLAGS=${CPPFLAGS:-'-I/usr/sfw/include'}
+        CC=${CC:-'/usr/gnu/bin/cc'}
+        LDFLAGS=${LDFLAGS:-'-L/usr/sfw/lib -R/usr/sfw/lib -L/usr/X11/lib -R/usr/X11/lib'}
+        LD=${LD:-'/usr/gnu/bin/ld'}
+        # Don't let user override path, the default path is broken as hell. If you want to override, edit it here:
         export PATH="/usr/gnu/bin:/usr/bin:/usr/X11/bin:/usr/sbin:/sbin:/opt/csw/bin/:/usr/ccs/bin:/usr/sfw/bin:/usr/local/bin"
-        export CONFIGUREFLAGS="--without-ldap --without-capi"
-        CORES=$(/usr/sbin/psrinfo| grep -c on-line)
+        CONFIGUREFLAGS=${CONFIGUREFLAGS:-'--without-ldap --without-capi'}
+        CORES=${CORES:-$(/usr/sbin/psrinfo| grep -c on-line)}
 elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
     then
-        export CFLAGS="-O2 -Wno-unused -g"
-        CORES=$(cat /proc/cpuinfo | grep -c processor)
+        CFLAGS=${CFLAGS:-'-O2 -g'}
+        CORES=${CORES:-$(cat /proc/cpuinfo | grep -c processor)}
         # Are we on 64-bit?
         if [ "`uname -m`" = "x86_64" ]
             then
@@ -122,39 +123,27 @@ elif [ $OS = 'Linux' ] || [ $OS = 'GNU/Linux' ]
 # PC-BSD or FreeBSD?
 elif [ $OS = 'FreeBSD' ] && [ "`which pbreg`" ]
     then
-        export CPPFLAGS="-I/PCBSD/local/include"
-        export LDFLAGS="-L/PCBSD/local/lib"
-        CORES=$(/sbin/sysctl -n hw.ncpu)
+        CPPFLAGS=${CPPFLAGS:-'-I/PCBSD/local/include'}
+        LDFLAGS=${LDFLAGS:-'-L/PCBSD/local/lib'}
+        CORES=${CORES:-$(/sbin/sysctl -n hw.ncpu)}
 elif [ $OS = 'FreeBSD' ]
     then
-        export CPPFLAGS="-I/usr/local/include"
-        export LDFLAGS="-L/usr/local/lib"
-        CORES=$(/sbin/sysctl -n hw.ncpu)
-elif [ $OS = 'Darwin' ]
-    then
-        # BUILD_DIR is the directory where you've built and installed wine's dependencies...OS X's built in one's are
-        # very broken for wine. Use install-osx-deps.sh from Winezeug to install this stuff in the right place.
-        export BUILD_DIR=$HOME/.winedeps
-        export CPPFLAGS="-I$BUILD_DIR/usr/include"
-        export CFLAGS="-O2 -I$BUILD_DIR/usr/include -g"
-        export LDFLAGS="-L$BUILD_DIR/usr/lib"
-        export PATH=$PATH:"$BUILD_DIR/usr/bin"
-        export PKG_CONFIG_PATH="$BUILD_DIR/usr/lib/pkgconfig"
-        export CONFIGUREFLAGS='--disable-win16 --without-hal --without-capi'
-        CORES=$(/usr/sbin/sysctl -n hw.ncpu)
+        CPPFLAGS=${CPPFLAGS:-'-I/usr/local/include'}
+        LDFLAGS=${LDFLAGS:-'-L/usr/local/lib'}
+        CORES=${CORES:-$(/sbin/sysctl -n hw.ncpu)}
 elif [ $OS = 'NetBSD' ]
     then
         echo "This is untested...going from memory"
-        export CFLAGS="-O2 -I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include -g"
-        export CPPFLAGS="-I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include"
-        export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/lib -Wl,-R/usr/lib -L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib"
-        CORES=$(/sbin/sysctl -n hw.ncpu)
+        CFLAGS=${CFLAGS:-'-O2 -I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include -g'}
+        CPPFLAGS=${CPPFLAGS:-'-I/usr/pkg/include -I/usr/include -I/usr/pkg/include/freetype2 -I/usr/X11R6/include'}
+        LDFLAGS=${LDFLAGS:-'-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/lib -Wl,-R/usr/lib -L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib'}
+        CORES=${CORES:-$(/sbin/sysctl -n hw.ncpu)}
 elif [ $OS = 'OpenBSD' ]
     then
-        export CFLAGS="-O2 -I/usr/local/include -I/usr/local/include/libpng -g"
-        export LDFLAGS="-lm -lz -lcrypto -L/usr/local/lib"
-        export X_EXTRA_LIBS="-lXau -lXdmcp"
-        export CPPFLAGS="-I/usr/local/include"
+        CFLAGS=${CFLAGS:-'-O2 -I/usr/local/include -I/usr/local/include/libpng -g'}
+        LDFLAGS=${LDFLAGS:-'-lm -lz -lcrypto -L/usr/local/lib'}
+        X_EXTRA_LIBS=${X_EXTRA_LIBS:-'-lXau -lXdmcp'}
+        CPPFLAGS=${CPPFLAGS:-'-I/usr/local/include'}
         #FIXME: CORES
 else
     echo "Your OS is not supported by this build script. Please e-mail the maintainer if you get this message."
@@ -168,7 +157,7 @@ GET() {
     if [ -x "`which wget`" ]
         then
            wget "$1"
-    # Or curl...silly Mac kids:
+    # Or curl...silly Mac/BSD kids:
     elif [ `which curl` ]
     then
            curl -L -o "$file" "$1"
@@ -245,9 +234,9 @@ exit 1
 # TODO: determine if logs are wanted, and if so, store in buildlog-date.txt
 build() {
 echo "Starting $BUILDNAME build." && 
-echo "Running configure." && ./configure $CONFIGUREFLAGS 1>/dev/null 2>&1 &&
-echo "Running make depend." && make -j$CORES depend 1>/dev/null 2>&1 &&
-echo "Running make." && make -j$CORES 1>/dev/null 2>&1 &&
+echo "Running configure." && ./configure $CONFIGUREFLAGS &&
+echo "Running make depend." && make -j$CORES depend &&
+echo "Running make." && make -j$CORES &&
 echo "$BUILDNAME build was fine. Coolio"
 }
 
