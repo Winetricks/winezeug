@@ -47,6 +47,10 @@ push(@needles,
    "msvcr90",
    "msxml3a",
    "msxml3r",
+   "rpclts5",
+   "rpcltscm",
+   "rpcltspx",
+   "rpcns4",
    "webcheck",
    "wmidx",
    "wmpshell",
@@ -139,6 +143,7 @@ foreach $haystack (@nonbundled) {
     close FILE;
 }
 
+#print "Imports:\n";
 #foreach $haystack (@nonbundled) {
 #    print "$haystack imports\n";
 #    print $imports{$haystack};
