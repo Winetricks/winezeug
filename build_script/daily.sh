@@ -80,11 +80,15 @@ export WINESERVER=$WINETESTGIT/server/wineserver
 export WINEPREFIX=$WINEPREFIX
 export WINEGITURL="git://source.winehq.org/git/wine.git"
 
-if [ `which ccache` ]
+# User defined CC overrides everything. Otherwise, hope user has gcc installed:
+if [ "$CC" ]
+    then
+        export CC="$CC"
+elif [ "`which ccache`" ]
     then
         export CC="ccache gcc"
 else
-        export CC="gcc"
+    export CC="gcc"
 fi
 
 set -e
