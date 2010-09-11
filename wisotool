@@ -2979,6 +2979,73 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+
+verblist_add ffxiv_beta "Final Fantasy XIV Beta (Square Enix, 2010)" ffxivsetup.exe
+
+load_ffxiv_beta() {
+    load_autohotkey
+    # e6e615e5886c17e744fc4aba7b267e7e3dcbdb52 ffxivsetup.exe
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ffxivsetup.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
+        die "Register for the beta and download ffxivsetup.exe from https://dev-na.ffxiv.com/ \
+             and place it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+    SetTitleMatchMode, 2
+    run, ffxivsetup.exe
+    winwait, FINAL FANTASY XIV Beta Version, Select a region and language
+    sleep 1000
+    controlclick, Button2, FINAL FANTASY XIV Beta Version, Select a region and language
+    ; It forces Directx Install :-(
+    winwait, FINAL FANTASY XIV Beta Version, A new version of DirectX is required for installation
+    sleep 1000
+    controlclick, Button2, FINAL FANTASY XIV Beta Version, A new version of DirectX is required for installation
+    winwait, Installing Microsoft(R) DirectX(R), Welcome to setup for DirectX
+    sleep 1000
+    controlclick, Button1, Installing Microsoft(R) DirectX(R), Welcome to setup for DirectX
+    sleep 1000
+    controlclick, Button4, Installing Microsoft(R) DirectX(R), Welcome to setup for DirectX
+    winwait, Installing Microsoft(R) DirectX(R), This install package will search for updated DirectX
+    sleep 1000
+    Controlclick, Button4, Installing Microsoft(R) DirectX(R), This install package will search for updated DirectX 
+    winwait, Installing Microsoft(R) DirectX(R), Installation Complete
+    sleep 1000
+    controlclick, Button5, Installing Microsoft(R) DirectX(R), Installation Complete
+    winwait, FINAL FANTASY XIV Beta Version, The InstallShield Wizard will install FINAL FANTASY
+    sleep 1000
+    Controlclick, Button1, FINAL FANTASY XIV Beta Version, The InstallShield Wizard will install FINAL FANTASY
+    winwait, FINAL FANTASY XIV Beta Version, Please shut down any antivirus
+    sleep 1000
+    ControlClick, Button1, FINAL FANTASY XIV Beta Version, Please shut down any antivirus
+    winwait, FINAL FANTASY XIV Beta Version, License Agreement
+    sleep 1000
+    Controlclick, Button5, FINAL FANTASY XIV Beta Version, License Agreement
+    sleep 1000
+    Controlclick, Button2, FINAL FANTASY XIV Beta Version, License Agreement
+    winwait, FINAL FANTASY XIV Beta Version, To install to this folder
+    sleep 1000
+    controlclick, Button1, FINAL FANTASY XIV Beta Version, To install to this folder
+    winwait, FINAL FANTASY XIV Beta Version, Start Copying Files
+    sleep 1000
+    controlclick, Button1, FINAL FANTASY XIV Beta Version, Start Copying Files
+    winwait, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
+    sleep 1000
+    Controlclick, Button1, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
+    sleep 1000
+    Controlclick, Button4, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
+    "
+    
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\SquareEnix\\FINAL FANTASY XIV Beta Version"
+ffxivboot.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
  
 verblist_add ffxivbench "Final Fantasy XIV Benchmark (Square Enix, 2010)" FFXIVBenchmark.zip
 
