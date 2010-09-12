@@ -93,6 +93,7 @@ for verb in \
     vjrun20 \
     wenquanyi \
     windowscodecs \
+    winhttp \
     wininet \
     wme9 \
     wmp9 \
