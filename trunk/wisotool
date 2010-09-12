@@ -3038,6 +3038,11 @@ load_ffxiv_beta() {
     Controlclick, Button4, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
     "
     
+    if workaround_wine_bug 24358
+    then
+        sh "$WINETRICKS" winhttp
+    fi
+
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 cd "$programfilesdir_x86_win\\SquareEnix\\FINAL FANTASY XIV Beta Version"
 ffxivboot.exe
