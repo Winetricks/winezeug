@@ -194,6 +194,7 @@ usage() {
     echo " comdlg32.ocx  MS comdlg32.ocx for VB6"
     echo " controlpad    MS ActiveX Control Pad"
     echo " corefonts     MS Arial, Courier, Times fonts"
+    echo " crypt32       MS crypt32.dl"
     echo " cygwin        Unix apps for Windows (needed by some build scripts)"
     echo " d3dx9         MS d3dx9_??.dll (from DirectX 9 user redistributable)"
     echo " d3dx9_28      MS d3dx9_28.dll"
@@ -1164,6 +1165,16 @@ load_corefonts() {
     try cp -f "$WINETRICKS_TMP"/Webdings.TTF "$winefontsdir"
     register_font Webdings.TTF "Webdings (TrueType)"
 }
+
+#----------------------------------------------------------------
+
+load_crypt32() {
+    # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
+    download . http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
+    try_cabextract -d "$WINDIR"/system32 "$WINETRICKS_CACHE"/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
+    override_dlls native crypt32
+}
+
 
 #----------------------------------------------------------------
 
@@ -4096,6 +4107,7 @@ do
     colorprofile) load_colorprofile;;
     controlpad|fm20) load_controlpad;;
     corefonts) load_corefonts;;
+    crypt32) load_crypt32;;
     cygwin) load_cygwin;;
     d3dx9) load_d3dx9;;
     d3dx9_28) load_d3dx9_xx 28;;
