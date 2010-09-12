@@ -2529,16 +2529,16 @@ load_mingw_min() {
     fi
 
     # See http://mingw.org/wiki/Getting_Started
-    download . http://sourceforge.net/projects/mingw/files/GNU%20Binutils/binutils-2.19.1-mingw32-bin.tar.gz 1ab72f3af3fe96d08c3c9bff60c47913704d5774
-    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gcc-core-4.4.0-mingw32-bin.tar.gz b88b8f3644ca0cdf2c41cd03f820bf7823a8eabb
-    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gcc-core-4.4.0-mingw32-dll.tar.gz 0372ecf4caf75d0d9fe4a7739ca234f1a3de831b
-    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/gmp-4.2.4-mingw32-dll.tar.gz a14dd928382f093f67cb3cd57c140625b1b265bb
-    download . http://sourceforge.net/projects/mingw/files/MinGW%20libiconv/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma 5b60ce4d9ec9cf91aee437915a2469b915e1235f
-    download . http://sourceforge.net/projects/mingw/files/MinGW%20Runtime/mingwrt-3.16-mingw32-dev.tar.gz 770ff5001989d8a9a1ec4f3621d8f264a24e178f
-    download . http://sourceforge.net/projects/mingw/files/MinGW%20Runtime/mingwrt-3.16-mingw32-dll.tar.gz b8032e97c79e16a3c540043f0f39821df1531ae9
-    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/mpfr-2.4.1-mingw32-dll.tar.gz 43b7ecb2c0c785c44321ff6c4376f51375713a7b
-    download . http://sourceforge.net/projects/mingw/files/GCC%20Version%204/pthreads-w32-2.8.0-mingw32-dll.tar.gz f922f8c0c42921fd4482a3d2e6f779d6384040c1
-    download . http://sourceforge.net/projects/mingw/files/MinGW%20API%20for%20MS-Windows/w32api-3.13-mingw32-dev.tar.gz 5eb7d8ec0fe032a92bea3a2c8282a78df2f1793c
+    download . http://sourceforge.net/projects/mingw/files/binutils-2.19.1-mingw32-bin.tar.gz 1ab72f3af3fe96d08c3c9bff60c47913704d5774
+    download . http://sourceforge.net/projects/mingw/files/gcc-core-4.4.0-mingw32-bin.tar.gz b88b8f3644ca0cdf2c41cd03f820bf7823a8eabb
+    download . http://sourceforge.net/projects/mingw/files/gcc-core-4.4.0-mingw32-dll.tar.gz 0372ecf4caf75d0d9fe4a7739ca234f1a3de831b
+    download . http://sourceforge.net/projects/mingw/files/gmp-4.2.4-mingw32-dll.tar.gz a14dd928382f093f67cb3cd57c140625b1b265bb
+    download . http://sourceforge.net/projects/mingw/files/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma 5b60ce4d9ec9cf91aee437915a2469b915e1235f
+    download . http://sourceforge.net/projects/mingw/files/mingwrt-3.16-mingw32-dev.tar.gz 770ff5001989d8a9a1ec4f3621d8f264a24e178f
+    download . http://sourceforge.net/projects/mingw/files/mingwrt-3.16-mingw32-dll.tar.gz b8032e97c79e16a3c540043f0f39821df1531ae9
+    download . http://sourceforge.net/projects/mingw/files/mpfr-2.4.1-mingw32-dll.tar.gz 43b7ecb2c0c785c44321ff6c4376f51375713a7b
+    download . http://sourceforge.net/projects/mingw/files/pthreads-w32-2.8.0-mingw32-dll.tar.gz f922f8c0c42921fd4482a3d2e6f779d6384040c1
+    download . http://sourceforge.net/projects/mingw/files/w32api-3.13-mingw32-dev.tar.gz 5eb7d8ec0fe032a92bea3a2c8282a78df2f1793c
 
     mkdir "$DRIVE_C"/MinGW
     cd "$DRIVE_C"/MinGW
@@ -2562,7 +2562,7 @@ load_mingw_gdb() {
     # See http://mingw.org/wiki/Getting_Started
     load_mingw_min
 
-    download . $SOURCEFORGE/mingw/GNU%20Source-Level%20Debugger/GDB-7.0/gdb-7.0-2-mingw32-bin.tar.gz a560cb0e3980d0ed853994c84038260212f58925
+    download . $SOURCEFORGE/mingw/GNU%20Source-Level%20Debugger/gdb-7.0-2-mingw32-bin.tar.gz a560cb0e3980d0ed853994c84038260212f58925
 
     cd "$DRIVE_C"/MinGW
     gzip -d -c "$WINETRICKS_CACHE"/gdb-7.0-2-mingw32-bin.tar.gz | tar x
