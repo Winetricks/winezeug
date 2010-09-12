@@ -304,6 +304,7 @@ usage() {
     echo " vlc           VLC media player"
     echo " wenquanyi     WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)"
     echo " windowscodecs MS Windows Imaging Component"
+    echo " winhttp       MS winhttp.dll (requires Windows license, but does not check for one)"
     echo " wininet       MS wininet.dll (requires Windows license, but does not check for one)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license, but does not check for one)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license, but does not check for one)"
@@ -3786,6 +3787,16 @@ load_windowscodecs() {
     try $WINE "$WINETRICKS_CACHE"/wic_x86_enu.exe /passive
 }
 
+
+#----------------------------------------------------------------
+
+load_winhttp() {
+    # See https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3ee866a0-3a09-4fdf-8bdb-c906850ab9f2
+    download . http://download.microsoft.com/download/5/d/8/5d802926-6bab-45fa-b96e-bee15413523b/Windows2000-KB842773-x86-ENU.EXE
+    try_cabextract -d "$WINDIR"/system32/ -L -F winhttp.dll "$WINETRICKS_CACHE"/Windows2000-KB842773-x86-ENU.EXE
+    override_dlls native,builtin winhttp
+}
+
 #----------------------------------------------------------------
 
 load_wininet() {
@@ -4185,6 +4196,7 @@ do
     vlc) load_vlc;;
     wenquanyi) load_wenquanyi;;
     windowscodecs|wic) load_windowscodecs;;
+    winhttp) load_winhttp;;
     wininet) load_wininet;;
     wme9) load_wme9;;
     wmp9) load_wmp9;;
