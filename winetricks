@@ -3806,7 +3806,7 @@ load_windowscodecs() {
 
 load_winhttp() {
     # See https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3ee866a0-3a09-4fdf-8bdb-c906850ab9f2
-    download . http://download.microsoft.com/download/5/d/8/5d802926-6bab-45fa-b96e-bee15413523b/Windows2000-KB842773-x86-ENU.EXE
+    download . http://download.microsoft.com/download/5/d/8/5d802926-6bab-45fa-b96e-bee15413523b/Windows2000-KB842773-x86-ENU.EXE e676d47e065a314bbf1d15b096a67aede6b0539a
     try_cabextract -d "$WINDIR"/system32/ -L -F winhttp.dll "$WINETRICKS_CACHE"/Windows2000-KB842773-x86-ENU.EXE
     override_dlls native,builtin winhttp
 }
