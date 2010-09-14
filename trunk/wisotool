@@ -5517,6 +5517,7 @@ verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a
 load_sims3() {
     load_autohotkey
 
+    # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
     if workaround_wine_bug 22350
     then
         try sh "$WINETRICKS" -q dotnet20
@@ -5672,7 +5673,7 @@ load_splitsecond_demo()
         die "You must download the demo to $WISOTOOL_CACHE/$PACKAGE before running this script.  See http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo"
     fi
 
-    if workaround_wine_bug 22774
+    if workaround_wine_bug 22774 "wine-1.3.[0-9]*"
     then
         echo "On wine, install takes an extra 7 minutes at the end, please be patient."
     fi
@@ -5725,7 +5726,7 @@ load_splitsecond()
 {
     load_autohotkey
 
-    if workaround_wine_bug 22774
+    if workaround_wine_bug 22774 "wine-1.3.[0-9]*"
     then
         echo "On wine, install takes an extra 7 minutes at the end, please be patient."
     fi
