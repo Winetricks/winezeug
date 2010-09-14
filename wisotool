@@ -5518,7 +5518,7 @@ load_sims3() {
     load_autohotkey
 
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
-    if workaround_wine_bug 22350
+    if false && workaround_wine_bug 22350
     then
         try sh "$WINETRICKS" -q dotnet20
     fi
