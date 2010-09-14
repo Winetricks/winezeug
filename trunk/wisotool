@@ -2980,6 +2980,32 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add ffvii_demo "Final Fantasy VII (Square Enix, 1998)" ff7demo.zip
+
+load_ffvii_demo() {
+    load_autohotkey
+    
+    download $PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
+
+    mkdir "$programfilesdir_x86_unix/ffvii_demo"
+    cd "$programfilesdir_x86_unix/ffvii_demo"
+    try unzip "$WISOTOOL_CACHE/$PACKAGE/ff7demo.zip"
+
+    if workaround_wine_bug 9220
+    then
+        warn "Doesn't work very well, see http://bugs.winehq.org/show_bug.cgi?id=9220"
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_unix/ffvii_demo"
+ff7demo.exe
+__EOF__
+    
+}
+
+
+#----------------------------------------------------------------
+
 verblist_add ffxiv_beta "Final Fantasy XIV Beta (Square Enix, 2010)" ffxivsetup.exe
 
 load_ffxiv_beta() {
