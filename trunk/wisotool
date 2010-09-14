@@ -3067,6 +3067,12 @@ load_ffxiv_beta() {
     if workaround_wine_bug 24358
     then
         sh "$WINETRICKS" winhttp
+        warn "You'll want to forward ports TCP/UDP 55296-55551 and UDP 443 to your computer to speed up the download. See also http://bugs.winehq.org/show_bug.cgi?id=24358"
+    fi
+
+    if workaround_wine_bug 24375
+    then
+        sh "$WINETRICKS" -q ie6
     fi
 
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
@@ -6262,7 +6268,7 @@ load_tlr_demo() {
     fi
     
     cd "$WISOTOOL_TMP"
-    unzip "$WISOTOOL_CACHE/$PACKAGE/TheLastRemnant_PC_Demo.zip"
+    try unzip "$WISOTOOL_CACHE/$PACKAGE/TheLastRemnant_PC_Demo.zip"
     cd "The Last Remnant Trial Version"
     
     ahk_do "
