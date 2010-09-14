@@ -6,10 +6,10 @@
 
 $winesrc = $ENV{"HOME"}."/wine-git";
 
-# Create list of know MS dlls
+# Create list of known MS dlls
 # Get list of fake DLLs.  Assumes you've initialized .wine.  
 # (It'd be better to look at wine.inf, but that looks hard?)
-@needles = split("\n", `grep -l "Wine placeholder DLL" ~/.wine/drive_c/windows/system32/*.dll | sed 's,.*/,,;s/\\.dll\$//'`);
+@needles = split("\n", `grep -l "Wine placeholder DLL" ~/.wine/drive_c/windows/system32/*.dll | grep -iv OpenAL32 | sed 's,.*/,,;s/\\.dll\$//'`);
 # MS DLLs for which we don't have fake DLLs
 push(@needles, 
    "atl70",
