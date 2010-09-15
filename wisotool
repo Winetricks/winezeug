@@ -2705,6 +2705,47 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add eve "EVE Online Tyrannis (CCP Games, 2010) [download]" EVE_Premium_Setup_177290_m.exe
+
+load_eve() {
+    load_autohotkey
+    # FIXME: download function should avoid checksumming huge old files
+    test -s "$WISOTOOL_CACHE/$PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
+        download $PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run, EVE_Premium_Setup_177290_m.exe
+        WinWait, EVE Online Installer
+        WinActivate
+        send {Enter}         ; Next
+        WinWait, EVE,License Agreement
+        WinActivate
+        send {Enter}         ; Next
+        WinWait, EVE,Choose Install
+        WinActivate
+        send {Enter}         ; Install
+        WinWait, EVE,Installation Complete
+        WinActivate
+        send {Enter}         ; next
+        WinWait, EVE,Installation Complete
+        WinActivate
+        Send {Tab}{Tab}{Tab} ; select Launch
+        Send {Space}         ; untick Launch
+        Send {Enter}         ; Finish
+        WinWaitClose
+    "
+    if workaround_wine_bug 18221
+    then
+        sh "$WINETRICKS" -q corefonts
+    fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\CCP\\EVE"
+eve.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2009)" 379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso \
                                 f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
 
@@ -7218,6 +7259,77 @@ load_beneath_a_steel_sky_gog()
 # - The install directory is the same as installer window title (second
 #   parameter), so this parameter is left out.
 # - Main installer size and sha1sum, separated by a comma.
+
+#----------------------------------------------------------------
+
+# Generic Positech installer
+_load_positech()
+{
+    load_autohotkey
+    dl_path="$1"
+    hash_sum="$2"
+    installer_name="$3"
+    window_title="$4"
+    installed_dir="$5"
+    installed_exe="$6"
+    download $PACKAGE $dl_path $hash_sum
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        run, $installer_name
+        WinWait, $window_title
+        WinActivate
+        ControlClick TNewButton1 ; Next
+        WinWait, $window_title,Select Destination
+        WinActivate
+        ControlClick TNewButton3 ; Next
+        WinWait, $window_title,Select Start
+        WinActivate
+        ControlClick TNewButton4 ; Next
+        WinWait, $window_title,Ready to Install
+        WinActivate
+        ControlClick TNewButton4 ; Install
+        WinWait, $window_title,Completing
+        WinActivate
+        Send {Space} ; Untick launch
+        ControlClick TNewButton4 ; Finish
+    "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\$installed_dir"
+$installed_exe
+__EOF__
+}
+
+verblist_add gsb_demo "Gratuitous Space Battles demo (Positech Games, 2009) [download]" GSBDemoInstaller.exe
+
+load_gsb_demo() {
+    _load_positech "http://www.positech.co.uk/gratuitousspacebattles/downloads/GSBDemoInstaller.exe" 83dab80aa3bb94aa886c94b2cb68fa54558fe563 "GSBDemoInstaller.exe" "Setup - Gratuitous Space Battles Demo" "Gratuitous Space Battles Demo" "GSBDemo.exe"
+    if workaround_wine_bug 22393
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+    if workaround_wine_bug 24395
+    then
+        warn "If the game crashes with 'Error initializing output device.  ..\src\GUI_Sounds.cpp 661', try disabling pulseaudio, and post a comment to bug 24395 saying whether it helped."
+    fi
+}
+
+verblist_add democracy2_demo "Democracy2 demo (Positech Games, 2007) [download]" Democracy2Demo.exe
+
+load_democracy2_demo() {
+    _load_positech "http://www.positech.co.uk/democracy2/Democracy2Demo.exe" 117cb63119adb3f79034ee3fcf641629dc825615 "Democracy2Demo.exe" "Setup - Democracy 2 Demo" "Democracy2 Demo" "Democracy2.exe"
+}
+
+verblist_add kudos2_demo "Kudos 2 demo (Positech Games, 2008) [download]" Kudos2DemoInstaller.exe
+
+load_kudos2_demo() {
+    _load_positech "http://www.positech.co.uk/kudos2/Kudos2DemoInstaller.exe" 31abe5a4ce10eb111e0306c8c1b5570f2fd43f33 "Kudos2DemoInstaller.exe" "Setup - Kudos 2 Demo" "Kudos 2 Demo" "Kudos2Demo.exe"
+}
+
+verblist_add rocklegend_demo "Rock Legend demo (Positech Games, 2007) [download]" RockLegendDemo.exe
+
+load_rocklegend_demo() {
+    _load_positech "http://www.positech.co.uk/rocklegend/RockLegendDemo.exe" b9f090d2e6a9e7be860a52c339d599e3c7bfe516 "RockLegendDemo.exe" "Setup - Kudos Rock Legend Demo" "Kudos Rock Legend Demo" "KudosRockLegendDemo.exe"
+}
 
 #----------------------------------------------------------------
 

@@ -15,14 +15,10 @@ case "$OS" in
     WINESERVER=true
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="C:/"
-    XXXPATH=cygpath
     ;;
  *)
     export WINE=${WINE:-$HOME/wine-git/wine}
     export WINESERVER=${WINESERVER:-$HOME/wine-git/server/wineserver}
-    export WINEPREFIX=$HOME/wisotooltest-prefixes/$app
-    export DRIVE_C="$WINEPREFIX/dosdevices/c:"
-    export XXXPATH="early_wine winepath"
     ;;
 esac
 
@@ -65,6 +61,8 @@ ea) verbs="
 	" ;;
 	# masseffect install hangs, so do it last
 
+positech) verbs="democracy2_demo gsb_demo kudos2_demo rocklegend_demo" ;;
+
 ubisoft) verbs="
 	assassinscreed
 	avatar_demo  
@@ -76,9 +74,12 @@ esac
 
 for app in $verbs
 do
+    export WINEPREFIX=$HOME/wisotooltest-prefixes/$app
     rm -rf $WINEPREFIX
+    export DRIVE_C="$WINEPREFIX/dosdevices/c:"
+
     # Isolate us from the user's home directory
-    sh winetricks sandbox
+    sh winetricks sandbox gecko
     echo "Installing $app"
     time sh wisotool $app
     echo -n "Done installing $app, disk usage "
