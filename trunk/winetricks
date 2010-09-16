@@ -4111,6 +4111,7 @@ do
     crypt32) load_crypt32;;
     cygwin) load_cygwin;;
     d3dx9) load_d3dx9;;
+    d3dx9_26) load_d3dx9_xx 26;;
     d3dx9_28) load_d3dx9_xx 28;;
     d3dx9_36) load_d3dx9_xx 36;;
     d3dx10) load_d3dx10;;
