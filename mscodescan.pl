@@ -4,6 +4,23 @@
 # Copyright 2010 Dan Kegel
 # LGPL
 
+# Usage: perl mscodescan.pl [-l][-q]
+# -l: just list dlls/exe's, not missing imports
+# -q: don't output titles
+
+my %opt;
+#use Getopt::Std;
+#getopt("lq", %opt);   doesn't work?
+foreach (@ARGV) {
+    if ($_ eq '-l') {
+        $opt{'l'} = 1;
+    } elsif ($_ eq '-q') {
+        $opt{'q'} = 1;
+    } else {
+        die("unknown option $_\n");
+    }
+}
+
 $winesrc = $ENV{"HOME"}."/wine-git";
 
 # Create list of known MS dlls
@@ -126,11 +143,18 @@ foreach $haystack (@haystacks) {
 }
 
 if (@bundled) {
-    print "Found ".scalar(@bundled)." bundled MS modules:\n";
+    if (! $opt{'q'}) {
+        print "Found ".scalar(@bundled)." bundled MS modules:\n";
+    }
     foreach $haystack (@bundled) {
-        print "  $haystack\n";
+        print "  " if (! $opt{'l'});
+	print "$haystack\n";
     }
 }
+if ($opt{'l'}) {
+    exit(0);
+}
+
 print "\n";
 
 foreach $haystack (@nonbundled) {
