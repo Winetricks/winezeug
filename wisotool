@@ -5215,7 +5215,49 @@ load_proevolution2010_demo()
     fi
 }
 
+#----------------------------------------------------------------
 
+verblist_add proevolution2011_demo "Pro Evolution Soccer 2011 Demo (Konami, 2010) [download]" PES2011_Demo.exe
+
+load_proevolution2011_demo()
+{
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
+    load_autohotkey
+    # http://www.bigdownload.com/games/pro-evolution-soccer-2011/pc/pro-evolution-soccer-2011-demo/
+    download $PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
+
+    if workaround_wine_bug 24438
+    then
+        warn "Installer probably won't work, see http://bugs.winehq.org/show_bug.cgi?id=24438"
+    fi
+    
+    # Copied from 2010, the first few dialogs are the same, but can't test all of it because of bug 24438.
+    
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, PES2011_Demo.exe
+        winwait, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, WARNING: This program is protected
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, WARNING: This program is protected ; Next
+        winwait, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, Please read the following
+        sleep 1000
+        ControlClick, Button3, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, Please read the ; Accept license
+        sleep 1000
+        ControlClick, Button5, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, Please read the following license ; Next
+        winwait, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, Click Next to install to this folder
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, Click Next to install to this folder ; Next
+        winwait, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, The wizard is ready to begin installation
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, The wizard is ready to begin installation. ; Install
+        winwait, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, InstallShield Wizard Completed
+        sleep 1000
+        ControlClick, Button1, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, InstallShield Wizard Completed ; Finished
+    "
+    cd "$olddir"
+
+}
 
 #----------------------------------------------------------------
 
