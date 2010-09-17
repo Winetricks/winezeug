@@ -783,7 +783,8 @@ load_iso() {
 #----------------------------------------------------------------
 
 ahk_do() {
-   echo "$@" | sed "s/\$/\r/" > "$WISOTOOL_TMP"/tmp.ahk
+   # FIXME: avoid embedded carriage returns, some editors strip them
+   echo "$@" | sed "s/\$//" > "$WISOTOOL_TMP"/tmp.ahk
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
 }
 
