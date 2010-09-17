@@ -2881,6 +2881,66 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+
+verblist_add fifa11_demo    "FIFA 11 Demo (EA Sports, 2010) [download]" fifa11_pc_demo_NA.zip
+
+load_fifa11_demo()
+{
+    load_autohotkey
+
+    # From http://www.easportsfootball.co.uk/news/item/file/FIFA-11-Demo-Release?om_u=2255229429&om_i=_BMknsPB8Usvnmr
+    download $PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
+    
+    mkdir "$WISOTOOL_TMP/$PACKAGE"
+    try unzip -d "$WISOTOOL_TMP/$PACKAGE" "$WISOTOOL_CACHE/$PACKAGE/fifa11_pc_demo_NA.zip"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, EASetup.exe
+        winwait, Microsoft Visual C++ 2008, This wizard will guide you
+        sleep 1000
+        controlclick, Button12, Microsoft Visual C++ 2008, This wizard will guide you
+        winwait, Microsoft Visual C++ 2008, License Terms
+        sleep 1000
+        controlclick, Button11, Microsoft Visual C++ 2008, License Terms
+        sleep 1000
+        controlclick, Button8, Microsoft Visual C++ 2008, License Terms
+        winwait, Microsoft Visual C++ 2008, Setup Complete
+        sleep 2000
+        controlclick, Button2, Microsoft Visual C++ 2008, Setup Complete
+        ; It doesn't seem to take the first click, so try a second time..
+        sleep 2000
+        controlclick, Button2, Microsoft Visual C++ 2008, Setup Complete
+        ; There are two license agreements...one is for Directx
+        winwait, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button3, FIFA 11, I &accept the terms in the End User License Agreement
+        winwait, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button3, FIFA 11, I &accept the terms in the End User License Agreement
+        winwait, FIFA 11, Ready to install FIFA 11
+        sleep 1000
+        controlclick, Button1, FIFA 11, Ready to install FIFA 11
+        winwait, FIFA 11, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button5, FIFA 11, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button1, FIFA 11, Click the Finish button to exit the Setup Wizard.
+    "
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\EA Sports\\FIFA 11 Demo\\Game"
+"fifa.exe"
+__EOF__
+
+}
+
+#----------------------------------------------------------------
  
 
 verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download]" FIFAOnlineSetup.exe
