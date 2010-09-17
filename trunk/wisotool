@@ -3701,7 +3701,7 @@ load_lol()
         export GC_DONT_GC=1
     fi
 
-    if workaround_wine_bug 24019
+    if workaround_wine_bug 24019 'wine-1.3.[2-9]|wine-1.3.1[0-9]'   # fixed in wine-1.3.2
     then
         # Avoid crash in downloader
         warn "Please apply patch from wine bug 24019"
