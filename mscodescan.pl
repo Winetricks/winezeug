@@ -143,7 +143,9 @@ foreach $haystack (@haystacks) {
 	$x = <PIPE>;
 	close(PIPE);
 	if (length($x) < 4) {
-	    print "File $haystack does not contain magic string 'microsoft corp', so assuming not a real Microsoft file.\n";
+            if (! $opt{'q'}) {
+                print "File $haystack does not contain magic string 'microsoft corp', so assuming not a real Microsoft file.\n";
+            }
 	    $found = 0;
 	}
     }
