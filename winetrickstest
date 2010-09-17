@@ -30,6 +30,7 @@ for verb in \
     dotnet11 \
     dotnet20 \
     droid \
+    dxsdk_nov2006 \
     eufonts \
     ffdshow \
     flash \
@@ -153,11 +154,10 @@ else
     cat > dotnet_test.c << __EOF__
 using System; class ExampleClass { static void Main(){Console.WriteLine("Dotnet works!");} }
 __EOF__
+    gmcs dotnet_test.c
+
     for verb in \
         dotnet20 \
-        mono20 \
-        mono22 \
-        mono24 \
         mono26
     do
         wineserver -k || true
@@ -200,7 +200,8 @@ fi
 # Broken
 #    controlpad #Broken on 64-bit karmic
 #    dotnet20sp2
-#    dotnet30 
+#    dotnet30
+#    dxsdk_nov2006 (silent install is broken)
 #    fm20
 #    psdkvista
 #    vc2005express
