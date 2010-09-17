@@ -135,6 +135,18 @@ foreach $haystack (@haystacks) {
             }
         }
     }
+    # Some games (e.g. second life) ship dlls with same name as microsoft ones, 
+    # so don't call it a microsoft dll unless it contains the string "microsoft corp"
+    if ($found) {
+	# Note extra backslash in escaped NULL!
+        open(PIPE, "tr -d '\\000' < '$haystack' | grep -il 'microsoft corp' |") || die;
+	$x = <PIPE>;
+	close(PIPE);
+	if (length($x) < 4) {
+	    print "File $haystack does not contain magic string 'microsoft corp', so assuming not a real Microsoft file.\n";
+	    $found = 0;
+	}
+    }
     if ($found) {
        push(@bundled, $haystack);
     } else {
