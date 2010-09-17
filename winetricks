@@ -1653,7 +1653,7 @@ load_dxsdk_nov2006() {
     download . http://download.microsoft.com/download/9/e/5/9e5bfc66-a621-4e0d-8bfe-6688058c3f00/dxsdk_aug2006.exe
     load_vcrun6   # for mfc42u
     echo "Be patient, the 'installing new services' step at the end takes about five minutes"
-    try $WINE "$WINETRICKS_CACHE"/dxsdk_aug2006.exe
+    try $WINE "$WINETRICKS_CACHE"/dxsdk_aug2006.exe $WINETRICKS_QUIET
 }
 
 #----------------------------------------------------------------
