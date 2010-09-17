@@ -309,8 +309,7 @@ try_unrar() {
     UNRAR="`which unrar 2>/dev/null`"
     if test ! -x "$UNRAR"
     then
-        die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install u
-nrar' or 'sudo yum install unrar')."
+        die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install unrar' or 'sudo yum install unrar')."
     fi
 
     try $UNRAR "$@"
@@ -784,8 +783,7 @@ load_iso() {
 #----------------------------------------------------------------
 
 ahk_do() {
-   # FIXME: avoid embedded carriage returns, some editors strip them
-   echo "$@" | sed "s/\$//" > "$WISOTOOL_TMP"/tmp.ahk
+   echo "$@" | sed "s/\$/\r/" > "$WISOTOOL_TMP"/tmp.ahk
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
 }
 
