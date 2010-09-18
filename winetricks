@@ -64,7 +64,7 @@ test -d "$WINETRICKS_CACHE" || mkdir -p "$WINETRICKS_CACHE"
 WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
 WINETRICKS_TMP_WIN='c:\winetrickstmp'
-mkdir -p $WINETRICKS_TMP
+mkdir -p "$WINETRICKS_TMP"
 
 # Handle case where z: doesn't exist
 case "$WINETRICKS_CACHE_WIN" in
@@ -421,7 +421,7 @@ showmenu()
     case $MENU in
     zenity)
         echo "zenity --title 'Winetricks' --text 'Select packages to install' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
-        usage | grep '^ [0-9a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WINETRICKS_TMP/zenity.sh
+        usage | grep '^ [0-9a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> "$WINETRICKS_TMP"/zenity.sh
         todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
         ;;
     kdialog)
