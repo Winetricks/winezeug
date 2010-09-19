@@ -2187,6 +2187,145 @@ __EOF__
 
 }
 
+#----------------------------------------------------------------
+
+verblist_add civ4 "Civilization IV (Firaxis Games, 2005) [broken-wine-drm]" 6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso 231eee984062c9acadd336b4c0852fac829b76a8.iso
+
+load_civ4() {
+    if workaround_wine_bug 219
+    then
+        warn "This game's DRM is not supported by Wine :-( but try patch 3.19 or later, it's said to remove the DRM"
+    fi
+
+    load_autohotkey
+
+    if workaround_wine_bug 6856
+    then
+        try sh "$WINETRICKS" -q msxml3
+    fi
+    if workaround_wine_bug 11675
+    then
+        try sh "$WINETRICKS" -q d3dx9_36
+    fi
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
+
+    cd "$ISO_MOUNT_ROOT"
+    ahk_do "
+        run ${ISO_MOUNT_LETTER}:autorun.exe
+        SetTitleMatchMode, 2
+        winwait, Civilization 4
+        ControlClick Button3, Civilization 4
+        winwait, Civilization 4 - InstallShield Wizard, Welcome
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4, I &accept the terms of the license agreement
+        ControlClick I &accept, Civilization 4
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4 - InstallShield Wizard, Express Install
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4 - InstallShield Wizard, begin installation
+        ControlClick &Install, Civilization 4
+        winwait, Setup Needs The Next Disk
+    "
+    iso_umount
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/231eee984062c9acadd336b4c0852fac829b76a8.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        ControlClick OK, Setup Needs The Next Disk
+        winwait, Civilization 4, Xfire
+        ControlClick No, Civilization 4
+        ControlClick &Next >, Civilization 4
+        winwait, Setup Needs The Next Disk
+    "
+    iso_umount
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        ControlClick OK, Setup Needs The Next Disk
+        winwait, Sid Meier's Civilization 4 - InstallShield Wizard, InstallShield Wizard Complete
+        ControlClick Finish, Sid Meier's Civilization 4 - InstallShield Wizard
+    "
+
+    download $PACKAGE http://www.firaxis.com/downloads/Patch/Civ4v161.exe 4712e96ef34dcc5aa961d2b75f49ada8bd6b0d92
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run Civ4v161.exe
+        winwait, Civilization 4
+        ControlClick &Next >, Sid Meier's Civilization 4 - InstallShield Wizard
+        winwait, Civilization 4, Xfire
+        ControlClick No, Civilization 4
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4, Update Complete
+    "
+    if workaround_wine_bug 6856
+    then
+        try sh "$WINETRICKS" -q msxml3
+    fi
+    if workaround_wine_bug 11675
+    then
+        try sh "$WINETRICKS" -q d3dx9_36
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4"
+Civilization4.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
+verblist_add civ4_demo    "Civilization IV Demo (Firaxis Games, 2005) [download]" Civilization4_Demo.zip
+
+load_civ4_demo()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Civilization4_Demo.zip"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download demo from http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html and place it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    mkdir -p "$WISOTOOL_TMP"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    try unzip Civilization4_Demo.zip -d "$WISOTOOL_TMP"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+    chmod +x setup.exe
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, setup.exe
+        winwait, Choose Setup Language
+        sleep 1000
+        Send {enter}
+        winwait, Civilization 4, Welcome
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4, I &accept the terms of the license agreement
+        ControlClick I &accept, Civilization 4
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4, Express Install
+        ControlClick &Next >, Civilization 4
+        winwait, Civilization 4, begin installation
+        ControlClick &Install, Civilization 4
+        winwait, Civilization 4, InstallShield Wizard Complete
+        ControlClick Finish, Civilization 4
+        winwaitclose
+    "
+    cd "$olddir"
+
+    if workaround_wine_bug 6856
+    then
+        try sh "$WINETRICKS" -q msxml3
+    fi
+    if workaround_wine_bug 6856 # part 2, still need to file a bug
+    then
+        try sh "$WINETRICKS" -q d3dx9_26
+    fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo"
+Civilization4.exe
+__EOF__
+}
 
 #----------------------------------------------------------------
 
