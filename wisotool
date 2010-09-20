@@ -441,10 +441,11 @@ download() {
         esac
 
         cd "$olddir"
-    fi
-    if [ "$3"x != ""x ]
-    then
-        verify_sha1sum $3  "$cache/$file"
+
+        if [ "$3"x != ""x ]
+        then
+            verify_sha1sum $3  "$cache/$file"
+        fi
     fi
 }
 
@@ -1615,6 +1616,115 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
+verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix 2009) (size: 2.0 GB)[download]" BMDemo_installer.exe
+
+load_batman_arkham_asylum_demo() {
+
+    load_autohotkey
+
+    download $PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    
+    ahk_do "
+        run BMDemo_installer.exe
+        SetTitleMatchMode, 2
+        WinWait, Batman: Arkham Asylum Demo, Select Language
+        WinActivate
+        Send {Enter}
+        WinWait, Batman: Arkham Asylum Demo, Install Demo
+        WinActivate
+        Send {Tab}
+        Send {Enter}
+        WinWait, Batman: Arkham Asylum Demo, Welcome
+        WinActivate
+        Send {Enter}
+        WinWait, Batman: Arkham Asylum Demo, License Agreement
+        WinActivate
+        Send +!a
+        Send {Enter}
+        Loop {
+            Sleep (1000)
+            IfWinExist, Batman: Arkham Asylum Demo, System Check Results
+            {
+                Sleep (300)
+                WinActivate
+                Send {Enter} 
+                break
+            }
+            IfWinExist, Batman: Arkham Asylum Demo, Your computer fails to meet
+            {
+                Sleep (300)             
+                Send +!o
+            }
+            IfWinExist, Batman: Arkham Asylum Demo, Setup has detected
+            {
+                Sleep (300)             
+                Send +!o ; I'm not sure about this keystroke sequence
+            }
+        }   
+        WinWait, Batman: Arkham Asylum Demo, Setup Type
+        WinActivate
+        Send {Enter}
+        
+        Loop
+        {
+            IfWinExist, NVIDIA, license
+            {
+                Sleep (500)
+                WinActivate
+                Send +!a ; license agreement
+                Send +!n ; next 
+            }
+            IfWinExist, NVIDIA, finish
+            {
+                WinActivate
+                Send +!f ; finish
+            }
+            IfWinExist, DXSETUP.exe - Error
+            {
+                Send {Enter}          ; DirectX9 Redistributable trying to install managed components, failing, but that's ok
+            }
+            IfWinExist, Fatal Error
+            {
+                Send {Enter}          ; PhysX installer exploded because wsh not installed, or dotnet30 not installed, probably ok
+            }
+            Process, Exist, BmLauncher.exe ; BmLauncher automatically starts after installation finished.
+            retVal = %ErrorLevel%
+            if retVal != 0
+            {
+                Process, Close, BmLauncher.exe ; kill BmLauncher
+                break
+            }     
+            Sleep (2000)
+        }
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Eidos\\Batman Arkham Asylum Demo\\Binaries"
+ShippingPC-BmGame.exe
+__EOF__
+
+    if workaround_wine_bug 6971
+    then
+        warn "The mouse is still broken in wine, but winetricks mwo=force will make the game much more playable, try it."
+    fi
+    if workaround_wine_bug 20651
+    then
+        download $PACKAGE http://www.glio.net/UserEngine.ini
+        download $PACKAGE http://www.glio.net/UserInput.ini
+        download $PACKAGE http://www.glio.net/UserGame.ini
+        configdir="$DRIVE_C/users/$USERNAME/My Documents/Eidos/Batman Arkham Asylum Demo/BmGame/Config"
+        mkdir -p "$configdir"
+        cp "$WISOTOOL_CACHE/$PACKAGE"/*.ini "$configdir"
+    fi  
+    if workaround_wine_bug 24471
+    then
+        sh "$WINETRICKS" mmdevapi=disabled
+    fi
+}
+
+#--------------------------------------------------------------------------------------
 verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010)" \
   9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
 
