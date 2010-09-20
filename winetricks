@@ -3170,7 +3170,7 @@ load_usp10() {
 
 load_utorrent() {
     # Torrent client supported on Windows,Mac OSX, Linux through WINE 
-    download . http://download.utorrent.com/2.0.2/utorrent.exe dfec781877aa86afa941d512c3fc9e95c2b2bdea
+    download . http://download.utorrent.com/2.0.4/utorrent.exe 483f49e654c9b69f101d532363c53da5e83fc8f4
 
     try cp -f "$WINETRICKS_CACHE"/utorrent.exe "$WINDIR"/utorrent.exe
     warn "utorrent is now installed to $WINDIR/utorrent.exe"
