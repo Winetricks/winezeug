@@ -30,6 +30,7 @@ for verb in \
     dotnet11 \
     dotnet20 \
     droid \
+    dsound \
     dxsdk_nov2006 \
     eufonts \
     ffdshow \

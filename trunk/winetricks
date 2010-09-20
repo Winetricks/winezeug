@@ -219,6 +219,7 @@ usage() {
     echo " dotnet20sp2   MS .NET 2.0 sp2 (requires Windows license, but does not check for one)"
     echo " dotnet30      MS .NET 3.0 (requires Windows license, but does not check for one, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
+    echo " dsound        MS dsound.dll (from DirectX 9 user redistributable)"
     echo " dxsdk_nov2006 DirectX Software Development Kit, November 2006 version"
     echo " eadm          EA Download Manager"
     echo " eufonts       Updated fonts for Romanian and Bulgarian"
@@ -1689,6 +1690,19 @@ load_dxsdk_nov2006() {
     load_vcrun6   # for mfc42u
     echo "Be patient, the 'installing new services' step at the end takes about five minutes"
     try $WINE "$WINETRICKS_CACHE"/dxsdk_aug2006.exe $WINETRICKS_QUIET
+}
+
+#----------------------------------------------------------------
+
+load_dsound() {
+    helper_directx_dl
+
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINDIR"/system32 -L -F 'dsound.dll' "$WINETRICKS_TMP/dxnt.cab"
+
+    try $WINE regsvr32 dsound.dll
+
+    override_dlls native dsound
 }
 
 #----------------------------------------------------------------
@@ -4169,6 +4183,7 @@ do
     dotnet3|dotnet30) load_dotnet30; load_fontfix;;
     dotnet35) load_dotnet35; load_fontfix;;
     droid) load_droid;;
+    dsound) load_dsound;;
     dxsdk_nov2006) load_dxsdk_nov2006;;
     eadm) load_eadm;;
     eufonts) load_eufonts;;
