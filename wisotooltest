@@ -13,7 +13,6 @@ case "$OS" in
     esac
     WINE=""
     WINESERVER=true
-    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="C:/"
     ;;
  *)
@@ -22,22 +21,18 @@ case "$OS" in
     ;;
 esac
 
-# Used below in the sha1sum check, these directories can change between Wine/Windows version:
-windir="`$WINE cmd /c echo "%windir%" | cut -c 4- | tr -d '\015'`"
-progdir="`$WINE cmd /c echo "%ProgramFiles%" | cut -c 4- | tr -d '\015'`"
-
 srcdir=`dirname $0`
 srcdir=`cd $srcdir; pwd`
 
 # verbs known to not work yet
 BLACKLIST="starcraft$|passmark7"
 
-
 case "$LANG" in
 ""|"C") echo "Some games won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ; exit 1;;
 esac
 
 case "$1" in
+download)  verbs="`sh wisotool --help | grep '\[download' | grep -v broken | egrep -v "$BLACKLIST" | awk '{print $1}'`" ;;
 all|"") verbs="`sh wisotool ls | egrep -v "$BLACKLIST" `" ;;
 activision) verbs="
 	blur
@@ -80,6 +75,7 @@ do
 
     # Isolate us from the user's home directory
     sh winetricks sandbox gecko
+
     echo "Installing $app"
     time sh wisotool $app
     echo -n "Done installing $app, disk usage "
@@ -90,6 +86,9 @@ do
     # Verify the installation
     if [ -f "$srcdir/wisotoolverify.d/$app.sha1sum" ]
     then
+        windir="`$WINE cmd /c echo "%windir%" | cut -c 4- | tr -d '\015'`"
+        progdir="`$WINE cmd /c echo "%ProgramFiles%" | cut -c 4- | tr -d '\015'`"
+
         cd "$DRIVE_C"
         # Fix up the filenames, which can differ between Windows versions/Wine:
         # FIXME: we need a way to guarantee that all _original_ .sha1sums are the same.
