@@ -1799,7 +1799,8 @@ load_flash() {
     # 2010-03-15: sha1sum 901b53ebe26c62c0bd7fc7dc400552ce335685bb
     # 2010-06-24: sha1sum 6de519569137ec2ba3a4eed59f4052c4d944869c
     # 2010-08-11: sha1sum bd3a91fe450a800dbbc8d070159dc0a599043652
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe bd3a91fe450a800dbbc8d070159dc0a599043652
+    # 2010-10-21: sha1sum c8bc6b4ead9538aeba24c9a5908dc1912ad443c7
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe c8bc6b4ead9538aeba24c9a5908dc1912ad443c7
     if [ $WINETRICKS_QUIET ]
     then
         try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe /install
@@ -1817,7 +1818,8 @@ load_flash() {
     # 2010-03-16: sha1sum e2fe55927c4068b0a07636742814682c0a2aa0fe
     # 2010-06-24: sha1sum a419339ada03076ea0a197b28011b87055c45478
     # 2010-08-11: sha1sum cb011ab4c74d222c8ddb48171a8aa3b5380f8d5a
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe cb011ab4c74d222c8ddb48171a8aa3b5380f8d5a
+    # 2010-10-21: sha1sum 26985ca9f8f9c9926d807b591a28cdf2cc35a76a
+    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 26985ca9f8f9c9926d807b591a28cdf2cc35a76a
     if [ $WINETRICKS_QUIET ]
     then
         try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe /install
