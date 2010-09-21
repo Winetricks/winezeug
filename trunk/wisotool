@@ -3720,7 +3720,7 @@ load_lhp_demo()
     load_autohotkey
 
     case "$LANG" in
-    *UTF-8*) ;;
+    *UTF-8*|*utf8*) ;;
     *) die "This installer fails in non-utf-8 locales.  Try doing export LANG=en_US.UTF-8"
     esac
 
