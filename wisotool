@@ -3532,13 +3532,11 @@ load_hegemonypom_demo()
             IfWinExist, Log message, IKnownFolderManager
             {
                  send {Enter}
-                 break
             }
             ; Work around wine bug 21261
             IfWinExist, Log message, Games Explorer
             {
                  send {Enter}
-                 break
             }
             IfWinExist, Hegemony, has been installed
             {
