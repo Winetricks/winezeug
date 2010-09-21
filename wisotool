@@ -999,6 +999,7 @@ load_3dmark03() {
     warn "Don't use mouse while this installer is running.  Sorry..."
     # This old installer doesn't seem to be scriptable the usual way, so spray and pray.
     ahk_do "
+        SetTitleMatchMode, 2
         run 3DMark03_v360_1901.exe
         Sleep 4000
         ; Welcome
@@ -1014,7 +1015,7 @@ load_3dmark03() {
         ; Begin install
         Send {Enter}
         ; Wait for install to finish
-        Sleep 35000
+        WinWait 3DMark03, Registration
         ; Purchase later
         Send {Tab}
         Send {Tab}
@@ -5276,7 +5277,7 @@ load_proevolution2010_demo()
 
 #----------------------------------------------------------------
 
-verblist_add proevolution2011_demo "Pro Evolution Soccer 2011 Demo (Konami, 2010) [download]" PES2011_Demo.exe
+verblist_add proevolution2011_demo "Pro Evolution Soccer 2011 Demo (Konami, 2010) [download][broken on wine]" PES2011_Demo.exe
 
 load_proevolution2011_demo()
 {
