@@ -3604,6 +3604,22 @@ load_hod3_jp_demo() {
         winwait, THE HOUSE OF THE DEAD 3
         send {Enter}
         ; Installer crashes before putting up finished dialog, but app seems okay anyway
+        Loop
+        {
+            IfWinExist, THE HOUSE OF THE DEAD 3,Finish
+            {
+                WinActivate
+                Send {Enter}  ; Finish (I hope, needs testing)
+            }
+            Process, Exist, hod3_trial.exe ; BmLauncher automatically starts after installation finished.
+            retVal = %ErrorLevel%
+            if retVal == 0
+            {
+                ; installer has crashed or exited
+                break
+            }     
+            Sleep (2000)
+        }
     "
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 cd "$programfilesdir_x86_win\\SEGA\\THE HOUSE OF THE DEAD3_JP_TRIAL"
@@ -5133,7 +5149,7 @@ load_popsot_demo()
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/POP_Demo_Eng.exe" && ! test -f "$WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        warn "You must manually download the Prince of Persia Sands of Time Demo to $WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe; expected sha1sum ed62f4da1f898c661ca09bd4e3a22e4a983a822b"
+        die "You must manually download the Prince of Persia Sands of Time Demo to $WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe; expected sha1sum ed62f4da1f898c661ca09bd4e3a22e4a983a822b"
     fi
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
@@ -5186,7 +5202,7 @@ load_procycling08_demo()
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        warn "Please download the game to $WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
+        die "Please download the game to $WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
