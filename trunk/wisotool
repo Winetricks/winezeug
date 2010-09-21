@@ -3600,7 +3600,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005) [download]"  hod3_trial.exe
+verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005) (broken in wine-1.3.3?) [download]"  hod3_trial.exe
 
 load_hod3_jp_demo() {
     load_autohotkey
@@ -3639,7 +3639,13 @@ load_hod3_jp_demo() {
             {
                 ; installer has crashed or exited
                 break
-            }     
+            }
+            ; work around hang on wine
+            if FileExist(\"$programfilesdir_x86_win\\SEGA\\THE HOUSE OF THE DEAD3_JP_TRIAL\\hod3launch.exe\")
+            {
+                Sleep (10000)
+                break
+            }
             Sleep (2000)
         }
     "
