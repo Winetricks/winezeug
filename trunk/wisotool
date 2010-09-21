@@ -3525,6 +3525,28 @@ load_hegemonypom_demo()
         controlclick, Button2
         winwait, Hegemony, shortcuts
         controlclick, Button2
+
+        Loop
+        {
+            ; Work around wine bug 24484
+            IfWinExist, Log message, IKnownFolderManager
+            {
+                 send {Enter}
+                 break
+            }
+            ; Work around wine bug 21261
+            IfWinExist, Log message, Games Explorer
+            {
+                 send {Enter}
+                 break
+            }
+            IfWinExist, Hegemony, has been installed
+            {
+                 break
+            }
+            Sleep (2000)
+        }
+
         winwait, Hegemony, has been installed
         controlclick, Button4
         controlclick, Button2
