@@ -5298,8 +5298,14 @@ load_proevolution2010_demo()
 
     if workaround_wine_bug 23104
     then
-        try sh "$WINETRICKS" -q d3dx9
+        try sh "$WINETRICKS" -q d3dx9_36
     fi
+    
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2010 DEMO"
+pes2010.exe
+__EOF__
+
 }
 
 #----------------------------------------------------------------
@@ -5344,6 +5350,16 @@ load_proevolution2011_demo()
     "
     cd "$olddir"
 
+    if workaround_wine_bug 23104
+    then
+        sh "$WINETRICKS" d3dx9_36
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2011 DEMO"
+pes2011demo.exe
+__EOF__
+   
 }
 
 #----------------------------------------------------------------
