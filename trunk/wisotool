@@ -1948,11 +1948,15 @@ load_braid()
 {
     load_autohotkey
 
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
+    then
+        die "Please enter your registration key into $WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
+    fi
     BRAID_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/braid-key.txt`
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
     then
-        download $PACKAGE "http://www.playgreenhouse.com/php/public/tracking/downloads.php?sku=NNONE-000001-01&platform=win" 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+        download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
     fi
     cd "$WISOTOOL_CACHE/$PACKAGE"
     mv downloads.php* braid_windows_r3.exe 2>/dev/null
@@ -3539,7 +3543,7 @@ load_help() {
 
 #----------------------------------------------------------------
 
-honexe=HoNClient-1.0.0.1.exe
+honexe=HoNClient-1.0.12.1.exe
 verblist_add hon "Heroes of Newerth (S2 Games, 2010) [download]" \
 $honexe
 
@@ -3547,10 +3551,7 @@ load_hon()
 {
     load_autohotkey
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$honexe"
-    then
-        download $PACKAGE http://dl2.heroesofnewerth.com/$honexe
-    fi
+    download $PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
