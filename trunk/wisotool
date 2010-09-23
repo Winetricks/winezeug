@@ -1871,26 +1871,29 @@ load_blur() {
         winwait, Blur, Setup Type
         sleep 1000
         send {Enter}
+        winwaitclose, Blur
+        ; the installer still has a bit of stuff to do after that window closes
+        sleep 10000
     "
-    # Installer seems to crash at end on Win7 and Wine
-    # Wait for last file to be created(Blur.exe?), then kill wineserver
-    # and do the d3dx physx install by using winetricks.
-    while [ ! -f "$programfilesdir_x86_unix"/Activision/Blur*/Blur.exe ]
-    do
-        sleep 5
-    done
-    # Sleep for 30 seconds to ensure that all files have been created
-    # before killing the wineserver.
-    sleep 30
-    wineserver -k
-    
-    # We killed the wineserver before(or during) the d3dx9 and physx install
-    # so use winetricks to install them. The game runs without the physx trick
-    # but frame rate improves with physx.
-    try sh "$WINETRICKS" -q d3dx9 physx
     iso_umount
+
+    # FIXME: The installer didn't install physx (does it on windows? If so, file wine bug).
+    # The game runs without the physx trick but frame rate improves with physx.
+    try sh "$WINETRICKS" -q physx
+
+    if workaround_wine_bug 24509
+    then
+        warn "Game will crash on first run (which is in full screen). On second run, it will go to windowed mode. Workaround this by defaulting to a 1024x768 window."
+        try mkdir -p "$appdata_unix/bizarre creations/blur"
+        cat > "$appdata_unix/bizarre creations/blur/settings.xml" <<__EOF__
+<application_settings version="1"/>
+<shared_graphical_settings width="1024" height="768" x="3" y="22" multisample="0" windowed="1" vsync="1" graphical_detail="2"/>
+__EOF__
+        
+    fi
+    
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\Activision\Blur*"
+cd "$programfilesdir_x86_win\Activision\Blur(TM)"
 "Blur.exe"
 __EOF__
 }
@@ -5012,7 +5015,7 @@ load_pscs5_pickle() {
     try cd ../"Program Files"
     try cp -r "$programfilesdir_x86_unix/Adobe" .
     try cd ../userhome
-    try cp -r "$userprofile_unix/Application Data/Adobe" .
+    try cp -r "$appdata_unix/Adobe" .
     try cd ..
     try cp "$system32_unix/odbc32.dll" .
     try cp "$system32_unix/odbcint.dll" .
@@ -5041,7 +5044,7 @@ load_pscs5_unpickle() {
     try mv "$WISOTOOL_TMP/Program Files/Adobe" .
     try cd "Common Files"
     try mv "$WISOTOOL_TMP/Common Files/Adobe" .
-    try cd "$DRIVE_C/users/$USER/Application Data/"
+    try cd "$appdata_win/"
     try mv "$WISOTOOL_TMP/userhome"/* .
     try cd "$WINDIR/system32"
     try mv "$WISOTOOL_TMP/odbc32.dll" .
@@ -7437,6 +7440,10 @@ then
     programfilesdir_x86_unix="${programfilesdir_unix}"
 fi
 export programfilesdir_x86_unix
+
+# localized, and different across Windows versions:
+appdata_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%AppData%" | tr -d '\015'`"
+appdata_unix="`unset WINEDEBUG; $XXXPATH -u "$appdata_win" | tr -d '\015' `"
 
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
