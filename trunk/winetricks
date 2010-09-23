@@ -280,7 +280,7 @@ usage() {
     echo " riched20      MS RichEdit Control, riched20 and riched32"
     echo " riched30      MS RichEdit Control, riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
-    echo " safari         Apple Safari web browser"
+    echo " safari        Apple Safari web browser"
     echo " secur32       MS secur32"
     echo " shockwave     Adobe Shockwave Player"
     echo " steam         Steam Client App from Valve"
@@ -3167,9 +3167,8 @@ load_safari() {
     download . http://appldnld.apple.com.edgesuite.net/content.info.apple.com/Safari5/061-7138.20100607.Y7U87/SafariSetup.exe e56d5d79d9cfbb85ac46ac78aa497d7f3d8dbc3d
     cd "$WINETRICKS_CACHE"
     # Workaround http://bugs.winehq.org/show_bug.cgi?id=21146
-    # FIXME: is this localized?
-    try mkdir -p "$DRIVE_C/users/$USER/Application Data/Apple Computer/Preferences"
-    cat > "$DRIVE_C/users/$USER/Application Data/Apple Computer/Preferences/com.apple.Safari.plist" <<_EOF_
+    try mkdir -p "$appdata_unix/Apple Computer/Preferences"
+    cat > "$appdata_unix/Apple Computer/Preferences/com.apple.Safari.plist" <<_EOF_
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -4181,6 +4180,10 @@ then
     programfilesdir_x86_win="${programfilesdir_win}"
     programfilesdir_x86_unix="${programfilesdir_unix}"
 fi
+
+# localized, and different across Windows versions:
+appdata_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%AppData%" | tr -d '\015'`"
+appdata_unix="`unset WINEDEBUG; $XXXPATH -u "$appdata_win" | tr -d '\015' `"
 
 # (Fixme: get fonts path from SHGetFolderPath
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
