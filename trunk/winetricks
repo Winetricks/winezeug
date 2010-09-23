@@ -239,6 +239,7 @@ usage() {
     echo " glut          The glut utility library"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " ie6           Microsoft Internet Explorer 6.0"
+    echo " ie6_full      Microsoft Internet Explorer 6.0, full installer"
     echo " ie7           Microsoft Internet Explorer 7.0"
     echo " ie8           Microsoft Internet Explorer 8.0"
     echo " jet40         MS Jet 4.0 Service Pack 8"
@@ -991,6 +992,13 @@ helper_directx_dl() {
 load_7zip() {
     download . $SOURCEFORGE/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
     try $WINE "$WINETRICKS_CACHE"/7z465.exe $WINETRICKS_S
+}
+
+#----------------------------------------------------------------
+
+load_abiword() {
+    download $PACKAGE http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
+    try $WINE "$WINETRICKS_CACHE"/$PACKAGE/abiword-setup-2.8.6.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
@@ -2230,6 +2238,69 @@ _EOF_
 }
 
 #----------------------------------------------------------------
+
+load_ie6_full() {
+    download . http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
+
+    cd "$WINETRICKS_TMP"
+    try_unzip "$WINETRICKS_CACHE"/ie60.exe
+    cd "IE 6.0 Full"
+
+    load_msls31
+
+    # Unregister Wine IE
+    if [ ! -f "$WINDIR"/system32/plugin.ocx ]
+    then 
+        try $WINE iexplore -unregserver
+    fi
+
+    # Change the override to the native so we are sure we use and register them
+    override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+
+    # Remove the fake dlls, if any
+    mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
+    for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    do
+        test -f "$WINDIR"/system32/$dll.dll &&
+          mv "$WINDIR"/system32/$dll.dll "$WINDIR"/system32/$dll.dll.bak
+    done
+
+    # The installer doesn't want to install iexplore.exe in XP mode.
+    set_winver win2k
+
+    # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
+    # See also http://code.google.com/p/winezeug/issues/detail?id=78
+    rm -f "$WINDIR"/system32/browseui.dll "$WINDIR"/system32/inseng.dll
+
+    $WINE ie6setup.exe
+
+    # IE6 exits with 194 to signal a reboot
+    status=$?
+    case $status in
+    0|194) ;;
+    *) die ie6 installation failed
+    esac
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: whittle down this list
+    cd "$WINDIR"/system32/
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll mshtml.dll mshtmled.dll msi.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx webcheck.dll wshom.ocx
+    do
+        $WINE regsvr32 /i $i > /dev/null 2>&1
+    done
+
+    # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
+    unset_winver
+}
 
 load_ie6() {
     if test "$WINE" = ""
@@ -4149,6 +4220,7 @@ do
         ;;
     -v) set -x;;
     7zip|7-zip) load_7zip;;
+    abiword) load_abiword;;
     adobeair) load_adobeair;;
     art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;
@@ -4205,6 +4277,7 @@ do
     glsl-enable) load_glsl_enable;;
     glut) load_glut;;
     hosts) load_hosts;;
+    ie6_full) load_ie6_full;;
     ie6) load_ie6;;
     ie7) load_ie7;;
     ie8) load_ie8;;
