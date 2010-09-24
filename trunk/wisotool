@@ -5421,13 +5421,9 @@ load_rom()
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/cached/ROMSetup.exe"
     then
         # Pre-extract files, if unrar is available
-        UNRAR="`which unrar 2>/dev/null`"
-        if test -x "$UNRAR"
-        then
-            mkdir -p "$WISOTOOL_CACHE/$PACKAGE/cached"
-            cd "$WISOTOOL_CACHE/$PACKAGE/cached"
-            try_unrar e ../Runes_of_Magic_3.0.1.2153.part1.exe
-        fi
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE/cached"
+        cd "$WISOTOOL_CACHE/$PACKAGE/cached"
+        try_unrar e ../Runes_of_Magic_3.0.1.2153.part1.exe
     fi
     # manual updates from http://forum.runesofmagic.com/showthread.php?t=79267
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
@@ -5439,8 +5435,13 @@ load_rom()
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe c5f6115aeb2e4627dd0428c0024f177dca6f067c
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe bf3183406bcb848826301bba33775a6dfb611859
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe d576596086395ea83cb8c1422877c81ed45a90c9
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe 3d8279c6b426e846cc5becd6dd03efd651f39db6
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe af3f74030f371ef9bc4cfcecf4a9ad1159f28136
     download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2231.en_3.0.3.2241.en.exe e46dbb3d2699ddc34a7885a16224c79f80657749
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2241.en_3.0.3.2246.en.exe 17c49fb1381fb6927a19ed58ef210abd98c3e89f
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2246.en_3.0.3.2250.en.exe 6484b2d8b23c1c7389f2f9a38681ecda84d856a4
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2250.en_3.0.4.2237.en.exe a34b20828303cdeaa649b503d0eee915b7a808b3
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2237.en_3.0.4.2261.en.exe 511bf0281a7f87e9912fcf52649307eec5b7d315
+    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2261.en_3.0.4.2263.en.exe 8d01ef99ae2a72e36d9de2b6d021bc3bbd3cd246
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     patches=`ls patch*.exe`
