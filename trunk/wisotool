@@ -3917,6 +3917,43 @@ set -x
     "
 }
 
+verblist_add lol_standalone "League of Legends standalone client (Riot Games, 2009)" 'StandAlone_9_21_2010_NA(with%20sse2%20fix).rar'
+
+load_lol_standalone() {
+    download ${PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
+    mkdir -p "$DRIVE_C/Riot Games"
+    cd "$DRIVE_C/Riot Games"
+    try_unrar x "$WISOTOOL_CACHE/$PACKAGE/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar"
+
+cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+cd "C:\\Riot Games\\StandAlone_9_21_2010_NA"
+lol.launcher.exe
+__EOF__
+
+    # Holy crap this is broken under Wine! Prepare for a workaround orgy
+    if workaround_wine_bug 20296
+    then
+        warn "You'll need a patch from http://bugs.winehq.org/show_bug.cgi?id=20296 to avoid a crash when starting LoL"
+    fi
+    if workaround_wine_bug 21870
+    then
+        warn "Please apply patch attached to bug 21870, or client will crash on start."
+    fi
+    if workaround_wine_bug 24102  # fixed in wine-1.3.3, but wine-1.3.3 crashes in secur32 on start? wine-1.3.1 is ok...
+    then
+        # Crashes on startup in wine below 1.3.3 without this
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+    if workaround_wine_bug 24015
+    then
+        sh "$WINETRICKS" -q ie6_full
+    fi
+    if workaround_wine_bug 24432
+    then
+        sh "$WINETRICKS" -q vcrun2005
+    fi
+}
+
 #----------------------------------------------------------------
 
 verblist_add lotsn   "Launch of the Screaming Narwhal (Telltale Games / Lucasarts, 2009)" LaunchOfTheScreamingNarwhal_Setup.exe
