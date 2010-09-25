@@ -309,7 +309,7 @@ try_unrar() {
     UNRAR="`which unrar 2>/dev/null`"
     if test ! -x "$UNRAR"
     then
-        die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install unrar' or 'sudo yum install unrar')."
+        die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install unrar' or 'sudo yum install unrar'). For cygwin, you can get it at http://gnuwin32.sourceforge.net/packages/unrar.htm"
     fi
 
     try $UNRAR "$@"
