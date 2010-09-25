@@ -788,8 +788,8 @@ load_iso() {
 #----------------------------------------------------------------
 
 ahk_do() {
-   # FIXME: avoid embedded carriage returns, some editors strip them
-   echo "$@" | sed "s/\$//" > "$WISOTOOL_TMP"/tmp.ahk
+   CR=`printf \\\\r`
+   echo "$@" | sed "s/\$/$CR/" > "$WISOTOOL_TMP"/tmp.ahk
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
 }
 
