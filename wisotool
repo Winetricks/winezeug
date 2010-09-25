@@ -4352,6 +4352,60 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add mise "Monkey Island: Special Edition (LucasArts, 2009)" SecretOfMonkeyIslandSE_ddsetup.zip
+
+load_mise() {
+    load_autohotkey
+
+    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/SecretOfMonkeyIslandSE_ddsetup.zip" ]
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Purchae Monkey Island: Special Edition from Direct2Drive and put SecretOfMonkeyIslandSE_ddsetup.zip in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    # Game installs .Net 3.5, so we need to install winetricks dotnet30 to get workarounds in place:
+    sh "$WINETRICKS" -q dotnet30
+    
+    # Game doesn't like wine's msvcr80, because of missing/incomplete SxS assembly?
+    if workaround_wine_bug 16577
+    then
+        sh "$WINETRICKS" -q vcrun2005
+    fi
+
+    cd "$WISOTOOL_TMP"
+    mkdir $PACKAGE
+    cd $PACKAGE
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, setup.exe
+        WinWait, The Secret of Monkey Island, This wizard will guide you
+        sleep 1000
+        ControlClick, Button2
+        WinWait, The Secret of Monkey Island, License Agreement
+        sleep 1000
+        ControlSend, RichEdit20A1, {CTRL}{END}
+        sleep 1000
+        ControlClick, Button4
+        sleep 1000
+        ControlClick, Button2
+        WinWait, The Secret of Monkey Island, Setup Type
+        sleep 1000
+        ControlClick, Button2
+        WinWait, The Secret of Monkey Island, Click Finish
+        sleep 1000
+        ControlClick, Button2
+        "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\LucasArts\The Secret of Monkey Island Special Edition"
+MISE.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add moh_beta    "Medal of Honor: Beta (EA, 2010) [download]" MOHMP_Beta_PC_Client_R2_550504_Installer.zip
 
 load_moh_beta()
