@@ -293,6 +293,10 @@ regedit() {
     die oops, bug, please report
 }
 
+wineserver() {
+    die oops, bug, please report
+}
+
 try_cabextract() {
     # Not always installed, but shouldn't be fatal unless it's being used
     CABEXTRACT="`which cabextract 2>/dev/null`"
@@ -1686,7 +1690,7 @@ load_bioshock() {
         winwait, Activation Successful
         Sleep 1000
         Controlclick, Button3, Activation Successful
-        " || (  wineserver -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
+        " || (  $WINESERVER -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
 
     # According to the AppDB, 1.1 may have problems with Wine. For now, don't run it.
     # FIXME: Test and if there's a Wine bug, file one/put this in an if workaround_wine_bug().
@@ -1778,7 +1782,7 @@ load_bioshock_iso()
         winwait, Activation Successful
         Sleep 1000
         Controlclick, Button3, Activation Successful
-        " || (  wineserver -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
+        " || (  $WINESERVER -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
     
     iso_umount
 
@@ -2005,8 +2009,7 @@ __EOF__
         controlclick, Button1
     "
     sleep 5
-    # FIXME: use right wineserver
-    wineserver -k
+    $WINESERVER -k
     cd "$olddir"
 } 
 
@@ -4089,8 +4092,7 @@ load_lswcs() {
     "
     # Installer crashes at end (http://bugs.winehq.org/show_bug.cgi?id=22529) but this doesn't seem to hurt.
     # Wait for all processes to exit, else unmount will fail
-    # FIXME: use right wineserver
-    wineserver -w
+    $WINESERVER -w
     iso_umount
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
@@ -5491,7 +5493,7 @@ load_rom()
         winkill
     "
     # Let installer finish normally
-    wineserver -w
+    $WINESERVER -w
     # Create settings file so patches can find game.  Normally this is created on first run of game.
     # Use funny tr and | to avoid embedded carriage returns, some editors strip them
     mkdir -p "$DRIVE_C/users/$USERNAME/My Documents/Runes of Magic"
