@@ -4357,10 +4357,11 @@ verblist_add mise "Monkey Island: Special Edition (LucasArts, 2009)" SecretOfMon
 load_mise() {
     load_autohotkey
 
+    # Archive SHA1SUM 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/SecretOfMonkeyIslandSE_ddsetup.zip" ]
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Purchae Monkey Island: Special Edition from Direct2Drive and put SecretOfMonkeyIslandSE_ddsetup.zip in $WISOTOOL_CACHE/$PACKAGE"
+        die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $WISOTOOL_CACHE/$PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
     fi
 
     # Game installs .Net 3.5, so we need to install winetricks dotnet30 to get workarounds in place:
@@ -4396,6 +4397,37 @@ load_mise() {
         sleep 1000
         ControlClick, Button2
         "
+
+    cd "$olddir"
+
+    # Activate
+    if test -f "$WISOTOOL_CACHE"/$PACKAGE/activationcode.txt
+    then
+        MISE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/activationcode.txt`
+        ahk_do "
+            SetTitleMatchMode, 2
+            run, $programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition\\MISE.exe
+            winwait, Product Activation
+            ControlClick, Edit1 ; Activation Code
+            send $MISE_KEY
+            ControlClick Button4 ; Activate Online
+            winwait, Product Activation, SUCCESSFUL
+            winClose
+        "
+    elif test -f "$WISOTOOL_CACHE"/$PACKAGE/unlockcode.txt
+    then
+        MISE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/unlockcode.txt`
+        ahk_do "
+            SetTitleMatchMode, 2
+            run, $programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition\\MISE.exe
+            winwait, Product Activation
+            ControlClick, Edit3 ; Unlock Code
+            send $MISE_KEY
+            ControlClick Button6 ; Activate manual
+            winwait, Product Activation, SUCCESSFUL
+            winClose
+        "
+    fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
 cd "$programfilesdir_x86_win\LucasArts\The Secret of Monkey Island Special Edition"
