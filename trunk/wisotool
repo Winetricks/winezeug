@@ -401,7 +401,7 @@ download() {
         # zero size - bad download?
         rm "$cache/$file"
     fi
-    if test "$nosizecheck" != "" || test ! -f "$cache/$file"
+    if test "$nosizecheck" != "" || test ! -f "$cache/$file" || test "$WISOTOOL_CONTINUE_DOWNLOAD"
     then
         cd "$cache"
         # Mac folks tend to have curl rather than wget
