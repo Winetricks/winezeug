@@ -1437,6 +1437,9 @@ load_directx9() {
     try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe
 
     unset_winver
+
+    # reenable mscoree, or other installs may fail, see issue 25
+    override_dlls builtin,native mscoree
 }
 
 #----------------------------------------------------------------
