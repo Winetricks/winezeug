@@ -4364,9 +4364,12 @@ load_mise() {
         die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $WISOTOOL_CACHE/$PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
     fi
 
-    # Game wants to install directx, but we delete it. It really only needs xact for x3daudio?_?.dll
-    sh "$WINETRICKS" -q xact
-    
+    if workaround_wine_bug 24545
+    then
+        # Game wants to install directx, but we delete it. It really only needs xact for x3daudio?_?.dll
+        sh "$WINETRICKS" -q xact
+    fi
+
     cd "$WISOTOOL_TMP"
     mkdir $PACKAGE
     cd $PACKAGE
