@@ -4364,19 +4364,16 @@ load_mise() {
         die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $WISOTOOL_CACHE/$PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
     fi
 
-    # Game installs .Net 3.5, so we need to install winetricks dotnet30 to get workarounds in place:
-    sh "$WINETRICKS" -q dotnet30
+    # Game wants to install directx, but we delete it. It really only needs xact for x3daudio?_?.dll
+    sh "$WINETRICKS" -q xact
     
-    # Game doesn't like wine's msvcr80, because of missing/incomplete SxS assembly?
-    if workaround_wine_bug 16577
-    then
-        sh "$WINETRICKS" -q vcrun2005
-    fi
-
     cd "$WISOTOOL_TMP"
     mkdir $PACKAGE
     cd $PACKAGE
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip
+    
+    # Don't extract DirectX/dotnet35 installers, they just take up extra time and aren't needed. Luckily, MISE copes well and just skips them if they are missing:
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip -x DirectX* dotnet*
+    
     ahk_do "
         SetTitleMatchMode, 2
         run, setup.exe
@@ -4430,7 +4427,7 @@ load_mise() {
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\LucasArts\The Secret of Monkey Island Special Edition"
+cd "$programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition"
 MISE.exe
 __EOF__
 
