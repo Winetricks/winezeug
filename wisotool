@@ -6631,6 +6631,49 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add timezattack_demo "Timez Attack Demo (BigBrainz, 2005) [download]" Win_TimezAttackFreeInstaller.exe
+
+load_timezattack_demo() {
+
+    load_autohotkey
+    download $PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c  
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    # autohotkey can't read any text from this one :-(
+    ahk_do "
+        settitlematchmode, 2
+        run, Win_TimezAttackFreeInstaller.exe
+        winwait, Setup
+        send {Enter}
+        sleep 5000
+        send {Tab}{Tab}{Space}{Tab}{Tab}{Tab}{Enter}
+        sleep 5000
+        send {Enter}
+        sleep 5000
+        send {Enter}
+        sleep 40000        ; fixme: wait for last file to be created
+        send {Enter}
+        sleep 5000
+        ControlClick TkChild14   ; uncheck (start game).  fixme: cannot uncheck
+        send {Enter}
+        sleep 2000
+    "
+    # fixme: only works on linux
+    killall TimezAttack.exe
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd C:\\TimezAttack
+TimezAttack.app\\TimezAttack.exe
+__EOF__
+
+    if workaround_wine_bug 24537
+    then
+        sh "$WINETRICKS" -q corefonts
+    fi
+}
+
+#----------------------------------------------------------------
+
 verblist_add tlr_demo "The Last Remnant Demo (Square Enix, 2009) [download]" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
 load_tlr_demo() {
