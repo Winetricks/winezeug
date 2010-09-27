@@ -337,7 +337,6 @@ usage() {
     echo " nocrashdialog Disable the graphical crash dialog"
     echo " orm=backbuffer Registry tweak: OffscreenRenderingMode=backbuffer"
     echo " orm=fbo        Registry tweak: OffscreenRenderingMode=fbo (default)"
-    echo " orm=pbuffer    Registry tweak: OffscreenRenderingMode=pbuffer"
     echo " rtlm=auto      Set RenderTargetLockMode to auto (default)"
     echo " rtlm=disabled  Set RenderTargetLockMode to disabled"
     echo " rtlm=readdraw  Set RenderTargetLockMode to readdraw"
@@ -1742,7 +1741,7 @@ _EOF_
 #----------------------------------------------------------------
 
 load_eadm() {
-    download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 6b3d1a328af2d44033c24b84444992f56107b27f
+    download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 566f25e56d9023617715db7df56b75b0d17454f6
     load_adobeair
     try $WINE "$WINETRICKS_CACHE"/eadm-installer.exe $WINETRICKS_S
 }
@@ -4396,7 +4395,6 @@ do
     nocrashdialog) disable_crashdialog;;
     orm=backbuffer|backbuffer) set_orm backbuffer;;
     orm=fbo|fbo) set_orm fbo;;
-    orm=pbuffer|pbuffer) set_orm pbuffer;;
     rtlm=auto) set_rtlm auto;;
     rtlm=disabled) set_rtlm disabled;;
     rtlm=readdraw) set_rtlm readdraw;;
