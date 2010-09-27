@@ -1514,9 +1514,10 @@ load_dotnet11() {
     # need corefonts, else installer crashes
     load_corefonts
 
-    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
-    try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f
-    try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f
+    # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
+    # Can't we all just play nice..
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
@@ -1561,9 +1562,10 @@ load_dotnet20() {
     download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     try cp -f "$WINETRICKS_CACHE"/dotnet20/l_intl.nls "$WINDIR/system32/"
 
-    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
-    try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f
-    try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f
+    # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
+    # Can't we all just play nice..
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5
     download dotnet20 http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe a3625c59d7a2995fb60877b5f5324892a1693b2a
@@ -1596,9 +1598,10 @@ load_dotnet20sp2() {
     download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     try cp -f "$WINETRICKS_CACHE"/dotnet20/l_intl.nls "$WINDIR/system32/"
 
-    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
-    try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f
-    try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f
+    # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
+    # Can't we all just play nice..
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
     # http://www.microsoft.com/downloads/details.aspx?familyid=5B2C0358-915B-4EB5-9B1D-10E506DA9D0F
     download dotnet20 http://download.microsoft.com/download/c/6/e/c6e88215-0178-4c6c-b5f3-158ff77b1f38/NetFx20SP2_x86.exe 22d776d4d204863105a5db99e8b8888be23c61a7
