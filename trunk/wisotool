@@ -5714,9 +5714,25 @@ load_re5bench() {
         ControlClick Button1 ; Next
         WinWait ahk_class MsiDialogCloseClass, Ready
         ControlClick Button1 ; Install
-        WinWait ahk_class MsiDialogCloseClass, Completed
-        ControlClick Button3 ; Uncheck Launch
-        ControlClick Button1 ; Finish
+        Loop
+        {
+            ; Only shows up on older Wine versions (e.g., 1.2. Disabling gameux.dll does not help
+            IfWinExist, GameExplorerInstall
+            {
+                ControlClick, Button1, GameExplorerInstall
+                Winwait, ahk_class MsiDialogCloseClass, Completed
+                ControlClick Button3 ; Uncheck Launch
+                ControlClick Button1 ; Finish
+                break
+            }
+            IfWinExist, ahk_class MsiDialogCloseClass, Completed
+            {
+                ControlClick Button3 ; Uncheck Launch
+                ControlClick Button1 ; Finish
+                break
+            }
+            sleep 5000
+        }
     "
 
     if workaround_wine_bug 21939
