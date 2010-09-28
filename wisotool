@@ -4370,9 +4370,9 @@ load_mise() {
         sh "$WINETRICKS" -q xact
     fi
 
-    if workaround_wine_bug 23736
+    if workaround_wine_bug 24547
     then
-        # It really does need vcrun2005, for msvp80.dll
+        # It really does need vcrun2005, for msvp80.dll (and potentially one stub from msvcr80)
         sh "$WINETRICKS" -q vcrun2005
     fi
 
