@@ -4370,6 +4370,12 @@ load_mise() {
         sh "$WINETRICKS" -q xact
     fi
 
+    if workaround_wine_bug 23736
+    then
+        # It really does need vcrun2005, for msvp80.dll
+        sh "$WINETRICKS" -q vcrun2005
+    fi
+
     cd "$WISOTOOL_TMP"
     mkdir $PACKAGE
     cd $PACKAGE
