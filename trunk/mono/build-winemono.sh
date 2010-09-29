@@ -8,6 +8,9 @@ PROFILES="net_1_1 net_2_0 net_3_5"
 ORIGINAL_PATH="$PATH"
 REBUILD=0
 
+# If CC is set, it will conflict, unset it
+unset CC
+
 export CPPFLAGS_FOR_EGLIB CFLAGS_FOR_EGLIB CPPFLAGS_FOR_LIBGC CFLAGS_FOR_LIBGC
 
 function setup ()
