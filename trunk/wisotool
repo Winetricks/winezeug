@@ -4364,6 +4364,12 @@ load_mise() {
         die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $WISOTOOL_CACHE/$PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
     fi
 
+    if workaround_wine_bug 22161
+    then
+        # Doesn't crash, but you only get a black screen and a flood of d3dx fixme's without native d3dx9_36
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+
     if workaround_wine_bug 24545
     then
         # Game wants to install directx, but we delete it. It really only needs xact for x3daudio?_?.dll
