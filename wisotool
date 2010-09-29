@@ -1957,6 +1957,7 @@ load_braid()
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
     then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
         die "Please enter your registration key into $WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
     fi
     BRAID_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/braid-key.txt`
@@ -2007,9 +2008,10 @@ __EOF__
         winwait, Enter Registration
         send {RAW}$BRAID_KEY
         controlclick, Button1
+        sleep 5000
+	; FIXME: Desktop resolution isn't reset after exit
+        process, close, braid.exe
     "
-    sleep 5
-    $WINESERVER -k
     cd "$olddir"
 } 
 
