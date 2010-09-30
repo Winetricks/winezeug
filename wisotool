@@ -4153,6 +4153,11 @@ load_masseffect2() {
     then
         try sh "$WINETRICKS" d3dx10
     fi
+    if workaround_wine_bug 23151
+    then
+        warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
+        try sh "$WINETRICKS" -q glsl-disable
+    fi
     if workaround_wine_bug 22919
     then
         try sh "$WINETRICKS" -q physx
@@ -4227,6 +4232,11 @@ load_masseffect2_demo() {
     if workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
         try sh "$WINETRICKS" d3dx10
+    fi
+    if workaround_wine_bug 23151
+    then
+        warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
+        try sh "$WINETRICKS" -q glsl-disable
     fi
     if workaround_wine_bug 22919
     then
