@@ -2881,6 +2881,13 @@ load_msxml6() {
 
 #----------------------------------------------------------------
 
+load_nvidiasdk95() {
+    download . http://developer.download.nvidia.com/SDK/9.5/NVIDIA_SDK_9.52.0324.0405.exe
+    try $WINE "$WINETRICKS_CACHE"/NVIDIA_SDK_9.52.0324.0405.exe
+}
+
+#----------------------------------------------------------------
+
 load_ogg() {
     # flac, ogg, speex, vorbis, ogm source, ogg source
     # see following URLs for more info
@@ -4324,6 +4331,7 @@ do
     msxml3) load_msxml3;;
     msxml4) load_msxml4;;
     msxml6) load_msxml6;;
+    nvidiasdk95) load_nvidiasdk95;;
     ogg) load_ogg;;
     ole2) load_ole2;;
     openwatcom|watcom) load_openwatcom;;
