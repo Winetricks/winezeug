@@ -27,6 +27,7 @@ for verb in \
     dinput8 \
     directmusic \
     directplay \
+    dxsdk_nov2006 \
     dotnet11 \
     dotnet20 \
     droid \
@@ -183,7 +184,6 @@ then
         divx \
         dotnet11sdk \
         dotnet20sdk \
-        dxsdk_nov2006 \
         kde \
         ole2 \
         psdk2003 \
