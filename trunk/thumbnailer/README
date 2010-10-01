@@ -3,4 +3,4 @@ This is the upstream for the Wine icon thumbnailer script originally available i
 It's just a bash script so it could be ported easily to other distros and desktop environments (provided they have scriptable thumbnailers).  On Gnome it must be enabled via installation of gconf schemas.
 
 
-It requires the icoutils package (which should contain wrestool as well).
+It requires the icoutils package (which should contain wrestool as well).  Version 0.29.1 or higher is required for Vista icon support.
