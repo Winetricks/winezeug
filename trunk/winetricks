@@ -277,6 +277,7 @@ usage() {
     echo " python-comtypes Python 0.6.1-1 comtypes package"
     echo " quartz        quartz.dll (from Directx 9 user redistributable)"
     echo " quicktime72   Apple Quicktime 7.2"
+    echo " quicktime76   Apple Quicktime 7.6"
     echo " riched20      MS RichEdit Control, riched20 and riched32"
     echo " riched30      MS RichEdit Control, riched30"
     echo " richtx32      MS Rich TextBox Control 6.0"
@@ -3084,6 +3085,8 @@ load_quartz() {
 load_quicktime72() {
     echo "Quicktime needs gdiplus..."
     load_gdiplus
+    echo "Quicktime needs vcrun2005..."
+    load_vcrun2005
 
     # http://www.apple.com/support/downloads/quicktime72forwindows.html
     download quicktime72 'http://wsidecar.apple.com/cgi-bin/nph-reg3rdpty2.pl/product=14402&cat=59&platform=osx&method=sa/QuickTimeInstaller.exe' bb89981f10cf21de57b9453e53cf81b9194271a9
@@ -3095,6 +3098,39 @@ load_quicktime72() {
     # set vista mode to inhibit directdraw overlay use that blacks the screen
     set_winver vista
     try $WINE "$WINETRICKS_CACHE"/quicktime72/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET > /dev/null 2>&1
+    if test "$WINETRICKS_QUIET"x = x
+    then
+        echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
+        try $WINE control "$programfilesdir_win\\QuickTime\\QTSystem\\QuickTime.cpl"
+    fi
+
+    unset_winver
+    # user might want to set vista mode himself, or run
+    #  wine control ".wine/drive_c/Program Files/QuickTime/QTSystem/QuickTime.cpl"
+    # and pick Advanced / Safe Mode (gdi only).
+    # We could probably force that by overwriting QuickTime.qtp
+    # (probably in Program Files/QuickTime/QTSystem/QuickTime.qtp)
+    # but the format isn't known, so we'd have to override all other settings, too.
+}
+
+#----------------------------------------------------------------
+
+load_quicktime76() {
+    echo "Quicktime needs gdiplus..."
+    load_gdiplus
+    echo "Quicktime needs vcrun2005..."
+    load_vcrun2005
+
+    # http://www.apple.com/quicktime/download/
+    download quicktime76 'http://appldnld.apple.com/QuickTime/061-8938.20100915.Qts3T/QuickTimeInstaller.exe' 38e33492ea1200abeda87256872e5a3dd47e584f
+    unset QUICKTIME_QUIET
+    if test "$WINETRICKS_QUIET"x != x
+    then
+       QUICKTIME_QUIET="/qn"  # ISSETUPDRIVEN=0
+    fi
+    # set vista mode to inhibit directdraw overlay use that blacks the screen
+    set_winver vista
+    try $WINE "$WINETRICKS_CACHE"/quicktime76/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET > /dev/null 2>&1
     if test "$WINETRICKS_QUIET"x = x
     then
         echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
@@ -4344,6 +4380,7 @@ do
     python-comtypes|pythoncom|python-com|pythoncomtypes) load_python_comtypes;;
     quartz) load_quartz;;
     quicktime72) load_quicktime72;;
+    quicktime76) load_quicktime76;;
     riched20) load_riched20;;
     riched30) load_riched30;;
     richtx32) load_richtx32;;
