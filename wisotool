@@ -4191,9 +4191,19 @@ load_masseffect2() {
         send {Enter}
         ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
         ; The hang/crash happens after the Physx install but does not seem to affect gameplay
-        ; TODO: work around this by waiting in some other way for install to finish
-        winwait, Mass Effect, Finish
-        winkill, Mass Effect
+        loop
+        {
+            ifwinexist, Mass Effect, Finish
+            {
+                winkill, Mass Effect
+                break
+            }
+            Process, exist, Installer.exe
+            me2pid = %ErrorLevel%
+            if me2pid = 0
+                break
+            sleep 1000
+        }
     "
     if workaround_wine_bug 6971
     then
