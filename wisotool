@@ -1256,27 +1256,19 @@ verblist_add avatar_demo    "James Camerons Avatar The Game Demo (Ubisoft, 2009)
 load_avatar_demo()
 {
     load_autohotkey
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Avatar_The_Game_Demo.exe"
-    then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "You must first download the demo from http://www.bigdownload.com/games/james-camerons-avatar-the-game/pc/james-camerons-avatar-the-game-demo/ and place the exe in $WISOTOOL_CACHE/$PACKAGE"
-    fi
+
+    download $PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
 
     if workaround_wine_bug 23094
     then
-        try sh winetricks -q vcrun2005
+        try sh "$WINETRICKS" -q vcrun2005
     fi
 
     mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+    try_unrar x "$WISOTOOL_CACHE/$PACKAGE/Avatar_The_Game_Demo.exe"
     ahk_do "
         SetTitleMatchMode, 2
-        run, Avatar_The_Game_Demo.exe
-        winwait, WinRAR, Install
-        send $WISOTOOL_TMP_WIN\\$PACKAGE
-        controlclick, Button2
-        winwaitclose, WinRAR
-        sleep 1000
         run, setup.exe
         winwait, Language
         controlclick, Button1
@@ -1287,14 +1279,21 @@ load_avatar_demo()
         controlclick, Button2
         winwait, AVATAR, setup type
         controlclick, Button2
-        ;Strange CRC error workaround. Will check this out. Stay tuned.
-        sleep 1000
-        ifwinactive, CRC Error
+        ; Strange CRC error workaround. Will check this out. Stay tuned.
+        loop
         {
-          controlclick, Button5
+            ifwinexist, CRC Error
+            {
+                winactivate, CRC Error
+                controlclick, Button3, CRC Error ; ignore
+            }
+            ifwinexist, AVATAR, Complete
+            {
+                controlclick, Button4
+                break
+            }
+            sleep 1000
         }
-        winwait, AVATAR, Complete
-        controlclick, Button4 
     "
     cd "$olddir"
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
