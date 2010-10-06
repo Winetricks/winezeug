@@ -187,6 +187,7 @@ usage() {
     echo " art2kmin      MS Access 2007 runtime"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
+    echo " baekmuk       Baekmuk Korean fonts"
     echo " cmake         CMake, the cross-platform, open-source build system"
     echo " colorprofile  Standard RGB color profile"
     echo " comctl32      MS common controls 5.80"
@@ -223,6 +224,9 @@ usage() {
     echo " dxsdk_nov2006 DirectX Software Development Kit, November 2006 version"
     echo " eadm          EA Download Manager"
     echo " eufonts       Updated fonts for Romanian and Bulgarian"
+    echo " fakechinese   Creates aliases for Chinese fonts using WenQuanYi fonts"
+    echo " fakejapanese  Creates aliases for Japanese fonts using Takao fonts"
+    echo " fakekorean    Creates aliases for Korean fonts using Baekmuk fonts"
     echo " ffdshow       ffdshow video codecs"
     echo " firefox       Firefox web browser"
     echo " flash         Adobe Flash Player ActiveX and firefox plugins"
@@ -286,6 +290,8 @@ usage() {
     echo " shockwave     Adobe Shockwave Player"
     echo " steam         Steam Client App from Valve"
     echo " tahoma        MS Tahoma font (not part of corefonts)"
+    echo " takao         Takao Japanese fonts"
+    echo " unifont       Unifont alternative to Arial Unicode MS"
     echo " urlmon        MS urlmon.dll"
     echo " usp10         MS usp10.dll (Uniscribe)"
     echo " utorrent      uTorrent"
@@ -322,8 +328,9 @@ usage() {
     echo "Pseudopackages:"
     echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
     echo " alldlls=default  Remove all DLL overrides"
-    echo " allfonts      All listed fonts (corefonts, droid, eufonts, liberation, lucida, tahoma, wenquanyi)"
+    echo " allfonts      All listed fonts and aliases (corefonts, droid, eufonts, liberation, lucida, tahoma, cjkfonts)"
     echo " allcodecs     All listed codecs (xvid, ffdshow)"
+    echo " cjkfonts      All Chinese, Japanese, Korean fonts and aliases (fakechinese, fakejapanese, fakekorean, unifont)"
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
     echo " ddr=opengl    Set DirectDrawRenderer to OpenGL"
     echo " dsoundbug9612 Use DirectSound MaxShadowSize=0 workaround for bug #9612"
@@ -1045,6 +1052,23 @@ load_autohotkey() {
     cd "$WINETRICKS_CACHE"
     try $WINE AutoHotkey104805_Install.exe $WINETRICKS_S
     cd -
+}
+
+#----------------------------------------------------------------
+
+load_baekmuk() {
+    # The Baekmuk fonts provide Korean glyphs.  May also be needed with fakekorean function.
+    # See http://kldp.net/projects/baekmuk for project page
+    # Need to download from Debian as the project page has unique captcha tokens per visitor
+    download . http://ftp.de.debian.org/debian/pool/main/t/ttf-baekmuk/ttf-baekmuk_2.2.orig.tar.gz afdee34f700007de6ea87b43c92a88b7385ba65b
+    cd "$WINETRICKS_TMP/"
+    gunzip -dc "$WINETRICKS_CACHE/ttf-baekmuk_2.2.orig.tar.gz" | tar -xf -
+    try mv baekmuk-ttf-2.2/ttf/*.ttf "$winefontsdir"
+    register_font batang.ttf "Baekmuk Batang"
+    register_font gulim.ttf "Baekmuk Gulim"
+    register_font dotum.ttf "Baekmuk Dotum"
+    register_font hline.ttf "Baekmuk Headline"
+    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1778,6 +1802,84 @@ load_eufonts() {
     register_font Verdana.ttf "Verdana (TrueType)"
     register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
 
+}
+
+#----------------------------------------------------------------
+
+load_fakechinese() {
+    load_wenquanyi
+    # Loads Wenquanyi fonts and sets aliases for Microsoft Chinese fonts
+    # Aliases to set:
+    # Microsoft JhengHei --> WenQuanYi Micro Hei
+    # Microsoft YaHei --> WenQuanYi Micro Hei
+    # SimHei --> WenQuanYi Micro Hei
+
+    cat > "$WINETRICKS_TMP"/faketraditionalchinese.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+"Microsoft JhengHei"="WenQuanYi Micro Hei"
+"Microsoft YaHei"="WenQuanYi Micro Hei"
+"SimHei"="WenQuanYi Micro Hei"
+
+_EOF_
+
+    try_regedit "$WINETRICKS_TMP_WIN"\\faketraditionalchinese.reg
+}
+
+#----------------------------------------------------------------
+
+load_fakejapanese() {
+    load_takao
+    # Loads Takao fonts and sets aliases for MS Gothic and MS PGothic, mainly for Japanese language support
+    # Aliases to set:
+    # MS Gothic --> TakaoGothic
+    # MS PGothic --> TakaoPGothic
+    # MS Mincho --> TakaoMincho
+    # MS PMincho --> TakaoPMincho
+    # These aliases were taken from what was listed in Ubuntu's fontconfig definitions.
+
+    cat > "$WINETRICKS_TMP"/fakejapanese.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+"MS Gothic"="TakaoGothic"
+"MS PGothic"="TakaoPGothic"
+"MS Mincho"="TakaoMincho"
+"MS PMincho"="TakaoPMincho"
+
+_EOF_
+
+    try_regedit "$WINETRICKS_TMP_WIN"\\fakejapanese.reg
+}
+
+#----------------------------------------------------------------
+
+load_fakekorean() {
+    load_baekmuk
+    # Loads Baekmuk fonts and sets as an alias for Gulim, Dotum, and Batang for Korean language support
+    # Aliases to set:
+    # Gulim --> Baekmuk Gulim
+    # GulimChe --> Baekmuk Gulim
+    # Batang --> Baekmuk Batang
+    # BatangChe --> Baekmuk Batang
+    # Dotum --> Baekmuk Dotum
+    # DotumChe --> Baekmuk Dotum
+
+    cat > "$WINETRICKS_TMP"/fakekorean.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+"Gulim"="Baekmuk Gulim"
+"GulimChe"="Baekmuk Gulim"
+"Batang"="Baekmuk Batang"
+"BatangChe"="Baekmuk Batang"
+"Dotum"="Baekmuk Dotum"
+"DotumChe"="Baekmuk Dotum"
+
+_EOF_
+
+    try_regedit "$WINETRICKS_TMP_WIN"\\fakekorean.reg
 }
 
 #----------------------------------------------------------------
@@ -3295,6 +3397,49 @@ load_tahoma() {
 
 #----------------------------------------------------------------
 
+load_takao() {
+    # The Takao font provides Japanese glyphs.  May also be needed with fakejapanese function above.
+    # See http://launchpad.net/takao-fonts for project page
+    download . http://launchpad.net/takao-fonts/003.02/003.02.01/+download/takao-fonts-ttf-003.02.01.zip 4f636d5c7c1bc16b96ea723adb16838cfb6df059
+    cp -f $WINETRICKS_CACHE/takao-fonts-ttf-003.02.01.zip $WINETRICKS_TMP
+    try_unzip -d $WINETRICKS_TMP $WINETRICKS_TMP/takao-fonts-ttf-003.02.01.zip
+    try cp -f "$WINETRICKS_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$winefontsdir"
+
+    register_font TakaoGothic.ttf "TakaoGothic"
+    register_font TakaoPGothic.ttf "TakaoPGothic"
+    register_font TakaoMincho.ttf "TakaoMincho"
+    register_font TakaoPMincho.ttf "TakaoPMincho"
+    register_font TakaoExGothic.ttf "TakaoExGothic"
+    register_font TakaoExMincho.ttf "TakaoExMincho"
+}
+
+#----------------------------------------------------------------
+
+load_unifont() {
+    # The GNU Unifont provides glyphs for just about everything in common language.  It is intended for multilingual usage.
+    # See http://unifoundry.com/unifont.html for project page
+    download . http://unifoundry.com/unifont-5.1.20080907.zip bb8a3960dc0a96aa305de28312ea8a0ab64123d2
+    cp -f $WINETRICKS_CACHE/unifont-5.1.20080907.zip $WINETRICKS_TMP
+    try_unzip -d $WINETRICKS_TMP $WINETRICKS_TMP/unifont-5.1.20080907.zip
+    try cp -f "$WINETRICKS_TMP"/unifont-5.1.20080907.ttf "$winefontsdir/unifont.ttf"
+
+    register_font unifont.ttf "Unifont"
+
+    cat > "$WINETRICKS_TMP"/unifont.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+"Arial Unicode MS"="Unifont"
+
+_EOF_
+
+    try_regedit "$WINETRICKS_TMP_WIN"\\unifont.reg
+}
+
+#----------------------------------------------------------------
+
+#----------------------------------------------------------------
+
 load_urlmon() {
     # This is an updated urlmon from IE 6.0
     # See http://www.microsoft.com/downloads/details.aspx?familyid=85BB441A-5BB1-4A82-86EC-A249AF287513
@@ -4289,6 +4434,7 @@ do
     art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;
     autohotkey|ahk) load_autohotkey;;
+    baekmuk) load_baekmuk;;
     cmake) load_cmake;;
     comctl32.ocx) load_comctl32ocx;;
     comctl32|cc580) load_cc580;;
@@ -4325,6 +4471,9 @@ do
     dxsdk_nov2006) load_dxsdk_nov2006;;
     eadm) load_eadm;;
     eufonts) load_eufonts;;
+    fakechinese) load_fakechinese;;
+    fakejapanese) load_fakejapanese;;
+    fakekorean) load_fakekorean;;
     ffdshow) load_ffdshow;;
     firefox|firefox3) load_firefox;;
     flash) load_flash;;
@@ -4389,6 +4538,8 @@ do
     shockwave) load_shockwave;;
     steam) load_steam;;
     tahoma) load_tahoma;;
+    takao) load_takao;;
+    unifont) load_unifont;;
     urlmon) load_urlmon;;
     usp10) load_usp10;;
     utorrent) load_utorrent;;
@@ -4429,9 +4580,10 @@ do
     xvid) load_xvid;;
 
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
-    allfonts) load_corefonts; load_droid; load_eufonts; load_liberation; load_lucida; load_tahoma; load_wenquanyi;;
+    allfonts) load_corefonts; load_droid; load_eufonts; load_liberation; load_lucida; load_tahoma; load_fakechinese; load_fakejapanese; load_fakekorean; load_unifont;;
     alldlls=builtin) override_all_dlls;;
     alldlls=default) override_no_dlls;;
+    cjkfonts) load_fakechinese; load_fakejapanese; load_fakekorean; load_unifont;;
     ddr=gdi) set_ddr gdi;;
     ddr=opengl) set_ddr opengl;;
     dsoundbug9612) load_dsoundbug9612;;
