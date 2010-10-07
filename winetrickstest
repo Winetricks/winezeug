@@ -107,6 +107,7 @@ for verb in \
     wsh56js \
     wsh56vb \
     xact \
+    xinput \
     xvid \
     ahk \
     firefox \

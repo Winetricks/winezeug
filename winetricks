@@ -324,6 +324,7 @@ usage() {
     echo " wsh56         MS Windows Scripting Host 5.6"
     echo " wsh56vb       MS Windows scripting 5.6, vbscript only, no cscript"
     echo " xact          MS XACT Engine (x3daudio?_?.dll, xactengine?_?.dll)"
+    echo " xinput        MS XInput (Xbox controller support, xinput?_?.dll)"
     echo " xvid          xvid video codec"
     echo "Pseudopackages:"
     echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
@@ -4304,6 +4305,20 @@ load_xact() {
 
 #----------------------------------------------------------------
 
+load_xinput() {
+    helper_directx_dl ;
+
+    # xinput1_1.dll  xinput1_2.dll  xinput1_3.dll  xinput9_1_0.dll
+    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_xinput_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in `ls "$WINETRICKS_TMP"/*.cab`
+    do
+      try_cabextract -d "$WINDIR"/system32 -L -F '*.dll' "$x"
+    done
+
+}
+
+#----------------------------------------------------------------
+
 load_xvid() {
     # xvid
     load_vcrun6
@@ -4583,6 +4598,7 @@ do
     jscript|wsh56js) load_wsh56js;;
     wsh56vb) load_wsh56vb;;
     xact|xactengine|x3daudio|xapofx) load_xact;;
+    xinput) load_xinput;;
     xvid) load_xvid;;
 
     allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
