@@ -6432,7 +6432,7 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
-verblist_add starcraft2    "Starcraft II (Blizzard, 2010)" 044bf7a83b0fc7086a4f89b44ea44d74af320059.iso
+verblist_add starcraft2    "Starcraft II (Blizzard, 2010)" Installer Tome 1.MPQE  Installer UI 1.MPQ  Installer UI 2.MPQE  Installer.app  Installer.exe
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=20882
 
@@ -6440,19 +6440,22 @@ load_starcraft2() {
     load_autohotkey
     load_gecko
 
+    for x in "Installer Tome 1.MPQE" "Installer UI 1.MPQ" "Installer UI 2.MPQE" "Installer.app" "Installer.exe"
+    do
+        if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$x"
+        then
+            mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+            die "Please download the installer files using the Blizzard downloader from https://us.battle.net/account/management/sc2/download.html?gameRegion=NA&lang=en-US&platform=win and put them in $WISOTOOL_CACHE/$PACKAGE"
+        fi
+    done
+    
     # Force clean-ish install
     test -d "$programfilesdir_unix/StarCraft II" && rm -rf "$programfilesdir_unix/StarCraft II"
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/044bf7a83b0fc7086a4f89b44ea44d74af320059.iso
-
-    if workaround_wine_bug 23824
-    then
-        warn "The installer may not run, see http://bugs.winehq.org/show_bug.cgi?id=23824. No known workaround yet."
-    fi
-
+    cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
-        run ${ISO_MOUNT_LETTER}:Installer.exe
+        run, Installer.exe
         winwait, StarCraft II Installer
         ControlClick, x300 y200
         winwait, End User License Agreement
