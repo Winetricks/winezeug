@@ -4141,7 +4141,7 @@ load_masseffect2() {
     if workaround_wine_bug 22091
     then
         warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        #try sh "$WINETRICKS" -q nocrashdialog
+        try sh "$WINETRICKS" -q nocrashdialog
     fi
 
     if workaround_wine_bug 23126 "wine-1.3.[0-9]*"
@@ -4222,16 +4222,12 @@ verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010)" MassEffect2DemoE
 load_masseffect2_demo() {
     load_autohotkey
 
-    file="$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe"
-    if ! test -f "$file"
-    then
-        download ${PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
-    fi
+    download ${PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
 
     if workaround_wine_bug 22091
     then
         warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        #try sh "$WINETRICKS" -q nocrashdialog
+        try sh "$WINETRICKS" -q nocrashdialog
     fi
 
     if workaround_wine_bug 23126 "wine-1.3.[0-9]*"
@@ -4253,11 +4249,16 @@ load_masseffect2_demo() {
     fi
 
     mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    # FIXME: use ln -fs on linux, cp on windows
-    cp "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP"
+    case "$OS" in
+        "Windows_NT")
+            cp "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
+        *)
+            ln -sf "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
+    esac
+    cd "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
-        run, $WISOTOOL_TMP_WIN\\MassEffect2DemoEN.exe
+        run, MassEffect2DemoEN.exe
         winwait, Mass Effect 2 Demo
         Sleep 1000
         send {Enter}
@@ -4272,9 +4273,19 @@ load_masseffect2_demo() {
         ControlClick, Button2
         ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
         ; The hang/crash happens after the Physx install but does not seem to affect gameplay
-        ; TODO: work around this by waiting in some other way for install to finish
-        winwait, Mass Effect 2 Demo, Finish
-        winkill
+        loop
+        {
+            ifwinexist, Mass Effect, Finish
+            {
+                winkill, Mass Effect
+                break
+            }
+            Process, exist, Installer.exe
+            me2pid = %ErrorLevel%
+            if me2pid = 0
+                break
+            sleep 1000
+        }
     "
     if workaround_wine_bug 6971
     then
