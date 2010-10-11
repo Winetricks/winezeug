@@ -11,6 +11,7 @@ WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 for verb in \
     7zip \
     adobeair \
+    amstream \
     art2kmin \
     atmlib \
     colorprofile \

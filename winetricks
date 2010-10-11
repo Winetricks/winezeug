@@ -184,6 +184,7 @@ usage() {
     echo "Packages:"
     echo " 7zip          7-zip file archiver"
     echo " adobeair      Adobe AIR runtime"
+    echo " amstream      MS amstream.dll"
     echo " art2kmin      MS Access 2007 runtime"
     echo " atmlib        Adobe Type Manager. Needed for Adobe CS4"
     echo " autohotkey    Autohotkey (open source gui scripting language)"
@@ -1021,6 +1022,20 @@ load_adobeair() {
     # 2010-07-29: sha1sum 7b93aedaf48ad7854940e7a4e7d9394a255e888b
     download . http://airdownload.adobe.com/air/win/download/2.0.2/AdobeAIRInstaller.exe 7b93aedaf48ad7854940e7a4e7d9394a255e888b
     try $WINE "$WINETRICKS_CACHE"/AdobeAIRInstaller.exe $WINETRICKS_UNIXSILENT
+}
+
+#----------------------------------------------------------------
+
+load_amstream() {
+    helper_directx_dl
+
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$WINDIR"/system32 -L -F 'amstream.dll' "$WINETRICKS_TMP/dxnt.cab"
+    
+    try $WINE regsvr32 amstream.dll
+    
+    override_dlls native amstream
+    
 }
 
 #----------------------------------------------------------------
@@ -4452,6 +4467,7 @@ do
     7zip|7-zip) load_7zip;;
     abiword) load_abiword;;
     adobeair) load_adobeair;;
+    amstream) load_amstream;;
     art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;
     autohotkey|ahk) load_autohotkey;;
