@@ -2801,6 +2801,46 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add ewj_demo     "Earthworm Jim demo (Shiny Entertainment, 1996) [download]"
+
+load_ewj_demo() {
+# http://appdb.winehq.org/objectManager.php?sClass=application&iId=4233
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ewjdemo.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download the demo from http://download.cnet.com/Earthworm-Jim-demo/3000-2099_4-10000793.html and put it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    # FIXME: If the user is on a 32-bit OS and has vm.mmap_min_addr=0, they can use Wine to extract the files.
+    # So we should try that if arj is not installed.
+    if ! [ -x `which arj` ]
+    then
+        die "You need to install the `arj` utility to extract the demo files. (e.g., sudo apt-get install arj or sudo yum install arj)"
+    else
+        mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+        cd "$WISOTOOL_TMP/$PACKAGE"
+        arj e "$WISOTOOL_CACHE/$PACKAGE/ewjdemo.exe"
+        mkdir -p "$DRIVE_C/ewj_demo"
+        cd "$DRIVE_C/ewj_demo"
+        arj e "$WISOTOOL_TMP/$PACKAGE/EWJFILES.EXE"
+    fi
+
+    if workaround_wine_bug 19531
+    then
+        warn "Sound doesn't work in Windows NT+ mode. It does in win98 mode, but then locks up the game. See http://bugs.winehq.org/show_bug.cgi?id=19531"
+    else
+        sh "$WINETRICKS" win98
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$DRIVE_C\\ewj_demo"
+WORM.EXE
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2009)" 379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso \
                                 f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
 
