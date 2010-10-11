@@ -325,9 +325,9 @@ cabextract() {
 
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
 # False (nonzero status) on Windows.
-# True (zero status) on Wine unless good-wineversion-shell-pattern is set 
+# True (zero status) on Wine unless good-wineversion-shell-pattern is set
 # and matches the current wine version.
-# For debugging: if you want to skip a bug's workaround, put the bug number in the 
+# For debugging: if you want to skip a bug's workaround, put the bug number in the
 # environment variable WISOTOOL_BLACKLIST to disable it.
 workaround_wine_bug()
 {
@@ -349,7 +349,7 @@ workaround_wine_bug()
         eval "$checkcode"
     fi
     case $1 in
-    "$WISOTOOL_BLACKLIST") 
+    "$WISOTOOL_BLACKLIST")
         echo wine bug $1 workaround blacklisted, skipping
         return 1
         ;;
@@ -533,7 +533,7 @@ iso_mount()
         warn "You don't seem to have an iso in $WISOTOOL_CACHE/$PACKAGE. Please insert the disk so I can prepare one for you."
         load_iso dd
     fi
-        
+
     if test "$WINE" = ""
     then
         load_vcdmount
@@ -548,7 +548,7 @@ iso_mount()
             for ISO_MOUNT_LETTER in e f g h i j k
             do
                 ISO_MOUNT_ROOT=/cygdrive/$ISO_MOUNT_LETTER
-                if find $ISO_MOUNT_ROOT -iname 'setup*' -o -iname '*.exe' -o -iname '*.msi' 
+                if find $ISO_MOUNT_ROOT -iname 'setup*' -o -iname '*.exe' -o -iname '*.msi'
                 then
                     break 2
                 fi
@@ -660,7 +660,7 @@ mds_umount()
         then
             die "cdemu is not installed, can't mount .mds files!"
         fi
-        
+
         # Initialize cdemu, if not already:
 
         # FIXME: Not sure this is 100% accurate...
@@ -739,11 +739,11 @@ load_iso() {
    # Copy disc to .iso file, display progress every 5 seconds
    # Use conv=noerror,sync to replace unreadable blocks with zeroes
    case $method in
-   dd) 
+   dd)
      dd if=$dev of="$WISOTOOL_CACHE"/temp.iso bs=2048 conv=noerror,sync &
      pid=$!
      ;;
-   ddrescue) 
+   ddrescue)
      if test "`which ddrescue`" = ""
      then
          die "Please install ddrescue first."
@@ -766,7 +766,7 @@ load_iso() {
    # FIXME: can't handle spaces in "$WISOTOOL_CACHE"
    sum=`sha1sum "$WISOTOOL_CACHE"/temp.iso | awk '{print $1}'`
    echo "Sha1sum of iso is $sum"
-   
+
    mv "$WISOTOOL_CACHE"/temp.iso "$WISOTOOL_CACHE"/$sum.iso
    if test "$key" != ""
    then
@@ -775,7 +775,7 @@ load_iso() {
    fi
 
    # Note: if you haven't written the verb for this disc yet,
-   # the .iso won't be moved to the right directory.  
+   # the .iso won't be moved to the right directory.
    # So when writing a new verb, first run 'sh wisotool load',
    # then write just the verblist_add part (including sha1sum), then
    # run 'sh wisotool migrate' to move the iso into the right directory,
@@ -944,7 +944,7 @@ load_3dmark2000() {
         ControlClick Button4  ; Finish
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\MadOnion.com\3DMark2000"
 REM possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
@@ -1031,7 +1031,7 @@ load_3dmark03() {
         Send {Tab}
         Send {Enter}
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark03"
 3DMark03
@@ -1075,7 +1075,7 @@ load_3dmark05() {
         warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
         ARGS="-nosysteminfo"
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark05"
 3DMark05 $ARGS
@@ -1137,7 +1137,7 @@ load_3dmark06() {
         ARGS="-nosysteminfo"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark06"
 3DMark06 $ARGS
@@ -1173,7 +1173,7 @@ load_algodoo_demo() {
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Algodoo"
 algodoo
@@ -1203,7 +1203,7 @@ load_msaoe_demo() {
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Microsoft Games\Age of Empires Trial"
 empires
@@ -1249,7 +1249,7 @@ load_assassinscreed() {
 
     # Should run AssassinsCreed_Launcher.exe, but that fails on Wine
     # Should give option to run AssassinsCreed_Dx10.exe, but that fails on Wine
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Ubisoft\Assassin's Creed"
 AssassinsCreed_Dx9.exe
@@ -1303,7 +1303,7 @@ load_avatar_demo()
         }
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Ubisoft\Demo\James Cameron's AVATAR - THE GAME (Demo)\bin"
 "AvatarDemo.exe"
@@ -1341,10 +1341,10 @@ load_baldursgate2() {
         sleep 5
         try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
     fi
-    
+
     # Will perform a full install, so no cd's needed
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
-    
+
     ahk_do "
         SetTitleMatchMode, 2
         run "$WISOTOOL_TMP"/$PACKAGE/tempcd/setup.exe
@@ -1403,13 +1403,13 @@ load_baldursgate2() {
         exit"
     cd -
     try rm "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
-    
+
     if workaround_wine_bug 22482
     then
         sh "$WINETRICKS" -q ddr=opengl
         warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
     fi
-    
+
     if workaround_wine_bug 22493
     then
         warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
@@ -1432,7 +1432,7 @@ load_batman_arkham_asylum_demo() {
     download $PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
-    
+
     ahk_do "
         run BMDemo_installer.exe
         SetTitleMatchMode, 2
@@ -1456,24 +1456,24 @@ load_batman_arkham_asylum_demo() {
             {
                 Sleep (300)
                 WinActivate
-                Send {Enter} 
+                Send {Enter}
                 break
             }
             IfWinExist, Batman: Arkham Asylum Demo, Your computer fails to meet
             {
-                Sleep (300)             
+                Sleep (300)
                 Send +!o
             }
             IfWinExist, Batman: Arkham Asylum Demo, Setup has detected
             {
-                Sleep (300)             
+                Sleep (300)
                 Send +!o ; I'm not sure about this keystroke sequence
             }
-        }   
+        }
         WinWait, Batman: Arkham Asylum Demo, Setup Type
         WinActivate
         Send {Enter}
-        
+
         Loop
         {
             IfWinExist, NVIDIA, license
@@ -1481,7 +1481,7 @@ load_batman_arkham_asylum_demo() {
                 Sleep (500)
                 WinActivate
                 Send +!a ; license agreement
-                Send +!n ; next 
+                Send +!n ; next
             }
             IfWinExist, NVIDIA, finish
             {
@@ -1502,12 +1502,12 @@ load_batman_arkham_asylum_demo() {
             {
                 Process, Close, BmLauncher.exe ; kill BmLauncher
                 break
-            }     
+            }
             Sleep (2000)
         }
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Eidos\\Batman Arkham Asylum Demo\\Binaries"
 ShippingPC-BmGame.exe
@@ -1525,7 +1525,7 @@ __EOF__
         configdir="$DRIVE_C/users/$USERNAME/My Documents/Eidos/Batman Arkham Asylum Demo/BmGame/Config"
         mkdir -p "$configdir"
         cp "$WISOTOOL_CACHE/$PACKAGE"/*.ini "$configdir"
-    fi  
+    fi
     if workaround_wine_bug 24471
     then
         sh "$WINETRICKS" mmdevapi=disabled
@@ -1589,7 +1589,7 @@ load_bfbc2() {
         then
             mv BFBC2/settings.ini BFBC2/oldsettings.ini
             sed 's,DxVersion=auto,DxVersion=9,;
-                 s,Fullscreen=true,Fullscreen=false,' BFBC2/oldsettings.ini > BFBC2/settings.ini 
+                 s,Fullscreen=true,Fullscreen=false,' BFBC2/oldsettings.ini > BFBC2/settings.ini
         else
             mkdir -p BFBC2
             echo "[Graphics]" > BFBC2/settings.ini
@@ -1597,12 +1597,12 @@ load_bfbc2() {
         fi
     fi
     cd "$olddir"
-    
+
     if workaround_wine_bug 22961
     then
         warn "If you get a Securom 'No CD/DVD error', check your mount settings. See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info."
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Battlefield Bad Company 2"
 BFBC2Game.exe
@@ -1624,7 +1624,7 @@ verblist_add bioshock       "Bioshock (2K Games, 2007)" \
 
 load_bioshock() {
     load_autohotkey
-    
+
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
     if workaround_wine_bug 22501
     then
@@ -1634,12 +1634,12 @@ load_bioshock() {
     # If .iso is present, use it rather than the .mds (.mds is still flaky, maybe we should just get rid of mds support)
     # FIXME: 'wisotool ls' only shows apps as loaded if all files present, so we need a way to
     # tell it either iso or mds is ok.
-    if test -f "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso 
+    if test -f "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
     then
         load_bioshock_iso
         return 0
     fi
-    
+
     # Will perform a full install, so no cd's needed
     mds_mount "$WISOTOOL_CACHE/$PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.mds"
 
@@ -1650,7 +1650,7 @@ load_bioshock() {
 
     # Don't trim the hyphen's "-", the installer won't proceed without them.
     BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.txt`
-    
+
     ahk_do "
         SetTitleMatchMode, 2
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -1742,7 +1742,7 @@ load_bioshock_iso()
 
     BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.txt`
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
-    
+
     ahk_do "
         SetTitleMatchMode, 2
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -1792,7 +1792,7 @@ load_bioshock_iso()
         Sleep 1000
         Controlclick, Button3, Activation Successful
         " || (  $WINESERVER -k ; warn "Bioshock failed to install properly, likely the Securom check failed" )
-    
+
     iso_umount
 
     if workaround_wine_bug 6971
@@ -1805,7 +1805,7 @@ load_bioshock_iso()
         sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\2K Games\\BioShock\\Builds\\Release"
 bioshock.exe
@@ -1951,10 +1951,10 @@ load_blur() {
 <application_settings version="1"/>
 <shared_graphical_settings width="1024" height="768" x="3" y="22" multisample="0" windowed="1" vsync="1" graphical_detail="2"/>
 __EOF__
-        
+
     fi
-    
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Activision\Blur(TM)"
 "Blur.exe"
@@ -1986,7 +1986,7 @@ load_braid_demo()
         winwait, Setup, Finishing installation
         sleep 5000
         ; Workaround_winebug 21761
-        ifwinactive, Setup, ShellExecuteEx failed 
+        ifwinactive, Setup, ShellExecuteEx failed
         {
             controlclick, Button1
         }
@@ -1999,13 +1999,13 @@ load_braid_demo()
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
-    
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Braid"
 braid.exe
 __EOF__
-} 
+}
 
 #----------------------------------------------------------------
 
@@ -2040,7 +2040,7 @@ load_braid()
         winwait, Setup, Finishing installation
         sleep 5000
         ; Workaround_winebug 21761
-        ifwinactive, Setup, ShellExecuteEx failed 
+        ifwinactive, Setup, ShellExecuteEx failed
         {
             controlclick, Button1
         }
@@ -2052,8 +2052,8 @@ load_braid()
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
-    
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Braid\"
 "braid.exe"
@@ -2074,7 +2074,7 @@ __EOF__
         process, close, braid.exe
     "
     cd "$olddir"
-} 
+}
 
 #----------------------------------------------------------------
 
@@ -2133,7 +2133,7 @@ load_codmw2()
         winwait, ahk_class USurface_, Steam
         WinClose
 
-        ; If you choose to start the game above, you could wait for it to be ready to play here.  
+        ; If you choose to start the game above, you could wait for it to be ready to play here.
         ;winwait, ahk_class USurface_8390, Ready
         ;Send {Tab}            # select Close
         ;Send {Enter}
@@ -2141,7 +2141,7 @@ load_codmw2()
         ;WinClose
     "
     iso_umount
-    
+
 }
 
 #----------------------------------------------------------------
@@ -2156,9 +2156,9 @@ load_cnc2()
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
-    
+
     try_unrar x OfficialCnCTiberianSun.rar "$programfilesdir_x86_unix"
-    
+
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\EA Games\\Command & Conquer The First Decade\\Command & Conquer(tm) Tiberian Sun(tm)\\SUN"
@@ -2302,7 +2302,7 @@ load_civ4_demo()
     then
         try sh "$WINETRICKS" -q d3dx9_26
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo"
 Civilization4.exe
@@ -2319,7 +2319,7 @@ load_cnc3_demo()
 
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/CnC3Demo.exe"
     then
-        download $PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7 
+        download $PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7
     fi
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -2349,7 +2349,7 @@ load_cnc3_demo()
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 3 Tiberium Wars Demo"
 CNC3Demo.exe
@@ -2383,7 +2383,7 @@ load_cnc4()
     iso_umount
 
     # Bypass the game's launcher: see AppDB
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\Data\\CNC4.game" -config "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\CNC4_English.SkuDef"
 __EOF__
@@ -2438,7 +2438,7 @@ load_darknesswithin2_demo()
     fi
 
     # you have to cd to the directory containing DarkLineage.exe before running it
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Iceberg Interactive\Darkness Within 2 Demo"
 "DarkLineage.exe"
@@ -2453,11 +2453,11 @@ verblist_add daytona_usa_evolutions  "Daytona USA Evolutions (Sega, 1997)" dayto
 load_daytona_usa_evolutions() {
     # Refuses to run on anything newer...
     sh "$WINETRICKS" -q win98
-    
-    load_autohotkey    
-    
+
+    load_autohotkey
+
     download $PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
-    
+
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
     # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -2506,7 +2506,7 @@ load_daytona_usa_evolutions() {
 
     warn "Gives an error when closing the game, seems safe to ignore."
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$DRIVE_C\SEGA\DAYTONA USA Evolution Demo CD"
 "DAYTONA USA Evolution Demo CD.exe"
@@ -2522,7 +2522,7 @@ load_dc2ba() {
 
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
     download $PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
-    
+
     if workaround_wine_bug 23749
     then
         sh "$WINETRICKS" -q ie6
@@ -2557,7 +2557,7 @@ load_dc2ba() {
     sleep 5
     killall winefile.exe
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Shockwave.com\\Dora's Carnival 2 - Boardwalk Adventure"
 "Dora's Carnival 2 - Boardwalk Adventure.exe"
@@ -2593,7 +2593,7 @@ load_deadspace() {
     ahk_do "
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
-        run, ${ISO_MOUNT_LETTER}:EASetup.exe 
+        run, ${ISO_MOUNT_LETTER}:EASetup.exe
         winwait, Dead
         send {Enter}
         winwait, Dead, Registration Code
@@ -2624,7 +2624,7 @@ load_deadspace() {
     "
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Dead Space"
 Dead Space.exe
@@ -2696,7 +2696,7 @@ verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
   e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
 
 load_diablo2() {
-    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs." 
+    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs."
     load_autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
@@ -2758,7 +2758,7 @@ load_diablo2() {
 
     warn "When starting the game, be patient, wait until the menu appears.  The game seems to hang if it looses focus, see bug 14456, you may need to set winecfg to virtual desktop."
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Diablo II"
 "Diablo II.exe"
@@ -2807,7 +2807,7 @@ load_dragonage() {
         exit 0
     "
     iso_umount
-    
+
     if workaround_wine_bug 22307
     then
         warn "Turn off frame buffer effects to avoid blurry cut scenes.  See http://bugs.winehq.org/show_bug.cgi?id=22307"
@@ -2825,7 +2825,7 @@ load_dragonage() {
         warn "If you still see flickering, try applying the patch from http://bugs.winehq.org/show_bug.cgi?id=23081"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Dragon Age"
 bin_ship\\daorigins.exe
@@ -2867,7 +2867,7 @@ load_eve() {
     then
         sh "$WINETRICKS" -q corefonts
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\CCP\\EVE"
 eve.exe
@@ -2907,7 +2907,7 @@ load_ewj_demo() {
         sh "$WINETRICKS" win98
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 cd "$DRIVE_C\\ewj_demo"
 WORM.EXE
 __EOF__
@@ -2927,7 +2927,7 @@ load_fallout3_goty() {
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
-        SetTitleMatchMode, 2        
+        SetTitleMatchMode, 2
         winwait, Fallout 3 - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3
         sleep 1000
         controlclick, Button1, Fallout 3 - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3
@@ -2971,13 +2971,13 @@ load_fallout3_goty() {
         sleep 1000
         controlclick, Button4, Fallout 3 - DLC EN - InstallShield Wizard, InstallShield Wizard Complete
     "
-  
+
     if workaround_wine_bug 23532
     then
         try "$WINETRICKS" -q xlive
     fi
-    
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3"
 "Fallout3.exe"
@@ -2987,7 +2987,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f333571c48.iso 
+verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f333571c48.iso
 
 load_fifa10() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
@@ -3005,11 +3005,11 @@ load_fifa10() {
         # FIXME: What is it on Windows?
         fifatitle="FIFA 10"
     fi
-    
+
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:AutoRun.exe
-        SetTitleMatchMode, 2        
+        SetTitleMatchMode, 2
         winwait, FIFA 10, View the readme file
         sleep 1000
         controlclick, Button1, FIFA 10, View the readme file
@@ -3044,7 +3044,7 @@ load_fifa10() {
         controlclick, Button14, Product Registration, Please log into your EA Master Account to continue.
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10"
 "FIFA10.exe"
@@ -3062,7 +3062,7 @@ load_fifa11_demo()
 
     # From http://www.easportsfootball.co.uk/news/item/file/FIFA-11-Demo-Release?om_u=2255229429&om_i=_BMknsPB8Usvnmr
     download $PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
-    
+
     mkdir "$WISOTOOL_TMP/$PACKAGE"
     try unzip -d "$WISOTOOL_TMP/$PACKAGE" "$WISOTOOL_CACHE/$PACKAGE/fifa11_pc_demo_NA.zip"
     cd "$WISOTOOL_TMP/$PACKAGE"
@@ -3105,7 +3105,7 @@ load_fifa11_demo()
         controlclick, Button1, FIFA 11, Click the Finish button to exit the Setup Wizard.
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\EA Sports\\FIFA 11 Demo\\Game"
 "fifa.exe"
@@ -3114,7 +3114,7 @@ __EOF__
 }
 
 #----------------------------------------------------------------
- 
+
 
 verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download]" FIFAOnlineSetup.exe
 
@@ -3164,7 +3164,7 @@ load_fifaonline3_beta()
     sleep 10
     killall "NFE.exe"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 c:
 cd \Program Files\\EA Sports\\FIFA Online
 Launch.exe
@@ -3192,14 +3192,14 @@ __EOF__
 }
 
 #----------------------------------------------------------------
- 
+
 verblist_add fifa10_demo     "Fifa 10 Demo (EA, 2009)" fifa10_pc_demo_ec.exe
 
 load_fifa10_demo() {
     load_autohotkey
-    
+
     download $PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
-    
+
     # The installer is a self extracting rar file. Make cleanups easy by using $WISOTOOL_TMP
     mkdir "$WISOTOOL_TMP/fifa10"
     cd "$WISOTOOL_TMP/fifa10"
@@ -3246,7 +3246,7 @@ load_fifa10_demo() {
         sleep 1000
         controlclick, Button1, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
     "
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10 - Demo"
 FIFA10Demo.exe
@@ -3259,7 +3259,7 @@ verblist_add ffvii_demo "Final Fantasy VII (Square Enix, 1998)" ff7demo.zip
 
 load_ffvii_demo() {
     load_autohotkey
-    
+
     download $PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
 
     mkdir "$programfilesdir_x86_unix/ffvii_demo"
@@ -3271,12 +3271,12 @@ load_ffvii_demo() {
         warn "Doesn't work very well, see http://bugs.winehq.org/show_bug.cgi?id=9220"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_unix/ffvii_demo"
 ff7demo.exe
 __EOF__
-    
+
 }
 
 
@@ -3312,7 +3312,7 @@ load_ffxiv_beta() {
     controlclick, Button4, Installing Microsoft(R) DirectX(R), Welcome to setup for DirectX
     winwait, Installing Microsoft(R) DirectX(R), This install package will search for updated DirectX
     sleep 1000
-    Controlclick, Button4, Installing Microsoft(R) DirectX(R), This install package will search for updated DirectX 
+    Controlclick, Button4, Installing Microsoft(R) DirectX(R), This install package will search for updated DirectX
     winwait, Installing Microsoft(R) DirectX(R), Installation Complete
     sleep 1000
     controlclick, Button5, Installing Microsoft(R) DirectX(R), Installation Complete
@@ -3339,7 +3339,7 @@ load_ffxiv_beta() {
     sleep 1000
     Controlclick, Button4, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
     "
-    
+
     if workaround_wine_bug 24358
     then
         sh "$WINETRICKS" winhttp
@@ -3360,12 +3360,12 @@ __EOF__
 }
 
 #----------------------------------------------------------------
- 
+
 verblist_add ffxivbench "Final Fantasy XIV Benchmark (Square Enix, 2010)" FFXIVBenchmark.zip
 
 load_ffxivbench() {
-    download $PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8 
-    
+    download $PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
+
     cd "$programfilesdir_x86_unix"
     try unzip "$WISOTOOL_CACHE/$PACKAGE/FFXIVBenchmark.zip"
 
@@ -3406,9 +3406,9 @@ then
 fi
 
 }
-    
+
 #----------------------------------------------------------------
- 
+
 verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
@@ -3457,7 +3457,7 @@ load_gta_vc() {
     send {enter}
     "
     iso_umount
-    
+
     if workaround_wine_bug 22414
     then
         try "$WINETRICKS" -q quartz
@@ -3465,7 +3465,7 @@ load_gta_vc() {
 }
 
 #----------------------------------------------------------------
- 
+
 verblist_add half_life_goty     "Half Life: Game of the Year Edition (Sierra, 2000) " \
   dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
 
@@ -3473,7 +3473,7 @@ load_half_life_goty() {
     load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
-    
+
     ahk_do "
     SetTitleMatchMode, 2
     Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -3510,11 +3510,11 @@ load_half_life_goty() {
     Sleep 1000
     ControlClick, Button4, Setup Complete, Setup has finished installing Half-Life on your computer.
     "
-    
+
     # The key is put in on first run:
     HALF_LIFE_GOTY_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.txt`
     cd $DRIVE_C/SIERRA/Half-Life
-    
+
     # Forcefully closing the process later will screw up the screen resolution, so store the user's current resolution so we can restore it later:
     current_res=`xrandr -q | awk -F'current' -F',' 'NR==1 {gsub("( |current)","");print $2}'`
 
@@ -3546,7 +3546,7 @@ load_hphbp_demo()
     esac
 
     load_autohotkey
-    
+
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$hbpdemoexe"
     then
         download $PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
@@ -3576,7 +3576,7 @@ load_hphbp_demo()
     # Not sure I trust putting \U2122 in a batch file, so use a wild card to cd to the right dir.
     # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
     # Have to be in the pc directory for the app to find its files.
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince* Demo
 cd pc
@@ -3618,7 +3618,7 @@ load_hphbp()
     "
     $WINESERVER -w
     iso_umount
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince*
 cd pc
@@ -3628,7 +3628,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Games, 2010) [download]" Hegemony_Philip_of_Macedon_Installer.exe 
+verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Games, 2010) [download]" Hegemony_Philip_of_Macedon_Installer.exe
 
 load_hegemonypom_demo()
 {
@@ -3724,7 +3724,7 @@ load_hon()
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Heroes of Newerth"
 hon.exe
@@ -3790,7 +3790,7 @@ __EOF__
 }
 
 #----------------------------------------------------------------
- 
+
 verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga40.exe
 
 # http://www.agdinteractive.com/games/kq1/download/download.html
@@ -3799,7 +3799,7 @@ verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga
 
 load_kq1vga() {
     load_autohotkey
-   
+
     download $PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -3839,7 +3839,7 @@ load_kq1vga() {
             send {Enter}
         "
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\AGD Interactive\\King's Quest I"
 Kq1vga.exe
@@ -3885,7 +3885,7 @@ load_lhp_demo()
         warn "If you have sound problems, try switching to OSS sound in winecfg"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\WB Games\\LEGO*"
 LEGOHarryPotterDEMO.exe
@@ -4097,7 +4097,7 @@ load_lotsn()
 {
     load_autohotkey
 
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe" 
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe"
     then
         download ${PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
     fi
@@ -4148,7 +4148,7 @@ load_lp2bench()
 
     load_autohotkey
 
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.zip" 
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.zip"
     then
         download ${PACKAGE} http://gamedaily.newaol.com/pub/LostPlanet2_Benchmark.zip 2c9862adc81974a61a450a1865cd60decd82587c
     fi
@@ -4191,7 +4191,7 @@ load_lp2bench()
         sh "$WINETRICKS" -q wmp9
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\CAPCOM\\LOST PLANET 2 Benchmark Version"
 .\LP2DX9.exe
@@ -4229,7 +4229,7 @@ load_lswcs() {
     $WINESERVER -w
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\LucasArts\\LEGO Star Wars - The Complete Saga"
 LEGOStarWarsSaga.exe
@@ -4440,7 +4440,7 @@ verblist_add metro2033     "Metro 2033 (THQ, 2010)" 3de89e07449c2573cd4a334b0cd7
 
 load_metro2033() {
     warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $WISOTOOL_CACHE. You'll also need your cd-key for Metro 2033 already added to your Steam Account."
-    
+
     if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
     then
         die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
@@ -4479,7 +4479,7 @@ load_metro2033() {
     winclose, Steam - Update News
     winclose, Steam
     "
-    
+
     ahk_do "
     Run, Steam.exe -install I:\\
     ; Install Metro 2033
@@ -4494,7 +4494,7 @@ load_metro2033() {
     winwait, Install - Metro 2033
     send, {Enter}
     "
-    
+
     # Wait for install to finish
     dl_log="$steam_dir/logs/download_log.txt"
         while true
@@ -4511,7 +4511,7 @@ load_metro2033() {
 
     warn "You'll need the Xinput2 patch from http://bugs2.winehq.org/attachment.cgi?id=29313 to be able to use the mouse."
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Steam"
 Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110
@@ -4554,10 +4554,10 @@ load_mise() {
     cd "$WISOTOOL_TMP"
     mkdir $PACKAGE
     cd $PACKAGE
-    
+
     # Don't extract DirectX/dotnet35 installers, they just take up extra time and aren't needed. Luckily, MISE copes well and just skips them if they are missing:
     try unzip "$WISOTOOL_CACHE/$PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip -x DirectX* dotnet*
-    
+
     ahk_do "
         SetTitleMatchMode, 2
         run, setup.exe
@@ -4610,7 +4610,7 @@ load_mise() {
         "
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition"
 MISE.exe
@@ -4640,7 +4640,7 @@ load_moh_beta()
     cd "$WISOTOOL_TMP/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
-        run, setup.exe 
+        run, setup.exe
         winwait, Medal of Honor, will install
         controlclick, Button1
         winwait, Medal of Honor, License
@@ -4666,20 +4666,20 @@ load_moh_beta()
         then
             mv "Medal of Honor MP Beta"/settings.ini "Medal of Honor MP Beta"/oldsettings.ini
             sed 's,DxVersion=auto,DxVersion=9,;
-                 s,Fullscreen=true,Fullscreen=false,' "Medal of Honor MP Beta"/oldsettings.ini > "Medal of Honor MP Beta"/settings.ini 
+                 s,Fullscreen=true,Fullscreen=false,' "Medal of Honor MP Beta"/oldsettings.ini > "Medal of Honor MP Beta"/settings.ini
         else
             mkdir -p "Medal of Honor MP Beta"
             echo "[Graphics]" > "Medal of Honor MP Beta"/settings.ini
             echo "DxVersion=9" >> "Medal of Honor MP Beta"/settings.ini
         fi
     fi
-    
+
     cd "$olddir"
 
     # fixme: Try to find a way to script this?
     warn "After you sign up at http://medalofhonor.com/beta, you will receive a beta key which you will need to enter the first time you run the game."
-    
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Medal of Honor MP Beta"
 MoHMPGame.exe
@@ -4741,9 +4741,9 @@ load_morrowind() {
     winwait, Information, You have installed Windows XP, which includes DirectX 8.1
     sleep 1000
     ControlClick, Button1
-    
+
     exit 0"
-    
+
     sleep 30s
     iso_umount
     cd "$olddir"
@@ -4757,7 +4757,7 @@ verblist_add mnbw_demo "Mount & Blade Warband Demo (Taleworlds, 2010) [download]
 load_mnbw_demo()
 {
     load_autohotkey
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/${mnbw_demo_exe}" 
+    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/${mnbw_demo_exe}"
     then
         download ${PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
     fi
@@ -4790,7 +4790,7 @@ verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007)" nfsps_pc
 load_nfsps_demo()
 {
     load_autohotkey
-    
+
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ps_pcdemo.exe"
     then
         download $PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
@@ -4823,7 +4823,7 @@ load_nfsps_demo()
         controlclick, Button4
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed ProStreet Demo"
 nfsdemo.exe
@@ -4853,7 +4853,7 @@ load_nfsshift()
     ahk_do "
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
-        run, ${ISO_MOUNT_LETTER}:EASetup.exe 
+        run, ${ISO_MOUNT_LETTER}:EASetup.exe
         ; Not sure which of two or three dialogs happens next
         loop
         {
@@ -4908,7 +4908,7 @@ load_nfsshift()
     "
 
     # Need path on shift.exe, see bug 23319
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT"
 .\shift.exe
@@ -4922,7 +4922,7 @@ verblist_add nfsshift_demo    "Need For Speed: SHIFT Demo (EA, 2009) [download]"
 load_nfsshift_demo()
 {
     load_autohotkey
-    
+
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe"
     then
         download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
@@ -4978,7 +4978,7 @@ load_nfsshift_demo()
         controlclick, Button1
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT Demo"
 shiftdemo.exe
@@ -5013,7 +5013,7 @@ load_oblivion()
         controlclick, Button3
         "
     iso_umount
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Bethesda Softworks Oblivion\\Oblivion"
 Oblivion.exe
@@ -5077,7 +5077,7 @@ load_orangebox() {
     "
     iso_umount
 
-    # FIXME: how to tell when update is done?  Probably have to launch all games once 
+    # FIXME: how to tell when update is done?  Probably have to launch all games once
     # the the commandline option to exit immediately.
 }
 
@@ -5133,7 +5133,7 @@ load_pcmark04() {
         warn "You may need to apply the patch from bug 22402 to avoid a crash in the tumbling blocks test."
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\PCMark04"
 PCMark04
@@ -5190,7 +5190,7 @@ load_pcmark05() {
         Send {Enter}
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\PCMark05"
 PCMark05
@@ -5243,15 +5243,15 @@ load_pscs5() {
 
     try Photoshop_12_LS1.exe /s /x /d .
     try cd "Adobe CS5"
-    
+
     if workaround_wine_bug 22679
     then
         try sh "$WINETRICKS" -q msxml3
     fi
 
     warn "Try not to have anything else running, cs5 will complain if firefox is running, and the mouse clicks here are sensitive"
-    
-    # Doesn't have clickable buttons, resorting to window positions. May break on non standard dpi settings.    
+
+    # Doesn't have clickable buttons, resorting to window positions. May break on non standard dpi settings.
     # Not sure how to detect when the window changes. They all have the same title, and no text is visible to AHK.
     # As a dirty workaround, may try detecting the color on the left side which shows the menu. The current step is darker
     # than the rest.
@@ -5300,7 +5300,7 @@ verblist_add pscs5_pickle       "Photoshop CS5 Demo (Adobe, 2010)"
 
 load_pscs5_pickle() {
     warn "This will tar up Photoshop CS5's files from a Windows install, along with needed registry entries, for use in wine with load_pscs5_unpickle()"
-    
+
     if [ ! -d "$programfilesdir_x86_win/Adobe/Adobe Photoshop CS5/" ]
     then
         load_pscs5
@@ -5317,7 +5317,7 @@ load_pscs5_pickle() {
     try cd cs5_temp
 
     try sleep 1 # Potential race condition, caught me a couple times
-    
+
     # First, the registry entries:
     try reg.exe export HKLM\\Software\\Adobe adobe_cs5.reg
 
@@ -5334,13 +5334,13 @@ load_pscs5_pickle() {
     try cd ..
     try cp "$system32_unix/odbc32.dll" .
     try cp "$system32_unix/odbcint.dll" .
-    
+
     try cd "$WISOTOOL_TMP"/cs5_temp
     try tar -c -f "$olddir/adobe_cs5.tar" *
     try cd ..
     try rm -rf cs5_temp
     try cd "$olddir"
-    
+
 }
 
 verblist_add pscs5_unpickle       "Photoshop CS5 Demo (Adobe, 2010)" \
@@ -5348,9 +5348,9 @@ verblist_add pscs5_unpickle       "Photoshop CS5 Demo (Adobe, 2010)" \
 
 load_pscs5_unpickle() {
     warn "This will install Photoshop CS5's files from a Windows install made with pscs5_pickle()"
-    
+
     # Install dependencies:
-    try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008 
+    try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
 
     try cd "$WISOTOOL_TMP"
     try tar xf "$WISOTOOL_CACHE/$PACKAGE/adobe_cs5.tar"
@@ -5366,7 +5366,7 @@ load_pscs5_unpickle() {
     try mv "$WISOTOOL_TMP/odbcint.dll" .
     try $WINE regsvr32 odbc32.dll
     try $WINE regsvr32 odbcint.dll
-    
+
     warn "Do not report bugs to wine with an installation done this way. Wait until the installer bugs are fixed or have patches to workaround them!"
     warn "On the first run, it will tell you your trial has 0 days left. On the second run and after, it will say 30 days."
 }
@@ -5395,7 +5395,7 @@ load_plantsvszombies() {
         ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\PopCap Games\Plants vs. Zombies"
 PlantsVsZombies
@@ -5434,7 +5434,7 @@ load_pop2008()
 
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia"
 Prince of Persia.exe
@@ -5481,7 +5481,7 @@ load_popfs()
 
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia The Forgotten Sands"
 Prince of Persia.exe
@@ -5572,7 +5572,7 @@ load_popsot_demo()
         }
         winwait, Prince of Persia, View the Readme
         ControlClick, Button1, Prince of Persia, View the Readme
-        ControlClick, Finish, Prince of Persia, View the Readme 
+        ControlClick, Finish, Prince of Persia, View the Readme
     "
     cd "$olddir"
     warn "Once you're in the Prince of Persia game, turn off fog or you won't be able to see anything (see wine bug 17423 for explanation, but this isn't a wine bug)"
@@ -5660,8 +5660,8 @@ load_proevolution2010_demo()
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
-    
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2010 DEMO"
 pes2010.exe
@@ -5684,9 +5684,9 @@ load_proevolution2011_demo()
     then
         warn "Installer probably won't work, see http://bugs.winehq.org/show_bug.cgi?id=24438"
     fi
-    
+
     # Copied from 2010, the first few dialogs are the same, but can't test all of it because of bug 24438.
-    
+
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
@@ -5716,12 +5716,12 @@ load_proevolution2011_demo()
         sh "$WINETRICKS" d3dx9_36
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2011 DEMO"
 pes2011demo.exe
 __EOF__
-   
+
 }
 
 #----------------------------------------------------------------
@@ -5875,7 +5875,7 @@ _EOF_
         try sh "$WINETRICKS" -q ie6
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Runes of Magic"
 "Runes of Magic.exe"
@@ -5899,7 +5899,7 @@ load_re5bench() {
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         run nzd_ResidentEvil5_Benchmark.exe
-        WinWait ahk_class MsiDialogCloseClass 
+        WinWait ahk_class MsiDialogCloseClass
         Sleep 1000
         Send {Enter}
         ; ControlClick Button1 ; Next.  Doesn't work?
@@ -5938,7 +5938,7 @@ load_re5bench() {
 
     # Should run launcher.exe, but that requires .net and doesn't run on Wine
     # Should give choice of running RE5DX10.EXE, but that requires dx10, which doesn't work on Wine yet
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\CAPCOM\RESIDENT EVIL 5 Benchmark Version"
 RE5DX9.EXE
@@ -5981,11 +5981,11 @@ load_quake3() {
 verblist_add sega_rally_2  "Sega Rally 2 (Sega, 1999)" rally2.exe
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
-load_sega_rally_2() {    
-    load_autohotkey    
-    
+load_sega_rally_2() {
+    load_autohotkey
+
     download $PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
-    
+
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
     # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -6032,7 +6032,7 @@ load_sega_rally_2() {
         warn "The game is unplayable due to http://bugs.winehq.org/show_bug.cgi?id=22668. No known workaround."
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Sega\SEGA RALLY 2 DEMO"
 "SEGA RALLY 2 DEMO.exe"
@@ -6105,7 +6105,7 @@ load_secondlife_beta() {
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\\SecondLifeViewer2
 SecondLife.exe
@@ -6158,7 +6158,7 @@ load_sims3() {
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
-    
+
     # Get user's key
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.txt | tr -d -`
 
@@ -6209,7 +6209,7 @@ load_sims3() {
 
     # FIXME: apply next patch, too
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\The Sims 3\\Game\\Bin"
 TS3.EXE
@@ -6285,7 +6285,7 @@ _EOF_
     try_regedit "$WISOTOOL_TMP_WIN"\\dof.reg
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Activision\Singularity(TM)\Binaries"
 Singularity.exe
@@ -6337,14 +6337,14 @@ load_splitsecond_demo()
         winwait, Split, Game features
         ControlClick, Button2, Split, Game features
         winwait, Split, start copying
-        ControlClick, Button1, Split, start copying 
+        ControlClick, Button1, Split, start copying
         winwait, Split, completed
         ControlClick, Button1, Split, completed
         ControlClick, Button4, Split, completed
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second Demo"
 SplitSecondDEMO.exe
@@ -6403,7 +6403,7 @@ load_splitsecond()
     "
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second"
 SplitSecond.exe
@@ -6448,7 +6448,7 @@ load_spore()
         controlclick, Button4
     "
     iso_umount
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Electronic Arts\\SPORE\\Sporebin"
 SporeApp.exe
@@ -6464,7 +6464,7 @@ load_ssdd2()
     load_autohotkey
     # Main page: http://arcade.nick.com/nick/gameinfo.jsp?s=SpongeBobDinerDash2
     download $PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 8407dae2c062ce62b38408eeac3a9f95be202b96
-    
+
     if workaround_wine_bug 23749
     then
         sh "$WINETRICKS" -q ie6
@@ -6499,14 +6499,14 @@ load_ssdd2()
     sleep 5
     killall winefile.exe
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Nick Arcade\\SpongeBob SquarePants Diner Dash 2"
 "SpongeBob SquarePants Diner Dash 2.exe"
 __EOF__
 
 }
-    
+
 #----------------------------------------------------------------
 
 verblist_add sonicdxb_demo     "Sonic Adventure Deluxe Trial B (Sega, 2003) [download]" sadx_trial_b.exe
@@ -6544,7 +6544,7 @@ load_sonicdxb_demo() {
     "
     LANG=${OLDLANG}
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Sega\\SONICADVENTUREDX_DEMO_B"
 sonic.exe
@@ -6557,7 +6557,7 @@ __EOF__
 verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
-    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc." 
+    warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc."
     load_autohotkey
 
     # Force clean-ish install
@@ -6612,7 +6612,7 @@ load_starcraft2() {
             die "Please download the installer files using the Blizzard downloader from https://us.battle.net/account/management/sc2/download.html?gameRegion=NA&lang=en-US&platform=win and put them in $WISOTOOL_CACHE/$PACKAGE"
         fi
     done
-    
+
     # Force clean-ish install
     test -d "$programfilesdir_unix/StarCraft II" && rm -rf "$programfilesdir_unix/StarCraft II"
 
@@ -6639,7 +6639,7 @@ load_starcraft2() {
         winclose
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\StarCraft II"
 "StarCraft II.exe"
@@ -6681,7 +6681,7 @@ load_sto()
         ControlClick, Button2
         winwait, Star Trek, Launch
         ControlClick, Button2
-    " 
+    "
     iso_umount
     # FIXME: register using the key that came with the DVD?
     # FIXME: log in and download patch?
@@ -6732,7 +6732,7 @@ load_stfu() {
 
     # Patch to 1.2
     # FIXME: add a commandline option to disable patching in general
-    # URL from http://www.lucasfiles.com/index.php?s=&action=download&id=1537&agree=true 
+    # URL from http://www.lucasfiles.com/index.php?s=&action=download&id=1537&agree=true
     # See also http://www.forceunleashed.net/news/force-unleashed-patch-1-2/
     download stfu http://xfer.lfnetwork.com/lucasfiles.com/downloads/1537/SWTFU_PC_EF_1.2_Update.exe cfd8043c4b86f4dc0ff0acd4c108b11c4b76e716
     cd "$WISOTOOL_CACHE/stfu"
@@ -6745,14 +6745,14 @@ load_stfu() {
         send {Enter}
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\StarCraft II Beta"
 "StarCraft II.exe"
 __EOF__
 
     # Should start SWTFU Launcher.exe, but that doesn't run in Wine?
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Aspyr\Star Wars The Force Unleashed"
 SWTFU.exe
@@ -6775,7 +6775,7 @@ load_sf4bench()
     cd "$WISOTOOL_CACHE"/$PACKAGE
 
     ahk_do "
-        SetTitleMatchmode, 2 
+        SetTitleMatchmode, 2
         run, StreetFighterIV_Benchmark.exe
         winwait, Choose
         controlclick, Button1
@@ -6838,7 +6838,7 @@ __EOF__
 
     cd "$olddir"
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\CAPCOM\\STREETFIGHTERIV_BENCHMARK"
 StreetFighterIV_Benchmark.exe
@@ -6856,7 +6856,7 @@ load_smbx() {
     download $PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
 
     # This winetricks verb doesn't work on Windows yet, but that's ok-ish, Windows comes with vb6 runtime
-    sh "$WINETRICKS" -q vb6run 
+    sh "$WINETRICKS" -q vb6run
 
     if workaround_wine_bug 23821
     then
@@ -6893,7 +6893,7 @@ load_smbx() {
         Send {Space}   ; Don't run game
         Send {Enter}
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SMBX
 smbx.exe
@@ -6907,7 +6907,7 @@ verblist_add timezattack_demo "Timez Attack Demo (BigBrainz, 2005) [download]" W
 load_timezattack_demo() {
 
     load_autohotkey
-    download $PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c  
+    download $PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     # autohotkey can't read any text from this one :-(
@@ -6932,7 +6932,7 @@ load_timezattack_demo() {
     # fixme: only works on linux
     killall TimezAttack.exe
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 C:
 cd C:\\TimezAttack
 TimezAttack.app\\TimezAttack.exe
@@ -6957,11 +6957,11 @@ load_tlr_demo() {
     then
         download $PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
     fi
-    
+
     cd "$WISOTOOL_TMP"
     try unzip "$WISOTOOL_CACHE/$PACKAGE/TheLastRemnant_PC_Demo.zip"
     cd "The Last Remnant Trial Version"
-    
+
     ahk_do "
         settitlematchmode, 2
         run, setup.exe
@@ -6988,7 +6988,7 @@ load_tlr_demo() {
     "
 
     # FIXME: When running, the window has the wrong size. Wine or app bug?
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\SquareEnix\\The Last Remnant Trial Version\\Binaries"
 TLRDemo.exe
@@ -7003,11 +7003,11 @@ verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd
 
 load_twfc() {
     load_autohotkey
-    
+
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
-    
+
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
-    
+
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
@@ -7035,7 +7035,7 @@ load_twfc() {
         winwait, Transformers, Select the setup type to install
         sleep 1000
         controlclick, Button4, Transformers, Select the setup type to install
-        
+
         ; Installer exits silently. Prevent an early umount:
         sleep 5000
             Loop
@@ -7052,8 +7052,8 @@ load_twfc() {
     then
         sh "$WINETRICKS" mwo=force
     fi
-    
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Activision\Transformers - War for Cybertron\Binaries"
 TWFC.exe
@@ -7078,7 +7078,7 @@ load_unigine_heaven() {
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
         run msiexec /i Unigine_Heaven-2.0.msi
-        WinWait ahk_class MsiDialogCloseClass 
+        WinWait ahk_class MsiDialogCloseClass
         Sleep 1000
         Send {Enter}
         WinWait ahk_class MsiDialogCloseClass, License
@@ -7111,7 +7111,7 @@ load_unigine_heaven() {
     # Should start Heaven.exe, but that doesn't run in Wine
     # Should give option to run Heaven_gl.bat (even works in Wine)
     # or the dx10 or dx11 versions (doesn't).
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Unigine\Heaven"
 cmd /c Heaven_d3d9.bat
@@ -7138,7 +7138,7 @@ load_vf2_demo()
 
     # installer refuses to run in Windows NT 5 or higher, so set win98 mode
     # FIXME: undo this when verb is done
-    case "$OS" in 
+    case "$OS" in
     "Windows_NT")
         export __COMPAT_LAYER=Win95
         ;;
@@ -7174,7 +7174,7 @@ set __COMPAT_LAYER=Win95
 VF2DEMO.exe
 __EOF__
 
-    case "$OS" in 
+    case "$OS" in
     "Windows_NT")
         warn "$PACKAGE requires an 8 or 16 bit display, so change desktop settings before running.  Also, on Windows XP, you'll need to set C:\\SEGA\\VF2DEMO\VF2DEMO.exe to Win95 mode."
         ;;
@@ -7195,10 +7195,10 @@ load_wog() {
     then
         # Get temporary download location
         download wog "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
-        URL=`cat "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" | 
+        URL=`cat "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" |
            grep WorldOfGooDemo.1.0.exe | sed 's,.*http,http,;s,".*,,'`
         rm "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
-       
+
         download wog "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
     fi
 
@@ -7216,7 +7216,7 @@ load_wog() {
         ControlClick, Make me dirty right now, World of Goo Setup, Thank you
         send {Enter}
         "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\WorldOfGooDemo"
 WorldOfGoo.exe
@@ -7274,8 +7274,8 @@ load_wowbc() {
     download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" b7ad37a75713f6d8e578558ca1e321927192c6c6
     download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" f73763541197fecdcca9b9f8cf91e83cde989a49
     download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe" ce73a0a8aa9f6eaf00b5e7cd0a34eb928738fd36
-    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe" 
-    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe"  
+    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe"
+    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe"
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     patch1=`stat -Lc%s WoW-3.2.0-enUS-patch.exe`
@@ -7286,7 +7286,7 @@ load_wowbc() {
     patch6=`stat -Lc%s WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe`
     patch7=`stat -Lc%s WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe`
 
-    if  [ $patch5 -ne 128600432 ] || [ $patch6 -ne 4959280 ] || [ $patch7 -ne 24886168 ] 
+    if  [ $patch5 -ne 128600432 ] || [ $patch6 -ne 4959280 ] || [ $patch7 -ne 24886168 ]
     then
         die "Failed to download patch 3.3.3.11685, or patch 3.3.3.11723, or patch 3.3.5.12213"
     fi
@@ -7300,7 +7300,7 @@ load_wowbc() {
         do
             try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
         done
-    
+
         # Start uTorrent, have it wait until all downloads are finished
         ahk_do "
             SetTitleMatchMode, 2
@@ -7374,14 +7374,14 @@ load_wowbc() {
         WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe\
         WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe\
         WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe
- 
+
 
     do
         ahk_do "
            run "$WISOTOOL_CACHE"/$PACKAGE/$file
            SetTitleMatchMode, 2
            winwait, Blizzard Updater
-           IfWinExist, Blizzard Updater, unable to start ;Exit if patch is already applied 
+           IfWinExist, Blizzard Updater, unable to start ;Exit if patch is already applied
            {
              ControlClick, Button1, Blizzard Updater, unable to start
              exit
@@ -7410,7 +7410,7 @@ load_wowbc() {
         echo "Patched $file"
         sleep 5
     done
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\World of Warcraft"
 Wow.exe
@@ -7450,7 +7450,7 @@ _load_positech()
         Send {Space} ; Untick launch
         ControlClick TNewButton4 ; Finish
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\$installed_dir"
 $installed_exe
@@ -7499,11 +7499,11 @@ load_rocklegend_demo() {
 #     Used for AutoHotKey. FIXME: is this guaranteed to match the wiki?
 # game_cache_file
 #     .gcf or .ncf file name. Note: Does _NOT_ always match the game folder name below.
-# game_folder 
+# game_folder
 #     Folder where files are stored under $STEAMDIR/steamapps/common/
 # game_extra_files
 #     Most games/demos come with one .gcf or .ncf file, then everything else in the
-#     $STEAMDIR/steamapps/common/$game_folder directory. Some (Total War demos) have several 
+#     $STEAMDIR/steamapps/common/$game_folder directory. Some (Total War demos) have several
 #     more .gcf/.ncf files. This should be a list, separated by commas.
 #
 #
@@ -7538,7 +7538,7 @@ _load_steam_app()
     game_cache_file="$3"
     game_folder="$4"
     game_extra_files="$5"
-    
+
     # If files are already cached, skipped downloading/installing and just restore from cache:
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" ]
     then
@@ -7548,8 +7548,8 @@ _load_steam_app()
         ; Originally used:
         ; run, Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
         ; but that doesn't work for all programs. Some would silently fail to start.
-        
-        ; Instead, run steam in the background, sleep for 30s to give it enough time 
+
+        ; Instead, run steam in the background, sleep for 30s to give it enough time
         ; to start, then use the steam:// prototol to install:
         run, Steam.exe -login $STEAM_USER $STEAM_PASS
         ; FIXME: should detect steam running properly...
@@ -7568,7 +7568,7 @@ _load_steam_app()
         }
         sleep 30000
         run, steam://install/$app_id
-        
+
         ; Info screen, disk space required, etc.
         winwait, Install - $game_title
         winactivate, Install - $game_title
@@ -7584,7 +7584,7 @@ _load_steam_app()
         sleep 10000
         send {enter}
         sleep 10000
-        
+
                 ; Here, it's getting the .gcf/.ncf files. This is normally quick, but can take a long time.
                 ; Most finish in a few seconds, but the Total War demos takes a couple minutes.
                 ; So, we'll exit AHK, then wait for all the game files to be present,
@@ -7615,7 +7615,7 @@ _load_steam_app()
 
         # FIXME: Is this a long enough sleep?
         sleep 30
-        
+
         ahk_do "
         winwait, Install - $game_title
         winactivate, Install - $game_title
@@ -7660,7 +7660,7 @@ _load_steam_app()
     else
         mkdir -p "$steam_dir/steamapps/common"
         cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder" "$steam_dir/steamapps/common"
-        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" "$steam_dir/steamapps" 
+        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" "$steam_dir/steamapps"
         if test ! "$game_extra_files" = ""
         then
             IFS=$','
@@ -7672,8 +7672,8 @@ _load_steam_app()
         fi
     fi
 
-    
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Steam"
 .\Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
@@ -7804,7 +7804,7 @@ srcdir=`cd $srcdir; /bin/pwd`
 # Load external verbs.  Filenames may not contain spaces.
 if cd "$WISOTOOL_VERBS"
 then
-    for file in `find . -type f -name '*.verb' 2>/dev/null` 
+    for file in `find . -type f -name '*.verb' 2>/dev/null`
     do
        . $file
     done
@@ -7974,7 +7974,7 @@ do
     # if verbs doesn't preserve the working directory, restore it
     cd "$olddir"
 
-    # User-specific postinstall hook.  
+    # User-specific postinstall hook.
     # Source it so the script can call download() if needed.
     if [ -f "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh ]
     then
