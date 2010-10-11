@@ -550,7 +550,7 @@ download() {
     fi
     cache="$WINETRICKS_CACHE/$1"
     mkdir -p "$cache"
-    if test ! -f "$cache/$file"
+    if test ! -f "$cache/$file" || test "$WINETRICKS_CONTINUE_DOWNLOAD"
     then
         cd "$cache"
         # Mac folks tend to have curl rather than wget
