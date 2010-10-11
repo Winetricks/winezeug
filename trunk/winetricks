@@ -382,6 +382,7 @@ GUI=0
 case x"$1" in
 x) GUI=1 ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
+x-V|x--version) echo "Winetricks version $VERSION.  (C) 2007-2010 Dan Kegel et al.  LGPL." ; exit 0;;
 esac
 
 early_wine()
@@ -4346,25 +4347,12 @@ load_xvid() {
     try $WINE "$WINETRICKS_CACHE"/Xvid-1.2.2-07062009.exe $WINETRICKS_SILENT
 }
 
-#----------------------------------------------------------------
-
-print_version() {
-    echo "$VERSION"
-}
-
 #--------- Main program -----------------------------------------
 
 # On Solaris, choose more modern commands (needed for id -u).
 case `uname -s` in
 SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
       ;;
-esac
-
-case "$1" in
--V|--version)
-    echo "Winetricks version $VERSION.  (C) 2007-2010 Dan Kegel et al.  LGPL."
-    exit 0
-    ;;
 esac
 
 detect_menu
@@ -4653,7 +4641,6 @@ do
     sound=disabled|sound=) set_sound_driver "";;
     strictdrawordering=enabled) set_sdo enabled;;
     strictdrawordering=disabled) set_sdo disabled;;
-    version) print_version;;
     videomemorysize=512) set_videomemorysize 512;;
     videomemorysize=1024) set_videomemorysize 1024;;
     videomemorysize=default) set_videomemorysize default;;
