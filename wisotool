@@ -1859,6 +1859,54 @@ load_bioshock_demo() {
 
 #----------------------------------------------------------------
 
+verblist_add bladekitten_demo "Blade Kitten Demo (Krome Studios Pty Ltd., 2010) [download]" BladeKittenDemoInstall.exe
+
+load_bladekitten_demo() {
+
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/BladeKittenDemoInstall.exe"
+    then
+        download $PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
+        cd "$WISOTOOL_CACHE/$PACKAGE"
+        mv 'download.php?file=BladeKittenDemoInstall.exe' "BladeKittenDemoInstall.exe"
+    fi
+
+    mkdir "$WISOTOOL_TMP/BladeKittenDemo"
+    cp "$WISOTOOL_CACHE/$PACKAGE"/BladeKittenDemoInstall.exe "$WISOTOOL_TMP"/BladeKittenDemo
+    cd "$WISOTOOL_TMP"/BladeKittenDemo
+    ahk_do "
+        SetTitleMatchMode, 3
+        run BladeKittenDemoInstall.exe
+        WinWait "Blade Kitten Demo Install Package"
+        ControlClick Button2 ;  Install
+        WinWait "Blade Kitten Demo", Next
+        ControlClick Button1
+        WinWait "Blade Kitten Demo", Cost
+        ControlClick Button1  ; Next
+        WinWait "Blade Kitten Demo", ready
+        ControlClick Button1 ;  Next
+        ; Note - If you are running an older version of wine the installer may appear to hang for 6-10 minutes at this point
+        WinWait "Blade Kitten Demo", Complete
+        ControlClick Button1 ;  Close
+    "
+    mv "$WISOTOOL_TMP/BladeKittenDemo" "$DRIVE_C/Program Files"
+
+    if workaround_wine_bug 24681
+    then
+        set_app_winver BladeKitten_Demo.exe win2k
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Krome Studios\\Blade Kitten Demo"
+BladeKitten_Demo.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add blur       "Blur (Activision, 2010)" \
   30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
