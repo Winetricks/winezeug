@@ -114,6 +114,11 @@ http://www.paradoxplaza.com/games/victoria-2
 Future Pinball
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=15074
 
+BioShock 2
+
+Grand Theft Auto 4
+Grand Theft Auto 4: Episodes from Liberty City
+
 Probably too painful:
 
 Moonbase Alpha
