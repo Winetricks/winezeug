@@ -8,12 +8,19 @@ set -ex
 rm -rf $HOME/.winetrickscache $HOME/.cache/winetricks
 WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
 
+test_failed()
+{
+    echo "$1 failed"
+    exit 1
+}
+
 for verb in \
     7zip \
     adobeair \
-    amstream \
     art2kmin \
     atmlib \
+    autohotkey \
+    baekmuk \
     colorprofile \
     comctl32 \
     comctl32.ocx \
@@ -21,6 +28,8 @@ for verb in \
     corefonts \
     crypt32 \
     d3dx9 \
+    d3dx9_28 \
+    d3dx9_36 \
     d3dx10 \
     d3dxof \
     dcom98 \
@@ -28,25 +37,30 @@ for verb in \
     dinput8 \
     directmusic \
     directplay \
-    dxsdk_nov2006 \
     dotnet11 \
     dotnet20 \
+    dotnet20sp2 \
     droid \
     dsound \
+    dxsdk_nov2006 \
+    eadm \
     eufonts \
     ffdshow \
+    firefox \
     flash \
+    fm20 \
     fontfix \
     fontsmooth-bgr \
     fontsmooth-disable \
     fontsmooth-gray \
     fontsmooth-rgb \
-    forcemono \
     gdiplus \
-    gecko \
     gecko-dbg \
+    gecko \
     gfw \
+    glut \
     hosts \
+    ie6 \
     jet40 \
     liberation \
     lucida \
@@ -55,10 +69,11 @@ for verb in \
     mdac28 \
     mfc40 \
     mfc42 \
-    mingw \
     mingw-gdb \
+    mingw \
     mono26 \
     mozillabuild \
+    mpc \
     mshflxgd \
     msi2 \
     msls31 \
@@ -74,6 +89,7 @@ for verb in \
     physx \
     quartz \
     quicktime72 \
+    quicktime76 \
     riched20 \
     riched30 \
     richtx32 \
@@ -82,6 +98,8 @@ for verb in \
     shockwave \
     steam \
     tahoma \
+    takao \
+    unifont \
     urlmon \
     usp10 \
     utorrent \
@@ -90,15 +108,15 @@ for verb in \
     vb4run \
     vb5run \
     vb6run \
-    vcrun6 \
-    vcrun6sp6 \
     vcrun2003 \
     vcrun2005 \
     vcrun2008 \
     vcrun2010 \
+    vcrun6 \
+    vcrun6sp6 \
     vjrun20 \
+    vlc \
     wenquanyi \
-    windowscodecs \
     winhttp \
     wininet \
     wme9 \
@@ -110,43 +128,62 @@ for verb in \
     xact \
     xinput \
     xvid \
-    ahk \
-    firefox \
-    ie6 \
-    ie7 \
-    ie8 \
-    mpc \
-    vlc \
+    alldlls=builtin \
+    alldlls=default \
     allfonts \
+    ddr=gdi \
+    ddr=opengl \
+    dsoundbug9612 \
+    forcemono \
     glsl-disable \
     glsl-enable \
+    heapcheck \
+    multisampling=enabled \
+    multisampling=disabled \
     native_mdac \
     native_oleaut32 \
     nocrashdialog \
     orm=backbuffer \
     orm=fbo \
-    orm=pbuffer \
+    rtlm=auto \
+    rtlm=disabled \
+    rtlm=readdraw \
+    rtlm=readtex \
+    rtlm=texdraw \
+    rtlm=textex \
     sandbox \
     sound=alsa \
     sound=audioio \
     sound=coreaudio \
-    sound=esound \
+    sound=esd \
     sound=jack \
     sound=nas \
     sound=oss \
-    winver=nt40 \
-    winver=win98 \
-    winver=win2k \
-    winver=winxp \
-    winver=vista \
+    sound=disabled \
+    strictdrawordering=enabled \
+    strictdrawordering=disabled \
+    nt40 \
+    vd=off \
+    vd=1024x768 \
+    win98 \
+    win2k \
+    winxp \
+    vista \
+    win7 \
     winver= \
-    version \
-    volnum
-
+    volnum \
+    mwo=force \
+    mwo=enabled \
+    mwo=disable \
+    npm-repack \
+    psm=on \
+    psm=off \
+    vsm-hard
+    
 do
     wineserver -k || true
     rm -rf $WINEPREFIX
-    sh winetricks  -q -v $verb
+    sh winetricks  -q -v $verb || test_failed $verb
 done
 
 # Test dotnet/etc. a bit more extensively:
@@ -161,13 +198,14 @@ __EOF__
     gmcs dotnet_test.c
 
     for verb in \
+        dotnet11 \
         dotnet20 \
         mono26
     do
         wineserver -k || true
         rm -rf $WINEPREFIX
         sh winetricks  -q -v $verb
-        wine dotnet_test.exe | grep "Dotnet works!"
+        wine dotnet_test.exe | grep "Dotnet works!" || test_failed $verb
     done
     rm dotnet_test.c dotnet_test.exe
 fi
@@ -186,7 +224,9 @@ then
         divx \
         dotnet11sdk \
         dotnet20sdk \
+        ie6_full \
         kde \
+        nvidiasdk9 \
         ole2 \
         psdk2003 \
         psdkwin7 \
@@ -197,18 +237,18 @@ then
     do
         wineserver -k || true
         rm -rf $WINEPREFIX
-        sh winetricks -v $verb
+        sh winetricks -v $verb || test_failed $verb
     done
 fi
 
 # Broken
-#    controlpad #Broken on 64-bit karmic
-#    dotnet20sp2
+#    controlpad #Broken on 64-bit karmic/lucid
 #    dotnet30
-#    dxsdk_nov2006 (silent install is broken)
-#    fm20
+#    dotnet35
+#    ie7
+#    ie8
 #    psdkvista
 #    vc2005express
 #    vc2005expresssp1
-
+#    windowscodecs (http://bugs.winehq.org/show_bug.cgi?id=24654)
 exit 0
