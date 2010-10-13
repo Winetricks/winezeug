@@ -3105,6 +3105,11 @@ load_fifa11_demo()
         controlclick, Button1, FIFA 11, Click the Finish button to exit the Setup Wizard.
     "
 
+if workaround_wine_bug 22161
+then
+    sh "$WINETRICKS" -q d3dx9_36
+fi
+
 cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\EA Sports\\FIFA 11 Demo\\Game"
