@@ -163,3 +163,7 @@ But wait, it's back!
 
 Demo lists:
 http://www.demonews.de/demos.php
+
+Game development IDEs:
+
+http://www.gamestart3d.com  (said to work quite well in wine)
