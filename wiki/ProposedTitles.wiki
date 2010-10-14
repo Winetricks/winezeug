@@ -1,5 +1,10 @@
 #summary Windows apps we are thinking about adding to wisotool
 
+Don't add titles here that you're already looking at - this is
+a reminder list for things we want to look at in the near future.
+
+When you add a title, please include links to appdb if possible.
+
 Proposed free titles:
 
 Alien Swarm
