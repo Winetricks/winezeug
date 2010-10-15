@@ -4790,6 +4790,30 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add nd23_saw_demo    "Nancy Drew 23: Shadow at the Waters Edge Demo (Her Interactive, 2010)" SAW_demo1.zip
+
+load_nd23_saw_demo() {
+    # http://www.herinteractive.com/Mystery_Games/Nancy_Drew/Shadow_at_the_Waters_Edge/pc
+    download $PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
+
+    cd "$DRIVE_C"
+    mkdir $PACKAGE
+    cd $PACKAGE
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/SAW_demo1.zip
+
+    if workaround_wine_bug 24754
+    then
+        try sh "$WINETRICKS" -q d3dx9_36
+    fi
+    cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+c:
+cd "${PACKAGE}"
+Shadow.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007)" nfsps_pcdemo.exe
 
 load_nfsps_demo()
