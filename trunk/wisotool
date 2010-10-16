@@ -5976,6 +5976,46 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add riseofnations_demo "Rise of Nations Trial (Microsoft/Big Huge Games 2003) [download]" RiseOfNationsTrial.exe
+
+load_riseofnations_demo() {
+
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/RiseOfNationsTrial.exe
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please visit http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html, download RiseOfNationsTrial.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: check sha1sum 33cbf1ebc0a93cb840f6296d8b529f6155db95ee
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run RiseOfNationsTrial.exe
+        WinWait,Rise Of Nations Trial Setup
+        sleep 2500
+        ControlClick CButtonClassName2
+        WinWait,Rise Of Nations Trial Setup, installed
+        sleep 2500
+        ControlClick CButtonClassName7
+    "
+
+    if workaround_wine_bug 9027
+    then
+        try sh "$WINETRICKS" -q directmusic
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd $programfilesdir_x86_win\\Microsoft Games\\Rise of Nations Trial
+nations.exe
+__EOF__
+
+}
+#----------------------------------------------------------------
+#----------------------------------------------------------------
+
 verblist_add quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
 
 load_quake3() {
