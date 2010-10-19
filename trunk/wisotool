@@ -2146,6 +2146,47 @@ load_codmw2()
 
 #----------------------------------------------------------------
 
+verblist_add cod4mw_demo "Call of Duty 4 Modern Warfare (Activision, 2007) [download]" CoD4MWDemoSetup_v2.exe
+
+load_cod4mw_demo() {
+
+    load_autohotkey
+
+    download $PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+       SetTitleMatchMode, 2
+       run CoD4MWDemoSetup_v2.exe
+       WinWait,Modern Warfare,Welcome
+       ControlClick Button1 ; Next
+       WinWait,Modern Warfare, License
+       ControlClick Button5 ; accept
+       ControlClick Button2 ; Next
+       WinWait,Modern Warfare, System Requirements
+       ControlClick Button1 ; Next
+       ControlClick Button4 ; Next
+       WinWait,Modern Warfare, Typical
+       ControlClick Button4 ; License
+       ControlClick Button1 ; Next
+       WinWait,Question, shortcut
+       ControlClick Button1 ; Yes
+       WinWait,Microsoft DirectX Setup, license
+       ControlClick Button1 ; Yes
+       WinWait,Modern Warfare, finished
+       ControlClick Button1 ; Finished
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Activision\\Call of Duty 4 - Modern Warfare Demo"
+iw3sp.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add cnc2    "Command and Conquer Tiberian Sun & Firestorm (Westwood, 2000), [download]" OfficialCnCTiberianSun.rar
 
 load_cnc2()
