@@ -3551,6 +3551,86 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) " ArcaniA_Gothic4_Demo_Setup.zip
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
+
+load_gothic4_demo() {
+    load_autohotkey
+
+    download $PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip 
+
+    try mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip 
+    
+    ahk_do "
+    Settitlematchmode, 2
+    run, ArcaniA_Gothic4_Demo_Setup.exe
+    winwait, Select Setup Language
+    sleep 1000
+    controlclick, TNewButton1, Select Setup Language
+    winwait, Setup - ArcaniA, Welcome to the
+    sleep 1000
+    controlclick, TNewButton1, Setup - ArcaniA, Welcome to the
+    winwait, Setup - ArcaniA, License Agreement
+    sleep 1000
+    controlclick, TNewRadioButton1, Setup - ArcaniA, License Agreement
+    sleep 1000
+    controlclick, TNewButton2, Setup - ArcaniA, License Agreement
+    winwait, Setup - ArcaniA, Select Destination Location
+    sleep 1000
+    controlclick, TNewButton3, Setup - ArcaniA, Select Destination Location
+    winwait, Setup - ArcaniA, Select Components
+    sleep 1000
+    controlclick, TNewButton3, Setup - ArcaniA, Select Components
+    winwait, Setup - ArcaniA, Select Start Menu
+    sleep 1000
+    controlclick, TNewButton4, Setup - ArcaniA, Select Start Menu
+    winwait, Setup - ArcaniA, Select Additional
+    sleep 1000
+    controlclick, TNewButton4, Setup - ArcaniA, Select Additional
+    winwait, Setup - ArcaniA, Ready to Install
+    sleep 1000
+    controlclick, TNewButton4, Setup - ArcaniA, Ready to Install
+    winwait, Setup - ArcaniA, Information
+    sleep 1000
+    controlclick, TNewButton4, Setup - ArcaniA, Information
+    winwait, Setup - ArcaniA, Completing
+    sleep 1000
+    ; The two checkboxes share the same button id. App/Wine bug?
+    mousemove, 190, 155
+    click
+    sleep 1000
+    mousemove, 190, 180
+    click
+    sleep 1000
+    controlclick, TNewButton4, Setup - ArcaniA, Completing
+    "
+
+if workaround_wine_bug 21939
+then
+    sh "$WINETRICKS" -q wmp9
+fi
+
+if workaround_wine_bug 24250
+then
+    sh "$WINETRICKS" -q vcrun2008
+fi
+
+if workaround_wine_bug 7065
+then
+    warn "Game has Securom protection, doesn't work in Wine yet."
+fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd $programfilesdir_x86_win\\JoWooD Entertainment AG\\ArcaniA - Gothic 4 Demo
+Arcania.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " GrandAgesRome-EU-XL-Demo.exe
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
 
