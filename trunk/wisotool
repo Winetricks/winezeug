@@ -2631,6 +2631,47 @@ Dead Space.exe
 __EOF__
 }
 
+#----------------------------------------------------------------
+
+verblist_add demolition_company_demo  "Demolition Company demo [download]" DemolitionCompanyDemoEN.exe
+
+load_demolition_company_demo()
+{
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DemolitionCompanyDemoEN.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Download the demo from http://www.demolitioncompany-thegame.com/demo.php and put it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, DemolitionCompanyDemoEN.exe
+        winwait, Setup - Demolition, This will install
+        sleep 1000
+        controlclick, TNewButton1, Setup - Demolition, This will install
+        winwait, Setup - Demolition, License Agreement
+        sleep 1000
+        controlclick, TNewRadioButton1, Setup - Demolition, License Agreement
+        sleep 1000
+        controlclick, TNewButton2, Setup - Demolition, License Agreement
+        winwait, Setup - Demolition, Setup Type
+        sleep 1000
+        controlclick, TNewButton2, Setup - Demolition, Setup Type
+        winwait, Setup - Demolition, Ready to Install
+        sleep 1000
+        controlclick, TNewButton2, Setup - Demolition, Ready to Install
+        winwait, Setup - Demolition, Completing
+        sleep 1000
+        controlclick, TNewButton2, Setup - Demolition, Completing
+        "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd "$programfilesdir_x86_win\\Demolition Company Demo\\"
+DemolitionCompany.exe
+__EOF__
+}
 
 #----------------------------------------------------------------
 
