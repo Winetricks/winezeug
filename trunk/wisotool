@@ -36,7 +36,7 @@ case "$OS" in
  *)
     WINE=${WINE:-wine}
     WINEVERSION=`$WINE --version`
-    WINESERVER=${WINESERVER:-wineserver}
+    WINESERVER=${WINESERVER:-`which wineserver`}
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
     DRIVE_C="$WINEPREFIX/dosdevices/c:"
     XXXPATH="early_wine winepath"
@@ -3547,6 +3547,52 @@ cd $programfilesdir_x86_win\\Sports Interactive\\Football Manager 2010 Demo
 fm.exe
 __EOF__
     
+}
+
+#----------------------------------------------------------------
+
+verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " GrandAgesRome-EU-XL-Demo.exe
+# http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
+
+load_grand_ages_rome_demo() {
+    load_autohotkey
+
+    download $PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
+    
+    if workaround_wine_bug 24819
+    then
+        sh "$WINETRICKS" -q gameux=disabled
+        $WINESERVER -w
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+    Settitlematchmode, 2
+    run, GrandAgesRome-EU-XL-Demo.exe
+    winwait, Installer Language
+    sleep 1000
+    controlclick, Button1, Installer Language
+    winwait, Grand Ages, Welcome to the
+    sleep 1000
+    controlclick, Button2, Grand Ages, Welcome to the
+    winwait, Grand Ages, Press Page Down
+    sleep 1000
+    controlclick, Button2, Grand Ages, Press Page Down
+    winwait, Grand Ages, Please select installation type
+    sleep 1000
+    controlclick, Button2, Grand Ages, Please select installation type
+    winwait, Grand Ages, Completing the Grand Ages Rome Demo
+    sleep 1000
+    controlclick, Button4, Grand Ages, Completing the Grand Ages Rome Demo
+    sleep 100
+    controlclick, Button2, Grand Ages, Completing the Grand Ages Rome Demo
+    "
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd $programfilesdir_x86_win\\Kalypso\\Grand Ages Rome Demo
+Rome Demo.exe
+__EOF__
+
 }
 
 #----------------------------------------------------------------
