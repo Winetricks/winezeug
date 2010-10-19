@@ -15,8 +15,6 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
-Football Manager 2010 Demo
-
 Gothic 4 demo (game release date oct 12 2010)
 http://www.pcgameshardware.de/aid,776033
 http://www.arcania-game.com/?lang=en&ID=1840 (gtx295 recommended)
