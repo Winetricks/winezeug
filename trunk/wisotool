@@ -7372,6 +7372,140 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add vegas     "Rainbow Six: Vegas (Ubisoft, 2006) [broken-drm]" \
+    be7cf72572708e9776af73c9bec8ee07952385af.iso \
+    abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
+
+load_vegas() {
+    if workaround_wine_bug 7065
+    then
+        warn "This game's DRM is not supported by wine"
+    fi
+    
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/be7cf72572708e9776af73c9bec8ee07952385af.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:setup.exe
+        WinWait, Choose Setup Language
+        WinActivate
+        ControlClick Button1   ; OK
+        WinWait, , Welcome
+        WinActivate
+        ControlClick Button1   ; next
+        WinWait, , License Agreement
+        WinActivate
+        ControlClick Button3   ; accept eula
+        ControlClick Button1   ; next
+        WinWait, , Choose Destination Location
+        WinActivate
+        ControlClick Button4   ; next
+        WinWait, , Ready to Install
+        WinActivate
+        ControlClick Button1   ; install
+        WinWait, Setup Needs The Next Disk
+        WinActivate
+    "
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Send {Enter}
+        WinWait, Microsoft DirectX Setup
+        WinActivate
+        ControlClick Button2  ; no
+        WinWait, , It is STRONGLY recommended that you install the latest DirectX runtimes
+        WinActivate
+        ControlClick Button1  ; ok
+        WinWait, Microsoft DirectX Setup
+        WinActivate
+        ControlClick Button2  ; No
+        WinWait, , Installation Completed
+        ControlClick Button1  ; untick desktop icon
+        ControlClick Button2  ; untick registration
+        ControlClick Button4  ; finish
+        WinWait, Detection
+        WinActivate
+        ControlClick Button1  ; quit
+        Sleep 1000            ; does not detect system properly, wait for warning popup and quit
+        Send {Enter}          ; quit
+    "
+    iso_umount
+    
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas\\Binaries"
+R6Vegas_Launcher.exe
+__EOF__
+}
+
+
+#----------------------------------------------------------------
+
+verblist_add vegas2     "Rainbow Six: Vegas 2 (Ubisoft, 2008) [broken-drm]" \
+    e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso \
+    1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
+
+load_vegas2() {
+    if workaround_wine_bug 219
+    then
+        warn "This game's DRM is not supported by wine"
+    fi
+    
+    load_autohotkey
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:setup.exe
+        WinWait, Tom Clancy
+        WinActivate
+        ControlClick Button3   ; next
+        WinWait, , Welcome
+        WinActivate
+        ControlClick Button1   ; next
+        WinWait, , License Agreement
+        WinActivate
+        ControlClick Button5   ; accept eula
+        ControlClick Button2   ; next
+        WinWait, , Ready to Install
+        WinActivate
+        ControlClick Button1   ; install
+        WinWait, Setup Needs The Next Disk
+        WinActivate
+    "
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
+
+    ahk_do "
+         SetTitleMatchMode, 2
+         Send {Enter}
+         WinWait, Detection
+         WinActivate
+         ControlClick Button1  ; close
+         WinWait, Setup Needs The Next Disk
+         WinActivate
+    "
+     
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        Send {Enter}
+        WinWait, , Installation Completed
+        WinActivate
+        ControlClick Button4  ; finish
+    "
+    iso_umount
+    
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
+cd "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas 2\\Binaries"
+R6Vegas2_Launcher.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add vf2_demo   "Virtua Fighter 2 demo (Sega, 1997) [download]" vf2_demo.exe
 
 load_vf2_demo()
