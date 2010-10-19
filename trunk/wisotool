@@ -3496,6 +3496,61 @@ fi
 
 #----------------------------------------------------------------
 
+verblist_add fm10_demo "Football Manager 2010 demo (Sony, 2009)" Setup_FM2010_Vanilla_Demo.exe
+
+load_fm10_demo() {
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Setup_FM2010_Vanilla_Demo.exe"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Download the demo from http://www.mirrorfootball.co.uk/football-manager-2010/ and put it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    load_autohotkey
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+    run, Setup_FM2010_Vanilla_Demo.exe
+    winwait, Football Manager 2010 Demo
+    sleep 1000
+    ; Buttons have no names, and there is no visible window text. Additionally, the windows don't close. :-(
+    ; Lastly, controlclick doesn't work, even with coordinates. Luckily, mousemove + click does
+    mousemove, 550, 400
+    Click
+    sleep 2000
+    mousemove, 400, 325
+    click
+    sleep 1000
+    mousemove, 550, 400
+    click
+    sleep 2000
+    mousemove, 550, 400
+    click
+    sleep 2000
+    mousemove, 550, 400
+    click
+    ; Wants directx. Cancel. Convienent, so we know when the install is done.
+    winwait, Installing Microsoft
+    winclose
+    winwait, Football Manager 2010 Demo
+    sleep 1000
+    mousemove, 550, 400
+    click
+    "
+
+    if workaround_wine_bug 24417
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cd $programfilesdir_x86_win\\Sports Interactive\\Football Manager 2010 Demo
+fm.exe
+__EOF__
+    
+}
+
+#----------------------------------------------------------------
+
 verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
