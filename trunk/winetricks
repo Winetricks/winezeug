@@ -4434,7 +4434,7 @@ fi
 # Warn the user if on win(e)64, since a lot of winetricks is broken for it
 if test -d "$DRIVE_C/windows/syswow64"
 then
-    die "You're using a 64-bit WINEPREFIX, most of winetricks hasn't been fixed for win64 yet."
+    die "You're using a 64-bit WINEPREFIX, most of winetricks hasn't been fixed for win64 yet. You can force a 32-bit WINEPREFIX by using WINEARCH=win32."
 fi
 
 while test "$1" != ""
