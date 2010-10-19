@@ -15,14 +15,6 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
-Gothic 4 demo (game release date oct 12 2010)
-http://www.pcgameshardware.de/aid,776033
-http://www.arcania-game.com/?lang=en&ID=1840 (gtx295 recommended)
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=21481 says it uses securom and doesn't run
-
-Grand Ages: Rome demo (Kalypso)
-http://www.filefront.com/13221514/Grand-Ages-Rome-Demo/
-
 Heat Online
 http://heat-online.net/
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; download using torrent, winetricks dotnet20 first)
