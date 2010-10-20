@@ -3551,7 +3551,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) " ArcaniA_Gothic4_Demo_Setup.zip
+verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [download] (broken)" ArcaniA_Gothic4_Demo_Setup.zip
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
 load_gothic4_demo() {
@@ -3564,47 +3564,47 @@ load_gothic4_demo() {
     try unzip "$WISOTOOL_CACHE/$PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip 
     
     ahk_do "
-    Settitlematchmode, 2
-    run, ArcaniA_Gothic4_Demo_Setup.exe
-    winwait, Select Setup Language
-    sleep 1000
-    controlclick, TNewButton1, Select Setup Language
-    winwait, Setup - ArcaniA, Welcome to the
-    sleep 1000
-    controlclick, TNewButton1, Setup - ArcaniA, Welcome to the
-    winwait, Setup - ArcaniA, License Agreement
-    sleep 1000
-    controlclick, TNewRadioButton1, Setup - ArcaniA, License Agreement
-    sleep 1000
-    controlclick, TNewButton2, Setup - ArcaniA, License Agreement
-    winwait, Setup - ArcaniA, Select Destination Location
-    sleep 1000
-    controlclick, TNewButton3, Setup - ArcaniA, Select Destination Location
-    winwait, Setup - ArcaniA, Select Components
-    sleep 1000
-    controlclick, TNewButton3, Setup - ArcaniA, Select Components
-    winwait, Setup - ArcaniA, Select Start Menu
-    sleep 1000
-    controlclick, TNewButton4, Setup - ArcaniA, Select Start Menu
-    winwait, Setup - ArcaniA, Select Additional
-    sleep 1000
-    controlclick, TNewButton4, Setup - ArcaniA, Select Additional
-    winwait, Setup - ArcaniA, Ready to Install
-    sleep 1000
-    controlclick, TNewButton4, Setup - ArcaniA, Ready to Install
-    winwait, Setup - ArcaniA, Information
-    sleep 1000
-    controlclick, TNewButton4, Setup - ArcaniA, Information
-    winwait, Setup - ArcaniA, Completing
-    sleep 1000
-    ; The two checkboxes share the same button id. App/Wine bug?
-    mousemove, 190, 155
-    click
-    sleep 1000
-    mousemove, 190, 180
-    click
-    sleep 1000
-    controlclick, TNewButton4, Setup - ArcaniA, Completing
+        Settitlematchmode, 2
+        run, ArcaniA_Gothic4_Demo_Setup.exe
+        winwait, Select Setup Language
+        sleep 1000
+        controlclick, TNewButton1, Select Setup Language
+        winwait, Setup - ArcaniA, Welcome to the
+        sleep 1000
+        controlclick, TNewButton1, Setup - ArcaniA, Welcome to the
+        winwait, Setup - ArcaniA, License Agreement
+        sleep 1000
+        controlclick, TNewRadioButton1, Setup - ArcaniA, License Agreement
+        sleep 1000
+        controlclick, TNewButton2, Setup - ArcaniA, License Agreement
+        winwait, Setup - ArcaniA, Select Destination Location
+        sleep 1000
+        controlclick, TNewButton3, Setup - ArcaniA, Select Destination Location
+        winwait, Setup - ArcaniA, Select Components
+        sleep 1000
+        controlclick, TNewButton3, Setup - ArcaniA, Select Components
+        winwait, Setup - ArcaniA, Select Start Menu
+        sleep 1000
+        controlclick, TNewButton4, Setup - ArcaniA, Select Start Menu
+        winwait, Setup - ArcaniA, Select Additional
+        sleep 1000
+        controlclick, TNewButton4, Setup - ArcaniA, Select Additional
+        winwait, Setup - ArcaniA, Ready to Install
+        sleep 1000
+        controlclick, TNewButton4, Setup - ArcaniA, Ready to Install
+        winwait, Setup - ArcaniA, Information
+        sleep 1000
+        controlclick, TNewButton4, Setup - ArcaniA, Information
+        winwait, Setup - ArcaniA, Completing
+        sleep 1000
+        ; The two checkboxes share the same button id. App/Wine bug?
+        mousemove, 190, 155
+        click
+        sleep 1000
+        mousemove, 190, 180
+        click
+        sleep 1000
+        controlclick, TNewButton4, Setup - ArcaniA, Completing
     "
 
 if workaround_wine_bug 21939
