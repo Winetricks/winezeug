@@ -107,6 +107,9 @@ http://zapakitul.wordpress.com/2010/09/10/getting-dragon-age-origins-v-1-04-to-w
 Far Cry 2
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
 
+Final Fantasy XIV (we did the beta, but haven't done retail version yet)
+EG had trouble, he couldn't get past the login screen even with ie6
+
 GTA IV (Scott on this)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8757
 
