@@ -7461,6 +7461,43 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add typingofthedead_demo "Typing of the Dead Demo (Sega, 1999) [download]" Tod_e_demo.exe
+
+load_typingofthedead_demo() {
+
+    load_autohotkey
+
+    download $PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    mkdir "$WISOTOOL_TMP/tod-demo"
+    cp tod-demo.zip "$WISOTOOL_TMP/tod-demo"
+    cd "$WISOTOOL_TMP/tod-demo"
+    unzip tod-demo.zip
+    rm tod-demo.zip
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run SETUP.EXE
+        WinWait,InstallShield Wizard,where
+        sleep 1000
+        ControlClick Button1 ; Next
+        WinWait,InstallShield Wizard,icons
+        sleep 1000
+        ControlClick Button2 ; Next
+        ; installer crashes here?
+        Sleep 20000
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\SEGA\\TOD-Demo"
+Tod_e_demo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
 
 load_unigine_heaven() {
