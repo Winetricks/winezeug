@@ -6310,6 +6310,51 @@ load_quake3() {
 
 #----------------------------------------------------------------
 
+verblist_add sammax304_demo "Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls (Telltale Games, 2010) [download]" SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+
+load_sammax304_demo() {
+
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+    then
+        download $PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
+        cd "$WISOTOOL_CACHE/$PACKAGE"
+        unzip SamMax304_BigDownload.exe.zip
+        rm -f SamMax304_BigDownload.exe.zip
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+        WinWait,Sam and Max Beyond the Alley of the Dolls Setup,Welcome
+        ControlClick Button2 ; Next
+        WinWait,Sam and Max Beyond the Alley of the Dolls Setup,DirectX
+        ControlClick Button2 ; Next - Directx check defaulted
+        WinWait,Sam and Max Beyond the Alley of the Dolls Setup,License
+        ControlClick Button2 ; Agree
+        WinWait,Sam and Max Beyond the Alley of the Dolls Setup,Location
+        ControlClick Button2 ; Install
+        WinWait,Sam and Max Beyond the Alley of the Dolls Setup,Finish
+        ControlClick Button4 ; Uncheck Play Now
+        ControlClick Button2 ; Finish
+    "
+
+    if workaround_wine_bug 24250
+    then
+        try sh "$WINETRICKS" -q vcrun2005
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Telltale Games\\Sam and Max - The Devil's Playhouse\\Beyond the Alley of the Dolls"
+SamMax304.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add sega_rally_2  "Sega Rally 2 (Sega, 1999)" rally2.exe
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
