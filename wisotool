@@ -7452,7 +7452,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add vegas     "Rainbow Six: Vegas (Ubisoft, 2006) [broken-drm]" \
+verblist_add vegas     "Rainbow Six: Vegas (Ubisoft, 2006) [broken-wine-drm]" \
     be7cf72572708e9776af73c9bec8ee07952385af.iso \
     abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
 
@@ -7523,7 +7523,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add vegas2     "Rainbow Six: Vegas 2 (Ubisoft, 2008) [broken-drm]" \
+verblist_add vegas2     "Rainbow Six: Vegas 2 (Ubisoft, 2008) [broken-wine-drm]" \
     e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso \
     1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
 
