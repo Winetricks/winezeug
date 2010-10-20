@@ -30,10 +30,6 @@ http://universe.lego.com/
 Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 
-Max and the Magic Marker demo (works great)
-http://news.bigdownload.com/2010/05/13/download-max-and-the-magic-marker-demo/
-(Note: http://maxandthemagicmarker.com/ has a unity3d player demo)
-
 NVidia DirectX9 samples
 http://developer.download.nvidia.com/SDK/9.5/Samples/3dgraphics_samples.html
 
@@ -61,9 +57,6 @@ Tropico 3 demo (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=19419
 Needs gta iv patch for water
 
-Typing of the Dead Demo
-http://en.wikipedia.org/wiki/The_Typing_of_the_Dead
-
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
@@ -81,9 +74,6 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=14475
 
 Draftsight
 http://www.3ds.com/products/draftsight/
-
-FIFA 11 Demo
-Available from all major game demo sites, fileplanet, bigdownload.com etc.
 
 Lost Planet 2 benchmark
 http://news.bigdownload.com/2010/08/16/lost-planet-2-pc-due-out-on-october-15-benchmark-test-released/
