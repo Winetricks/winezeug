@@ -93,7 +93,6 @@ Downloaded via steam, but doesn't use Steam once downloaded, just like America's
 Torchlight (painful)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=10540
 
-
 == Proposed paid titles ==
 
 Arma II: Operation Arrowhead  (EG said he'd take this)
@@ -105,13 +104,10 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
 Update Dragon Age Origins to 1.04, supposedly fixes flickering:
 http://zapakitul.wordpress.com/2010/09/10/getting-dragon-age-origins-v-1-04-to-work-on-ubuntu-10-04-and-wine/
 
-Eve Online
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=2249
-
 Far Cry 2
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
 
-GTA IV
+GTA IV (Scott on this)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8757
 
 Team Fortress 2 (via steam; in timedemo mode, so yagmark, too? )
