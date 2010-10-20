@@ -4704,6 +4704,27 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add maxmagicmarker_demo "Download: Max & the Magic Marker Demo (2010) [download]" max_demo_pc.zip
+
+load_maxmagicmarker_demo() {
+
+    download $PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
+
+    try mkdir "$programfilesdir_x86_unix"/$PACKAGE
+    cd "$programfilesdir_x86_unix"/$PACKAGE
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/max_demo_pc.zip
+    # Work around bug in game?!
+    mv "max and the magic markerdemo pc" "max and the magic markerdemo pc"_Data
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\$PACKAGE"
+max and the magic markerdemo pc.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add metro2033     "Metro 2033 (THQ, 2010)" 3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
 
 load_metro2033() {
@@ -6320,7 +6341,7 @@ load_sammax304_demo() {
     then
         download $PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
         cd "$WISOTOOL_CACHE/$PACKAGE"
-        unzip SamMax304_BigDownload.exe.zip
+        try unzip SamMax304_BigDownload.exe.zip
         rm -f SamMax304_BigDownload.exe.zip
     fi
 
