@@ -5,7 +5,7 @@ a reminder list for things we want to look at in the near future.
 
 When you add a title, please include links to appdb if possible.
 
-Proposed free titles:
+== Proposed free titles ==
 
 Alien Swarm
 http://news.bigdownload.com/2010/07/16/alien-swarm-to-be-released-by-valve-as-free-game-on-monday/
@@ -74,7 +74,7 @@ Worms Reloaded (steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21222
 http://www.gamerankings.com/pc/990077-worms-reloaded/index.html
 
-Already done by someone (though maybe not committed yet)
+== Already done by someone (though maybe not committed yet) ==
 
 Call of Duty 5: World at War
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=14475
@@ -91,14 +91,10 @@ http://news.bigdownload.com/2010/08/16/lost-planet-2-pc-due-out-on-october-15-be
 Pro Evolution Soccer 2011 Demo
 Available from all major game demo sites, fileplanet, bigdownload.com etc.
 
-Sam and Max: Beyond the Alley of the Dolls
-http://news.bigdownload.com/2010/07/26/download-sam-and-max-beyond-the-alley-of-the-dolls-demo/
-http://www.gamerankings.com/pc/991759-/index.html
-
 Supreme Commander 2 - Square Enix
 http://bugs.winehq.org/show_bug.cgi?id=23593
 
-Probably too painful:
+== Probably too painful ==
 
 Moonbase Alpha
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20752&iTestingId=54989
@@ -108,7 +104,7 @@ Torchlight (painful)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=10540
 
 
-Proposed paid titles:
+== Proposed paid titles ==
 
 Arma II: Operation Arrowhead  (EG said he'd take this)
 http://www.gamerankings.com/pc/971387-/ 
@@ -134,15 +130,15 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
 Unreal Tournament 3 (I have the copy Travis bought)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5937
 
-GOG titles:
+== GOG titles ==
 
 http://www.gog.com/en/forum/general/gog_games_that_are_working_fine_with_linux_wine
 has a list of the ones that work, but the service has shut down, so it's moot.
 But wait, it's back!
 
-Demo lists:
+== Demo lists ==
 http://www.demonews.de/demos.php
 
-Game development IDEs:
+== Game development IDEs ==
 
 http://www.gamestart3d.com  (said to work quite well in wine)
