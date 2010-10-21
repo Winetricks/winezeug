@@ -181,12 +181,15 @@ ubuntu_64_ibex_lib32_sos="libdbus-1.so.3"
 # rpm-based distros
 
 fedora_pkgs="\
-bison cups-devel flex fontconfig-devel freeglut-devel freetype-devel gcc git \
-gnutls-devel hal-devel isdn4k-utils-devel lcms-devel libgphoto2-devel libjpeg-devel \
-libpng-devel libX11-devel libXcomposite-devel libXcursor-devel libXext-devel \
-libXi-devel libXinerama-devel libxml2-devel libXrandr-devel libXrender-devel \
-libxslt-devel libXt-devel libXxf86vm-devel make ncurses-devel openldap-devel \
-openssl-devel patch sane-backends-devel"
+alsa-lib-devel audiofile-devel bison cups-devel dbus-devel esound-devel flex \
+fontconfig-devel fontforge freeglut-devel freetype-devel gcc giflib-devel git \
+gnutls-devel hal-devel isdn4k-utils-devel lcms-devel libgphoto2-devel \
+libICE-devel libjpeg-devel libpng-devel libSM-devel libusb-devel libX11-devel \
+libXau-devel libXcomposite-devel libXcursor-devel libXext-devel libXi-devel \
+libXinerama-devel libxml2-devel libXrandr-devel libXrender-devel \
+libxslt-devel libXt-devel libXv-devel libXxf86vm-devel make mesa-libGL-devel \
+mesa-libGLU-devel ncurses-devel openldap-devel openssl-devel patch pkgconfig \
+prelink samba-winbind sane-backends-devel xorg-x11-proto-devel"
 
 suse_pkgs="\
 alsa-devel audiofile bison capi4linux-devel cups-devel desktop-file-utils flex \
@@ -217,7 +220,7 @@ Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Linux*Mint*7|Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
 Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
-Fedora*release*10*\(Cambridge\)) yum install $fedora_pkgs ;;
+Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*) apt-get install $debian_pkgs;;
 *) echo "distro $distro not supported"; exit 1;;
@@ -256,7 +259,20 @@ linksos()
 	# For some reason not installed by default
 	apt-get install lib32ncurses5-dev
 	;;
-    *) 
+    Fedora*release*)
+        yum install alsa-lib-devel.i686 audiofile-devel.i686 cups-devel.i686 dbus-devel.i686 esound-devel.i686 \
+            fontconfig-devel.i686 freetype.i686 freetype-devel.i686 giflib-devel.i686 hal-devel.i686 \
+            lcms-devel.i686 libICE-devel.i686 libjpeg-devel.i686 libpng-devel.i686 libSM-devel.i686 \
+            libusb-devel.i686 libX11-devel.i686 libXau-devel.i686 libXcomposite-devel.i686 \
+            libXcursor-devel.i686 libXext-devel.i686 libXi-devel.i686 libXinerama-devel.i686 \
+            libxml2-devel.i686 libXrandr-devel.i686  libXrender-devel.i686 libxslt-devel.i686 \
+            libXt-devel.i686 libXv-devel.i686 libXxf86vm-devel.i686 mesa-libGL-devel.i686  mesa-libGLU-devel.i686 \
+            ncurses-devel.i686 openldap-devel.i686 openssl-devel.i686 zlib-devel.i686 sane-backends-devel.i686 \
+            xorg-x11-proto-devel glibc-devel.i686 prelink libstdc++-devel.i686 pulseaudio-libs-devel.i686 \
+            gnutls-devel.i686 libgphoto2-devel.i686 openal-soft-devel.i686 isdn4k-utils-devel.i686 \
+            gsm-devel.i686 libv4l-devel.i686 cups-devel.i686 libtiff-devel.i686
+        ;;
+    *)
         echo "I do not know how to install 32 bit libraries for distro $distro yet"
         ;;
     esac
