@@ -49,14 +49,6 @@ http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
 http://www.gamerankings.com/pc/950908-the-last-remnant/index.html
 
-Trackmania Forever
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=7064
-http://www.focus-files.com/game/
-
-Tropico 3 demo (Kalypso)
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=19419
-Needs gta iv patch for water
-
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
