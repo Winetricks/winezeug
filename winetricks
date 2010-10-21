@@ -382,7 +382,7 @@ GUI=0
 case x"$1" in
 x) GUI=1 ;;
 x-h|x--help|xhelp) usage ; exit 1 ;;
-x-V|x--version) echo "Winetricks version $VERSION.  (C) 2007-2010 Dan Kegel et al.  LGPL." ; exit 0;;
+x-V|x--version|xversion) echo "Winetricks version $VERSION.  (C) 2007-2010 Dan Kegel et al.  LGPL." ; exit 0;;
 esac
 
 early_wine()
