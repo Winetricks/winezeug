@@ -7397,6 +7397,62 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add tmnationsforever "TrackMania Nations Forever (Nadeo, 2009) [download]" tmnationsforever_setup.exe
+
+load_tmnationsforever() {
+    if workaround_wine_bug 20915
+    then
+        warn "Gameplay and sound may be very choppy on some machines :-("
+    fi
+    load_autohotkey
+
+    download $PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run tmnationsforever_setup.exe
+        WinWait,Select Setup Language,language
+        Sleep 1000
+        ControlClick TNewButton1 ; OK
+        WinWait,Setup - TmNationsForever,Welcome
+        Sleep 1000
+        ControlClick TNewButton1 ; Next
+        WinWait,Setup - TmNationsForever,License
+        Sleep 1000
+        ControlClick TNewRadioButton1 ; Accept
+        Sleep 1000
+        ControlClick TNewButton2 ; Next
+        WinWait,Setup - TmNationsForever,Where
+        Sleep 1000
+        ControlClick TNewButton3 ; Next
+        WinWait,Setup - TmNationsForever,shortcuts
+        Sleep 1000
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - TmNationsForever,perform
+        Sleep 1000
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - TmNationsForever,installing
+        Sleep 1000
+        ControlClick TNewButton4 ; Install
+        WinWait,Setup - TmNationsForever,finished
+        Sleep 1000
+        ControlFocus, TNewCheckListBox1, TmNationsForever, finished
+        Sleep 1000
+        Send {Space} ; don't start game
+        ControlClick TNewButton4 ; Finish
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\TmNationsForever"
+TmForever.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
 load_twfc() {
