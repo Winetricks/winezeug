@@ -7517,6 +7517,65 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add tropico3_demo "Tropico 3 Demo (Kalypso Media GmbH, 2009) [download]" Tropico3Demo.exe
+
+load_tropico3_demo() {
+
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/Tropico3Demo.exe
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please visit http://www.fileshack.com/file_download.x/15191 or http://www.tropico3.com/?p=downloads, download Tropico3Demo.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: check sha1sum e031749db346ac3a87a675787c81eb1ca8cb5909
+
+    if workaround_wine_bug 24819
+    then
+        sh "$WINETRICKS" gameux=disabled
+        $WINESERVER -w
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run Tropico3Demo.exe
+        WinWait,Installer Language,select
+        sleep 1000
+        ControlClick Button1 ; OK
+        WinWait,Tropico,Welcome
+        sleep 1000
+        ControlClick Button2 ; Next
+        WinWait,Tropico,License
+        sleep 1000
+        ControlClick Button2 ; Agree
+        WinWait,Tropico,Typical
+        sleep 1000
+        ControlClick Button2 ; Next
+        ;WinWait,Log message,Explorer  ; What is this?
+        ;sleep 1000
+        ;ControlClick Button1 ; OK
+        WinWait,Tropico,Completing
+        sleep 1000
+        ControlClick Button4 ; Uncheck Run Now
+        ControlClick Button2 ; Finish
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Kalypso\\Tropico 3 Demo"
+Tropico3 Demo.exe
+__EOF__
+
+    if workaround_wine_bug 24845
+    then
+        sh "$WINETRICKS" mmdevapi=disabled
+    fi
+}
+
+#----------------------------------------------------------------
+
 verblist_add typingofthedead_demo "Typing of the Dead Demo (Sega, 1999) [download]" Tod_e_demo.exe
 
 load_typingofthedead_demo() {
