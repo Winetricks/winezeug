@@ -5791,8 +5791,12 @@ load_popfs()
         winwait, Prince of Persia, Click Finish
         ControlClick, Button4
     "
-
     iso_umount
+
+if workaround_wine_bug 24346
+then
+    sh "$WINETRICKS" -q dsoundbug9612
+fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
