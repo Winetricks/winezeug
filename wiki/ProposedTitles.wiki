@@ -33,10 +33,6 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 NVidia DirectX9 samples
 http://developer.download.nvidia.com/SDK/9.5/Samples/3dgraphics_samples.html
 
-Overlord II
-http://www.codemasters.com/games/?gameid=2807
-http://www.gamerankings.com/pc/952371-overlord-ii/index.html
-
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
