@@ -55,6 +55,11 @@ Worms Reloaded (steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21222
 http://www.gamerankings.com/pc/990077-worms-reloaded/index.html
 
+== Non-GPU-intensive free titles ==
+
+Opera
+http://www.opera.com/browser/download/?os=windows&ver=10.63&local=y
+
 == Already done by someone (though maybe not committed yet) ==
 
 Call of Duty 5: World at War
