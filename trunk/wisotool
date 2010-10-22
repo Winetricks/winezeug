@@ -7557,9 +7557,6 @@ load_tropico3_demo() {
         WinWait,Tropico,Typical
         sleep 1000
         ControlClick Button2 ; Next
-        ;WinWait,Log message,Explorer  ; What is this?
-        ;sleep 1000
-        ;ControlClick Button1 ; OK
         WinWait,Tropico,Completing
         sleep 1000
         ControlClick Button4 ; Uncheck Run Now
@@ -7571,6 +7568,12 @@ ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Kalypso\\Tropico 3 Demo"
 Tropico3 Demo.exe
 __EOF__
+
+    if workaround_wine_bug 16328
+    then
+        # 20540 is a dup of 16328, but it describes the problem nicely
+        warn "seawater is invisible due to wine bug 20540, work around this by applying the patch from http://bugs.winehq.org/show_bug.cgi?id=16328#c180"
+    fi
 
     if workaround_wine_bug 24845
     then
