@@ -125,9 +125,12 @@ usage() {
     echo " crypt32       MS crypt32.dl"
     echo " cygwin        Unix apps for Windows (needed by some build scripts)"
     echo " d3dx9         MS d3dx9_??.dll (from DirectX 9 user redistributable)"
+    echo " d3dx9_26      MS d3dx9_26.dll"
     echo " d3dx9_28      MS d3dx9_28.dll"
+    echo " d3dx9_31      MS d3dx9_31.dll"
     echo " d3dx9_35      MS d3dx9_35.dll"
     echo " d3dx9_36      MS d3dx9_36.dll"
+    echo " d3dx9_42      MS d3dx9_42.dll"
     echo " d3dx10        MS d3dx10_??.dll (from DirectX user redistributable)"
     echo " d3dxof        MS d3dxof.dll (from DirectX user redistributable)"
     echo " dcom98        MS DCOM (ole32, oleaut32); requires Windows 98 license, but does not check for one"
@@ -4488,8 +4491,10 @@ do
     d3dx9) load_d3dx9;;
     d3dx9_26) load_d3dx9_xx 26;;
     d3dx9_28) load_d3dx9_xx 28;;
+    d3dx9_31) load_d3dx9_xx 31;;
     d3dx9_35) load_d3dx9_xx 35;;
     d3dx9_36) load_d3dx9_xx 36;;
+    d3dx9_42) load_d3dx9_xx 42;;
     d3dx10) load_d3dx10;;
     d3dxof) load_d3dxof;;
     dcom98) load_dcom98;;
