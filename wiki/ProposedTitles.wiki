@@ -15,6 +15,11 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
+Colin McRae's Dirt2 Demo
+http://www.codemasters.co.uk/downloads/details.php?id=39417
+http://www.youtube.com/watch?v=BtNMwJAvVmA
+http://www.gamerankings.com/pc/955088-dirt-2/index.html
+
 Heat Online
 http://heat-online.net/
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; download using torrent, winetricks dotnet20 first)
@@ -120,6 +125,13 @@ But wait, it's back!
 
 == Demo lists ==
 http://www.demonews.de/demos.php
+
+== Youtube Channels about Wine and Games ==
+http://www.youtube.com/user/Jakejw93#g/u
+http://www.youtube.com/user/2m42hy#g/u
+
+== Other Wine Frontends ==
+http://www.playonlinux.com/repository/?cat=1
 
 == Game development IDEs ==
 
