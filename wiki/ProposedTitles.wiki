@@ -5,6 +5,35 @@ a reminder list for things we want to look at in the near future.
 
 When you add a title, please include links to appdb if possible.
 
+
+== GOG titles ==
+
+http://www.gog.com/en/forum/general/gog_games_that_are_working_fine_with_linux_wine
+has a list of the ones that work.  We removed GOG support when they shut down
+recently, but now that they're back, we should updated it and add it back in.
+
+== Demo/release lists ==
+Sometimes you can find fresh game demos at these sites... 
+the earlier we can QA them and file bugs, the sooner wine can support them.
+
+http://www.demonews.de/demos.php
+
+http://www.bigdownload.com/downloads?fileId=1&orderType=update&genreId=0
+
+http://www.ign.com/index/release.html
+
+== Youtube Channels about Wine and Games ==
+(Hey, if it runs well enough to make a video about, we should probably support it!)
+
+http://www.youtube.com/user/Jakejw93#g/u
+
+http://www.youtube.com/user/2m42hy#g/u
+
+== Other Wine Frontends ==
+(PlayOnLinux supports about 250 games.  If it works for them, we can probably script it.)
+
+http://www.playonlinux.com/repository/?cat=1
+
 == Proposed free titles ==
 
 Alien Swarm
@@ -116,22 +145,6 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
 
 Unreal Tournament 3 (I have the copy Travis bought)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5937
-
-== GOG titles ==
-
-http://www.gog.com/en/forum/general/gog_games_that_are_working_fine_with_linux_wine
-has a list of the ones that work, but the service has shut down, so it's moot.
-But wait, it's back!
-
-== Demo lists ==
-http://www.demonews.de/demos.php
-
-== Youtube Channels about Wine and Games ==
-http://www.youtube.com/user/Jakejw93#g/u
-http://www.youtube.com/user/2m42hy#g/u
-
-== Other Wine Frontends ==
-http://www.playonlinux.com/repository/?cat=1
 
 == Game development IDEs ==
 
