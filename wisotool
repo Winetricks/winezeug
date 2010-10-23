@@ -547,6 +547,7 @@ iso_mount()
         do
             for ISO_MOUNT_LETTER in e f g h i j k
             do
+                echo "$WISOTOOL_MOUNT_LETTER_IGNORE" | grep -q "$ISO_MOUNT_LETTER" && continue
                 ISO_MOUNT_ROOT=/cygdrive/$ISO_MOUNT_LETTER
                 if find $ISO_MOUNT_ROOT -iname 'setup*' -o -iname '*.exe' -o -iname '*.msi'
                 then
