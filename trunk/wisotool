@@ -3550,6 +3550,60 @@ __EOF__
     
 }
 
+# http://www.futurepinball.com/
+verblist_add futurepinball "Future Pinball (Christopher Leathley, 2008) [download]"
+
+load_futurepinball() {
+    load_autohotkey
+
+    download $PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
+    
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, FuturePinballSetup_v1.9.20081225.exe
+        WinWait, Setup, Welcome to the Future
+        sleep 1000
+        ControlClick, TButton1
+        WinWait, Setup, License Agreement
+        sleep 1000
+        ControlClick, TRadioButton1   ; accept
+        sleep 1000
+        ;ControlClick, TButton2        ; next
+        send {Enter}
+        WinWait, Setup, Select Destination Location
+        sleep 1000
+        ControlClick, TButton3
+        WinWait, Folder Does Not Exist
+        sleep 1000
+        ControlClick, Button1
+        WinWait, Setup, Select Start Menu Folder
+        sleep 1000
+        ControlClick, TButton4
+        WinWait, Setup, Select Additional Tasks
+        sleep 1000
+        ControlClick, x53 y163
+        ControlClick, TButton4
+        WinWait, Setup, Ready to Install
+        sleep 1000
+        ControlClick, TButton4
+        WinWait, Setup, Completing the Future Pinball
+        sleep 1000
+        send {Space}              ; do not launch
+        ControlClick, TButton4    ; finish
+    "
+    if workaround_wine_bug 8780
+    then 
+        try "$WINETRICKS" -q wsh56vb dcom98
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "\\Games\\Future Pinball"
+"Future Pinball.exe"
+__EOF__
+}
+
 #----------------------------------------------------------------
 
 verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [download] (broken)" ArcaniA_Gothic4_Demo_Setup.zip
