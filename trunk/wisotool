@@ -6957,6 +6957,64 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add stalker_pripyat_bench "S.T.A.L.K.E.R Call of Pripyat benchmark (GSC Game World, 2009) [download]" stkcop-bench-setup.exe
+
+load_stalker_pripyat_bench() {
+
+    load_autohotkey
+
+    # FIXME: There's a much faster download at
+    # http://www.bigdownload.com/games/stalker-call-of-pripyat/pc/stalker-call-of-pripyat-benchmark
+    # Should we direct users to download from there manually?
+    download $PACKAGE http://files.gsc-game.com/st/bench/stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    # FIXME: a bit fragile, if you're browsing the web while installing, it sometimes gets stuck.
+    ahk_do "
+        SetTitleMatchMode, 2
+        run stkcop-bench-setup.exe
+        WinWait,Setup - Call Of Pripyat Benchmark,Pripyat
+        sleep 1000
+        ControlClick TNewButton1 ; Next
+        WinWait,Setup - Call Of Pripyat Benchmark,License
+        sleep 1000
+        ControlClick TNewRadioButton1 ; accept
+        sleep 1000
+        ControlClick TNewButton2 ; Next
+        WinWait,Setup - Call Of Pripyat Benchmark,Destination
+        sleep 1000
+        ControlClick TNewButton3 ; Next
+        WinWait,Setup - Call Of Pripyat Benchmark,shortcuts
+        sleep 1000
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - Call Of Pripyat Benchmark,tasks
+        sleep 1000
+        send {Enter}
+        WinWait,Setup - Call Of Pripyat Benchmark,ready
+        sleep 1000
+        ControlClick, TNewButton4 ; Next  (nah, who reads doc?)
+        WinWait,Setup - Call Of Pripyat Benchmark,finished
+        sleep 1000
+        Send {Space}  ; uncheck launch
+        sleep 1000
+        ControlClick TNewButton4 ; Finish
+    "
+
+    if workaround_wine_bug 24868
+    then
+        sh "$WINETRICKS" d3dx9_31 d3dx9_42
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Call Of Pripyat Benchmark"
+Benchmark.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
 
 load_starcraft() {
