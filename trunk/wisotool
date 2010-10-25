@@ -789,6 +789,7 @@ load_iso() {
 #----------------------------------------------------------------
 
 ahk_do() {
+   load_autohotkey
    CR=`printf \\\\r`
    echo "$@" | sed "s/\$/$CR/" > "$WISOTOOL_TMP"/tmp.ahk
    $WINE "$programfilesdir_unix/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
@@ -913,8 +914,6 @@ verblist_init
 verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000) [download]" 3dmark2000_v11_100308.exe
 
 load_3dmark2000() {
-    load_autohotkey
-
     # http://www.futuremark.com/download/3dmark2000/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3dmark2000_v11_100308.exe"
     then
@@ -959,8 +958,6 @@ __EOF__
 verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001) [download]" 3dmark2001se_330_100308.exe
 
 load_3dmark2001() {
-    load_autohotkey
-
     # http://www.futuremark.com/download/3dmark2001/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/3dmark2001se_330_100308.exe
     then
@@ -993,7 +990,6 @@ load_3dmark2001() {
 verblist_add 3dmark03 "3D Mark 03 (Futuremark, 2003) [download]" 3DMark03_v360_1901.exe
 
 load_3dmark03() {
-    load_autohotkey
 
     # http://www.futuremark.com/benchmarks/3dmark03/download/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark03_v360_1901.exe"
@@ -1044,7 +1040,6 @@ __EOF__
 verblist_add 3dmark05 "3D Mark 05 (Futuremark, 2005) [download]" 3DMark05_v130_1901.exe
 
 load_3dmark05() {
-    load_autohotkey
 
     # http://www.futuremark.com/download/3dmark05/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark05_v130_1901.exe"
@@ -1088,8 +1083,6 @@ __EOF__
 verblist_add 3dmark06 "3D Mark 06 (Futuremark, 2006) [download]" 3DMark06_v120_1901.exe
 
 load_3dmark06() {
-    load_autohotkey
-
     # http://www.futuremark.com/benchmarks/3dmark06/download/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark06_v120_1901.exe"
     then
@@ -1150,7 +1143,6 @@ __EOF__
 verblist_add algodoo_demo  "Algodoo Demo (Algoryx, 2009) [download]" Algodoo_1_7_1-Win32.exe
 
 load_algodoo_demo() {
-    load_autohotkey
     download $PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -1186,7 +1178,6 @@ __EOF__
 verblist_add msaoe_demo  "Age of Empires Demo (Microsoft, 1997) [download]" MSAoE.exe
 
 load_msaoe_demo() {
-    load_autohotkey
     download $PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -1216,8 +1207,6 @@ __EOF__
 verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
 
 load_assassinscreed() {
-    load_autohotkey
-
     if workaround_wine_bug 22392
     then
         # Don't hang at a dialog box when Detection crashes
@@ -1263,8 +1252,6 @@ verblist_add avatar_demo    "James Camerons Avatar The Game Demo (Ubisoft, 2009)
 
 load_avatar_demo()
 {
-    load_autohotkey
-
     download $PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
 
     if workaround_wine_bug 23094
@@ -1321,8 +1308,6 @@ verblist_add baldursgate2       "Baldurs Gate 2 - Shadows of Amn (Bioware, 2000)
   94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
 
 load_baldursgate2() {
-    load_autohotkey
-
     # Possible wine bug: cd is still in use, even if wine eject is used. Workaround it by
     # copying all the cd's to a directory, and running the installer from there.
     # You still need the first CD mounted at the end, however...
@@ -1427,9 +1412,6 @@ load_baldursgate2() {
 verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix 2009) (size: 2.0 GB)[download]" BMDemo_installer.exe
 
 load_batman_arkham_asylum_demo() {
-
-    load_autohotkey
-
     download $PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -1538,7 +1520,6 @@ verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010)" \
   9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
 
 load_bfbc2() {
-    load_autohotkey
     exedir="$programfilesdir_x86_unix/Electronic Arts/Battlefield Bad Company 2"
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
@@ -1624,8 +1605,6 @@ verblist_add bioshock       "Bioshock (2K Games, 2007)" \
   deaf00ebee6e73aecf38f704c3f516008a68d888.iso
 
 load_bioshock() {
-    load_autohotkey
-
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
     if workaround_wine_bug 22501
     then
@@ -1819,7 +1798,6 @@ verblist_add bioshock_demo       "Bioshock Demo (2K Games, 2007)" \
   nzd_BioShockPC.zip
 
 load_bioshock_demo() {
-    load_autohotkey
     download $PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
     cd "$DRIVE_C"
     rm -rf bioshock-temp
@@ -1863,9 +1841,6 @@ load_bioshock_demo() {
 verblist_add bladekitten_demo "Blade Kitten Demo (Krome Studios Pty Ltd., 2010) [download]" BladeKittenDemoInstall.exe
 
 load_bladekitten_demo() {
-
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/BladeKittenDemoInstall.exe"
     then
         download $PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
@@ -1912,7 +1887,6 @@ verblist_add blur       "Blur (Activision, 2010)" \
   30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
 load_blur() {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
     ahk_do "
@@ -1968,8 +1942,6 @@ verblist_add braid_demo    "Braid Demo (Number None, 2009) [download]" braid_win
 
 load_braid_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
     then
         download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
@@ -2014,8 +1986,6 @@ verblist_add braid    "Braid (Number None, 2009) [download]" braid_windows_r3.ex
 
 load_braid()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -2086,7 +2056,6 @@ verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [br
 load_codmw2()
 {
     warn "This verb isn't quite ready for prime time."
-    load_autohotkey
     test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || try sh $WINETRICKS -q steam
 
     # Get user's key
@@ -2150,9 +2119,6 @@ load_codmw2()
 verblist_add cod4mw_demo "Call of Duty 4 Modern Warfare (Activision, 2007) [download]" CoD4MWDemoSetup_v2.exe
 
 load_cod4mw_demo() {
-
-    load_autohotkey
-
     download $PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -2218,8 +2184,6 @@ load_civ4() {
     then
         warn "This game's DRM is not supported by Wine :-( but try patch 3.19 or later, it's said to remove the DRM"
     fi
-
-    load_autohotkey
 
     if workaround_wine_bug 6856
     then
@@ -2302,8 +2266,6 @@ verblist_add civ4_demo    "Civilization IV Demo (Firaxis Games, 2005) [download]
 
 load_civ4_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Civilization4_Demo.zip"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -2357,8 +2319,6 @@ verblist_add cnc3_demo    "Command and Conquer 3 Demo (EA, 2007) [download]" CnC
 
 load_cnc3_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/CnC3Demo.exe"
     then
         download $PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7
@@ -2404,8 +2364,6 @@ verblist_add cnc4    "Command and Conquer 4 (EA, 2010) [broken-wine-drm]" f3308e
 
 load_cnc4()
 {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -2439,7 +2397,6 @@ verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interacti
 
 load_darknesswithin2_demo()
 {
-    load_autohotkey
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -2495,8 +2452,6 @@ verblist_add daytona_usa_evolutions  "Daytona USA Evolutions (Sega, 1997)" dayto
 load_daytona_usa_evolutions() {
     # Refuses to run on anything newer...
     sh "$WINETRICKS" -q win98
-
-    load_autohotkey
 
     download $PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
 
@@ -2560,8 +2515,6 @@ __EOF__
 
 verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, 2008)" InstallDorasCarnival2BoardwalkAdventure.exe
 load_dc2ba() {
-    load_autohotkey
-
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
     download $PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
 
@@ -2618,7 +2571,6 @@ verblist_add deadspace       "Dead Space (EA, 2008)" \
   abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
 
 load_deadspace() {
-    load_autohotkey
     DEADSPACEKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
 
     if workaround_wine_bug 23324
@@ -2679,8 +2631,6 @@ verblist_add demolition_company_demo  "Demolition Company demo [download]" Demol
 
 load_demolition_company_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DemolitionCompanyDemoEN.exe"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -2720,8 +2670,6 @@ __EOF__
 verblist_add deusex2_demo   "Deus Ex 2 Demo [download]" dxiw_demo.zip
 load_deusex2_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/dxiw_demo.zip"
     then
         download $PACKAGE http://www.techpowerup.com/downloads/1730i/dxiw_demo.zip ccae48fb046d912b3714ea1b4be4294e74bb3092
@@ -2780,7 +2728,6 @@ verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
 
 load_diablo2() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs."
-    load_autohotkey
     download diablo2 http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
     # Force clean-ish install
@@ -2853,8 +2800,6 @@ __EOF__
 verblist_add dragonage     "Dragon Age: Origins (Bioware / EA, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
-    load_autohotkey
-
     # Get user's key
     DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
 
@@ -2920,7 +2865,6 @@ __EOF__
 verblist_add eve "EVE Online Tyrannis (CCP Games, 2010) [download]" EVE_Premium_Setup_177290_m.exe
 
 load_eve() {
-    load_autohotkey
     # FIXME: download function should avoid checksumming huge old files
     test -s "$WISOTOOL_CACHE/$PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
         download $PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
@@ -3004,8 +2948,6 @@ verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2
 
 load_fallout3_goty() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
 
     ahk_do "
@@ -3074,8 +3016,6 @@ verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f3335
 
 load_fifa10() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2038b86319862e1177912949e9f826f333571c48.iso
 
     # Get user's key
@@ -3141,8 +3081,6 @@ verblist_add fifa11_demo    "FIFA 11 Demo (EA Sports, 2010) [download]" fifa11_p
 
 load_fifa11_demo()
 {
-    load_autohotkey
-
     # From http://www.easportsfootball.co.uk/news/item/file/FIFA-11-Demo-Release?om_u=2255229429&om_i=_BMknsPB8Usvnmr
     download $PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
 
@@ -3208,7 +3146,6 @@ verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download
 
 load_fifaonline3_beta()
 {
-    load_autohotkey
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/FIFAOnlineSetup.exe"
     then
         mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
@@ -3284,8 +3221,6 @@ __EOF__
 verblist_add fifa10_demo     "Fifa 10 Demo (EA, 2009)" fifa10_pc_demo_ec.exe
 
 load_fifa10_demo() {
-    load_autohotkey
-
     download $PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
 
     # The installer is a self extracting rar file. Make cleanups easy by using $WISOTOOL_TMP
@@ -3346,8 +3281,6 @@ __EOF__
 verblist_add ffvii_demo "Final Fantasy VII (Square Enix, 1998)" ff7demo.zip
 
 load_ffvii_demo() {
-    load_autohotkey
-
     download $PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
 
     mkdir "$programfilesdir_x86_unix/ffvii_demo"
@@ -3373,7 +3306,6 @@ __EOF__
 verblist_add ffxiv_beta "Final Fantasy XIV Beta (Square Enix, 2010)" ffxivsetup.exe
 
 load_ffxiv_beta() {
-    load_autohotkey
     # e6e615e5886c17e744fc4aba7b267e7e3dcbdb52 ffxivsetup.exe
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ffxivsetup.exe"
     then
@@ -3506,8 +3438,6 @@ load_fm10_demo() {
         die "Download the demo from http://www.mirrorfootball.co.uk/football-manager-2010/ and put it in $WISOTOOL_CACHE/$PACKAGE"
     fi
 
-    load_autohotkey
-
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
     run, Setup_FM2010_Vanilla_Demo.exe
@@ -3554,8 +3484,6 @@ __EOF__
 verblist_add futurepinball "Future Pinball (Christopher Leathley, 2008) [download]"
 
 load_futurepinball() {
-    load_autohotkey
-
     download $PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
     
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -3610,8 +3538,6 @@ verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [dow
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
 load_gothic4_demo() {
-    load_autohotkey
-
     download $PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip 
 
     try mkdir -p "$WISOTOOL_TMP/$PACKAGE"
@@ -3690,8 +3616,6 @@ verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " Gran
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
 
 load_grand_ages_rome_demo() {
-    load_autohotkey
-
     download $PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
     
     if workaround_wine_bug 24819
@@ -3737,8 +3661,6 @@ verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
 
 load_gta_vc() {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
     ahk_do "
     SetTitleMatchMode, 2
@@ -3793,8 +3715,6 @@ verblist_add half_life_goty     "Half Life: Game of the Year Edition (Sierra, 20
   dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
 
 load_half_life_goty() {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
 
     ahk_do "
@@ -3868,8 +3788,6 @@ load_hphbp_demo()
     ""|"C") die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$hbpdemoexe"
     then
         download $PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
@@ -3917,7 +3835,6 @@ load_hphbp()
     ""|"C") die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
     HPHBP_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.txt | tr -d -`
     ahk_do "
@@ -3955,8 +3872,6 @@ verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Game
 
 load_hegemonypom_demo()
 {
-    load_autohotkey
-
     mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
     cd "$WISOTOOL_CACHE/$PACKAGE"
 
@@ -4024,8 +3939,6 @@ $honexe
 
 load_hon()
 {
-    load_autohotkey
-
     download $PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -4059,7 +3972,6 @@ __EOF__
 verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005) (broken in wine-1.3.3?) [download]"  hod3_trial.exe
 
 load_hod3_jp_demo() {
-    load_autohotkey
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/hod3_trial.exe"
     then
         download $PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
@@ -4121,8 +4033,6 @@ verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga
 # See also http://en.wikipedia.org/wiki/AGD_Interactive
 
 load_kq1vga() {
-    load_autohotkey
-
     download $PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -4175,8 +4085,6 @@ verblist_add lhp_demo "LEGO Harry Potter Demo [Years 1-4] (Travellers Tales / WB
 
 load_lhp_demo()
 {
-    load_autohotkey
-
     case "$LANG" in
     *UTF-8*|*utf8*) ;;
     *) die "This installer fails in non-utf-8 locales.  Try doing export LANG=en_US.UTF-8"
@@ -4223,8 +4131,6 @@ load_lol()
 {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=19141
 # http://www.leagueoflegends.com/
-
-    load_autohotkey
 
     # Outer installer, fetches the latest client
     if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LeagueofLegends.exe"
@@ -4418,8 +4324,6 @@ verblist_add lotsn   "Launch of the Screaming Narwhal (Telltale Games / Lucasart
 
 load_lotsn()
 {
-    load_autohotkey
-
     if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe"
     then
         download ${PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
@@ -4468,8 +4372,6 @@ verblist_add lp2bench "Lost Planet 2 Benchmark (Capcom, 2010)" LostPlanet2_Bench
 load_lp2bench()
 {
     # http://news.bigdownload.com/2010/08/16/lost-planet-2-pc-due-out-on-october-15-benchmark-test-released/
-
-    load_autohotkey
 
     if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.zip"
     then
@@ -4532,8 +4434,6 @@ __EOF__
 verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
 
 load_lswcs() {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -4571,8 +4471,6 @@ verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
 load_manhole() {
     cd $WISOTOOL_TMP
 
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
     mkdir -p "$DRIVE_C"/manhole
     try cp -r "$ISO_MOUNT_ROOT"/* "$DRIVE_C"/manhole
@@ -4591,7 +4489,6 @@ verblist_add masseffect2       "Mass Effect 2 (BioWare, 2010)" \
   49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
 
 load_masseffect2() {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
     ME2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
 
@@ -4678,8 +4575,6 @@ __EOF__
 verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010)" MassEffect2DemoEN.exe
 
 load_masseffect2_demo() {
-    load_autohotkey
-
     download ${PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
 
     if workaround_wine_bug 22091
@@ -4803,8 +4698,6 @@ load_metro2033() {
 
     steam_dir="$programfilesdir_unix/Steam"
 
-    load_autohotkey
-
     # Game uses Steam to install itself
     try sh $WINETRICKS -q steam
 
@@ -4868,8 +4761,6 @@ __EOF__
 verblist_add mise "Monkey Island: Special Edition (LucasArts, 2009)" SecretOfMonkeyIslandSE_ddsetup.zip
 
 load_mise() {
-    load_autohotkey
-
     # Archive SHA1SUM 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/SecretOfMonkeyIslandSE_ddsetup.zip" ]
     then
@@ -4968,8 +4859,6 @@ verblist_add moh_beta    "Medal of Honor: Beta (EA, 2010) [download]" MOHMP_Beta
 
 load_moh_beta()
 {
-    load_autohotkey
-
     # Archive SHA1SUM 7585700202ec305017038be4f1cb8ee1b43c24a2
     file="$WISOTOOL_CACHE/$PACKAGE/MOHMP_Beta_PC_Client_R2_550504_Installer.zip"
     test -f "$file" || file="$WISOTOOL_CACHE/$PACKAGE/MOH-MPBetaClient_R2550504_Installer.zip"
@@ -5041,7 +4930,6 @@ load_morrowind() {
 
     # FIXME: Only supports the main installer, and the construction set (which follows automatically)
     # eventually should support the expansions as well
-    load_autohotkey
 
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
     ahk_do "
@@ -5100,7 +4988,6 @@ verblist_add mnbw_demo "Mount & Blade Warband Demo (Taleworlds, 2010) [download]
 
 load_mnbw_demo()
 {
-    load_autohotkey
     if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/${mnbw_demo_exe}"
     then
         download ${PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
@@ -5157,8 +5044,6 @@ verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007)" nfsps_pc
 
 load_nfsps_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ps_pcdemo.exe"
     then
         download $PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
@@ -5204,8 +5089,6 @@ verblist_add nfsshift    "Need For Speed: Shift (EA, 2009)" 83d3b7499742ccf77da1
 
 load_nfsshift()
 {
-    load_autohotkey
-
     if workaround_wine_bug 23324
     then
         msvcrun_me_harder="
@@ -5289,8 +5172,6 @@ verblist_add nfsshift_demo    "Need For Speed: SHIFT Demo (EA, 2009) [download]"
 
 load_nfsshift_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe"
     then
         download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
@@ -5359,8 +5240,6 @@ verblist_add oblivion    "Elder Scrolls: Oblivion (Bethesda Game Studios, 2006)"
 
 load_oblivion()
 {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/0c6826d55029e7b64150ebe804220284962657e1.iso
 
     ahk_do "
@@ -5395,8 +5274,6 @@ verblist_add orangebox     "Orange Box (Valve, 2007) " \
     b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
 
 load_orangebox() {
-    load_autohotkey
-
     test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || try sh $WINETRICKS -q steam
     # Have to log in before you can install orangebox!
     $WINE 'c:\Program Files\Steam\Steam' -login $STEAMUSER $STEAMPW
@@ -5454,8 +5331,6 @@ load_orangebox() {
 verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
 
 load_pcmark04() {
-    load_autohotkey
-
     # http://www.futuremark.com/download/pcmark04/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark04_v130_installer.exe"
     then
@@ -5513,8 +5388,6 @@ __EOF__
 verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005) [download]" PCMark05_v120_1901.exe
 
 load_pcmark05() {
-    load_autohotkey
-
     # http://www.futuremark.com/download/pcmark05/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark05_v120_1901.exe"
     then
@@ -5571,8 +5444,6 @@ __EOF__
 #verblist_add passmark7 "Performance Test 7 (Passmark, 2010) [download]" petst.exe
 
 load_passmark7() {
-    load_autohotkey
-
     # http://www.passmark.com/download/pt_download.htm
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/petst.exe"
     then
@@ -5594,7 +5465,6 @@ verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010)" \
 
 
 load_pscs5() {
-    load_autohotkey
     try cd "$WISOTOOL_CACHE/$PACKAGE"
     if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.7z" ]
     then
@@ -5744,8 +5614,6 @@ load_pscs5_unpickle() {
 verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009) [download]" PlantsVsZombiesSetup.exe
 
 load_plantsvszombies() {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/plantsvszombies/PlantsVsZombiesSetup.exe"
     then
         download plantsvszombies "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
@@ -5776,7 +5644,6 @@ verblist_add pop2008 "Prince of Persia (Ubisoft, 2008)" e65acd04baaf84481b79589b
 
 load_pop2008()
 {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE/$PACKAGE/e65acd04baaf84481b79589b795edb144d24d1b5.iso"
     ahk_do "
         SetTitleMatchMode, 2
@@ -5817,7 +5684,6 @@ bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso
 
 load_popfs()
 {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE/$PACKAGE/bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso"
     ahk_do "
         SetTitleMatchMode, 2
@@ -5867,7 +5733,6 @@ a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso
 
 load_popsot()
 {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE/$PACKAGE/a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso"
     ahk_do "
         SetTitleMatchMode, 2
@@ -5905,7 +5770,6 @@ POP_Demo_Eng.exe
 
 load_popsot_demo()
 {
-    load_autohotkey
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/POP_Demo_Eng.exe" && ! test -f "$WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe"
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -5956,7 +5820,6 @@ verblist_add procycling08_demo "Pro Cycling Manager 2008 Demo (Cyanide, 2008) [d
 
 load_procycling08_demo()
 {
-    load_autohotkey
     # FIXME sha1sum 008b91a16c388c9965faaeaaa8242409b9db56b9
     # FIXME homepage http://www.cycling-manager.com/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe"
@@ -5998,7 +5861,6 @@ verblist_add proevolution2010_demo "Pro Evolution Soccer 2010 Demo (Konami, 2009
 load_proevolution2010_demo()
 {
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
-    load_autohotkey
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PES2010_PC_DEMO_Setup.exe"
     then
         download $PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
@@ -6048,7 +5910,6 @@ verblist_add proevolution2011_demo "Pro Evolution Soccer 2011 Demo (Konami, 2010
 load_proevolution2011_demo()
 {
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
-    load_autohotkey
     # http://www.bigdownload.com/games/pro-evolution-soccer-2011/pc/pro-evolution-soccer-2011-demo/
     download $PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
 
@@ -6104,8 +5965,6 @@ verblist_add rom "Runes of Magic (Frogster Interactive, 2009) [download]" \
 
 load_rom()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
     then
         download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
@@ -6261,8 +6120,6 @@ __EOF__
 verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
     then
         download $PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
@@ -6323,8 +6180,6 @@ verblist_add riseofnations_demo "Rise of Nations Trial (Microsoft/Big Huge Games
 
 load_riseofnations_demo() {
 
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/RiseOfNationsTrial.exe
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -6362,8 +6217,6 @@ __EOF__
 verblist_add quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
 
 load_quake3() {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
     ahk_do "
         Run ${ISO_MOUNT_LETTER}:Setup.exe
@@ -6393,9 +6246,6 @@ load_quake3() {
 verblist_add sammax304_demo "Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls (Telltale Games, 2010) [download]" SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
 
 load_sammax304_demo() {
-
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
     then
         download $PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
@@ -6439,8 +6289,6 @@ verblist_add sega_rally_2  "Sega Rally 2 (Sega, 1999)" rally2.exe
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
 load_sega_rally_2() {
-    load_autohotkey
-
     download $PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
 
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
@@ -6502,7 +6350,6 @@ __EOF__
 verblist_add 7million      "7Million (Deep Silver, 2009) [download] [broken on wine]" 7Million_0_17_0-full.exe
 
 load_7million() {
-    load_autohotkey
     download $PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -6546,7 +6393,6 @@ __EOF__
 verblist_add secondlife_beta      "Second Life Viewer - Beta [Download]" Second_Life_2-1-0-207030_Setup.exe
 
 load_secondlife_beta() {
-    load_autohotkey
     download $PACKAGE http://download.cloud.secondlife.com/Viewer-2-1/Second_Life_2-1-0-207030_Setup.exe
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -6574,7 +6420,6 @@ __EOF__
 verblist_add segabass "Sega Bass Fishing 2 (SEGA/Activision, 2001) [requires disc]"
 
 load_segabass() {
-    load_autohotkey
     # Can't make a .iso of this disc, so assume the disc is in drive d:
     ahk_do "
         SetTitleMatchMode, 2
@@ -6603,8 +6448,6 @@ __EOF__
 verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
 
 load_sims3() {
-    load_autohotkey
-
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
     if false && workaround_wine_bug 22350
     then
@@ -6678,8 +6521,6 @@ __EOF__
 verblist_add singularity         "Singularity (Activision, 2010)" cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
 
 load_singularity() {
-    load_autohotkey
-
     # Get user's key
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.txt | tr -d -`
 
@@ -6755,8 +6596,6 @@ verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [
 
 load_splitsecond_demo()
 {
-    load_autohotkey
-
     if test ! -f "$WISOTOOL_CACHE/$PACKAGE"/SplitSecond*.exe
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -6815,8 +6654,6 @@ verblist_add splitsecond    "Split Second (Black Rock Studios, 2010) [wine bug 2
 
 load_splitsecond()
 {
-    load_autohotkey
-
     if workaround_wine_bug 22774 "wine-1.3.[0-9]*"
     then
         echo "On wine, install takes an extra 7 minutes at the end, please be patient."
@@ -6874,7 +6711,6 @@ verblist_add spore    "Spore (EA, 2008)" d08d1985d3161661d4f0ded30a0d11e705f2fcc
 
 load_spore()
 {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso
     SPORE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.txt | tr -d -`
     ahk_do "
@@ -6918,7 +6754,6 @@ verblist_add ssdd2    "SpongeBob SquarePants Diner Dash 2 (Nickelodeon/Big Fish,
 
 load_ssdd2()
 {
-    load_autohotkey
     # Main page: http://arcade.nick.com/nick/gameinfo.jsp?s=SpongeBobDinerDash2
     download $PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 8407dae2c062ce62b38408eeac3a9f95be202b96
 
@@ -6969,8 +6804,6 @@ __EOF__
 verblist_add sonicdxb_demo     "Sonic Adventure Deluxe Trial B (Sega, 2003) [download]" sadx_trial_b.exe
 
 load_sonicdxb_demo() {
-    load_autohotkey
-
     # http://sega.jp/pc/sonicdx/
     # http://sega.jp/pc/sonicdx/trial.shtml
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/sadx_trial_b.exe"
@@ -7014,9 +6847,6 @@ __EOF__
 verblist_add stalker_pripyat_bench "S.T.A.L.K.E.R Call of Pripyat benchmark (GSC Game World, 2009) [download]" stkcop-bench-setup.exe
 
 load_stalker_pripyat_bench() {
-
-    load_autohotkey
-
     # FIXME: There's a much faster download at
     # http://www.bigdownload.com/games/stalker-call-of-pripyat/pc/stalker-call-of-pripyat-benchmark
     # Should we direct users to download from there manually?
@@ -7073,7 +6903,6 @@ verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76
 
 load_starcraft() {
     warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc."
-    load_autohotkey
 
     # Force clean-ish install
     test -d "$programfilesdir_unix/StarCraft" && rm -rf "$programfilesdir_unix/StarCraft"
@@ -7116,7 +6945,6 @@ verblist_add starcraft2    "Starcraft II (Blizzard, 2010)" Installer Tome 1.MPQE
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=20882
 
 load_starcraft2() {
-    load_autohotkey
     load_gecko
 
     for x in "Installer Tome 1.MPQE" "Installer UI 1.MPQ" "Installer UI 2.MPQE" "Installer.app" "Installer.exe"
@@ -7166,7 +6994,6 @@ verblist_add sto           "Star Trek Online (Cryptic, 2010)" f891dab46d05d771e0
 
 load_sto()
 {
-    load_autohotkey
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f891dab46d05d771e0123a1e7ec969f3601064a6.iso
     # Note: http://www.startrekonline.com/download shows how to download the
     # client using bittorrent.  If the iso is not present, we should try that path.
@@ -7280,8 +7107,6 @@ verblist_add sf4bench "Street Fighter 4: Benchmark (CAPCOM, 2009) [download]" St
 
 load_sf4bench()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/StreetFighterIV_Benchmark.exe"
     then
         download $PACKAGE http://gamedaily.newaol.com/pub/StreetFighterIV_Benchmark.exe f7754210308b3a0ff2bb3be3a62b22767519ca62
@@ -7365,8 +7190,6 @@ __EOF__
 verblist_add smbx  "Super Mario Bros. X (Indie, 2009) [download]"  smbx122.exe
 
 load_smbx() {
-    load_autohotkey
-
     # Download URL embedded in http://www.supermariobrothers.org/downloads/smbx122.html
     download $PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
 
@@ -7420,8 +7243,6 @@ __EOF__
 verblist_add timezattack_demo "Timez Attack Demo (BigBrainz, 2005) [download]" Win_TimezAttackFreeInstaller.exe
 
 load_timezattack_demo() {
-
-    load_autohotkey
     download $PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -7467,7 +7288,6 @@ load_tlr_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
 # http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
 
-    load_autohotkey
     if ! test -f "$WISOTOOL_CACHE"/$PACKAGE/TheLastRemnant_PC_Demo.zip
     then
         download $PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
@@ -7521,7 +7341,6 @@ load_tmnationsforever() {
     then
         warn "Gameplay and sound may be very choppy on some machines :-("
     fi
-    load_autohotkey
 
     download $PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
 
@@ -7573,8 +7392,6 @@ __EOF__
 verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
 load_twfc() {
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
     KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
@@ -7637,9 +7454,6 @@ __EOF__
 verblist_add tropico3_demo "Tropico 3 Demo (Kalypso Media GmbH, 2009) [download]" Tropico3Demo.exe
 
 load_tropico3_demo() {
-
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/Tropico3Demo.exe
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
@@ -7699,9 +7513,6 @@ __EOF__
 verblist_add typingofthedead_demo "Typing of the Dead Demo (Sega, 1999) [download]" Tod_e_demo.exe
 
 load_typingofthedead_demo() {
-
-    load_autohotkey
-
     download $PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
@@ -7736,8 +7547,6 @@ __EOF__
 verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
 
 load_unigine_heaven() {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Unigine_Heaven-2.0.msi"
     then
         warn "This download is slow, you may want to do a manual download from http://downloads.guru3d.com/Unigine-Heaven-DirectX-11-benchmark-2.0-download-2414.html instead"
@@ -7800,8 +7609,6 @@ load_vegas() {
         warn "This game's DRM is not supported by wine"
     fi
     
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/be7cf72572708e9776af73c9bec8ee07952385af.iso
 
     ahk_do "
@@ -7871,8 +7678,6 @@ load_vegas2() {
         warn "This game's DRM is not supported by wine"
     fi
     
-    load_autohotkey
-
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
 
     ahk_do "
@@ -7927,7 +7732,6 @@ __EOF__
 verblist_add victoria2_demo       "Victoria 2 Demo (Paradox Interactive, 2010) [download]"
 
 load_victoria2_demo() {
-    load_autohotkey
     # download zip file via torrent from http://www.gamershell.com/download_62070.shtml
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Victoria2_Demo.zip"
     then
@@ -8015,8 +7819,6 @@ verblist_add vf2_demo   "Virtua Fighter 2 demo (Sega, 1997) [download]" vf2_demo
 
 load_vf2_demo()
 {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/vf2_demo.exe"
     then
         download $PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
@@ -8080,8 +7882,6 @@ __EOF__
 verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
 
 load_wog() {
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
         # Get temporary download location
@@ -8119,8 +7919,6 @@ __EOF__
 verblist_add wowtrial       "World of Warcraft trial(Blizzard, 2009)" TryWoW.exe
 
 load_wowtrial() {
-    load_autohotkey
-
     download $PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
 
     ahk_do "
@@ -8150,7 +7948,6 @@ verblist_add wowbc       "World of Warcraft: Battle Chest (Blizzard, 2008)" \
   c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
 
 load_wowbc() {
-    load_autohotkey
     test -f "$WINDIR"/utorrent.exe || try sh $WINETRICKS utorrent
 
     case "$LANG" in
@@ -8313,7 +8110,6 @@ __EOF__
 # Generic Positech installer
 _load_positech()
 {
-    load_autohotkey
     dl_path="$1"
     hash_sum="$2"
     installer_name="$3"
@@ -8421,7 +8217,6 @@ _load_steam_app()
 
     steam_dir="$programfilesdir_unix/Steam"
 
-    load_autohotkey
     test -f "$steam_dir/Steam.exe" || try sh $WINETRICKS -q steam
 
     app_id="$1"
