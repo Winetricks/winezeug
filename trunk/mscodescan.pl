@@ -7,26 +7,36 @@
 # Usage: perl mscodescan.pl [-l][-q]
 # -l: just list dlls/exe's, not missing imports
 # -q: don't output titles
+# -w: where to look for wine sources
 
 my %opt;
 #use Getopt::Std;
 #getopt("lq", %opt);   doesn't work?
+my $pending;
+$winesrc = $ENV{"HOME"}."/wine-git";
+
 foreach (@ARGV) {
-    if ($_ eq '-l') {
+	 if (defined($pending)) {
+		 $winesrc = $_ if ($pending eq '-w');
+		 undef $pending;
+	 } elsif ($_ eq '-l') {
         $opt{'l'} = 1;
     } elsif ($_ eq '-q') {
         $opt{'q'} = 1;
+    } elsif ($_ eq '-w') {
+		  $pending = $_;
     } else {
         die("unknown option $_\n");
     }
 }
+die("$pending requires argument\n") if (defined($pending));
 
-$winesrc = $ENV{"HOME"}."/wine-git";
-
+my $wineprefix = $ENV{"WINEPREFIX"};
+$wineprefix = $ENV{"HOME"}."/.wine" if (!defined($wineprefix));
 # Create list of known MS dlls
 # Get list of fake DLLs.  Assumes you've initialized .wine.  
 # (It'd be better to look at wine.inf, but that looks hard?)
-@needles = split("\n", `grep -l "Wine placeholder DLL" ~/.wine/drive_c/windows/system32/*.dll | grep -iv OpenAL32 | sed 's,.*/,,;s/\\.dll\$//'`);
+@needles = split("\n", `grep -l "Wine placeholder DLL" $wineprefix/drive_c/windows/system32/*.dll | grep -iv OpenAL32 | sed 's,.*/,,;s/\\.dll\$//'`);
 # MS DLLs for which we don't have fake DLLs
 push(@needles, 
    "atl70",
