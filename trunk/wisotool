@@ -3779,6 +3779,69 @@ load_half_life_goty() {
 
 #----------------------------------------------------------------
 
+verblist_add hordsoforcs2_demo "Hordes of Orcs 2 Demo (Freeverse, 2010) [download]" HoO2Demo.exe
+
+load_hordsoforcs2_demo() {
+
+    load_autohotkey
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/HoO2Demo.exe
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please visit http://www.fileplanet.com/216619/download/Hordes-of-Orcs-2-Demo, download HoO2Demo.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: check sha1sum 1ba26d35697e359f89a30915140e471fadc675da
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run HoO2Demo.exe
+        WinWait,Orcs
+        sleep 500
+        ControlFocus, Button1, Hordes ; Next
+        sleep 500
+        Send {Enter}
+        WinWait,Orcs,conditions
+        sleep 500
+        ControlFocus, Button4, Hordes, agree
+        sleep 500
+        Send {Space}
+        sleep 500
+        ControlFocus, Button1, Hordes ; Next
+        sleep 500
+        Send {Enter}
+        WinActivate,Orcs,files
+        sleep 500
+        ControlFocus Button1, Hordes ; Next
+        sleep 500
+        Send {Enter}
+        WinWait,Orcs,exist
+        sleep 500
+        ControlFocus, Button1, Hordes ; Yes
+        sleep 500
+        Send {Enter}
+        WinActivate,Orcs,T
+        sleep 500
+        ControlFocus, Button1, Hordes ; Start
+        sleep 500
+        Send {Enter}
+        WinWait,Orcs,E
+        sleep 500
+        ControlFocus, Button2, successfully
+        sleep 500
+        Send {Space}
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Hordes of Orcs 2 Demo"
+HoO2.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 hbpdemoexe=Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe
 verblist_add hphbp_demo    "Harry Potter & The Half Blood Prince Demo (EA, 2009) [download]" $hbpdemoexe
 
