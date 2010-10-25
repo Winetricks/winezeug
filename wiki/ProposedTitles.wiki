@@ -10,7 +10,7 @@ When you add a title, please include links to appdb if possible.
 
 http://www.gog.com/en/forum/general/gog_games_that_are_working_fine_with_linux_wine
 has a list of the ones that work.  We removed GOG support when they shut down
-recently, but now that they're back, we should updated it and add it back in.
+recently (see http://code.google.com/p/winezeug/source/detail?r=1600 ), but now that they're back, we should revert r1600 and update it to work with the new GOG.com.
 
 == Demo/release lists ==
 Sometimes you can find fresh game demos at these sites... 
