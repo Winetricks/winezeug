@@ -3782,9 +3782,6 @@ load_half_life_goty() {
 verblist_add hordsoforcs2_demo "Hordes of Orcs 2 Demo (Freeverse, 2010) [download]" HoO2Demo.exe
 
 load_hordsoforcs2_demo() {
-
-    load_autohotkey
-
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/HoO2Demo.exe
     then
         mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
