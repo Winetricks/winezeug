@@ -70,15 +70,6 @@ http://developer.download.nvidia.com/SDK/9.5/Samples/3dgraphics_samples.html
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
-Stalker benchmark
-http://downloads.guru3d.com/S.T.A.L.K.E.R-Call-of-Pripyat-benchmark-download-2433.html
-(but see http://bugs.winehq.org/show_bug.cgi?id=23089 )
-
-The Last Remnant - Square Enix
-http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
-http://www.gamerankings.com/pc/950908-the-last-remnant/index.html
-
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
