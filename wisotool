@@ -1204,6 +1204,67 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add anno1404_demo  "Anno 1404 Demo (Ubisoft, 2009) [download]" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
+
+load_anno1404_demo() {
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download demo from http://www.filefront.com/thankyou.php?f=13908918 and place it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$PACKAGE"
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip 
+    try cd "Anno1404_Demo_US_2009_06_15_18_22"
+    ahk_do "
+        run, setup.exe
+        SetTitleMatchMode, 2
+        winwait, , Welcome to the InstallShield Wizard for Dawn of Discovery (Demo)
+        ControlClick, Button3 ; Next
+        winwait, , Licence Agreement
+        ControlClick, Button2 ; Accept
+        ControlClick, Button6 ; Next
+        winwait, , Setup Type
+        ControlClick Button4  ; Next
+        winwait, , Select Options
+        ControlClick Button6  ; Next
+        winwait, Question
+        ControlClick Button2  ; No
+        winwait, , InstallShield Wizard completed
+        Controlclick Button4  ; Finish
+    "
+
+    if workaround_wine_bug 22762
+    then
+        if test -f "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini"
+        then
+            cd "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/"
+            mv Engine.ini oldEngine.ini
+            sed '/LanguageTAG/s,eng,usa,;
+                 /DirectXVersion/s,0,9,' oldEngine.ini > Engine.ini
+        else
+            mkdir -p "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/"
+            cat > "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini" <<__EOF__
+<InitFile>
+<DirectXVersion>9</DirectXVersion>
+<LanguageTAG>usa</LanguageTAG>
+</InitFile>
+__EOF__
+        fi
+    fi
+
+    cd "$olddir"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Ubisoft\\Related Designs\\Dawn of Discovery (Demo)"
+Anno4.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
 
 load_assassinscreed() {
