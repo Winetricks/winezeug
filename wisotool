@@ -7924,6 +7924,93 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add victoria2_demo       "Victoria 2 Demo (Paradox Interactive, 2010) [download]"
+
+load_victoria2_demo() {
+    load_autohotkey
+    # download zip file via torrent from http://www.gamershell.com/download_62070.shtml
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Victoria2_Demo.zip"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Download Victoria2_Demo.zip from http://www.gamershell.com/download_62070.shtml and place in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: check sha1sum 20bac88a3ace1010e4fb116d72baf95e92976b39
+    # or better, check sha1sum of extracted .exe, since different
+    # sources add their own readme in the .zip file
+    mkdir -p "$WISOTOOL_TMP"/$PACKAGE/
+    cd "$WISOTOOL_TMP"/$PACKAGE/
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/Victoria2_Demo.zip
+
+    # Clean up old temp files from installer extractor (it leaves them around)
+    rm -rf temp_files_for_v2
+
+    # Run installer -- the ifwinactive statements are due to things that may not appear in Win7
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, Victoria2_Demo.exe
+        winwait, WinRAR
+        ControlClick, Button2, WinRAR
+        winwait, InstallShield, Welcome to the
+        sleep 1000
+        ControlClick, Button1, InstallShield, Welcome to the
+        winwait, InstallShield, License Agreement
+        sleep 1000
+        ControlClick, Button2, InstallShield, License Agreement
+        winwait, InstallShield, Setup will install
+        sleep 1000
+        ControlClick, Button1, InstallShield, Setup will install
+        winwait, InstallShield, Setup will add program icons
+        sleep 1000
+        ControlClick, Button2, InstallShield, Setup will add program icons
+        WinWait, InstallShield, Setup is performing
+        WinWaitClose, InstallShield, Setup is performing
+        loop
+        {
+          ifwinexist, Microsoft Visual C++, Please read the following license
+          {
+            winactivate, Microsoft Visual C++, Please read the following license
+            sleep 1000
+            ControlClick, Button1, Microsoft Visual C++, Please read the following license
+            WinWaitClose, Microsoft Visual C++
+            WinWaitClose, Microsoft Visual C++
+            WinWaitClose, Microsoft Visual C++
+          }
+          ifwinexist, DirectX, Welcome to setup for DirectX
+          {
+            sleep 1000
+            ControlClick, Button6, DirectX, Welcome to setup for DirectX
+            WinWaitClose, DirectX, Welcome to setup for DirectX
+          }
+          ifwinexist, InstallShield, InstallShield Wizard Complete
+          {
+            sleep 1000
+            break
+          }
+          sleep 100
+        }
+        ControlClick, Button1, InstallShield, InstallShield Wizard Complete
+        ControlClick, Button2, InstallShield, InstallShield Wizard Complete
+        ControlClick, Button4, InstallShield, InstallShield Wizard Complete
+        winwaitclose, InstallShield, InstallShield Wizard Complete
+    "
+    if workaround_wine_bug 24422
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
+    if workaround_wine_bug 24217
+    then
+        sh "$WINETRICKS" -q dsoundbug9612
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Paradox Interactive\\Victoria 2 - DEMO"
+v2demo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add vf2_demo   "Virtua Fighter 2 demo (Sega, 1997) [download]" vf2_demo.exe
 
 load_vf2_demo()
