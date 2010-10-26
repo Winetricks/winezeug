@@ -34,6 +34,11 @@ http://www.youtube.com/user/2m42hy#g/u
 
 http://www.playonlinux.com/repository/?cat=1
 
+Wine-Doors supports a dozen or so games, might be worth looking at, even though
+the project is shut down.
+
+http://en.wikipedia.org/wiki/Wine-Doors
+
 == Proposed free titles ==
 
 Age of Empire III Demo
