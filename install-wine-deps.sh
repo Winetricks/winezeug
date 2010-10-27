@@ -88,8 +88,8 @@ debian_pkgs="\
 bison ccache flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
 libcapi20-3 libcapi20-dev libcups2-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
-libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
-libgphoto2-2-dev libgsm1-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
+libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev \
+libgstreamer0.10-dev libgstreamer0.10-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
 libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
 libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libsane-dev \
 libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
@@ -108,18 +108,18 @@ ubuntu_common_pkgs="\
 bison ccache cvs flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
 libcapi20-3 libcapi20-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
-libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev \
-libgphoto2-2-dev libgsm1-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
+libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev \
+libgstreamer-plugins-base0.10-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
 libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
-libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libqt3-headers libqt3-mt libqt3-mt-dev libsane-dev \
+libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libsane-dev \
 libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
 libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
 libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
 libxmu-headers libxrandr-dev libxrender-dev libxslt1-dev libxt-dev libxv-dev \
-libxxf86vm-dev linux-libc-dev m4 make mesa-common-dev odbcinst1debian1 qt3-dev-tools \
+libxxf86vm-dev linux-libc-dev m4 make mesa-common-dev \
 unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x11proto-fixes-dev  \
 x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11proto-xext-dev \
-x11proto-xf86vidmode-dev x11proto-xinerama-dev x-dev xtrans-dev zlib1g-dev \
+x11proto-xf86vidmode-dev x11proto-xinerama-dev xtrans-dev zlib1g-dev \
 libelfg0 libfreebob0 libgif-dev libhal-storage-dev libjack-dev"
 
 ubuntu_gutsy_pkgs="\
@@ -130,8 +130,10 @@ libltdl3 \
 libltdl3-dev \
 liblzo-dev \
 libopencdk8-dev \
+odbcinst1debian1 \
 render-dev \
 x11proto-render-dev \
+x-dev \
 "
 
 ubuntu_hardy_pkgs="\
@@ -141,6 +143,8 @@ libltdl3 \
 libltdl3-dev \
 liblzo-dev \
 libopencdk10-dev \
+odbcinst1debian1 \
+x-dev \
 "
 
 ubuntu_ibex_pkgs="\
@@ -149,6 +153,8 @@ libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
 libltdl7-dev \
+odbcinst1debian1 \
+x-dev \
 "
 
 ubuntu_jaunty_pkgs="\
@@ -157,6 +163,8 @@ libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
 libltdl7-dev \
+odbcinst1debian1 \
+x-dev \
 "
 
 ubuntu_karmic_pkgs="\
@@ -164,6 +172,18 @@ libcups2-dev \
 liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
+libgstreamermm-0.10-dev \
+odbcinst1debian1 \
+x-dev \
+"
+
+ubuntu_maverick_pkgs="\
+libcups2-dev \
+liblzo2-dev \
+libltdl7 \
+libltdl7-dev \
+libgstreamermm-0.10-dev \
+odbcinst \
 "
 
 ubuntu_64_ibex_usr_lib32_sos="\
@@ -220,6 +240,7 @@ Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Linux*Mint*7|Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
 Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
+Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*) apt-get install $debian_pkgs;;
@@ -271,6 +292,10 @@ linksos()
             xorg-x11-proto-devel glibc-devel.i686 prelink libstdc++-devel.i686 pulseaudio-libs-devel.i686 \
             gnutls-devel.i686 libgphoto2-devel.i686 openal-soft-devel.i686 isdn4k-utils-devel.i686 \
             gsm-devel.i686 libv4l-devel.i686 cups-devel.i686 libtiff-devel.i686
+        ;;
+    Ubuntu*10.04|Ubuntu*10.10)
+        # Should be all that's needed now
+        apt-get install ia32-libs
         ;;
     *)
         echo "I do not know how to install 32 bit libraries for distro $distro yet"
