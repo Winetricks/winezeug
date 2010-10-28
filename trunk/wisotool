@@ -3004,6 +3004,44 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add fallout3  "Fallout 3 Windows Live Version (Bethesda, 2009)" 4994dca9fa2e105ea592899644f48d754338663f.iso
+
+load_fallout3()
+{
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4994dca9fa2e105ea592899644f48d754338663f.iso
+
+    if workaround_wine_bug 23532
+    then
+        try "$WINETRICKS" -q xlive
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:setup.exe
+        winwait, Fallout 3, Welcome
+        controlclick, Button1
+        winwait, Fallout 3, License Agreement
+        controlclick, Button3
+        controlclick, Button1
+        winwait, Fallout 3, Setup Type
+        controlclick, Button4
+        winwait, Fallout 3, Ready to Install
+        controlclick, Button1
+        winwait, Fallout 3, InstallShield Wizard Complete
+	controlclick, Button1
+	controlclick, Button2
+	controlclick, Button3
+    "
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3"
+"Fallout3.exe"
+__EOF__
+}
+#----------------------------------------------------------------
+
 verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2009)" 379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso \
                                 f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
 
