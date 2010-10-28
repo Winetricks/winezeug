@@ -31,12 +31,17 @@ foreach (@ARGV) {
 }
 die("$pending requires argument\n") if (defined($pending));
 
-my $wineprefix = $ENV{"WINEPREFIX"};
-$wineprefix = $ENV{"HOME"}."/.wine" if (!defined($wineprefix));
+# Caution: don't point wineprefix to the directory being tested, or you will miss lots of MS DLLs.
+# Point it to a neutral, just-initialized .wine directory.
+my $wineprefix = $ENV{"HOME"}."/.wine-virgin";
+if (! -d $wineprefix) {
+    die "Please create an empty wineprefix in $wineprefix so we can see what dummy DLLs wine has";
+}
 # Create list of known MS dlls
 # Get list of fake DLLs.  Assumes you've initialized .wine.  
 # (It'd be better to look at wine.inf, but that looks hard?)
 @needles = split("\n", `grep -l "Wine placeholder DLL" $wineprefix/drive_c/windows/system32/*.dll | grep -iv OpenAL32 | sed 's,.*/,,;s/\\.dll\$//'`);
+
 # MS DLLs for which we don't have fake DLLs
 push(@needles, 
    "atl70",
@@ -88,6 +93,9 @@ push(@needles,
 );
 # Avoid dups
 @needles = grep !$seen{$_}++, @needles;
+
+#print "Got needles ";
+#print join("\n", @needles);
 
 # Stoplist of functions we don't care about (because they're only called when app crashes)
 # See also http://bugs.winehq.org/show_bug.cgi?id=22044#c4
