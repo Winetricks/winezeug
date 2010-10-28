@@ -134,7 +134,7 @@ usage() {
     echo " d3dx10        MS d3dx10_??.dll (from DirectX user redistributable)"
     echo " d3dxof        MS d3dxof.dll (from DirectX user redistributable)"
     echo " dcom98        MS DCOM (ole32, oleaut32); requires Windows 98 license, but does not check for one"
-    echo " devenum      MS devenum.dll (from DirectX 9 user redistributable)"
+    echo " devenum       MS devenum.dll (from DirectX 9 user redistributable)"
     echo " dinput8       MS dinput8.dll (from DirectX 9 user redistributable)"
     echo " dirac         the Dirac directshow filter"
     echo " directmusic   MS DirectMusic (from DirectX 9 user redistributable)"
@@ -142,6 +142,7 @@ usage() {
     echo " directx9      MS DirectX 9 user redistributable (not recommended! use d3dx9 instead)"
     echo " directx9-beta MS DirectX 9 user redistributable - beta verb (not recommended! use d3dx9 instead)"
     echo " divx          divx video codec"
+    echo " dmsynth       MS dmsynth.dll (midi sythesizer from DirectX 9 user redistributable)"
     echo " dotnet11      MS .NET 1.1 (requires Windows license, but does not check for one)"
 # Doesn't work yet, don't make it public
 #    echo " dotnet11sdk   MS .NET Framework SDK Version 1.1 (requires Windows license, but does not check for one; may not work yet)"
@@ -179,6 +180,7 @@ usage() {
     echo " ie8           Microsoft Internet Explorer 8.0"
     echo " jet40         MS Jet 4.0 Service Pack 8"
     echo " kde           KDE for Windows installer"
+    echo " l3codecx      MPEG Layer-3 Audio Codec for Microsoft DirectShow"
     echo " liberation    Red Hat Liberation fonts (Sans, Serif, Mono)"
     echo " lucida        MS Lucida Console font"
     echo " mdac25        MS MDAC 2.5: Microsoft ODBC drivers, etc."
@@ -1375,7 +1377,7 @@ load_devenum() {
     try_cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE/$DIRECTX_NAME"
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$WINETRICKS_TMP/dxnt.cab"
 
-    try $WINE regsvr32 devenum
+    try $WINE regsvr32 devenum.dll
 
     override_dlls native devenum
 }
@@ -1403,10 +1405,11 @@ load_dirac() {
 #----------------------------------------------------------------
 
 load_directmusic() {
-# Untested. Based off http://bugs.winehq.org/show_bug.cgi?id=4805
+# Untested. Based off http://bugs.winehq.org/show_bug.cgi?id=4805 and http://bugs.winehq.org/show_bug.cgi?id=24911
     helper_directx_dl
 
     try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$WINETRICKS_TMP/dxnt.cab"
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmband.dll' "$WINETRICKS_TMP/dxnt.cab"
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmcompos.dll' "$WINETRICKS_TMP/dxnt.cab"
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmime.dll' "$WINETRICKS_TMP/dxnt.cab"
@@ -1418,19 +1421,21 @@ load_directmusic() {
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic32.dll' "$WINETRICKS_TMP/dxnt.cab"
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dswave.dll' "$WINETRICKS_TMP/dxnt.cab"
     try_cabextract -d "$SYSTEM32_DLLS" -L -F 'streamci.dll' "$WINETRICKS_TMP/dxnt.cab"
-
-    try $WINE regsvr32 dmband
-    try $WINE regsvr32 dmcompos
-    try $WINE regsvr32 dmime 
-    try $WINE regsvr32 dmloader
-    try $WINE regsvr32 dmscript
-    try $WINE regsvr32 dmstyle
-    try $WINE regsvr32 dmsynth
-    try $WINE regsvr32 dmusic
-    try $WINE regsvr32 dswave
-
-    override_dlls native dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci
-
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$WINETRICKS_TMP/dxnt.cab"
+    
+    try $WINE regsvr32 devenum.dll
+    try $WINE regsvr32 dmband.dll
+    try $WINE regsvr32 dmcompos.dll
+    try $WINE regsvr32 dmime.dll
+    try $WINE regsvr32 dmloader.dll
+    try $WINE regsvr32 dmscript.dll
+    try $WINE regsvr32 dmstyle.dll
+    try $WINE regsvr32 dmsynth.dll
+    try $WINE regsvr32 dmusic.dll
+    try $WINE regsvr32 dswave.dll
+    try $WINE regsvr32 quartz.dll
+    
+    override_dlls native devenum dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci quartz
 }
 
 #----------------------------------------------------------------
@@ -1562,6 +1567,20 @@ load_dcom98() {
 
     # and undo version win98
     unset_winver
+}
+
+#----------------------------------------------------------------
+
+load_dmsynth() {
+    helper_directx_dl
+
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$WINETRICKS_TMP/dxnt.cab"
+    
+    try $WINE regsvr32 dmsynth.dll
+    
+    override_dlls native dmsynth
+    
 }
 
 #----------------------------------------------------------------
@@ -2709,6 +2728,17 @@ load_kde() {
     cd "$programfilesdir_unix/kde"
     try $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.7-0.exe"
     cd "$olddir"
+}
+
+#----------------------------------------------------------------
+
+load_l3codecx() {
+    helper_directx_dl
+
+    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F l3codecx.ax "$WINETRICKS_TMP/dxnt.cab"
+    
+    try $WINE regsvr32 l3codecx.ax
 }
 
 #----------------------------------------------------------------
@@ -4475,6 +4505,7 @@ do
     abiword) load_abiword;;
     adobeair) load_adobeair;;
     amstream) load_amstream;;
+    l3codecx) load_l3codecx;;
     art2kmin|art2k7min) load_art2kmin;;
     atmlib) load_atmlib;;
     autohotkey|ahk) load_autohotkey;;
@@ -4513,6 +4544,7 @@ do
     dotnet20sp2) load_dotnet20sp2; load_fontfix;;
     dotnet3|dotnet30) load_dotnet30; load_fontfix;;
     dotnet35) load_dotnet35; load_fontfix;;
+    dmsynth) load_dmsynth;;
     droid) load_droid;;
     dsound) load_dsound;;
     dxsdk_nov2006) load_dxsdk_nov2006;;
