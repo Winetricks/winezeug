@@ -1204,6 +1204,60 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add aoe3_demo "Age of Empires III (Microsoft, 2005) [download]" aoe3trial.exe
+
+load_aoe3_demo() {
+
+    download $PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
+        2b0a123243092d79f910db5691d99d469f7c17c3
+
+    if workaround_wine_bug 24897
+    then
+        try sh "$WINETRICKS" -q msxml4
+    fi
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run aoe3trial.exe
+        WinWait,Empires,Welcome
+        Sleep 500
+        ControlClick Button1 ; Next
+        WinWait,Empires,Please
+        Sleep 500
+        ControlClick Button4 ; Next
+        WinWait,Empires,Complete
+        Sleep 500
+        ControlClick Button4 ; Finish
+        WinWaitClose
+    "
+
+    if workaround_wine_bug 24911
+    then
+        # On some systems, only quartz is needed?
+	# appdb says that l3codecx is also needed?
+        try sh "$WINETRICKS" -q devenum dmsynth quartz
+    fi
+
+    if workaround_wine_bug 24912
+    then
+        # kill off lingering installer
+        ahk_do "
+            SetTitleMatchMode, 2
+            WinKill,Empires
+        "
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III Trial"
+age3.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add anno1404_demo  "Anno 1404 Demo (Ubisoft, 2009) [download]" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
 
 load_anno1404_demo() {
@@ -6914,7 +6968,9 @@ verblist_add ssdd2    "SpongeBob SquarePants Diner Dash 2 (Nickelodeon/Big Fish,
 load_ssdd2()
 {
     # Main page: http://arcade.nick.com/nick/gameinfo.jsp?s=SpongeBobDinerDash2
-    download $PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 8407dae2c062ce62b38408eeac3a9f95be202b96
+    # old: 8407dae2c062ce62b38408eeac3a9f95be202b96
+    # 27 Oct 2010: 440c4f2e9484ba150782cae8754ff8eaaad3b01e
+    download $PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 440c4f2e9484ba150782cae8754ff8eaaad3b01e
 
     if workaround_wine_bug 23749
     then
