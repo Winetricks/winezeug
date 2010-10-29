@@ -3044,7 +3044,7 @@ load_ewj_demo() {
 
     if workaround_wine_bug 19531
     then
-        warn "Sound doesn't work in Windows NT+ mode. It does in win98 mode, but then locks up the game. See http://bugs.winehq.org/show_bug.cgi?id=19531"
+        warn "Sound does not work in Windows NT+ mode. It does in win98 mode, but then locks up the game. See http://bugs.winehq.org/show_bug.cgi?id=19531"
     else
         sh "$WINETRICKS" win98
     fi
@@ -3054,6 +3054,115 @@ cd "$DRIVE_C\\ewj_demo"
 WORM.EXE
 __EOF__
 
+}
+
+#----------------------------------------------------------------
+
+verblist_add fable_tlc "Fable: The Lost Chapters (Microsoft, 2005)" \
+    e435cfeb975e596db1bf953170462e3b81c41396.iso \
+    755eaa37cd52c1171339d2dae11979147cf62080.iso \
+    ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso \
+    2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso
+
+
+load_fable_tlc() {
+
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.txt | tr -d -`
+
+    if workaround_wine_bug 657
+    then
+        try sh "$WINETRICKS" mfc42
+    fi
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        run, ${ISO_MOUNT_LETTER}:setup.exe
+        WinWait,Fable,Welcome
+        Sleep 500
+        ControlClick Button1 ; Next
+        WinWait,Fable,Please
+        Sleep 500
+        ControlClick Button4 ; Next
+        WinWait,Fable,Product Key
+	Sleep 500
+        Send $KEY
+	Send {Enter}
+        WinWait,Fable,Disk 2
+        "
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        WinWait,Fable,Disk 2
+        Sleep 500
+        ControlClick Button2 ; Retry
+        WinWait,Fable,Disk 3
+	"
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/755eaa37cd52c1171339d2dae11979147cf62080.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        WinWait,Fable,Disk 3
+        Sleep 500
+        ControlClick Button2 ; Retry
+        WinWait,Fable,Disk 4
+	"
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e435cfeb975e596db1bf953170462e3b81c41396.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        WinWait,Fable,Disk 4
+        Sleep 500
+        ControlClick Button2 ; Retry
+        WinWait,Fable,Disk 1
+	WinKill
+	"
+
+    # Now tell game what the real disc is so user can insert disc 1 and run the game!
+    cat > "$WISOTOOL_TMP"/$PACKAGE.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\D3BE9C3CAF4226447B48E06CAACF2DDD\InstallProperties]
+"InstallSource"="D:\\"
+
+_EOF_
+    try_regedit "$WISOTOOL_TMP_WIN"\\$PACKAGE.reg
+
+    # Also accept EULA
+    cat > "$WISOTOOL_TMP"/$PACKAGE.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Microsoft\Microsoft Games\Fable TLC]
+"FIRSTRUN"=dword:00000001
+
+_EOF_
+    try_regedit "$WISOTOOL_TMP_WIN"\\$PACKAGE.reg
+
+    if workaround_wine_bug 24912
+    then
+        # kill off lingering installer
+        ahk_do "
+            SetTitleMatchMode, 2
+            WinKill,Fable
+        "
+        $WINESERVER -k
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Microsoft Games\\Fable - The Lost Chapters"
+Fable.exe
+__EOF__
+
+    if workaround_wine_bug 24941
+    then
+        try sh "$WINETRICKS" -q devenum quartz wmp9
+    fi
+
+    if workaround_wine_bug 24942
+    then
+        sh "$WINETRICKS" -q d3dx9_36
+    fi
 }
 
 #----------------------------------------------------------------
@@ -8845,7 +8954,7 @@ do
     load) load_iso dd;;
     load_harder) load_iso ddrescue;;
     load=*) key="`echo $PACKAGE | sed 's/load=//'`"; load_iso dd "$key";;
-    migrate) migrate_files;;
+    refile|migrate) migrate_files;;
     version) print_version;;
 
     *.verb)
