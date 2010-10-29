@@ -3058,23 +3058,25 @@ __EOF__
 
 #----------------------------------------------------------------
 
+# Sadly, the SHA1SUM of the first disc varies!
+# FIXME: change load function to call it by its volume label instead; right now you have to rename it manually.
+
 verblist_add fable_tlc "Fable: The Lost Chapters (Microsoft, 2005)" \
-    e435cfeb975e596db1bf953170462e3b81c41396.iso \
+    FABLE_DISC_1.iso \
     755eaa37cd52c1171339d2dae11979147cf62080.iso \
     ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso \
     2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso
 
-
 load_fable_tlc() {
 
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.txt | tr -d -`
+    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/FABLE_DISK_1.txt | tr -d -`
 
     if workaround_wine_bug 657
     then
-        try sh "$WINETRICKS" mfc42
+        try sh "$WINETRICKS" -q mfc42
     fi
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/FABLE_DISK_1.iso
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:setup.exe
