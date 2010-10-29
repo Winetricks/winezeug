@@ -41,9 +41,8 @@ http://en.wikipedia.org/wiki/Wine-Doors
 
 == Proposed free titles ==
 
-Age of Empire III Demo
-(Ran fine for me, but required native msxml4)
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=3467
+Age of Empires 2 Trial
+http://www.microsoft.com/games/age2/downloads.htm
 
 Alien Swarm
 http://news.bigdownload.com/2010/07/16/alien-swarm-to-be-released-by-valve-as-free-game-on-monday/
@@ -76,10 +75,6 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 NVidia DirectX9 samples
 http://developer.download.nvidia.com/SDK/9.5/Samples/3dgraphics_samples.html
 
-Osmos demo
-http://www.hemispheregames.com/osmos/#anchor_demos
-platinum at http://appdb.winehq.org/objectManager.php?sClass=application&iId=10151
-
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
@@ -92,12 +87,6 @@ http://www.warhammeronline.com/trial/
 Worms Reloaded (steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21222
 http://www.gamerankings.com/pc/990077-worms-reloaded/index.html
-
-Zoo Tycoon 2
-http://en.wikipedia.org/wiki/Zoo_Tycoon_2
-Game released in 2004.  Free demo from
-http://zootycoon.com/Downloads/Demos.htm
-Runs nicely on my desktop
 
 == Proposed paid titles ==
 
