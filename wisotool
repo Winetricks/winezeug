@@ -1236,7 +1236,7 @@ load_aoe3_demo() {
     if workaround_wine_bug 24911
     then
         # On some systems, only quartz is needed?
-	# appdb says that l3codecx is also needed?
+        # appdb says that l3codecx is also needed?
         try sh "$WINETRICKS" -q devenum dmsynth quartz
     fi
 
@@ -1247,6 +1247,9 @@ load_aoe3_demo() {
             SetTitleMatchMode, 2
             WinKill,Empires
         "
+        # or should we just do wineserver -k, like fable_tlc does?
+        PID=`ps augxw | grep IDriver | grep -v grep | awk '{print $2}'`
+        kill $PID  
     fi
 
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
