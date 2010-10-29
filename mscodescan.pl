@@ -53,6 +53,7 @@ push(@needles,
    "ieaksie",
    "iepeers",
    "iesetup",
+   "mfc40",
    "mfc42",
    "mfc70",
    "mfc80",
@@ -152,12 +153,21 @@ foreach $haystack (@haystacks) {
                break;
             }
         }
+        # this is lame - duplicates code from below.
+        open(PIPE, "tr -d '\\000' < '$haystack' | egrep -il 'microsoft corp|ProductNameMicrosoft' |") || die;
+        $x = <PIPE>;
+        close(PIPE);
+        if (length($x) > 3) {
+           $found = 1;
+        }
     }
     # Some games (e.g. second life) ship dlls with same name as microsoft ones, 
     # so don't call it a microsoft dll unless it contains the string "microsoft corp"
+    # Some old pidgen.dll's, and some WMP executables, have ProductNameMicrosoft instead.
+    # FIXME: remove code duplication.
     if ($found) {
 	# Note extra backslash in escaped NULL!
-        open(PIPE, "tr -d '\\000' < '$haystack' | grep -il 'microsoft corp' |") || die;
+        open(PIPE, "tr -d '\\000' < '$haystack' | egrep -il 'microsoft corp|ProductNameMicrosoft' |") || die;
 	$x = <PIPE>;
 	close(PIPE);
 	if (length($x) < 4) {
