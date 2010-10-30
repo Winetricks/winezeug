@@ -52,6 +52,11 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
+Call of Duty Demo (Activision, 2003)  (old but platinum, highly rated)
+http://www.gamerankings.com/pc/914586-call-of-duty/index.html
+http://www.bigdownload.com/games/call-of-duty/pc/call-of-duty-demo/
+http://appdb.winehq.org/objectManager.php?sClass=application&iId=1346
+
 Colin McRae's Dirt2 Demo
 http://www.codemasters.co.uk/downloads/details.php?id=39417
 http://www.youtube.com/watch?v=BtNMwJAvVmA
