@@ -37,13 +37,14 @@ find . -type f -name "*.dll" -exec mv {} ../$wineversion/dlls \;
 # need to mrmove the test exe's here...
 find . -type f -name "*.exe" -exec mv {} ../$wineversion/programs \;
 
+cd ..
+
 cat > "$wineversion/README" <<__EOF__
 These are the Wine dll's and programs compiled for Win32.
 They are meant to be used for testing, and should not be used arbitrarily.
 Misuse can break your Windows system! WineHQ and the builder cannot be held liable for any damages.
 __EOF__
 
-cd ..
 tar -vjcf $wineversion-win32.tar.bz2 $wineversion
 
 # cleanup
