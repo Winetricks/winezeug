@@ -2785,6 +2785,48 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add desperados2  "Desperados 2 (Atari, 2006)" ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso
+
+load_desperados2()
+{
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        WinWait, , Choose Setup Language
+        WinActivate
+        ControlClick Button3           ; next
+        WinWait, , License Agreement
+        WinActivate
+        ControlClick Button3           ; accept eula
+        ControlClick Button1           ; next
+        WinWait, , Choose Destination Location
+        ControlClick Button1           ; next
+        WinWait, , Select Program Folder
+        WinActivate
+        ControlClick Button2           ; next
+        WinWait, , Ready to Install
+        WinActivate
+        ControlClick Button1           ; install
+        WinWait, , InstallShield Wizard Complete
+        ControlCLick Button1           ; untick shortcut
+        ControlClick Button2           ; untick directx setup
+        ControlClick Button4           ; finish, also combo breaker
+        WinWait, Desperados            ; flashy autorun thingy
+        MouseMove 103, 417             ; x marks the spot
+        Click                          ; exit
+    "
+    iso_umount
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Atari\\Desperados 2"
+Desperados2.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add deusex2_demo   "Deus Ex 2 Demo [download]" dxiw_demo.zip
 load_deusex2_demo()
 {
@@ -2975,6 +3017,45 @@ load_dragonage() {
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Dragon Age"
 bin_ship\\daorigins.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
+verblist_add dts     "Death to Spies (1C Company / Haggard Games, 2007)" 3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
+
+load_dts() {
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
+
+    ahk_do "
+        Run, ${ISO_MOUNT_LETTER}:Death_to_Spies_Setup.exe
+        SetTitleMatchMode, 2
+        WinWait, Death to Spies
+        WinActivate
+        ControlClick TNewButton1       ; next
+        WinWait, , Select Destination Location
+        ControlClick TNewButton3       ; next
+        WinWait, , Select Start Menu Folder
+        ControlClick TNewButton4       ; next
+        WinWait, , Select Additional Tasks
+        ControlClick TNewCheckListBox1 ; uncheck shortcut
+        ControlClick TNewButton4       ; next
+        WinWait, , Ready to Install
+        ControlClick TNewButton4       ; next
+        WinWait, Microsoft             ; direct x
+        WinActivate
+        ControlClick Button6           ; cancel
+        WinWait, Death to Spies
+        WinActivate
+        ControlClick TNewButton4       ; finish
+    "
+    iso_umount
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Aspyr\\Death to Spies Moment of Truth"
+Truth.exe
 __EOF__
 }
 
