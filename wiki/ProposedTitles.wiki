@@ -5,6 +5,16 @@ a reminder list for things we want to look at in the near future.
 
 When you add a title, please include links to appdb if possible.
 
+== Criteria ==
+
+We like games that are very popular/good/recent.
+
+I usually check Wikipedia for release dates (ancient games unlikely to interest people unless they're great and/or are free downloads),
+Gamerankings.com for a measure of "good" (70% or higher is ok, 90% is "do it now!")
+and amazon to see if it's selling (if it's in the top 100 in some category,
+that's a good sign).
+
+But even if it doesn't meet those criteria, and you love the game, go ahead.
 
 == GOG titles ==
 
@@ -41,8 +51,6 @@ http://en.wikipedia.org/wiki/Wine-Doors
 
 == Proposed free titles ==
 
-Age of Empires 2 Trial
-http://www.microsoft.com/games/age2/downloads.htm
 
 Alien Swarm
 http://news.bigdownload.com/2010/07/16/alien-swarm-to-be-released-by-valve-as-free-game-on-monday/
@@ -103,12 +111,6 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
 
 Update Dragon Age Origins to 1.04, supposedly fixes flickering:
 http://zapakitul.wordpress.com/2010/09/10/getting-dragon-age-origins-v-1-04-to-work-on-ubuntu-10-04-and-wine/
-
-Fable: Lost Chapters  (Dan has a copy?)
-http://en.wikipedia.org/wiki/Fable_(video_game)
-Game released in 2005.  Mixed results in appdb,
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=3827&iTestingId=46669
-but at least some people got it running well
 
 Far Cry 2
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
