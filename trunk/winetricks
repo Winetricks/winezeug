@@ -1944,12 +1944,12 @@ _EOF_
 #----------------------------------------------------------------
 
 load_firefox() {
-    download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.10/win32/en-US/Firefox%20Setup%203.6.10.exe" b1be5982250d1f3009d597d58b7e06009d716cee "Firefox Setup 3.6.10.exe"
+    download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.12/win32/en-US/Firefox%20Setup%203.6.12.exe" c10562f70de6e0dc656a949931ef9f479623fcd6 "Firefox Setup 3.6.12.exe"
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.6.10.exe"
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.6.12.exe"
     else
-       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.6.10.exe" -ms
+       try $WINE "$WINETRICKS_CACHE"/"Firefox Setup 3.6.12.exe" -ms
     fi
 }
 
