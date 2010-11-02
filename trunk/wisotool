@@ -3360,6 +3360,88 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add fallout_nv  "Fallout New Vegas (Bethesda, 2010)" f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
+
+load_fallout_nv()
+{
+    warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $WISOTOOL_CACHE. You'll also need your cd-key for Fallout New Vegas already added to your Steam Account."
+
+    if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    then
+        die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
+    elif [ ! "$STEAM_USER" -a -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    then
+        STEAM_USER=`cat "$WISOTOOL_CACHE"/STEAM_USER`
+    fi
+
+    if [ ! "$STEAM_PASS" -a ! -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    then
+        die "You need to set STEAM_PASS variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_PASS"
+    elif [ ! "$STEAM_PASS" -a -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    then
+        STEAM_PASS=`cat "$WISOTOOL_CACHE"/STEAM_PASS`
+    fi
+
+    steam_dir="$programfilesdir_unix/Steam"
+
+    # Game uses Steam to install itself
+    try sh $WINETRICKS -q steam
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
+
+    cd "$steam_dir"
+
+    # Run Steam, let it update. Then, in a separate thread, run the installer.
+    ahk_do "
+    SetTitleMatchMode, 2
+    SetControlDelay -1
+    run, Steam.exe -login $STEAM_USER $STEAM_PASS
+    Winwait, Steam - Update News
+    ; Close all windows, prevent conflicts with later controlclick's
+    winclose, Steam - Update News
+    winclose, Steam
+    "
+
+    ahk_do "
+    SetTitleMatchMode, 2
+    SetControlDelay -1
+    Run, Steam.exe -install I:\\
+    ; Install Fallout New Vegas
+    winwait, Install - Fallout- New Vegas
+    send, {Enter}
+    ; Shortcuts
+    sleep 10000
+    winwait, Install - Fallout- New Vegas
+    send, {Enter}
+    ; Installing...
+    sleep 10000
+    winwait, Install - Fallout- New Vegas
+    send, {Enter}
+    "
+
+    # Wait for install to finish
+    dl_log="$steam_dir/logs/download_log.txt"
+        while true
+        do
+            grep "SetHasAllLocalContent(true) called for 22380" "$dl_log" && break
+            sleep 15
+        done
+
+    ahk_do "
+    send {Enter}
+    sleep 1000
+    run, Steam.exe -shutdown
+    "
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Steam"
+Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 22380
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f333571c48.iso
 
 load_fifa10() {
