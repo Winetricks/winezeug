@@ -1588,11 +1588,15 @@ load_dmsynth() {
 load_dotnet11() {
     DOTNET_INSTALL_DIR="$WINDIR/Microsoft.NET/Framework/v1.1.4322"
 
-    # If this is just a dependency check, don't re-install
-    if test $PACKAGE != dotnet11 && test -d "$DOTNET_INSTALL_DIR"
+    # Wine now provides some fake dll's here that conflict.
+    # So check for a file that Wine should never provide, to determine if the install folder is Wine's fake one, or a real one.
+    # If real, rm -rf it:
+    if test $PACKAGE != dotnet11 && test -f "$DOTNET_INSTALL_DIR/ndpsetup.ico"
     then
         echo "prerequisite dotnet11 already installed, skipping"
         return
+    else
+        rm -rf "$DOTNET_INSTALL_DIR"
     fi
 
     # need corefonts, else installer crashes
