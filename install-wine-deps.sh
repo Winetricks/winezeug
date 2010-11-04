@@ -174,6 +174,7 @@ libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
 odbcinst1debian1 \
+prelink \
 x-dev \
 "
 
@@ -184,6 +185,7 @@ libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
 odbcinst \
+prelink \
 "
 
 ubuntu_64_ibex_usr_lib32_sos="\
