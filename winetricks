@@ -1836,7 +1836,7 @@ _EOF_
 #----------------------------------------------------------------
 
 load_eadm() {
-    download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 3be0786e92542c9638e911df0652b059b6cd4203
+    download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 9f87ad485f82b7ef290613b94912dede79f5f48c
     load_adobeair
     try $WINE "$WINETRICKS_CACHE"/eadm-installer.exe $WINETRICKS_S
 }
