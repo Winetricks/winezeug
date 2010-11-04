@@ -5818,6 +5818,44 @@ load_orangebox() {
 
 #----------------------------------------------------------------
 
+verblist_add osmos_demo "Osmos demo (Hemisphere Games, 2009) [download]" OsmosDemo_Installer_1.5.6.exe
+
+load_osmos_demo() {
+    
+    download $PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
+    
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+        SetTitleMatchMode, 2
+        run OsmosDemo_Installer_1.5.6.exe
+        winwait, Osmos Demo Setup, License Agreement
+        sleep 500
+        controlclick, Button2, Osmos Demo Setup, License Agreement
+        winwait, Osmos Demo Setup, Choose Install Location
+        sleep 500
+        controlclick, Button2, Osmos Demo Setup, Choose Install Location
+        winwait, Osmos Demo Setup, Choose Start Menu Folder
+        sleep 500
+        controlclick, Button2, Osmos Demo Setup, Choose Start Menu Folder
+        winwait, Osmos Demo Setup, Installation Complete
+        sleep 500
+        controlclick, Button2, Osmos Demo Setup, Installation Complete
+    "
+    
+    if workaround_wine_bug 24416
+    then
+        sh "$WINETRICKS" -q vcrun2005
+    fi
+    
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\OsmosDemo"
+OsmosDemo.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
 
 load_pcmark04() {
