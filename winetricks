@@ -1983,7 +1983,7 @@ load_flash() {
     # 2008-04-01: old version sha1sum f4dd1c0c715b791db2c972aeba90d3b78372996a
     # 2008-04-18: new version sha1sum 04ac79c4f1eb1e1ca689f27fa71f12bb5cd11cc2
     # Version 10 http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe
-    # 2008-11-27: 10 sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd
+    # 2008-11-27: sha1sum 7f6850ae815e953311bb94a8aa9d226f97a646dd
     # 2009-02-27: sha1sum 86745020a25edc9695a1a6a4d59eae375665a0b3
     # 2009-07-31: sha1sum 11a81ad1b19344c28b1e1249169f15dfbd2a04f5
     # 2009-12-09: sha1sum f4ec0e95099e354fd01cd3bb27c202f54932dc70
@@ -1992,7 +1992,8 @@ load_flash() {
     # 2010-06-24: sha1sum 6de519569137ec2ba3a4eed59f4052c4d944869c
     # 2010-08-11: sha1sum bd3a91fe450a800dbbc8d070159dc0a599043652
     # 2010-10-21: sha1sum c8bc6b4ead9538aeba24c9a5908dc1912ad443c7
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe c8bc6b4ead9538aeba24c9a5908dc1912ad443c7
+    # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866    
+download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866 
     if [ $WINETRICKS_QUIET ]
     then
         try $WINE "$WINETRICKS_CACHE"/install_flash_player_ax.exe /install
@@ -2011,7 +2012,8 @@ load_flash() {
     # 2010-06-24: sha1sum a419339ada03076ea0a197b28011b87055c45478
     # 2010-08-11: sha1sum cb011ab4c74d222c8ddb48171a8aa3b5380f8d5a
     # 2010-10-21: sha1sum 26985ca9f8f9c9926d807b591a28cdf2cc35a76a
-    download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 26985ca9f8f9c9926d807b591a28cdf2cc35a76a
+    # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f    
+download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 09f2491c5bec7286155234f4e6e1af70c7cef78f
     if [ $WINETRICKS_QUIET ]
     then
         try $WINE "$WINETRICKS_CACHE"/install_flash_player.exe /install
