@@ -2167,6 +2167,52 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add cod_demo "Call of Duty (Activision, 2003) [download]" Call_Of_Duty_Demo.exe
+
+load_cod_demo() {
+    download $PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    ahk_do "
+       SetTitleMatchMode, 2
+       run Call_Of_Duty_Demo.exe 
+       WinWait,Call of Duty Single Player Demo,Welcome
+       ControlClick Button1 ; I Agree
+       WinWait,Call of Duty Single Player Demo,License
+       ControlClick Button4 ; Next
+       WinWait,Call of Duty Single Player Demo,System
+       ControlClick Button4 ; Next
+       WinWait,Call of Duty Single Player Demo,Location
+       ControlClick Button1 ; Next
+       WinWait,Call of Duty Single Player Demo,Select
+       ControlClick Button1 ; Next
+       WinWait,Call of Duty Single Player Demo,Start
+       ControlClick Button1 ; Install
+       WinWait,Create Shortcut
+       ControlClick Button1 ; Yes
+       WinWait,Call of Duty Single Player Demo, Complete
+       ControlClick Button1 ; Finish
+    "
+
+    if workaround_wine_bug 21558
+    then
+        # Work around a buffer overflow - not really Wine's fault
+        setvar="@if not defined %__GL_ExtensionStringVersion% then echo \"If you get a buffer overflow error, set __GL_ExtensionStringVersion=17700 before starting Wine.  See http://bugs.winehq.org/show_bug.cgi?id=21558.\""
+    else
+        setvar=
+    fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+$setvar
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Call of Duty Single Player Demo"
+CoDSP.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
+
 verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
   6f572261ed954733806daf5b42edf92b3127cd14.iso \
   3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
