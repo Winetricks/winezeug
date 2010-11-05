@@ -2839,28 +2839,29 @@ load_desperados2()
     ahk_do "
         SetTitleMatchMode, 2
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
-        WinWait, , Choose Setup Language
+        WinWait, Desperados 2, Choose Setup Language
         WinActivate
         ControlClick Button3           ; next
-        WinWait, , License Agreement
+        WinWait, Desperados 2, License Agreement
         WinActivate
         ControlClick Button3           ; accept eula
         ControlClick Button1           ; next
-        WinWait, , Choose Destination Location
+        WinWait, Desperados 2, Choose Destination Location
         ControlClick Button1           ; next
-        WinWait, , Select Program Folder
+        WinWait, Desperados 2, Select Program Folder
         WinActivate
         ControlClick Button2           ; next
-        WinWait, , Ready to Install
+        WinWait, Desperados 2, Ready to Install
         WinActivate
         ControlClick Button1           ; install
-        WinWait, , InstallShield Wizard Complete
+        WinWait, Desperados 2, InstallShield Wizard Complete
         ControlCLick Button1           ; untick shortcut
         ControlClick Button2           ; untick directx setup
         ControlClick Button4           ; finish, also combo breaker
         WinWait, Desperados            ; flashy autorun thingy
         MouseMove 103, 417             ; x marks the spot
         Click                          ; exit
+        WinWaitClose
     "
     iso_umount
 
@@ -2868,6 +2869,48 @@ load_desperados2()
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Atari\\Desperados 2"
 Desperados2.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
+verblist_add desperados2_demo "Desperados 2 Demo (Atari, 2006) [download]" Desperados_Demo_US.zip
+
+load_desperados2_demo() {
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Desperados_Demo_US.zip"
+    then
+        mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
+        die "Download Desperados_Demo_US.zip from http://www.gamershell.com/download_13281.shtml and place it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: check SHA1sum ba2109a6ced8fb88c9e1066865cbf914d140f995
+
+    cd "$WISOTOOL_TMP"
+    mkdir $PACKAGE
+    cd $PACKAGE
+    try unzip "$WISOTOOL_CACHE/$PACKAGE"/Desperados_Demo_US.zip
+    ahk_do "
+        SetTitleMatchMode, 2
+        run Desperados2_Demo_Setup_US-ENES.exe
+        WinWait, Desperados 2, Choose Setup Language
+        WinActivate
+        ControlClick Button3       ; next
+        WinWait, Desperados 2, Choose Destination Location
+        ControlClick Button1       ; next
+        WinWait, Desperados 2, Select Program Folder
+        ControlClick Button2       ; next
+        WinWait, Desperados 2, Ready to Install the Program
+        ControlClick Button1       ; install
+        WinWait, Desperados 2, InstallShield Wizard Complete
+        ControlClick Button1       ; untick shortcut
+        ControlClick Button2       ; untick directx setup
+        ControlClick Button4       ; finish
+        WinWaitClose
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Atari\\Desperados 2 Demo"
+Desperados2_Demo.exe
 __EOF__
 }
 
