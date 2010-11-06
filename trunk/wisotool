@@ -12,7 +12,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of wisotool (YYYYMMDD)
-VERSION=20100731
+VERSION=20101106
 
 # Run a windows command without triggering wine's mshtml's gecko install dialog
 early_wine()
