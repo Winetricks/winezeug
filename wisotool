@@ -1634,14 +1634,18 @@ __EOF__
 }
 
 #--------------------------------------------------------------------------------------
+
+# Sadly, the SHA1SUM varies!
+# FIXME: change load function to call it by its volume label instead; right now you have to rename it manually.
+
 verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010)" \
-  9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
+  BFBC2.iso
 
 load_bfbc2() {
     exedir="$programfilesdir_x86_unix/Electronic Arts/Battlefield Bad Company 2"
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.iso
-    BFBC2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/9ec587f1eda0f8bf13f485526e3c46e4f9d477a6.txt | tr -d -`
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/BFBC2.iso
+    BFBC2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/BFBC2.txt | tr -d -`
     ahk_do "
         SetTitleMatchMode, 2
         run ${ISO_MOUNT_LETTER}:setup.exe
