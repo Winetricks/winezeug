@@ -51,7 +51,6 @@ http://en.wikipedia.org/wiki/Wine-Doors
 
 == Proposed free titles ==
 
-
 Alien Swarm
 http://news.bigdownload.com/2010/07/16/alien-swarm-to-be-released-by-valve-as-free-game-on-monday/
 82%: http://www.gamerankings.com/pc/999022-alien-swarm/index.html
@@ -59,11 +58,6 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
-
-Call of Duty Demo (Activision, 2003)  (old but platinum, highly rated)
-http://www.gamerankings.com/pc/914586-call-of-duty/index.html
-http://www.bigdownload.com/games/call-of-duty/pc/call-of-duty-demo/
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=1346
 
 Colin McRae's Dirt2 Demo
 http://www.codemasters.co.uk/downloads/details.php?id=39417
@@ -109,6 +103,10 @@ http://www.gamerankings.com/pc/971387-/
 Borderlands
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
 
+Deathspank (Steam)
+http://store.steampowered.com/app/18040/
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=21793
+
 Update Dragon Age Origins to 1.04, supposedly fixes flickering:
 http://zapakitul.wordpress.com/2010/09/10/getting-dragon-age-origins-v-1-04-to-work-on-ubuntu-10-04-and-wine/
 
@@ -134,16 +132,13 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=5937
 Opera
 http://www.opera.com/browser/download/?os=windows&ver=10.63&local=y
 
-== Already done by someone (though maybe not committed yet) ==
+== Already done by someone (though not committed yet - FIXME) ==
 
 Call of Duty 5: World at War
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=14475
 
 Draftsight
 http://www.3ds.com/products/draftsight/
-
-Lost Planet 2 benchmark
-http://news.bigdownload.com/2010/08/16/lost-planet-2-pc-due-out-on-october-15-benchmark-test-released/
 
 Pro Evolution Soccer 2011 Demo
 Available from all major game demo sites, fileplanet, bigdownload.com etc.
