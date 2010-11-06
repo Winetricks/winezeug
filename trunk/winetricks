@@ -3442,8 +3442,9 @@ load_shockwave() {
     # 2010-01-23 sha1sum: 4a837d238c28c5f345d73f105711f20c6d059273  
     # 2010-05-15 sha1sum: bdce02afc82233801e84137e78c2c5fe574db253
     # 2010-09-02 sha1sum: fed20eccc29fec2f64162b7265343514d43884bc
+    # 2010-11-03 sha1sum: 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
 
-    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi fed20eccc29fec2f64162b7265343514d43884bc
+    download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
     try $WINE msiexec /i "$WINETRICKS_CACHE"/sw_lic_full_installer.msi $WINETRICKS_QUIET
 }
 
@@ -3540,7 +3541,9 @@ load_usp10() {
 
 load_utorrent() {
     # Torrent client supported on Windows,Mac OSX, Linux through WINE 
-    download . http://download.utorrent.com/2.0.4/utorrent.exe 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee 
+    # Oct 2010 sha1sum 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee 
+    # Nov 6 2010 sha1sum 263a91693d0976473cd321cd6f1b0103a814f3adx
+    download . http://download.utorrent.com/2.0.4/utorrent.exe 263a91693d0976473cd321cd6f1b0103a814f3ad
 
     try cp -f "$WINETRICKS_CACHE"/utorrent.exe "$WINDIR"/utorrent.exe
     warn "utorrent is now installed to $WINDIR/utorrent.exe"
