@@ -6,7 +6,9 @@
 set -ex
 
 rm -rf $HOME/.winetrickscache $HOME/.cache/winetricks
-WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
+# Default to directory with spaces, just to make things harder
+WINEPREFIX="${WINEPREFIX:-$HOME/.wine for winetrickstest}"
+export WINEPREFIX
 
 test_failed()
 {
@@ -182,7 +184,7 @@ for verb in \
     
 do
     wineserver -k || true
-    rm -rf $WINEPREFIX
+    rm -rf "$WINEPREFIX"
     sh winetricks  -q -v $verb || test_failed $verb
 done
 
@@ -203,7 +205,7 @@ __EOF__
         mono26
     do
         wineserver -k || true
-        rm -rf $WINEPREFIX
+        rm -rf "$WINEPREFIX"
         sh winetricks  -q -v $verb
         wine dotnet_test.exe | grep "Dotnet works!" || test_failed $verb
     done
@@ -236,7 +238,7 @@ then
         vc2005trial
     do
         wineserver -k || true
-        rm -rf $WINEPREFIX
+        rm -rf "$WINEPREFIX"
         sh winetricks -v $verb || test_failed $verb
     done
 fi
