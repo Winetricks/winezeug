@@ -76,6 +76,12 @@ http://www.massively.com/2010/03/11/gdc10-land-of-chaos-online-interview/
 Lego Universe (closed beta, ask Dan for key)
 http://universe.lego.com/
 
+Lost Horizon demo (Deep Silver, game released Sept 2010) (a just-ok point and click adventure)
+http://www.amazon.com/Southpeak-40435Lost-Horizon-Lost-Download/dp/B0042X9M0K
+http://www.fileplanet.com/215704/210000/fileinfo/Lost-Horizon-Demo
+http://bugs.winehq.org/show_bug.cgi?id=25054
+http://www.gamerankings.com/pc/971542-lost-horizon/index.html  (82%, 8 ratings)
+
 Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 
