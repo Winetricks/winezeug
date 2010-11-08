@@ -88,6 +88,11 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 NVidia DirectX9 samples
 http://developer.download.nvidia.com/SDK/9.5/Samples/3dgraphics_samples.html
 
+Ongaku Demo
+http://www.ongakugame.com/demotry.html
+Seems to need directx9 to play well, haven't figured out exactly what it wants
+It's really freaky,
+
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
