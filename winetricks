@@ -1010,6 +1010,42 @@ _EOF_
     rm -f "$WINETRICKS_TMP"/path.reg
 }
 
+# Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
+# False (nonzero status) on Windows.
+# True (zero status) on Wine unless good-wineversion-shell-pattern is set
+# and matches the current wine version.
+# (FIXME: make that easier to use, maybe by specifying a range instead of a pattern.)
+# For debugging: if you want to skip a bug's workaround, put the bug number in the
+# environment variable WINETRICKS_BUG_BLACKLIST to disable it.
+workaround_wine_bug()
+{
+    if test "$WINE" = ""
+    then
+        echo No need to work around wine bug $1 on windows
+        return 1
+    fi
+    if test "$2" != ""
+    then
+        # Using shell patterns in a variable with case is tricky, need to use eval
+        checkcode="
+            case $WINEVERSION in
+                $2) echo No need to work around wine bug $1 in wine $WINEVERSION
+                return 1
+                ;;
+            esac
+        "
+        eval "$checkcode"
+    fi
+    if test "$WINETRICKS_BUG_BLACKLIST" && echo $1 | grep -q "$WINETRICKS_BUG_BLACKLIST"
+    then
+        echo wine bug $1 workaround blacklisted, skipping
+        return 1
+    fi
+    # In wisotool, we warn here, but traditionally winetricks has been silent about workarounds, so just echo
+    echo "Working around wine bug $1"
+    return 0
+}
+
 #----- common download for several verbs
 
 helper_directx_dl() {
@@ -1755,8 +1791,6 @@ load_dotnet30() {
 #----------------------------------------------------------------
 
 load_dotnet35() {
-    warn "This does not work yet, see bug 20110"
-
     # According to AF's recipe, installing dotnet30 first works around msi bugs
     load_dotnet30
 
@@ -1767,7 +1801,25 @@ load_dotnet35() {
     cd "$DRIVE_C"
     try_cabextract $WINETRICKS_UNIXQUIET "$WINETRICKS_CACHE"/dotnet35/dotnetfx35.exe
     cd wcu/dotNetFramework
-    try $WINE dotNetFx35setup.exe /lang:ENU
+    $WINE dotNetFx35setup.exe /lang:ENU
+
+    # FIXME: Do this only if the above commmand failed (not sure how to detect it... look for some file, I s'pose)
+    if workaround_wine_bug 25060
+    then
+        # Thanks to Louis for this partial recipe
+        #try $WINE reg add 'HKLM\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727' /v SP /t REG_DWORD /d 0001
+        cat > "$WINETRICKS_TMP"/sp1.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
+"SP"=dword:00000001
+
+_EOF_
+        try $WINE regedit "$WINETRICKS_TMP"/sp1.reg
+        cd "$DRIVE_C"/wcu/dotNetFramework/dotNetFX35/x86
+        try_cabextract netfx35_x86.exe
+        try $WINE msiexec /i vs_setup.msi ADDEPLOY=1
+    fi
 }
 
 #----------------------------------------------------------------
