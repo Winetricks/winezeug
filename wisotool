@@ -2560,6 +2560,95 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+verblist_add dao_ue     "Dragon Age: Origins - Ultimate Edition (Bioware / EA, 2010)" 2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso 545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso
+
+load_dao_ue()
+{
+    # Get user's key
+    DAO_UE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.txt | tr -d -`
+    
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso
+
+    # Annoyingly, it runs a webrowser so you can activate the extra stuff. Disable that, and warn the user after install:
+    export WINEDLLOVERRIDES="winebrowser.exe="
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        winwait, Installer Language
+        sleep 1000
+        ControlClick Button1, Installer Language
+        winwait, Dragon Age: Origins Setup
+        ControlClick Button2, Dragon Age: Origins Setup
+        winwait, Dragon Age: Origins Setup, License Agreement
+        sleep 1000
+        ControlClick Button4, Dragon Age: Origins Setup
+        sleep 1000
+        ControlClick Button2, Dragon Age: Origins Setup
+        winwait, Dragon Age: Origins, Registration
+        sleep 1000
+        controlclick, Edit1
+        send $DAO_UE_KEY
+        send {Enter}
+        winwait, Dragon Age: Origins Setup, Install Type
+        sleep 1000
+        controlclick, Button2, Dragon Age: Origins Setup, Install Type
+        winwait, Dragon Age: Origins Setup, expanded content
+        sleep 1000
+        controlclick, Button1
+        winwait, Insert Disc...
+    "
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso
+    
+    ahk_do "
+        sleep 5000
+	SetTitleMatchMode, 2
+        controlclick, Button2, Insert Disc...
+        winwait, Dragon Age, The required version
+        sleep 1000
+        controlclick, Button2, Dragon Age, The required version
+        winwait, Dragon Age, Setup was completed successfully
+        sleep 1000
+        controlclick, Button2, Dragon Age, Setup was completed successfully
+        winwait, Dragon Age, Click Finish to close
+        sleep 1000
+        controlclick, Button5, Dragon Age, Click Finish to close
+        sleep 1000
+        controlclick, Button2, Dragon Age, Click Finish to close
+    "
+    iso_umount
+
+    if workaround_wine_bug 22307
+    then
+        warn "Turn off frame buffer effects to avoid blurry cut scenes.  See http://bugs.winehq.org/show_bug.cgi?id=22307"
+    fi
+
+    if workaround_wine_bug 22383
+    then
+        try "$WINETRICKS" -q strictdrawordering=enabled
+    fi
+
+    if workaround_wine_bug 23730
+    then
+        warn "Run with WINEDEBUG=-all to reduce flickering."
+    fi
+
+    if workaround_wine_bug 23081
+    then
+        warn "If you still see flickering, try applying the patch from http://bugs.winehq.org/show_bug.cgi?id=23081"
+    fi
+
+    warn "To activate the additional content, visit http://social.bioware.com/redeem_code.php?path=/dragonage/pc/dlcactivate/en"
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Dragon Age"
+bin_ship\\daorigins.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
 
 verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
 
