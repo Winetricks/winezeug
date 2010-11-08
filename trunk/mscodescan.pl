@@ -154,7 +154,7 @@ foreach $haystack (@haystacks) {
             }
         }
         # this is lame - duplicates code from below.
-        open(PIPE, "tr -d '\\000' < '$haystack' | egrep -il 'microsoft corp|ProductNameMicrosoft' |") || die;
+        open(PIPE, "tr -d '\\000' < '$haystack' | strings | grep -v '<!-- Copyright 1981-2001 Microsoft Corporation -->' | egrep -i 'microsoft corp|ProductNameMicrosoft' |") || die;
         $x = <PIPE>;
         close(PIPE);
         if (length($x) > 3) {
