@@ -39,6 +39,11 @@ http://www.youtube.com/user/Jakejw93#g/u
 
 http://www.youtube.com/user/2m42hy#g/u
 
+== Blogs about Wine and Games ==
+
+http://www.steamgamesonlinux.com/category/playable-steam-games/
+(assuming we ever get steam reliably scripted, that is)
+
 == Other Wine Frontends ==
 (PlayOnLinux supports about 250 games.  If it works for them, we can probably script it.)
 
