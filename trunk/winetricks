@@ -3127,9 +3127,19 @@ load_msxml6() {
     # download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6.msi 2308743ddb4cb56ae910e461eeb3eab0a9e58058
     # Service Pack 1
     # http://www.microsoft.com/downloads/details.aspx?familyid=D21C292C-368B-4CE1-9DAB-3E9827B70604
-    download . http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi
-    override_dlls native,builtin msxml6
-    try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml6_x86.msi $WINETRICKS_QUIET
+    case $ARCH in
+    win32)
+        download . http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi 5125220e985b33c946bbf9f60e2b222c7570bfa2
+        override_dlls native,builtin msxml6
+        try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml6_x86.msi $WINETRICKS_QUIET
+        ;;
+    win64)
+        # FIXME: Currently fails, wine bug?
+        download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6_x64.msi 1eb84eeae7729ea5db7fe79779f4e216114261ba
+        override_dlls native,builtin msxml6
+        try $WINE msiexec /i "$WINETRICKS_CACHE"/msxml6_x64.msi $WINETRICKS_QUIET
+        ;;
+    esac
 }
 
 #----------------------------------------------------------------
