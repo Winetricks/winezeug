@@ -2604,9 +2604,6 @@ load_dao_ue()
         sleep 5000
 	SetTitleMatchMode, 2
         controlclick, Button2, Insert Disc...
-        winwait, Dragon Age, The required version
-        sleep 1000
-        controlclick, Button2, Dragon Age, The required version
         winwait, Dragon Age, Setup was completed successfully
         sleep 1000
         controlclick, Button2, Dragon Age, Setup was completed successfully
