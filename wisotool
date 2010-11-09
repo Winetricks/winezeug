@@ -4097,6 +4097,12 @@ load_futurepinball() {
         sleep 1000
         send {Space}              ; do not launch
         ControlClick, TButton4    ; finish
+        ; sometimes the dang thing ignores the space and launches anyway
+        sleep 2000
+        Process, exist, Future Pinball.exe
+        fppid = %ErrorLevel%
+        if fpid != 0
+            Process, close, Future Pinball.exe
     "
     if workaround_wine_bug 8780
     then 
