@@ -1624,6 +1624,12 @@ load_dmsynth() {
 load_dotnet11() {
     DOTNET_INSTALL_DIR="$WINDIR/Microsoft.NET/Framework/v1.1.4322"
 
+    # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
+    if [ $ARCH = win64 ]
+    then
+        die "This package dotnet11 does not work on a 64-bit installation"
+    fi
+
     # Wine now provides some fake dll's here that conflict.
     # So check for a file that Wine should never provide, to determine if the install folder is Wine's fake one, or a real one.
     # If real, rm -rf it:
