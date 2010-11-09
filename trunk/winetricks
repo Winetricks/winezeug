@@ -1627,7 +1627,7 @@ load_dotnet11() {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
     then
-        die "This package dotnet11 does not work on a 64-bit installation"
+        die "This package does not work on a 64-bit installation"
     fi
 
     # Wine now provides some fake dll's here that conflict.
@@ -2486,6 +2486,12 @@ _EOF_
 #----------------------------------------------------------------
 
 load_ie6_full() {
+    # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
+    if [ $ARCH = win64 ]
+    then
+        die "This package does not work on a 64-bit installation"
+    fi
+
     download . http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
 
     cd "$WINETRICKS_TMP"
@@ -2548,7 +2554,15 @@ load_ie6_full() {
     unset_winver
 }
 
+#----------------------------------------------------------------
+
 load_ie6() {
+    # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
+    if [ $ARCH = win64 ]
+    then
+        die "This package does not work on a 64-bit installation"
+    fi
+
     if test "$WINE" = ""
     then
         echo "No need to install ie6 on real windows"
