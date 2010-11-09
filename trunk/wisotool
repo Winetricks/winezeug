@@ -1592,7 +1592,7 @@ load_batman_arkham_asylum_demo() {
                 Send +!a ; license agreement
                 Send +!n ; next
             }
-            IfWinExist, NVIDIA, finish
+            IfWinExist, NVIDIA, Finish  ; "NVIDIA PhysX has been successfully installed."
             {
                 WinActivate
                 Send +!f ; finish
@@ -1612,6 +1612,7 @@ load_batman_arkham_asylum_demo() {
                 Process, Close, BmLauncher.exe ; kill BmLauncher
                 break
             }
+	    ; If BmLauncher.exe fails to run, we'll get stuck in an infinite loop here.  Shouldn't happen unless, say, .net 30 fails to install.
             Sleep (2000)
         }
     "
