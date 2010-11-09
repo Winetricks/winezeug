@@ -2973,13 +2973,15 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add deusex2_demo   "Deus Ex 2 Demo [download]" dxiw_demo.zip
+verblist_add deusex2_demo   "Deus Ex 2 / Deus Ex: Invisible War Demo (Eidos, 2003) [download]" dxiw_demo.zip
 load_deusex2_demo()
 {
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/dxiw_demo.zip"
     then
-        download $PACKAGE http://www.techpowerup.com/downloads/1730i/dxiw_demo.zip ccae48fb046d912b3714ea1b4be4294e74bb3092
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download the demo from http://www.techpowerup.com/downloads/1730/Deus_Ex:_Invisible_War_Demo.html and put it in $WISOTOOL_CACHE/$PACKAGE"
     fi
+    # FIXME: sha1sum ccae48fb046d912b3714ea1b4be4294e74bb3092
 
     mkdir -p "$WISOTOOL_TMP/$PACKAGE"
     cd "$WISOTOOL_CACHE/$PACKAGE"
