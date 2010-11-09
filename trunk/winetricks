@@ -3792,7 +3792,7 @@ load_vcrun2003() {
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     download . $SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
     try $WINE "$WINETRICKS_CACHE"/BZEditW32_1.6.5_Installer.exe $WINETRICKS_S
-    try cp "$programfilesdir_unix/BZEdit1.6.5"/m*71* "$SYSTEM32_DLLS"
+    try cp "$programfilesdir_x86_unix/BZEdit1.6.5"/m*71* "$SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
