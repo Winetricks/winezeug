@@ -1781,10 +1781,13 @@ load_dotnet30() {
        ln -sf "${SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
     done 
 
-    # Don't do this for dotnet30! See http://bugs.winehq.org/show_bug.cgi?id=24349#c4
-    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
-    #try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f
-    #try $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f
+    #if workaround_wine_bug 25074
+    #then
+    #    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
+    #    rm "$WINDIR/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
+    #    rm -rf "$WINDIR/Microsoft.NET/Framework/v4.0.30319"
+#	ls -l "$WINDIR"/Microsoft.NET/Framework
+#    fi
 
     if [ "$WINETRICKS_QUIET"x = ""x ]
     then

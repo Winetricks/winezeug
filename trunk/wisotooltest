@@ -25,7 +25,7 @@ srcdir=`dirname $0`
 srcdir=`cd $srcdir; pwd`
 
 # verbs known to not work yet
-BLACKLIST="starcraft$|passmark7"
+BLACKLIST="starcraft$|passmark7|smbx"
 
 case "$LANG" in
 ""|"C") echo "Some games won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ; exit 1;;
@@ -33,7 +33,7 @@ esac
 
 case "$1" in
 download)  verbs="`sh wisotool --help | grep '\[download' | grep -v broken | egrep -v "$BLACKLIST" | awk '{print $1}'`" ;;
-all|"") verbs="`sh wisotool ls | egrep -v "$BLACKLIST" `" ;;
+loaded|all|"") verbs="`sh wisotool ls | egrep -v "$BLACKLIST" `" ;;
 activision) verbs="
 	blur
 	codmw2
@@ -70,14 +70,24 @@ esac
 for app in $verbs
 do
     export WINEPREFIX=$HOME/wisotooltest-prefixes/$app
-    rm -rf $WINEPREFIX
+    # change if you don't want to skip ones already installed
+    if test -d $HOME/wisotooltest-prefixes/$app
+    then
+        echo "Skipping $app, already installed"
+	continue
+        #rm -rf $WINEPREFIX
+    fi
     export DRIVE_C="$WINEPREFIX/dosdevices/c:"
 
     # Isolate us from the user's home directory
     sh winetricks sandbox gecko
 
     echo "Installing $app"
-    time sh wisotool $app
+    if ! sh wisotool $app
+    then
+        echo "Installing $app failed!"
+	#exit 1
+    fi
     echo -n "Done installing $app, disk usage "
     du -sh $WINEPREFIX
     $WINESERVER -w

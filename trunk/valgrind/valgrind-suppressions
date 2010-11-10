@@ -131,6 +131,13 @@
    obj:/usr/lib*/libXcursor.so.1.0.2
 }
 {
+   bogus_libxcb
+   Memcheck:Param
+   writev(vector[...])
+   obj:*
+   obj:/usr/lib/libxcb.so*
+}
+{
    suppress_i915_ioctl
    Memcheck:Param
    ioctl(generic)
