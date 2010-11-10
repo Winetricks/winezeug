@@ -3879,6 +3879,11 @@ load_vcrun2010() {
 #----------------------------------------------------------------
 
 load_vjrun20() {
+    if [ $ARCH = win64 ]
+    then
+        warn "vjrun20 depends on dotnet20, which doesn't work on 64-bit wine yet. Skipping."
+        return
+    fi
     load_dotnet20
     # See http://www.microsoft.com/downloads/details.aspx?FamilyId=E9D87F37-2ADC-4C32-95B3-B5E3A21BAB2C
     download vjrun20 http://download.microsoft.com/download/9/2/3/92338cd0-759f-4815-8981-24b437be74ef/vjredist.exe 80a098e36b90d159da915aebfbfbacf35f302bd8
