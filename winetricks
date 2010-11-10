@@ -4352,6 +4352,10 @@ load_wininet() {
 #----------------------------------------------------------------
 
 load_wme9() {
+    if [ $ARCH = win64 ]
+    then
+        die "Installer doesn't support 64-bit architecture."
+    fi
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=5691ba02-e496-465a-bba9-b2f1182cdf24
     download wme9 http://download.microsoft.com/download/8/1/f/81f9402f-efdd-439d-b2a4-089563199d47/WMEncoder.exe 7a3f8781f3e5705651992ef0150ee30bc1295116
 
