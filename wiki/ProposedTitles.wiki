@@ -74,6 +74,9 @@ http://heat-online.net/
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; download using torrent, winetricks dotnet20 first)
 (see also http://en.wikipedia.org/wiki/Project_Torque, http://bugs.winehq.org/show_bug.cgi?id=22152 )
 
+Hegemony Gold beta
+http://www.longbowgames.com/
+
 Land of Chaos Online Open beta starts aug 3.
 http://pc.ign.com/articles/110/1109105p1.html
 http://www.massively.com/2010/03/11/gdc10-land-of-chaos-online-interview/
