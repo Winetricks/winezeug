@@ -8,6 +8,7 @@
 # -l: just list dlls/exe's, not missing imports
 # -q: don't output titles
 # -w: where to look for wine sources
+# -i pattern: ignore wine's implementation of dlls matching pattern, report all imports
 
 my %opt;
 #use Getopt::Std;
@@ -16,15 +17,21 @@ my $pending;
 $winesrc = $ENV{"HOME"}."/wine-git";
 
 foreach (@ARGV) {
-	 if (defined($pending)) {
-		 $winesrc = $_ if ($pending eq '-w');
-		 undef $pending;
-	 } elsif ($_ eq '-l') {
+    if (defined($pending)) {
+       if ($pending eq '-w') {
+           $winesrc = $_ 
+       } elsif ($pending eq '-i') { 
+           $report_all_imports_from_these_modules = $_;
+       }
+       undef $pending;
+    } elsif ($_ eq '-l') {
         $opt{'l'} = 1;
     } elsif ($_ eq '-q') {
         $opt{'q'} = 1;
+    } elsif ($_ eq '-i') {
+        $pending = $_;
     } elsif ($_ eq '-w') {
-		  $pending = $_;
+        $pending = $_;
     } else {
         die("unknown option $_\n");
     }
@@ -228,8 +235,9 @@ foreach $needle (@needles) {
             }
             if ($found == 2) {
                 if (/^\s*(\d+)\s*(\S+)\s/) {
-                    if ($stubs{$needle.":".$2}) {
-                        $found{$needle.":".$2} = 1;
+		    $symbol = $2;
+                    if ($stubs{$needle.":".$symbol} || (defined($report_all_imports_from_these_modules) && $needle =~ /${report_all_imports_from_these_modules}/)) {
+                        $found{$needle.":".$symbol} = 1;
                     }
                 } else {
                     $found = 0;
