@@ -396,8 +396,6 @@ early_wine()
     WINEDLLOVERRIDES=mshtml= $WINE "$@"
 }
 
-# Default values for important settings if not already in environment.
-# These settings should not need editing here.
 case "$OS" in
  "Windows_NT")
     # Cheezy fix for getting rid of double slashes when running cygwin in wine
@@ -411,8 +409,25 @@ case "$OS" in
     ;;
  *)
     WINE=${WINE:-wine}
+    if [ ! -x "`which "$WINE" 2>/dev/null`" ]
+    then
+        die "Cannot find wine ($WINE)"
+    fi
+
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
     DRIVE_C="$WINEPREFIX/dosdevices/c:"
+
+    # Create $WINEPREFIX if not already there, and wait for it to complete
+    # (otherwise, there's a nasty race condition):
+    # DO NOT USE $WINE BEFORE THIS, if you need to, then move this appropriately.
+    if test ! -d "$WINEPREFIX" 
+    then
+        early_wine cmd /c echo hi > /dev/null 2>&1
+    fi
+
+    # Prevent running with wrong user id.
+    # It's bad to create files as the wrong user!
+    die_if_user_not_dirowner "$WINEPREFIX"
     XXXPATH="early_wine winepath"
     ;;
 esac
@@ -4502,29 +4517,10 @@ esac
 detect_menu
 detect_sudo
 
-case "$OS" in
- "Windows_NT")
-  ;;
- *)
-  # Prevent running with wrong user id.
-  # It's bad to create files as the wrong user!
-  die_if_user_not_dirowner "$WINEPREFIX"
-  #die_if_user_not_dirowner "$WINETRICKS_CACHE"
-
-  if [ ! -x "`which "$WINE" 2>/dev/null`" ]
-  then
-      die "Cannot find wine ($WINE)"
-  fi
-
-  # Create wineprefix if not already there
-  test -d "$WINEPREFIX" || WINEDLLOVERRIDES=mshtml= $WINE cmd /c echo yes > /dev/null 2>&1
-  ;;
-esac
-
 mkdir -p "$WINETRICKS_TMP"
 
 case $GUI in
-1) showmenu ; set $todo ;;
+    1) showmenu ; set $todo ;;
 esac
 
 mkdir -p "$WINETRICKS_CACHE"
