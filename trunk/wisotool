@@ -3728,8 +3728,9 @@ load_fifaonline3_beta()
     then
         mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
         die "Download the FIFAOnlineSetup.exe from http://fifa-online.easports.com/web/beta/welcome \
-             and place it in $WISOTOOL_CACHE/$PACKAGE"
+             or http://www.fileplanet.com/190743/download/FIFA-Online-Game-Client and place it in $WISOTOOL_CACHE/$PACKAGE"
     fi
+    # FIXME: sha1sum?
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
@@ -4524,6 +4525,12 @@ load_hegemonypom_demo()
         download $PACKAGE http://www.longbowgames.com/downloads/Hegemony%20Philip%20of%20Macedon%20Installer.exe d3d2aa020d38b594d112360ae40871662d35dea4
         # Get rid of spaces in exe name, since download leaves them as %20's, and ahk_do might not make it easy to use quotes
         mv Hegemony* Hegemony_Philip_of_Macedon_Installer.exe
+    fi
+
+    if workaround_wine_bug 24819
+    then
+        sh "$WINETRICKS" gameux=disabled
+        $WINESERVER -w
     fi
 
     ahk_do "
@@ -6013,10 +6020,10 @@ __EOF__
 verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
 
 load_pcmark04() {
-    # http://www.futuremark.com/download/pcmark04/
     if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark04_v130_installer.exe"
     then
-        die "Sorry, you have to download PCMark04_v130_installer.exe yourself and put it in $WISOTOOL_CACHE/$PACKAGE/PCMark04_v130_installer.exe"
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download PCMark04_v130_installer.exe from http://www.futuremark.com/download/pcmark04/ and put it in $WISOTOOL_CACHE/$PACKAGE/"
     fi
 
     warn "Please don't use mouse while this installer is running.  Sorry..."
@@ -7915,6 +7922,7 @@ load_smbx() {
         Send {Space}   ; Don't run game
         Send {Enter}
     "
+    # FIXME: tries to install Bing Bar, hangs.
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SMBX
@@ -8228,19 +8236,19 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add unigine_heaven "Unigen Heaven 2 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
+verblist_add unigine_heaven "Unigen Heaven 2.1 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
 
 load_unigine_heaven() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Unigine_Heaven-2.0.msi"
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Unigine_Heaven-2.1.msi"
     then
-        warn "This download is slow, you may want to do a manual download from http://downloads.guru3d.com/Unigine-Heaven-DirectX-11-benchmark-2.0-download-2414.html instead"
-        #download $PACKAGE http://www.techpowerup.com/downloads/1775e/Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
-        download $PACKAGE http://unigine.com/download/files/Unigine_Heaven-2.0.msi 6a0bd499ae8ed8d73d74d964d3c4312a0a40b7e6
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download via http://unigine.com/download/torrents/Unigine_Heaven-2.1.msi.torrent and place in $WISOTOOL_CACHE/$PACKAGE"
     fi
+    # FIXME sha1sum 3d7b94a3734cdae85f98032b61668e743979c444
 
     cd "$WISOTOOL_CACHE/$PACKAGE"
     ahk_do "
-        run msiexec /i Unigine_Heaven-2.0.msi
+        run msiexec /i Unigine_Heaven-2.1.msi
         WinWait ahk_class MsiDialogCloseClass
         Sleep 1000
         Send {Enter}
