@@ -441,6 +441,7 @@ if test -d "$DRIVE_C/windows/syswow64"
 then
     ARCH=win64
     SYSTEM32_DLLS="$WINDIR/syswow64"
+    SYSTEM64_DLLS="$WINDIR/system32"
 else
     ARCH=win32
     SYSTEM32_DLLS="$WINDIR/system32"
@@ -2245,6 +2246,9 @@ load_gecko() {
         GECKO_VERSION=1.1.0
         GECKO_ARCH=-x86
         GECKO_SHA1SUM=1b6c637207b6f032ae8a52841db9659433482714
+        GECKO64_DIR="$SYSTEM64_DLLS"
+        GECKO64_ARCH=-x86_64
+        GECKO64_SHA1SUM=55b4b60cd2a48631d6236fb411c3a94d806d9906
         ;;
     esac
 
@@ -2300,6 +2304,26 @@ _EOF_
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
     try_cabextract $WINETRICKS_UNIXQUIET "$GECKOPATH"
     cd "$olddir"
+    
+    # Repeat for 64-bit. You don't need to set registry, though..
+    if [ $ARCH = win64 ]
+    then
+        GECKOCAB="wine_gecko-$GECKO_VERSION$GECKO64_ARCH.cab"
+        for candidate in "$WINEDIR/../share/wine/gecko/$GECKOCAB" "$WINEDIR/../gecko/$GECKOCAB"
+        do
+            gotsum=`$SHA1SUM 2>/dev/null < "$candidate" | sed 's/ .*//'`
+            if [ "$gotsum"x = "$GECKO64_SHA1SUM"x ]
+            then
+                GECKOPATH="$candidate"
+                break
+            fi
+        done
+
+        mkdir -p "$GECKO64_DIR/gecko/$GECKO_VERSION"
+        cd "$GECKO64_DIR/gecko/$GECKO_VERSION"
+        try_cabextract $WINETRICKS_UNIXQUIET "$GECKOPATH"
+        cd "$olddir"
+    fi
 
     # set install-path
     try_regedit "$WINETRICKS_TMP_WIN"\\geckopath.reg
