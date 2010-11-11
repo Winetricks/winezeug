@@ -893,14 +893,36 @@ migrate_files()
 {
     for file in "$WISOTOOL_CACHE"/*.iso "$WISOTOOL_CACHE"/*.exe
     do
+        set -x
+        # Did wildcard fail to match?
+        if test "$file" = "$WISOTOOL_CACHE/*.iso" || test "$file" = "$WISOTOOL_CACHE/*.exe"
+	then
+	    continue
+	fi
+
         barefile=`basename $file`
         verb=`map_file_to_verb $barefile`
+
+        if test "$verb" = ""
+	then
+	    # Try volume name
+	    if volname $file | sed 's/  *$//' > /tmp/migrate.volname
+	    then
+	        vname=`cat /tmp/migrate.volname`
+                verb=`map_file_to_verb "$vname.iso"`
+                if test "$verb" != ""
+		then
+		    mv "$file" "$WISOTOOL_CACHE/$vname.iso"
+		    file="$WISOTOOL_CACHE/$vname.iso"
+		fi
+	    fi
+        fi
         if test "$verb" != ""
         then
             mkdir -p "$WISOTOOL_CACHE"/$verb
-            movee=`echo $file | sed 's,\(\.iso\)$\|\(\.exe\)$,.*,g'`
-            echo Moving $movee to $WISOTOOL_CACHE/$verb/
-            mv $movee "$WISOTOOL_CACHE"/$verb/
+            movee=`echo $file | sed 's,\(\.iso\)$\|\(\.exe\)$,,g'`
+            echo Moving $movee.* to $WISOTOOL_CACHE/$verb/
+            mv "$movee".* "$WISOTOOL_CACHE"/$verb/
         fi
     done
 }
