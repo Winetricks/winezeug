@@ -764,7 +764,7 @@ set_psm() {
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
-"RenderTargetLockMode"="$1"
+"PixelShaderMode"="$1"
 
 _EOF_
     try_regedit "$WINETRICKS_TMP"/set-psm.reg
