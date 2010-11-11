@@ -2319,6 +2319,14 @@ _EOF_
             fi
         done
 
+        if test -z "$GECKOPATH"
+        then
+            # FIXME: busted if using curl!
+            download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO64_ARCH.cab" \
+                    $GECKO64_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO64_ARCH.cab
+            GECKOPATH="$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO64_ARCH.cab
+        fi
+
         mkdir -p "$GECKO64_DIR/gecko/$GECKO_VERSION"
         cd "$GECKO64_DIR/gecko/$GECKO_VERSION"
         try_cabextract $WINETRICKS_UNIXQUIET "$GECKOPATH"
