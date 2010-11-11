@@ -553,7 +553,7 @@ try_unzip() {
         die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
     fi
     
-    try $UNZIP "$@"
+    try $UNZIP -o -q "$@"
 }
 
 unzip() {
@@ -1170,7 +1170,7 @@ load_cc580() {
     download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
     try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
+    try_unzip -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
     try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
     try cp "$WINETRICKS_TMP"/comcnt.dll "$SYSTEM32_DLLS"/comctl32.dll
 
@@ -1206,7 +1206,7 @@ load_comctl32ocx() {
 
 load_colorprofile() {
     download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
 
     # It's in system32 for both win32/win64
     mkdir -p "$WINDIR"/system32/spool/drivers/color
@@ -2532,7 +2532,7 @@ _EOF_
 
 load_glut() {
     download . http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$DRIVE_C" "$WINETRICKS_CACHE"/glut-3.7.6-bin.zip
+    try_unzip -d "$DRIVE_C" "$WINETRICKS_CACHE"/glut-3.7.6-bin.zip
     try cp "$DRIVE_C"/glut-3.7.6-bin/glut32.dll "$SYSTEM32_DLLS"
     warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
 }
@@ -2989,7 +2989,7 @@ load_mdac28() {
 load_mfc40() {
     # See http://support.microsoft.com/kb/122244
     download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ole2v.exe
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ole2v.exe
     try cp -f "$WINETRICKS_TMP"/MFC40.DLL "$SYSTEM32_DLLS"
 
     rm -rf "$WINETRICKS_TMP"/*
@@ -3251,7 +3251,7 @@ load_ogg() {
 load_ole2() {
     # http://support.microsoft.com/kb/123087/EN-US/
     download . http://download.microsoft.com/download/win31/update/2.03/win/en-us/ww1116.exe b803991c40f387464b61f606536b7c98a88245d2
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
     set_winver win31
     cd "$WINETRICKS_TMP"
     try $WINE setup.exe
@@ -3294,7 +3294,7 @@ load_pdh() {
     # http://support.microsoft.com/kb/284996
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
     try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/pdhinst.exe
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/pdh.exe
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/pdh.exe
     try cp -f "$WINETRICKS_TMP"/x86/Pdh.Dll "$SYSTEM32_DLLS"/pdh.dll
 }
 
@@ -3720,7 +3720,7 @@ load_vb2run() {
     # Not referenced on MS web anymore. But the old Microsoft Software Library FTP still has it.
     # See ftp://ftp.microsoft.com/Softlib/index.txt
     download . ftp://ftp.microsoft.com/Softlib/MSLFILES/VBRUN200.EXE ac0568b73ee375408778e9b505df995f79ab907e
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
     try cp -f "$WINETRICKS_TMP/VBRUN200.DLL" "$SYSTEM32_DLLS"
 
 }
@@ -3730,7 +3730,7 @@ load_vb2run() {
 load_vb3run() {
     # See http://support.microsoft.com/kb/196285
     download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb3run.exe
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb3run.exe
     try cp -f "$WINETRICKS_TMP/Vbrun300.dll" "$SYSTEM32_DLLS"
 
 }
@@ -3740,7 +3740,7 @@ load_vb3run() {
 load_vb4run() {
     # See http://support.microsoft.com/kb/196286
     download . http://download.microsoft.com/download/vb40ent/sample27/1/w9xnt4/en-us/vb4run.exe 83e968063272e97bfffd628a73bf0ff5f8e1023b
-    try_unzip -o $WINETRICKS_UNIXQUIET -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb4run.exe
+    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb4run.exe
     try cp -f "$WINETRICKS_TMP/Vb40032.dll" "$SYSTEM32_DLLS"
     try cp -f "$WINETRICKS_TMP/Vb40016.dll" "$SYSTEM32_DLLS"
 
