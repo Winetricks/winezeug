@@ -2370,6 +2370,9 @@ load_gecko_dbg() {
         GECKO_ARCH=-x86
         GECKO_EXTENSION=tar.bz2
         GECKO_SHA1SUM=647a488b306f3865527ce03df3c16c06afce1677
+        GECKO64_DIR="$SYSTEM64_DLLS"
+        GECKO64_ARCH=-x86_64
+        GECKO64_SHA1SUM=d6b286e0066f3d08f0a3510bd7b506d7c5b3991d
         ;;
     esac
 
@@ -2415,6 +2418,36 @@ _EOF_
     fi
 
     cd "$olddir"
+    
+    # Repeat for 64-bit. You don't need to set registry, though..
+    if [ $ARCH = win64 ]
+    then
+        if test ! -f "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO64_ARCH-dbg.$GECKO_EXTENSION
+        then
+           # FIXME: busted if using curl!
+           download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO64_ARCH-dbg.$GECKO_EXTENSION" $GECKO64_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO64_ARCH-dbg.$GECKO_EXTENSION
+        fi
+
+        GECKOCAB="wine_gecko-$GECKO_VERSION$GECKO64_ARCH.cab"
+        for candidate in "$WINEDIR/../share/wine/gecko/$GECKOCAB" "$WINEDIR/../gecko/$GECKOCAB"
+        do
+            gotsum=`$SHA1SUM 2>/dev/null < "$candidate" | sed 's/ .*//'`
+            if [ "$gotsum"x = "$GECKO64_SHA1SUM"x ]
+            then
+                GECKOPATH="$candidate"
+                break
+            fi
+        done
+
+        mkdir -p "$GECKO64_DIR/gecko/$GECKO_VERSION"
+        cd "$GECKO64_DIR/gecko/$GECKO_VERSION"
+        bunzip2 -cd "$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO64_ARCH-dbg.tar.bz2 | tar -xf -
+        if test $? -ne 0
+        then
+            die Gecko debug redistributable extraction failed
+        fi
+        cd "$olddir"
+    fi
 
     # set install-path
     try_regedit "$WINETRICKS_TMP_WIN"\\geckopath.reg
