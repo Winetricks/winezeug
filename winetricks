@@ -4433,6 +4433,11 @@ load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
 
+    if [ $ARCH = win64 ]
+    then
+        die "Installer doesn't support 64-bit architecture."
+    fi
+
     load_wsh57
 
     set_winver win2k
