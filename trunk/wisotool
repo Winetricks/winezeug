@@ -1291,6 +1291,239 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add aoe3cc "Age Of Empires III: Complete Collection - Age of Empires III (Microsoft, 2009)" "AOE III DISC 1".iso "AOE III DISC 2".iso "AOE III DISC 3".iso
+
+load_aoe3cc() {
+# Not using $PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
+# where $PACKAGE would be set differently
+
+    mkdir -p "$WISOTOOL_TMP/aoe3cc"
+
+    if test ! -f "$WISOTOOL_TMP/aoe3cc/tempcd/0x0409.ini"
+    then
+        # This app is protected by SmartE, so we have to copy
+        # all the files to hard disk before installing.
+        mkdir -p "$WISOTOOL_TMP/aoe3cc/tempcd"
+        for disc in 1 2 3
+        do
+            echo Copying disc $disc
+	    # Not using $PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
+	    # where $PACKAGE would be set differently
+            iso_mount "$WISOTOOL_CACHE/aoe3cc/AOE III DISC $disc.iso"
+            cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/aoe3cc/tempcd
+            chmod -R +w "$WISOTOOL_TMP"/aoe3cc/tempcd
+            iso_umount
+            sleep 5
+        done
+    fi
+
+    if workaround_wine_bug 657
+    then
+        try sh "$WINETRICKS" -q mfc42
+    fi
+
+    if workaround_wine_bug 24897
+    then
+        try sh "$WINETRICKS" -q msxml4
+    fi
+
+    AOE3CC_KEY="`cat "$WISOTOOL_CACHE/aoe3cc/AOE III DISC 1.txt" | tr -d -`"
+
+    cd "$WISOTOOL_TMP"/aoe3cc/tempcd
+    ahk_do "
+        Run, Setup.exe
+        SetTitleMatchMode, 2
+        WinWait, Age of Empires, Welcome
+        Sleep 500
+        ControlClick Button1 ; Next
+        WinWait, Age of Empires, Express
+        Sleep 500
+        ControlClick Button4 ; Next
+        WinWait, Age of Empires, Key
+        Sleep 500
+        ControlClick, Edit1
+        Send {RAW}$AOE3CC_KEY
+        ControlClick, Button1 ; OK
+        WinWait, Age of Empires, Complete
+        Sleep 500
+        ControlClick, Button4 ; Finish
+        WinWaitClose
+    "
+
+    if workaround_wine_bug 24911
+    then
+        try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+    fi
+
+    if workaround_wine_bug 24912
+    then
+        # kill off lingering installer
+        ahk_do "
+            SetTitleMatchMode, 2
+            WinKill,Empires
+        "
+    fi
+
+cat > "$DRIVE_C/run-aoe3cc.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III"
+i"age3.exe"
+__EOF__
+}
+
+#----------------------------------------------------------------
+
+verblist_add aoe3cc_ad "Age Of Empires III: Complete Collection - Asian Dynasties Expansion (Microsoft, 2009)" AOE3Y.iso
+
+load_aoe3cc_ad() {
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+
+    if ! test -f "$programfilesdir_x86_unix/Microsoft Games/Age of Empires III/age3.exe"
+    then
+        load_aoe3cc
+    fi
+
+    # This app is protected by SmartE, so we have to copy
+    # all the files to hard disk before installing.
+    if ! test -f "$WISOTOOL_TMP/$PACKAGE/aoe3y/Setup.exe"
+    then
+        mkdir -p "$WISOTOOL_TMP/$PACKAGE/aoe3y"
+        iso_mount "$WISOTOOL_CACHE/$PACKAGE/AOE3Y.iso"
+        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/aoe3y
+        chmod -R +w "$WISOTOOL_TMP"/$PACKAGE/aoe3y
+        iso_umount
+    fi
+
+    if workaround_wine_bug 657
+    then
+        try sh "$WINETRICKS" -q mfc42
+    fi
+
+    if workaround_wine_bug 24897
+    then
+        try sh "$WINETRICKS" -q msxml4
+    fi
+
+    AOE3Y_KEY="`cat "$WISOTOOL_CACHE/$PACKAGE/AOE3Y.txt" | tr -d -`"
+
+    cd "$WISOTOOL_TMP"/$PACKAGE/aoe3y
+    ahk_do "
+        Run, Setup.exe
+        SetTitleMatchMode, 2
+        WinWait, Age of Empires III - The Asian Dynasties - InstallShield Wizard, Welcome
+        Sleep 500
+        ControlClick, Button1 ; Install
+        WinWait, Age of Empires III - The Asian Dynasties, Product
+        Sleep 500
+        ControlClick, Edit1
+        Send {RAW}$AOE3Y_KEY
+        ControlClick Button1 ; OK
+        WinWait, Age of Empires III - The Asian Dynasties ,finished
+        Sleep 500
+        ControlClick, Button1 ; Finish
+        WinWaitClose
+    "
+
+    if workaround_wine_bug 24911
+    then
+        try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+    fi
+
+    if workaround_wine_bug 24912
+    then
+        # kill off lingering installer
+        ahk_do "
+            SetTitleMatchMode, 2
+            WinKill,Empires
+        "
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III"
+"age3y.exe"
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
+verblist_add aoe3cc_wc "Age Of Empires III: Complete Collection - WarChiefs Expansion (Microsoft, 2009)" AOE3X.iso
+
+load_aoe3cc_wc() {
+
+    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+
+    if ! test -f "$programfilesdir_x86_unix/Microsoft Games/Age of Empires III/age3.exe"
+    then
+        load_aoe3cc
+    fi
+
+    # This app is protected by SmartE, so we have to copy
+    # all the files to hard disk before installing.
+    if ! test -f "$WISOTOOL_TMP/$PACKAGE/aoe3x/Setup.exe"
+    then
+        mkdir -p "$WISOTOOL_TMP/$PACKAGE/aoe3x"
+        iso_mount "$WISOTOOL_CACHE/$PACKAGE/AOE3X.iso"
+        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/aoe3x
+        chmod -R +w "$WISOTOOL_TMP"/$PACKAGE/aoe3x
+        iso_umount
+    fi
+
+    if workaround_wine_bug 657
+    then
+        try sh "$WINETRICKS" -q mfc42
+    fi
+
+    if workaround_wine_bug 24897
+    then
+        try sh "$WINETRICKS" -q msxml4
+    fi
+
+    AOE3X_KEY="`cat "$WISOTOOL_CACHE/$PACKAGE/AOE3X.txt" | tr -d -`"
+
+    cd "$WISOTOOL_TMP"/$PACKAGE/aoe3x
+    ahk_do "
+        Run, Setup.exe
+        SetTitleMatchMode, 2
+        WinWait, Age of Empires III - The WarChiefs - InstallShield Wizard, Welcome
+        Sleep 500
+        ControlClick, Button1 ; Install
+        WinWait, Age of Empires III - The WarChiefs, Product
+        Sleep 500
+        ControlClick, Edit1
+        Send {RAW}$AOE3X_KEY
+        ControlClick Button1 ; OK
+        WinWait, Age of Empires III - The WarChiefs - InstallShield Wizard, finished
+        Sleep 500
+        ControlClick, Button1 ; Finish
+        WinWaitClose
+    "
+
+    if workaround_wine_bug 24911
+    then
+        try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+    fi
+
+    if workaround_wine_bug 24912
+    then
+        # kill off lingering installer
+        ahk_do "
+            SetTitleMatchMode, 2
+            WinKill,Empires
+        "
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III"
+"age3x.exe"
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add anno1404_demo  "Anno 1404 Demo (Ubisoft, 2009) [download]" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
 
 load_anno1404_demo() {
