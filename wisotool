@@ -5373,6 +5373,62 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add losthorizon_demo "Lost Horizon Demo (Deep Silver, 2010) [download]" Lost_Horizon_Demo_EN.exe
+
+load_losthorizon_demo() {
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/Lost_Horizon_Demo_EN.exe
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please visit http://www.fileplanet.com/215704/download/Lost-Horizon-Demo, download Lost_Horizon_Demo_EN.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run Lost_Horizon_Demo_EN.exe
+        WinWait,Lost Horizon Demo, Destination
+        Sleep 500
+        Send {RAW}"$WISOTOOL_TMP"
+        ControlClick Button2 ;Install
+        WinWaitClose,Lost Horizon Demo,Installation
+        Sleep 1000
+        Click, Left, 169, 371
+        WinWait,Lost Horizon Demo - InstallShield Wizard,Welcome
+        Sleep 500
+        ControlClick Button1 ;Next
+        WinWait,Lost Horizon Demo - InstallShield Wizard,License
+        ControlFocus,Button3,Lost Horizon Demo
+        Sleep 500
+        Send {Space}
+        ControlClick Button1 ;Next
+        WinWait,Lost Horizon Demo - InstallShield Wizard,program
+        Sleep 500
+        ControlClick Button2 ;Next
+        WinWait,Lost Horizon Demo - InstallShield Wizard,features
+        Sleep 500
+        ControlClick Button4 ;Next
+        WinWait,Lost Horizon Demo - InstallShield Wizard,begin
+        Sleep 500
+        ControlClick Button1 ;Next
+        WinWait,Lost Horizon Demo - InstallShield Wizard,Complete
+        ControlFocus,Button2,Lost Horizon
+        Sleep 500
+        Send {Space}
+        Sleep 500
+        ControlClick Button4 ; Finish
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Deep Silver\\Lost Horizon Demo"
+fsasgame.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 # Note: may require load_harder.  Result may vary in length and checksum.
 
 verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
