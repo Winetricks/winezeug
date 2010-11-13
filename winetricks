@@ -1669,9 +1669,9 @@ load_dotnet11() {
     # Using builtin regsvcs.exe to workaround http://bugs.winehq.org/show_bug.cgi?id=25120
     if [ $WINETRICKS_QUIET ]
     then
-        try WINEDLLOVERRIDES=regsvcs.exe=b $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe /q /C:"install /q"
+        WINEDLLOVERRIDES="regsvcs.exe=b" try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe /q /C:"install /q"
     else
-        try WINEDLLOVERRIDES=regsvcs.exe=b $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe
+        WINEDLLOVERRIDES="regsvcs.exe=b" try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe
     fi
 }
 
