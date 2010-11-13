@@ -148,9 +148,6 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=14475
 Draftsight
 http://www.3ds.com/products/draftsight/
 
-Pro Evolution Soccer 2011 Demo
-Available from all major game demo sites, fileplanet, bigdownload.com etc.
-
 Supreme Commander 2 - Square Enix
 http://bugs.winehq.org/show_bug.cgi?id=23593
 
