@@ -1667,11 +1667,12 @@ load_dotnet11() {
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
+    # Using builtin regsvcs.exe to workaround http://bugs.winehq.org/show_bug.cgi?id=25120
     if [ $WINETRICKS_QUIET ]
     then
-        try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe /q /C:"install /q"
+        try WINEDLLOVERRIDES=regsvcs.exe=b $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe /q /C:"install /q"
     else
-        try $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe
+        try WINEDLLOVERRIDES=regsvcs.exe=b $WINE "$WINETRICKS_CACHE"/dotnet11/dotnetfx.exe
     fi
 }
 
