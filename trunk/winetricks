@@ -154,7 +154,6 @@ usage() {
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " dsound        MS dsound.dll (from DirectX 9 user redistributable)"
     echo " dxsdk_nov2006 DirectX Software Development Kit, November 2006 version"
-    echo " eadm          EA Download Manager"
     echo " eufonts       Updated fonts for Romanian and Bulgarian"
     echo " fakechinese   Creates aliases for Chinese fonts using WenQuanYi fonts"
     echo " fakejapanese  Creates aliases for Japanese fonts using Takao fonts"
@@ -1909,14 +1908,6 @@ REGEDIT4
 
 _EOF_
     try $WINE regedit "$WINETRICKS_TMP"/dsoundmaxshadow.reg
-}
-
-#----------------------------------------------------------------
-
-load_eadm() {
-    download . http://akamai.cdn.ea.com/eamaster/u/f/eaonline/eadm/eadm-installer.exe 9f87ad485f82b7ef290613b94912dede79f5f48c
-    load_adobeair
-    try $WINE "$WINETRICKS_CACHE"/eadm-installer.exe $WINETRICKS_S
 }
 
 #----------------------------------------------------------------
@@ -4718,7 +4709,6 @@ do
     droid) load_droid;;
     dsound) load_dsound;;
     dxsdk_nov2006) load_dxsdk_nov2006;;
-    eadm) load_eadm;;
     eufonts) load_eufonts;;
     fakechinese) load_fakechinese;;
     fakejapanese) load_fakejapanese;;
