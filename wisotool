@@ -3360,6 +3360,54 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009)" Dirt2Demo.zip
+
+load_dirt2_demo() {
+    download $PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
+
+    mkdir "$WISOTOOL_TMP/$PACKAGE"
+    try unzip -d "$WISOTOOL_TMP/$PACKAGE" "$WISOTOOL_CACHE/$PACKAGE/Dirt2Demo.zip"
+
+    cd "$WISOTOOL_TMP/$PACKAGE"
+
+    ahk_do "
+        Run, "Setup.exe"
+        WinWait, Choose Setup Language, Select
+        ControlClick Button1    ;next
+        WinWait, DiRT2 Demo - InstallShield Wizard, Welcome
+        ControlClick Button1    ;next
+        WinWait, DiRT2 Demo - InstallShield Wizard, License
+        ControlClick Button3    ;i accept
+        ControlClick Button1    ;next
+        WinWait, DiRT2 Demo - InstallShield Wizard, Setup
+        ControlClick Button4    ;next
+        WinWait, InstallShield Wizard, In order
+        ControlClick Button1    ;next
+        WinWait, DiRT2 Demo - InstallShield Wizard, Ready
+        ControlClick Button1    ;next
+        WinWait, DiRT2 Demo - InstallShield Wizard, Complete
+        ControlClick Button4    ;finish
+        "
+
+    if workaround_wine_bug 23532
+    then
+        try "$WINETRICKS" -q xlive
+    fi
+
+    if workaround_wine_bug 24868
+    then
+        sh "$WINETRICKS" d3dx9_36
+    fi
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Codemasters\\DiRT2 Demo"
+dirt2.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add dragonage     "Dragon Age: Origins (Bioware / EA, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
