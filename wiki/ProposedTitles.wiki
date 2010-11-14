@@ -108,6 +108,9 @@ It's really freaky,
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
+Puzzle Agent (got 75% on gamerankings, released 2010)
+http://www.telltalegames.com/puzzleagent
+
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
