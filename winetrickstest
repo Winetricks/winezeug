@@ -73,6 +73,7 @@ for verb in \
     mingw-gdb \
     mingw \
     mono26 \
+    mono28 \
     mozillabuild \
     mpc \
     mshflxgd \
@@ -198,10 +199,11 @@ using System; class ExampleClass { static void Main(){Console.WriteLine("Dotnet 
 __EOF__
     gmcs dotnet_test.c
 
+# Note: gmcs builds a .Net 2.0+ exe, so we can't use this for dotnet11
     for verb in \
-        dotnet11 \
         dotnet20 \
-        mono26
+        mono26 \
+        mono28
     do
         wineserver -k || true
         rm -rf "$WINEPREFIX"
