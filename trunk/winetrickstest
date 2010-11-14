@@ -123,6 +123,7 @@ for verb in \
     winhttp \
     wininet \
     wme9 \
+    wmi \
     wmp9 \
     wmp10 \
     wsh56 \
