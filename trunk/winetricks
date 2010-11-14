@@ -173,6 +173,7 @@ usage() {
     echo " gfw           MS Game For Windows Live (xlive.dll)"
     echo " glut          The glut utility library"
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
+    echo " icodecs       Intel Indeo codecs"
     echo " ie6           Microsoft Internet Explorer 6.0"
     echo " ie6_full      Microsoft Internet Explorer 6.0, full installer"
     echo " ie7           Microsoft Internet Explorer 7.0"
@@ -2632,6 +2633,19 @@ load_ie6_full() {
 
 #----------------------------------------------------------------
 
+load_icodecs() {
+    # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
+    download . "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
+    try $WINE "$WINETRICKS_CACHE"/"codinstl.exe"
+    try $WINE regsvr32 "$SYSTEM32_DLLS/ir50_32.dll"
+    # Work around bug in codec's installer?
+    # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
+    override_dlls native ir50_32.dll
+}
+
+#----------------------------------------------------------------
+
 load_ie6() {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
@@ -4724,6 +4738,7 @@ do
     glsl-enable) load_glsl_enable;;
     glut) load_glut;;
     hosts) load_hosts;;
+    icodecs) load_icodecs;;
     ie6_full) load_ie6_full;;
     ie6) load_ie6;;
     ie7) load_ie7;;
@@ -4815,7 +4830,7 @@ do
     xinput) load_xinput;;
     xvid) load_xvid;;
 
-    allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;;
+    allcodecs|allvcodecs) load_vcrun6; load_ffdshow; load_xvid;  load_icodecs;;
     allfonts) load_corefonts; load_droid; load_eufonts; load_liberation; load_lucida; load_tahoma; load_fakechinese; load_fakejapanese; load_fakekorean; load_unifont;;
     alldlls=builtin) override_all_dlls;;
     alldlls=default) override_no_dlls;;
