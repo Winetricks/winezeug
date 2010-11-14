@@ -123,6 +123,25 @@ detect_menu() {
     fi
 }
 
+read_game_key() {
+    keyfile="$WISOTOOL_CACHE/$PACKAGE/key.txt"
+    if ! test -f "$keyfile"
+    then
+        # read key from user
+        case $MENU in
+        *zenity) KEY=`zenity --entry --text "Enter the disc key for $PACKAGE"` ;;
+        *kdialog) KEY=`kdialog --inputbox "Enter the disc key for $PACKAGE"` ;; 
+        *xmessage) die "sorry, can't read key from gui with xmessage" ;;
+        esac
+        if test "$KEY" = ""
+        then
+            die "No key given"
+        fi
+        echo "$KEY" > "$keyfile"
+    fi
+    KEY=`cat "$keyfile" | tr -d -`
+}
+
 warn() {
     echo "------------------------------------------------------"
     echo "$@"
@@ -3411,8 +3430,7 @@ __EOF__
 verblist_add dragonage     "Dragon Age: Origins (Bioware / EA, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
-    # Get user's key
-    DRAGONAGEKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.txt | tr -d -`
+    read_game_key
 
     # Installer has a non-fatal crash on exit, so ignore it.
     sh "$WINETRICKS" -q nocrashdialog physx vcrun2005
@@ -3433,7 +3451,7 @@ load_dragonage() {
         send {Enter} ; continue
         SetTitleMatchMode, 1
         winwait, Dragon Age: Origins, Registration
-        send $DRAGONAGEKEY
+        send $KEY
         send {Enter}
         winwait, Dragon Age: Origins Setup, Install Type
         Sleep 1000
@@ -3604,7 +3622,7 @@ verblist_add fable_tlc "Fable: The Lost Chapters (Microsoft, 2005)" \
 
 load_fable_tlc() {
 
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/FABLE_DISK_1.txt | tr -d -`
+    read_game_key
 
     if workaround_wine_bug 657
     then
@@ -7512,7 +7530,7 @@ load_sims3() {
     fi
 
     # Get user's key
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.txt | tr -d -`
+    read_game_key
 
     echo KEY is $KEY
     iso_mount "$WISOTOOL_CACHE"/$PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
