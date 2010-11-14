@@ -252,6 +252,7 @@ usage() {
     echo " winhttp       MS winhttp.dll (requires Windows license, but does not check for one)"
     echo " wininet       MS wininet.dll (requires Windows license, but does not check for one)"
     echo " wme9          MS Windows Media Encoder 9 (requires Windows license, but does not check for one)"
+    echo " wmi           Windows Management Instrumentation core 1.5 (requires Windows license, but does not check for one)"
     echo " wmp10         MS Windows Media Player 10 (requires Windows license, but does not check for one)"
     echo " wmp9          MS Windows Media Player 9 (requires Windows license, but does not check for one)"
     echo " wsh56js       MS Windows scripting 5.6, jscript only, no cscript"
@@ -4430,6 +4431,25 @@ load_wme9() {
 
 #----------------------------------------------------------------
 
+load_wmi() {
+    if test $ARCH = win64
+    then
+        die "Installer doesn't support 64-bit architecture."
+    fi
+
+    # WMI for NT4.0 need validation: http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c174cfb1-ef67-471d-9277-4c2b1014a31e
+    # See also http://www.microsoft.com/downloads/en/details.aspx?FamilyId=98A4C5BA-337B-4E92-8C18-A63847760EA5
+    download . http://download.microsoft.com/download/platformsdk/wmi9x/1.5/W9X/EN-US/wmi9x.exe 62752e9c1b879688c26f205eebf07d3783906c3e
+
+    set_winver win98
+    override_dlls native,builtin wbemprox.dll wmiutils.dll
+    # Note: there is a crash in the background towards the end, doesn't seem to hurt; see http://bugs.winehq.org/show_bug.cgi?id=7920
+    try $WINE "$WINETRICKS_CACHE"/wmi9x.exe $WINETRICKS_S
+    unset_winver
+}
+
+#----------------------------------------------------------------
+
 load_wmp9() {
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
@@ -4821,6 +4841,7 @@ do
     winhttp) load_winhttp;;
     wininet) load_wininet;;
     wme9) load_wme9;;
+    wmi|wbem) load_wmi;;
     wmp9) load_wmp9;;
     wmp10) load_wmp10;;
     wsh56|wsh57) load_wsh57;;
