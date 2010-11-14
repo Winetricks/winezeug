@@ -4548,9 +4548,9 @@ load_xact() {
     done
 
     # xactengine?_?.dll, xaudio?_?.dll - register
-    for x in `ls "$SYSTEM32_DLLS"/xactengine* "$SYSTEM32_DLLS"/xaudio*`
+    for x in "$SYSTEM32_DLLS"/xactengine* "$SYSTEM32_DLLS"/xaudio*
     do
-      try $WINE regsvr32 `basename $x`
+      try $WINE regsvr32 `basename "$x"`
     done
 }
 
