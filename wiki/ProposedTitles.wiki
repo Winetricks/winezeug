@@ -64,6 +64,12 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
+Heart's Medicine
+This is just a cheesy little game, but a wine developer's gf wanted to play it,
+so he fixed a wined3d bug for it.  Let's add it so the install doesn't regress.
+See also http://bugs.winehq.org/show_bug.cgi?id=25174
+http://www.sandlotgames.com/w5/hearts_medicine_season_1.html
+
 Heat Online
 http://heat-online.net/
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; download using torrent, winetricks dotnet20 first)
