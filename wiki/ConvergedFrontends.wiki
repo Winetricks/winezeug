@@ -1,0 +1,81 @@
+#summary Many wine front ends exist.  Let's see what can be converged.
+
+= Introduction =
+
+Many people have written front ends for wine that allow managing
+multiple wine bottles and let users contribute recipes for installing various applications.
+
+It would be nice if the bottles managed by these front ends were interchangeable,
+so you could create a bottle with one front end, and see it in the list
+of bottles of another front end (and launch its app from either).
+
+It would also be nice if the user-contributed recipes were interchangeable,
+e.g. if you could use a recipe written for one front end with other front ends.
+We could then have a global repository of recipes which would grow much
+faster than the isolated recipe repository for any individual front end.
+
+And what the heck, it would be nice if menu items for the apps disappeared
+properly when you delete the bottle.  (That probably just requires creating
+symlinks from ~/.local/applications/foo into ~/.local/wineprefixes/foo/xdgmenu
+or something like that; the devil is in the details.)
+
+= Directories =
+
+ * ~/.local/wineprefixes - directory where all the wineprefixes will live
+ * Any non-standard metadata for frontend 'myfe' will live in subdirectory myfe of the wineprefix
+
+= Recipes =
+
+Recipies are bourne shell scripts that are sourced by the front end.  
+They may call functions defined by the front end; all such functions are lowercase and start with w_.
+They may read variables defined by the front end; all such variables are uppercase, and most start with W_.
+
+Each recipe consists of metadata followed by a function.
+
+The metadata looks like this:
+{{{
+w_metadata \
+ key=value \
+ key=value \
+ ...
+}}}
+
+e.g.
+{{{
+w_metadata \
+ type=app \
+ code=sc2 \
+ name="StarCraft II: Wings of Liberty" \
+ publisher=Blizzard \
+ year=2010 \
+ desc="Sequel to the award winning 1998 real-time strategy game StarCraft." \
+ desc_da="Efterfølger til det prisbelønnede realtids-strategispil StarCraft fra 1998." \
+ cat="Games, Strategy" \
+ icon=http://macin.files.wordpress.com/2010/07/starcraft-ii-icon.png \
+ license=Commercial 
+}}}
+
+A simple function looks like this:
+
+{{{
+install_bioshock_demo() {
+    w_download http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
+    cd "$W_TEMP"
+    w_try unzip -q "$W_CACHE/$W_PACKAGE"/nzd_BioShockPC.zip
+    w_try cd "BioShock PC Demo"
+    w_try wine setup.exe
+}
+}}}
+
+== Predefined Variables ==
+
+ * PATH - this will be set so 'wine' executes the correct version of wine
+ * W_CACHE - a Unix path to the directory where downloaded files are cached.
+ * W_PACKAGE - the code for the currently executing recipe.  e.g. this is set to
+bioshock_demo before calling install_bioshock_demo.
+ * W_TEMP - a Unix path to a directory which exists and is empty when the function starts, and is deleted when the function exits.  This is where to unpack .zip files, etc.
+
+== Predefined Functions ==
+
+ * w_download - takes a URL and an sha1sum, downloads the given file to the directory $W_CACHE/$W_PACKAGE
+ * w_try - executes the following command, possibly with logging, and aborts nicely if the command fails
