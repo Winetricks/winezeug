@@ -111,6 +111,12 @@ http://www.perpetuum-online.com
 Puzzle Agent (got 75% on gamerankings, released 2010)
 http://www.telltalegames.com/puzzleagent
 
+Risen Demo (Deep Silver, 2009, got 78%).  Don't script unless it works for you,
+but do file bugs.
+http://www.gamerankings.com/pc/952152-risen/index.html
+http://news.bigdownload.com/2009/10/01/download-risen-demo
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=17988
+
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
