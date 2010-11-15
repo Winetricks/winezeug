@@ -71,8 +71,7 @@ install_bioshock_demo() {
 
  * PATH - this will be set so 'wine' executes the correct version of wine
  * W_CACHE - a Unix path to the directory where downloaded files are cached.
- * W_PACKAGE - the code for the currently executing recipe.  e.g. this is set to
-bioshock_demo before calling install_bioshock_demo.
+ * W_PACKAGE - the code for the currently executing recipe.  e.g. this is set to bioshock_demo before calling install_bioshock_demo.
  * W_TEMP - a Unix path to a directory which exists and is empty when the function starts, and is deleted when the function exits.  This is where to unpack .zip files, etc.
 
 == Predefined Functions ==
