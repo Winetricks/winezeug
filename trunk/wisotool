@@ -1543,6 +1543,63 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add amnesia_tdd_demo "Amnesia: The Dark Descent Demo (Frictional Games, 2010) [download]" amnesia_tdd_demo_1.0.1.exe
+
+load_amnesia_tdd_demo() {
+
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/amnesia_tdd_demo_1.0.1.exe
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please visit http://www.amnesiagame.com/#demo, download amnesia_tdd_demo_1.0.1.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: check sha1sum 0bf0bc6e9c8ea76f1c44582d9302a9b22d31d1b6
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        run amnesia_tdd_demo_1.0.1.exe
+        WinWait,Select Setup Language,language
+        Sleep 500
+        ;ControlClick TNewButton1 ; OK
+        send {Enter}              ; button click fails on vista?
+        WinWait,Setup - Amnesia - The Dark Descent Demo,Welcome
+        Sleep 500
+        ControlClick TNewButton1 ; Next
+        WinWait,Setup - Amnesia - The Dark Descent Demo,License
+        Sleep 500
+        ControlClick TNewRadioButton1 ; agree
+        Sleep 500
+        ControlClick TNewButton2 ; Next
+        WinWait,Setup - Amnesia - The Dark Descent Demo,Destination
+        Sleep 500
+        ControlClick TNewButton3 ; Next
+        WinWait,Folder Does Not Exist,created
+        Sleep 500
+        ControlClick Button1 ; OK
+        WinWait,Setup - Amnesia - The Dark Descent Demo,should
+        Sleep 500
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - Amnesia - The Dark Descent Demo,should
+        Sleep 500
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - Amnesia - The Dark Descent Demo,installing
+        Sleep 500
+        ControlClick TNewButton4 ; Install
+        WinWait,Setup - Amnesia - The Dark Descent Demo,finished
+        Sleep 500
+        ControlClick TNewButton4 ; Finish
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Amnesia - The Dark Descent Demo\\redist"
+Amnesia.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add anno1404_demo  "Anno 1404 Demo (Ubisoft, 2009) [download]" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
 
 load_anno1404_demo() {
@@ -3379,7 +3436,7 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009)" Dirt2Demo.zip
+verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009) [download]" Dirt2Demo.zip
 
 load_dirt2_demo() {
     download $PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
