@@ -3449,20 +3449,29 @@ load_dirt2_demo() {
     ahk_do "
         Run, "Setup.exe"
         WinWait, Choose Setup Language, Select
+        sleep 500
         ControlClick Button1    ;next
         WinWait, DiRT2 Demo - InstallShield Wizard, Welcome
+        sleep 500
         ControlClick Button1    ;next
         WinWait, DiRT2 Demo - InstallShield Wizard, License
+        sleep 500
         ControlClick Button3    ;i accept
+        sleep 500
         ControlClick Button1    ;next
         WinWait, DiRT2 Demo - InstallShield Wizard, Setup
+        sleep 500
         ControlClick Button4    ;next
         WinWait, InstallShield Wizard, In order
+        sleep 500
         ControlClick Button1    ;next
         WinWait, DiRT2 Demo - InstallShield Wizard, Ready
+        sleep 500
         ControlClick Button1    ;next
         WinWait, DiRT2 Demo - InstallShield Wizard, Complete
+        sleep 500
         ControlClick Button4    ;finish
+        WinWaitClose
         "
 
     if workaround_wine_bug 23532
