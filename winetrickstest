@@ -61,7 +61,6 @@ for verb in \
     gfw \
     glut \
     hosts \
-    icodecs \
     ie6 \
     jet40 \
     liberation \
@@ -229,6 +228,7 @@ then
         divx \
         dotnet11sdk \
         dotnet20sdk \
+        icodecs \
         ie6_full \
         kde \
         nvidiasdk9 \
