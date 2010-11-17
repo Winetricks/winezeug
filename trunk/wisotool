@@ -8701,6 +8701,42 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add torchlight "Torchlight (Runic Games, 2009) [Boxed version]" \
+  7cc5d7504b2927c030a0a192f7c9858721b59730.iso
+
+load_torchlight() {
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/7cc5d7504b2927c030a0a192f7c9858721b59730.iso
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:Torchlight.exe
+        WinWait, Torchlight Setup, This wizard will guide
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, This wizard will guide
+        WinWait, Torchlight Setup, Please review the license terms
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, Please review the license terms
+        WinWait, Torchlight Setup, Choose Install Location
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, Choose Install Location
+        WinWait, Torchlight Setup, Installation Complete
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, Installation Complete
+        WinWait, Torchlight Setup, Completing the Torchlight Setup Wizard
+        sleep 1000
+        ControlClick, Button4, Torchlight Setup, Completing the Torchlight Setup Wizard
+        ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
+    "
+
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Runic Games\\Torchlight"
+Torchlight.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 verblist_add tropico3_demo "Tropico 3 Demo (Kalypso Media GmbH, 2009) [download]" Tropico3Demo.exe
 
 load_tropico3_demo() {
