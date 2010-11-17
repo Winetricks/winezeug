@@ -4859,6 +4859,7 @@ ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\SanrioTown\\Hello Kitty Online"
 HKO.exe
 __EOF__
+}
 
 #----------------------------------------------------------------
 
