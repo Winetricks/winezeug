@@ -472,6 +472,53 @@ download() {
     fi
 }
 
+# Download one or more files via bittorrent
+# Usage: package [foo.torrent]
+# Caches downloads in $WISOTOOL_CACHE/$PACKAGE, torrent files are assumed to be there
+# If no foo.torrent is given, will add ALL .torrent files in $WISOTOOL_CACHE/$PACKAGE
+download_torrent() {
+    test -f "$WINDIR"/utorrent.exe || try sh $WINETRICKS utorrent
+    UT_WINPATH="$WISOTOOL_CACHE_WIN\\$1"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    if [ "$2"x != ""x ] # foo.torrent parameter supplied
+    then
+        try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$2" &
+    else # grab all torrents
+        for torrent in `ls *.torrent`
+        do
+            try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
+        done
+    fi
+
+    # Start uTorrent, have it wait until all downloads are finished
+    ahk_do "
+        SetTitleMatchMode, 2
+        winwait, Torrent
+        sleep 3000
+        ;Cancels bandwidth test on first run of uTorrent
+        ifwinexist, Torrent, Bandwidth
+        {
+            sleep 1000
+            controlclick, Button5, Torrent, Bandwidth
+            sleep 3000
+        }
+        ;Declines upgrade to newer version
+        ifwinexist, Torrent, version
+        {
+            sleep 1000
+            controlclick, Button3, Torrent, version
+            controlclick, Button2, Torrent, version
+            sleep 3000
+        }
+        ;Sets parameter to close uTorrent once all downloads are complete
+        winactivate, Torrent 2.0
+        send !o
+        send a{Down}{Enter}
+        winwaitclose, Torrent 2.0
+    "
+}
+
 set_winver() {
     echo "Setting Windows version to $1"
     cat > "$WISOTOOL_TMP"/set-winver.reg <<_EOF_
@@ -4748,6 +4795,70 @@ load_half_life_goty() {
     "
     xrandr -s $current_res
 }
+
+#----------------------------------------------------------------
+
+verblist_add hko "Hello Kitty Online (Sanrio Digital, 2009) [download]" "Hello Kitty Online Standard Installer.zip"
+
+load_hko() {
+    download $PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
+    download_torrent $PACKAGE hkostandardinstaller.torrent
+    try unzip "$WISOTOOL_CACHE/$PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$WISOTOOL_TMP"
+    cd "$WISOTOOL_TMP/Hello Kitty Online Standard Installer"
+
+    ahk_do "
+        Run, setup.exe
+        SetTitleMatchMode, 2
+        WinWait,Setup - Hello Kitty Online, Welcome
+        Sleep 500
+        ControlClick TNewButton1 ; Next
+        WinWait,Setup - Hello Kitty Online, License
+        Sleep 500
+        ControlFocus,TNewRadioButton1,Kitty
+        Sleep 500
+        Send {Space}
+        Sleep 500
+        ControlClick TNewButton2 ; Next
+        WinWait,Setup - Hello Kitty Online, Location
+        Sleep 500
+        ControlClick TNewButton3 ; Next
+        WinWait,Setup - Hello Kitty Online, Menu
+        Sleep 500
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - Hello Kitty Online, Additional
+        ControlFocus,TNewCheckListBox1,Kitty
+        Sleep 500
+        Send {Space}
+        Sleep 500
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - Hello Kitty Online, now
+        Sleep 500
+        ControlClick TNewButton4 ; Install
+        WinWait,Setup - Hello Kitty Online, Completing
+        Sleep 500
+        ControlClick TNewButton4 ; Finish
+        WinWaitClose
+    "
+
+    # Appdb says minigames need flash.
+    # Is this a wine bug?  Not if HKO doesn't bundle flash.  FIXME: find out.
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=19076
+    try sh "$WINETRICKS" -q flash
+
+    if workaround_wine_bug 25132
+    then
+        try sh "$WINETRICKS" -q ie6
+    fi
+    if workaround_wine_bug 25133
+    then
+        try sh "$WINETRICKS" -q msxml3
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\SanrioTown\\Hello Kitty Online"
+HKO.exe
+__EOF__
 
 #----------------------------------------------------------------
 
