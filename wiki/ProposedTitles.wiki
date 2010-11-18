@@ -64,6 +64,9 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
+Football Manager 2011 demo
+http://www.bigdownload.com/games/football-manager-2011/pc/football-manager-2011-vanilla-demo/
+
 Heart's Medicine
 This is just a cheesy little game, but a wine developer's gf wanted to play it,
 so he fixed a wined3d bug for it.  Let's add it so the install doesn't regress.
@@ -78,6 +81,9 @@ His gf says these are her favorite five games from bigfish:
   Santa's Super Friends
 Only the last one doesn't work in Wine.  If bigfish's installer is too annoying,
 try looking for them at sandlotgames, perhaps. 
+
+Hawx 2 benchmark (Ubisoft.  Beware DRM.)
+http://www.bigdownload.com/games/tom-clancys-hawx-2/pc/hawx-2-pc-benchmark/
 
 Heat Online
 http://heat-online.net/
@@ -119,6 +125,9 @@ but do file bugs.
 http://www.gamerankings.com/pc/952152-risen/index.html
 http://news.bigdownload.com/2009/10/01/download-risen-demo
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=17988
+
+Undergarden Demo (Atari, 2010)
+http://www.bigdownload.com/games/the-undergarden/pc/the-undergarden-demo/
 
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
