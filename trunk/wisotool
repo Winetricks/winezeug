@@ -7207,6 +7207,55 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add puzzleagent_demo "Puzzle Agent Demo (Telltale Games, 2010) [download]" PuzzleAgent_PC_Setup.exe
+
+load_puzzleagent_demo() {
+
+    download $PACKAGE http://telltale.vo.llnwd.net/o15/games/puzzleagent/100/PuzzleAgent_PC_Setup.exe 98337b2f24966c0e8ecb3357173ca16cca39b378
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        Run, PuzzleAgent_PC_Setup.exe
+        SetTitleMatchMode, 2
+        WinWait,Puzzle Agent Setup, Welcome
+        Sleep 500
+        ControlClick Button2 ; Next
+        WinWait,Puzzle Agent Setup, properly
+        Sleep 500
+        ControlClick Button5 ;DirectX
+        Sleep 500
+        ControlClick Button2 ; Next
+        WinWait,Puzzle Agent Setup, before
+        Sleep 500
+        ControlClick Button2 ; Agree
+        WinWait,Puzzle Agent Setup, different
+        Sleep 500
+        ControlClick Button2 ; Install
+        WinWait,Puzzle Agent Setup, been
+        Sleep 500
+        ControlClick Button4 ; Play
+        Sleep 500
+        ControlClick Button5 ; will
+        Sleep 500
+        ControlClick Button2 ; Finish
+        WinWaitClose
+    "
+
+    if workaround_wine_bug 25210  # fixed in 1.3.8
+    then
+        try sh "$WINETRICKS" -q vcrun2008
+    fi
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Telltale Games\\Puzzle Agent\\The Mystery of Scoggins"
+Grickle101.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add rom "Runes of Magic (Frogster Interactive, 2009) [download]" \
   Runes_of_Magic_3.0.1.2153.part1.exe \
   Runes_of_Magic_3.0.1.2153.part2.rar
