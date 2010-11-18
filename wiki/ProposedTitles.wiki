@@ -114,9 +114,6 @@ It's really freaky,
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
-Puzzle Agent (got 75% on gamerankings, released 2010)
-http://www.telltalegames.com/puzzleagent
-
 Risen Demo (Deep Silver, 2009, got 78%).  Don't script unless it works for you,
 but do file bugs.
 http://www.gamerankings.com/pc/952152-risen/index.html
