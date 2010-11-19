@@ -377,6 +377,19 @@ workaround_wine_bug()
     return 0
 }
 
+# Create a batch file to run the current app
+# Usage: w_declare_exe "path" "exe"
+# Please double any backslashes in path or exe for portability
+w_declare_exe()
+{
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd $1
+$2
+__EOF__
+
+}
+
 # verify an sha1sum
 verify_sha1sum() {
     wantsum=$1
@@ -9243,11 +9256,8 @@ load_wog() {
         ControlClick, Make me dirty right now, World of Goo Setup, Thank you
         send {Enter}
         "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\WorldOfGooDemo"
-WorldOfGoo.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\WorldOfGooDemo" "WorldOfGoo.exe"
 }
 
 #----------------------------------------------------------------
