@@ -1,0 +1,287 @@
+#!/bin/sh
+# LGPL
+# Copyright 2010 Dan Kegel
+# Experimental cleanup of wisotool
+# In this version, all variables wisotool defines for use by verbs
+# are capital and start with W_, and all functions wisotool defines
+# for use by verbs start with w_.
+# See http://code.google.com/p/winezeug/wiki/ConvergedFrontends
+# I'm starting by defining just the variables and functions
+# needed to get the first verb working.  Once that's done, I'll add
+# one more verb and get it working.  This should leave behind lots
+# of cruft.
+# Changes:
+# - The menu system now stores metadata in files rather than a huge variable.
+# - The GUI now has columns for the things that used to be in parentheses.
+
+#---- Private Variables ----
+
+# Ephemeral files for this run
+WISOTOOL_WORKDIR=/tmp/w.$LOGNAME.$$
+rm -rf "$WISOTOOL_WORKDIR"
+
+# Registering a verb creates a file in WISOTOOL_METADATA
+WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
+mkdir -p "$WISOTOOL_METADATA"
+
+# Delete work directory after each run
+trap wisotool_cleanup 1 2 3 6
+wisotool_cleanup()
+{
+    rm -rf "$WISOTOOL_WORKDIR"
+}
+
+# Which GUI helper to use (none, zenity, or kdialog).  See wisotool_detect_gui.
+WISOTOOL_MENU=none
+
+#---- Private Functions ----
+
+wisotool_detect_gui()
+{
+    if test -x "`which zenity 2>/dev/null`"
+    then
+        WISOTOOL_MENU=zenity
+    elif test -x "`which kdialog 2>/dev/null`"
+    then
+        echo "Zenity not found!  Using kdialog as poor substitute."
+        WISOTOOL_MENU=kdialog
+    else
+        echo "Please install zenity if you want a graphical interface."
+        exit 1
+    fi
+}
+
+# Output list of verbs to execute to stdout
+wisotool_showmenu()
+{
+    case $WISOTOOL_MENU in
+    zenity)
+        echo -n "zenity \
+                --title 'Select a package to install' \
+                --text 'Install?' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Package \
+                --column Title \
+                --column Publisher \
+                --column Year \
+                --column Media \
+                --height 440 \
+                --width 600 \
+                " > "$WISOTOOL_WORKDIR"/zenity.sh
+
+        for metadatafile in "$WISOTOOL_METADATA"/*.vars
+        do
+            code=`basename $metadatafile .vars`
+            (
+            title='?'
+            author='?'
+            . $metadatafile
+            echo -n FALSE \
+                    $code \
+                    "\"$title\"" \
+                    "\"$publisher\"" \
+                    "\"$year\"" \
+                    "\"$media\""
+            )
+        done >> $WISOTOOL_WORKDIR/zenity.sh
+
+        sh "$WISOTOOL_WORKDIR"/zenity.sh | tr '|' ' '
+        ;;
+
+    kdialog)
+        die "unimplemented"
+        ;;
+    esac
+}
+
+# Returns true if given verb has been registered
+wisotool_metadata_exists()
+{
+   file="$WISOTOOL_METADATA/$1.vars"
+   test -f "$file"
+}
+
+#---- Public Variables ----
+
+# Verbs can rely on W_TMP being empty at entry, and deleted after return
+W_TMP="$WISOTOOL_WORKDIR/tmp"
+
+# The folder-name is localized!
+W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+test x"$W_PROGRAMS_WIN" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+case "$W_PROGRAMS_WIN" in
+%*) die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?"
+esac
+W_PROGRAMS_UNIX="`unset WINEDEBUG; $XXXPATH -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
+test x"$W_PROGRAMS_UNIX" != x || die "winepath -u $W_PROGRAMS_WIN returned empty string"
+W_TMP_WIN="`$XXXPATH -w "$WISOTOOL_TMP"`"
+
+# 64 bit windows has a second directory for program files
+W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN} (x86)"
+W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX} (x86)"
+if ! test -d "$W_PROGRAMS_X86_UNIX"
+then
+    W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN}"
+    W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX}"
+fi
+
+# FIXME: don't hardcode
+W_PROGRAMS_DRIVE=c
+
+#---- Public Functions ----
+
+# Display warning message
+w_warn() {
+    echo "------------------------------------------------------"
+    echo "$@"
+    echo "------------------------------------------------------"
+
+    # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
+    msg="`echo $@ | tr '\000' ' '`"
+    case $WISOTOOL_MENU in
+    zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
+    kdialog) kdialog --title Wisotool --error "$msg" ;;
+    none) ;;
+    esac
+}
+
+# Display fatal error message
+w_die() {
+    w_warn "$@"
+
+    exit 1
+}
+
+# Function for verbs to register themselves so they show up in the menu.
+# Example:
+# w_metadata  wog \
+#   title="World of Goo Demo" \
+#   pub="2D Boy" \
+#   year="2008" \
+#   media="download" \
+#   file1="WorldOfGooDemo.1.0.exe"
+
+w_metadata() {
+   file="$WISOTOOL_METADATA/$1.vars"
+   shift
+   perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
+}
+
+# Function for verbs to register their main executable.
+# Example:
+#   w_register_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
+w_register_exe()
+{
+    _dir="$1"
+    _exe="$2"
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+${W_PROGRAMS_DRIVE}:
+cd "_$dir"
+$_exe
+__EOF__
+}
+
+#---- Builtin Verbs ----
+
+#----------------------------------------------------------------
+
+w_metadata  wog \
+   title="World of Goo Demo" \
+   publisher="2D Boy" \
+   year="2008" \
+   media="download" \
+   file1="WorldOfGooDemo.1.0.exe"
+
+load_wog() {
+    if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
+    then
+        # Get temporary download location
+        w_download "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+        URL=`cat "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" |
+           grep WorldOfGooDemo.1.0.exe | sed 's,.*http,http,;s,".*,,'`
+        rm "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+
+        w_download "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        run WorldOfGooDemo.1.0.exe
+        winwait, World of Goo Setup, License Agreement
+        sleep 1000
+        send {Enter}
+        winwait, World of Goo Setup, Choose Components
+        send {Enter}
+        winwait, World of Goo Setup, Choose Install Location
+        send {Enter}
+        winwait, World of Goo Setup, Thank you
+        ControlClick, Make me dirty right now, World of Goo Setup, Thank you
+        send {Enter}
+        "
+    w_register_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
+}
+
+#----------------------------------------------------------------
+
+#---- Main Program ----
+
+if ! test "$WISOTOOL_LIB"
+then
+    # If no arguments given, read them from GUI
+    case "$1" in
+    "")
+        wisotool_detect_gui
+        set `wisotool_showmenu`
+        ;;
+    esac
+
+    for W_PACKAGE in $*
+    do
+        case $PACKAGE in
+
+        # Special
+        -q) W_QUIET="/q"
+            WINEDEBUG=${WINEDEBUG:-"fixme-all"}
+            export WINEDEBUG
+            ;;
+        -v) set -x;;
+        version) print_version;;
+
+        # External verbs
+        *.verb)
+           case $1 in
+           */*) . $1 ;;
+           *) . ./$1 ;;
+           esac
+           W_PACKAGE=`echo $1 | sed 's,.*/,,;s,.verb,,'`
+           load_$W_PACKAGE
+           ;;
+
+        # Internal verbs
+        *) if wisotool_metadata_exists $W_PACKAGE
+           then
+               load_$W_PACKAGE
+           else
+               echo Unknown arg $W_PACKAGE; wisotool_usage ; exit 1;
+           fi
+           ;;
+        esac
+
+        # if verbs doesn't preserve the working directory, restore it
+        cd "$olddir"
+
+        # User-specific postinstall hook.
+        # Source it so the script can call w_download() if needed.
+        postfile="$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
+        if test -f "$postfile"
+        then
+            chmod +x "$postfile"
+            ( . "$postfile" )
+        fi
+
+    done
+
+    wisotool_cleanup
+fi
