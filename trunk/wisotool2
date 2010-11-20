@@ -14,27 +14,196 @@
 # - The menu system now stores metadata in files rather than a huge variable.
 # - The GUI now has columns for the things that used to be in parentheses.
 
-#---- Private Variables ----
+#---- Public Functions ----
 
-# Ephemeral files for this run
-WISOTOOL_WORKDIR=/tmp/w.$LOGNAME.$$
-rm -rf "$WISOTOOL_WORKDIR"
-
-# Registering a verb creates a file in WISOTOOL_METADATA
-WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
-mkdir -p "$WISOTOOL_METADATA"
-
-# Delete work directory after each run
-trap wisotool_cleanup 1 2 3 6
-wisotool_cleanup()
+# Display warning message
+w_warn()
 {
-    rm -rf "$WISOTOOL_WORKDIR"
+    echo "------------------------------------------------------"
+    echo "$@"
+    echo "------------------------------------------------------"
+
+    # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
+    msg="`echo $@ | tr '\000' ' '`"
+    case $WISOTOOL_MENU in
+    zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
+    kdialog) kdialog --title Wisotool --error "$msg" ;;
+    none) ;;
+    esac
 }
 
-# Which GUI helper to use (none, zenity, or kdialog).  See wisotool_detect_gui.
-WISOTOOL_MENU=none
+# Display fatal error message
+w_die()
+{
+    w_warn "$@"
+
+    exit 1
+}
+
+# Execute with error checking
+w_try()
+{
+    # "VAR=foo try cmd" fails to put VAR in the environment
+    # with some versions of bash if try is a shell function?!
+    # Adding this explicit export works around it.
+    export WINEDLLOVERRIDES
+    echo Executing "$@"
+    # Mark executable - needed if running on windows vista
+    case "$1" in
+    *.exe) chmod +x "$1" || true
+      cmd /c "$@"
+      ;;
+    *)
+      "$@"
+      ;;
+    esac
+    status=$?
+    if test $status -ne 0
+    then
+        w_die "Note: command '$@' returned status $status.  Aborting."
+    fi
+}
+
+# Convert a Unix path to a Windows path
+# Usage is lowest common denominator of cygpath/winepath
+# so -u to convert to unix, and -w to convert to windows
+w_pathconv()
+{
+    case "$OS" in
+     "Windows_NT")
+        cygpath "$@"
+        ;;
+     *)
+        wisotool_early_wine winepath "$@"
+        ;;
+    esac
+}
+
+# Download a file
+# Usage: w_download url [sha1sum [filename [cookie jar]]]
+# Caches downloads in wisotoolcache/$package
+w_download()
+{
+    url="$1"
+    sum="$2"
+    file="$3"
+    cookiejar="$4"
+
+    if [ "$file"x = ""x ]
+    then
+        file=`basename "$url"`
+    fi
+    cache="$W_CACHE/$W_PACKAGE"
+    mkdir -p "$cache"
+    if test ! -s "$cache/$file" && test -f "$cache/$file"
+    then
+        # zero size - bad download?
+        rm "$cache/$file"
+    fi
+    if test "$nosizecheck" != "" || test ! -f "$cache/$file" || test "$WISOTOOL_CONTINUE_DOWNLOAD"
+    then
+        cd "$cache"
+        # Mac folks tend to have curl rather than wget
+        # On Mac, 'which' doesn't return good exit status
+        # Need to jam in --header "Accept-Encoding: gzip,deflate" else
+        # redhat.com decompresses liberation-fonts.tar.gz!
+        echo Downloading $url
+        if [ -x "`which wget 2>/dev/null`" ]
+        then
+           # Use -nd to insulate ourselves from people who set -x in WGETRC
+           # [*] --retry-connrefused works around the broken sf.net mirroring
+           # system when downloading corefonts
+           # [*] --read-timeout is useful on the adobe server that doesn't
+           # close the connection unless you tell it to (control-C or closing
+           # the socket)
+           # Disable retries for gog.com (which requires higher level retries)
+           wget -O "$file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${cookiejar:+--load-cookies "$cookiejar"} "$url"
+        else
+           # curl doesn't get filename from the location given by the server!
+           # fortunately, we know it
+           curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" ${cookiejar:+--cookie "$cookiejar"} "$url"
+        fi
+        if test $? != 0
+        then
+            test -f "$file" && rm "$file"
+            w_die "Downloading $url failed"
+        fi
+        # Need to decompress .exe's that are compressed, else cygwin fails
+        # Only affects cygwin, so don't barf if 'file' not installed
+        FILE=`which file 2>/dev/null`
+        case $FILE-$file in
+        /*-*.exe)
+            case `file $file` in
+            *gzip*) mv $file $file.gz; gunzip < $file.gz > $file;;
+            esac
+        esac
+
+        # On cygwin, .exe's must be marked +x
+        case $file in
+        *.exe) chmod +x $file ;;
+        esac
+
+        cd "$olddir"
+
+        if [ "$sum"x != ""x ]
+        then
+            verify_sha1sum $sum  "$cache/$file"
+        fi
+    fi
+}
+
+w_download_manual()
+{
+    url="$1"
+    file="$2"
+    sha1sum="$3"
+    if ! test -f "$W_CACHE/$W_PACKAGE/$file"
+    then
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        xdg-open "$url"
+        sleep 3   # give some time for browser to open
+        w_die "Please download $file from the browser just opened to $url"
+    fi
+    # FIXME: verify $sha1sum of $file
+}
+
+# Function for verbs to register themselves so they show up in the menu.
+# Example:
+# w_metadata  wog \
+#   title="World of Goo Demo" \
+#   pub="2D Boy" \
+#   year="2008" \
+#   media="download" \
+#   file1="WorldOfGooDemo.1.0.exe"
+
+w_metadata()
+{
+   file="$WISOTOOL_METADATA/$1.vars"
+   shift
+   perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
+}
+
+# Function for verbs to register their main executable.
+# Example:
+#   w_register_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
+w_register_exe()
+{
+    _dir="$1"
+    _exe="$2"
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+${W_PROGRAMS_DRIVE}:
+cd "_$dir"
+$_exe
+__EOF__
+}
 
 #---- Private Functions ----
+
+# Run a windows command without triggering wine's mshtml's gecko install dialog
+wisotool_early_wine()
+{
+    WINEDEBUG=-all WINEDLLOVERRIDES=mshtml= $WINE "$@"
+}
 
 wisotool_detect_gui()
 {
@@ -78,7 +247,7 @@ wisotool_showmenu()
             title='?'
             author='?'
             . $metadatafile
-            echo -n FALSE \
+            echo -n " " FALSE \
                     $code \
                     "\"$title\"" \
                     "\"$publisher\"" \
@@ -91,7 +260,7 @@ wisotool_showmenu()
         ;;
 
     kdialog)
-        die "unimplemented"
+        w_die "unimplemented"
         ;;
     esac
 }
@@ -103,20 +272,58 @@ wisotool_metadata_exists()
    test -f "$file"
 }
 
+#---- Private Variables ----
+
+# Ephemeral files for this run
+WISOTOOL_WORKDIR=/tmp/w.$LOGNAME.$$
+rm -rf "$WISOTOOL_WORKDIR"
+
+# Registering a verb creates a file in WISOTOOL_METADATA
+WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
+mkdir -p "$WISOTOOL_METADATA"
+
+# Delete work directory after each run
+trap wisotool_cleanup 1 2 3 6
+wisotool_cleanup()
+{
+    rm -rf "$WISOTOOL_WORKDIR"
+}
+
+# Which GUI helper to use (none, zenity, or kdialog).  See wisotool_detect_gui.
+WISOTOOL_MENU=none
+
+WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
+
 #---- Public Variables ----
+
+# System-specific variables
+case "$OS" in
+ "Windows_NT")
+    WINE=""
+    W_DRIVE_C="C:/"
+    ;;
+ *)
+    WINE=${WINE:-wine}
+    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+    W_DRIVE_C="$WINEPREFIX/dosdevices/c:"
+    ;;
+esac
 
 # Verbs can rely on W_TMP being empty at entry, and deleted after return
 W_TMP="$WISOTOOL_WORKDIR/tmp"
+W_TMP_WIN="`w_pathconv -w "$WISOTOOL_TMP"`"
+
+# Where application installers are cached
+W_CACHE="${W_CACHE:-$WISOTOOL_DIR/cache}"
+W_CACHE_WIN="`w_pathconv -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 
 # The folder-name is localized!
 W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
-test x"$W_PROGRAMS_WIN" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 case "$W_PROGRAMS_WIN" in
-%*) die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?"
+"") w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string" ;;
+%*) w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?" ;;
 esac
-W_PROGRAMS_UNIX="`unset WINEDEBUG; $XXXPATH -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
-test x"$W_PROGRAMS_UNIX" != x || die "winepath -u $W_PROGRAMS_WIN returned empty string"
-W_TMP_WIN="`$XXXPATH -w "$WISOTOOL_TMP"`"
+W_PROGRAMS_UNIX="`w_pathconv -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
 
 # 64 bit windows has a second directory for program files
 W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN} (x86)"
@@ -130,60 +337,31 @@ fi
 # FIXME: don't hardcode
 W_PROGRAMS_DRIVE=c
 
-#---- Public Functions ----
-
-# Display warning message
-w_warn() {
-    echo "------------------------------------------------------"
-    echo "$@"
-    echo "------------------------------------------------------"
-
-    # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
-    msg="`echo $@ | tr '\000' ' '`"
-    case $WISOTOOL_MENU in
-    zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
-    kdialog) kdialog --title Wisotool --error "$msg" ;;
-    none) ;;
-    esac
-}
-
-# Display fatal error message
-w_die() {
-    w_warn "$@"
-
-    exit 1
-}
-
-# Function for verbs to register themselves so they show up in the menu.
-# Example:
-# w_metadata  wog \
-#   title="World of Goo Demo" \
-#   pub="2D Boy" \
-#   year="2008" \
-#   media="download" \
-#   file1="WorldOfGooDemo.1.0.exe"
-
-w_metadata() {
-   file="$WISOTOOL_METADATA/$1.vars"
-   shift
-   perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
-}
-
-# Function for verbs to register their main executable.
-# Example:
-#   w_register_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
-w_register_exe()
-{
-    _dir="$1"
-    _exe="$2"
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${W_PROGRAMS_DRIVE}:
-cd "_$dir"
-$_exe
-__EOF__
-}
-
 #---- Builtin Verbs ----
+
+#----------------------------------------------------------------
+
+w_metadata  blobby_volley \
+   title="Blobby Volley" \
+   publisher="Daniel Skoraszewsky" \
+   year="2000" \
+   media="download" \
+   file1="blobby.zip"
+
+load_blobby_volley()
+{
+    w_download_manual http://www.chip.de/downloads/Blobby-Volley_12990993.html blobby.zip c7057c77a5009a88d9d877e17a63b5536ebeb177
+
+    mkdir -p "$W_DRIVE_C/BlobbyVolley"
+    cd "$W_CACHE/$W_PACKAGE"
+    w_try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
+    w_declare_exe "c:\\BlobbyVolley" "volley.exe"
+
+    if workaround_wine_bug 4432
+    then
+        warn "Go bug Wolfgang Sang for the bugfix :-)"
+    fi
+}
 
 #----------------------------------------------------------------
 
@@ -194,7 +372,8 @@ w_metadata  wog \
    media="download" \
    file1="WorldOfGooDemo.1.0.exe"
 
-load_wog() {
+load_wog()
+{
     if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
         # Get temporary download location
@@ -225,6 +404,19 @@ load_wog() {
 
 #----------------------------------------------------------------
 
+#---- External Verbs ----
+# This is experimental, just for testing; eventually we'll load from a particular directory
+
+for verb in *.verb
+do
+    if grep -sqe '^w_metadata ' $verb && grep -sqe '^load_[a-z0-9_]\(\)' $verb
+    then
+        ( . ./$verb )
+    fi
+done
+
+#----------------------------------------------------------------
+
 #---- Main Program ----
 
 if ! test "$WISOTOOL_LIB"
@@ -239,7 +431,7 @@ then
 
     for W_PACKAGE in $*
     do
-        case $PACKAGE in
+        case $W_PACKAGE in
 
         # Special
         -q) W_QUIET="/q"
