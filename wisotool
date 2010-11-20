@@ -2405,6 +2405,29 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add blobby_volley "Blobby Volley (Daniel Skoraszewsky, 2000) [download]" blobby.zip
+
+load_blobby_volley() {
+    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/blobby.zip"
+    then
+        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
+        die "Please download demo from http://www.chip.de/downloads/Blobby-Volley_12990993.html and place it in $WISOTOOL_CACHE/$PACKAGE"
+    fi
+    # FIXME: verify sha1sum c7057c77a5009a88d9d877e17a63b5536ebeb177
+
+    mkdir -p "$DRIVE_C/BlobbyVolley"
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    try unzip blobby.zip -d "$DRIVE_C/BlobbyVolley"
+    w_declare_exe "c:\\BlobbyVolley" "volley.exe"
+
+    if workaround_wine_bug 4432
+    then
+        warn "Go bug Wolfgang Sang for the bugfix :-)"
+    fi
+}
+
+#----------------------------------------------------------------
+
 verblist_add blur       "Blur (Activision, 2010)" \
   30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
