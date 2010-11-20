@@ -56,6 +56,10 @@ http://en.wikipedia.org/wiki/Wine-Doors
 
 == Proposed free titles ==
 
+Joerg requests that we add one or more of the titles in
+http://bugs.winehq.org/show_bug.cgi?id=15030
+since that exposes an installer hang.
+
 Alien Swarm
 http://news.bigdownload.com/2010/07/16/alien-swarm-to-be-released-by-valve-as-free-game-on-monday/
 82%: http://www.gamerankings.com/pc/999022-alien-swarm/index.html
