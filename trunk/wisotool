@@ -5216,6 +5216,40 @@ __EOF__
 
 #----------------------------------------------------------------
 
+verblist_add imvu "IMVU - Instant Messaging Virtual Universe (IMVU, 2004) [download]" "InstallIMVU_447.0_st_conduit.exe"
+
+load_imvu() {
+
+    download $PACKAGE "http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_447.0_st_conduit.exe" 61963e1c8d45c7dba942d85efadaf6284c556af4
+
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        Run, InstallIMVU_447.0_st_conduit.exe
+        SetTitleMatchMode, 2
+        WinWait,IMVU Setup, Earn
+        Sleep 500
+        ControlClick Button4 ; Toolbar
+        Sleep 500
+        ControlClick Button2 ; Finish
+        WinWait,IMVU Login, chrome
+        Sleep 500
+        Click, Left, 29, 230
+        Sleep 500
+        Click, Left, 416, 11
+        Sleep 500
+        WinKill,IMVU Login, chrome
+    "
+
+cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$DRIVE_C\\users\\$USERNAME\\Application Data\\IMVUClient"
+IMVUClient.exe
+__EOF__
+}
+
+#----------------------------------------------------------------
+
 verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga40.exe
 
 # http://www.agdinteractive.com/games/kq1/download/download.html
