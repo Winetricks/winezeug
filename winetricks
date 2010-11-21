@@ -133,7 +133,6 @@ usage() {
     echo " d3dx9_42      MS d3dx9_42.dll"
     echo " d3dx10        MS d3dx10_??.dll (from DirectX user redistributable)"
     echo " d3dxof        MS d3dxof.dll (from DirectX user redistributable)"
-    echo " dcom98        MS DCOM (ole32, oleaut32); requires Windows 98 license, but does not check for one"
     echo " devenum       MS devenum.dll (from DirectX 9 user redistributable)"
     echo " dinput8       MS dinput8.dll (from DirectX 9 user redistributable)"
     echo " dirac         the Dirac directshow filter"
@@ -1590,37 +1589,7 @@ load_divx() {
 #----------------------------------------------------------------
 
 load_dcom98() {
-    # Install native dcom per http://wiki.winehq.org/NativeDcom
-    # to avoid http://bugs.winehq.org/show_bug.cgi?id=4228
-    # See http://www.microsoft.com/downloads/details.aspx?familyid=08b1ac1b-7a11-43e8-b59d-0867f9bdda66
-    download . http://download.microsoft.com/download/d/1/3/d13cd456-f0cf-4fb2-a17f-20afc79f8a51/DCOM98.EXE aff002bd03f17340b2bef2e6b9ea8e3798e9ccc1
-
-    # Pick win98 so we can install native dcom
-    set_winver win98
-
-    # Avoid "err:setupapi:SetupDefaultQueueCallbackA copy error 5 ..."
-    # Those messages are suspect, probably shouldn't be err's.
-    rm -f "$SYSTEM32_DLLS"/ole32.dll
-    rm -f "$SYSTEM32_DLLS"/olepro32.dll
-    rm -f "$SYSTEM32_DLLS"/oleaut32.dll
-    rm -f "$SYSTEM32_DLLS"/rpcrt4.dll
-
-    # Normally only need to override ole32, but overriding advpack
-    # as well gets us the correct exit status.
-    WINEDLLOVERRIDES="ole32,advpack=n" try $WINE "$WINETRICKS_CACHE"/DCOM98.EXE $WINETRICKS_QUIET
-
-    # Set native DCOM by default for all apps (ok, this might be overkill)
-    override_dlls native,builtin ole32 oleaut32 rpcrt4
-
-    # but not for a few builtin apps that don't like it
-    override_app_dlls explorer.exe builtin ole32 oleaut32 rpcrt4
-    override_app_dlls iexplore.exe builtin ole32 oleaut32 rpcrt4
-    override_app_dlls services.exe builtin ole32 oleaut32 rpcrt4
-    override_app_dlls wineboot.exe builtin ole32 oleaut32 rpcrt4
-    override_app_dlls winedevice.exe builtin ole32 oleaut32 rpcrt4
-
-    # and undo version win98
-    unset_winver
+   die "Installing dcom98 is no longer needed or useful with modern wine."
 }
 
 #----------------------------------------------------------------
