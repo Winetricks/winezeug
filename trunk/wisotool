@@ -1129,11 +1129,7 @@ load_3dmark03() {
         Send {Tab}
         Send {Enter}
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Futuremark\3DMark03"
-3DMark03
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Futuremark\\3DMark03" "3DMark03"
 }
 
 #----------------------------------------------------------------
@@ -1275,11 +1271,7 @@ load_algodoo_demo() {
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Algodoo"
-algodoo
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Algodoo" "algodoo"
 }
 
 #----------------------------------------------------------------
@@ -1304,11 +1296,7 @@ load_msaoe_demo() {
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Microsoft Games\Age of Empires Trial"
-empires
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires Trial" "empires"
 }
 
 #----------------------------------------------------------------
@@ -1361,11 +1349,7 @@ load_aoe3_demo() {
         kill $PID  
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III Trial"
-age3.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III Trial" "age3.exe"
 }
 
 #----------------------------------------------------------------
@@ -1443,11 +1427,7 @@ load_aoe3cc() {
         "
     fi
 
-cat > "$DRIVE_C/run-aoe3cc.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III"
-i"age3.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III" "age3.exe"
 }
 
 #----------------------------------------------------------------
@@ -1518,12 +1498,7 @@ load_aoe3cc_ad() {
         "
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III"
-"age3y.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III" "age3y.exe"
 }
 
 #----------------------------------------------------------------
@@ -1594,11 +1569,7 @@ load_aoe3cc_wc() {
         "
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III"
-"age3x.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III" "age3x.exe"
 }
 
 #----------------------------------------------------------------
@@ -1651,11 +1622,7 @@ load_amnesia_tdd_demo() {
         ControlClick TNewButton4 ; Finish
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Amnesia - The Dark Descent Demo\\redist"
-Amnesia.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Amnesia - The Dark Descent Demo\\redist" "Amnesia.exe"
 }
 
 #----------------------------------------------------------------
@@ -1712,11 +1679,7 @@ __EOF__
 
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Ubisoft\\Related Designs\\Dawn of Discovery (Demo)"
-Anno4.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Related Designs\\Dawn of Discovery (Demo)" "Anno4.exe"
 }
 
 #----------------------------------------------------------------
@@ -1756,11 +1719,7 @@ load_assassinscreed() {
 
     # Should run AssassinsCreed_Launcher.exe, but that fails on Wine
     # Should give option to run AssassinsCreed_Dx10.exe, but that fails on Wine
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Ubisoft\Assassin's Creed"
-AssassinsCreed_Dx9.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Assassin's Creed" "AssassinsCreed_Dx9.exe"
 }
 
 #----------------------------------------------------------------
@@ -1808,11 +1767,7 @@ load_avatar_demo()
         }
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Ubisoft\Demo\James Cameron's AVATAR - THE GAME (Demo)\bin"
-"AvatarDemo.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Demo\\James Cameron's AVATAR - THE GAME (Demo)\\bin" "AvatarDemo.exe"
 }
 
 #----------------------------------------------------------------
@@ -2008,11 +1963,7 @@ load_batman_arkham_asylum_demo() {
         }
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Eidos\\Batman Arkham Asylum Demo\\Binaries"
-ShippingPC-BmGame.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Eidos\\Batman Arkham Asylum Demo\\Binaries" "ShippingPC-BmGame.exe"
 
     if workaround_wine_bug 6971
     then
@@ -2106,11 +2057,8 @@ load_bfbc2() {
     then
         warn "If you get a Securom 'No CD/DVD error', check your mount settings. See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info."
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Battlefield Bad Company 2"
-BFBC2Game.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Battlefield Bad Company 2" "BFBC2Game.exe"
 }
 
 #----------------------------------------------------------------
@@ -2307,11 +2255,7 @@ load_bioshock_iso()
         sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\2K Games\\BioShock\\Builds\\Release"
-bioshock.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\2K Games\\BioShock\\Builds\\Release" "bioshock.exe"
 }
 
 #----------------------------------------------------------------
@@ -2474,11 +2418,7 @@ __EOF__
 
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Activision\Blur(TM)"
-"Blur.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Activision\\Blur(TM)" "Blur.exe"
 }
 
 #----------------------------------------------------------------
@@ -2518,11 +2458,7 @@ load_braid_demo()
         try sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Braid"
-braid.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Braid" "braid.exe"
 }
 
 #----------------------------------------------------------------
@@ -2569,11 +2505,7 @@ load_braid()
         try sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Braid\"
-"braid.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Braid" "braid.exe"
 
     # Enter the key
     cd "$DRIVE_C"
@@ -2735,12 +2667,7 @@ load_cod4mw_demo() {
        ControlClick Button1 ; Finished
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Activision\\Call of Duty 4 - Modern Warfare Demo"
-iw3sp.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Activision\\Call of Duty 4 - Modern Warfare Demo" "iw3sp.exe"
 }
 
 #----------------------------------------------------------------
@@ -2758,12 +2685,7 @@ load_cnc2()
 
     try_unrar x OfficialCnCTiberianSun.rar "$programfilesdir_x86_unix"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\EA Games\\Command & Conquer The First Decade\\Command & Conquer(tm) Tiberian Sun(tm)\\SUN"
-Game.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\EA Games\\Command & Conquer The First Decade\\Command & Conquer(tm) Tiberian Sun(tm)\\SUN" "Game.exe"
 }
 
 #----------------------------------------------------------------
@@ -2844,11 +2766,7 @@ load_civ4() {
         try sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4"
-Civilization4.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4" "Civilization4.exe"
 }
 
 #----------------------------------------------------------------
@@ -2897,11 +2815,8 @@ load_civ4_demo()
     then
         try sh "$WINETRICKS" -q d3dx9_26
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo"
-Civilization4.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
 }
 
 #----------------------------------------------------------------
@@ -2942,11 +2857,7 @@ load_cnc3_demo()
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 3 Tiberium Wars Demo"
-CNC3Demo.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 3 Tiberium Wars Demo" "CNC3Demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -3060,12 +2971,7 @@ load_dao_ue()
 
     warn "To activate the additional content, visit http://social.bioware.com/redeem_code.php?path=/dragonage/pc/dlcactivate/en"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Dragon Age"
-bin_ship\\daorigins.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Dragon Age" "bin_ship\\daorigins.exe"
 }
 
 #----------------------------------------------------------------
@@ -3114,11 +3020,7 @@ load_darknesswithin2_demo()
     fi
 
     # you have to cd to the directory containing DarkLineage.exe before running it
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Iceberg Interactive\Darkness Within 2 Demo"
-"DarkLineage.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Iceberg Interactive\\Darkness Within 2 Demo" "DarkLineage.exe"
 }
 
 #----------------------------------------------------------------
@@ -3180,12 +3082,7 @@ load_daytona_usa_evolutions() {
 
     warn "Gives an error when closing the game, seems safe to ignore."
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$DRIVE_C\SEGA\DAYTONA USA Evolution Demo CD"
-"DAYTONA USA Evolution Demo CD.exe"
-__EOF__
-
+    w_declare_exe "$DRIVE_C\\SEGA\\DAYTONA USA Evolution Demo CD" "DAYTONA USA Evolution Demo CD.exe"
 }
 
 #----------------------------------------------------------------
@@ -3229,11 +3126,7 @@ load_dc2ba() {
     sleep 5
     killall winefile.exe
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Shockwave.com\\Dora's Carnival 2 - Boardwalk Adventure"
-"Dora's Carnival 2 - Boardwalk Adventure.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Shockwave.com\\Dora's Carnival 2 - Boardwalk Adventure" "Dora's Carnival 2 - Boardwalk Adventure.exe"
 
     # Workarounds needed by the game but not the installer should come at end of verb
     if workaround_wine_bug 13496
@@ -3295,11 +3188,7 @@ load_deadspace() {
     "
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Dead Space"
-Dead Space.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Dead Space" "Dead Space.exe"
 }
 
 #----------------------------------------------------------------
@@ -3336,10 +3225,7 @@ load_demolition_company_demo()
         sleep 1000
         controlclick, TNewButton2, Setup - Demolition, Completing
         "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-cd "$programfilesdir_x86_win\\Demolition Company Demo\\"
-DemolitionCompany.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Demolition Company Demo\\" "DemolitionCompany.exe"
 }
 
 #----------------------------------------------------------------
@@ -3378,11 +3264,7 @@ load_desperados2()
     "
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Atari\\Desperados 2"
-Desperados2.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Atari\\Desperados 2" "Desperados2.exe"
 }
 
 #----------------------------------------------------------------
@@ -3433,11 +3315,7 @@ load_deusex2_demo()
         warn "This game suffers from The Mouse Bug, see http://wiki.winehq.org/Bug6971 for tips"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Deus Ex - Invisible War Demo\\System\\"
-DX2.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Deus Ex - Invisible War Demo\\System\\" "DX2.exe"
 }
 
 #----------------------------------------------------------------
@@ -3510,11 +3388,7 @@ load_diablo2() {
 
     warn "When starting the game, be patient, wait until the menu appears.  The game seems to hang if it looses focus, see bug 14456, you may need to set winecfg to virtual desktop."
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Diablo II"
-"Diablo II.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Diablo II" "Diablo II.exe"
 }
 
 #----------------------------------------------------------------
@@ -3567,11 +3441,7 @@ load_dirt2_demo() {
         sh "$WINETRICKS" d3dx9_36
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Codemasters\\DiRT2 Demo"
-dirt2.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Codemasters\\DiRT2 Demo" "dirt2.exe"
 }
 
 #----------------------------------------------------------------
@@ -3631,11 +3501,7 @@ load_dragonage() {
         warn "If you still see flickering, try applying the patch from http://bugs.winehq.org/show_bug.cgi?id=23081"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Dragon Age"
-bin_ship\\daorigins.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Dragon Age" "bin_ship\\daorigins.exe"
 }
 
 #----------------------------------------------------------------
@@ -3670,11 +3536,7 @@ load_dts() {
     "
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Aspyr\\Death to Spies Moment of Truth"
-Truth.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Aspyr\\Death to Spies Moment of Truth" "Truth.exe"
 }
 
 #----------------------------------------------------------------
@@ -3711,11 +3573,8 @@ load_eve() {
     then
         sh "$WINETRICKS" -q corefonts
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\CCP\\EVE"
-eve.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\CCP\\EVE" "eve.exe"
 }
 
 #----------------------------------------------------------------
@@ -3751,11 +3610,7 @@ load_ewj_demo() {
         sh "$WINETRICKS" win98
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-cd "$DRIVE_C\\ewj_demo"
-WORM.EXE
-__EOF__
-
+    w_declare_exe "$DRIVE_C\\ewj_demo" "WORM.EXE"
 }
 
 #----------------------------------------------------------------
@@ -3852,11 +3707,7 @@ _EOF_
         $WINESERVER -k
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Microsoft Games\\Fable - The Lost Chapters"
-Fable.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Fable - The Lost Chapters" "Fable.exe"
 
     if workaround_wine_bug 24941
     then
@@ -3900,13 +3751,9 @@ load_fallout3()
 	controlclick, Button2
 	controlclick, Button3
     "
-
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3"
-"Fallout3.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3" "Fallout3.exe"
 }
+
 #----------------------------------------------------------------
 
 verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2009)" 379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso \
@@ -3968,12 +3815,7 @@ load_fallout3_goty() {
         try "$WINETRICKS" -q xlive
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3"
-"Fallout3.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3" "Fallout3.exe"
 }
 
 #----------------------------------------------------------------
@@ -4051,11 +3893,7 @@ load_fallout_nv()
     run, Steam.exe -shutdown
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Steam"
-Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 22380
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Steam" "Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 22380"
 }
 
 #----------------------------------------------------------------
@@ -4115,12 +3953,7 @@ load_fifa10() {
         controlclick, Button14, Product Registration, Please log into your EA Master Account to continue.
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10"
-"FIFA10.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\EA Sports\\FIFA 10" "FIFA10.exe"
 }
 
 #----------------------------------------------------------------
@@ -4179,12 +4012,7 @@ then
     sh "$WINETRICKS" -q d3dx9_36
 fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\EA Sports\\FIFA 11 Demo\\Game"
-"fifa.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\EA Sports\\FIFA 11 Demo\\Game" "fifa.exe"
 }
 
 #----------------------------------------------------------------
@@ -4238,11 +4066,7 @@ load_fifaonline3_beta()
     sleep 10
     killall "NFE.exe"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-c:
-cd \Program Files\\EA Sports\\FIFA Online
-Launch.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\EA Sports\\FIFA Online" "Launch.exe"
 
     # Download audio commentary
     cd "$DRIVE_C"
@@ -4318,11 +4142,7 @@ load_fifa10_demo() {
         sleep 1000
         controlclick, Button1, $fifatitle Setup, Click the Finish button to exit the Setup Wizard.
     "
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\EA Sports\\FIFA 10 - Demo"
-FIFA10Demo.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\EA Sports\\FIFA 10 - Demo" "FIFA10Demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -4341,12 +4161,7 @@ load_ffvii_demo() {
         warn "Doesn't work very well, see http://bugs.winehq.org/show_bug.cgi?id=9220"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_unix/ffvii_demo"
-ff7demo.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_unix/ffvii_demo" "ff7demo.exe"
 }
 
 
@@ -4420,12 +4235,7 @@ load_ffxiv_beta() {
         sh "$WINETRICKS" -q ie6
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\SquareEnix\\FINAL FANTASY XIV Beta Version"
-ffxivboot.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\SquareEnix\\FINAL FANTASY XIV Beta Version" "ffxivboot.exe"
 }
 
 #----------------------------------------------------------------
@@ -4522,11 +4332,7 @@ load_fm10_demo() {
         sh "$WINETRICKS" -q d3dx9_36
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-cd $programfilesdir_x86_win\\Sports Interactive\\Football Manager 2010 Demo
-fm.exe
-__EOF__
-    
+    w_declare_exe "$programfilesdir_x86_win\\Sports Interactive\\Football Manager 2010 Demo" "fm.exe"
 }
 
 # http://www.futurepinball.com/
@@ -4580,11 +4386,7 @@ load_futurepinball() {
         try "$WINETRICKS" -q wsh56vb dcom98
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "\\Games\\Future Pinball"
-"Future Pinball.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Games\\Future Pinball" "Future Pinball.exe"
 }
 
 #----------------------------------------------------------------
@@ -4658,11 +4460,7 @@ then
     warn "Game has Securom protection, doesn't work in Wine yet."
 fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-cd $programfilesdir_x86_win\\JoWooD Entertainment AG\\ArcaniA - Gothic 4 Demo
-Arcania.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\JoWooD Entertainment AG\\ArcaniA - Gothic 4 Demo" "Arcania.exe"
 }
 
 #----------------------------------------------------------------
@@ -4702,11 +4500,8 @@ load_grand_ages_rome_demo() {
     sleep 100
     controlclick, Button2, Grand Ages, Completing the Grand Ages Rome Demo
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-cd $programfilesdir_x86_win\\Kalypso\\Grand Ages Rome Demo
-Rome Demo.exe
-__EOF__
 
+    w_declare_exe "$programfilesdir_x86_win\\Kalypso\\Grand Ages Rome Demo" "Rome Demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -4890,11 +4685,7 @@ load_hko() {
         try sh "$WINETRICKS" -q msxml3
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\SanrioTown\\Hello Kitty Online"
-HKO.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\SanrioTown\\Hello Kitty Online" "HKO.exe"
 }
 
 #----------------------------------------------------------------
@@ -4950,11 +4741,7 @@ load_hordsoforcs2_demo() {
         Send {Space}
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Hordes of Orcs 2 Demo"
-HoO2.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Hordes of Orcs 2 Demo" "HoO2.exe"
 }
 
 #----------------------------------------------------------------
@@ -5038,9 +4825,10 @@ load_hphbp()
     "
     $WINESERVER -w
     iso_umount
+
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
-cd $programfilesdir_x86_win\Electronic Arts\Harry Potter and the Half-Blood Prince*
+cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince*
 cd pc
 hp6.exe
 __EOF__
@@ -5150,11 +4938,7 @@ load_hon()
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Heroes of Newerth"
-hon.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Heroes of Newerth" "hon.exe"
 }
 
 #----------------------------------------------------------------
@@ -5296,11 +5080,8 @@ load_kq1vga() {
             send {Enter}
         "
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\AGD Interactive\\King's Quest I"
-Kq1vga.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\AGD Interactive\\King's Quest I" "Kq1vga.exe"
 }
 
 #----------------------------------------------------------------
@@ -5340,11 +5121,7 @@ load_lhp_demo()
         warn "If you have sound problems, try switching to OSS sound in winecfg"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\WB Games\\LEGO*"
-LEGOHarryPotterDEMO.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\WB Games\\LEGO*" "LEGOHarryPotterDEMO.exe"
 }
 
 #----------------------------------------------------------------
@@ -5576,11 +5353,7 @@ load_lotsn()
     "
     cd "${olddir}"
 
-    cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
-${programfilesdrive}:
-cd "${programfilesdir_x86_win}\\Telltale Games\\Tales of Monkey Island\\Launch of the Screaming Narwhal"
-MonkeyIsland101.exe
-__EOF__
+    w_declare_exe "${programfilesdir_x86_win}\\Telltale Games\\Tales of Monkey Island\\Launch of the Screaming Narwhal" "MonkeyIsland101.exe"
 
     if workaround_wine_bug 22161
     then
@@ -5640,11 +5413,7 @@ load_lp2bench()
         sh "$WINETRICKS" -q wmp9
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\CAPCOM\\LOST PLANET 2 Benchmark Version"
-.\LP2DX9.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\CAPCOM\\LOST PLANET 2 Benchmark Version" ".\\LP2DX9.exe"
 
     if workaround_wine_bug 24043
     then
@@ -5676,11 +5445,7 @@ load_lswcs() {
     $WINESERVER -w
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\LucasArts\\LEGO Star Wars - The Complete Saga"
-LEGOStarWarsSaga.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\LucasArts\\LEGO Star Wars - The Complete Saga" "LEGOStarWarsSaga.exe"
 
     warn "This game is copy-protected, and requires the real disc in a real drive to run."
 }
@@ -5734,11 +5499,8 @@ load_losthorizon_demo() {
         ControlClick Button4 ; Finish
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Deep Silver\\Lost Horizon Demo"
-fsasgame.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Deep Silver\\Lost Horizon Demo" "fsasgame.exe"
 }
 
 #----------------------------------------------------------------
@@ -5842,12 +5604,8 @@ load_masseffect2() {
     then
         echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Mass Effect 2\Binaries"
-MassEffect2.EXE
-__EOF__
 
+    w_declare_exe "$programfilesdir_x86_win\\Mass Effect 2\\Binaries" "MassEffect2.EXE"
 }
 
 #----------------------------------------------------------------
@@ -5924,12 +5682,8 @@ load_masseffect2_demo() {
     then
         echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Mass Effect 2 Demo\\Binaries"
-MassEffect2.EXE
-__EOF__
 
+    w_declare_exe "$programfilesdir_x86_win\\Mass Effect 2 Demo\\Binaries" "MassEffect2.EXE"
 }
 
 #----------------------------------------------------------------
@@ -5946,11 +5700,7 @@ load_maxmagicmarker_demo() {
     # Work around bug in game?!
     mv "max and the magic markerdemo pc" "max and the magic markerdemo pc"_Data
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\$PACKAGE"
-max and the magic markerdemo pc.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\$PACKAGE" "max and the magic markerdemo pc.exe"
 }
 
 #----------------------------------------------------------------
@@ -6125,12 +5875,7 @@ load_mise() {
         "
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition"
-MISE.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition" "MISE.exe"
 }
 
 #----------------------------------------------------------------
@@ -6192,11 +5937,7 @@ load_moh_beta()
     # fixme: Try to find a way to script this?
     warn "After you sign up at http://medalofhonor.com/beta, you will receive a beta key which you will need to enter the first time you run the game."
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Medal of Honor MP Beta"
-MoHMPGame.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Medal of Honor MP Beta" "MoHMPGame.exe"
 }
 
 #----------------------------------------------------------------
@@ -6286,12 +6027,8 @@ load_mnbw_demo()
         ControlClick, Button2, Warband
     "
     cd "${olddir}"
-    cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
-${programfilesdrive}:
-cd "${programfilesdir_x86_win}\\Mount&Blade Warband"
-mb_warband.exe
-__EOF__
 
+    w_declare_exe "${programfilesdir_x86_win}\\Mount&Blade Warband" "mb_warband.exe"
 }
 
 #----------------------------------------------------------------
@@ -6356,11 +6093,8 @@ load_nfsps_demo()
         controlclick, Button4
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed ProStreet Demo"
-nfsdemo.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed ProStreet Demo" "nfsdemo.exe"
 }
 
 #----------------------------------------------------------------
@@ -6439,11 +6173,7 @@ load_nfsshift()
     "
 
     # Need path on shift.exe, see bug 23319
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT"
-.\shift.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT" ".\\shift.exe"
 }
 
 #----------------------------------------------------------------
@@ -6507,11 +6237,8 @@ load_nfsshift_demo()
         controlclick, Button1
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT Demo"
-shiftdemo.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Need for Speed SHIFT Demo" "shiftdemo.exe"
 }
 
 #----------------------------------------------------------------
@@ -6540,11 +6267,8 @@ load_oblivion()
         controlclick, Button3
         "
     iso_umount
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Bethesda Softworks Oblivion\\Oblivion"
-Oblivion.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Bethesda Softworks Oblivion\\Oblivion" "Oblivion.exe"
 }
 
 #----------------------------------------------------------------
@@ -6636,12 +6360,8 @@ load_osmos_demo() {
     then
         sh "$WINETRICKS" -q vcrun2005
     fi
-    
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\OsmosDemo"
-OsmosDemo.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\OsmosDemo" "OsmosDemo.exe"
 }
 
 #----------------------------------------------------------------
@@ -6694,11 +6414,7 @@ load_pcmark04() {
         warn "You may need to apply the patch from bug 22402 to avoid a crash in the tumbling blocks test."
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Futuremark\PCMark04"
-PCMark04
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Futuremark\\PCMark04" "PCMark04"
 }
 
 #----------------------------------------------------------------
@@ -6749,11 +6465,7 @@ load_pcmark05() {
         Send {Enter}
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Futuremark\PCMark05"
-PCMark05
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Futuremark\\PCMark05" "PCMark05"
 }
 
 #----------------------------------------------------------------
@@ -6949,11 +6661,7 @@ load_plantsvszombies() {
         ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\PopCap Games\Plants vs. Zombies"
-PlantsVsZombies
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\PopCap Games\\Plants vs. Zombies" "PlantsVsZombies"
 }
 
 #----------------------------------------------------------------
@@ -6987,11 +6695,7 @@ load_pop2008()
 
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia"
-Prince of Persia.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia" "Prince of Persia.exe"
 }
 
 
@@ -7037,11 +6741,7 @@ then
     sh "$WINETRICKS" -q dsoundbug9612
 fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia The Forgotten Sands"
-Prince of Persia.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Prince of Persia The Forgotten Sands" "Prince of Persia.exe"
 }
 
 #----------------------------------------------------------------
@@ -7213,12 +6913,7 @@ load_proevolution2010_demo()
         try sh "$WINETRICKS" -q d3dx9_36
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2010 DEMO"
-pes2010.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2010 DEMO" "pes2010.exe"
 }
 
 #----------------------------------------------------------------
@@ -7267,12 +6962,7 @@ load_proevolution2011_demo()
         sh "$WINETRICKS" d3dx9_36
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2011 DEMO"
-pes2011demo.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2011 DEMO" "pes2011demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -7317,11 +7007,7 @@ load_puzzleagent_demo() {
         try sh "$WINETRICKS" -q vcrun2008
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Telltale Games\\Puzzle Agent\\The Mystery of Scoggins"
-Grickle101.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Telltale Games\\Puzzle Agent\\The Mystery of Scoggins" "Grickle101.exe"
 }
 
 #----------------------------------------------------------------
@@ -7473,12 +7159,7 @@ _EOF_
         try sh "$WINETRICKS" -q ie6
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Runes of Magic"
-"Runes of Magic.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Runes of Magic" "Runes of Magic.exe"
     cd "$olddir"
 }
 
@@ -7534,11 +7215,7 @@ load_re5bench() {
 
     # Should run launcher.exe, but that requires .net and doesn't run on Wine
     # Should give choice of running RE5DX10.EXE, but that requires dx10, which doesn't work on Wine yet
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\CAPCOM\RESIDENT EVIL 5 Benchmark Version"
-RE5DX9.EXE
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\CAPCOM\\RESIDENT EVIL 5 Benchmark Version" "RE5DX9.EXE"
 }
 
 #----------------------------------------------------------------
@@ -7571,12 +7248,7 @@ load_riseofnations_demo() {
         try sh "$WINETRICKS" -q directmusic
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd $programfilesdir_x86_win\\Microsoft Games\\Rise of Nations Trial
-nations.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Rise of Nations Trial" "nations.exe"
 }
 #----------------------------------------------------------------
 #----------------------------------------------------------------
@@ -7643,11 +7315,7 @@ load_sammax304_demo() {
         try sh "$WINETRICKS" -q vcrun2005
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Telltale Games\\Sam and Max - The Devil's Playhouse\\Beyond the Alley of the Dolls"
-SamMax304.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Telltale Games\\Sam and Max - The Devil's Playhouse\\Beyond the Alley of the Dolls" "SamMax304.exe"
 }
 
 #----------------------------------------------------------------
@@ -7704,12 +7372,7 @@ load_sega_rally_2() {
         warn "The game is unplayable due to http://bugs.winehq.org/show_bug.cgi?id=22668. No known workaround."
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Sega\SEGA RALLY 2 DEMO"
-"SEGA RALLY 2 DEMO.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Sega\\SEGA RALLY 2 DEMO" "SEGA RALLY 2 DEMO.exe"
 }
 
 #----------------------------------------------------------------
@@ -7744,11 +7407,9 @@ load_7million() {
         Send {Enter}
     "
     cd "$olddir"
-    cat > "$DRIVE_C/run-$PACKAGE.bat" << __EOF__
-${programfilesdrive}:
-cd "users\\$LOGNAME\Local Settings\Application Data\7Million"
-7million
-__EOF__
+
+    w_declare_exe "users\\$LOGNAME\\Local Settings\\Application Data\\7Million" "7million"
+
    if workaround_wine_bug 23248
    then
        warn "This game doesn't work on wine yet"
@@ -7775,11 +7436,7 @@ load_secondlife_beta() {
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd $programfilesdir_x86_win\\SecondLifeBetaViewer
-SecondLifeBetaViewer.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\SecondLifeBetaViewer" "SecondLifeBetaViewer.exe"
 }
 
 #----------------------------------------------------------------
@@ -7803,11 +7460,8 @@ load_segabass() {
         send {Enter}
         winwaitclose
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\SEGA\\Sega Bass Fishing"
-BassFishing.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\SEGA\\Sega Bass Fishing" "BassFishing.exe"
 }
 
 #----------------------------------------------------------------
@@ -7876,11 +7530,7 @@ load_sims3() {
 
     # FIXME: apply next patch, too
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\The Sims 3\\Game\\Bin"
-TS3.EXE
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\The Sims 3\\Game\\Bin" "TS3.EXE"
 }
 
 #----------------------------------------------------------------
@@ -7950,11 +7600,7 @@ _EOF_
     try_regedit "$WISOTOOL_TMP_WIN"\\dof.reg
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Activision\Singularity(TM)\Binaries"
-Singularity.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Activision\\Singularity(TM)\\Binaries" "Singularity.exe"
 }
 
 #----------------------------------------------------------------
@@ -8007,12 +7653,7 @@ load_splitsecond_demo()
     "
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second Demo"
-SplitSecondDEMO.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second Demo" "SplitSecondDEMO.exe"
 }
 
 #----------------------------------------------------------------
@@ -8064,12 +7705,7 @@ load_splitsecond()
     "
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second"
-SplitSecond.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Disney Interactive Studios\\Split Second" "SplitSecond.exe"
 }
 
 #----------------------------------------------------------------
@@ -8108,11 +7744,8 @@ load_spore()
         controlclick, Button4
     "
     iso_umount
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Electronic Arts\\SPORE\\Sporebin"
-SporeApp.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\SPORE\\Sporebin" "SporeApp.exe"
 }
 
 #----------------------------------------------------------------
@@ -8160,12 +7793,7 @@ load_ssdd2()
     sleep 5
     killall winefile.exe
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Nick Arcade\\SpongeBob SquarePants Diner Dash 2"
-"SpongeBob SquarePants Diner Dash 2.exe"
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Nick Arcade\\SpongeBob SquarePants Diner Dash 2" "SpongeBob SquarePants Diner Dash 2.exe"
 }
 
 #----------------------------------------------------------------
@@ -8203,12 +7831,7 @@ load_sonicdxb_demo() {
     "
     LANG=${OLDLANG}
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Sega\\SONICADVENTUREDX_DEMO_B"
-sonic.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Sega\\SONICADVENTUREDX_DEMO_B" "sonic.exe"
 }
 
 #----------------------------------------------------------------
@@ -8259,11 +7882,7 @@ load_stalker_pripyat_bench() {
         sh "$WINETRICKS" d3dx9_31 d3dx9_42
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Call Of Pripyat Benchmark"
-Benchmark.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Call Of Pripyat Benchmark" "Benchmark.exe"
 }
 
 #----------------------------------------------------------------
@@ -8351,11 +7970,7 @@ load_starcraft2() {
         winclose
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\StarCraft II"
-"StarCraft II.exe"
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\StarCraft II" "StarCraft II.exe"
 }
 
 #----------------------------------------------------------------
@@ -8547,11 +8162,7 @@ __EOF__
 
     cd "$olddir"
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\CAPCOM\\STREETFIGHTERIV_BENCHMARK"
-StreetFighterIV_Benchmark.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\CAPCOM\\STREETFIGHTERIV_BENCHMARK" "StreetFighterIV_Benchmark.exe"
 }
 
 #----------------------------------------------------------------
@@ -8693,11 +8304,7 @@ load_tlr_demo() {
     "
 
     # FIXME: When running, the window has the wrong size. Wine or app bug?
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\SquareEnix\\The Last Remnant Trial Version\\Binaries"
-TLRDemo.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\SquareEnix\\The Last Remnant Trial Version\\Binaries" "TLRDemo.exe"
 
     warn "The mouse seems broken, see bug 6971 for possible workarounds (mwo={force,disabled,enabled} didn't work for me)."
 }
@@ -8750,11 +8357,7 @@ load_tmnationsforever() {
         ControlClick TNewButton4 ; Finish
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\TmNationsForever"
-TmForever.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\TmNationsForever" "TmForever.exe"
 }
 
 #----------------------------------------------------------------
@@ -8811,12 +8414,7 @@ load_twfc() {
         sh "$WINETRICKS" mwo=force
     fi
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Activision\Transformers - War for Cybertron\Binaries"
-TWFC.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Activision\\Transformers - War for Cybertron\\Binaries" "TWFC.exe"
 }
 
 #----------------------------------------------------------------
@@ -8847,12 +8445,7 @@ load_torchlight() {
         ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Runic Games\\Torchlight"
-Torchlight.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Runic Games\\Torchlight" "Torchlight.exe"
 }
 
 #----------------------------------------------------------------
@@ -8896,11 +8489,7 @@ load_tropico3_demo() {
         ControlClick Button2 ; Finish
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Kalypso\\Tropico 3 Demo"
-Tropico3 Demo.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Kalypso\\Tropico 3 Demo" "Tropico3 Demo.exe"
 
     if workaround_wine_bug 16328
     then
@@ -8941,11 +8530,7 @@ load_typingofthedead_demo() {
         Sleep 20000
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\SEGA\\TOD-Demo"
-Tod_e_demo.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\SEGA\\TOD-Demo" "Tod_e_demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -9065,10 +8650,7 @@ load_vegas() {
     "
     iso_umount
     
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas\\Binaries"
-R6Vegas_Launcher.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas\\Binaries" "R6Vegas_Launcher.exe"
 }
 
 
@@ -9127,10 +8709,7 @@ load_vegas2() {
     "
     iso_umount
     
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__ 
-cd "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas 2\\Binaries"
-R6Vegas2_Launcher.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas 2\\Binaries" "R6Vegas2_Launcher.exe"
 }
 
 #----------------------------------------------------------------
@@ -9212,11 +8791,7 @@ load_victoria2_demo() {
         sh "$WINETRICKS" -q dsoundbug9612
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Paradox Interactive\\Victoria 2 - DEMO"
-v2demo.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Paradox Interactive\\Victoria 2 - DEMO" "v2demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -9501,11 +9076,8 @@ load_wowbc() {
         echo "Patched $file"
         sleep 5
     done
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\World of Warcraft"
-Wow.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\World of Warcraft" "Wow.exe"
 }
 
 #----------------------------------------------------------------
@@ -9533,11 +9105,8 @@ load_zootycoon2_demo() {
         winwaitactive, Zoo Tycoon 2 Trial, COMPLETE
         winclose, Zoo Tycoon 2 Trial, COMPLETE
         "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Microsoft Games\\Zoo Tycoon 2 Trial Version"
-zt2demoretail.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Zoo Tycoon 2 Trial Version" "zt2demoretail.exe"
 }
 
 #----------------------------------------------------------------
@@ -9572,11 +9141,8 @@ _load_positech()
         Send {Space} ; Untick launch
         ControlClick TNewButton4 ; Finish
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\$installed_dir"
-$installed_exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\$installed_dir" "$installed_exe"
 }
 
 verblist_add gsb_demo "Gratuitous Space Battles demo (Positech Games, 2009) [download]" GSBDemoInstaller.exe
