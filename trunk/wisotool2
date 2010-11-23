@@ -2,10 +2,18 @@
 # LGPL
 # Copyright 2010 Dan Kegel
 # Experimental cleanup of wisotool
-# In this version, all variables wisotool defines for use by verbs
-# are capital and start with W_, and all functions wisotool defines
-# for use by verbs start with w_.
 # See http://code.google.com/p/winezeug/wiki/ConvergedFrontends
+#
+# Coding standards:
+# Public things defined by this script, for use by verbs:
+# - Variables have uppercase names starting with W_
+# - Functions have lowercase names starting with w_
+#
+# Private things internal to this script, not for use by verbs: 
+# - Local variables have lowercase names starting with uppercase W_
+# - Global variables have uppercase names starting with WISOTOOL_
+# - Functions have lowercase names starting with wisotool_
+#
 # I'm starting by defining just the variables and functions
 # needed to get the first verb working.  Once that's done, I'll add
 # one more verb and get it working.  This should leave behind lots
@@ -13,6 +21,12 @@
 # Changes:
 # - The menu system now stores metadata in files rather than a huge variable.
 # - The GUI now has columns for the things that used to be in parentheses.
+# - Entire script can be used as a library by setting WISOTOOL_LIB and sourcing
+# - Caching of iso's/dvd's is now optional, controlled by -s / WISOTOOL_OPT_SAVE
+# - Automated install now defaults to off, is controlled by W_OPT_UNATTENDED
+
+# Name of this version of wisotool (YYYYMMDD)
+WISOTOOL_VERSION=20101122
 
 #---- Public Functions ----
 
@@ -79,6 +93,20 @@ w_pathconv()
     esac
 }
 
+# verify an sha1sum
+w_verify_sha1sum()
+{
+    _W_vs_wantsum=$1
+    _W_vs_file=$2
+
+    _W_vs_gotsum=`$SHA1SUM < $_W_file | sed 's/ .*//'`
+    if [ "$_W_vs_gotsum"x != "$_W_wantsum"x ]
+    then
+       die "sha1sum mismatch!  Rename $_W_vs_file and try again."
+    fi
+    unset _W_vs_wantsum _W_vs_file _W_vs_gotsum
+}
+
 # Download a file
 # Usage: w_download url [sha1sum [filename [cookie jar]]]
 # Caches downloads in wisotoolcache/$package
@@ -143,11 +171,9 @@ w_download()
         *.exe) chmod +x $file ;;
         esac
 
-        cd "$olddir"
-
         if [ "$sum"x != ""x ]
         then
-            verify_sha1sum $sum  "$cache/$file"
+            w_verify_sha1sum $sum "$cache/$file"
         fi
     fi
 }
@@ -165,6 +191,52 @@ w_download_manual()
         w_die "Please download $file from the browser just opened to $url"
     fi
     # FIXME: verify $sha1sum of $file
+}
+
+# Usage: w_mount "volume name"
+# FIXME: should take mount option 'unhide' for poorly mastered discs
+w_mount()
+{
+    WISOTOOL_IMG="$W_CACHE/$W_PACKAGE/$1.iso"
+    mkdir -p "$W_CACHE/$W_PACKAGE"
+
+    if test -f "$WISOTOOL_IMG"
+    then
+        wisotool_mount_cached_iso "$1" 
+    else
+        case "$WISOTOOL_OPT_SAVE" in
+        0)
+            wisotool_cache_iso "$1" 
+            wisotool_mount_cached_iso "$1" 
+            ;;
+        1)
+            wisotool_mount_real_volume "$1"
+            ;;
+        esac
+    fi
+}
+
+w_umount()
+{
+    if test "$WINE" = ""
+    then
+        w_die Windows not yet supported
+    else
+        echo "Running $WISOTOOL_SUDO umount $WISOTOOL_ISO_MOUNT_ROOT"
+        case "$WISOTOOL_SUDO" in
+        gksudo)
+          # -l lazy unmount in case executable still running
+          $WISOTOOL_SUDO "umount -l $WISOTOOL_ISO_MOUNT_ROOT"
+          try $WISOTOOL_SUDO "rm -rf $WISOTOOL_ISO_MOUNT_ROOT"
+          ;;
+        *)
+          $WISOTOOL_SUDO umount -l $WISOTOOL_ISO_MOUNT_ROOT
+          try $WISOTOOL_SUDO rm -rf $WISOTOOL_ISO_MOUNT_ROOT
+          ;;
+        esac
+        rm -f "$WINEPREFIX"/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}:
+        rm -f "$WINEPREFIX"/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}::
+    fi
 }
 
 # Function for verbs to register themselves so they show up in the menu.
@@ -199,6 +271,10 @@ __EOF__
 
 #---- Private Functions ----
 
+wisotool_print_version() {
+    echo "$WISOTOOL_VERSION"
+}
+
 # Run a windows command without triggering wine's mshtml's gecko install dialog
 wisotool_early_wine()
 {
@@ -217,6 +293,26 @@ wisotool_detect_gui()
     else
         echo "Please install zenity if you want a graphical interface."
         exit 1
+    fi
+}
+
+# Detect which sudo to use
+wisotool_detect_sudo()
+{
+    WISOTOOL_SUDO=sudo
+    if test "$WISOTOOL_MENU" = "none"
+    then
+        return
+    fi
+    if test x"$DISPLAY" != x""
+    then
+        if test -x "`which gksudo 2>/dev/null`"
+        then
+            WISOTOOL_SUDO=gksudo
+        elif test -x "`which kdesudo 2>/dev/null`"
+        then
+            WISOTOOL_SUDO=kdesudo
+        fi
     fi
 }
 
@@ -272,70 +368,320 @@ wisotool_metadata_exists()
    test -f "$file"
 }
 
-#---- Private Variables ----
-
-# Ephemeral files for this run
-WISOTOOL_WORKDIR=/tmp/w.$LOGNAME.$$
-rm -rf "$WISOTOOL_WORKDIR"
-
-# Registering a verb creates a file in WISOTOOL_METADATA
-WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
-mkdir -p "$WISOTOOL_METADATA"
-
-# Delete work directory after each run
-trap wisotool_cleanup 1 2 3 6
-wisotool_cleanup()
+# Abort if user doesn't own the given directory (or its parent, if it doesn't exist yet)
+wisotool_die_if_user_not_dirowner()
 {
-    rm -rf "$WISOTOOL_WORKDIR"
+    if test -d "$1"
+    then
+        _W_checkdir="$1"
+    else
+        # fixme: quoting problem?
+        _W_checkdir=`dirname "$1"`
+    fi
+    _W_nuser=`id -u`
+    _W_nowner=`ls -l -n -d -L "$_W_checkdir" | awk '{print $3}'`
+    if test x$_W_nuser != x$_W_nowner
+    then
+        w_die "You (`id -un`) don't own $_W_checkdir.  Don't run this tool as another user!"
+    fi
 }
 
-# Which GUI helper to use (none, zenity, or kdialog).  See wisotool_detect_gui.
-WISOTOOL_MENU=none
+wisotool_volname()
+{
+    x=`volname $1 | sed 's/  *$//'`
+    if test "x$x" = "x"
+    then
+        # UDF?  See the ubuntu bug filed against volname
+        # FIXME: test this with more than one DVD, that offset 
+        # probably varies
+        x=`dd if=$1 skip=65562 bs=1 count=28 | tr -d '\000'`
+    fi
+    echo $x
+}
 
-WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
+# Really, should take a volume name as argument, and use 'mount' to get 
+# mount point if system automounted it.
+wisotool_detect_optical_drive()
+{
+    case "$WISOTOOL_DEV" in
+    "") ;;
+    *) return ;;
+    esac
 
-#---- Public Variables ----
+    for WISOTOOL_DEV in /dev/cdrom /dev/dvd /dev/sr0
+    do
+        test -b $WISOTOOL_DEV && break
+    done
 
-# System-specific variables
-case "$OS" in
- "Windows_NT")
-    WINE=""
-    W_DRIVE_C="C:/"
-    ;;
- *)
-    WINE=${WINE:-wine}
-    WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
-    W_DRIVE_C="$WINEPREFIX/dosdevices/c:"
-    ;;
-esac
+    case "$WISOTOOL_DEV" in
+    "x") w_die "can't find cd/dvd drive" ;;
+    esac
+}
 
-# Verbs can rely on W_TMP being empty at entry, and deleted after return
-W_TMP="$WISOTOOL_WORKDIR/tmp"
-W_TMP_WIN="`w_pathconv -w "$WISOTOOL_TMP"`"
+wisotool_cache_iso()
+{
+    # WISOTOOL_IMG has already been set by w_mount
+    _W_expected_volname="$1"
 
-# Where application installers are cached
-W_CACHE="${W_CACHE:-$WISOTOOL_DIR/cache}"
-W_CACHE_WIN="`w_pathconv -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
+    wisotool_die_if_user_not_dirowner "$W_CACHE"
+    wisotool_detect_optical_drive
 
-# The folder-name is localized!
-W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
-case "$W_PROGRAMS_WIN" in
-"") w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string" ;;
-%*) w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?" ;;
-esac
-W_PROGRAMS_UNIX="`w_pathconv -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
+    # Horrible hack for Gentoo - make sure we can read from the drive
+    if ! test -r $WISOTOOL_DEV
+    then
+        case "$WISOTOOL_SUDO" in
+        gksudo) $WISOTOOL_SUDO "chmod 666 $WISOTOOL_DEV" ;;
+        *) $WISOTOOL_SUDO chmod 666 $WISOTOOL_DEV ;;
+        esac
+    fi
 
-# 64 bit windows has a second directory for program files
-W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN} (x86)"
-W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX} (x86)"
-if ! test -d "$W_PROGRAMS_X86_UNIX"
+    while true
+    do
+        # Wait for user to insert disc.  
+        # Sleep long to make it less likely to close the drive during insertion.
+        while ! dd if=$WISOTOOL_DEV of=/dev/null count=1
+        do
+            sleep 5
+        done
+
+        # Some distros automount discs in /media, take advantage of that
+        if test -d "/media/_W_expected_volname"
+        then
+            break
+        fi
+        # Otherwise try and read it straight from unmounted volume
+        _W_volname=`wisotool_volname $WISOTOOL_DEV`
+        if test "$_W_expected_volname" != "$_W_volname"
+        then
+            w_warn "Wrong volume [$_W_volname] inserted, wanted [$_W_expected_volname]"
+            sleep 5
+        else
+            break
+        fi
+    done
+
+    # Copy disc to .iso file, display progress every 5 seconds
+    # Use conv=noerror,sync to replace unreadable blocks with zeroes
+    case $WISOTOOL_OPT_DD in
+    dd)
+      dd if=$WISOTOOL_DEV of="$W_CACHE"/temp.iso bs=2048 conv=noerror,sync &
+      pid=$!
+      ;;
+    ddrescue)
+      if test "`which ddrescue`" = ""
+      then
+          w_die "Please install ddrescue first."
+      fi
+      ddrescue -v -b 2048 $WISOTOOL_DEV "$W_CACHE"/temp.iso &
+      pid=$!
+      ;;
+    esac
+
+    # Note: if user presses ^C, wisotool_cleanup will call wisotool_iso_cleanup
+    while ps -p $pid > /dev/null 2>&1
+    do
+      sleep 5
+      ls -l "$W_CACHE"/temp.iso
+    done
+    pid=""
+
+    mv "$W_CACHE"/temp.iso "$WISOTOOL_IMG"
+
+    eject $WISOTOOL_DEV || true    # punt if eject not found (as on cygwin)
+}
+
+wisotool_mount_cached_iso()
+{
+    # On entry, WISOTOOL_IMG is already set
+    w_umount
+
+    if test "$WINE" = ""
+    then
+        w_die Windows not yet supported
+    else
+        # Linux
+        # FIXME: find a way to mount or copy from image without sudo
+        case "$WISOTOOL_SUDO" in
+        gksudo)
+          w_try $WISOTOOL_SUDO "mkdir -p $WISOTOOL_ISO_MOUNT_ROOT"
+          w_try $WISOTOOL_SUDO "mount -o ro,loop,uid=$USERID,unhide $WISOTOOL_IMG $WISOTOOL_ISO_MOUNT_ROOT"
+          ;;
+        *)
+          w_try $WISOTOOL_SUDO mkdir -p $WISOTOOL_ISO_MOUNT_ROOT
+          w_try $WISOTOOL_SUDO mount -o ro,loop,uid=$USERID,unhide "$WISOTOOL_IMG" $WISOTOOL_ISO_MOUNT_ROOT
+          ;;
+        esac
+
+        echo "Mounting as drive ${WISOTOOL_ISO_MOUNT_LETTER}:"
+        # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
+        rm -f "$WINEPREFIX/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}:"*
+        ln -sf "$WISOTOOL_IMG" "$WINEPREFIX/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}::"
+        ln -sf "$WISOTOOL_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}:"
+    fi
+}
+
+wisotool_mount_real_volume()
+{
+    # Wait for user to insert disc.  
+    # For now, only support distros that automount
+
+    warn "Please insert volume $1"
+
+    if test "$WINE" = ""
+    then
+        w_die Windows not yet supported
+    else
+        while ! test -d "/media/$1"
+        do
+            ls /media
+            sleep 1
+        done
+
+        wisotool_detect_optical_drive
+
+        # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
+        rm -f "$WINEPREFIX/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}:"*
+        ln -sf "$WISOTOOL_DEV" "$WINEPREFIX/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}::"
+        ln -sf "/media/$1" "$WINEPREFIX/dosdevices/${WISOTOOL_ISO_MOUNT_LETTER}:"
+    fi
+
+    # FIXME: need to remount some discs with unhide option, 
+    # add that as option to w_mount
+}
+
+wisotool_cleanup()
+{
+    echo "Caught signal, cleaning up."
+    case "$pid" in
+    "") ;;
+    *) kill $pid ;;
+    esac
+    test "$W_CACHE_SYMLINK" && rm -f "$W_CACHE_SYMLINK"
+    rm -rf "$WISOTOOL_WORKDIR"
+    echo "Done cleanup, quitting."
+    exit 1
+}
+
+wisotool_init()
+{
+    #---- Private Variables ----
+
+    # Ephemeral files for this run
+    WISOTOOL_WORKDIR=/tmp/w.$LOGNAME.$$
+    rm -rf "$WISOTOOL_WORKDIR"
+
+    # Registering a verb creates a file in WISOTOOL_METADATA
+    WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
+    mkdir -p "$WISOTOOL_METADATA"
+
+    # Delete work directory after each run
+    trap wisotool_cleanup 1 2 3 6
+
+    # Which GUI helper to use (none/zenity/kdialog).  See wisotool_detect_gui.
+    WISOTOOL_MENU=none
+
+    WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
+
+    # Overridden for windows
+    WISOTOOL_ISO_MOUNT_ROOT=/mnt/wisotool
+    WISOTOOL_ISO_MOUNT_LETTER=i
+
+    # Whether to always cache cached iso's (1) or only use cache if present (0)
+    # Can be inherited from environment or set via -c, defaults to off
+    WISOTOOL_OPT_SAVE=${WISOTOOL_SAVE_ISO:-0}
+
+    # what program to use to make disc image (dd or ddrescue)
+    WISOTOOL_OPT_DD=${WISOTOOL_OPT_DD:-dd}
+
+    #---- Public Variables ----
+
+    # System-specific variables
+    case "$OS" in
+     "Windows_NT")
+        WINE=""
+        W_DRIVE_C="C:/"
+        ;;
+     *)
+        WINE=${WINE:-wine}
+        WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+        W_DRIVE_C="$WINEPREFIX/dosdevices/c:"
+        ;;
+    esac
+
+    # Verbs can rely on W_TMP being empty at entry, and deleted after return
+    W_TMP="$WISOTOOL_WORKDIR/tmp"
+    W_TMP_WIN="`w_pathconv -w "$WISOTOOL_TMP"`"
+
+    # Where application installers are cached
+    W_CACHE="${W_CACHE:-$WISOTOOL_DIR/cache}"
+    W_CACHE_WIN="`w_pathconv -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
+
+    # The folder-name is localized!
+    W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+    case "$W_PROGRAMS_WIN" in
+    "") w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string" ;;
+    %*) w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?" ;;
+    esac
+    W_PROGRAMS_UNIX="`w_pathconv -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
+
+    # 64 bit windows has a second directory for program files
+    W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN} (x86)"
+    W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX} (x86)"
+    if ! test -d "$W_PROGRAMS_X86_UNIX"
+    then
+        W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN}"
+        W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX}"
+    fi
+
+    # FIXME: don't hardcode
+    W_PROGRAMS_DRIVE=c
+
+    # Whether to automate installs (0=no, 1=yes)
+    W_OPT_UNATTENDED={$W_OPT_UNATTENDED:-0}
+}
+
+wisotool_usage()
+{
+    cat <<_EOF_
+Usage: $0 [options] verb ...
+Executes given verbs.  Each verb installs an application or changes a setting.
+Verbs can be builtin, or can be paths to external files ending in .verb.
+Options:
+-s|--save_isos: cache isos while installing
+-q|--unattended: don't ask any questions while installing
+-r|--ddrescue: use alternate method of copying from disc
+-v|--verbose: echo all commands as they are executed
+-V|--version: display version and exit
+-h|--help: display this message and exit
+_EOF_
+}
+
+wisotool_handle_option()
+{
+    case "$1" in
+    -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
+    -s|--save_isos) WISOTOOL_OPT_SAVE=1 ;;
+    -q|--unattended) W_OPT_UNATTENDED=1 ;;
+    -v|--verbose) set -x ;;
+    -V|--version) wisotool_print_version ; exit 0;;
+    -h|--help) wisotool_usage ; exit 0 ;;
+    -*) w_die "unknown option $1" ;;
+    *) return 1 ;;
+    esac
+    return 0
+}
+
+# Must initialize variables before calling w_metadata
+if ! test "$WISOTOOL_LIB"
 then
-    W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN}"
-    W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX}"
-fi
+    # Handle options before init, to avoid starting wine for --help or --version
+    while wisotool_handle_option $1
+    do
+        shift
+    done
 
-# FIXME: don't hardcode
-W_PROGRAMS_DRIVE=c
+    wisotool_init
+fi
 
 #---- Builtin Verbs ----
 
@@ -361,6 +707,41 @@ load_blobby_volley()
     then
         warn "Go bug Wolfgang Sang for the bugfix :-)"
     fi
+}
+
+#----------------------------------------------------------------
+
+w_metadata  torchlight \
+   title="Torchlight (Boxed version)" \
+   publisher="Runic Games" \
+   year=2009 \
+   media=dvd \
+   file1=Torchlight.iso
+
+load_torchlight() {
+    w_mount "Torchlight"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${WISOTOOL_ISO_MOUNT_LETTER}:Torchlight.exe
+        WinWait, Torchlight Setup, This wizard will guide
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, This wizard will guide
+        WinWait, Torchlight Setup, Please review the license terms
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, Please review the license terms
+        WinWait, Torchlight Setup, Choose Install Location
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, Choose Install Location
+        WinWait, Torchlight Setup, Installation Complete
+        sleep 1000
+        ControlClick, Button2, Torchlight Setup, Installation Complete
+        WinWait, Torchlight Setup, Completing the Torchlight Setup Wizard
+        sleep 1000
+        ControlClick, Button4, Torchlight Setup, Completing the Torchlight Setup Wizard
+        ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
+    "
+
+    w_register_exe "$W_PROGRAMS_X86_WIN\\Runic Games\\Torchlight" Torchlight.exe
 }
 
 #----------------------------------------------------------------
@@ -421,7 +802,7 @@ done
 
 if ! test "$WISOTOOL_LIB"
 then
-    # If no arguments given, read them from GUI
+    # If no non-option arguments given, read them from GUI
     case "$1" in
     "")
         wisotool_detect_gui
@@ -433,36 +814,25 @@ then
     do
         case $W_PACKAGE in
 
-        # Special
-        -q) W_QUIET="/q"
-            WINEDEBUG=${WINEDEBUG:-"fixme-all"}
-            export WINEDEBUG
-            ;;
-        -v) set -x;;
-        version) print_version;;
-
         # External verbs
         *.verb)
            case $1 in
            */*) . $1 ;;
            *) . ./$1 ;;
            esac
-           W_PACKAGE=`echo $1 | sed 's,.*/,,;s,.verb,,'`
-           load_$W_PACKAGE
+           W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
+           ( load_$W_PACKAGE )
            ;;
 
         # Internal verbs
         *) if wisotool_metadata_exists $W_PACKAGE
            then
-               load_$W_PACKAGE
+               ( load_$W_PACKAGE )
            else
                echo Unknown arg $W_PACKAGE; wisotool_usage ; exit 1;
            fi
            ;;
         esac
-
-        # if verbs doesn't preserve the working directory, restore it
-        cd "$olddir"
 
         # User-specific postinstall hook.
         # Source it so the script can call w_download() if needed.
