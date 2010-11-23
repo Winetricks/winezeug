@@ -71,6 +71,11 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56
 Football Manager 2011 demo
 http://www.bigdownload.com/games/football-manager-2011/pc/football-manager-2011-vanilla-demo/
 
+Guild Wars (NCSoft, 2005; free 5 day trial)
+http://www.guildwars.com/
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=9194
+http://www.gamerankings.com/pc/914653-guild-wars/index.html
+
 Heart's Medicine
 This is just a cheesy little game, but a wine developer's gf wanted to play it,
 so he fixed a wined3d bug for it.  Let's add it so the install doesn't regress.
@@ -172,6 +177,12 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
 
 Unreal Tournament 3 (I have the copy Travis bought)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5937
+
+== Upcoming Betas ==
+
+ncsoft:
+ Guild Wars 2
+ Blade and Soul
 
 == Other titles (not sure if free demo available) ==
 
