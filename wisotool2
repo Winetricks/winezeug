@@ -94,13 +94,13 @@ w_try_winetricks()
     w_try "$WISOTOOL_WINETRICKS" -q $*
 }
 
-w_read_game_key()
+w_read_key()
 {
     _W_keyfile="$W_CACHE/$W_PACKAGE/key.txt"
     if ! test -f "$_W_keyfile"
     then
         # read key from user
-        _W_keymsg="Enter the disc key for $W_PACKAGE"
+        _W_keymsg="Please enter the key for app '$W_PACKAGE'"
         case $WISOTOOL_MENU in
         *zenity) W_KEY=`zenity --entry --text "$_W_keymsg"` ;;
         *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;; 
@@ -333,8 +333,8 @@ w_metadata()
 
 # Function for verbs to register their main executable.
 # Example:
-#   w_register_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
-w_register_exe()
+#   w_declare_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
+w_declare_exe()
 {
     _W_dir="$1"
     _W_exe="$2"
@@ -800,7 +800,7 @@ load_blobby_volley()
     mkdir -p "$W_DRIVE_C/BlobbyVolley"
     cd "$W_CACHE/$W_PACKAGE"
     w_try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
-    w_register_exe "c:\\BlobbyVolley" "volley.exe"
+    w_declare_exe "c:\\BlobbyVolley" "volley.exe"
 
     if w_workaround_wine_bug 4432
     then
@@ -819,7 +819,7 @@ w_metadata singularity \
 
 load_singularity()
 {
-    w_read_game_key
+    w_read_key
     w_mount SNG_DVD
     w_ahk_do "
         run ${W_ISO_MOUNT_LETTER}:setup.exe
@@ -877,7 +877,7 @@ _EOF_
         w_try_regedit "$W_TMP_WIN"\\dof.reg
     fi
 
-    w_register_exe "$W_PROGRAMS_X86_WIN\\Activision\\Singularity(TM)\\Binaries" "Singularity.exe"
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Singularity(TM)\\Binaries" "Singularity.exe"
 
     # Clean up crap left over in c:\ when the installer runs the vc 2008 redistributable installer
     cd "$W_DRIVE_C"
@@ -916,7 +916,72 @@ load_torchlight() {
         ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
     "
 
-    w_register_exe "$W_PROGRAMS_X86_WIN\\Runic Games\\Torchlight" Torchlight.exe
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Runic Games\\Torchlight" Torchlight.exe
+}
+
+#----------------------------------------------------------------
+
+w_metadata  twfc \
+  title="Transformers: War for Cybertron" \
+  publisher=Activision \
+  year=2010 \
+  media=dvd \
+  file1=TWFC_DVD.iso
+
+load_twfc()
+{
+    w_read_key
+    w_mount TWFC_DVD
+
+    w_ahk_do "
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
+        SetTitleMatchMode, 2
+        winwait, Activision, Select the language for the installation
+        sleep 1000
+        controlclick, Button1, Activision, Select the language for the installation
+        winwait, Transformers, Press NEXT to verify your key
+        sleep 1000
+        send $W_KEY
+        send {Enter}
+        winwait, Keycode Check, The Keycode you entered appears to be valid
+        sleep 1000
+        send {Enter}
+        winwait, Transformers, The InstallShield Wizard will install Transformers
+        sleep 1000
+        controlclick, Button1, Transformers, The InstallShield Wizard will install Transformers
+        winwait, Transformers, License Agreement
+        sleep 1000
+        controlclick, Button5, Transformers, License Agreement
+        sleep 1000
+        controlclick, Button2, Transformers, License Agreement
+        winwait, Transformers, Minimum System Requirements
+        sleep 1000
+        controlclick, Button1, Transformers, Minimum System Requirements
+        winwait, Transformers, Select the setup type to install
+        sleep 1000
+        controlclick, Button4, Transformers, Select the setup type to install
+
+        ; Installer exits silently. Prevent an early umount:
+        sleep 5000
+            Loop
+            {
+                ifwinexist, Transformers
+                    sleep 15000
+                else
+                    break
+            }
+    "
+
+    if w_workaround_wine_bug 6971
+    then
+        w_try_winetricks mwo=force
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Transformers - War for Cybertron\\Binaries" "TWFC.exe"
+
+    # Clean up crap left over in c:\ when the installer runs the vc 2008 redistributable installer
+    cd "$W_DRIVE_C"
+    rm -f VC_RED.* eula.*.txt globdata.ini install.exe install.ini install.res.*.dll vcredist.bmp
 }
 
 #----------------------------------------------------------------
@@ -955,7 +1020,7 @@ load_wog()
         ControlClick, Make me dirty right now, World of Goo Setup, Thank you
         send {Enter}
         "
-    w_register_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
 }
 
 #----------------------------------------------------------------
