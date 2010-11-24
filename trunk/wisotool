@@ -4690,6 +4690,56 @@ load_hko() {
 
 #----------------------------------------------------------------
 
+verblist_add hm_demo "Hearts Medicine Demo (Gamehouse, 2010) [download]" HeartsMedicine_Season1_download.exe
+
+load_hm_demo() {
+    download $PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, HeartsMedicine_Season1_download.exe
+        winwait, Hearts Medicine, This wizard will guide you
+        sleep 500
+        controlclick, Button2, Hearts Medicine, This wizard will guide you
+        winwait, Hearts Medicine, License Agreement
+        sleep 500
+        controlclick, Button4, Hearts Medicine, License Agreement
+        sleep 500
+        controlclick, Button2, Hearts Medicine, License Agreement
+        winwait, Hearts Medicine, Choose Install Location
+        sleep 500
+        controlclick, Button2, Hearts Medicine, Choose Install Location
+        winwait, Hearts Medicine, Choose Start Menu Folder
+        sleep 500
+        controlclick, Button2, Hearts Medicine, Choose Start Menu Folder
+        winwait, Hearts Medicine, Select Additional Tasks
+        sleep 500
+        controlclick, Button4, Hearts Medicine, Select Additional Tasks
+        sleep 500
+        controlclick, Button2, Hearts Medicine, Select Additional Tasks
+        winwait, Hearts Medicine, Completing the Hearts Medicine
+        sleep 500
+        controlclick, Button4, Hearts Medicine, Completing the Hearts Medicine
+        sleep 500
+        controlclick, Button2, Hearts Medicine, Completing the Hearts Medicine
+    "
+
+    if workaround_wine_bug 25187
+    then
+        sh "$WINETRICKS" -q ie6
+    fi
+
+    if workaround_wine_bug 25274
+    then
+        warn "Game fails to run, see http://bugs.winehq.org/show_bug.cgi?id=25274"
+    fi
+
+    w_declare_exe "$programfilesdir_x86_win\\Sandlot Games\\Hearts Medicine - Season 1" "GH Hearts Medicine s1.exe"
+}
+
+#----------------------------------------------------------------
+
 verblist_add hordsoforcs2_demo "Hordes of Orcs 2 Demo (Freeverse, 2010) [download]" HoO2Demo.exe
 
 load_hordsoforcs2_demo() {
