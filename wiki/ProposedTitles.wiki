@@ -206,9 +206,6 @@ Moonbase Alpha
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20752&iTestingId=54989
 Downloaded via steam, but doesn't use Steam once downloaded, just like America's Army.  Copy how we did AA.
 
-Torchlight (painful)
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=10540
-
 == Game development IDEs ==
 
 http://www.gamestart3d.com  (said to work quite well in wine)
