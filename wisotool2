@@ -246,17 +246,25 @@ w_download()
 
 w_download_manual()
 {
-    url="$1"
-    file="$2"
-    sha1sum="$3"
-    if ! test -f "$W_CACHE/$W_PACKAGE/$file"
+    _W_url="$1"
+    _W_file="$2"
+    _W_sha1sum="$3"
+
+    case $LANG in
+    de*) _W_dlmsg="Bitte laden Sie $_W_file von $_W_url runter, stellen Sie's in $W_CACHE/$W_PACKAGE, dann wiederholen Sie diesen Kommando.";;
+    *) _W_dlmsg="Please download $_W_file from $_W_url, place it in $W_CACHE/$W_PACKAGE, then re-run this script.";;
+    esac
+
+    if ! test -f "$W_CACHE/$W_PACKAGE/$_W_file"
     then
         mkdir -p "$W_CACHE/$W_PACKAGE"
-        xdg-open "$url"
+        xdg-open "$_W_url"
         sleep 3   # give some time for browser to open
-        w_die "Please download $file from the browser just opened to $url"
+        w_die "$_W_dlmsg"
+        # FIXME: wait in loop until file is finished?
     fi
     # FIXME: verify $sha1sum of $file
+    unset _W_url _W_file _W_sha1sum _W_dlmsg
 }
 
 # Usage: w_mount "volume name"
@@ -492,6 +500,33 @@ wisotool_metadata_exists()
 {
    file="$WISOTOOL_METADATA/$1.vars"
    test -f "$file"
+}
+
+# List verbs which are already fully cached locally
+wisotool_list_cached()
+{
+    for _W_metadatafile in "$WISOTOOL_METADATA"/*.vars
+    do
+        (
+        code=`basename $_W_metadatafile .vars`
+        . $_W_metadatafile
+        # FIXME: also check file2... if given
+        if test -f "$W_CACHE/$code/$file1"
+        then
+            echo $code
+        fi
+        )
+    done
+    unset _W_metadatafile
+}
+
+# List verbs which are downloadable, regardless of whether they're cached yet
+wisotool_list_download()
+{
+    (
+        cd "$WISOTOOL_METADATA"
+        grep -l 'media=.download' *.vars | sed 's/\.vars//'
+    )
 }
 
 # Abort if user doesn't own the given directory (or its parent, if it doesn't exist yet)
@@ -797,10 +832,27 @@ wisotool_init()
     WISOTOOL_WINETRICKS="$WISOTOOL_SRCDIR/winetricks"
     if ! test -f "$WISOTOOL_WINETRICKS"
     then
-        WISOTOOL_WINETRICKS="$WISOTOOL_CACHE/winetricks/winetricks"
+        WISOTOOL_WINETRICKS="$W_CACHE/winetricks/winetricks"
         W_PACKAGE=winetricks w_download http://kegel.com/wine/winetricks
     fi
 
+    # Handle case where z: doesn't exist
+    case "$W_CACHE_WIN" in
+    ""|*\?\\unix*)
+        # W_CACHE isn't accessible via a drive letter mapping, so make one,
+        # but be sure to clean it up later.
+        for letter in y x w v u t s r q
+        do
+            if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
+            then
+                WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+                ln -sf "$W_CACHE" "$WISOTOOL_CACHE_SYMLINK"
+                W_CACHE_WIN=${letter}:
+                break
+            fi
+        done
+        ;;
+    esac
 }
 
 wisotool_usage()
@@ -818,6 +870,9 @@ Optionen:
 -v|--verbose: alle ausgeführten Kommandos anzeigen
 -V|--version: Programmversion anzeigen
 -h|--help: diese Hilfemeldung anzeigen
+Sonstige Verben:
+list-cached: Anwendungen mit schon gecachte Installers auflisten
+list-download: herunterladbare Anwendungen auflisten
 _EOF_
         ;;
     *)
@@ -831,6 +886,9 @@ Options:
 -v|--verbose: echo all commands as they are executed
 -V|--version: display version and exit
 -h|--help: display this message and exit
+Miscelaneous verbs:
+list-cached: list applications with already-cached installers
+list-download: list downloadable applications
 _EOF_
         ;;
     esac
@@ -1136,9 +1194,16 @@ then
         ;;
     esac
 
+    rm -rf "$W_TMP"
+
     for W_PACKAGE in $*
     do
-        w_try mkdir -p "$W_TMP"
+        mkdir -p "$W_TMP"
+
+        case $LANG in
+        de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
+        *)   fail_msg="Failed to install package $W_PACKAGE" ;;
+        esac
 
         case $W_PACKAGE in
 
@@ -1158,16 +1223,27 @@ then
             *) . ./$1 ;;
             esac
             W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
-            ( load_$W_PACKAGE )
+            if ! ( load_$W_PACKAGE )
+            then
+                w_die "$fail_msg"
+            fi
             ;;
 
         # Internal verbs
+        list-cached) wisotool_list_cached ;;
+        list-download) wisotool_list_download ;;
+
         *)
             if wisotool_metadata_exists $W_PACKAGE
             then
-                ( load_$W_PACKAGE )
+                if ! ( load_$W_PACKAGE )
+                then
+                    w_die "$fail_msg"
+                fi
             else
-                echo Unknown arg $W_PACKAGE; wisotool_usage ; exit 1;
+                echo Unknown arg $W_PACKAGE
+                wisotool_usage
+                exit 1
             fi
             ;;
         esac
