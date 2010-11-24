@@ -100,7 +100,14 @@ w_read_key()
     if ! test -f "$_W_keyfile"
     then
         # read key from user
-        _W_keymsg="Please enter the key for app '$W_PACKAGE'"
+        case $LANG in
+        de*) _W_keymsg="Bitte einen Key für '$W_PACKAGE' eingeben"
+            _W_nokeymsg="Keinen Key eingegeben?"
+            ;;
+        *)  _W_keymsg="Please enter the key for app '$W_PACKAGE'"
+            _W_nokeymsg="No key given"
+            ;;
+        esac
         case $WISOTOOL_MENU in
         *zenity) W_KEY=`zenity --entry --text "$_W_keymsg"` ;;
         *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;; 
@@ -108,12 +115,12 @@ w_read_key()
         esac
         if test "$W_KEY" = ""
         then
-            w_die "No key given"
+            w_die "$_W_nokeymsg"
         fi
         echo "$W_KEY" > "$_W_keyfile"
     fi
     W_KEY=`cat "$_W_keyfile" | tr -d -`
-    unset _W_keyfile _W_keymsg
+    unset _W_keyfile _W_keymsg _W_nokeymsg
 }
 
 # Convert a Unix path to a Windows path
@@ -398,9 +405,25 @@ wisotool_showmenu()
 {
     case $WISOTOOL_MENU in
     zenity)
-        echo -n "zenity \
+        case $LANG in
+        de*) echo -n "zenity \
+                --title 'Pakete auswählen' \
+                --text 'Welche Pakete möchten Sie installieren?' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Paket \
+                --column Name \
+                --column Herausgeber \
+                --column Jahr \
+                --column Media \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+        *) echo -n "zenity \
                 --title 'Select a package to install' \
-                --text 'Install?' \
+                --text 'Which package(s) would you like to install?' \
                 --list \
                 --checklist \
                 --column '' \
@@ -409,9 +432,11 @@ wisotool_showmenu()
                 --column Publisher \
                 --column Year \
                 --column Media \
-                --height 440 \
-                --width 600 \
-                " > "$WISOTOOL_WORKDIR"/zenity.sh
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+        esac > "$WISOTOOL_WORKDIR"/zenity.sh
 
         for metadatafile in "$WISOTOOL_METADATA"/*.vars
         do
