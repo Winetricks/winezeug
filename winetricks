@@ -1636,6 +1636,9 @@ load_dotnet11() {
     $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
     $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
+    # Builtin fusion isn't good enough and sometimes causes install to fail. .Net will install a good one anyway...
+    rm -f "$WINDIR/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
+
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
     # Using builtin regsvcs.exe to workaround http://bugs.winehq.org/show_bug.cgi?id=25120
