@@ -101,7 +101,7 @@ w_read_key()
     then
         # read key from user
         case $LANG in
-        de*) _W_keymsg="Bitte einen Key für '$W_PACKAGE' eingeben"
+        de*) _W_keymsg="Bitte einen Key fuer Pakete '$W_PACKAGE' eingeben"
             _W_nokeymsg="Keinen Key eingegeben?"
             ;;
         *)  _W_keymsg="Please enter the key for app '$W_PACKAGE'"
@@ -317,7 +317,10 @@ w_workaround_wine_bug()
         return 1
         ;;
     esac
-    w_warn Working around wine bug $1
+    case $LANG in
+    de*) w_warn Wine-Fehler $1 wird umgegangen ;;
+    *)   w_warn Working around wine bug $1 ;;
+    esac
     return 0
 }
 
@@ -555,7 +558,11 @@ wisotool_cache_iso()
         _W_volname=`wisotool_volname $WISOTOOL_DEV`
         if test "$_W_expected_volname" != "$_W_volname"
         then
-            w_warn "Wrong volume [$_W_volname] inserted, wanted [$_W_expected_volname]"
+            case $LANG in
+            de*)  w_warn "Falsche Disk [$_W_volname] eingelegt.  Bitte legen Sie Disk [$_W_expected_volname] ein!" ;;
+            *)    w_warn "Wrong disc [$_W_volname] inserted.  Please insert disc [$_W_expected_volname]" ;;
+            esac
+
             sleep 5
         else
             break
@@ -629,7 +636,10 @@ wisotool_mount_real_volume()
     # Wait for user to insert disc.  
     # For now, only support distros that automount
 
-    _W_mountmsg="Please insert and mount volume '$1' (needed for app '$W_PACKAGE')"
+    case $LANG in
+    de*)_W_mountmsg="Disc '$1' bitte einlegen und montieren (fuer Pakete '$W_PACKAGE')" ;;
+    *)  _W_mountmsg="Please insert and mount volume '$1' (needed for package '$W_PACKAGE')" ;;
+    esac
 
     if test "$WINE" = ""
     then
