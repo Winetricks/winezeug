@@ -80,12 +80,6 @@ http://www.guildwars.com/
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=9194
 http://www.gamerankings.com/pc/914653-guild-wars/index.html
 
-Heart's Medicine
-This is just a cheesy little game, but a wine developer's gf wanted to play it,
-so he fixed a wined3d bug for it.  Let's add it so the install doesn't regress.
-See also http://bugs.winehq.org/show_bug.cgi?id=25174
-http://www.sandlotgames.com/w5/hearts_medicine_season_1.html
-
 His gf says these are her favorite five games from bigfish:
   World Mosaics (1, 2 and 3)
   Grimms Hatchery
