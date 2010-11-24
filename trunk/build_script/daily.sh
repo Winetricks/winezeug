@@ -42,10 +42,6 @@ WINETESTDIR=${WINETESTDIR:-$HOME/.winetest}
 # different one, change it here or override the environmental variable.
 WINEPREFIX=${WINEPREFIX:-$WINETESTDIR/wineprefix}
 
-# The tree for building Wine for the conformance tests. This will be removed and
-# recreated unless --no-newtree is specified.
-WINETESTGIT=${WINETESTGIT:-$WINETESTDIR/winesrc}
-
 # Set your name here. It will be used to submit test data. If none is given, your username will be used.
 NAME=${NAME:-`whoami`}
 
@@ -75,9 +71,11 @@ die() {
   exit 1
 }
 
-export WINE=$WINETESTGIT/wine
-export WINESERVER=$WINETESTGIT/server/wineserver
-export WINEPREFIX=$WINEPREFIX
+export WINETESTGIT="$WINETESTDIR/winesrc"
+export WINEBUILDDIR="$WINETESTDIR/winebuild"
+export WINE="$WINEBUILDDIR/wine"
+export WINESERVER="$WINEBUILDDIR/server/wineserver"
+export WINEPREFIX="$WINEPREFIX"
 export WINEGITURL="git://source.winehq.org/git/wine.git"
 
 # User defined CC overrides everything. Otherwise, hope user has gcc installed:
@@ -232,16 +230,15 @@ echo "$BUILDNAME build failed for some reason...Investigate manually you lazy ba
 exit 1
 }
 
-# TODO: sed/grep -v out visibility attribute/ignored return value errors, then wc -l error/warnings lines.
-# From there, we can store $WARNINGS_PREDICTED in each OS above, and complain if it doesn't match.
-# This shouldn't be used on Ubuntu right now, until the "ignoring return value" problem is fixed.
-# TODO: determine if logs are wanted, and if so, store in buildlog-date.txt
 build() {
-echo "Starting $BUILDNAME build." && 
-echo "Running configure." && ./configure $CONFIGUREFLAGS &&
-echo "Running make depend." && make -j$CORES depend &&
-echo "Running make." && make -j$CORES &&
-echo "$BUILDNAME build was fine. Coolio"
+cd "$WINEBUILDDIR"
+if [ $REBASE_TREE = 1 ]
+then
+    ./configure $CONFIGUREFLAGS
+else
+    "$WINETESTGIT"/configure $CONFIGUREFLAGS
+fi
+make -j$CORES
 }
 
 # Test functions here...
@@ -342,8 +339,7 @@ runtests() {
         tag="$NAME-$MACHINE$TESTNAME"
     fi
     
-    echo "About to start $tag test run. Expect no output for a while..." &&
-    $WINE $TESTBINARY -c -m $EMAIL -t $tag 1>/dev/null 2>&1 &&
+    $WINE $TESTBINARY -c -m $EMAIL -t $tag
     rm -rf $WINEPREFIX
 }
 
@@ -385,12 +381,16 @@ runtests
 build_regular() {
 BUILDNAME=regular
 CONFIGUREFLAGS=${CONFIGUREFLAGS}""
+rm -rf "$WINEBUILDDIR"
+mkdir -p "$WINEBUILDDIR"
 build || build_failed
 }
 
 build_win64() {
 BUILDNAME=win64
 CONFIGUREFLAGS=${CONFIGUREFLAGS}" --enable-win64"
+rm -rf "$WINEBUILDDIR"
+mkdir -p "$WINEBUILDDIR"
 build || build_failed
 }
 
@@ -744,8 +744,7 @@ usage() {
 echo "This script is used for Wine testing. By default, it will:"
 echo "1) update your git tree, or clone one for you if you don't have one"
 echo "2) Build (32-bit) Wine"
-echo "3) Download winetest.exe"
-echo "4) Runs winetest.exe, without any special options, and submits the results"
+echo "3) Runs winetest.exe, without any special options, and submits the results"
 echo ""
 echo "The script, however, has many more options:"
 echo "--no-newtree - Disables updating your git tree."
@@ -895,7 +894,6 @@ if [ $REBASE_TREE = 1 ]
         rebase_tree
 else
     clone_tree
-    cd "$WINETESTGIT"
 fi
 
 # Figure out the git revision. Used to get the right winetest:
@@ -918,14 +916,12 @@ if [ $WITH64_TEST = 1 ]
         WINETESTGIT=$WINETESTDIR/wine64 clone_tree
         # FIXME: Should probably be a more proper build function, a la above.
         # Though, right now, 64-bit only works on Linux, so not a huge deal.
-        cd $WINETESTDIR/wine64
         ./configure --enable-win64 --prefix=$WINETESTDIR/install
         make -j$CORES depend
         make -j$CORES
         make install
         
         WINETESTGIT=$WINETESTDIR/wine32 clone_tree
-        cd $WINETESTDIR/wine32
         ./configure --with-wine64=$WINETESTDIR/wine64 --without-mpg123 --prefix=$WINETESTDIR/install
         make -j$CORES depend
         make -j$CORES
