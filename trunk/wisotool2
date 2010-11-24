@@ -2,31 +2,52 @@
 # LGPL
 # Copyright 2010 Dan Kegel
 # Experimental cleanup of wisotool
+#
+#--------------------------------------------------------------------
 # See http://code.google.com/p/winezeug/wiki/ConvergedFrontends
 #
 # Coding standards:
+# Languge:
+# - Portability matters, as this script is run on many operating systems
+# - No bash, zsh, or csh extensions
+# - Prefer classic sh idioms
+#
+# Portability:
+# - If there is no universally available program for a needed function,
+#   support the two most frequently available programs.
+#   e.g. fall back to wget if curl is not available; likewise, support
+#   both sha1sum and openssl.
+#
+# Formatting:
+# - Your terminal and editor must be configured for utf-8
+# - Do not use tabs in this file or any verbs.
+# - Indent 4 spaces.
+# - Curlies and 'then' at beginning of line.
+# - cases aligned with 'case' and 'esac'
+# - Try to keep line length below 80 (makes printing easier)
+#
+# Commenting:
+# - Comments should explain intent in English
+# - Keep functions short and well named to reduce need for comments
+#
+# Naming:
 # Public things defined by this script, for use by verbs:
 # - Variables have uppercase names starting with W_
 # - Functions have lowercase names starting with w_
-#
 # Private things internal to this script, not for use by verbs: 
-# - Local variables have lowercase names starting with uppercase W_
+# - Local variables have lowercase names starting with uppercase _W_
 # - Global variables have uppercase names starting with WISOTOOL_
 # - Functions have lowercase names starting with wisotool_
 #
-# I'm starting by defining just the variables and functions
-# needed to get the first verb working.  Once that's done, I'll add
-# one more verb and get it working.  This should leave behind lots
-# of cruft.
-# Changes:
-# - The menu system now stores metadata in files rather than a huge variable.
-# - The GUI now has columns for the things that used to be in parentheses.
-# - Entire script can be used as a library by setting WISOTOOL_LIB and sourcing
-# - Caching of iso's/dvd's is now optional, controlled by -s / WISOTOOL_OPT_SAVE
-# - Automated install now defaults to off, is controlled by W_OPT_UNATTENDED
+# Internationalization / localization:
+# - Each important or frequently used message must be localized to at
+#   least one non-English language.  The default language presented
+#   if no translation is available for a message should be English.
+#
+#--------------------------------------------------------------------
 
 # Name of this version of wisotool (YYYYMMDD)
-WISOTOOL_VERSION=20101122
+WISOTOOL_VERSION=20101124
 
 #---- Public Functions ----
 
@@ -101,7 +122,7 @@ w_read_key()
     then
         # read key from user
         case $LANG in
-        de*) _W_keymsg="Bitte einen Key fuer Pakete '$W_PACKAGE' eingeben"
+        de*) _W_keymsg="Bitte einen Key für Pakete '$W_PACKAGE' eingeben"
             _W_nokeymsg="Keinen Key eingegeben?"
             ;;
         *)  _W_keymsg="Please enter the key for app '$W_PACKAGE'"
@@ -144,7 +165,7 @@ w_verify_sha1sum()
     _W_vs_wantsum=$1
     _W_vs_file=$2
 
-    _W_vs_gotsum=`$SHA1SUM < $_W_file | sed 's/ .*//'`
+    _W_vs_gotsum=`$WISOTOOL_SHA1SUM < $_W_file | sed 's/ .*//'`
     if [ "$_W_vs_gotsum"x != "$_W_wantsum"x ]
     then
        w_die "sha1sum mismatch!  Rename $_W_vs_file and try again."
@@ -318,8 +339,8 @@ w_workaround_wine_bug()
         ;;
     esac
     case $LANG in
-    de*) w_warn Wine-Fehler $1 wird umgegangen ;;
-    *)   w_warn Working around wine bug $1 ;;
+    de*) w_warn "Wine-Fehler $1 wird umgegangen" ;;
+    *)   w_warn "Working around wine bug $1" ;;
     esac
     return 0
 }
@@ -637,7 +658,7 @@ wisotool_mount_real_volume()
     # For now, only support distros that automount
 
     case $LANG in
-    de*)_W_mountmsg="Disc '$1' bitte einlegen und montieren (fuer Pakete '$W_PACKAGE')" ;;
+    de*)_W_mountmsg="Disc '$1' bitte einlegen und montieren (für Pakete '$W_PACKAGE')" ;;
     *)  _W_mountmsg="Please insert and mount volume '$1' (needed for package '$W_PACKAGE')" ;;
     esac
 
@@ -715,6 +736,17 @@ wisotool_init()
     # what program to use to make disc image (dd or ddrescue)
     WISOTOOL_OPT_DD=${WISOTOOL_OPT_DD:-dd}
 
+    # Mac folks tend to not have sha1sum, but we can make do with openssl
+    if [ -x "`which sha1sum 2>/dev/null`" ]
+    then
+       WISOTOOL_SHA1SUM="sha1sum"
+    elif [ -x "`which openssl 2>/dev/null`" ]
+    then
+       WISOTOOL_SHA1SUM="openssl dgst -sha1"
+    else
+       w_die "No sha1sum utility available."
+    fi
+
     #---- Public Variables ----
 
     # System-specific variables
@@ -773,18 +805,35 @@ wisotool_init()
 
 wisotool_usage()
 {
-    cat <<_EOF_
-Usage: $0 [options] verb ...
+    case $LANG in
+    de*)
+        cat <<_EOF_
+Usage: $0 [options] [verb|path-to-verb] ...
+Angegebene Verben ausführen.
+Jeder Verb installiert z.B. eine Anwendung oder ändert eine Einstellung.
+Optionen:
+-s|--save_isos: isos local speichern (erlaubt spätere Installierung ohne Disk)
+-q|--unattended: keine Fragen stellen, alles automatisch installieren
+-r|--ddrescue: alternative Zugriffsmodus (hilft bei gekratzten Disks)
+-v|--verbose: alle ausgeführten Kommandos anzeigen
+-V|--version: Programmversion anzeigen
+-h|--help: diese Hilfemeldung anzeigen
+_EOF_
+        ;;
+    *)
+        cat <<_EOF_
+Usage: $0 [options] [verb|path-to-verb] ...
 Executes given verbs.  Each verb installs an application or changes a setting.
-Verbs can be builtin, or can be paths to external files ending in .verb.
 Options:
--s|--save_isos: cache isos while installing
--q|--unattended: don't ask any questions while installing
--r|--ddrescue: use alternate method of copying from disc
+-s|--save_isos: cache isos (allows later installation without disc)
+-q|--unattended: don't ask any questions, just install automatically
+-r|--ddrescue: alternate method of disc access (helps with scratched discs)
 -v|--verbose: echo all commands as they are executed
 -V|--version: display version and exit
 -h|--help: display this message and exit
 _EOF_
+        ;;
+    esac
 }
 
 wisotool_handle_option()
@@ -1046,6 +1095,7 @@ load_wog()
         run WorldOfGooDemo.1.0.exe
         winwait, World of Goo Setup, License Agreement
         sleep 1000
+        WinActivate
         send {Enter}
         winwait, World of Goo Setup, Choose Components
         send {Enter}
@@ -1092,24 +1142,34 @@ then
 
         case $W_PACKAGE in
 
+        # Late options
+        -*)
+            if ! wisotool_handle_option $W_PACKAGE
+            then
+                wisotool_usage 
+                exit 1
+            fi
+            ;;
+
         # External verbs
         *.verb)
-           case $1 in
-           */*) . $1 ;;
-           *) . ./$1 ;;
-           esac
-           W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
-           ( load_$W_PACKAGE )
-           ;;
+            case $1 in
+            */*) . $1 ;;
+            *) . ./$1 ;;
+            esac
+            W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
+            ( load_$W_PACKAGE )
+            ;;
 
         # Internal verbs
-        *) if wisotool_metadata_exists $W_PACKAGE
-           then
-               ( load_$W_PACKAGE )
-           else
-               echo Unknown arg $W_PACKAGE; wisotool_usage ; exit 1;
-           fi
-           ;;
+        *)
+            if wisotool_metadata_exists $W_PACKAGE
+            then
+                ( load_$W_PACKAGE )
+            else
+                echo Unknown arg $W_PACKAGE; wisotool_usage ; exit 1;
+            fi
+            ;;
         esac
 
         # User-specific postinstall hook.
