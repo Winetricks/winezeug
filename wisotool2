@@ -6,17 +6,18 @@
 #--------------------------------------------------------------------
 # See http://code.google.com/p/winezeug/wiki/ConvergedFrontends
 #
-# Coding standards:
-# Languge:
+# This script, and the verbs it invokes, should follow these Coding standards:
+#
+# Portability:
 # - Portability matters, as this script is run on many operating systems
 # - No bash, zsh, or csh extensions
 # - Prefer classic sh idioms
-#
-# Portability:
 # - If there is no universally available program for a needed function,
 #   support the two most frequently available programs.
 #   e.g. fall back to wget if curl is not available; likewise, support
 #   both sha1sum and openssl.
+# - When using unix commands like cp, put options before filenames
+#   so it will work on systems like BSD and MacOSX
 #
 # Formatting:
 # - Your terminal and editor must be configured for utf-8
@@ -40,9 +41,12 @@
 # - Functions have lowercase names starting with wisotool_
 #
 # Internationalization / localization:
-# - Each important or frequently used message must be localized to at
-#   least one non-English language.  The default language presented
-#   if no translation is available for a message should be English.
+# - Important or frequently used message should be internationalized
+#   so translations can be easily added.  For example:
+#     case $LANG in
+#     de*) echo "Das ist die deutsche Meldung" ;;
+#     *)   echo "This is the English message" ;;
+#     esac
 #
 #--------------------------------------------------------------------
 
