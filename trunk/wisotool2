@@ -1273,7 +1273,12 @@ then
     case "$1" in
     "")
         wisotool_detect_gui
-        set `wisotool_showmenu`
+        verbs="`wisotool_showmenu`"
+        if test "$verbs"
+        then
+            # replace $1, $2, $3, ... with words of $verbs
+            set $verbs
+        fi
         ;;
     esac
 
