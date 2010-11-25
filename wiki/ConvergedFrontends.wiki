@@ -29,6 +29,7 @@ or something like that; the devil is in the details.)
 Recipies are bourne shell scripts that are sourced by the front end.  
 They may call functions defined by the front end; all such functions are lowercase and start with w_.
 They may read variables defined by the front end; all such variables are uppercase, and most start with W_.
+The winetricks environment variable WINE and the standard Wine variable WINEPREFIX are obeyed.
 
 Each recipe consists of metadata followed by a function.
 
@@ -58,7 +59,7 @@ w_metadata \
 A simple function looks like this:
 
 {{{
-install_bioshock_demo() {
+load_bioshock_demo() {
     w_download http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
     cd "$W_TEMP"
     w_try unzip -q "$W_CACHE/$W_PACKAGE"/nzd_BioShockPC.zip
@@ -68,13 +69,41 @@ install_bioshock_demo() {
 }}}
 
 == Predefined Variables ==
+Verbs can rely on the following variables being set before they are executed:
 
- * PATH - this will be set so 'wine' executes the correct version of wine
+ * WINE - if this isn't set by the user, the framework sets it to `which wine`
+ * WINEPREFIX - if this isn't set by the user, the framework sets it to ~/.wine
  * W_CACHE - a Unix path to the directory where downloaded files are cached.
- * W_PACKAGE - the code for the currently executing recipe.  e.g. this is set to bioshock_demo before calling install_bioshock_demo.
- * W_TEMP - a Unix path to a directory which exists and is empty when the function starts, and is deleted when the function exits.  This is where to unpack .zip files, etc.
+ * W_CACHE_WIN - a Windows path version of W_CACHE
+ * W_DRIVE_C - a Unix path to the C:\ directory
+ * W_ISO_MOUNT_LETTER - the drive letter the install disc is mounted on
+ * W_KEY - the key for this package (set by w_read_key) 
+ * W_OPT_UNATTENDED - if 1, install app without asking any questions
+ * W_PACKAGE - the code for the currently executing recipe.  e.g. this is set to bioshock_demo before calling load_bioshock_demo.
+ * W_PROGRAMS_DRIVE - drive letter the standard Program Files directory is on 
+ * W_PROGRAMS_UNIX - Unix path to standard Programs Files directory
+ * W_PROGRAMS_WIN - Windows path to standard Programs Files directory
+ * W_PROGRAMS_X86_UNIX - Unix path to standard 32 bit Programs Files directory
+ * W_PROGRAMS_X86_WIN - Windows path to standard 32 bit Programs Files directory
+ * W_TMP - a Unix path to a directory which exists and is empty when the function starts, and is deleted when the function exits.  This is where to unpack .zip files, etc.
+ * W_TMP_WIN - same as W_TMP, but as a Windows path
 
 == Predefined Functions ==
 
+Verbs may call any of the following shell functions:
+
+ * w_ahk_do - execute an Autohotkey script
+ * w_declare_exe - tell the framework how to run the app
+ * w_die - abort with an error message
  * w_download - takes a URL and an sha1sum, downloads the given file to the directory $W_CACHE/$W_PACKAGE
+ * w_download_manual - takes a URL, a filename, and an sha1sum, and asks the user to download a file from the given page
+ * w_metadata - called before verb is defined to add it to the list of verbs
+ * w_mount - takes a volume name; mounts the given volume (either from a disc or an iso)
+ * w_pathconv - convert between unix and windows paths (fixme: split into two functions)
+ * w_read_key - prompt the user for a disc key (or read a cached one)
  * w_try - executes the following command, possibly with logging, and aborts nicely if the command fails
+ * w_try_regedit - run regedit, abort on failure
+ * w_try_winetricks - run winetricks, abort on failure
+ * w_verify_sha1sum - verify the checksum of a single file, die if mismatch
+ * w_warn - display nice warning.  If GUI mode, waits for user to confirm.
+ * w_workaround_wine_bug - checks whether given wine bug should be worked around.
