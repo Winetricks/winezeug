@@ -1179,6 +1179,8 @@ load_wog()
     w_ahk_do "
         run WorldOfGooDemo.1.0.exe
         winwait, World of Goo Setup, License Agreement
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
         sleep 1000
         WinActivate
         send {Enter}
@@ -1189,6 +1191,8 @@ load_wog()
         winwait, World of Goo Setup, Thank you
         ControlClick, Make me dirty right now, World of Goo Setup, Thank you
         send {Enter}
+        }
+        winwaitclose, World of Goo Setup
         "
     w_declare_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
 }
