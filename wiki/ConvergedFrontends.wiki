@@ -27,8 +27,8 @@ or something like that; the devil is in the details.)
 = Recipes =
 
 Recipies are bourne shell scripts that are sourced by the front end.  
-They may call functions defined by the front end; all such functions are lowercase and start with w_.
-They may read variables defined by the front end; all such variables are uppercase, and most start with W_.
+They may call functions defined by the front end; all such functions are lowercase and start with w`_`.
+They may read variables defined by the front end; all such variables are uppercase, and most start with W`_`.
 The winetricks environment variable WINE and the standard Wine variable WINEPREFIX are obeyed.
 
 Each recipe consists of metadata followed by a function.
