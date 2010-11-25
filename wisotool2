@@ -973,31 +973,31 @@ load_singularity()
         winwait, Activision(R) - InstallShield, Select the language for the installation from the choices below.
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-        sleep 1000
-        controlclick, Button1, Activision(R) - InstallShield, Select the language for the installation from the choices below.
-        sleep 1000
-        winwait, Singularity(TM), Keycode Check
-        sleep 1000
-        Send $W_KEY
-        sleep 1000
-        Send {Enter}
-        ; Well this is annoying...
-        Winwait, Keycode Check, The Keycode you entered appears to be valid.
-        sleep 1000
-        Send {Enter}
-        winwait, Singularity(TM), The InstallShield Wizard will install Singularity(TM) on your computer
-        sleep 1000
-        controlclick, Button1, Singularity(TM), The InstallShield Wizard will install Singularity(TM) on your computer
-        winwait, Singularity(TM), Please read the following license agreement carefully
-        sleep 1000
-        controlclick, Button5, Singularity(TM), Please read the following license agreement carefully
-        sleep 1000
-        controlclick, Button2, Singularity(TM), Please read the following license agreement carefully
-        winwait, Singularity(TM), Minimum System Requirements
-        sleep 1000
-        controlclick, Button1, Singularity(TM), Minimum System Requirements
-        winwait, Singularity(TM), Select the setup type to install
-        controlclick, Button4, Singularity(TM), Select the setup type to install
+            sleep 1000
+            controlclick, Button1, Activision(R) - InstallShield, Select the language for the installation from the choices below.
+            sleep 1000
+            winwait, Singularity(TM), Keycode Check
+            sleep 1000
+            Send $W_KEY
+            sleep 1000
+            Send {Enter}
+            ; Well this is annoying...
+            Winwait, Keycode Check, The Keycode you entered appears to be valid.
+            sleep 1000
+            Send {Enter}
+            winwait, Singularity(TM), The InstallShield Wizard will install Singularity(TM) on your computer
+            sleep 1000
+            controlclick, Button1, Singularity(TM), The InstallShield Wizard will install Singularity(TM) on your computer
+            winwait, Singularity(TM), Please read the following license agreement carefully
+            sleep 1000
+            controlclick, Button5, Singularity(TM), Please read the following license agreement carefully
+            sleep 1000
+            controlclick, Button2, Singularity(TM), Please read the following license agreement carefully
+            winwait, Singularity(TM), Minimum System Requirements
+            sleep 1000
+            controlclick, Button1, Singularity(TM), Minimum System Requirements
+            winwait, Singularity(TM), Select the setup type to install
+            controlclick, Button4, Singularity(TM), Select the setup type to install
         }
         ; Loop until installer window has been gone for at least two seconds
         Loop
@@ -1058,21 +1058,21 @@ load_torchlight() {
         WinWait, Torchlight Setup, This wizard will guide
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-        sleep 1000
-        ControlClick, Button2, Torchlight Setup, This wizard will guide
-        WinWait, Torchlight Setup, Please review the license terms
-        sleep 1000
-        ControlClick, Button2, Torchlight Setup, Please review the license terms
-        WinWait, Torchlight Setup, Choose Install Location
-        sleep 1000
-        ControlClick, Button2, Torchlight Setup, Choose Install Location
-        WinWait, Torchlight Setup, Installation Complete
-        sleep 1000
-        ControlClick, Button2, Torchlight Setup, Installation Complete
-        WinWait, Torchlight Setup, Completing the Torchlight Setup Wizard
-        sleep 1000
-        ControlClick, Button4, Torchlight Setup, Completing the Torchlight Setup Wizard
-        ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
+            sleep 1000
+            ControlClick, Button2, Torchlight Setup, This wizard will guide
+            WinWait, Torchlight Setup, Please review the license terms
+            sleep 1000
+            ControlClick, Button2, Torchlight Setup, Please review the license terms
+            WinWait, Torchlight Setup, Choose Install Location
+            sleep 1000
+            ControlClick, Button2, Torchlight Setup, Choose Install Location
+            WinWait, Torchlight Setup, Installation Complete
+            sleep 1000
+            ControlClick, Button2, Torchlight Setup, Installation Complete
+            WinWait, Torchlight Setup, Completing the Torchlight Setup Wizard
+            sleep 1000
+            ControlClick, Button4, Torchlight Setup, Completing the Torchlight Setup Wizard
+            ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
         }
         WinWaitClose, Torchlight Setup
     "
@@ -1100,29 +1100,29 @@ load_twfc()
         winwait, Activision, Select the language for the installation
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-        sleep 1000
-        controlclick, Button1, Activision, Select the language for the installation
-        winwait, Transformers, Press NEXT to verify your key
-        sleep 1000
-        send $W_KEY
-        send {Enter}
-        winwait, Keycode Check, The Keycode you entered appears to be valid
-        sleep 1000
-        send {Enter}
-        winwait, Transformers, The InstallShield Wizard will install Transformers
-        sleep 1000
-        controlclick, Button1, Transformers, The InstallShield Wizard will install Transformers
-        winwait, Transformers, License Agreement
-        sleep 1000
-        controlclick, Button5, Transformers, License Agreement
-        sleep 1000
-        controlclick, Button2, Transformers, License Agreement
-        winwait, Transformers, Minimum System Requirements
-        sleep 1000
-        controlclick, Button1, Transformers, Minimum System Requirements
-        winwait, Transformers, Select the setup type to install
-        sleep 1000
-        controlclick, Button4, Transformers, Select the setup type to install
+            sleep 1000
+            controlclick, Button1, Activision, Select the language for the installation
+            winwait, Transformers, Press NEXT to verify your key
+            sleep 1000
+            send $W_KEY
+            send {Enter}
+            winwait, Keycode Check, The Keycode you entered appears to be valid
+            sleep 1000
+            send {Enter}
+            winwait, Transformers, The InstallShield Wizard will install Transformers
+            sleep 1000
+            controlclick, Button1, Transformers, The InstallShield Wizard will install Transformers
+            winwait, Transformers, License Agreement
+            sleep 1000
+            controlclick, Button5, Transformers, License Agreement
+            sleep 1000
+            controlclick, Button2, Transformers, License Agreement
+            winwait, Transformers, Minimum System Requirements
+            sleep 1000
+            controlclick, Button1, Transformers, Minimum System Requirements
+            winwait, Transformers, Select the setup type to install
+            sleep 1000
+            controlclick, Button4, Transformers, Select the setup type to install
         }
         ; Installer exits silently. Prevent an early umount
         Loop
@@ -1181,16 +1181,16 @@ load_wog()
         winwait, World of Goo Setup, License Agreement
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-        sleep 1000
-        WinActivate
-        send {Enter}
-        winwait, World of Goo Setup, Choose Components
-        send {Enter}
-        winwait, World of Goo Setup, Choose Install Location
-        send {Enter}
-        winwait, World of Goo Setup, Thank you
-        ControlClick, Make me dirty right now, World of Goo Setup, Thank you
-        send {Enter}
+            sleep 1000
+            WinActivate
+            send {Enter}
+            winwait, World of Goo Setup, Choose Components
+            send {Enter}
+            winwait, World of Goo Setup, Choose Install Location
+            send {Enter}
+            winwait, World of Goo Setup, Thank you
+            ControlClick, Make me dirty right now, World of Goo Setup, Thank you
+            send {Enter}
         }
         winwaitclose, World of Goo Setup
         "
