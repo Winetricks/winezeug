@@ -107,3 +107,10 @@ Verbs may call any of the following shell functions:
  * w_verify_sha1sum - verify the checksum of a single file, die if mismatch
  * w_warn - display nice warning.  If GUI mode, waits for user to confirm.
  * w_workaround_wine_bug - checks whether given wine bug should be worked around.
+
+== Reference Implementation ==
+
+For a preview version of wisotool that implements the new api, see
+http://code.google.com/p/winezeug/source/browse/trunk/wisotool2
+This currently embeds four verbs inside itself; later the verbs
+will live in a separate directory, one file per verb.
