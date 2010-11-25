@@ -71,6 +71,12 @@ More will be added when needed.
  * publisher - company releasing the app, e.g. "Electronic Arts", "Activision", or "Adobe"
  * title - name of app (ideally same as name in wine appdb and gamerankings.com)
  * year - year app was released for PC
+ * wineversion - version of wine known to work (optional), e.g. 1.3.7.
+
+The 'wineversion' metadata should be familiar to PlayOnLinux scripters.
+Other front ends may choose to ignore this field (e.g. wisotool will ignore it
+because wisotool is partly aimed at Wine developers, who always want to use the
+one they just built).
 
 == Predefined Variables ==
 Recipes can rely on the following variables being set before they are executed:
