@@ -71,6 +71,7 @@ load_bioshock_demo() {
 == Predefined Variables ==
 Verbs can rely on the following variables being set before they are executed:
 
+ * LANG - used when outputting localized messages.  If not set, use English.
  * WINE - if this isn't set by the user, the framework sets it to `which wine`
  * WINEPREFIX - if this isn't set by the user, the framework sets it to ~/.wine
  * W_CACHE - a Unix path to the directory where downloaded files are cached.
@@ -112,5 +113,6 @@ Verbs may call any of the following shell functions:
 
 For a preview version of wisotool that implements the new api, see
 http://code.google.com/p/winezeug/source/browse/trunk/wisotool2
+
 This currently embeds four verbs inside itself; later the verbs
 will live in a separate directory, one file per verb.
