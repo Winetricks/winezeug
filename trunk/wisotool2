@@ -506,16 +506,25 @@ wisotool_metadata_exists()
    test -f "$file"
 }
 
+# Returns true if given verb has been cached
+# You must have already loaded its metadata before calling
+wisotool_is_cached()
+{
+    # FIXME: also check file2... if given
+    test -f "$W_CACHE/$1/$file1"
+}
+
 # List verbs which are already fully cached locally
 wisotool_list_cached()
 {
     for _W_metadatafile in "$WISOTOOL_METADATA"/*.vars
     do
+        # Use a subshell to avoid putting metadata in global space
+        # If this is too slow, we can unset known metadata by hand
         (
         code=`basename $_W_metadatafile .vars`
         . $_W_metadatafile
-        # FIXME: also check file2... if given
-        if test -f "$W_CACHE/$code/$file1"
+        if wisotool_is_cached $code
         then
             echo $code
         fi
@@ -527,10 +536,47 @@ wisotool_list_cached()
 # List verbs which are downloadable, regardless of whether they're cached yet
 wisotool_list_download()
 {
-    (
-        cd "$WISOTOOL_METADATA"
-        grep -l 'media=.download' *.vars | sed 's/\.vars//'
-    )
+    cd "$WISOTOOL_METADATA"
+    grep -l 'media=.download' *.vars | sed 's/\.vars//'
+}
+
+# Helper for adding a string to a list of flags
+wisotool_append_to_flags()
+{
+    if test "$flags"
+    then
+        flags="$flags,"
+    fi
+    flags="${flags}$1"
+}
+
+# List all verbs verbosely
+# Format is "verb  title  (publisher, year) [flags]"
+wisotool_list_all()
+{
+    case $LANG in
+    de*) _W_cached="cached" ; _W_download="downloadable";;
+    *)   _W_cached="gecached" ; _W_download="herunterladbar";;
+    esac
+
+    for _W_metadatafile in "$WISOTOOL_METADATA"/*.vars
+    do
+        # Use a subshell to avoid putting metadata in global space
+        # If this is too slow, we can unset known metadata by hand
+        (
+        code=`basename $_W_metadatafile .vars`
+        . $_W_metadatafile
+
+        # Compute cached and downloadable flags 
+        flags=""
+        test "$media" = "download" && wisotool_append_to_flags "$_W_download"
+        wisotool_is_cached $code   && wisotool_append_to_flags "$_W_cached"
+        test "$flags" && flags="[$flags]"
+
+        printf "%-24s %s (%s, %s) %s\n" $code "$title" "$publisher" "$year" "$flags"
+        )
+    done
+    unset _W_cached _W_metadatafile
 }
 
 # Abort if user doesn't own the given directory (or its parent, if it doesn't exist yet)
@@ -875,8 +921,9 @@ Optionen:
 -V|--version: Programmversion anzeigen
 -h|--help: diese Hilfemeldung anzeigen
 Sonstige Verben:
-list-cached: Anwendungen mit schon gecachte Installers auflisten
-list-download: herunterladbare Anwendungen auflisten
+list: Alle Verben auflisten
+list-cached: Verben für schon gecachte Installers auflisten
+list-download: Verben für herunterladbare Anwendungen auflisten
 _EOF_
         ;;
     *)
@@ -890,9 +937,10 @@ Options:
 -v|--verbose: echo all commands as they are executed
 -V|--version: display version and exit
 -h|--help: display this message and exit
-Miscelaneous verbs:
-list-cached: list applications with already-cached installers
-list-download: list downloadable applications
+Miscellaneous verbs:
+list: list all verbs
+list-cached: list verbs for already-cached installers
+list-download: list verbs for downloadable applications
 _EOF_
         ;;
     esac
@@ -1044,7 +1092,7 @@ _EOF_
 #----------------------------------------------------------------
 
 w_metadata  torchlight \
-   title="Torchlight (Boxed version)" \
+   title="Torchlight - boxed version" \
    publisher="Runic Games" \
    year=2009 \
    media=dvd \
@@ -1261,6 +1309,7 @@ then
             ;;
 
         # Internal verbs
+        list) wisotool_list_all ;;
         list-cached) wisotool_list_cached ;;
         list-download) wisotool_list_download ;;
 
