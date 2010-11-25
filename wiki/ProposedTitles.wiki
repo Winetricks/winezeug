@@ -68,6 +68,9 @@ http://bugs.winehq.org/show_bug.cgi?id=23842
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
+DeathSpank (EA) (Steam)
+http://appdb.winehq.org/objectManager.php?sClass=application&iId=12280
+
 Divinity II (DTP Entertainment, 2010)
 http://en.wikipedia.org/wiki/Divinity_II:_Ego_Draconis
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=22059
