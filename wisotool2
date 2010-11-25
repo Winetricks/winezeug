@@ -117,6 +117,10 @@ w_try_winetricks()
 
 w_read_key()
 {
+    case "$W_OPT_UNATTENDED" in
+    0) W_KEY=dummy_to_make_autohotkey_happy ; return 0 ;;
+    esac
+
     _W_keyfile="$W_CACHE/$W_PACKAGE/key.txt"
     if ! test -f "$_W_keyfile"
     then
@@ -827,7 +831,7 @@ wisotool_init()
     W_PROGRAMS_DRIVE=c
 
     # Whether to automate installs (0=no, 1=yes)
-    W_OPT_UNATTENDED={$W_OPT_UNATTENDED:-0}
+    W_OPT_UNATTENDED=${W_OPT_UNATTENDED:-0}
 
     WISOTOOL_WINETRICKS="$WISOTOOL_SRCDIR/winetricks"
     if ! test -f "$WISOTOOL_WINETRICKS"
@@ -963,9 +967,12 @@ load_singularity()
 {
     w_read_key
     w_mount SNG_DVD
+
     w_ahk_do "
         run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, Activision(R) - InstallShield, Select the language for the installation from the choices below.
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
         sleep 1000
         controlclick, Button1, Activision(R) - InstallShield, Select the language for the installation from the choices below.
         sleep 1000
@@ -991,13 +998,21 @@ load_singularity()
         controlclick, Button1, Singularity(TM), Minimum System Requirements
         winwait, Singularity(TM), Select the setup type to install
         controlclick, Button4, Singularity(TM), Select the setup type to install
-        sleep 5000
+        }
+        ; Loop until installer window has been gone for at least two seconds
         Loop
         {
-            ifwinexist, Singularity(TM)
-                sleep 15000
-            else
-                break
+            sleep 1000
+            IfWinExist, Singularity
+                continue
+            IfWinExist, Activision
+                continue
+            sleep 1000
+            IfWinExist, Singularity
+                continue
+            IfWinExist, Activision
+                continue
+            break
         }
         "
 
@@ -1041,6 +1056,8 @@ load_torchlight() {
         SetTitleMatchMode, 2
         Run, ${W_ISO_MOUNT_LETTER}:Torchlight.exe
         WinWait, Torchlight Setup, This wizard will guide
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
         sleep 1000
         ControlClick, Button2, Torchlight Setup, This wizard will guide
         WinWait, Torchlight Setup, Please review the license terms
@@ -1056,6 +1073,8 @@ load_torchlight() {
         sleep 1000
         ControlClick, Button4, Torchlight Setup, Completing the Torchlight Setup Wizard
         ControlClick, Button2, Torchlight Setup, Completing the Torchlight Setup Wizard
+        }
+        WinWaitClose, Torchlight Setup
     "
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Runic Games\\Torchlight" Torchlight.exe
@@ -1079,6 +1098,8 @@ load_twfc()
         run ${W_ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
         winwait, Activision, Select the language for the installation
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
         sleep 1000
         controlclick, Button1, Activision, Select the language for the installation
         winwait, Transformers, Press NEXT to verify your key
@@ -1102,16 +1123,22 @@ load_twfc()
         winwait, Transformers, Select the setup type to install
         sleep 1000
         controlclick, Button4, Transformers, Select the setup type to install
-
-        ; Installer exits silently. Prevent an early umount:
-        sleep 5000
-            Loop
-            {
-                ifwinexist, Transformers
-                    sleep 15000
-                else
-                    break
-            }
+        }
+        ; Installer exits silently. Prevent an early umount
+        Loop
+        {
+            sleep 1000
+            IfWinExist, Transformers
+                continue
+            IfWinExist, Activision
+                continue
+            sleep 1000
+            IfWinExist, Transformers
+                continue
+            IfWinExist, Activision
+                continue
+            break
+        }
     "
 
     if w_workaround_wine_bug 6971
