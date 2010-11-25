@@ -2366,7 +2366,7 @@ load_blobby_volley() {
 
     if workaround_wine_bug 4432
     then
-        warn "Go bug Wolfgang Sang for the bugfix :-)"
+        warn "Go bug Wolfram Sang for the bugfix :-)"
     fi
 }
 
