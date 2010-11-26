@@ -2571,6 +2571,84 @@ __EOF__
 
 #----------------------------------------------------------------
 
+# Use load_harder to load the first disc
+# Checksums vary, have to rename by hand to match volume names
+verblist_add cod1 "Call of Duty (Activision, 2003)" \
+    COD1.iso \
+    CoD2.iso
+
+load_cod1() {
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/COD1.iso
+
+    read_game_key
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${ISO_MOUNT_LETTER}:setup.exe
+        WinWait, CD Key, enter
+        send {Raw}$KEY
+        ControlClick Button1
+        WinWait, CD Key, valid
+        ControlClick Button1
+        WinWait, Call of Duty, Welcome
+        ControlClick Button1
+        WinWait, Call of Duty, License
+        ControlClick Button3
+        WinWait, Call of Duty, Minimum
+        ControlClick Button4
+        WinWait, Call of Duty, Location
+        ControlClick Button1
+        WinWait, Call of Duty, Folder
+        ControlClick Button1
+        WinWait, Call of Duty, Start
+        ControlClick Button1
+        WinWait, Insert CD, Please
+        "
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/CoD2.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Send {Enter}    ;continue installation
+        WinWait, Insert CD, Please
+    "
+
+    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/COD1.iso
+
+    ahk_do "
+        SetTitleMatchMode, 2
+        Send {Enter}    ;finalize install
+        WinWait, Create Shortcut, Desktop
+        ControlClick Button1
+        WinWait, DirectX, Call    ;directx 9
+        ControlClick Button6
+        ControlClick Button1
+        WinWait, Confirm DX settings, Are
+        ControlClick Button2
+        WinWait, Installation Complete, Congratulations!
+        ControlClick Button1
+    "
+    iso_umount
+
+    if workaround_wine_bug 21558
+    then
+        # Work around a buffer overflow - not really Wine's fault
+        setvar="@if not defined %__GL_ExtensionStringVersion% then echo \"If you get a buffer overflow error, set __GL_ExtensionStringVersion=17700 before starting Wine.  See http://bugs.winehq.org/show_bug.cgi?id=21558.\""
+    else
+        setvar=
+    fi
+    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+$setvar
+${programfilesdrive}:
+cd "$programfilesdir_x86_win\\Call of Duty"
+CoDSP.exe
+__EOF__
+
+    warn "This game is copy-protected, and requires the real disc in a real drive to run."
+}
+
+#----------------------------------------------------------------
+
 
 verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
   6f572261ed954733806daf5b42edf92b3127cd14.iso \
