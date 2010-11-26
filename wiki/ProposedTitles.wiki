@@ -103,12 +103,6 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; 
 Hegemony Gold beta
 http://www.longbowgames.com/
 
-IMVU - free mmo chat
-http://www.IMVU.com
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=2697
-It has a downloader that works well.  Game runs fine, no winetricks needed?
-Only problem is screen goes black when you exit the store, or something.
-
 Land of Chaos Online Open beta starts aug 3.
 http://pc.ign.com/articles/110/1109105p1.html
 http://www.massively.com/2010/03/11/gdc10-land-of-chaos-online-interview/
