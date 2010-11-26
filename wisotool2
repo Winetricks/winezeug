@@ -130,6 +130,9 @@ w_read_key()
     then
         # read key from user
         case $LANG in
+        da*) _W_keymsg="Angiv venligst registrerings-nøglen for pakken '$_PACKAGE'"
+            _W_nokeymsg="Ingen nøgle angivet"
+            ;;
         de*) _W_keymsg="Bitte einen Key für Pakete '$W_PACKAGE' eingeben"
             _W_nokeymsg="Keinen Key eingegeben?"
             ;;
@@ -259,6 +262,7 @@ w_download_manual()
     _W_sha1sum="$3"
 
     case $LANG in
+    da*) _W_dlmsg="Hent venligst filen $_W_file fra $_W_url og placér den i $W_CACHE/W_PACKAGE, kør derefter dette skript.";;
     de*) _W_dlmsg="Bitte laden Sie $_W_file von $_W_url runter, stellen Sie's in $W_CACHE/$W_PACKAGE, dann wiederholen Sie diesen Kommando.";;
     *) _W_dlmsg="Please download $_W_file from $_W_url, place it in $W_CACHE/$W_PACKAGE, then re-run this script.";;
     esac
@@ -355,6 +359,7 @@ w_workaround_wine_bug()
         ;;
     esac
     case $LANG in
+    da*) w_warn "Arbejder uden om wine-fejl $1" ;;
     de*) w_warn "Wine-Fehler $1 wird umgegangen" ;;
     *)   w_warn "Working around wine bug $1" ;;
     esac
@@ -446,7 +451,22 @@ wisotool_showmenu()
     case $WISOTOOL_MENU in
     zenity)
         case $LANG in
-        de*) echo -n "zenity \
+        da*) echo -n "zenity \
+                --title 'Vælg en pakke' \
+                --text 'Vilken pakke vil du installere?' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Pakke \
+                --column Navn \
+                --column Udgiver \
+                --column År \
+                --column Medie \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+       de*) echo -n "zenity \
                 --title 'Pakete auswählen' \
                 --text 'Welche Pakete möchten Sie installieren?' \
                 --list \
@@ -559,8 +579,9 @@ wisotool_append_to_flags()
 wisotool_list_all()
 {
     case $LANG in
-    de*) _W_cached="cached" ; _W_download="downloadable";;
-    *)   _W_cached="gecached" ; _W_download="herunterladbar";;
+    da*) _W_cached="cached"   ; _W_download="kan hentes"    ;;
+    de*) _W_cached="gecached" ; _W_download="herunterladbar";;
+    *)   _W_cached="cached"   ; _W_download="downloadable"  ;;
     esac
 
     for _W_metadatafile in "$WISOTOOL_METADATA"/*.vars
@@ -669,6 +690,7 @@ wisotool_cache_iso()
         if test "$_W_expected_volname" != "$_W_volname"
         then
             case $LANG in
+            da*)  w_warn "Forkert disk [$_W_volname] indsat. Indsæt venligst disken [$_W_expected_volname]" ;;
             de*)  w_warn "Falsche Disk [$_W_volname] eingelegt.  Bitte legen Sie Disk [$_W_expected_volname] ein!" ;;
             *)    w_warn "Wrong disc [$_W_volname] inserted.  Please insert disc [$_W_expected_volname]" ;;
             esac
@@ -747,6 +769,7 @@ wisotool_mount_real_volume()
     # For now, only support distros that automount
 
     case $LANG in
+    da*)_W_mountmsg="Indsæt og montér venligst disken '$1' (krævet af pakken '$_PACKAGE')" ;;
     de*)_W_mountmsg="Disc '$1' bitte einlegen und montieren (für Pakete '$W_PACKAGE')" ;;
     *)  _W_mountmsg="Please insert and mount volume '$1' (needed for package '$W_PACKAGE')" ;;
     esac
@@ -912,6 +935,23 @@ wisotool_init()
 wisotool_usage()
 {
     case $LANG in
+    da*)
+        cat <<_EOF_
+Brug: $0 [tilvalg] [verbum|sti-til-verbum] ...
+Kører de angivne verber.  Hvert verbum installerer et program eller ændrer en indstilling.
+Tilvalg:
+-s|--save_isos: lagr iso'er lokalt (muliggør senere installation uden disk)
+-q|--unattended: stil ingen spørgsmål, installér bare automatisk
+-r|--ddrescue: brug alternativ disk-tilgangsmetode (hjælper i tilfælde af en ridset disk)
+-v|--verbose: vis alle kommandoer som de bliver udført
+-V|--version: vis programversionen og afslut
+-h|--help: vis denne besked og afslut
+Diverse verber:
+list: vis en liste over alle verber
+list-cached: vis en liste over verber for allerede-hentede installationsprogrammer
+list-download: vis en liste over verber for programmer der kan hentes
+_EOF_
+        ;;
     de*)
         cat <<_EOF_
 Usage: $0 [options] [verb|path-to-verb] ...
@@ -1289,6 +1329,7 @@ then
         mkdir -p "$W_TMP"
 
         case $LANG in
+        de*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
         de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
         *)   fail_msg="Failed to install package $W_PACKAGE" ;;
         esac
