@@ -763,34 +763,97 @@ wisotool_mount_cached_iso()
     fi
 }
 
+# List the currently mounted udf or iso9660 filesystems that match the given pattern
+# Output format: 
+#   dev mountpoint
+#   dev mountpoint
+#   ...
+# Mountpoints may contain spaces.
+
+wisotool_list_mounts()
+{
+    mount | egrep 'udf|iso9660' | sed 's,^\([^ ]*\) on \(.*\) type .*,\1 \2,'| grep "$1\$" 
+}
+
+# Return success and set _W_dev _W_mountpoint if volume $1 is mounted
+# Note: setting variables as a way of returning results from a
+# shell function exposed several bugs in most shells (except ksh!)
+# related to implicit subshells.  It would be better to output
+# one string to stdout instead.
+wisotool_is_mounted()
+{
+    # First, check for matching mountpoint
+    _W_tmp="`wisotool_list_mounts "$1"`"
+    if test "$_W_tmp"
+    then
+        _W_dev=`echo $_W_tmp | sed 's/ .*//'`
+        _W_mountpoint="`echo $_W_tmp | sed 's/^[^ ]* //'`"
+        # Volume found!
+        return 0
+    fi
+
+    # If that fails, read volume name the hard way for each volume
+    # Have to use file to return results from implicit subshell
+    rm -f /tmp/_W_tmp.$LOGNAME
+    wisotool_list_mounts . | while true
+    do
+        IFS= read _W_tmp
+
+        _W_dev=`echo $_W_tmp | sed 's/ .*//'`
+        test "$_W_dev" || break
+        _W_mountpoint="`echo $_W_tmp | sed 's/^[^ ]* //'`"
+        _W_volname=`wisotool_volname $_W_dev`
+        if test "$1" = "$_W_volname"
+        then
+            # Volume found!  Want to return from function here, but can't
+            echo "$_W_tmp" > /tmp/_W_tmp.$LOGNAME
+            break
+        fi
+    done
+
+    if test -f /tmp/_W_tmp.$LOGNAME
+    then
+        # Volume found!  Return from function.  
+        _W_dev=`cat /tmp/_W_tmp.$LOGNAME | sed 's/ .*//'`
+        _W_mountpoint="`cat /tmp/_W_tmp.$LOGNAME | sed 's/^[^ ]* //'`"
+        rm -f /tmp/_W_tmp.$LOGNAME
+        return 0
+    fi
+
+    # Volume not found
+    unset _W_dev _W_mountpoint _W_volname
+    return 1
+}
+
 wisotool_mount_real_volume()
 {
+    _W_expected_volname="$1"
+
     # Wait for user to insert disc.  
-    # For now, only support distros that automount
 
     case $LANG in
-    da*)_W_mountmsg="Indsæt og montér venligst disken '$1' (krævet af pakken '$_PACKAGE')" ;;
-    de*)_W_mountmsg="Disc '$1' bitte einlegen und montieren (für Pakete '$W_PACKAGE')" ;;
-    *)  _W_mountmsg="Please insert and mount volume '$1' (needed for package '$W_PACKAGE')" ;;
+    da*)_W_mountmsg="Indsæt og montér venligst disken '$_W_expected_volname' (krævet af pakken '$_PACKAGE')" ;;
+    de*)_W_mountmsg="Disc '$_W_expected_volname' bitte einlegen und montieren (für Pakete '$W_PACKAGE')" ;;
+    *)  _W_mountmsg="Please insert and mount volume '$_W_expected_volname' (needed for package '$W_PACKAGE')" ;;
     esac
 
     if test "$WINE" = ""
     then
         w_die Windows not yet supported
     else
-        while ! test -d "/media/$1"
+        while ! wisotool_is_mounted "$_W_expected_volname"
         do
             w_warn "$_W_mountmsg"
-            ls /media
-            sleep 1
+            # In non-gui case, give user two seconds to futz with disc drive before spamming him again
+            sleep 2
         done
-
-        wisotool_detect_optical_drive
+        WISOTOOL_DEV=$_W_dev
+        WISOTOOL_ISO_MOUNT_ROOT="$_W_mountpoint"
 
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         rm -f "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"*
         ln -sf "$WISOTOOL_DEV" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
-        ln -sf "/media/$1" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
+        ln -sf "$WISOTOOL_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
     fi
 
     # FIXME: need to remount some discs with unhide option, 
@@ -1044,6 +1107,65 @@ load_blobby_volley()
     then
         w_warn "You may need to apply a patch, see http://bugs.winehq.org/show_bug.cgi?id=4432#c15"
     fi
+}
+
+#----------------------------------------------------------------
+
+w_metadata  lemonysnicket \
+   title="Lemony Snicket's A Series of Unfortunate Events" \
+   publisher="Activision" \
+   year=2004 \
+   media=cd \
+   file1="Lemony Snicket.iso"
+
+load_lemonysnicket() {
+    w_mount "Lemony Snicket"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${W_ISO_MOUNT_LETTER}:setup.exe
+        WinWait, Lemony, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 1000
+            ControlClick, Button1 ; Next
+            WinWait, Lemony, License
+            sleep 1000
+            ControlClick, Button2 ; Accept
+            WinWait, Lemony, Minimum System
+            sleep 1000
+            ControlClick, Button2 ; Yes
+            WinWait, Lemony, Destination
+            sleep 1000
+            ControlClick, Button1 ; Next
+            WinWait, Lemony, Select Program Folder
+            sleep 1000
+            ControlClick, Button2 ; Next
+            WinWait, Lemony, Start Copying
+            sleep 1000
+            ControlClick, Button1 ; Next
+            WinWait, Question, Would you like to add a desktop shortcut
+            sleep 1000
+            ControlClick, Button2 ; No
+            WinWait, Question, Would you like to register
+            sleep 1000
+            ControlClick, Button2 ; No
+            ;WinWait, Information, Please register
+            ;sleep 1000
+            ;ControlClick, Button1 ; OK
+            WinWait, Lemony, Complete
+            sleep 1000
+            ControlClick, Button4 ; Finish
+            WinWait, Lemony, Play
+            sleep 1000
+            ControlClick, Button6 ; Exit
+            WinWait, Lemony, Are you sure
+            sleep 1000
+            ControlClick, Button1 ; Yes already
+        }
+        WinWaitClose, Lemony
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Lemony Snicket's A Series of Unfortunate Events" System\\game.exe
 }
 
 #----------------------------------------------------------------
