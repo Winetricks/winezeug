@@ -451,6 +451,11 @@ wisotool_detect_sudo()
 wisotool_mainmenu()
 {
     case $LANG in
+    da*) _W_msg_title='Vælg en pakke-kategori'
+         _W_msg_body='Hvad ønsker du at gøre?'
+         _W_msg_apps='Installér et program'
+         _W_msg_games='Installér et spil'
+         ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
          _W_msg_apps='Anwendung installieren'
@@ -1681,7 +1686,7 @@ then
         mkdir -p "$W_TMP"
 
         case $LANG in
-        de*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
+        da*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
         de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
         *)   fail_msg="Failed to install package $W_PACKAGE" ;;
         esac
