@@ -451,7 +451,7 @@ wisotool_showmenu()
 {
     case $LANG in
     da*) _W_msg_title='Vælg en pakke'
-	 _W_msg_body='Vilken pakke vil du installere?'
+         _W_msg_body='Vilken pakke vil du installere?'
          ;;
     de*) _W_msg_title='Pakete auswählen'
          _W_msg_body='Welche Pakete möchten Sie installieren?'
