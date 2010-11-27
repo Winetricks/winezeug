@@ -465,8 +465,8 @@ wisotool_showmenu()
     zenity)
         case $LANG in
         da*) echo -n "zenity \
-                --title "$_W_msg_title" \
-                --text "$_W_msg_body" \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
                 --list \
                 --checklist \
                 --column '' \
@@ -480,8 +480,8 @@ wisotool_showmenu()
                 " 
              ;;
        de*) echo -n "zenity \
-                --title "$_W_msg_title" \
-                --text "$_W_msg_body" \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
                 --list \
                 --checklist \
                 --column '' \
@@ -495,8 +495,8 @@ wisotool_showmenu()
                 " 
              ;;
         *) echo -n "zenity \
-                --title "$_W_msg_title" \
-                --text "$_W_msg_body" \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
                 --list \
                 --checklist \
                 --column '' \
