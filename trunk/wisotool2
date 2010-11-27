@@ -144,6 +144,7 @@ w_read_key()
         *zenity) W_KEY=`zenity --entry --text "$_W_keymsg"` ;;
         *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;; 
         *xmessage) w_die "sorry, can't read key from gui with xmessage" ;;
+        none) echo -n "$_W_keymsg": ; read W_KEY ;;
         esac
         if test "$W_KEY" = ""
         then
@@ -1087,6 +1088,84 @@ fi
 
 #----------------------------------------------------------------
 
+w_metadata  bfbc2 \
+   title="Battlefield Bad Company 2" \
+   publisher=EA \
+   year=2010 \
+   media=dvd \
+   file1=BFBC2.iso
+
+load_bfbc2()
+{
+    w_mount BFBC2
+    w_read_key
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
+        winwait, Bad Company, English
+        ControlClick, Next, Bad Company
+        winwait, Bad Company, Registration Code
+        send {RAW}$W_KEY
+        ControlClick, Next, Bad Company, Registration Code
+        winwait, Bad Company, Setup Wizard will install
+        ControlClick, Button1, Bad Company, Setup Wizard
+        winwait, Bad Company, License Agreement
+        ControlClick, Button1, Bad Company, License Agreement
+        ControlClick, Button3, Bad Company, License Agreement
+        winwait, Bad Company, End-User License Agreement
+        ControlClick, Button1, Bad Company, License Agreement
+        ControlClick, Button3, Bad Company, License Agreement
+        winwait, Bad Company, Destination Folder
+        ControlClick, Button1, Bad Company, Destination Folder
+        winwait, Bad Company, Ready to install
+        ControlClick, Install, Bad Company, Ready to install
+        winwait, Authenticate Battlefield
+        ControlClick, Disc authentication, Authenticate Battlefield
+        ControlClick, Button4, Authenticate Battlefield
+        winwait, Bad Company, PunkBuster
+        ControlClick, Button4, Bad Company, PunkBuster
+        ControlClick, Finish, Bad Company
+    "
+
+    w_warn "Patching to latest version..."
+
+    cd "$W_PROGRAMS_X86_UNIX/Electronic Arts/Battlefield Bad Company 2"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, BFBC2Updater.exe
+        winwait, Updater, have to update to
+        ControlClick, Yes, Updater, have to update
+        winwait, Updater, successfully updated
+        ControlClick,No, Updater, successfully updated
+    "
+
+    if w_workaround_wine_bug 22762
+    then
+        # FIXME: does this directory name change in win7?
+        cd "$W_DRIVE_C/users/$USERNAME/My Documents"
+        if test -f BFBC2/settings.ini
+        then
+            mv BFBC2/settings.ini BFBC2/oldsettings.ini
+            sed 's,DxVersion=auto,DxVersion=9,;
+                 s,Fullscreen=true,Fullscreen=false,' BFBC2/oldsettings.ini > BFBC2/settings.ini
+        else
+            mkdir -p BFBC2
+            echo "[Graphics]" > BFBC2/settings.ini
+            echo "DxVersion=9" >> BFBC2/settings.ini
+        fi
+    fi
+
+    if w_workaround_wine_bug 22961
+    then
+        w_warn 'If the game says "No CD/DVD error", try "sudo mount -o remount,unhide,uid=`uid -u`".  See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info.'
+    fi
+
+    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Battlefield Bad Company 2" "BFBC2Game.exe"
+}
+
+#----------------------------------------------------------------
+
+# http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
 w_metadata  blobby_volley \
    title="Blobby Volley" \
    publisher="Daniel Skoraszewsky" \
