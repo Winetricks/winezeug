@@ -132,6 +132,7 @@ read_game_key() {
         *zenity) KEY=`zenity --entry --text "Enter the disc key for $PACKAGE"` ;;
         *kdialog) KEY=`kdialog --inputbox "Enter the disc key for $PACKAGE"` ;; 
         *xmessage) die "sorry, can't read key from gui with xmessage" ;;
+        none) echo "Enter the disc key for $PACKAGE": ; read $KEY ;;
         esac
         if test "$KEY" = ""
         then
