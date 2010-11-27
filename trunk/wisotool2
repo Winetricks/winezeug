@@ -116,7 +116,12 @@ w_try_regedit()
 
 w_try_winetricks()
 {
-    w_try "$WISOTOOL_WINETRICKS" -q $*
+    _W_q=
+    case "$W_OPT_UNATTENDED" in
+    1) _W_q="-q" ;;
+    esac
+    
+    w_try "$WISOTOOL_WINETRICKS" $_W_q $*
 }
 
 w_read_key()
@@ -940,7 +945,7 @@ wisotool_mount_real_volume()
 
 wisotool_cleanup()
 {
-    test "$W_CACHE_SYMLINK" && rm -f "$W_CACHE_SYMLINK"
+    test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
     rm -rf "$WISOTOOL_WORKDIR"
 }
 
@@ -1319,6 +1324,58 @@ load_blobby_volley()
     then
         w_warn "You may need to apply a patch, see http://bugs.winehq.org/show_bug.cgi?id=4432#c15"
     fi
+}
+
+#----------------------------------------------------------------
+
+w_metadata civ4_demo games \
+   title="Civilization IV Demo" \
+   publisher="Firaxis Games" \
+   year="2005" \
+   media="download" \
+   file1=Civilization4_Demo.zip
+
+load_civ4_demo()
+{
+    w_download_manual http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html Civilization4_Demo.zip b54f1e5d0a1c2d1ef456d0c20098c23bbb6a0ea7
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_try unzip Civilization4_Demo.zip -d "$W_TMP"
+    cd "$W_TMP/$W_PACKAGE"
+    chmod +x setup.exe
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, setup.exe
+        winwait, Choose Setup Language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 1000
+            Send {enter}
+            winwait, Civilization 4, Welcome
+            ControlClick &Next >, Civilization 4
+            winwait, Civilization 4, I &accept the terms of the license agreement
+            ControlClick I &accept, Civilization 4
+            ControlClick &Next >, Civilization 4
+            winwait, Civilization 4, Express Install
+            ControlClick &Next >, Civilization 4
+            winwait, Civilization 4, begin installation
+            ControlClick &Install, Civilization 4
+            winwait, Civilization 4, InstallShield Wizard Complete
+            ControlClick Finish, Civilization 4
+        }
+        winwaitclose
+    "
+
+    if w_workaround_wine_bug 6856
+    then
+        w_try_winetricks msxml3
+    fi
+    if w_workaround_wine_bug 6856 # part 2, still need to file a bug
+    then
+        w_try_winetricks d3dx9_26
+    fi
+
+    w_declare_exe "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
 }
 
 #----------------------------------------------------------------
