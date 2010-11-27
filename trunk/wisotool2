@@ -64,7 +64,7 @@ w_warn()
 
     # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
     msg="`echo $@ | tr '\000' ' '`"
-    case $WISOTOOL_MENU in
+    case $WISOTOOL_GUI in
     zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
     kdialog) kdialog --title Wisotool --error "$msg" ;;
     none) ;;
@@ -140,7 +140,7 @@ w_read_key()
             _W_nokeymsg="No key given"
             ;;
         esac
-        case $WISOTOOL_MENU in
+        case $WISOTOOL_GUI in
         *zenity) W_KEY=`zenity --entry --text "$_W_keymsg"` ;;
         *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;; 
         *xmessage) w_die "sorry, can't read key from gui with xmessage" ;;
@@ -369,7 +369,7 @@ w_workaround_wine_bug()
 
 # Function for verbs to register themselves so they show up in the menu.
 # Example:
-# w_metadata  wog \
+# w_metadata  wog games \
 #   title="World of Goo Demo" \
 #   pub="2D Boy" \
 #   year="2008" \
@@ -378,7 +378,8 @@ w_workaround_wine_bug()
 
 w_metadata()
 {
-   file="$WISOTOOL_METADATA/$1.vars"
+   file="$WISOTOOL_METADATA/$2/$1.vars"
+   shift
    shift
    # FIXME: fall back to posix shell string manipulation if perl not present?
    perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
@@ -415,11 +416,11 @@ wisotool_detect_gui()
 {
     if test -x "`which zenity 2>/dev/null`"
     then
-        WISOTOOL_MENU=zenity
+        WISOTOOL_GUI=zenity
     elif test -x "`which kdialog 2>/dev/null`"
     then
         echo "Zenity not found!  Using kdialog as poor substitute."
-        WISOTOOL_MENU=kdialog
+        WISOTOOL_GUI=kdialog
     else
         echo "Please install zenity if you want a graphical interface."
         exit 1
@@ -430,7 +431,7 @@ wisotool_detect_gui()
 wisotool_detect_sudo()
 {
     WISOTOOL_SUDO=sudo
-    if test "$WISOTOOL_MENU" = "none"
+    if test "$WISOTOOL_GUI" = "none"
     then
         return
     fi
@@ -446,7 +447,54 @@ wisotool_detect_sudo()
     fi
 }
 
-# Output list of verbs to execute to stdout
+# Display main menu, get which submenu the user wants
+wisotool_mainmenu()
+{
+    case $LANG in
+    de*) _W_msg_title='Pakettyp auswählen'
+         _W_msg_body='Was möchten Sie tun?'
+         _W_msg_apps='Anwendung installieren'
+         _W_msg_games='Spiel installieren'
+         ;;
+    *)   _W_msg_title='Select a package category'
+         _W_msg_body='What would you like to do?'
+         _W_msg_apps='Install a program'
+         _W_msg_games='Install a game'
+         ;;
+    esac
+
+    case $WISOTOOL_GUI in
+    zenity)
+        zenity \
+            --title "$_W_msg_title" \
+            --text "$_W_msg_body" \
+            --list \
+            --radiolist \
+            --column '' \
+            --column '' \
+            --column '' \
+            --height 500 \
+            --width 800 \
+            FALSE apps  "$_W_msg_apps" \
+            FALSE games "$_W_msg_games" \
+         | tr '|' ' '
+        ;;
+
+    kdialog)
+        kdialog --geometry 600x400+100+100 \
+                --title "$_W_msg_title" \
+                --separate-output \
+                --radiolist \
+                "$_W_msg_body"\
+                apps  "$_W_msg_apps" off \
+                games "$_W_msg_games" off \
+
+        ;;
+    esac
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
+}
+
+# Display the current menu, output list of verbs to execute to stdout
 wisotool_showmenu()
 {
     case $LANG in
@@ -461,7 +509,7 @@ wisotool_showmenu()
          ;;
     esac
 
-    case $WISOTOOL_MENU in
+    case $WISOTOOL_GUI in
     zenity)
         case $LANG in
         da*) echo -n "zenity \
@@ -511,7 +559,7 @@ wisotool_showmenu()
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
 
-        for metadatafile in "$WISOTOOL_METADATA"/*.vars
+        for metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
         do
             code=`basename $metadatafile .vars`
             (
@@ -538,13 +586,14 @@ wisotool_showmenu()
         sh "$WISOTOOL_WORKDIR"/kdialog.sh
         ;;
     esac
+
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
 }
 
 # Returns true if given verb has been registered
 wisotool_metadata_exists()
 {
-   file="$WISOTOOL_METADATA/$1.vars"
-   test -f "$file"
+   test -f "$WISOTOOL_METADATA"/*/$1.vars
 }
 
 # Returns true if given verb has been cached
@@ -558,7 +607,7 @@ wisotool_is_cached()
 # List verbs which are already fully cached locally
 wisotool_list_cached()
 {
-    for _W_metadatafile in "$WISOTOOL_METADATA"/*.vars
+    for _W_metadatafile in "$WISOTOOL_METADATA"/*/*.vars
     do
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
@@ -578,7 +627,7 @@ wisotool_list_cached()
 wisotool_list_download()
 {
     cd "$WISOTOOL_METADATA"
-    grep -l 'media=.download' *.vars | sed 's/\.vars//'
+    grep -l 'media=.download' */*.vars | sed 's,.*/,,;s/\.vars//'
 }
 
 # Helper for adding a string to a list of flags
@@ -591,17 +640,21 @@ wisotool_append_to_flags()
     flags="${flags}$1"
 }
 
-# List all verbs verbosely
+# List all verbs in category WISOTOOL_CURMENU verbosely
 # Format is "verb  title  (publisher, year) [flags]"
 wisotool_list_all()
 {
+    case $WISOTOOL_CURMENU in
+    main) echo "apps"; echo "games"; return;;
+    esac
+
     case $LANG in
     da*) _W_cached="cached"   ; _W_download="kan hentes"    ;;
     de*) _W_cached="gecached" ; _W_download="herunterladbar";;
     *)   _W_cached="cached"   ; _W_download="downloadable"  ;;
     esac
 
-    for _W_metadatafile in "$WISOTOOL_METADATA"/*.vars
+    for _W_metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
     do
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
@@ -887,14 +940,14 @@ wisotool_cleanup()
 
 wisotool_kill_handler()
 {
-    echo "Caught signal, cleaning up."
+    #echo "Caught signal, cleaning up."
     case "$WISOTOOL_DD_PID" in
     "") ;;
     *) kill $WISOTOOL_DD_PID ;;
     esac
     wisotool_cleanup
-    echo "Done cleanup, quitting."
-    exit 1
+    #echo "Done cleanup, quitting."
+    #exit 1
 }
 
 wisotool_init()
@@ -907,13 +960,19 @@ wisotool_init()
 
     # Registering a verb creates a file in WISOTOOL_METADATA
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
-    mkdir -p "$WISOTOOL_METADATA"
+    for _W_cat in games apps
+    do
+        mkdir -p "$WISOTOOL_METADATA"/$_W_cat
+    done
 
-    # Delete work directory after each run
-    trap wisotool_kill_handler 1 2 3 6
+    # Which subdirectory of WISOTOOL_METADATA is currently active (or main, if none)
+    WISOTOOL_CURMENU=main
+
+    # Delete work directory after each run, on exit either graceful or abrupt
+    trap wisotool_kill_handler 0 1 2 3 6
 
     # Which GUI helper to use (none/zenity/kdialog).  See wisotool_detect_gui.
-    WISOTOOL_MENU=none
+    WISOTOOL_GUI=none
 
     WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
 
@@ -963,7 +1022,7 @@ wisotool_init()
     W_CACHE_WIN="`w_pathconv -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 
     # The folder-name is localized!
-    W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+    W_PROGRAMS_WIN="`wisotool_early_wine cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
     case "$W_PROGRAMS_WIN" in
     "") w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string" ;;
     %*) w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?" ;;
@@ -979,6 +1038,9 @@ wisotool_init()
         W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN}"
         W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX}"
     fi
+
+    W_APPDATA_WIN="`wisotool_early_wine cmd.exe /c echo "%AppData%" | tr -d '\015'`"
+    W_APPDATA_UNIX="`w_pathconv -u "$W_APPDATA_WIN" | tr -d '\015' `"
 
     # FIXME: don't hardcode
     W_PROGRAMS_DRIVE=c
@@ -1045,7 +1107,9 @@ Optionen:
 -V|--version: Programmversion anzeigen
 -h|--help: diese Hilfemeldung anzeigen
 Sonstige Verben:
-list: Alle Verben auflisten
+apps: Typ 'Andwendungen' auswählen
+games: Typ 'Spiele' auswählen
+list: Verben von ausgewählte Typ auflisten
 list-cached: Verben für schon gecachte Installers auflisten
 list-download: Verben für herunterladbare Anwendungen auflisten
 _EOF_
@@ -1062,7 +1126,9 @@ Options:
 -V|--version: display version and exit
 -h|--help: display this message and exit
 Miscellaneous verbs:
-list: list all verbs
+apps: select type 'apps'
+games: select type 'games'
+list: list verbs from selected category
 list-cached: list verbs for already-cached installers
 list-download: list verbs for downloadable applications
 _EOF_
@@ -1103,8 +1169,53 @@ fi
 #---- Builtin Verbs ----
 
 #----------------------------------------------------------------
+# Apps
+#----------------------------------------------------------------
 
-w_metadata  bfbc2 \
+w_metadata  safari apps \
+   title="Safari" \
+   publisher=Apple \
+   year=2010 \
+   media=download \
+   file1=SafariSetup.exe
+
+load_safari()
+{
+    w_download http://appldnld.apple.com.edgesuite.net/content.info.apple.com/Safari5/061-7138.20100607.Y7U87/SafariSetup.exe e56d5d79d9cfbb85ac46ac78aa497d7f3d8dbc3d
+
+    cd "$W_CACHE"/$W_PACKAGE
+
+    if w_workaround_wine_bug 21146
+    then
+        w_try mkdir -p "$W_APPDATA_UNIX/Apple Computer/Preferences"
+        cat > "$W_APPDATA_UNIX/Apple Computer/Preferences/com.apple.Safari.plist" <<_EOF_
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>LastDisplayedWelcomePageVersionString</key>
+        <string>4.0</string>
+</dict>
+</plist>
+_EOF_
+    fi
+
+    if test $W_OPT_UNATTENDED = 1
+    then
+        w_warn "Safari's silent install is broken under wine. See http://bugs.winehq.org/show_bug.cgi?id=23493. You should do a regular install if you want to use Safari."
+        w_try $WINE SafariSetup.exe /qn
+    else
+        w_try $WINE SafariSetup.exe
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Safari" "Safari.exe"
+}
+
+#----------------------------------------------------------------
+# Games
+#----------------------------------------------------------------
+
+w_metadata  bfbc2 games \
    title="Battlefield Bad Company 2" \
    publisher=EA \
    year=2010 \
@@ -1176,13 +1287,13 @@ load_bfbc2()
         w_warn 'If the game says "No CD/DVD error", try "sudo mount -o remount,unhide,uid=`uid -u`".  See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info.'
     fi
 
-    w_declare_exe "$programfilesdir_x86_win\\Electronic Arts\\Battlefield Bad Company 2" "BFBC2Game.exe"
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Electronic Arts\\Battlefield Bad Company 2" "BFBC2Game.exe"
 }
 
 #----------------------------------------------------------------
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
-w_metadata  blobby_volley \
+w_metadata  blobby_volley games \
    title="Blobby Volley" \
    publisher="Daniel Skoraszewsky" \
    year="2000" \
@@ -1206,7 +1317,7 @@ load_blobby_volley()
 
 #----------------------------------------------------------------
 
-w_metadata  lemonysnicket \
+w_metadata  lemonysnicket games \
    title="Lemony Snicket's A Series of Unfortunate Events" \
    publisher="Activision" \
    year=2004 \
@@ -1265,7 +1376,7 @@ load_lemonysnicket() {
 
 #----------------------------------------------------------------
 
-w_metadata singularity \
+w_metadata singularity games \
     title=Singularity \
     publisher=Activision \
     year=2010 \
@@ -1352,7 +1463,7 @@ _EOF_
 
 #----------------------------------------------------------------
 
-w_metadata  torchlight \
+w_metadata  torchlight games \
    title="Torchlight - boxed version" \
    publisher="Runic Games" \
    year=2009 \
@@ -1391,7 +1502,7 @@ load_torchlight() {
 
 #----------------------------------------------------------------
 
-w_metadata  twfc \
+w_metadata  twfc games \
   title="Transformers: War for Cybertron" \
   publisher=Activision \
   year=2010 \
@@ -1464,7 +1575,7 @@ load_twfc()
 
 #----------------------------------------------------------------
 
-w_metadata  wog \
+w_metadata  wog games \
    title="World of Goo Demo" \
    publisher="2D Boy" \
    year="2008" \
@@ -1526,16 +1637,39 @@ done
 if ! test "$WISOTOOL_LIB"
 then
     wisotool_detect_sudo
+
+    # If user specifies menu on commandline, jump there.
+    # FIXME: this code is duplicated several times; unify it
+    case "$1" in
+    games|apps)
+        WISOTOOL_CURMENU=$1; shift;;
+    esac
+
     # If no non-option arguments given, read them from GUI
     case "$1" in
     "")
         wisotool_detect_gui
-        verbs="`wisotool_showmenu`"
-        if test "$verbs"
-        then
-            # replace $1, $2, $3, ... with words of $verbs
-            set $verbs
-        fi
+        while true
+        do
+            case $WISOTOOL_CURMENU in
+            main) verbs=`wisotool_mainmenu` ;;
+            *) verbs="`wisotool_showmenu`" ;;
+            esac
+
+            case "$verbs" in
+            games|apps)
+                WISOTOOL_CURMENU=$verbs
+                ;;
+            "") # user didn't pick anything, just exit
+                break
+                ;;
+            *) # Otherwise user picked a real verb.
+                # replace $1, $2, $3, ... with words of $verbs
+                set $verbs
+                break
+                ;;
+            esac
+        done
         ;;
     esac
 
@@ -1552,6 +1686,10 @@ then
         esac
 
         case $W_PACKAGE in
+
+        games|apps)
+            WISOTOOL_CURMENU=$W_PACKAGE
+            ;;
 
         # Late options
         -*)
@@ -1607,6 +1745,4 @@ then
         rm -rf "$W_TMP"
 
     done
-
-    wisotool_cleanup
 fi
