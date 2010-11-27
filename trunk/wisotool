@@ -8225,12 +8225,6 @@ load_stfu() {
         send {Enter}
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\StarCraft II Beta"
-"StarCraft II.exe"
-__EOF__
-
     # Should start SWTFU Launcher.exe, but that doesn't run in Wine?
     cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
