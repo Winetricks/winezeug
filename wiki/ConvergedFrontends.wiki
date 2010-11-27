@@ -35,15 +35,17 @@ Each recipe consists of metadata followed by a function.
 
 The metadata looks like this:
 {{{
-w_metadata verbname \
+w_metadata verbname category \
  key=value \
  key=value \
  ...
 }}}
 
+where legal categories are 'apps' or 'games' at the moment.
+
 e.g.
 {{{
-w_metadata wog \
+w_metadata wog games \
    title="World of Goo Demo" \
    publisher="2D Boy" \
    year="2008" \
@@ -84,6 +86,8 @@ Recipes can rely on the following variables being set before they are executed:
  * LANG - used when outputting localized messages.  If not set, use English.
  * WINE - if this isn't set by the user, the framework sets it to `which wine`
  * WINEPREFIX - if this isn't set by the user, the framework sets it to ~/.wine
+ * W_APPDATA_UNIX - Unix path to user's Application Data folder
+ * W_APPDATA_WIN - Windows path to user's Application Data folder
  * W_CACHE - a Unix path to the directory where downloaded files are cached.
  * W_CACHE_WIN - a Windows path version of W_CACHE
  * W_DRIVE_C - a Unix path to the C:\ directory
