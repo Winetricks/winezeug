@@ -449,12 +449,24 @@ wisotool_detect_sudo()
 # Output list of verbs to execute to stdout
 wisotool_showmenu()
 {
+    case $LANG in
+    da*) _W_msg_title='Vælg en pakke'
+	 _W_msg_body='Vilken pakke vil du installere?'
+         ;;
+    de*) _W_msg_title='Pakete auswählen'
+         _W_msg_body='Welche Pakete möchten Sie installieren?'
+         ;;
+    *)   _W_msg_title='Select a package to install'
+         _W_msg_body='Which package(s) would you like to install?'
+         ;;
+    esac
+
     case $WISOTOOL_MENU in
     zenity)
         case $LANG in
         da*) echo -n "zenity \
-                --title 'Vælg en pakke' \
-                --text 'Vilken pakke vil du installere?' \
+                --title "$_W_msg_title" \
+                --text "$_W_msg_body" \
                 --list \
                 --checklist \
                 --column '' \
@@ -468,8 +480,8 @@ wisotool_showmenu()
                 " 
              ;;
        de*) echo -n "zenity \
-                --title 'Pakete auswählen' \
-                --text 'Welche Pakete möchten Sie installieren?' \
+                --title "$_W_msg_title" \
+                --text "$_W_msg_body" \
                 --list \
                 --checklist \
                 --column '' \
@@ -483,8 +495,8 @@ wisotool_showmenu()
                 " 
              ;;
         *) echo -n "zenity \
-                --title 'Select a package to install' \
-                --text 'Which package(s) would you like to install?' \
+                --title "$_W_msg_title" \
+                --text "$_W_msg_body" \
                 --list \
                 --checklist \
                 --column '' \
@@ -519,7 +531,11 @@ wisotool_showmenu()
         ;;
 
     kdialog)
-        w_die "unimplemented"
+        (
+        echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
+        wisotool_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
+        ) > "$WISOTOOL_WORKDIR"/kdialog.sh
+        sh "$WISOTOOL_WORKDIR"/kdialog.sh
         ;;
     esac
 }
