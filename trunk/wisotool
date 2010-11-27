@@ -2339,12 +2339,7 @@ load_bladekitten_demo() {
         set_app_winver BladeKitten_Demo.exe win2k
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\Krome Studios\\Blade Kitten Demo"
-BladeKitten_Demo.exe
-__EOF__
-
+    w_declare_exe "$programfilesdir_x86_win\\Krome Studios\\Blade Kitten Demo" "BladeKitten_Demo.exe"
 }
 
 #----------------------------------------------------------------
@@ -5145,11 +5140,8 @@ load_hod3_jp_demo() {
             Sleep (2000)
         }
     "
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\\SEGA\\THE HOUSE OF THE DEAD3_JP_TRIAL"
-hod3launch.exe
-__EOF__
+
+    w_declare_exe "$programfilesdir_x86_win\\SEGA\\THE HOUSE OF THE DEAD3_JP_TRIAL" "hod3launch.exe"
 }
 
 #----------------------------------------------------------------
@@ -5179,11 +5171,7 @@ load_imvu() {
         WinKill,IMVU Login, chrome
     "
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$DRIVE_C\\users\\$USERNAME\\Application Data\\IMVUClient"
-IMVUClient.exe
-__EOF__
+    w_declare_exe "$DRIVE_C\\users\\$USERNAME\\Application Data\\IMVUClient" "IMVUClient.exe"
 }
 
 #----------------------------------------------------------------
@@ -8226,11 +8214,7 @@ load_stfu() {
     "
 
     # Should start SWTFU Launcher.exe, but that doesn't run in Wine?
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$programfilesdir_x86_win\Aspyr\Star Wars The Force Unleashed"
-SWTFU.exe
-__EOF__
+    w_declare_exe "$programfilesdir_x86_win\\Aspyr\\Star Wars The Force Unleashed" "SWTFU.exe"
 }
 
 #----------------------------------------------------------------
