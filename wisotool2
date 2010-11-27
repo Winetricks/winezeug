@@ -475,6 +475,7 @@ wisotool_mainmenu()
             --column '' \
             --height 500 \
             --width 800 \
+            --hide-column 2 \
             FALSE apps  "$_W_msg_apps" \
             FALSE games "$_W_msg_games" \
          | tr '|' ' '
