@@ -21,8 +21,10 @@ or something like that; the devil is in the details.)
 
 = Directories =
 
- * ~/.local/wineprefixes - directory where all the wineprefixes will live
+ * $XDG_DATA_HOME/wineprefixes (this defaults to $HOME/.local/share/wineprefixes) - directory where all the wineprefixes will live
  * Any non-standard metadata for frontend 'myfe' will live in subdirectory myfe of the wineprefix
+
+ * TODO: double-check that these are compliant with the XDG spec: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
 = Recipes =
 
