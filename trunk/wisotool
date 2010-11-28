@@ -57,12 +57,12 @@ WISOTOOL_POST="${WISOTOOL_POST:-$WISOTOOL_DIR/postinstall}"
 W_CACHE="${W_CACHE:-$HOME/.wisotoolcache}"
 test -d "$W_CACHE" || W_CACHE="$WISOTOOL_DIR/cache"
 W_CACHE_WIN="`$XXXPATH -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
-WISOTOOL_TMP="$W_DRIVE_C"/wisotooltmp
-WISOTOOL_TMP_WIN='c:\wisotooltmp'
+W_TMP="$W_DRIVE_C"/wisotooltmp
+W_TMP_WIN='c:\wisotooltmp'
 
 # Clean up after failed runs, if needed
-rm -rf "$WISOTOOL_TMP"
-mkdir -p "$WISOTOOL_TMP"
+rm -rf "$W_TMP"
+mkdir -p "$W_TMP"
 
 # Handle case where z: doesn't exist
 case "$W_CACHE_WIN" in
@@ -195,7 +195,7 @@ usage() {
     echo " -v         verbose"
     echo " -V         display Version"
     echo "Packages:"
-    sort "$WISOTOOL_TMP"/menutext
+    sort "$W_TMP"/menutext
     echo "Pseudopackages:"
     echo " load          Load a disc into the iso cache"
     echo " load=KEY      Load a disc with given key; only works from commandline at moment"
@@ -254,9 +254,9 @@ showmenu()
     # FIXME: call verblist_get_descriptions instead of scraping usage() ?
     case $MENU in
     zenity)
-        echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WISOTOOL_TMP"/zenity.sh
-        usage | grep '^ [3a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $WISOTOOL_TMP/zenity.sh
-        todo="`sh "$WISOTOOL_TMP"/zenity.sh | tr '|' ' '`"
+        echo "zenity --title 'Select a package to install' --text 'Install?' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$W_TMP"/zenity.sh
+        usage | grep '^ [3a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> $W_TMP/zenity.sh
+        todo="`sh "$W_TMP"/zenity.sh | tr '|' ' '`"
         ;;
     kdialog)
         packages=`usage | awk '/^ [3a-z]/ {print $1}'`
@@ -540,14 +540,14 @@ download_torrent() {
 
 set_winver() {
     echo "Setting Windows version to $1"
-    cat > "$WISOTOOL_TMP"/set-winver.reg <<_EOF_
+    cat > "$W_TMP"/set-winver.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine]
 "Version"="$1"
 
 _EOF_
-    try_regedit "$WISOTOOL_TMP_WIN"\\set-winver.reg
+    try_regedit "$W_TMP_WIN"\\set-winver.reg
 }
 
 set_app_winver() {
@@ -559,10 +559,10 @@ set_app_winver() {
     echo ""
     echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app]"
     echo "\"Version\"=\"$version\""
-    ) > "$WISOTOOL_TMP"/set-winver.reg
+    ) > "$W_TMP"/set-winver.reg
 
-    try_regedit "$WISOTOOL_TMP_WIN"\\set-winver.reg
-    rm "$WISOTOOL_TMP"/set-winver.reg
+    try_regedit "$W_TMP_WIN"\\set-winver.reg
+    rm "$W_TMP"/set-winver.reg
 }
 
 
@@ -876,8 +876,8 @@ load_iso() {
 w_ahk_do() {
    load_autohotkey
    CR=`printf \\\\r`
-   echo "$@" | sed "s/\$/$CR/" > "$WISOTOOL_TMP"/tmp.ahk
-   $WINE "$W_PROGRAMS_UNIX/AutoHotkey/AutoHotkey.exe" "$WISOTOOL_TMP_WIN"\\tmp.ahk
+   echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
+   $WINE "$W_PROGRAMS_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
 }
 
 #----------------------------------------------------------------
@@ -904,7 +904,7 @@ verblist_init()
     # Must call this before first call to verblist_add
     file_map="case \"\$1\" in "
     # Clear menu
-    rm -f "$WISOTOOL_TMP"/menutext
+    rm -f "$W_TMP"/menutext
 }
 
 verblist_finish()
@@ -916,7 +916,7 @@ verblist_finish()
 menu_add() {
     verbname=$1
     description="$2"
-    printf " %-24s %s\n" $verbname "$description" >> "$WISOTOOL_TMP"/menutext
+    printf " %-24s %s\n" $verbname "$description" >> "$W_TMP"/menutext
 }
 
 # Add a new verb
@@ -947,8 +947,8 @@ verblist_add()
 verblist_is_legal_verb()
 {
   verb=$1
-  awk '{print $1}' < "$WISOTOOL_TMP"/menutext > "$WISOTOOL_TMP"/verbs
-  if grep "^$verb$" "$WISOTOOL_TMP"/verbs > /dev/null
+  awk '{print $1}' < "$W_TMP"/menutext > "$W_TMP"/verbs
+  if grep "^$verb$" "$W_TMP"/verbs > /dev/null
   then
       return 0
   else
@@ -1027,7 +1027,7 @@ load_3dmark2000() {
         download $W_PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
     fi
 
-    cd "$WISOTOOL_TMP"
+    cd "$W_TMP"
     mkdir $W_PACKAGE
     cd $W_PACKAGE
     w_try unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
@@ -1366,21 +1366,21 @@ load_aoe3cc() {
 # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
 # where $W_PACKAGE would be set differently
 
-    mkdir -p "$WISOTOOL_TMP/aoe3cc"
+    mkdir -p "$W_TMP/aoe3cc"
 
-    if test ! -f "$WISOTOOL_TMP/aoe3cc/tempcd/0x0409.ini"
+    if test ! -f "$W_TMP/aoe3cc/tempcd/0x0409.ini"
     then
         # This app is protected by SmartE, so we have to copy
         # all the files to hard disk before installing.
-        mkdir -p "$WISOTOOL_TMP/aoe3cc/tempcd"
+        mkdir -p "$W_TMP/aoe3cc/tempcd"
         for disc in 1 2 3
         do
             echo Copying disc $disc
             # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
             # where $W_PACKAGE would be set differently
             iso_mount "$W_CACHE/aoe3cc/AOE III DISC $disc.iso"
-            cp -rf "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/aoe3cc/tempcd
-            chmod -R +w "$WISOTOOL_TMP"/aoe3cc/tempcd
+            cp -rf "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/aoe3cc/tempcd
+            chmod -R +w "$W_TMP"/aoe3cc/tempcd
             iso_umount
             sleep 5
         done
@@ -1398,7 +1398,7 @@ load_aoe3cc() {
 
     AOE3CC_KEY="`cat "$W_CACHE/aoe3cc/AOE III DISC 1.txt" | tr -d -`"
 
-    cd "$WISOTOOL_TMP"/aoe3cc/tempcd
+    cd "$W_TMP"/aoe3cc/tempcd
     w_ahk_do "
         Run, Setup.exe
         SetTitleMatchMode, 2
@@ -1442,7 +1442,7 @@ verblist_add aoe3cc_ad "Age Of Empires III: Complete Collection - Asian Dynastie
 
 load_aoe3cc_ad() {
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
 
     if ! test -f "$W_PROGRAMS_X86_UNIX/Microsoft Games/Age of Empires III/age3.exe"
     then
@@ -1451,12 +1451,12 @@ load_aoe3cc_ad() {
 
     # This app is protected by SmartE, so we have to copy
     # all the files to hard disk before installing.
-    if ! test -f "$WISOTOOL_TMP/$W_PACKAGE/aoe3y/Setup.exe"
+    if ! test -f "$W_TMP/$W_PACKAGE/aoe3y/Setup.exe"
     then
-        mkdir -p "$WISOTOOL_TMP/$W_PACKAGE/aoe3y"
+        mkdir -p "$W_TMP/$W_PACKAGE/aoe3y"
         iso_mount "$W_CACHE/$W_PACKAGE/AOE3Y.iso"
-        cp -rf "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
-        chmod -R +w "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
+        cp -rf "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/aoe3y
+        chmod -R +w "$W_TMP"/$W_PACKAGE/aoe3y
         iso_umount
     fi
 
@@ -1472,7 +1472,7 @@ load_aoe3cc_ad() {
 
     AOE3Y_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3Y.txt" | tr -d -`"
 
-    cd "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
+    cd "$W_TMP"/$W_PACKAGE/aoe3y
     w_ahk_do "
         Run, Setup.exe
         SetTitleMatchMode, 2
@@ -1513,7 +1513,7 @@ verblist_add aoe3cc_wc "Age Of Empires III: Complete Collection - WarChiefs Expa
 
 load_aoe3cc_wc() {
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
 
     if ! test -f "$W_PROGRAMS_X86_UNIX/Microsoft Games/Age of Empires III/age3.exe"
     then
@@ -1522,12 +1522,12 @@ load_aoe3cc_wc() {
 
     # This app is protected by SmartE, so we have to copy
     # all the files to hard disk before installing.
-    if ! test -f "$WISOTOOL_TMP/$W_PACKAGE/aoe3x/Setup.exe"
+    if ! test -f "$W_TMP/$W_PACKAGE/aoe3x/Setup.exe"
     then
-        mkdir -p "$WISOTOOL_TMP/$W_PACKAGE/aoe3x"
+        mkdir -p "$W_TMP/$W_PACKAGE/aoe3x"
         iso_mount "$W_CACHE/$W_PACKAGE/AOE3X.iso"
-        cp -rf "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
-        chmod -R +w "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
+        cp -rf "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/aoe3x
+        chmod -R +w "$W_TMP"/$W_PACKAGE/aoe3x
         iso_umount
     fi
 
@@ -1543,7 +1543,7 @@ load_aoe3cc_wc() {
 
     AOE3X_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3X.txt" | tr -d -`"
 
-    cd "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
+    cd "$W_TMP"/$W_PACKAGE/aoe3x
     w_ahk_do "
         Run, Setup.exe
         SetTitleMatchMode, 2
@@ -1642,8 +1642,8 @@ load_anno1404_demo() {
         w_die "Please download demo from http://www.filefront.com/thankyou.php?f=13908918 and place it in $W_CACHE/$W_PACKAGE"
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
     w_try unzip "$W_CACHE/$W_PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
     w_try cd "Anno1404_Demo_US_2009_06_15_18_22"
     w_ahk_do "
@@ -1741,8 +1741,8 @@ load_avatar_demo()
         w_try_winetricks vcrun2005
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
     try_unrar x "$W_CACHE/$W_PACKAGE/Avatar_The_Game_Demo.exe"
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -1789,21 +1789,21 @@ load_baldursgate2() {
     # Possible wine bug: cd is still in use, even if wine eject is used. Workaround it by
     # copying all the cd's to a directory, and running the installer from there.
     # You still need the first CD mounted at the end, however...
-    if test ! -d "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+    if test ! -d "$W_TMP"/$W_PACKAGE/tempcd
     then
-        w_try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try mkdir -p "$W_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
         sleep 5
-        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
         sleep 5
-        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
         sleep 5
-        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
         sleep 5
-        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Will perform a full install, so no cd's needed
@@ -1811,7 +1811,7 @@ load_baldursgate2() {
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        run "$WISOTOOL_TMP"/$W_PACKAGE/tempcd/setup.exe
+        run "$W_TMP"/$W_PACKAGE/tempcd/setup.exe
         winwait, Baldur's Gate, Welcome to the Baldur's Gate
         sleep 1000
         ControlClick, Button1, Baldur's Gate, Welcome to the Baldur's Gate
@@ -1846,15 +1846,15 @@ load_baldursgate2() {
         sleep 1000
         ControlClick, Button4, Baldur's Gate, Setup has finished installing
         "
-    w_try chmod +w -R "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
-    w_try rm -rf "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+    w_try chmod +w -R "$W_TMP"/$W_PACKAGE/tempcd
+    w_try rm -rf "$W_TMP"/$W_PACKAGE/tempcd
 
     # Install latest patch
     download $W_PACKAGE http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
     # AHK doesn't like its name...
-    w_try cp -f "$W_CACHE/$W_PACKAGE/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
+    w_try cp -f "$W_CACHE/$W_PACKAGE/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$W_TMP/baldurs_gate_2_patch.exe"
 
-    cd "$WISOTOOL_TMP"
+    cd "$W_TMP"
     w_ahk_do "
         SetTitleMatchMode, 2
         run, baldurs_gate_2_patch.exe
@@ -1866,7 +1866,7 @@ load_baldursgate2() {
         ControlClick Button4, InstallShield Wizard, InstallShield Wizard Complete
         exit"
     cd -
-    w_try rm "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
+    w_try rm "$W_TMP/baldurs_gate_2_patch.exe"
 
     if w_workaround_wine_bug 22482
     then
@@ -2161,7 +2161,7 @@ load_bioshock() {
     # FIXME: Test and if there's a Wine bug, file one/put this in an if w_workaround_wine_bug().
     #
     #download $W_PACKAGE http://downloads.2kgames.com/bioshock/patch/Bioshock_Version_11_Patch_Worldwide_Retail.zip
-    #cd $WISOTOOL_TMP
+    #cd $W_TMP
     #unzip "$W_CACHE/$W_PACKAGE/Bioshock_Version_11_Patch_Worldwide_Retail.zip"
     #w_ahk_do "
     #    run Bioshock Version 1.1 Patch Worldwide Retail.exe
@@ -2320,9 +2320,9 @@ load_bladekitten_demo() {
         mv 'download.php?file=BladeKittenDemoInstall.exe' "BladeKittenDemoInstall.exe"
     fi
 
-    mkdir "$WISOTOOL_TMP/BladeKittenDemo"
-    cp "$W_CACHE/$W_PACKAGE"/BladeKittenDemoInstall.exe "$WISOTOOL_TMP"/BladeKittenDemo
-    cd "$WISOTOOL_TMP"/BladeKittenDemo
+    mkdir "$W_TMP/BladeKittenDemo"
+    cp "$W_CACHE/$W_PACKAGE"/BladeKittenDemoInstall.exe "$W_TMP"/BladeKittenDemo
+    cd "$W_TMP"/BladeKittenDemo
     w_ahk_do "
         SetTitleMatchMode, 3
         run BladeKittenDemoInstall.exe
@@ -2338,7 +2338,7 @@ load_bladekitten_demo() {
         WinWait "Blade Kitten Demo", Complete
         ControlClick Button1 ;  Close
     "
-    mv "$WISOTOOL_TMP/BladeKittenDemo" "$W_DRIVE_C/Program Files"
+    mv "$W_TMP/BladeKittenDemo" "$W_DRIVE_C/Program Files"
 
     if w_workaround_wine_bug 24681
     then
@@ -2860,10 +2860,10 @@ load_civ4_demo()
         w_die "Please download demo from http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html and place it in $W_CACHE/$W_PACKAGE"
     fi
 
-    mkdir -p "$WISOTOOL_TMP"
+    mkdir -p "$W_TMP"
     cd "$W_CACHE/$W_PACKAGE"
-    w_try unzip Civilization4_Demo.zip -d "$WISOTOOL_TMP"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try unzip Civilization4_Demo.zip -d "$W_TMP"
+    cd "$W_TMP/$W_PACKAGE"
     chmod +x setup.exe
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -3358,10 +3358,10 @@ load_deusex2_demo()
     fi
     # FIXME: sha1sum ccae48fb046d912b3714ea1b4be4294e74bb3092
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
-    w_try unzip dxiw_demo.zip -d "$WISOTOOL_TMP/$W_PACKAGE"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try unzip dxiw_demo.zip -d "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
     chmod +x setup.exe
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -3477,10 +3477,10 @@ verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009) [download]" Dirt2Demo.z
 load_dirt2_demo() {
     download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
 
-    mkdir "$WISOTOOL_TMP/$W_PACKAGE"
-    w_try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
+    mkdir "$W_TMP/$W_PACKAGE"
+    w_try unzip -d "$W_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
 
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
 
     w_ahk_do "
         Run, "Setup.exe"
@@ -3674,12 +3674,12 @@ load_ewj_demo() {
     then
         w_die "You need to install the `arj` utility to extract the demo files. (e.g., sudo apt-get install arj or sudo yum install arj)"
     else
-        mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
-        cd "$WISOTOOL_TMP/$W_PACKAGE"
+        mkdir -p "$W_TMP/$W_PACKAGE"
+        cd "$W_TMP/$W_PACKAGE"
         arj e "$W_CACHE/$W_PACKAGE/ewjdemo.exe"
         mkdir -p "$W_DRIVE_C/ewj_demo"
         cd "$W_DRIVE_C/ewj_demo"
-        arj e "$WISOTOOL_TMP/$W_PACKAGE/EWJFILES.EXE"
+        arj e "$W_TMP/$W_PACKAGE/EWJFILES.EXE"
     fi
 
     if w_workaround_wine_bug 19531
@@ -3757,24 +3757,24 @@ load_fable_tlc() {
         "
 
     # Now tell game what the real disc is so user can insert disc 1 and run the game!
-    cat > "$WISOTOOL_TMP"/$W_PACKAGE.reg <<_EOF_
+    cat > "$W_TMP"/$W_PACKAGE.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\D3BE9C3CAF4226447B48E06CAACF2DDD\InstallProperties]
 "InstallSource"="D:\\"
 
 _EOF_
-    try_regedit "$WISOTOOL_TMP_WIN"\\$W_PACKAGE.reg
+    try_regedit "$W_TMP_WIN"\\$W_PACKAGE.reg
 
     # Also accept EULA
-    cat > "$WISOTOOL_TMP"/$W_PACKAGE.reg <<_EOF_
+    cat > "$W_TMP"/$W_PACKAGE.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Microsoft\Microsoft Games\Fable TLC]
 "FIRSTRUN"=dword:00000001
 
 _EOF_
-    try_regedit "$WISOTOOL_TMP_WIN"\\$W_PACKAGE.reg
+    try_regedit "$W_TMP_WIN"\\$W_PACKAGE.reg
 
     if w_workaround_wine_bug 24912
     then
@@ -4044,9 +4044,9 @@ load_fifa11_demo()
     # From http://www.easportsfootball.co.uk/news/item/file/FIFA-11-Demo-Release?om_u=2255229429&om_i=_BMknsPB8Usvnmr
     download $W_PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
 
-    mkdir "$WISOTOOL_TMP/$W_PACKAGE"
-    w_try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_pc_demo_NA.zip"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir "$W_TMP/$W_PACKAGE"
+    w_try unzip -d "$W_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_pc_demo_NA.zip"
+    cd "$W_TMP/$W_PACKAGE"
 
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -4175,9 +4175,9 @@ verblist_add fifa10_demo     "Fifa 10 Demo (EA, 2009)" fifa10_pc_demo_ec.exe
 load_fifa10_demo() {
     download $W_PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
 
-    # The installer is a self extracting rar file. Make cleanups easy by using $WISOTOOL_TMP
-    mkdir "$WISOTOOL_TMP/fifa10"
-    cd "$WISOTOOL_TMP/fifa10"
+    # The installer is a self extracting rar file. Make cleanups easy by using $W_TMP
+    mkdir "$W_TMP/fifa10"
+    cd "$W_TMP/fifa10"
 
     if w_workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
     then
@@ -4186,12 +4186,12 @@ load_fifa10_demo() {
         fifatitle="FIFA 10 - Demo"
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         Run fifa10_pc_demo_ec.exe
         winwait, FIFA 10 PC Demo
-        send $WISOTOOL_TMP_WIN\\${W_PACKAGE}{ENTER}
+        send $W_TMP_WIN\\${W_PACKAGE}{ENTER}
         winwait, FIFA 10 - Demo, View the readme file
         sleep 1000
         controlclick, Button1, FIFA 10 - Demo, View the readme file
@@ -4476,8 +4476,8 @@ verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [dow
 load_gothic4_demo() {
     download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip
 
-    w_try mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try mkdir -p "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
     w_try unzip "$W_CACHE/$W_PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip
 
     w_ahk_do "
@@ -4739,8 +4739,8 @@ verblist_add hko "Hello Kitty Online (Sanrio Digital, 2009) [download]" "Hello K
 load_hko() {
     download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
     download_torrent $W_PACKAGE hkostandardinstaller.torrent
-    w_try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$WISOTOOL_TMP"
-    cd "$WISOTOOL_TMP/Hello Kitty Online Standard Installer"
+    w_try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$W_TMP"
+    cd "$W_TMP/Hello Kitty Online Standard Installer"
 
     w_ahk_do "
         Run, setup.exe
@@ -5617,7 +5617,7 @@ load_losthorizon_demo() {
         run Lost_Horizon_Demo_EN.exe
         WinWait,Lost Horizon Demo, Destination
         Sleep 500
-        Send {RAW}"$WISOTOOL_TMP"
+        Send {RAW}"$W_TMP"
         ControlClick Button2 ;Install
         WinWaitClose,Lost Horizon Demo,Installation
         Sleep 1000
@@ -5659,7 +5659,7 @@ verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
   39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
 
 load_manhole() {
-    cd $WISOTOOL_TMP
+    cd $W_TMP
 
     iso_mount "$W_CACHE"/$W_PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
     mkdir -p "$W_DRIVE_C"/manhole
@@ -5787,14 +5787,14 @@ load_masseffect2_demo() {
         w_try_winetricks physx
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
     case "$OS" in
         "Windows_NT")
-            cp "$W_CACHE/$W_PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
+            cp "$W_CACHE/$W_PACKAGE/MassEffect2DemoEN.exe" "$W_TMP" ;;
         *)
-            ln -sf "$W_CACHE/$W_PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
+            ln -sf "$W_CACHE/$W_PACKAGE/MassEffect2DemoEN.exe" "$W_TMP" ;;
     esac
-    cd "$WISOTOOL_TMP"
+    cd "$W_TMP"
     w_ahk_do "
         SetTitleMatchMode, 2
         run, MassEffect2DemoEN.exe
@@ -5964,7 +5964,7 @@ load_mise() {
         w_try_winetricks vcrun2005
     fi
 
-    cd "$WISOTOOL_TMP"
+    cd "$W_TMP"
     mkdir $W_PACKAGE
     cd $W_PACKAGE
 
@@ -6041,9 +6041,9 @@ load_moh_beta()
         w_die "Download the beta from http://medalofhonor.com/beta or http://www.fileplanet.com/213429/210000/fileinfo/Medal-of-Honor---Multiplayer-Beta-Client and place in $W_CACHE/$W_PACKAGE"
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
-    w_try unzip -o "$file" -d "$WISOTOOL_TMP/$W_PACKAGE"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
+    w_try unzip -o "$file" -d "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
         run, setup.exe
@@ -6094,7 +6094,7 @@ verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
   c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
 
 load_morrowind() {
-    cd $WISOTOOL_TMP
+    cd $W_TMP
     # FIXME: Untested on Windows!
 
     # FIXME: Only supports the main installer, and the construction set (which follows automatically)
@@ -6214,13 +6214,13 @@ load_nfsps_demo()
         download $W_PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
         run, nfsps_pcdemo.exe
         winwait, ProStreet, folder
-        send $WISOTOOL_TMP_WIN\\$W_PACKAGE
+        send $W_TMP_WIN\\$W_PACKAGE
         controlclick, Button2
         winwait, ProStreet, View the readme
         controlclick, Button1
@@ -6335,11 +6335,11 @@ load_nfsshift_demo()
         download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
     # FIXME: use ln -s on Linux (in case user has run 'winetricks sandbox'),
     # but run the package from the cache on Windows
-    cp "$W_CACHE/$W_PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
-    cd "$WISOTOOL_TMP"
+    cp "$W_CACHE/$W_PACKAGE/NFSSHIFTPCDEMO.exe" "$W_TMP"
+    cd "$W_TMP"
     w_ahk_do "
         SetTitleMatchMode, 2
         SetTitleMatchMode, slow
@@ -6722,7 +6722,7 @@ load_pscs5_pickle() {
         load_pscs5
     fi
 
-    w_try cd "$WISOTOOL_TMP"
+    w_try cd "$W_TMP"
 
     # Setup a skeleton file structure:
     w_try rm -rf cs5_temp
@@ -6751,7 +6751,7 @@ load_pscs5_pickle() {
     w_try cp "$system32_unix/odbc32.dll" .
     w_try cp "$system32_unix/odbcint.dll" .
 
-    w_try cd "$WISOTOOL_TMP"/cs5_temp
+    w_try cd "$W_TMP"/cs5_temp
     w_try tar -c -f "$olddir/adobe_cs5.tar" *
     w_try cd ..
     w_try rm -rf cs5_temp
@@ -6768,18 +6768,18 @@ load_pscs5_unpickle() {
     # Install dependencies:
     w_try_winetricks gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
 
-    w_try cd "$WISOTOOL_TMP"
+    w_try cd "$W_TMP"
     w_try tar xf "$W_CACHE/$W_PACKAGE/adobe_cs5.tar"
     w_try $WINE regedit adobe_cs5.reg
     w_try cd "$W_PROGRAMS_X86_UNIX"
-    w_try mv "$WISOTOOL_TMP/Program Files/Adobe" .
+    w_try mv "$W_TMP/Program Files/Adobe" .
     w_try cd "Common Files"
-    w_try mv "$WISOTOOL_TMP/Common Files/Adobe" .
+    w_try mv "$W_TMP/Common Files/Adobe" .
     w_try cd "$appdata_win/"
-    w_try mv "$WISOTOOL_TMP/userhome"/* .
+    w_try mv "$W_TMP/userhome"/* .
     w_try cd "$WINDIR/system32"
-    w_try mv "$WISOTOOL_TMP/odbc32.dll" .
-    w_try mv "$WISOTOOL_TMP/odbcint.dll" .
+    w_try mv "$W_TMP/odbc32.dll" .
+    w_try mv "$W_TMP/odbcint.dll" .
     w_try $WINE regsvr32 odbc32.dll
     w_try $WINE regsvr32 odbcint.dll
 
@@ -7737,14 +7737,14 @@ load_singularity() {
     if w_workaround_wine_bug 22548
     then
     echo "Disabling \'depth of field\'"
-    cat > "$WISOTOOL_TMP"/dof.reg <<_EOF_
+    cat > "$W_TMP"/dof.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Activision\Singularity]
 "DepthOfField"=dword:00000000
 
 _EOF_
-    try_regedit "$WISOTOOL_TMP_WIN"\\dof.reg
+    try_regedit "$W_TMP_WIN"\\dof.reg
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Singularity(TM)\\Binaries" "Singularity.exe"
@@ -8411,7 +8411,7 @@ load_tlr_demo() {
         download $W_PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
     fi
 
-    cd "$WISOTOOL_TMP"
+    cd "$W_TMP"
     w_try unzip "$W_CACHE/$W_PACKAGE/TheLastRemnant_PC_Demo.zip"
     cd "The Last Remnant Trial Version"
 
@@ -8648,9 +8648,9 @@ load_typingofthedead_demo() {
     download $W_PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
 
     cd "$W_CACHE/$W_PACKAGE"
-    mkdir "$WISOTOOL_TMP/tod-demo"
-    cp tod-demo.zip "$WISOTOOL_TMP/tod-demo"
-    cd "$WISOTOOL_TMP/tod-demo"
+    mkdir "$W_TMP/tod-demo"
+    cp tod-demo.zip "$W_TMP/tod-demo"
+    cd "$W_TMP/tod-demo"
     unzip tod-demo.zip
     rm tod-demo.zip
 
@@ -8863,8 +8863,8 @@ load_victoria2_demo() {
     # FIXME: check sha1sum 20bac88a3ace1010e4fb116d72baf95e92976b39
     # or better, check sha1sum of extracted .exe, since different
     # sources add their own readme in the .zip file
-    mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/
-    cd "$WISOTOOL_TMP"/$W_PACKAGE/
+    mkdir -p "$W_TMP"/$W_PACKAGE/
+    cd "$W_TMP"/$W_PACKAGE/
     w_try unzip "$W_CACHE/$W_PACKAGE"/Victoria2_Demo.zip
 
     # Clean up old temp files from installer extractor (it leaves them around)
@@ -8942,10 +8942,10 @@ load_vf2_demo()
         download $W_PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
-    w_try unzip vf2_demo.exe -d "$WISOTOOL_TMP/$W_PACKAGE"
-    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try unzip vf2_demo.exe -d "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE"
 
     # installer refuses to run in Windows NT 5 or higher, so set win98 mode
     # FIXME: undo this when verb is done
@@ -9127,19 +9127,19 @@ load_wowbc() {
     fi
     cd "$olddir"
 
-    if ! test -d "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+    if ! test -d "$W_TMP"/$W_PACKAGE/tempcd
     then
-        w_try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try mkdir -p "$W_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
         sleep 5
-        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$W_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
     if ! test -d "$W_DRIVE_C/Program Files/World of Warcraft"
     then
       w_ahk_do "
-          run "$WISOTOOL_TMP_WIN"/$W_PACKAGE/tempcd/Installer.exe
+          run "$W_TMP_WIN"/$W_PACKAGE/tempcd/Installer.exe
           SetTitleMatchMode, 2
           winwait, Burning Crusade Installer
           sleep 4000
@@ -9679,7 +9679,7 @@ case "$OS" in
   ;;
 esac
 
-mkdir -p "$WISOTOOL_TMP"
+mkdir -p "$W_TMP"
 
 case $GUI in
 1) showmenu ; set $todo ;;
@@ -9702,7 +9702,7 @@ case "$W_PROGRAMS_WIN" in
 esac
 W_PROGRAMS_UNIX="`unset WINEDEBUG; $XXXPATH -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
 test x"$W_PROGRAMS_UNIX" != x || w_die "winepath -u $W_PROGRAMS_WIN returned empty string"
-wisotool_tmp_win="`$XXXPATH -w "$WISOTOOL_TMP"`"
+wisotool_tmp_win="`$XXXPATH -w "$W_TMP"`"
 
 # 64 bit windows has a second directory for program files
 W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN} (x86)"
@@ -9810,8 +9810,8 @@ done
 test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
 
 # remove the temp directory
-chmod -R 700 "$WISOTOOL_TMP"
-while ! rm -rf "$WISOTOOL_TMP"
+chmod -R 700 "$W_TMP"
+while ! rm -rf "$W_TMP"
 do
     # Sometimes apps take a while to exit on Vista
     sleep 1
