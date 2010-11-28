@@ -425,7 +425,7 @@ url_encode() {
 # Download a file
 # Usage: package url [sha1sum [filename [cookie jar]]]
 # Caches downloads in wisotoolcache/$package
-download() {
+w_download() {
     if [ "$4"x != ""x ]
     then
         file="$4"
@@ -586,7 +586,7 @@ load_vcdmount()
     if test ! -x "$W_PROGRAMS_UNIX/$VCD_DIR/vcdmount.exe" && test ! -x "$W_PROGRAMS_X86_UNIX/$VCD_DIR/vcdmount.exe"
     then
         w_warn "Installing Virtual CloneDrive"
-        download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
+        w_download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
         # have to use cmd else vista won't let cygwin run .exe's?
         chmod +x "$W_CACHE"/SetupVirtualCloneDrive.exe
         cd "$W_CACHE"
@@ -1024,7 +1024,7 @@ load_3dmark2000() {
     # http://www.futuremark.com/download/3dmark2000/
     if ! test -f "$W_CACHE/$W_PACKAGE/3dmark2000_v11_100308.exe"
     then
-        download $W_PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
+        w_download $W_PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
     fi
 
     cd "$W_TMP"
@@ -1068,7 +1068,7 @@ load_3dmark2001() {
     # http://www.futuremark.com/download/3dmark2001/
     if ! test -f "$W_CACHE/$W_PACKAGE"/3dmark2001se_330_100308.exe
     then
-        download $W_PACKAGE http://www.ocinside.de/download/3dmark2001se_330_100308.exe 643bacbcc1615bb4f46d3b045b1b8d78371a6b54
+        w_download $W_PACKAGE http://www.ocinside.de/download/3dmark2001se_330_100308.exe 643bacbcc1615bb4f46d3b045b1b8d78371a6b54
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1101,7 +1101,7 @@ load_3dmark03() {
     # http://www.futuremark.com/benchmarks/3dmark03/download/
     if ! test -f "$W_CACHE/$W_PACKAGE/3DMark03_v360_1901.exe"
     then
-        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe 46a439101ddbbe3c9563b5e9651cb61b46ce0619
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe 46a439101ddbbe3c9563b5e9651cb61b46ce0619
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1147,7 +1147,7 @@ load_3dmark05() {
     # http://www.futuremark.com/download/3dmark05/
     if ! test -f "$W_CACHE/$W_PACKAGE/3DMark05_v130_1901.exe"
     then
-        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe 8ad6bc2917e22edf5fc95d1fa96cc82515093fb2
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe 8ad6bc2917e22edf5fc95d1fa96cc82515093fb2
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1189,7 +1189,7 @@ load_3dmark06() {
     # http://www.futuremark.com/benchmarks/3dmark06/download/
     if ! test -f "$W_CACHE/$W_PACKAGE/3DMark06_v120_1901.exe"
     then
-        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1246,7 +1246,7 @@ __EOF__
 verblist_add algodoo_demo  "Algodoo Demo (Algoryx, 2009) [download]" Algodoo_1_7_1-Win32.exe
 
 load_algodoo_demo() {
-    download $W_PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
+    w_download $W_PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -1285,7 +1285,7 @@ load_algodoo_demo() {
 verblist_add msaoe_demo  "Age of Empires Demo (Microsoft, 1997) [download]" MSAoE.exe
 
 load_msaoe_demo() {
-    download $W_PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
+    w_download $W_PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -1311,7 +1311,7 @@ verblist_add aoe3_demo "Age of Empires III (Microsoft, 2005) [download]" aoe3tri
 
 load_aoe3_demo() {
 
-    download $W_PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
+    w_download $W_PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
         2b0a123243092d79f910db5691d99d469f7c17c3
 
     if w_workaround_wine_bug 24897
@@ -1734,7 +1734,7 @@ verblist_add avatar_demo    "James Camerons Avatar The Game Demo (Ubisoft, 2009)
 
 load_avatar_demo()
 {
-    download $W_PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
+    w_download $W_PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
 
     if w_workaround_wine_bug 23094
     then
@@ -1850,7 +1850,7 @@ load_baldursgate2() {
     w_try rm -rf "$W_TMP"/$W_PACKAGE/tempcd
 
     # Install latest patch
-    download $W_PACKAGE http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
+    w_download $W_PACKAGE http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
     # AHK doesn't like its name...
     w_try cp -f "$W_CACHE/$W_PACKAGE/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$W_TMP/baldurs_gate_2_patch.exe"
 
@@ -1890,7 +1890,7 @@ load_baldursgate2() {
 verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix 2009) (size: 2.0 GB)[download]" BMDemo_installer.exe
 
 load_batman_arkham_asylum_demo() {
-    download $W_PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
+    w_download $W_PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -1977,9 +1977,9 @@ load_batman_arkham_asylum_demo() {
     fi
     if w_workaround_wine_bug 20651
     then
-        download $W_PACKAGE http://www.glio.net/UserEngine.ini
-        download $W_PACKAGE http://www.glio.net/UserInput.ini
-        download $W_PACKAGE http://www.glio.net/UserGame.ini
+        w_download $W_PACKAGE http://www.glio.net/UserEngine.ini
+        w_download $W_PACKAGE http://www.glio.net/UserInput.ini
+        w_download $W_PACKAGE http://www.glio.net/UserGame.ini
         configdir="$W_DRIVE_C/users/$USERNAME/My Documents/Eidos/Batman Arkham Asylum Demo/BmGame/Config"
         mkdir -p "$configdir"
         cp "$W_CACHE/$W_PACKAGE"/*.ini "$configdir"
@@ -2270,7 +2270,7 @@ verblist_add bioshock_demo       "Bioshock Demo (2K Games, 2007) [download]" \
   nzd_BioShockPC.zip
 
 load_bioshock_demo() {
-    download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
+    w_download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
     cd "$W_DRIVE_C"
     rm -rf bioshock-temp
     mkdir bioshock-temp
@@ -2315,7 +2315,7 @@ verblist_add bladekitten_demo "Blade Kitten Demo (Krome Studios Pty Ltd., 2010) 
 load_bladekitten_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE/BladeKittenDemoInstall.exe"
     then
-        download $W_PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
+        w_download $W_PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
         cd "$W_CACHE/$W_PACKAGE"
         mv 'download.php?file=BladeKittenDemoInstall.exe' "BladeKittenDemoInstall.exe"
     fi
@@ -2430,7 +2430,7 @@ load_braid_demo()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/braid_windows_r3.exe"
     then
-        download $W_PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+        w_download $W_PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
     fi
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -2477,7 +2477,7 @@ load_braid()
 
     if ! test -f "$W_CACHE/$W_PACKAGE/braid_windows_r3.exe"
     then
-        download $W_PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+        w_download $W_PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
     fi
     cd "$W_CACHE/$W_PACKAGE"
     mv downloads.php* braid_windows_r3.exe 2>/dev/null
@@ -2530,7 +2530,7 @@ load_braid()
 verblist_add cod_demo "Call of Duty (Activision, 2003) [download]" Call_Of_Duty_Demo.exe
 
 load_cod_demo() {
-    download $W_PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -2721,7 +2721,7 @@ load_codmw2()
 verblist_add cod4mw_demo "Call of Duty 4 Modern Warfare (Activision, 2007) [download]" CoD4MWDemoSetup_v2.exe
 
 load_cod4mw_demo() {
-    download $W_PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -2757,7 +2757,7 @@ load_cnc2()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/OfficialCncTiberianSun.rar"
     then
-        download $W_PACKAGE http://na.llnet.cnc3tv.ea.com/u/f/eagames/cnc3/cnc3tv/Classic/OfficialCnCTiberianSun.rar 591aabd639fb9f2d2476a2150f3c00b1162674f5
+        w_download $W_PACKAGE http://na.llnet.cnc3tv.ea.com/u/f/eagames/cnc3/cnc3tv/Classic/OfficialCnCTiberianSun.rar 591aabd639fb9f2d2476a2150f3c00b1162674f5
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -2824,7 +2824,7 @@ load_civ4() {
         ControlClick Finish, Sid Meier's Civilization 4 - InstallShield Wizard
     "
 
-    download $W_PACKAGE http://www.firaxis.com/downloads/Patch/Civ4v161.exe 4712e96ef34dcc5aa961d2b75f49ada8bd6b0d92
+    w_download $W_PACKAGE http://www.firaxis.com/downloads/Patch/Civ4v161.exe 4712e96ef34dcc5aa961d2b75f49ada8bd6b0d92
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -2906,7 +2906,7 @@ load_cnc3_demo()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/CnC3Demo.exe"
     then
-        download $W_PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7
+        w_download $W_PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -3111,7 +3111,7 @@ load_daytona_usa_evolutions() {
     # Refuses to run on anything newer...
     w_try_winetricks win98
 
-    download $W_PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
+    w_download $W_PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
 
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
     # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
@@ -3169,7 +3169,7 @@ load_daytona_usa_evolutions() {
 verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, 2008)" InstallDorasCarnival2BoardwalkAdventure.exe
 load_dc2ba() {
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
-    download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
+    w_download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
 
     if w_workaround_wine_bug 23749
     then
@@ -3407,7 +3407,7 @@ verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
 
 load_diablo2() {
     w_warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs."
-    download $W_PACKAGE http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
+    w_download $W_PACKAGE http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
     # Force clean-ish install
     test -d "$W_PROGRAMS_UNIX/Diablo II" && rm -rf "$W_PROGRAMS_UNIX/Diablo II"
@@ -3475,7 +3475,7 @@ load_diablo2() {
 verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009) [download]" Dirt2Demo.zip
 
 load_dirt2_demo() {
-    download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
 
     mkdir "$W_TMP/$W_PACKAGE"
     w_try unzip -d "$W_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
@@ -3625,7 +3625,7 @@ verblist_add eve "EVE Online Tyrannis (CCP Games, 2010) [download]" EVE_Premium_
 load_eve() {
     # FIXME: download function should avoid checksumming huge old files
     test -s "$W_CACHE/$W_PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
-        download $W_PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
+        w_download $W_PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         run, EVE_Premium_Setup_177290_m.exe
@@ -4042,7 +4042,7 @@ verblist_add fifa11_demo    "FIFA 11 Demo (EA Sports, 2010) [download]" fifa11_p
 load_fifa11_demo()
 {
     # From http://www.easportsfootball.co.uk/news/item/file/FIFA-11-Demo-Release?om_u=2255229429&om_i=_BMknsPB8Usvnmr
-    download $W_PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
+    w_download $W_PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
 
     mkdir "$W_TMP/$W_PACKAGE"
     w_try unzip -d "$W_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_pc_demo_NA.zip"
@@ -4173,7 +4173,7 @@ load_fifaonline3_beta()
 verblist_add fifa10_demo     "Fifa 10 Demo (EA, 2009)" fifa10_pc_demo_ec.exe
 
 load_fifa10_demo() {
-    download $W_PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
 
     # The installer is a self extracting rar file. Make cleanups easy by using $W_TMP
     mkdir "$W_TMP/fifa10"
@@ -4229,7 +4229,7 @@ load_fifa10_demo() {
 verblist_add ffvii_demo "Final Fantasy VII (Square Enix, 1998)" ff7demo.zip
 
 load_ffvii_demo() {
-    download $W_PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
+    w_download $W_PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
 
     mkdir "$W_PROGRAMS_X86_UNIX/ffvii_demo"
     cd "$W_PROGRAMS_X86_UNIX/ffvii_demo"
@@ -4322,7 +4322,7 @@ load_ffxiv_beta() {
 verblist_add ffxivbench "Final Fantasy XIV Benchmark (Square Enix, 2010)" FFXIVBenchmark.zip
 
 load_ffxivbench() {
-    download $W_PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
+    w_download $W_PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
 
     cd "$W_PROGRAMS_X86_UNIX"
     w_try unzip "$W_CACHE/$W_PACKAGE/FFXIVBenchmark.zip"
@@ -4418,7 +4418,7 @@ load_fm10_demo() {
 verblist_add futurepinball "Future Pinball (Christopher Leathley, 2008) [download]"
 
 load_futurepinball() {
-    download $W_PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
+    w_download $W_PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -4474,7 +4474,7 @@ verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [dow
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
 load_gothic4_demo() {
-    download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip
+    w_download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip
 
     w_try mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_TMP/$W_PACKAGE"
@@ -4548,7 +4548,7 @@ verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " Gran
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
 
 load_grand_ages_rome_demo() {
-    download $W_PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
+    w_download $W_PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
 
     if w_workaround_wine_bug 24819
     then
@@ -4643,7 +4643,7 @@ load_gta_vc() {
 verblist_add guildwars    "Guild Wars (NCsoft, 2005) [download]" GwSetup.exe
 
 load_guildwars() {
-    download $W_PACKAGE http://guildwars.com/download a7c4c8cb3b8cbee20707dcf8176d3da6a1686c05 GwSetup.exe
+    w_download $W_PACKAGE http://guildwars.com/download a7c4c8cb3b8cbee20707dcf8176d3da6a1686c05 GwSetup.exe
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -4737,7 +4737,7 @@ load_half_life_goty() {
 verblist_add hko "Hello Kitty Online (Sanrio Digital, 2009) [download]" "Hello Kitty Online Standard Installer.zip"
 
 load_hko() {
-    download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
+    w_download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
     download_torrent $W_PACKAGE hkostandardinstaller.torrent
     w_try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$W_TMP"
     cd "$W_TMP/Hello Kitty Online Standard Installer"
@@ -4798,7 +4798,7 @@ load_hko() {
 verblist_add hm_demo "Hearts Medicine Demo (Gamehouse, 2010) [download]" HeartsMedicine_Season1_download.exe
 
 load_hm_demo() {
-    download $W_PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
+    w_download $W_PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
     cd "$W_CACHE/$W_PACKAGE"
 
     w_ahk_do "
@@ -4912,7 +4912,7 @@ load_hphbp_demo()
 
     if ! test -f "$W_CACHE/$W_PACKAGE/$hbpdemoexe"
     then
-        download $W_PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
+        w_download $W_PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5000,7 +5000,7 @@ load_hegemonypom_demo()
     then
         # Oct 2010: d3d2aa020d38b594d112360ae40871662d35dea4
         # Nov 2010: 80cad805ad4bed0d3c493f2d9a40d06512c429a9 http://www.longbowgames.com/forums/topic/?id=2223&start=0#post22184
-        download $W_PACKAGE http://www.longbowgames.com/downloads/Hegemony%20Philip%20of%20Macedon%20Installer.exe 80cad805ad4bed0d3c493f2d9a40d06512c429a9
+        w_download $W_PACKAGE http://www.longbowgames.com/downloads/Hegemony%20Philip%20of%20Macedon%20Installer.exe 80cad805ad4bed0d3c493f2d9a40d06512c429a9
         # FIXME: download changes the working directory
         cd "$W_CACHE/$W_PACKAGE"
         # Get rid of spaces in exe name, since download leaves them as %20's, and w_ahk_do might not make it easy to use quotes
@@ -5072,7 +5072,7 @@ $honexe
 
 load_hon()
 {
-    download $W_PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
+    w_download $W_PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -5103,7 +5103,7 @@ verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005
 load_hod3_jp_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE/hod3_trial.exe"
     then
-        download $W_PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
+        w_download $W_PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
     fi
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -5156,7 +5156,7 @@ verblist_add imvu "IMVU - Instant Messaging Virtual Universe (IMVU, 2004) [downl
 
 load_imvu() {
 
-    download $W_PACKAGE "http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_447.0_st_conduit.exe" 61963e1c8d45c7dba942d85efadaf6284c556af4
+    w_download $W_PACKAGE "http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_447.0_st_conduit.exe" 61963e1c8d45c7dba942d85efadaf6284c556af4
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -5189,7 +5189,7 @@ verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga
 # See also http://en.wikipedia.org/wiki/AGD_Interactive
 
 load_kq1vga() {
-    download $W_PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
+    w_download $W_PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -5245,7 +5245,7 @@ load_lhp_demo()
 
     if ! test -f "$W_CACHE/$W_PACKAGE/LEGOHarryPotterDEMO.exe"
     then
-        download $W_PACKAGE http://static.kidswb.com/legoharrypottergame/LEGOHarryPotterDEMO.exe bb0a30ad9a7cc51c80e1bb1f3eec22e6ccc1a706
+        w_download $W_PACKAGE http://static.kidswb.com/legoharrypottergame/LEGOHarryPotterDEMO.exe bb0a30ad9a7cc51c80e1bb1f3eec22e6ccc1a706
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5284,7 +5284,7 @@ load_lol()
     # Outer installer, fetches the latest client
     if ! test -f "${W_CACHE}/${W_PACKAGE}/LeagueofLegends.exe"
     then
-        download ${W_PACKAGE} http://l3cdn.riotgames.com/Installer/ProdSource.06_29_2010/LeagueofLegends.exe 89cb958c6430c7840c377b61cae7939a0d276249
+        w_download ${W_PACKAGE} http://l3cdn.riotgames.com/Installer/ProdSource.06_29_2010/LeagueofLegends.exe 89cb958c6430c7840c377b61cae7939a0d276249
     fi
 
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
@@ -5432,7 +5432,7 @@ set -x
 verblist_add lol_standalone "League of Legends standalone client (Riot Games, 2009)" 'StandAlone_9_21_2010_NA(with%20sse2%20fix).rar'
 
 load_lol_standalone() {
-    download ${W_PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
+    w_download ${W_PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
     mkdir -p "$W_DRIVE_C/Riot Games"
     cd "$W_DRIVE_C/Riot Games"
     try_unrar x "$W_CACHE/$W_PACKAGE/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar"
@@ -5475,7 +5475,7 @@ load_lotsn()
 {
     if ! test -f "${W_CACHE}/${W_PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe"
     then
-        download ${W_PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
+        w_download ${W_PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
     fi
 
     load_gecko
@@ -5520,7 +5520,7 @@ load_lp2bench()
 
     if ! test -f "${W_CACHE}/${W_PACKAGE}/LostPlanet2_Benchmark.zip"
     then
-        download ${W_PACKAGE} http://gamedaily.newaol.com/pub/LostPlanet2_Benchmark.zip 2c9862adc81974a61a450a1865cd60decd82587c
+        w_download ${W_PACKAGE} http://gamedaily.newaol.com/pub/LostPlanet2_Benchmark.zip 2c9862adc81974a61a450a1865cd60decd82587c
     fi
 
     cd "${W_CACHE}/${W_PACKAGE}/"
@@ -5761,7 +5761,7 @@ load_masseffect2() {
 verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010) [download]" MassEffect2DemoEN.exe
 
 load_masseffect2_demo() {
-    download ${W_PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
+    w_download ${W_PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
 
     if w_workaround_wine_bug 22091
     then
@@ -5840,7 +5840,7 @@ verblist_add maxmagicmarker_demo "Download: Max & the Magic Marker Demo (2010) [
 
 load_maxmagicmarker_demo() {
 
-    download $W_PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
+    w_download $W_PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
 
     w_try mkdir "$W_PROGRAMS_X86_UNIX"/$W_PACKAGE
     cd "$W_PROGRAMS_X86_UNIX"/$W_PACKAGE
@@ -6159,7 +6159,7 @@ load_mnbw_demo()
 {
     if ! test -f "${W_CACHE}/${W_PACKAGE}/${mnbw_demo_exe}"
     then
-        download ${W_PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
+        w_download ${W_PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
     fi
     cd "${W_CACHE}/${W_PACKAGE}"
     chmod +x ${mnbw_demo_exe}
@@ -6185,7 +6185,7 @@ verblist_add nd23_saw_demo    "Nancy Drew 23: Shadow at the Waters Edge Demo (He
 
 load_nd23_saw_demo() {
     # http://www.herinteractive.com/Mystery_Games/Nancy_Drew/Shadow_at_the_Waters_Edge/pc
-    download $W_PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
+    w_download $W_PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
 
     cd "$W_DRIVE_C"
     mkdir $W_PACKAGE
@@ -6211,7 +6211,7 @@ load_nfsps_demo()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/ps_pcdemo.exe"
     then
-        download $W_PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
+        w_download $W_PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
     fi
 
     mkdir -p "$W_TMP/$W_PACKAGE"
@@ -6310,7 +6310,7 @@ load_nfsshift()
     "
     iso_umount
 
-    download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/SHIFTPCPATCHV1.02_NA.exe 3ec2bf46aeb223c369ffcb0b57c080fba67d5dd9
+    w_download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/SHIFTPCPATCHV1.02_NA.exe 3ec2bf46aeb223c369ffcb0b57c080fba67d5dd9
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -6332,7 +6332,7 @@ load_nfsshift_demo()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/NFSSHIFTPCDEMO.exe"
     then
-        download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
+        w_download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
     fi
 
     mkdir -p "$W_TMP/$W_PACKAGE"
@@ -6484,7 +6484,7 @@ verblist_add osmos_demo "Osmos demo (Hemisphere Games, 2009) [download]" OsmosDe
 
 load_osmos_demo() {
 
-    download $W_PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
+    w_download $W_PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -6573,7 +6573,7 @@ load_pcmark05() {
     # http://www.futuremark.com/download/pcmark05/
     if ! test -f "$W_CACHE/$W_PACKAGE/PCMark05_v120_1901.exe"
     then
-        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe 8636fce0e4023cd59bcf7f3e1a027e233ee81193
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe 8636fce0e4023cd59bcf7f3e1a027e233ee81193
     fi
 
     w_warn "Don't use mouse while this installer is running.  Sorry..."
@@ -6625,7 +6625,7 @@ load_passmark7() {
     # http://www.passmark.com/download/pt_download.htm
     if ! test -f "$W_CACHE/$W_PACKAGE/petst.exe"
     then
-        download $W_PACKAGE http://www.passmark.com/ftp/petst.exe 6d9db9c1bc53452cf7a2d3ad07a1195218095f8f
+        w_download $W_PACKAGE http://www.passmark.com/ftp/petst.exe 6d9db9c1bc53452cf7a2d3ad07a1195218095f8f
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -6794,7 +6794,7 @@ verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009) [download]
 load_plantsvszombies() {
     if ! test -f "$W_CACHE/$W_PACKAGE/PlantsVsZombiesSetup.exe"
     then
-        download $W_PACKAGE "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
+        w_download $W_PACKAGE "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -7029,7 +7029,7 @@ load_proevolution2010_demo()
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
     if ! test -f "$W_CACHE/$W_PACKAGE/PES2010_PC_DEMO_Setup.exe"
     then
-        download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
+        w_download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -7072,7 +7072,7 @@ load_proevolution2011_demo()
 {
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
     # http://www.bigdownload.com/games/pro-evolution-soccer-2011/pc/pro-evolution-soccer-2011-demo/
-    download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
+    w_download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
 
     if w_workaround_wine_bug 24438
     then
@@ -7119,7 +7119,7 @@ verblist_add puzzleagent_demo "Puzzle Agent Demo (Telltale Games, 2010) [downloa
 
 load_puzzleagent_demo() {
 
-    download $W_PACKAGE http://telltale.vo.llnwd.net/o15/games/puzzleagent/100/PuzzleAgent_PC_Setup.exe 98337b2f24966c0e8ecb3357173ca16cca39b378
+    w_download $W_PACKAGE http://telltale.vo.llnwd.net/o15/games/puzzleagent/100/PuzzleAgent_PC_Setup.exe 98337b2f24966c0e8ecb3357173ca16cca39b378
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -7168,8 +7168,8 @@ load_rom()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$W_CACHE/$W_PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
     then
-        download $W_PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
-        download $W_PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
+        w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
+        w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
 
     fi
     if ! test -f "$W_CACHE/$W_PACKAGE/cached/ROMSetup.exe"
@@ -7180,22 +7180,22 @@ load_rom()
         try_unrar e ../Runes_of_Magic_3.0.1.2153.part1.exe
     fi
     # manual updates from http://forum.runesofmagic.com/showthread.php?t=79267
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2172.en_3.0.1.2175.en.exe ed120bc8140f8c3b2481a78f504a7a9e76c8642f
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2175.en_3.0.1.2178.en.exe 012e679402f2165effbf2aaaffe41a5d9405d319
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe c5f6115aeb2e4627dd0428c0024f177dca6f067c
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe bf3183406bcb848826301bba33775a6dfb611859
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe d576596086395ea83cb8c1422877c81ed45a90c9
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe af3f74030f371ef9bc4cfcecf4a9ad1159f28136
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2231.en_3.0.3.2241.en.exe e46dbb3d2699ddc34a7885a16224c79f80657749
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2241.en_3.0.3.2246.en.exe 17c49fb1381fb6927a19ed58ef210abd98c3e89f
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2246.en_3.0.3.2250.en.exe 6484b2d8b23c1c7389f2f9a38681ecda84d856a4
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2250.en_3.0.4.2237.en.exe a34b20828303cdeaa649b503d0eee915b7a808b3
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2237.en_3.0.4.2261.en.exe 511bf0281a7f87e9912fcf52649307eec5b7d315
-    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2261.en_3.0.4.2263.en.exe 8d01ef99ae2a72e36d9de2b6d021bc3bbd3cd246
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2172.en_3.0.1.2175.en.exe ed120bc8140f8c3b2481a78f504a7a9e76c8642f
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2175.en_3.0.1.2178.en.exe 012e679402f2165effbf2aaaffe41a5d9405d319
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe c5f6115aeb2e4627dd0428c0024f177dca6f067c
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe bf3183406bcb848826301bba33775a6dfb611859
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe d576596086395ea83cb8c1422877c81ed45a90c9
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe af3f74030f371ef9bc4cfcecf4a9ad1159f28136
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2231.en_3.0.3.2241.en.exe e46dbb3d2699ddc34a7885a16224c79f80657749
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2241.en_3.0.3.2246.en.exe 17c49fb1381fb6927a19ed58ef210abd98c3e89f
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2246.en_3.0.3.2250.en.exe 6484b2d8b23c1c7389f2f9a38681ecda84d856a4
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2250.en_3.0.4.2237.en.exe a34b20828303cdeaa649b503d0eee915b7a808b3
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2237.en_3.0.4.2261.en.exe 511bf0281a7f87e9912fcf52649307eec5b7d315
+    w_download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2261.en_3.0.4.2263.en.exe 8d01ef99ae2a72e36d9de2b6d021bc3bbd3cd246
 
     cd "$W_CACHE/$W_PACKAGE"
     patches=`ls patch*.exe`
@@ -7318,7 +7318,7 @@ verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_
 load_re5bench() {
     if ! test -f "$W_CACHE/$W_PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
     then
-        download $W_PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
+        w_download $W_PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -7435,7 +7435,7 @@ verblist_add sammax304_demo "Sam & Max: The Devils Playhouse - Beyond the Alley 
 load_sammax304_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
     then
-        download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
+        w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
         cd "$W_CACHE/$W_PACKAGE"
         w_try unzip SamMax304_BigDownload.exe.zip
         rm -f SamMax304_BigDownload.exe.zip
@@ -7472,7 +7472,7 @@ verblist_add sega_rally_2  "Sega Rally 2 (Sega, 1999) [download]" rally2.exe
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
 load_sega_rally_2() {
-    download $W_PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
+    w_download $W_PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
 
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
     # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
@@ -7528,7 +7528,7 @@ load_sega_rally_2() {
 verblist_add 7million      "7Million (Deep Silver, 2009) [download]" 7Million_0_17_0-full.exe
 
 load_7million() {
-    download $W_PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
+    w_download $W_PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -7569,7 +7569,7 @@ load_7million() {
 verblist_add secondlife_beta      "Second Life Viewer - Beta (Linden Labs 2003-2010) [download]" Second_Life_2-3-0-213435_BetaViewer_Setup.exe
 
 load_secondlife_beta() {
-    download $W_PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
+    w_download $W_PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -7665,7 +7665,7 @@ load_sims3() {
     echo "Sims3 version info:"
     cat skuversion.txt
 
-    download $W_PACKAGE http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_1.6.6.002001_from_1.0.631.00001.exe 02703d296417750005326ff0d37295fa434a3f49
+    w_download $W_PACKAGE http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_1.6.6.002001_from_1.0.631.00001.exe 02703d296417750005326ff0d37295fa434a3f49
 
     cd "$W_CACHE"/$W_PACKAGE
     w_ahk_do "
@@ -7904,7 +7904,7 @@ load_ssdd2()
     # Main page: http://arcade.nick.com/nick/gameinfo.jsp?s=SpongeBobDinerDash2
     # old: 8407dae2c062ce62b38408eeac3a9f95be202b96
     # 27 Oct 2010: 440c4f2e9484ba150782cae8754ff8eaaad3b01e
-    download $W_PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 440c4f2e9484ba150782cae8754ff8eaaad3b01e
+    w_download $W_PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 440c4f2e9484ba150782cae8754ff8eaaad3b01e
 
     if w_workaround_wine_bug 23749
     then
@@ -7952,7 +7952,7 @@ load_sonicdxb_demo() {
     # http://sega.jp/pc/sonicdx/trial.shtml
     if ! test -f "$W_CACHE/$W_PACKAGE/sadx_trial_b.exe"
     then
-        download $W_PACKAGE 'http://sega.jp/cgi-bin/link.cgi?url=sadx_trial_b' f76fc33d3cb1b062437e03ba4e0687be07d903ad
+        w_download $W_PACKAGE 'http://sega.jp/cgi-bin/link.cgi?url=sadx_trial_b' f76fc33d3cb1b062437e03ba4e0687be07d903ad
         mv "$W_CACHE"/$W_PACKAGE/'link.cgi?url=sadx_trial_b' "$W_CACHE/$W_PACKAGE/sadx_trial_b.exe"
     fi
 
@@ -7989,7 +7989,7 @@ load_stalker_pripyat_bench() {
     # FIXME: There's a much faster download at
     # http://www.bigdownload.com/games/stalker-call-of-pripyat/pc/stalker-call-of-pripyat-benchmark
     # Should we direct users to download from there manually?
-    download $W_PACKAGE http://files.gsc-game.com/st/bench/stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
+    w_download $W_PACKAGE http://files.gsc-game.com/st/bench/stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -8207,7 +8207,7 @@ load_stfu() {
     # FIXME: add a commandline option to disable patching in general
     # URL from http://www.lucasfiles.com/index.php?s=&action=download&id=1537&agree=true
     # See also http://www.forceunleashed.net/news/force-unleashed-patch-1-2/
-    download $W_PACKAGE http://xfer.lfnetwork.com/lucasfiles.com/downloads/1537/SWTFU_PC_EF_1.2_Update.exe cfd8043c4b86f4dc0ff0acd4c108b11c4b76e716
+    w_download $W_PACKAGE http://xfer.lfnetwork.com/lucasfiles.com/downloads/1537/SWTFU_PC_EF_1.2_Update.exe cfd8043c4b86f4dc0ff0acd4c108b11c4b76e716
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         run SWTFU_PC_EF_1.2_Update.exe
@@ -8230,7 +8230,7 @@ load_sf4bench()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/StreetFighterIV_Benchmark.exe"
     then
-        download $W_PACKAGE http://gamedaily.newaol.com/pub/StreetFighterIV_Benchmark.exe f7754210308b3a0ff2bb3be3a62b22767519ca62
+        w_download $W_PACKAGE http://gamedaily.newaol.com/pub/StreetFighterIV_Benchmark.exe f7754210308b3a0ff2bb3be3a62b22767519ca62
     fi
 
     cd "$W_CACHE"/$W_PACKAGE
@@ -8308,7 +8308,7 @@ verblist_add smbx  "Super Mario Bros. X (Indie, 2009) [download]"  smbx122.exe
 
 load_smbx() {
     # Download URL embedded in http://www.supermariobrothers.org/downloads/smbx122.html
-    download $W_PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
+    w_download $W_PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
 
     # This winetricks verb doesn't work on Windows yet, but that's ok-ish, Windows comes with vb6 runtime
     w_try_winetricks vb6run
@@ -8361,7 +8361,7 @@ __EOF__
 verblist_add timezattack_demo "Timez Attack Demo (BigBrainz, 2005) [download]" Win_TimezAttackFreeInstaller.exe
 
 load_timezattack_demo() {
-    download $W_PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
+    w_download $W_PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
 
     cd "$W_CACHE/$W_PACKAGE"
     # autohotkey can't read any text from this one :-(
@@ -8408,7 +8408,7 @@ load_tlr_demo() {
 
     if ! test -f "$W_CACHE"/$W_PACKAGE/TheLastRemnant_PC_Demo.zip
     then
-        download $W_PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
+        w_download $W_PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
     fi
 
     cd "$W_TMP"
@@ -8456,7 +8456,7 @@ load_tmnationsforever() {
         w_warn "Gameplay and sound may be very choppy on some machines :-("
     fi
 
-    download $W_PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
+    w_download $W_PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -8645,7 +8645,7 @@ load_tropico3_demo() {
 verblist_add typingofthedead_demo "Typing of the Dead Demo (Sega, 1999) [download]" Tod_e_demo.exe
 
 load_typingofthedead_demo() {
-    download $W_PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
+    w_download $W_PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
 
     cd "$W_CACHE/$W_PACKAGE"
     mkdir "$W_TMP/tod-demo"
@@ -8939,7 +8939,7 @@ load_vf2_demo()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/vf2_demo.exe"
     then
-        download $W_PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
+        w_download $W_PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
     fi
 
     mkdir -p "$W_TMP/$W_PACKAGE"
@@ -9003,12 +9003,12 @@ load_wog() {
     if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
         # Get temporary download location
-        download $W_PACKAGE "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+        w_download $W_PACKAGE "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
         URL=`cat "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" |
            grep WorldOfGooDemo.1.0.exe | sed 's,.*http,http,;s,".*,,'`
         rm "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
 
-        download $W_PACKAGE "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
+        w_download $W_PACKAGE "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
     fi
 
     cd "$W_CACHE/wog"
@@ -9034,7 +9034,7 @@ load_wog() {
 verblist_add wowtrial       "World of Warcraft trial (Blizzard, 2009) [download]" TryWoW.exe
 
 load_wowtrial() {
-    download $W_PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
+    w_download $W_PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
 
     w_ahk_do "
         SetTitleMatchMode, slow
@@ -9072,13 +9072,13 @@ load_wowbc() {
 
     # Torrent file URLs found on http://www.wowwiki.com/Patch_mirrors
     # Patches 3.3.2.11403-to-3.3.3.11685-enUS-patch.exe up to 3.3.5 are downloaded from http://alexsmith.im/wow-patches/enus-patches
-    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" f9e96e7b4edc6a4c22faad084eef147853e3ebb5
-    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 33bdf8749b3c3781451b5f6ac2a59ba29d6c61bd
-    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" b7ad37a75713f6d8e578558ca1e321927192c6c6
-    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" f73763541197fecdcca9b9f8cf91e83cde989a49
-    download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe" ce73a0a8aa9f6eaf00b5e7cd0a34eb928738fd36
-    download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe"
-    download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe"
+    w_download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" f9e96e7b4edc6a4c22faad084eef147853e3ebb5
+    w_download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 33bdf8749b3c3781451b5f6ac2a59ba29d6c61bd
+    w_download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" b7ad37a75713f6d8e578558ca1e321927192c6c6
+    w_download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" f73763541197fecdcca9b9f8cf91e83cde989a49
+    w_download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe" ce73a0a8aa9f6eaf00b5e7cd0a34eb928738fd36
+    w_download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe"
+    w_download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe"
 
     cd "$W_CACHE/$W_PACKAGE"
     patch1=`stat -Lc%s WoW-3.2.0-enUS-patch.exe`
@@ -9222,7 +9222,7 @@ load_wowbc() {
 verblist_add zootycoon2_demo  "Zoo Tycoon 2 demo (Microsoft, 2004) [download]" Zoo2Trial.exe
 
 load_zootycoon2_demo() {
-    download $W_PACKAGE "http://download.microsoft.com/download/9/f/6/9f6a95f0-f34a-4312-9749-77b81d3de245/Zoo2Trial.exe" 60ad1bb34351f97b579c58234b926055f7979126
+    w_download $W_PACKAGE "http://download.microsoft.com/download/9/f/6/9f6a95f0-f34a-4312-9749-77b81d3de245/Zoo2Trial.exe" 60ad1bb34351f97b579c58234b926055f7979126
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -9257,7 +9257,7 @@ _load_positech()
     window_title="$4"
     installed_dir="$5"
     installed_exe="$6"
-    download $W_PACKAGE $dl_path $hash_sum
+    w_download $W_PACKAGE $dl_path $hash_sum
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         run, $installer_name
@@ -9691,7 +9691,7 @@ WINETRICKS="$srcdir/winetricks"
 if ! test -f "$WINETRICKS"
 then
     WINETRICKS="$W_CACHE/winetricks"
-    download . http://kegel.com/wine/winetricks
+    w_download . http://kegel.com/wine/winetricks
 fi
 
 # The folder-name is localized!
