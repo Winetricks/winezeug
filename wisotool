@@ -130,7 +130,7 @@ read_game_key() {
         # read key from user
         case $MENU in
         *zenity) KEY=`zenity --entry --text "Enter the disc key for $W_PACKAGE"` ;;
-        *kdialog) KEY=`kdialog --inputbox "Enter the disc key for $W_PACKAGE"` ;; 
+        *kdialog) KEY=`kdialog --inputbox "Enter the disc key for $W_PACKAGE"` ;;
         *xmessage) w_die "sorry, can't read key from gui with xmessage" ;;
         none) echo "Enter the disc key for $W_PACKAGE": ; read $KEY ;;
         esac
@@ -1347,7 +1347,7 @@ load_aoe3_demo() {
         "
         # or should we just do wineserver -k, like fable_tlc does?
         PID=`ps augxw | grep IDriver | grep -v grep | awk '{print $2}'`
-        kill $PID  
+        kill $PID
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Age of Empires III Trial" "age3.exe"
@@ -1371,8 +1371,8 @@ load_aoe3cc() {
         for disc in 1 2 3
         do
             echo Copying disc $disc
-	    # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
-	    # where $W_PACKAGE would be set differently
+            # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
+            # where $W_PACKAGE would be set differently
             iso_mount "$W_CACHE/aoe3cc/AOE III DISC $disc.iso"
             cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/aoe3cc/tempcd
             chmod -R +w "$WISOTOOL_TMP"/aoe3cc/tempcd
@@ -1639,7 +1639,7 @@ load_anno1404_demo() {
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip "$W_CACHE/$W_PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip 
+    try unzip "$W_CACHE/$W_PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
     try cd "Anno1404_Demo_US_2009_06_15_18_22"
     w_ahk_do "
         run, setup.exe
@@ -1959,7 +1959,7 @@ load_batman_arkham_asylum_demo() {
                 Process, Close, BmLauncher.exe ; kill BmLauncher
                 break
             }
-	    ; If BmLauncher.exe fails to run, we'll get stuck in an infinite loop here.  Shouldn't happen unless, say, .net 30 fails to install.
+            ; If BmLauncher.exe fails to run, we'll get stuck in an infinite loop here.  Shouldn't happen unless, say, .net 30 fails to install.
             Sleep (2000)
         }
     "
@@ -2514,7 +2514,7 @@ load_braid()
         send {RAW}$BRAID_KEY
         controlclick, Button1
         sleep 5000
-	; FIXME: Desktop resolution isn't reset after exit
+        ; FIXME: Desktop resolution isn't reset after exit
         process, close, braid.exe
     "
     cd "$olddir"
@@ -2530,7 +2530,7 @@ load_cod_demo() {
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
        SetTitleMatchMode, 2
-       run Call_Of_Duty_Demo.exe 
+       run Call_Of_Duty_Demo.exe
        WinWait,Call of Duty Single Player Demo,Welcome
        ControlClick Button1 ; I Agree
        WinWait,Call of Duty Single Player Demo,License
@@ -2974,7 +2974,7 @@ load_dao_ue()
 {
     # Get user's key
     DAO_UE_KEY=`cat "$W_CACHE"/$W_PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.txt | tr -d -`
-    
+
     iso_mount "$W_CACHE"/$W_PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso
 
     # Annoyingly, it runs a webrowser so you can activate the extra stuff. Disable that, and w_warn the user after install:
@@ -3007,10 +3007,10 @@ load_dao_ue()
         winwait, Insert Disc...
     "
     iso_mount "$W_CACHE"/$W_PACKAGE/545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso
-    
+
     w_ahk_do "
         sleep 5000
-	SetTitleMatchMode, 2
+        SetTitleMatchMode, 2
         controlclick, Button2, Insert Disc...
         winwait, Dragon Age, Setup was completed successfully
         sleep 1000
@@ -3718,9 +3718,9 @@ load_fable_tlc() {
         Sleep 500
         ControlClick Button4 ; Next
         WinWait,Fable,Product Key
-	Sleep 500
+        Sleep 500
         Send $KEY
-	Send {Enter}
+        Send {Enter}
         WinWait,Fable,Disk 2
         "
     iso_mount "$W_CACHE"/$W_PACKAGE/ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso
@@ -3730,7 +3730,7 @@ load_fable_tlc() {
         Sleep 500
         ControlClick Button2 ; Retry
         WinWait,Fable,Disk 3
-	"
+        "
 
     iso_mount "$W_CACHE"/$W_PACKAGE/755eaa37cd52c1171339d2dae11979147cf62080.iso
     w_ahk_do "
@@ -3739,7 +3739,7 @@ load_fable_tlc() {
         Sleep 500
         ControlClick Button2 ; Retry
         WinWait,Fable,Disk 4
-	"
+        "
 
     iso_mount "$W_CACHE"/$W_PACKAGE/e435cfeb975e596db1bf953170462e3b81c41396.iso
     w_ahk_do "
@@ -3748,8 +3748,8 @@ load_fable_tlc() {
         Sleep 500
         ControlClick Button2 ; Retry
         WinWait,Fable,Disk 1
-	WinKill
-	"
+        WinKill
+        "
 
     # Now tell game what the real disc is so user can insert disc 1 and run the game!
     cat > "$WISOTOOL_TMP"/$W_PACKAGE.reg <<_EOF_
@@ -3821,9 +3821,9 @@ load_fallout3()
         winwait, Fallout 3, Ready to Install
         controlclick, Button1
         winwait, Fallout 3, InstallShield Wizard Complete
-	controlclick, Button1
-	controlclick, Button2
-	controlclick, Button3
+        controlclick, Button1
+        controlclick, Button2
+        controlclick, Button3
     "
     w_declare_exe "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3" "Fallout3.exe"
 }
@@ -4414,7 +4414,7 @@ verblist_add futurepinball "Future Pinball (Christopher Leathley, 2008) [downloa
 
 load_futurepinball() {
     download $W_PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
-    
+
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -4456,7 +4456,7 @@ load_futurepinball() {
             Process, close, Future Pinball.exe
     "
     if workaround_wine_bug 8780
-    then 
+    then
         try "$WINETRICKS" -q wsh56vb dcom98
     fi
 
@@ -4469,12 +4469,12 @@ verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [dow
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
 load_gothic4_demo() {
-    download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip 
+    download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip
 
     try mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip "$W_CACHE/$W_PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip 
-    
+    try unzip "$W_CACHE/$W_PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip
+
     w_ahk_do "
         Settitlematchmode, 2
         run, ArcaniA_Gothic4_Demo_Setup.exe
@@ -4544,7 +4544,7 @@ verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " Gran
 
 load_grand_ages_rome_demo() {
     download $W_PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
-    
+
     if workaround_wine_bug 24819
     then
         sh "$WINETRICKS" -q gameux=disabled
@@ -5604,7 +5604,7 @@ load_losthorizon_demo() {
         mkdir -p "$W_CACHE/$W_PACKAGE"
         w_die "Please visit http://www.fileplanet.com/215704/download/Lost-Horizon-Demo, download Lost_Horizon_Demo_EN.exe, and place it in directory $W_CACHE/$W_PACKAGE"
     fi
-    
+
     cd "$W_CACHE/$W_PACKAGE"
 
     w_ahk_do "
@@ -6478,9 +6478,9 @@ load_orangebox() {
 verblist_add osmos_demo "Osmos demo (Hemisphere Games, 2009) [download]" OsmosDemo_Installer_1.5.6.exe
 
 load_osmos_demo() {
-    
+
     download $W_PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
-    
+
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -6498,7 +6498,7 @@ load_osmos_demo() {
         sleep 500
         controlclick, Button2, Osmos Demo Setup, Installation Complete
     "
-    
+
     if workaround_wine_bug 24416
     then
         sh "$WINETRICKS" -q vcrun2005
@@ -6818,21 +6818,21 @@ load_pop2008()
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:Setup.exe
         winwait, Prince of Persia, Language
-	sleep 1000
+        sleep 1000
         ControlClick, Button3
         winwait, Prince of Persia, Welcome
-	sleep 1000
+        sleep 1000
         ControlClick, Button1
         winwait, Prince of Persia, License
-	sleep 1000
+        sleep 1000
         ControlClick, Button5
-	sleep 1000
+        sleep 1000
         ControlClick, Button2
         winwait, Prince of Persia, Click Install
-	sleep 1000
+        sleep 1000
         ControlClick, Button1
         winwait, Prince of Persia, Click Finish
-	sleep 1000
+        sleep 1000
         ControlClick, Button4
     "
 
@@ -8732,7 +8732,7 @@ load_vegas() {
     then
         w_warn "This game's DRM is not supported by wine"
     fi
-    
+
     iso_mount "$W_CACHE"/$W_PACKAGE/be7cf72572708e9776af73c9bec8ee07952385af.iso
 
     w_ahk_do "
@@ -8782,7 +8782,7 @@ load_vegas() {
         Send {Enter}          ; quit
     "
     iso_umount
-    
+
     w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas\\Binaries" "R6Vegas_Launcher.exe"
 }
 
@@ -8798,7 +8798,7 @@ load_vegas2() {
     then
         w_warn "This game's DRM is not supported by wine"
     fi
-    
+
     iso_mount "$W_CACHE"/$W_PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
 
     w_ahk_do "
@@ -8831,7 +8831,7 @@ load_vegas2() {
          WinWait, Setup Needs The Next Disk
          WinActivate
     "
-     
+
     iso_mount "$W_CACHE"/$W_PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -8841,7 +8841,7 @@ load_vegas2() {
         ControlClick Button4  ; finish
     "
     iso_umount
-    
+
     w_declare_exe "$programfilesdir_x86_win\\Ubisoft\\Tom Clancy's Rainbow Six Vegas 2\\Binaries" "R6Vegas2_Launcher.exe"
 }
 
