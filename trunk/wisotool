@@ -299,6 +299,11 @@ w_try() {
     fi
 }
 
+w_try_winetricks()
+{
+    w_try sh $WINETRICKS -q $*
+}
+
 try_regedit() {
     # on windows, doesn't work without cmd /c
     case "$OS" in
@@ -491,7 +496,7 @@ download() {
 # Caches downloads in $W_CACHE/$W_PACKAGE, torrent files are assumed to be there
 # If no foo.torrent is given, will add ALL .torrent files in $W_CACHE/$W_PACKAGE
 download_torrent() {
-    test -f "$WINDIR"/utorrent.exe || try sh $WINETRICKS utorrent
+    test -f "$WINDIR"/utorrent.exe || w_try_winetricks utorrent
     UT_WINPATH="$W_CACHE_WIN\\$1"
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -879,7 +884,7 @@ w_ahk_do() {
 
 load_autohotkey()
 {
-    test -f "$W_PROGRAMS_UNIX/AutoHotkey/AutoHotkey.exe" || try sh "$WINETRICKS" -q autohotkey
+    test -f "$W_PROGRAMS_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks autohotkey
 }
 
 #----------------------------------------------------------------
@@ -888,7 +893,7 @@ load_gecko()
 {
     if ! test -f "$windir/system32/gecko/1.0.0/wine_gecko/nspr4.dll"
     then
-        w_try sh "$WINETRICKS" gecko
+        w_try_winetricks gecko
     fi
 }
 
@@ -1219,7 +1224,7 @@ load_3dmark06() {
     if w_workaround_wine_bug 22393
     then
         # "Demo" button doesn't work without this
-        sh "$WINETRICKS" -q d3dx9_28 d3dx9_36
+        w_try_winetricks d3dx9_28 d3dx9_36
     fi
 
     ARGS=""
@@ -1311,7 +1316,7 @@ load_aoe3_demo() {
 
     if w_workaround_wine_bug 24897
     then
-        w_try sh "$WINETRICKS" -q msxml4
+        w_try_winetricks msxml4
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1335,7 +1340,7 @@ load_aoe3_demo() {
     then
         # On some systems, only quartz is needed?
         # appdb says that l3codecx is also needed?
-        w_try sh "$WINETRICKS" -q devenum dmsynth quartz
+        w_try_winetricks devenum dmsynth quartz
     fi
 
     if w_workaround_wine_bug 24912
@@ -1383,12 +1388,12 @@ load_aoe3cc() {
 
     if w_workaround_wine_bug 657
     then
-        w_try sh "$WINETRICKS" -q mfc42
+        w_try_winetricks mfc42
     fi
 
     if w_workaround_wine_bug 24897
     then
-        w_try sh "$WINETRICKS" -q msxml4
+        w_try_winetricks msxml4
     fi
 
     AOE3CC_KEY="`cat "$W_CACHE/aoe3cc/AOE III DISC 1.txt" | tr -d -`"
@@ -1416,7 +1421,7 @@ load_aoe3cc() {
 
     if w_workaround_wine_bug 24911
     then
-        w_try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+        w_try_winetricks devenum dmsynth quartz l3codecx
     fi
 
     if w_workaround_wine_bug 24912
@@ -1457,12 +1462,12 @@ load_aoe3cc_ad() {
 
     if w_workaround_wine_bug 657
     then
-        w_try sh "$WINETRICKS" -q mfc42
+        w_try_winetricks mfc42
     fi
 
     if w_workaround_wine_bug 24897
     then
-        w_try sh "$WINETRICKS" -q msxml4
+        w_try_winetricks msxml4
     fi
 
     AOE3Y_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3Y.txt" | tr -d -`"
@@ -1487,7 +1492,7 @@ load_aoe3cc_ad() {
 
     if w_workaround_wine_bug 24911
     then
-        w_try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+        w_try_winetricks devenum dmsynth quartz l3codecx
     fi
 
     if w_workaround_wine_bug 24912
@@ -1528,12 +1533,12 @@ load_aoe3cc_wc() {
 
     if w_workaround_wine_bug 657
     then
-        w_try sh "$WINETRICKS" -q mfc42
+        w_try_winetricks mfc42
     fi
 
     if w_workaround_wine_bug 24897
     then
-        w_try sh "$WINETRICKS" -q msxml4
+        w_try_winetricks msxml4
     fi
 
     AOE3X_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3X.txt" | tr -d -`"
@@ -1558,7 +1563,7 @@ load_aoe3cc_wc() {
 
     if w_workaround_wine_bug 24911
     then
-        w_try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+        w_try_winetricks devenum dmsynth quartz l3codecx
     fi
 
     if w_workaround_wine_bug 24912
@@ -1691,7 +1696,7 @@ load_assassinscreed() {
     if w_workaround_wine_bug 22392
     then
         # Don't hang at a dialog box when Detection crashes
-        sh "$WINETRICKS" nocrashdialog
+        w_try_winetricks nocrashdialog
     fi
 
     iso_mount "$W_CACHE"/$W_PACKAGE/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
@@ -1733,7 +1738,7 @@ load_avatar_demo()
 
     if w_workaround_wine_bug 23094
     then
-        w_try sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
@@ -1865,7 +1870,7 @@ load_baldursgate2() {
 
     if w_workaround_wine_bug 22482
     then
-        sh "$WINETRICKS" -q ddr=opengl
+        w_try_winetricks ddr=opengl
         w_warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
     fi
 
@@ -1981,7 +1986,7 @@ load_batman_arkham_asylum_demo() {
     fi
     if w_workaround_wine_bug 24471
     then
-        sh "$WINETRICKS" mmdevapi=disabled
+        w_try_winetricks mmdevapi=disabled
     fi
 }
 
@@ -2079,7 +2084,7 @@ load_bioshock() {
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
     if w_workaround_wine_bug 22501
     then
-        sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     # If .iso is present, use it rather than the .mds (.mds is still flaky, maybe we should just get rid of mds support)
@@ -2175,12 +2180,12 @@ load_bioshock() {
     #    "
     if w_workaround_wine_bug 6971
     then
-        sh "$WINETRICKS" -q mwo=force
+        w_try_winetricks mwo=force
     fi
 
     if w_workaround_wine_bug 23884
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     mds_umount
@@ -2248,12 +2253,12 @@ load_bioshock_iso()
 
     if w_workaround_wine_bug 6971
     then
-        sh "$WINETRICKS" -q mwo=force
+        w_try_winetricks mwo=force
     fi
 
     if w_workaround_wine_bug 23884
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\2K Games\\BioShock\\Builds\\Release" "bioshock.exe"
@@ -2401,7 +2406,7 @@ load_blur() {
 
     # FIXME: The installer didn't install physx (does it on windows? If so, file wine bug).
     # The game runs without the physx trick but frame rate improves with physx.
-    w_try sh "$WINETRICKS" -q physx
+    w_try_winetricks physx
 
     if w_workaround_wine_bug 24509
     then
@@ -2451,7 +2456,7 @@ load_braid_demo()
 
     if w_workaround_wine_bug 22161
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Braid" "braid.exe"
@@ -2498,7 +2503,7 @@ load_braid()
 
     if w_workaround_wine_bug 22161
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Braid" "braid.exe"
@@ -2653,7 +2658,7 @@ verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [br
 load_codmw2()
 {
     w_warn "This verb isn't quite ready for prime time."
-    test -f "$W_PROGRAMS_X86_UNIX"/Steam/Steam.exe || try sh $WINETRICKS -q steam
+    test -f "$W_PROGRAMS_X86_UNIX"/Steam/Steam.exe || w_try_winetricks -q steam
 
     # Get user's key
     CODMW2_KEY=`cat "$W_CACHE"/$W_PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.txt | tr -d -`
@@ -2774,11 +2779,11 @@ load_civ4() {
 
     if w_workaround_wine_bug 6856
     then
-        w_try sh "$WINETRICKS" -q msxml3
+        w_try_winetricks msxml3
     fi
     if w_workaround_wine_bug 11675
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     iso_mount "$W_CACHE"/$W_PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
@@ -2833,11 +2838,11 @@ load_civ4() {
     "
     if w_workaround_wine_bug 6856
     then
-        w_try sh "$WINETRICKS" -q msxml3
+        w_try_winetricks msxml3
     fi
     if w_workaround_wine_bug 11675
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Firaxis Games\\Sid Meier's Civilization 4" "Civilization4.exe"
@@ -2883,11 +2888,11 @@ load_civ4_demo()
 
     if w_workaround_wine_bug 6856
     then
-        w_try sh "$WINETRICKS" -q msxml3
+        w_try_winetricks msxml3
     fi
     if w_workaround_wine_bug 6856 # part 2, still need to file a bug
     then
-        w_try sh "$WINETRICKS" -q d3dx9_26
+        w_try_winetricks d3dx9_26
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
@@ -3030,7 +3035,7 @@ load_dao_ue()
 
     if w_workaround_wine_bug 22383
     then
-        w_try "$WINETRICKS" -q strictdrawordering=enabled
+        w_try_winetricks strictdrawordering=enabled
     fi
 
     if w_workaround_wine_bug 23730
@@ -3090,7 +3095,7 @@ load_darknesswithin2_demo()
 
     if w_workaround_wine_bug 23041
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     # you have to cd to the directory containing DarkLineage.exe before running it
@@ -3104,7 +3109,7 @@ verblist_add daytona_usa_evolutions  "Daytona USA Evolutions (Sega, 1997)" dayto
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=1136
 load_daytona_usa_evolutions() {
     # Refuses to run on anything newer...
-    sh "$WINETRICKS" -q win98
+    w_try_winetricks win98
 
     download $W_PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
 
@@ -3168,7 +3173,7 @@ load_dc2ba() {
 
     if w_workaround_wine_bug 23749
     then
-        sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -3205,7 +3210,7 @@ load_dc2ba() {
     # Workarounds needed by the game but not the installer should come at end of verb
     if w_workaround_wine_bug 13496
     then
-        sh "$WINETRICKS" -q vcrun6
+        w_try_winetricks vcrun6
     fi
 }
 
@@ -3507,12 +3512,12 @@ load_dirt2_demo() {
 
     if w_workaround_wine_bug 23532
     then
-        w_try "$WINETRICKS" -q xlive
+        w_try_winetricks xlive
     fi
 
     if w_workaround_wine_bug 24868
     then
-        sh "$WINETRICKS" d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Codemasters\\DiRT2 Demo" "dirt2.exe"
@@ -3526,7 +3531,7 @@ load_dragonage() {
     w_read_key
 
     # Installer has a non-fatal crash on exit, so ignore it.
-    sh "$WINETRICKS" -q nocrashdialog physx vcrun2005
+    w_try_winetricks nocrashdialog physx vcrun2005
     iso_mount "$W_CACHE"/$W_PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
     w_ahk_do "
@@ -3564,7 +3569,7 @@ load_dragonage() {
     fi
     if w_workaround_wine_bug 22383
     then
-        w_try "$WINETRICKS" -q strictdrawordering=enabled
+        w_try_winetricks strictdrawordering=enabled
     fi
     if w_workaround_wine_bug 23730
     then
@@ -3645,7 +3650,7 @@ load_eve() {
     "
     if w_workaround_wine_bug 18221
     then
-        sh "$WINETRICKS" -q corefonts
+        w_try_winetricks corefonts
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\CCP\\EVE" "eve.exe"
@@ -3681,7 +3686,7 @@ load_ewj_demo() {
     then
         w_warn "Sound does not work in Windows NT+ mode. It does in win98 mode, but then locks up the game. See http://bugs.winehq.org/show_bug.cgi?id=19531"
     else
-        sh "$WINETRICKS" win98
+        w_try_winetricks win98
     fi
 
     w_declare_exe "$W_DRIVE_C\\ewj_demo" "WORM.EXE"
@@ -3704,7 +3709,7 @@ load_fable_tlc() {
 
     if w_workaround_wine_bug 657
     then
-        w_try sh "$WINETRICKS" -q mfc42
+        w_try_winetricks mfc42
     fi
 
     iso_mount "$W_CACHE"/$W_PACKAGE/FABLE_DISK_1.iso
@@ -3785,12 +3790,12 @@ _EOF_
 
     if w_workaround_wine_bug 24941
     then
-        w_try sh "$WINETRICKS" -q devenum quartz wmp9
+        w_try_winetricks devenum quartz wmp9
     fi
 
     if w_workaround_wine_bug 24942
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 }
 
@@ -3804,7 +3809,7 @@ load_fallout3()
 
     if w_workaround_wine_bug 23532
     then
-        w_try "$WINETRICKS" -q xlive
+        w_try_winetricks xlive
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -3886,7 +3891,7 @@ load_fallout3_goty() {
 
     if w_workaround_wine_bug 23532
     then
-        w_try "$WINETRICKS" -q xlive
+        w_try_winetricks xlive
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Bethesda Softworks\\Fallout 3" "Fallout3.exe"
@@ -3919,7 +3924,7 @@ load_fallout_nv()
     steam_dir="$W_PROGRAMS_UNIX/Steam"
 
     # Game uses Steam to install itself
-    w_try sh $WINETRICKS -q steam
+    w_try_winetricks steam
 
     iso_mount "$W_CACHE"/$W_PACKAGE/f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
 
@@ -4083,7 +4088,7 @@ load_fifa11_demo()
 
 if w_workaround_wine_bug 22161
 then
-    sh "$WINETRICKS" -q d3dx9_36
+    w_try_winetricks d3dx9_36
 fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\EA Sports\\FIFA 11 Demo\\Game" "fifa.exe"
@@ -4300,13 +4305,13 @@ load_ffxiv_beta() {
 
     if w_workaround_wine_bug 24358
     then
-        sh "$WINETRICKS" winhttp
+        w_try_winetricks winhttp
         w_warn "You'll want to forward ports TCP/UDP 55296-55551 and UDP 443 to your computer to speed up the download. See also http://bugs.winehq.org/show_bug.cgi?id=24358"
     fi
 
     if w_workaround_wine_bug 24375
     then
-        sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\SquareEnix\\FINAL FANTASY XIV Beta Version" "ffxivboot.exe"
@@ -4355,7 +4360,7 @@ __EOF__
 
 if w_workaround_wine_bug 22555
 then
-        w_try "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
 fi
 
 }
@@ -4403,7 +4408,7 @@ load_fm10_demo() {
 
     if w_workaround_wine_bug 24417
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Sports Interactive\\Football Manager 2010 Demo" "fm.exe"
@@ -4457,7 +4462,7 @@ load_futurepinball() {
     "
     if w_workaround_wine_bug 8780
     then
-        w_try "$WINETRICKS" -q wsh56vb dcom98
+        w_try_winetricks wsh56vb dcom98
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Games\\Future Pinball" "Future Pinball.exe"
@@ -4521,12 +4526,12 @@ load_gothic4_demo() {
 
 if w_workaround_wine_bug 21939
 then
-    sh "$WINETRICKS" -q wmp9
+    w_try_winetricks wmp9
 fi
 
 if w_workaround_wine_bug 24250
 then
-    sh "$WINETRICKS" -q vcrun2008
+    w_try_winetricks vcrun2008
 fi
 
 if w_workaround_wine_bug 7065
@@ -4547,7 +4552,7 @@ load_grand_ages_rome_demo() {
 
     if w_workaround_wine_bug 24819
     then
-        sh "$WINETRICKS" -q gameux=disabled
+        w_try_winetricks gameux=disabled
         $WINESERVER -w
     fi
 
@@ -4629,7 +4634,7 @@ load_gta_vc() {
 
     if w_workaround_wine_bug 22414
     then
-        w_try "$WINETRICKS" -q quartz
+        w_try_winetricks quartz
     fi
 }
 
@@ -4774,15 +4779,15 @@ load_hko() {
     # Appdb says minigames need flash.
     # Is this a wine bug?  Not if HKO doesn't bundle flash.  FIXME: find out.
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=19076
-    w_try sh "$WINETRICKS" -q flash
+    w_try_winetricks flash
 
     if w_workaround_wine_bug 25132
     then
-        w_try sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
     if w_workaround_wine_bug 25133
     then
-        w_try sh "$WINETRICKS" -q msxml3
+        w_try_winetricks msxml3
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\SanrioTown\\Hello Kitty Online" "HKO.exe"
@@ -4827,7 +4832,7 @@ load_hm_demo() {
 
     if w_workaround_wine_bug 25187
     then
-        sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
     if w_workaround_wine_bug 25274
@@ -5006,7 +5011,7 @@ load_hegemonypom_demo()
 
     if w_workaround_wine_bug 24819
     then
-        sh "$WINETRICKS" gameux=disabled
+        w_try_winetricks gameux=disabled
         $WINESERVER -w
     fi
 
@@ -5290,7 +5295,7 @@ load_lol()
 
     if w_workaround_wine_bug 21870
     then
-        sh "$WINETRICKS" -q secur32
+        w_try_winetricks secur32
     fi
 
     if w_workaround_wine_bug 22152
@@ -5307,7 +5312,7 @@ load_lol()
     if w_workaround_wine_bug 24020
     then
         # Avoid crash in downloader
-        sh "$WINETRICKS" -q vcrun2008
+        w_try_winetricks vcrun2008
     fi
 
     if w_workaround_wine_bug 24025
@@ -5373,7 +5378,7 @@ load_lol()
 
     if w_workaround_wine_bug 24015
     then
-        sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
 cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
@@ -5450,15 +5455,15 @@ __EOF__
     if w_workaround_wine_bug 24102  # fixed in wine-1.3.3, but wine-1.3.3 crashes in secur32 on start? wine-1.3.1 is ok...
     then
         # Crashes on startup in wine below 1.3.3 without this
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
     if w_workaround_wine_bug 24015
     then
-        sh "$WINETRICKS" -q ie6_full
+        w_try_winetricks ie6_full
     fi
     if w_workaround_wine_bug 24432
     then
-        sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 }
 
@@ -5501,7 +5506,7 @@ load_lotsn()
     if w_workaround_wine_bug 22161
     then
         # Crashes on startup without this
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 }
 
@@ -5553,7 +5558,7 @@ load_lp2bench()
     "
     if w_workaround_wine_bug 21939
     then
-        sh "$WINETRICKS" -q wmp9
+        w_try_winetricks wmp9
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\CAPCOM\\LOST PLANET 2 Benchmark Version" ".\\LP2DX9.exe"
@@ -5680,25 +5685,25 @@ load_masseffect2() {
     if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        w_try sh "$WINETRICKS" -q nocrashdialog
+        w_try_winetricks nocrashdialog
     fi
 
     if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
-        w_try sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
     if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
-        w_try sh "$WINETRICKS" d3dx10
+        w_try_winetricks d3dx10
     fi
     if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
-        w_try sh "$WINETRICKS" -q glsl-disable
+        w_try_winetricks glsl-disable
     fi
     if w_workaround_wine_bug 22919
     then
-        w_try sh "$WINETRICKS" -q physx
+        w_try_winetricks physx
     fi
 
     w_ahk_do "
@@ -5761,25 +5766,25 @@ load_masseffect2_demo() {
     if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        w_try sh "$WINETRICKS" -q nocrashdialog
+        w_try_winetricks nocrashdialog
     fi
 
     if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
-        w_try sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
     if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
-        w_try sh "$WINETRICKS" d3dx10
+        w_try_winetricks d3dx10
     fi
     if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
-        w_try sh "$WINETRICKS" -q glsl-disable
+        w_try_winetricks glsl-disable
     fi
     if w_workaround_wine_bug 22919
     then
-        w_try sh "$WINETRICKS" -q physx
+        w_try_winetricks physx
     fi
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
@@ -5872,7 +5877,7 @@ load_metro2033() {
     steam_dir="$W_PROGRAMS_UNIX/Steam"
 
     # Game uses Steam to install itself
-    w_try sh $WINETRICKS -q steam
+    w_try_winetricks steam
 
     iso_mount "$W_CACHE"/$W_PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
     METRO_KEY=`cat "$W_CACHE"/$W_PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.txt | tr -d -`
@@ -5944,19 +5949,19 @@ load_mise() {
     if w_workaround_wine_bug 22161
     then
         # Doesn't crash, but you only get a black screen and a flood of d3dx fixme's without native d3dx9_36
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     if w_workaround_wine_bug 24545
     then
         # Game wants to install directx, but we delete it. It really only needs xact for x3daudio?_?.dll
-        sh "$WINETRICKS" -q xact
+        w_try_winetricks xact
     fi
 
     if w_workaround_wine_bug 24547
     then
         # It really does need vcrun2005, for msvp80.dll (and potentially one stub from msvcr80)
-        sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     cd "$WISOTOOL_TMP"
@@ -6189,7 +6194,7 @@ load_nd23_saw_demo() {
 
     if w_workaround_wine_bug 24754
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
     cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 c:
@@ -6421,7 +6426,7 @@ verblist_add orangebox     "Orange Box (Valve, 2007) " \
     b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
 
 load_orangebox() {
-    test -f "$W_PROGRAMS_X86_UNIX"/Steam/Steam.exe || try sh $WINETRICKS -q steam
+    test -f "$W_PROGRAMS_X86_UNIX"/Steam/Steam.exe || w_try_winetricks -q steam
     # Have to log in before you can install orangebox!
     $WINE 'c:\Program Files\Steam\Steam' -login $STEAMUSER $STEAMPW
     # Now, um, let it log in for a few seconds.  Anyone know how to tell when it's done?
@@ -6501,7 +6506,7 @@ load_osmos_demo() {
 
     if w_workaround_wine_bug 24416
     then
-        sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\OsmosDemo" "OsmosDemo.exe"
@@ -6657,7 +6662,7 @@ load_pscs5() {
 
     if w_workaround_wine_bug 22679
     then
-        w_try sh "$WINETRICKS" -q msxml3
+        w_try_winetricks msxml3
     fi
 
     w_warn "Try not to have anything else running, cs5 will complain if firefox is running, and the mouse clicks here are sensitive"
@@ -6761,7 +6766,7 @@ load_pscs5_unpickle() {
     w_warn "This will install Photoshop CS5's files from a Windows install made with pscs5_pickle()"
 
     # Install dependencies:
-    w_try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
+    w_try_winetricks gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
 
     w_try cd "$WISOTOOL_TMP"
     w_try tar xf "$W_CACHE/$W_PACKAGE/adobe_cs5.tar"
@@ -6881,7 +6886,7 @@ load_popfs()
 
 if w_workaround_wine_bug 24346
 then
-    sh "$WINETRICKS" -q dsoundbug9612
+    w_try_winetricks dsoundbug9612
 fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Ubisoft\\Prince of Persia The Forgotten Sands" "Prince of Persia.exe"
@@ -7053,7 +7058,7 @@ load_proevolution2010_demo()
 
     if w_workaround_wine_bug 23104
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\KONAMI\\Pro Evolution Soccer 2010 DEMO" "pes2010.exe"
@@ -7102,7 +7107,7 @@ load_proevolution2011_demo()
 
     if w_workaround_wine_bug 23104
     then
-        sh "$WINETRICKS" d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\KONAMI\\Pro Evolution Soccer 2011 DEMO" "pes2011demo.exe"
@@ -7147,7 +7152,7 @@ load_puzzleagent_demo() {
 
     if w_workaround_wine_bug 25210  # fixed in 1.3.8
     then
-        w_try sh "$WINETRICKS" -q vcrun2008
+        w_try_winetricks vcrun2008
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Telltale Games\\Puzzle Agent\\The Mystery of Scoggins" "Grickle101.exe"
@@ -7294,12 +7299,12 @@ _EOF_
 
     if w_workaround_wine_bug 23217
     then
-        w_try sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     if w_workaround_wine_bug 22002
     then
-        w_try sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Runes of Magic" "Runes of Magic.exe"
@@ -7353,7 +7358,7 @@ load_re5bench() {
 
     if w_workaround_wine_bug 21939
     then
-        w_try sh "$WINETRICKS" -q wmp9
+        w_try_winetricks wmp9
     fi
 
     # Should run launcher.exe, but that requires .net and doesn't run on Wine
@@ -7388,7 +7393,7 @@ load_riseofnations_demo() {
 
     if w_workaround_wine_bug 9027
     then
-        w_try sh "$WINETRICKS" -q directmusic
+        w_try_winetricks directmusic
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Rise of Nations Trial" "nations.exe"
@@ -7455,7 +7460,7 @@ load_sammax304_demo() {
 
     if w_workaround_wine_bug 24250
     then
-        w_try sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Telltale Games\\Sam and Max - The Devil's Playhouse\\Beyond the Alley of the Dolls" "SamMax304.exe"
@@ -7615,12 +7620,12 @@ load_sims3() {
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
     if false && w_workaround_wine_bug 22350
     then
-        w_try sh "$WINETRICKS" -q dotnet20
+        w_try_winetricks dotnet20
     fi
 
     if w_workaround_wine_bug 21517
     then
-        w_try sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
 
     w_read_key
@@ -7726,7 +7731,7 @@ load_singularity() {
 
     if w_workaround_wine_bug 6971
     then
-        sh "$WINETRICKS" -q mwo=force
+        w_try_winetricks mwo=force
     fi
 
     if w_workaround_wine_bug 22548
@@ -7903,7 +7908,7 @@ load_ssdd2()
 
     if w_workaround_wine_bug 23749
     then
-        sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -8021,7 +8026,7 @@ load_stalker_pripyat_bench() {
 
     if w_workaround_wine_bug 24868
     then
-        sh "$WINETRICKS" d3dx9_31 d3dx9_42
+        w_try_winetricks d3dx9_31 d3dx9_42
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Call Of Pripyat Benchmark" "Benchmark.exe"
@@ -8129,7 +8134,7 @@ load_sto()
         # Install is fine without ie6, but can't log in or download patch without ie6,
         # and the installer launches the app when it's done.
         # Even with ie6, it's not perfect, there are lots of annoying script error prompts.
-        sh "$WINETRICKS" -q ie6
+        w_try_winetricks ie6
     fi
 
     w_ahk_do "
@@ -8306,13 +8311,13 @@ load_smbx() {
     download $W_PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
 
     # This winetricks verb doesn't work on Windows yet, but that's ok-ish, Windows comes with vb6 runtime
-    sh "$WINETRICKS" -q vb6run
+    w_try_winetricks vb6run
 
     if w_workaround_wine_bug 23821
     then
         # http://www.supermariobrothers.org/forums/viewtopic.php?f=8&t=6711
         # claims this works
-        sh "$WINETRICKS" -q quartz
+        w_try_winetricks quartz
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -8389,7 +8394,7 @@ __EOF__
 
     if w_workaround_wine_bug 24537
     then
-        sh "$WINETRICKS" -q corefonts
+        w_try_winetricks corefonts
     fi
 }
 
@@ -8543,7 +8548,7 @@ load_twfc() {
 
     if w_workaround_wine_bug 6971
     then
-        sh "$WINETRICKS" mwo=force
+        w_try_winetricks mwo=force
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Transformers - War for Cybertron\\Binaries" "TWFC.exe"
@@ -8594,7 +8599,7 @@ load_tropico3_demo() {
 
     if w_workaround_wine_bug 24819
     then
-        sh "$WINETRICKS" gameux=disabled
+        w_try_winetricks gameux=disabled
         $WINESERVER -w
     fi
 
@@ -8631,7 +8636,7 @@ load_tropico3_demo() {
 
     if w_workaround_wine_bug 24845
     then
-        sh "$WINETRICKS" mmdevapi=disabled
+        w_try_winetricks mmdevapi=disabled
     fi
 }
 
@@ -8707,7 +8712,7 @@ load_unigine_heaven() {
     if w_workaround_wine_bug 22614
     then
         # hope your card actually has 1GB of RAM
-        sh "$WINETRICKS" videomemorysize=1024
+        w_try_winetricks videomemorysize=1024
     fi
 
     # Should start Heaven.exe, but that doesn't run in Wine
@@ -8916,11 +8921,11 @@ load_victoria2_demo() {
     "
     if w_workaround_wine_bug 24422
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
     if w_workaround_wine_bug 24217
     then
-        sh "$WINETRICKS" -q dsoundbug9612
+        w_try_winetricks dsoundbug9612
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Paradox Interactive\\Victoria 2 - DEMO" "v2demo.exe"
@@ -8949,7 +8954,7 @@ load_vf2_demo()
         export __COMPAT_LAYER=Win95
         ;;
     *)
-        sh $WINETRICKS win98
+        w_try_winetricks win98
         ;;
     esac
 
@@ -9058,7 +9063,7 @@ verblist_add wowbc       "World of Warcraft: Battle Chest (Blizzard, 2008)" \
   c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
 
 load_wowbc() {
-    test -f "$WINDIR"/utorrent.exe || try sh $WINETRICKS utorrent
+    test -f "$WINDIR"/utorrent.exe || w_try_winetricks utorrent
 
     case "$LANG" in
     en_US*) ;;
@@ -9283,7 +9288,7 @@ load_gsb_demo() {
     _load_positech "http://www.positech.co.uk/gratuitousspacebattles/downloads/GSBDemoInstaller.exe" 83dab80aa3bb94aa886c94b2cb68fa54558fe563 "GSBDemoInstaller.exe" "Setup - Gratuitous Space Battles Demo" "Gratuitous Space Battles Demo" "GSBDemo.exe"
     if w_workaround_wine_bug 22393
     then
-        sh "$WINETRICKS" -q d3dx9_36
+        w_try_winetricks d3dx9_36
     fi
     if w_workaround_wine_bug 24395
     then
@@ -9350,7 +9355,7 @@ _load_steam_app()
 
     steam_dir="$W_PROGRAMS_UNIX/Steam"
 
-    test -f "$steam_dir/Steam.exe" || try sh $WINETRICKS -q steam
+    test -f "$steam_dir/Steam.exe" || w_try_winetricks -q steam
 
     app_id="$1"
     game_title="$2"
@@ -9593,12 +9598,12 @@ load_napoleon_total_war_demo_steam()
 
     if w_workaround_wine_bug 23126
     then
-        w_try sh "$WINETRICKS" -q vcrun2005
+        w_try_winetricks vcrun2005
     fi
 
     if w_workaround_wine_bug 23356
     then
-        w_try sh "$WINETRICKS" -q d3dx9
+        w_try_winetricks d3dx9
     fi
 
     if w_workaround_wine_bug 18490
