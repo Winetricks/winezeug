@@ -159,7 +159,7 @@ w_warn() {
     esac
 }
 
-die() {
+w_die() {
     w_warn "$@"
 
     exit 1
@@ -277,7 +277,7 @@ showmenu()
 #-----  Helpers  ------------------------------------------------
 
 # Execute with error checking
-try() {
+w_try() {
     # "VAR=foo try cmd" fails to put VAR in the environment
     # with some versions of bash if try is a shell function?!
     # Adding this explicit export works around it.
@@ -306,7 +306,7 @@ try_regedit() {
     *) unset cmdc
     esac
 
-    try early_wine $cmdc regedit "$@"
+    w_try early_wine $cmdc regedit "$@"
 }
 
 regedit() {
@@ -325,7 +325,7 @@ try_cabextract() {
         w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
 
-    try $CABEXTRACT "$@"
+    w_try $CABEXTRACT "$@"
 }
 
 try_unrar() {
@@ -336,7 +336,7 @@ try_unrar() {
         w_die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install unrar' or 'sudo yum install unrar'). For cygwin, you can get it at http://gnuwin32.sourceforge.net/packages/unrar.htm"
     fi
 
-    try $UNRAR "$@"
+    w_try $UNRAR "$@"
 }
 
 cabextract() {
@@ -497,11 +497,11 @@ download_torrent() {
 
     if [ "$2"x != ""x ] # foo.torrent parameter supplied
     then
-        try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$2" &
+        w_try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$2" &
     else # grab all torrents
         for torrent in `ls *.torrent`
         do
-            try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
+            w_try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
         done
     fi
 
@@ -619,7 +619,7 @@ iso_mount()
         load_vcdmount
         my_img_win="`$XXXPATH -w $my_img | tr '\012' ' ' | sed 's/ $//'`"
         cd "$VCD_DIR"
-        try vcdmount.exe /l=$letter "$my_img_win"
+        w_try vcdmount.exe /l=$letter "$my_img_win"
         cd "$olddir"
 
         tries=0
@@ -643,12 +643,12 @@ iso_mount()
         # FIXME: use fuseiso when posible to avoid needing sudo
         case "$SUDO" in
         gksudo)
-          try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
-          try $SUDO "mount -o ro,loop,uid=$USERID,unhide $my_img $ISO_MOUNT_ROOT"
+          w_try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
+          w_try $SUDO "mount -o ro,loop,uid=$USERID,unhide $my_img $ISO_MOUNT_ROOT"
           ;;
         *)
-          try $SUDO mkdir -p $ISO_MOUNT_ROOT
-          try $SUDO mount -o ro,loop,uid=$USERID,unhide "$my_img" $ISO_MOUNT_ROOT
+          w_try $SUDO mkdir -p $ISO_MOUNT_ROOT
+          w_try $SUDO mount -o ro,loop,uid=$USERID,unhide "$my_img" $ISO_MOUNT_ROOT
           ;;
         esac
         echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
@@ -666,7 +666,7 @@ iso_umount()
         # Windows
         load_vcdmount
         cd "$VCD_DIR"
-        try vcdmount.exe /u
+        w_try vcdmount.exe /u
         cd "$olddir"
     else
         echo "Running $SUDO umount $ISO_MOUNT_ROOT"
@@ -674,11 +674,11 @@ iso_umount()
         gksudo)
           # -l lazy unmount in case executable still running
           $SUDO "umount -l $ISO_MOUNT_ROOT"
-          try $SUDO "rm -rf $ISO_MOUNT_ROOT"
+          w_try $SUDO "rm -rf $ISO_MOUNT_ROOT"
           ;;
         *)
           $SUDO umount -l $ISO_MOUNT_ROOT
-          try $SUDO rm -rf $ISO_MOUNT_ROOT
+          w_try $SUDO rm -rf $ISO_MOUNT_ROOT
           ;;
         esac
         rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}:
@@ -698,7 +698,7 @@ mds_mount()
         load_vcdmount
         my_img_win="`$XXXPATH -w $my_img | tr '\012' ' ' | sed 's/ $//'`"
         cd "$VCD_DIR"
-        try vcdmount.exe /l=$letter "$my_img_win"
+        w_try vcdmount.exe /l=$letter "$my_img_win"
         cd "$olddir"
         while ! test -d "$ISO_MOUNT_ROOT"
         do
@@ -734,7 +734,7 @@ mds_umount()
         # Windows
         load_vcdmount
         cd "$VCD_DIR"
-        try vcdmount.exe /u
+        w_try vcdmount.exe /u
         cd "$olddir"
     else
         if [ ! -x "`which cdemu 2>/dev/null`" ]
@@ -888,7 +888,7 @@ load_gecko()
 {
     if ! test -f "$windir/system32/gecko/1.0.0/wine_gecko/nspr4.dll"
     then
-        try sh "$WINETRICKS" gecko
+        w_try sh "$WINETRICKS" gecko
     fi
 }
 
@@ -1025,7 +1025,7 @@ load_3dmark2000() {
     cd "$WISOTOOL_TMP"
     mkdir $W_PACKAGE
     cd $W_PACKAGE
-    try unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
+    w_try unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
     w_ahk_do "
         SetTitleMatchMode, 2
         run Setup.exe
@@ -1311,7 +1311,7 @@ load_aoe3_demo() {
 
     if w_workaround_wine_bug 24897
     then
-        try sh "$WINETRICKS" -q msxml4
+        w_try sh "$WINETRICKS" -q msxml4
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1335,7 +1335,7 @@ load_aoe3_demo() {
     then
         # On some systems, only quartz is needed?
         # appdb says that l3codecx is also needed?
-        try sh "$WINETRICKS" -q devenum dmsynth quartz
+        w_try sh "$WINETRICKS" -q devenum dmsynth quartz
     fi
 
     if w_workaround_wine_bug 24912
@@ -1383,12 +1383,12 @@ load_aoe3cc() {
 
     if w_workaround_wine_bug 657
     then
-        try sh "$WINETRICKS" -q mfc42
+        w_try sh "$WINETRICKS" -q mfc42
     fi
 
     if w_workaround_wine_bug 24897
     then
-        try sh "$WINETRICKS" -q msxml4
+        w_try sh "$WINETRICKS" -q msxml4
     fi
 
     AOE3CC_KEY="`cat "$W_CACHE/aoe3cc/AOE III DISC 1.txt" | tr -d -`"
@@ -1416,7 +1416,7 @@ load_aoe3cc() {
 
     if w_workaround_wine_bug 24911
     then
-        try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+        w_try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
     fi
 
     if w_workaround_wine_bug 24912
@@ -1457,12 +1457,12 @@ load_aoe3cc_ad() {
 
     if w_workaround_wine_bug 657
     then
-        try sh "$WINETRICKS" -q mfc42
+        w_try sh "$WINETRICKS" -q mfc42
     fi
 
     if w_workaround_wine_bug 24897
     then
-        try sh "$WINETRICKS" -q msxml4
+        w_try sh "$WINETRICKS" -q msxml4
     fi
 
     AOE3Y_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3Y.txt" | tr -d -`"
@@ -1487,7 +1487,7 @@ load_aoe3cc_ad() {
 
     if w_workaround_wine_bug 24911
     then
-        try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+        w_try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
     fi
 
     if w_workaround_wine_bug 24912
@@ -1528,12 +1528,12 @@ load_aoe3cc_wc() {
 
     if w_workaround_wine_bug 657
     then
-        try sh "$WINETRICKS" -q mfc42
+        w_try sh "$WINETRICKS" -q mfc42
     fi
 
     if w_workaround_wine_bug 24897
     then
-        try sh "$WINETRICKS" -q msxml4
+        w_try sh "$WINETRICKS" -q msxml4
     fi
 
     AOE3X_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3X.txt" | tr -d -`"
@@ -1558,7 +1558,7 @@ load_aoe3cc_wc() {
 
     if w_workaround_wine_bug 24911
     then
-        try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
+        w_try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
     fi
 
     if w_workaround_wine_bug 24912
@@ -1639,8 +1639,8 @@ load_anno1404_demo() {
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip "$W_CACHE/$W_PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
-    try cd "Anno1404_Demo_US_2009_06_15_18_22"
+    w_try unzip "$W_CACHE/$W_PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
+    w_try cd "Anno1404_Demo_US_2009_06_15_18_22"
     w_ahk_do "
         run, setup.exe
         SetTitleMatchMode, 2
@@ -1733,7 +1733,7 @@ load_avatar_demo()
 
     if w_workaround_wine_bug 23094
     then
-        try sh "$WINETRICKS" -q vcrun2005
+        w_try sh "$WINETRICKS" -q vcrun2005
     fi
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
@@ -1786,19 +1786,19 @@ load_baldursgate2() {
     # You still need the first CD mounted at the end, however...
     if test ! -d "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     then
-        try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Will perform a full install, so no cd's needed
@@ -1841,13 +1841,13 @@ load_baldursgate2() {
         sleep 1000
         ControlClick, Button4, Baldur's Gate, Setup has finished installing
         "
-    try chmod +w -R "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
-    try rm -rf "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+    w_try chmod +w -R "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+    w_try rm -rf "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
 
     # Install latest patch
     download $W_PACKAGE http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
     # AHK doesn't like its name...
-    try cp -f "$W_CACHE/$W_PACKAGE/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
+    w_try cp -f "$W_CACHE/$W_PACKAGE/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
 
     cd "$WISOTOOL_TMP"
     w_ahk_do "
@@ -1861,7 +1861,7 @@ load_baldursgate2() {
         ControlClick Button4, InstallShield Wizard, InstallShield Wizard Complete
         exit"
     cd -
-    try rm "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
+    w_try rm "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
 
     if w_workaround_wine_bug 22482
     then
@@ -2270,8 +2270,8 @@ load_bioshock_demo() {
     rm -rf bioshock-temp
     mkdir bioshock-temp
     cd bioshock-temp
-    try unzip -q "$W_CACHE/$W_PACKAGE"/nzd_BioShockPC.zip
-    try cd "BioShock PC Demo"
+    w_try unzip -q "$W_CACHE/$W_PACKAGE"/nzd_BioShockPC.zip
+    w_try cd "BioShock PC Demo"
     w_ahk_do "
         SetTitleMatchMode, 2
         run setup.exe
@@ -2357,7 +2357,7 @@ load_blobby_volley() {
 
     mkdir -p "$W_DRIVE_C/BlobbyVolley"
     cd "$W_CACHE/$W_PACKAGE"
-    try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
+    w_try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
     w_declare_exe "c:\\BlobbyVolley" "volley.exe"
 
     if w_workaround_wine_bug 4432
@@ -2401,12 +2401,12 @@ load_blur() {
 
     # FIXME: The installer didn't install physx (does it on windows? If so, file wine bug).
     # The game runs without the physx trick but frame rate improves with physx.
-    try sh "$WINETRICKS" -q physx
+    w_try sh "$WINETRICKS" -q physx
 
     if w_workaround_wine_bug 24509
     then
         w_warn "Game will crash on first run (which is in full screen). On second run, it will go to windowed mode. Workaround this by defaulting to a 1024x768 window."
-        try mkdir -p "$appdata_unix/bizarre creations/blur"
+        w_try mkdir -p "$appdata_unix/bizarre creations/blur"
         cat > "$appdata_unix/bizarre creations/blur/settings.xml" <<__EOF__
 <application_settings version="1"/>
 <shared_graphical_settings width="1024" height="768" x="3" y="22" multisample="0" windowed="1" vsync="1" graphical_detail="2"/>
@@ -2451,7 +2451,7 @@ load_braid_demo()
 
     if w_workaround_wine_bug 22161
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Braid" "braid.exe"
@@ -2498,7 +2498,7 @@ load_braid()
 
     if w_workaround_wine_bug 22161
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Braid" "braid.exe"
@@ -2774,11 +2774,11 @@ load_civ4() {
 
     if w_workaround_wine_bug 6856
     then
-        try sh "$WINETRICKS" -q msxml3
+        w_try sh "$WINETRICKS" -q msxml3
     fi
     if w_workaround_wine_bug 11675
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
 
     iso_mount "$W_CACHE"/$W_PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
@@ -2833,11 +2833,11 @@ load_civ4() {
     "
     if w_workaround_wine_bug 6856
     then
-        try sh "$WINETRICKS" -q msxml3
+        w_try sh "$WINETRICKS" -q msxml3
     fi
     if w_workaround_wine_bug 11675
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4" "Civilization4.exe"
@@ -2857,7 +2857,7 @@ load_civ4_demo()
 
     mkdir -p "$WISOTOOL_TMP"
     cd "$W_CACHE/$W_PACKAGE"
-    try unzip Civilization4_Demo.zip -d "$WISOTOOL_TMP"
+    w_try unzip Civilization4_Demo.zip -d "$WISOTOOL_TMP"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
     chmod +x setup.exe
     w_ahk_do "
@@ -2883,11 +2883,11 @@ load_civ4_demo()
 
     if w_workaround_wine_bug 6856
     then
-        try sh "$WINETRICKS" -q msxml3
+        w_try sh "$WINETRICKS" -q msxml3
     fi
     if w_workaround_wine_bug 6856 # part 2, still need to file a bug
     then
-        try sh "$WINETRICKS" -q d3dx9_26
+        w_try sh "$WINETRICKS" -q d3dx9_26
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
@@ -3030,7 +3030,7 @@ load_dao_ue()
 
     if w_workaround_wine_bug 22383
     then
-        try "$WINETRICKS" -q strictdrawordering=enabled
+        w_try "$WINETRICKS" -q strictdrawordering=enabled
     fi
 
     if w_workaround_wine_bug 23730
@@ -3355,7 +3355,7 @@ load_deusex2_demo()
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
-    try unzip dxiw_demo.zip -d "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try unzip dxiw_demo.zip -d "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
     chmod +x setup.exe
     w_ahk_do "
@@ -3451,7 +3451,7 @@ load_diablo2() {
         winclose, Diablo II Setup"
     iso_umount
 
-    try "$WINE" "$W_CACHE"/$W_PACKAGE/D2Patch_113c.exe
+    w_try "$WINE" "$W_CACHE"/$W_PACKAGE/D2Patch_113c.exe
     w_ahk_do "
         winwait Blizzard Updater v2.72
         send {Enter}
@@ -3473,7 +3473,7 @@ load_dirt2_demo() {
     download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
 
     mkdir "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
+    w_try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
 
     cd "$WISOTOOL_TMP/$W_PACKAGE"
 
@@ -3507,7 +3507,7 @@ load_dirt2_demo() {
 
     if w_workaround_wine_bug 23532
     then
-        try "$WINETRICKS" -q xlive
+        w_try "$WINETRICKS" -q xlive
     fi
 
     if w_workaround_wine_bug 24868
@@ -3564,7 +3564,7 @@ load_dragonage() {
     fi
     if w_workaround_wine_bug 22383
     then
-        try "$WINETRICKS" -q strictdrawordering=enabled
+        w_try "$WINETRICKS" -q strictdrawordering=enabled
     fi
     if w_workaround_wine_bug 23730
     then
@@ -3704,7 +3704,7 @@ load_fable_tlc() {
 
     if w_workaround_wine_bug 657
     then
-        try sh "$WINETRICKS" -q mfc42
+        w_try sh "$WINETRICKS" -q mfc42
     fi
 
     iso_mount "$W_CACHE"/$W_PACKAGE/FABLE_DISK_1.iso
@@ -3785,7 +3785,7 @@ _EOF_
 
     if w_workaround_wine_bug 24941
     then
-        try sh "$WINETRICKS" -q devenum quartz wmp9
+        w_try sh "$WINETRICKS" -q devenum quartz wmp9
     fi
 
     if w_workaround_wine_bug 24942
@@ -3804,7 +3804,7 @@ load_fallout3()
 
     if w_workaround_wine_bug 23532
     then
-        try "$WINETRICKS" -q xlive
+        w_try "$WINETRICKS" -q xlive
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -3886,7 +3886,7 @@ load_fallout3_goty() {
 
     if w_workaround_wine_bug 23532
     then
-        try "$WINETRICKS" -q xlive
+        w_try "$WINETRICKS" -q xlive
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Bethesda Softworks\\Fallout 3" "Fallout3.exe"
@@ -3919,7 +3919,7 @@ load_fallout_nv()
     steam_dir="$programfilesdir_unix/Steam"
 
     # Game uses Steam to install itself
-    try sh $WINETRICKS -q steam
+    w_try sh $WINETRICKS -q steam
 
     iso_mount "$W_CACHE"/$W_PACKAGE/f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
 
@@ -4040,7 +4040,7 @@ load_fifa11_demo()
     download $W_PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
 
     mkdir "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_pc_demo_NA.zip"
+    w_try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_pc_demo_NA.zip"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
 
     w_ahk_do "
@@ -4228,7 +4228,7 @@ load_ffvii_demo() {
 
     mkdir "$programfilesdir_x86_unix/ffvii_demo"
     cd "$programfilesdir_x86_unix/ffvii_demo"
-    try unzip "$W_CACHE/$W_PACKAGE/ff7demo.zip"
+    w_try unzip "$W_CACHE/$W_PACKAGE/ff7demo.zip"
 
     if w_workaround_wine_bug 9220
     then
@@ -4320,7 +4320,7 @@ load_ffxivbench() {
     download $W_PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
 
     cd "$programfilesdir_x86_unix"
-    try unzip "$W_CACHE/$W_PACKAGE/FFXIVBenchmark.zip"
+    w_try unzip "$W_CACHE/$W_PACKAGE/FFXIVBenchmark.zip"
 
 # Setup two batch files, one for high res, one for low res:
 cat > FFXIVBenchmark/data/config.low <<__EOF__
@@ -4355,7 +4355,7 @@ __EOF__
 
 if w_workaround_wine_bug 22555
 then
-        try "$WINETRICKS" -q d3dx9_36
+        w_try "$WINETRICKS" -q d3dx9_36
 fi
 
 }
@@ -4457,7 +4457,7 @@ load_futurepinball() {
     "
     if w_workaround_wine_bug 8780
     then
-        try "$WINETRICKS" -q wsh56vb dcom98
+        w_try "$WINETRICKS" -q wsh56vb dcom98
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Games\\Future Pinball" "Future Pinball.exe"
@@ -4471,9 +4471,9 @@ verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [dow
 load_gothic4_demo() {
     download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip
 
-    try mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip "$W_CACHE/$W_PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip
+    w_try unzip "$W_CACHE/$W_PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip
 
     w_ahk_do "
         Settitlematchmode, 2
@@ -4629,7 +4629,7 @@ load_gta_vc() {
 
     if w_workaround_wine_bug 22414
     then
-        try "$WINETRICKS" -q quartz
+        w_try "$WINETRICKS" -q quartz
     fi
 }
 
@@ -4734,7 +4734,7 @@ verblist_add hko "Hello Kitty Online (Sanrio Digital, 2009) [download]" "Hello K
 load_hko() {
     download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
     download_torrent $W_PACKAGE hkostandardinstaller.torrent
-    try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$WISOTOOL_TMP"
+    w_try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$WISOTOOL_TMP"
     cd "$WISOTOOL_TMP/Hello Kitty Online Standard Installer"
 
     w_ahk_do "
@@ -4774,15 +4774,15 @@ load_hko() {
     # Appdb says minigames need flash.
     # Is this a wine bug?  Not if HKO doesn't bundle flash.  FIXME: find out.
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=19076
-    try sh "$WINETRICKS" -q flash
+    w_try sh "$WINETRICKS" -q flash
 
     if w_workaround_wine_bug 25132
     then
-        try sh "$WINETRICKS" -q ie6
+        w_try sh "$WINETRICKS" -q ie6
     fi
     if w_workaround_wine_bug 25133
     then
-        try sh "$WINETRICKS" -q msxml3
+        w_try sh "$WINETRICKS" -q msxml3
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\SanrioTown\\Hello Kitty Online" "HKO.exe"
@@ -5522,7 +5522,7 @@ load_lp2bench()
 
     if ! test -f "${W_CACHE}/${W_PACKAGE}/LostPlanet2_Benchmark.exe"
     then
-        try unzip "$W_CACHE/$W_PACKAGE"/LostPlanet2_Benchmark.zip
+        w_try unzip "$W_CACHE/$W_PACKAGE"/LostPlanet2_Benchmark.zip
     fi
 
     w_ahk_do "
@@ -5658,7 +5658,7 @@ load_manhole() {
 
     iso_mount "$W_CACHE"/$W_PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
     mkdir -p "$W_DRIVE_C"/manhole
-    try cp -r "$ISO_MOUNT_ROOT"/* "$W_DRIVE_C"/manhole
+    w_try cp -r "$ISO_MOUNT_ROOT"/* "$W_DRIVE_C"/manhole
     iso_umount
 
     if w_workaround_wine_bug 22502
@@ -5680,25 +5680,25 @@ load_masseffect2() {
     if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        try sh "$WINETRICKS" -q nocrashdialog
+        w_try sh "$WINETRICKS" -q nocrashdialog
     fi
 
     if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
-        try sh "$WINETRICKS" -q vcrun2005
+        w_try sh "$WINETRICKS" -q vcrun2005
     fi
     if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
-        try sh "$WINETRICKS" d3dx10
+        w_try sh "$WINETRICKS" d3dx10
     fi
     if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
-        try sh "$WINETRICKS" -q glsl-disable
+        w_try sh "$WINETRICKS" -q glsl-disable
     fi
     if w_workaround_wine_bug 22919
     then
-        try sh "$WINETRICKS" -q physx
+        w_try sh "$WINETRICKS" -q physx
     fi
 
     w_ahk_do "
@@ -5761,25 +5761,25 @@ load_masseffect2_demo() {
     if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        try sh "$WINETRICKS" -q nocrashdialog
+        w_try sh "$WINETRICKS" -q nocrashdialog
     fi
 
     if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
-        try sh "$WINETRICKS" -q vcrun2005
+        w_try sh "$WINETRICKS" -q vcrun2005
     fi
     if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
-        try sh "$WINETRICKS" d3dx10
+        w_try sh "$WINETRICKS" d3dx10
     fi
     if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
-        try sh "$WINETRICKS" -q glsl-disable
+        w_try sh "$WINETRICKS" -q glsl-disable
     fi
     if w_workaround_wine_bug 22919
     then
-        try sh "$WINETRICKS" -q physx
+        w_try sh "$WINETRICKS" -q physx
     fi
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
@@ -5837,9 +5837,9 @@ load_maxmagicmarker_demo() {
 
     download $W_PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
 
-    try mkdir "$programfilesdir_x86_unix"/$W_PACKAGE
+    w_try mkdir "$programfilesdir_x86_unix"/$W_PACKAGE
     cd "$programfilesdir_x86_unix"/$W_PACKAGE
-    try unzip "$W_CACHE/$W_PACKAGE"/max_demo_pc.zip
+    w_try unzip "$W_CACHE/$W_PACKAGE"/max_demo_pc.zip
     # Work around bug in game?!
     mv "max and the magic markerdemo pc" "max and the magic markerdemo pc"_Data
 
@@ -5872,7 +5872,7 @@ load_metro2033() {
     steam_dir="$programfilesdir_unix/Steam"
 
     # Game uses Steam to install itself
-    try sh $WINETRICKS -q steam
+    w_try sh $WINETRICKS -q steam
 
     iso_mount "$W_CACHE"/$W_PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
     METRO_KEY=`cat "$W_CACHE"/$W_PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.txt | tr -d -`
@@ -5964,7 +5964,7 @@ load_mise() {
     cd $W_PACKAGE
 
     # Don't extract DirectX/dotnet35 installers, they just take up extra time and aren't needed. Luckily, MISE copes well and just skips them if they are missing:
-    try unzip "$W_CACHE/$W_PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip -x DirectX* dotnet*
+    w_try unzip "$W_CACHE/$W_PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip -x DirectX* dotnet*
 
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -6037,7 +6037,7 @@ load_moh_beta()
     fi
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
-    try unzip -o "$file" -d "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try unzip -o "$file" -d "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -6185,11 +6185,11 @@ load_nd23_saw_demo() {
     cd "$W_DRIVE_C"
     mkdir $W_PACKAGE
     cd $W_PACKAGE
-    try unzip "$W_CACHE/$W_PACKAGE"/SAW_demo1.zip
+    w_try unzip "$W_CACHE/$W_PACKAGE"/SAW_demo1.zip
 
     if w_workaround_wine_bug 24754
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
     cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 c:
@@ -6638,7 +6638,7 @@ verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010) [download]" \
 
 
 load_pscs5() {
-    try cd "$W_CACHE/$W_PACKAGE"
+    w_try cd "$W_CACHE/$W_PACKAGE"
     if [ ! -f "$W_CACHE/$W_PACKAGE/Photoshop_12_LS1.7z" ]
     then
         w_die "You must download Photoshop CS5 trial files and put them in $W_CACHE/$W_PACKAGE"
@@ -6652,12 +6652,12 @@ load_pscs5() {
         verify_sha1sum abbfeeef9348c79b6cdde5f8762f5c3f96d32f6e Photoshop_12_LS1.exe
     fi
 
-    try Photoshop_12_LS1.exe /s /x /d .
-    try cd "Adobe CS5"
+    w_try Photoshop_12_LS1.exe /s /x /d .
+    w_try cd "Adobe CS5"
 
     if w_workaround_wine_bug 22679
     then
-        try sh "$WINETRICKS" -q msxml3
+        w_try sh "$WINETRICKS" -q msxml3
     fi
 
     w_warn "Try not to have anything else running, cs5 will complain if firefox is running, and the mouse clicks here are sensitive"
@@ -6700,11 +6700,11 @@ load_pscs5() {
                 else break
             }
     "
-    try cd ..
+    w_try cd ..
     # Remove installer temp files:
-    try cd "$W_CACHE/$W_PACKAGE"
-    try rm -rf "Photoshop CS5 Read Me.pdf" "Adobe CS5"
-    try cd "$olddir"
+    w_try cd "$W_CACHE/$W_PACKAGE"
+    w_try rm -rf "Photoshop CS5 Read Me.pdf" "Adobe CS5"
+    w_try cd "$olddir"
 }
 
 verblist_add pscs5_pickle       "Photoshop CS5 Demo (Adobe, 2010)"
@@ -6717,40 +6717,40 @@ load_pscs5_pickle() {
         load_pscs5
     fi
 
-    try cd "$WISOTOOL_TMP"
+    w_try cd "$WISOTOOL_TMP"
 
     # Setup a skeleton file structure:
-    try rm -rf cs5_temp
-    try mkdir -p cs5_temp/"Common Files"
-    try mkdir -p cs5_temp/"Program Files"
-    try mkdir -p cs5_temp/"userhome"
+    w_try rm -rf cs5_temp
+    w_try mkdir -p cs5_temp/"Common Files"
+    w_try mkdir -p cs5_temp/"Program Files"
+    w_try mkdir -p cs5_temp/"userhome"
 
-    try cd cs5_temp
+    w_try cd cs5_temp
 
-    try sleep 1 # Potential race condition, caught me a couple times
+    w_try sleep 1 # Potential race condition, caught me a couple times
 
     # First, the registry entries:
-    try reg.exe export HKLM\\Software\\Adobe adobe_cs5.reg
+    w_try reg.exe export HKLM\\Software\\Adobe adobe_cs5.reg
 
     # Then the files:
     userprofile_unix="`cygpath $USERPROFILE`"
     system32_unix="`cygpath $WINDIR/system32`"
 
-    try cd "Common Files"
-    try cp -r "$programfilesdir_x86_unix/Common Files/Adobe" .
-    try cd ../"Program Files"
-    try cp -r "$programfilesdir_x86_unix/Adobe" .
-    try cd ../userhome
-    try cp -r "$appdata_unix/Adobe" .
-    try cd ..
-    try cp "$system32_unix/odbc32.dll" .
-    try cp "$system32_unix/odbcint.dll" .
+    w_try cd "Common Files"
+    w_try cp -r "$programfilesdir_x86_unix/Common Files/Adobe" .
+    w_try cd ../"Program Files"
+    w_try cp -r "$programfilesdir_x86_unix/Adobe" .
+    w_try cd ../userhome
+    w_try cp -r "$appdata_unix/Adobe" .
+    w_try cd ..
+    w_try cp "$system32_unix/odbc32.dll" .
+    w_try cp "$system32_unix/odbcint.dll" .
 
-    try cd "$WISOTOOL_TMP"/cs5_temp
-    try tar -c -f "$olddir/adobe_cs5.tar" *
-    try cd ..
-    try rm -rf cs5_temp
-    try cd "$olddir"
+    w_try cd "$WISOTOOL_TMP"/cs5_temp
+    w_try tar -c -f "$olddir/adobe_cs5.tar" *
+    w_try cd ..
+    w_try rm -rf cs5_temp
+    w_try cd "$olddir"
 
 }
 
@@ -6761,22 +6761,22 @@ load_pscs5_unpickle() {
     w_warn "This will install Photoshop CS5's files from a Windows install made with pscs5_pickle()"
 
     # Install dependencies:
-    try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
+    w_try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
 
-    try cd "$WISOTOOL_TMP"
-    try tar xf "$W_CACHE/$W_PACKAGE/adobe_cs5.tar"
-    try $WINE regedit adobe_cs5.reg
-    try cd "$programfilesdir_x86_unix"
-    try mv "$WISOTOOL_TMP/Program Files/Adobe" .
-    try cd "Common Files"
-    try mv "$WISOTOOL_TMP/Common Files/Adobe" .
-    try cd "$appdata_win/"
-    try mv "$WISOTOOL_TMP/userhome"/* .
-    try cd "$WINDIR/system32"
-    try mv "$WISOTOOL_TMP/odbc32.dll" .
-    try mv "$WISOTOOL_TMP/odbcint.dll" .
-    try $WINE regsvr32 odbc32.dll
-    try $WINE regsvr32 odbcint.dll
+    w_try cd "$WISOTOOL_TMP"
+    w_try tar xf "$W_CACHE/$W_PACKAGE/adobe_cs5.tar"
+    w_try $WINE regedit adobe_cs5.reg
+    w_try cd "$programfilesdir_x86_unix"
+    w_try mv "$WISOTOOL_TMP/Program Files/Adobe" .
+    w_try cd "Common Files"
+    w_try mv "$WISOTOOL_TMP/Common Files/Adobe" .
+    w_try cd "$appdata_win/"
+    w_try mv "$WISOTOOL_TMP/userhome"/* .
+    w_try cd "$WINDIR/system32"
+    w_try mv "$WISOTOOL_TMP/odbc32.dll" .
+    w_try mv "$WISOTOOL_TMP/odbcint.dll" .
+    w_try $WINE regsvr32 odbc32.dll
+    w_try $WINE regsvr32 odbcint.dll
 
     w_warn "Do not report bugs to wine with an installation done this way. Wait until the installer bugs are fixed or have patches to workaround them!"
     w_warn "On the first run, it will tell you your trial has 0 days left. On the second run and after, it will say 30 days."
@@ -7053,7 +7053,7 @@ load_proevolution2010_demo()
 
     if w_workaround_wine_bug 23104
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\KONAMI\\Pro Evolution Soccer 2010 DEMO" "pes2010.exe"
@@ -7147,7 +7147,7 @@ load_puzzleagent_demo() {
 
     if w_workaround_wine_bug 25210  # fixed in 1.3.8
     then
-        try sh "$WINETRICKS" -q vcrun2008
+        w_try sh "$WINETRICKS" -q vcrun2008
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Telltale Games\\Puzzle Agent\\The Mystery of Scoggins" "Grickle101.exe"
@@ -7294,12 +7294,12 @@ _EOF_
 
     if w_workaround_wine_bug 23217
     then
-        try sh "$WINETRICKS" -q vcrun2005
+        w_try sh "$WINETRICKS" -q vcrun2005
     fi
 
     if w_workaround_wine_bug 22002
     then
-        try sh "$WINETRICKS" -q ie6
+        w_try sh "$WINETRICKS" -q ie6
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Runes of Magic" "Runes of Magic.exe"
@@ -7353,7 +7353,7 @@ load_re5bench() {
 
     if w_workaround_wine_bug 21939
     then
-        try sh "$WINETRICKS" -q wmp9
+        w_try sh "$WINETRICKS" -q wmp9
     fi
 
     # Should run launcher.exe, but that requires .net and doesn't run on Wine
@@ -7388,7 +7388,7 @@ load_riseofnations_demo() {
 
     if w_workaround_wine_bug 9027
     then
-        try sh "$WINETRICKS" -q directmusic
+        w_try sh "$WINETRICKS" -q directmusic
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Rise of Nations Trial" "nations.exe"
@@ -7432,7 +7432,7 @@ load_sammax304_demo() {
     then
         download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
         cd "$W_CACHE/$W_PACKAGE"
-        try unzip SamMax304_BigDownload.exe.zip
+        w_try unzip SamMax304_BigDownload.exe.zip
         rm -f SamMax304_BigDownload.exe.zip
     fi
 
@@ -7455,7 +7455,7 @@ load_sammax304_demo() {
 
     if w_workaround_wine_bug 24250
     then
-        try sh "$WINETRICKS" -q vcrun2005
+        w_try sh "$WINETRICKS" -q vcrun2005
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\Telltale Games\\Sam and Max - The Devil's Playhouse\\Beyond the Alley of the Dolls" "SamMax304.exe"
@@ -7615,12 +7615,12 @@ load_sims3() {
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
     if false && w_workaround_wine_bug 22350
     then
-        try sh "$WINETRICKS" -q dotnet20
+        w_try sh "$WINETRICKS" -q dotnet20
     fi
 
     if w_workaround_wine_bug 21517
     then
-        try sh "$WINETRICKS" -q d3dx9_36
+        w_try sh "$WINETRICKS" -q d3dx9_36
     fi
 
     w_read_key
@@ -8407,7 +8407,7 @@ load_tlr_demo() {
     fi
 
     cd "$WISOTOOL_TMP"
-    try unzip "$W_CACHE/$W_PACKAGE/TheLastRemnant_PC_Demo.zip"
+    w_try unzip "$W_CACHE/$W_PACKAGE/TheLastRemnant_PC_Demo.zip"
     cd "The Last Remnant Trial Version"
 
     w_ahk_do "
@@ -8860,7 +8860,7 @@ load_victoria2_demo() {
     # sources add their own readme in the .zip file
     mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/
     cd "$WISOTOOL_TMP"/$W_PACKAGE/
-    try unzip "$W_CACHE/$W_PACKAGE"/Victoria2_Demo.zip
+    w_try unzip "$W_CACHE/$W_PACKAGE"/Victoria2_Demo.zip
 
     # Clean up old temp files from installer extractor (it leaves them around)
     rm -rf temp_files_for_v2
@@ -8939,7 +8939,7 @@ load_vf2_demo()
 
     mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
-    try unzip vf2_demo.exe -d "$WISOTOOL_TMP/$W_PACKAGE"
+    w_try unzip vf2_demo.exe -d "$WISOTOOL_TMP/$W_PACKAGE"
     cd "$WISOTOOL_TMP/$W_PACKAGE"
 
     # installer refuses to run in Windows NT 5 or higher, so set win98 mode
@@ -9096,7 +9096,7 @@ load_wowbc() {
         UT_WINPATH="$W_CACHE_WIN\\wowbc"
         for torrent in `ls *.torrent`
         do
-            try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
+            w_try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
         done
 
         # Start uTorrent, have it wait until all downloads are finished
@@ -9124,10 +9124,10 @@ load_wowbc() {
 
     if ! test -d "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     then
-        try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
@@ -9593,12 +9593,12 @@ load_napoleon_total_war_demo_steam()
 
     if w_workaround_wine_bug 23126
     then
-        try sh "$WINETRICKS" -q vcrun2005
+        w_try sh "$WINETRICKS" -q vcrun2005
     fi
 
     if w_workaround_wine_bug 23356
     then
-        try sh "$WINETRICKS" -q d3dx9
+        w_try sh "$WINETRICKS" -q d3dx9
     fi
 
     if w_workaround_wine_bug 18490
