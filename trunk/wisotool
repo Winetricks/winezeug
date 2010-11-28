@@ -87,8 +87,8 @@ esac
 USERNAME=${USERNAME:-$LOGNAME}
 
 # Overridden for windows
-ISO_MOUNT_ROOT=/mnt/wisotool
-ISO_MOUNT_LETTER=i
+W_ISO_MOUNT_ROOT=/mnt/wisotool
+W_ISO_MOUNT_LETTER=i
 
 WINDIR="$W_DRIVE_C/windows"
 
@@ -574,7 +574,7 @@ load_vcdmount()
     fi
 
     # Call only on real Windows.
-    # Sets VCD_DIR and ISO_MOUNT_ROOT
+    # Sets VCD_DIR and W_ISO_MOUNT_ROOT
 
     # The only free mount tool I know for Windows Vista is Virtual CloneDrive,
     # which can be downloaded at
@@ -630,11 +630,11 @@ iso_mount()
         tries=0
         while test $tries -lt 20
         do
-            for ISO_MOUNT_LETTER in e f g h i j k
+            for W_ISO_MOUNT_LETTER in e f g h i j k
             do
-                echo "$WISOTOOL_MOUNT_LETTER_IGNORE" | grep -q "$ISO_MOUNT_LETTER" && continue
-                ISO_MOUNT_ROOT=/cygdrive/$ISO_MOUNT_LETTER
-                if find $ISO_MOUNT_ROOT -iname 'setup*' -o -iname '*.exe' -o -iname '*.msi'
+                echo "$WISOTOOL_MOUNT_LETTER_IGNORE" | grep -q "$W_ISO_MOUNT_LETTER" && continue
+                W_ISO_MOUNT_ROOT=/cygdrive/$W_ISO_MOUNT_LETTER
+                if find $W_ISO_MOUNT_ROOT -iname 'setup*' -o -iname '*.exe' -o -iname '*.msi'
                 then
                     break 2
                 fi
@@ -648,19 +648,19 @@ iso_mount()
         # FIXME: use fuseiso when posible to avoid needing sudo
         case "$SUDO" in
         gksudo)
-          w_try $SUDO "mkdir -p $ISO_MOUNT_ROOT"
-          w_try $SUDO "mount -o ro,loop,uid=$USERID,unhide $my_img $ISO_MOUNT_ROOT"
+          w_try $SUDO "mkdir -p $W_ISO_MOUNT_ROOT"
+          w_try $SUDO "mount -o ro,loop,uid=$USERID,unhide $my_img $W_ISO_MOUNT_ROOT"
           ;;
         *)
-          w_try $SUDO mkdir -p $ISO_MOUNT_ROOT
-          w_try $SUDO mount -o ro,loop,uid=$USERID,unhide "$my_img" $ISO_MOUNT_ROOT
+          w_try $SUDO mkdir -p $W_ISO_MOUNT_ROOT
+          w_try $SUDO mount -o ro,loop,uid=$USERID,unhide "$my_img" $W_ISO_MOUNT_ROOT
           ;;
         esac
-        echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
+        echo "Mounting as drive ${W_ISO_MOUNT_LETTER}:"
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         # FIXME: one of these gives a w_warning frequently, possibly on second run
-        ln -sf "$my_img" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}::"
-        ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}:"
+        ln -sf "$my_img" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
+        ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
     fi
 }
 
@@ -674,20 +674,20 @@ iso_umount()
         w_try vcdmount.exe /u
         cd "$olddir"
     else
-        echo "Running $SUDO umount $ISO_MOUNT_ROOT"
+        echo "Running $SUDO umount $W_ISO_MOUNT_ROOT"
         case "$SUDO" in
         gksudo)
           # -l lazy unmount in case executable still running
-          $SUDO "umount -l $ISO_MOUNT_ROOT"
-          w_try $SUDO "rm -rf $ISO_MOUNT_ROOT"
+          $SUDO "umount -l $W_ISO_MOUNT_ROOT"
+          w_try $SUDO "rm -rf $W_ISO_MOUNT_ROOT"
           ;;
         *)
-          $SUDO umount -l $ISO_MOUNT_ROOT
-          w_try $SUDO rm -rf $ISO_MOUNT_ROOT
+          $SUDO umount -l $W_ISO_MOUNT_ROOT
+          w_try $SUDO rm -rf $W_ISO_MOUNT_ROOT
           ;;
         esac
-        rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}:
-        rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}::
+        rm -f "$WINEPREFIX"/dosdevices/${W_ISO_MOUNT_LETTER}:
+        rm -f "$WINEPREFIX"/dosdevices/${W_ISO_MOUNT_LETTER}::
     fi
 }
 
@@ -705,7 +705,7 @@ mds_mount()
         cd "$VCD_DIR"
         w_try vcdmount.exe /l=$letter "$my_img_win"
         cd "$olddir"
-        while ! test -d "$ISO_MOUNT_ROOT"
+        while ! test -d "$W_ISO_MOUNT_ROOT"
         do
             echo "Waiting for mount to finish"
             sleep 1
@@ -722,13 +722,13 @@ mds_mount()
         # Unfortunately, cdemu doesn't give an easy way to determine it, so find it with a combination of
         # cdemu, mount, and grep
         device_name=`cdemu device-mapping | grep ^0 | awk '{print $2}'`
-        ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
+        W_ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
 
-        echo "Mounting as drive ${ISO_MOUNT_LETTER}:"
+        echo "Mounting as drive ${W_ISO_MOUNT_LETTER}:"
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         # FIXME: one of these gives a w_warning frequently, possibly on second run
-        ln -sf "$device_name" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}::"
-        ln -sf "$ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${ISO_MOUNT_LETTER}:"
+        ln -sf "$device_name" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
+        ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
     fi
 }
 
@@ -771,14 +771,14 @@ mds_umount()
         then
             echo "$img_name is mounted in cdemu, forcing an eject"
             device_name=`cdemu device-mapping | grep ^0 | awk '{print $2}'`
-            ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
+            W_ISO_MOUNT_ROOT=`mount -l | grep $device_name | awk '{print $3}'`
             # FIXME: Does this need sudo?
-            eject $ISO_MOUNT_ROOT
+            eject $W_ISO_MOUNT_ROOT
             sleep 60 # Give devices time to settle
         fi
 
-        rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}:
-        rm -f "$WINEPREFIX"/dosdevices/${ISO_MOUNT_LETTER}::
+        rm -f "$WINEPREFIX"/dosdevices/${W_ISO_MOUNT_LETTER}:
+        rm -f "$WINEPREFIX"/dosdevices/${W_ISO_MOUNT_LETTER}::
     fi
 }
 
@@ -1379,7 +1379,7 @@ load_aoe3cc() {
             # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
             # where $W_PACKAGE would be set differently
             iso_mount "$W_CACHE/aoe3cc/AOE III DISC $disc.iso"
-            cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/aoe3cc/tempcd
+            cp -rf "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/aoe3cc/tempcd
             chmod -R +w "$WISOTOOL_TMP"/aoe3cc/tempcd
             iso_umount
             sleep 5
@@ -1455,7 +1455,7 @@ load_aoe3cc_ad() {
     then
         mkdir -p "$WISOTOOL_TMP/$W_PACKAGE/aoe3y"
         iso_mount "$W_CACHE/$W_PACKAGE/AOE3Y.iso"
-        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
+        cp -rf "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
         chmod -R +w "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
         iso_umount
     fi
@@ -1526,7 +1526,7 @@ load_aoe3cc_wc() {
     then
         mkdir -p "$WISOTOOL_TMP/$W_PACKAGE/aoe3x"
         iso_mount "$W_CACHE/$W_PACKAGE/AOE3X.iso"
-        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
+        cp -rf "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
         chmod -R +w "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
         iso_umount
     fi
@@ -1701,7 +1701,7 @@ load_assassinscreed() {
 
     iso_mount "$W_CACHE"/$W_PACKAGE/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
         winwait, InstallShield Wizard, Language
         ; wine bug? - clicking on Next does nothing until you move the mouse over the installer window
@@ -1794,16 +1794,16 @@ load_baldursgate2() {
         w_try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
         sleep 5
-        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
         sleep 5
-        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
         sleep 5
-        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
         sleep 5
-        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Will perform a full install, so no cd's needed
@@ -2005,7 +2005,7 @@ load_bfbc2() {
     BFBC2_KEY=`cat "$W_CACHE"/$W_PACKAGE/BFBC2.txt | tr -d -`
     w_ahk_do "
         SetTitleMatchMode, 2
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, Bad Company, English
         ControlClick, Next, Bad Company
         winwait, Bad Company, Registration Code
@@ -2109,7 +2109,7 @@ load_bioshock() {
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, BioShock - InstallShield Wizard, Choose Setup Language
         sleep 2000
         ControlClick, Button3, BioShock - InstallShield Wizard, Choose Setup Language
@@ -2201,7 +2201,7 @@ load_bioshock_iso()
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, BioShock - InstallShield Wizard, Choose Setup Language
         sleep 2000
         ControlClick, Button3, BioShock - InstallShield Wizard, Choose Setup Language
@@ -2380,7 +2380,7 @@ load_blur() {
     iso_mount "$W_CACHE"/$W_PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
     w_ahk_do "
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         SetTitleMatchMode, 2
         winwait, Activision, Select the language
         sleep 1000
@@ -2585,7 +2585,7 @@ load_cod1() {
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:setup.exe
         WinWait, CD Key, enter
         send {Raw}$KEY
         ControlClick Button1
@@ -2667,7 +2667,7 @@ load_codmw2()
     cd "$W_PROGRAMS_X86_UNIX"/Steam
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, Steam.exe -login $STEAMUSER $STEAMPW -install ${ISO_MOUNT_LETTER}:
+        Run, Steam.exe -login $STEAMUSER $STEAMPW -install ${W_ISO_MOUNT_LETTER}:
 
         ; Uncomment these lines if you haven't activated this game via steam on this account before.
         ;winwait, Activation
@@ -2788,9 +2788,9 @@ load_civ4() {
 
     iso_mount "$W_CACHE"/$W_PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
 
-    cd "$ISO_MOUNT_ROOT"
+    cd "$W_ISO_MOUNT_ROOT"
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:autorun.exe
+        run ${W_ISO_MOUNT_LETTER}:autorun.exe
         SetTitleMatchMode, 2
         winwait, Civilization 4
         ControlClick Button3, Civilization 4
@@ -2950,7 +2950,7 @@ load_cnc4()
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:EASetup.exe
+        run, ${W_ISO_MOUNT_LETTER}:EASetup.exe
         winwait, Tiberian Twilight, License
         controlclick, Button1
         controlclick, Button2
@@ -2987,7 +2987,7 @@ load_dao_ue()
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, Installer Language
         sleep 1000
         ControlClick Button1, Installer Language
@@ -3236,7 +3236,7 @@ load_deadspace() {
     w_ahk_do "
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
-        run, ${ISO_MOUNT_LETTER}:EASetup.exe
+        run, ${W_ISO_MOUNT_LETTER}:EASetup.exe
         winwait, Dead
         send {Enter}
         winwait, Dead, Registration Code
@@ -3316,7 +3316,7 @@ load_desperados2()
     iso_mount "$W_CACHE"/$W_PACKAGE/ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         WinWait, Desperados 2, Choose Setup Language
         WinActivate
         ControlClick Button3           ; next
@@ -3417,7 +3417,7 @@ load_diablo2() {
 
     iso_mount "$W_CACHE"/$W_PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, Diablo II Setup
         send {i}
         winwait, Choose Installation Size
@@ -3433,7 +3433,7 @@ load_diablo2() {
         winwait, Insert Disc"
     iso_mount "$W_CACHE"/$W_PACKAGE/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
     # Needed by patch 1.13c to avoid disc swapping
-    cp "$ISO_MOUNT_ROOT"/d2music.mpq "$W_PROGRAMS_UNIX/Diablo II/"
+    cp "$W_ISO_MOUNT_ROOT"/d2music.mpq "$W_PROGRAMS_UNIX/Diablo II/"
     w_ahk_do "
         send, {Enter}
         Sleep 1000
@@ -3535,7 +3535,7 @@ load_dragonage() {
     iso_mount "$W_CACHE"/$W_PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
     w_ahk_do "
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         SetTitleMatchMode, 2
         winwait, Installer Language
         send {Enter}
@@ -3592,7 +3592,7 @@ load_dts() {
     iso_mount "$W_CACHE"/$W_PACKAGE/3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
 
     w_ahk_do "
-        Run, ${ISO_MOUNT_LETTER}:Death_to_Spies_Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Death_to_Spies_Setup.exe
         SetTitleMatchMode, 2
         WinWait, Death to Spies
         WinActivate
@@ -3715,7 +3715,7 @@ load_fable_tlc() {
     iso_mount "$W_CACHE"/$W_PACKAGE/FABLE_DISK_1.iso
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:setup.exe
         WinWait,Fable,Welcome
         Sleep 500
         ControlClick Button1 ; Next
@@ -3815,7 +3815,7 @@ load_fallout3()
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, Fallout 3, Welcome
         controlclick, Button1
         winwait, Fallout 3, License Agreement
@@ -3843,7 +3843,7 @@ load_fallout3_goty() {
     iso_mount "$W_CACHE"/$W_PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
 
     w_ahk_do "
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         SetTitleMatchMode, 2
         winwait, Fallout 3 - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3
         sleep 1000
@@ -3871,7 +3871,7 @@ load_fallout3_goty() {
     iso_mount "$W_CACHE"/$W_PACKAGE/f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
 
     w_ahk_do "
-        Run, ${ISO_MOUNT_LETTER}:EN_Fallout_3_DLC.EXE
+        Run, ${W_ISO_MOUNT_LETTER}:EN_Fallout_3_DLC.EXE
         SetTitleMatchMode, 2
         winwait, Fallout 3 - DLC EN - InstallShield Wizard, Welcome to the InstallShield Wizard for Fallout 3 - DLC EN
         sleep 1000
@@ -3996,7 +3996,7 @@ load_fifa10() {
 
 
     w_ahk_do "
-        Run, ${ISO_MOUNT_LETTER}:AutoRun.exe
+        Run, ${W_ISO_MOUNT_LETTER}:AutoRun.exe
         SetTitleMatchMode, 2
         winwait, FIFA 10, View the readme file
         sleep 1000
@@ -4593,7 +4593,7 @@ load_gta_vc() {
     iso_mount "$W_CACHE"/$W_PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
     w_ahk_do "
     SetTitleMatchMode, 2
-    Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
     winwait, Choose Setup Language
     sleep 1000
     Send {enter}
@@ -4674,7 +4674,7 @@ load_half_life_goty() {
 
     w_ahk_do "
     SetTitleMatchMode, 2
-    Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
     winwait, System Test, Did you hear the sound file?
     sleep 1000
     ControlClick, Button6, System Test, Did you hear the sound file?
@@ -4961,7 +4961,7 @@ load_hphbp()
     HPHBP_KEY=`cat "$W_CACHE"/$W_PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.txt | tr -d -`
     w_ahk_do "
         SetTItleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:EASetup.exe
+        run, ${W_ISO_MOUNT_LETTER}:EASetup.exe
         winwait, Harry Potter
         send {RAW}$HPHBP_KEY
         controlclick, Button2
@@ -5577,7 +5577,7 @@ verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2
 load_lswcs() {
     iso_mount "$W_CACHE"/$W_PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
         winwait, Choose Setup Language
         send {Enter}
@@ -5663,7 +5663,7 @@ load_manhole() {
 
     iso_mount "$W_CACHE"/$W_PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
     mkdir -p "$W_DRIVE_C"/manhole
-    w_try cp -r "$ISO_MOUNT_ROOT"/* "$W_DRIVE_C"/manhole
+    w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$W_DRIVE_C"/manhole
     iso_umount
 
     if w_workaround_wine_bug 22502
@@ -5708,7 +5708,7 @@ load_masseffect2() {
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, Installer Language
         send {Enter}
         winwait, Mass Effect
@@ -6103,7 +6103,7 @@ load_morrowind() {
     iso_mount "$W_CACHE"/$W_PACKAGE/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
     w_ahk_do "
     SetTitleMatchMode, 2
-    Run, ${ISO_MOUNT_LETTER}:Setup.exe
+    Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
     winwait, The Elder Scrolls III:  Morrowind Setup, The Elder Scrolls III:  Morrowind (License Agreement)
     sleep 1000
     controlclick, Button2
@@ -6266,7 +6266,7 @@ load_nfsshift()
     w_ahk_do "
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
-        run, ${ISO_MOUNT_LETTER}:EASetup.exe
+        run, ${W_ISO_MOUNT_LETTER}:EASetup.exe
         ; Not sure which of two or three dialogs happens next
         loop
         {
@@ -6399,7 +6399,7 @@ load_oblivion()
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, Oblivion, Welcome to the
         controlclick, Button1
         winwait, Oblivion, License Agreement
@@ -6436,7 +6436,7 @@ load_orangebox() {
     KEY=`cat "$W_CACHE"/$W_PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.txt | tr -d -`
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:Setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, ahk_class #32770
         MouseMove, 300, 365
         ; user has to click Install; I can't script it!
@@ -6821,7 +6821,7 @@ load_pop2008()
     iso_mount "$W_CACHE/$W_PACKAGE/e65acd04baaf84481b79589b795edb144d24d1b5.iso"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, Prince of Persia, Language
         sleep 1000
         ControlClick, Button3
@@ -6857,7 +6857,7 @@ load_popfs()
     iso_mount "$W_CACHE/$W_PACKAGE/bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, Prince of Persia, Language
         ControlClick, Button3
         winwait, Prince of Persia, Welcome
@@ -6902,7 +6902,7 @@ load_popsot()
     iso_mount "$W_CACHE/$W_PACKAGE/a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:Setup.exe
+        run, ${W_ISO_MOUNT_LETTER}:Setup.exe
         winwait, Prince of Persia, Language
         ControlClick, Button3
         winwait, Prince of Persia, Welcome
@@ -7406,7 +7406,7 @@ verblist_add quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a
 load_quake3() {
     iso_mount "$W_CACHE"/$W_PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
     w_ahk_do "
-        Run ${ISO_MOUNT_LETTER}:Setup.exe
+        Run ${W_ISO_MOUNT_LETTER}:Setup.exe
         WinWait, Quake III Arena
         ControlClick, x532 y206 ; Click Install
         WinWait, Welcome
@@ -7634,7 +7634,7 @@ load_sims3() {
     iso_mount "$W_CACHE"/$W_PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
     # Default lang, USA, accept defaults, uncheck EA dl mgr, uncheck readme
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:Sims3Setup.exe
+        run ${W_ISO_MOUNT_LETTER}:Sims3Setup.exe
         winwait, Choose Setup Language
         send {Enter}
         SetTitleMatchMode, 2
@@ -7691,7 +7691,7 @@ load_singularity() {
     echo KEY is $KEY
     iso_mount "$W_CACHE"/$W_PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, Activision(R) - InstallShield, Select the language for the installation from the choices below.
         sleep 1000
         controlclick, Button1, Activision(R) - InstallShield, Select the language for the installation from the choices below.
@@ -7825,7 +7825,7 @@ load_splitsecond()
     iso_mount "$W_CACHE"/$W_PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.iso
 
     # Aborts with dialog about FirewallInstallHelper.dll if that's not on the path (e.g. in current dir)
-    cd "$ISO_MOUNT_ROOT"
+    cd "$W_ISO_MOUNT_ROOT"
     w_ahk_do "
         SetTitleMatchMode, 2
         run setup.exe
@@ -7865,7 +7865,7 @@ load_spore()
     SPORE_KEY=`cat "$W_CACHE"/$W_PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.txt | tr -d -`
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${ISO_MOUNT_LETTER}:SPORESetup.exe
+        run, ${W_ISO_MOUNT_LETTER}:SPORESetup.exe
         winwait, Language
         controlclick, Button1
         winwait, SPORE, Welcome
@@ -8047,7 +8047,7 @@ load_starcraft() {
 
     iso_mount "$W_CACHE"/$W_PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:StarCraft (Windows).exe
+        run ${W_ISO_MOUNT_LETTER}:StarCraft (Windows).exe
         winwait, StarCraft - Brood War
         send {i}
         winwait, End User License Agreement
@@ -8139,7 +8139,7 @@ load_sto()
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         winwait, Installer
         Send {Enter}                        ; Accept English as default language
         winwait, Star Trek Online
@@ -8171,7 +8171,7 @@ load_stfu() {
     iso_mount "$W_CACHE"/$W_PACKAGE/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
     w_warn "Starting installer.  This can be very slow, please be patient."
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
         winwait, Select Setup Language
         send {Enter}
@@ -8507,7 +8507,7 @@ load_twfc() {
     KEY=`cat "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
 
     w_ahk_do "
-        run ${ISO_MOUNT_LETTER}:setup.exe
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
         winwait, Activision, Select the language for the installation
         sleep 1000
@@ -8563,7 +8563,7 @@ load_torchlight() {
     iso_mount "$W_CACHE"/$W_PACKAGE/7cc5d7504b2927c030a0a192f7c9858721b59730.iso
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:Torchlight.exe
+        Run, ${W_ISO_MOUNT_LETTER}:Torchlight.exe
         WinWait, Torchlight Setup, This wizard will guide
         sleep 1000
         ControlClick, Button2, Torchlight Setup, This wizard will guide
@@ -8741,7 +8741,7 @@ load_vegas() {
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:setup.exe
         WinWait, Choose Setup Language
         WinActivate
         ControlClick Button1   ; OK
@@ -8807,7 +8807,7 @@ load_vegas2() {
 
     w_ahk_do "
         SetTitleMatchMode, 2
-        Run, ${ISO_MOUNT_LETTER}:setup.exe
+        Run, ${W_ISO_MOUNT_LETTER}:setup.exe
         WinWait, Tom Clancy
         WinActivate
         ControlClick Button3   ; next
@@ -9132,7 +9132,7 @@ load_wowbc() {
         w_try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
         iso_mount "$W_CACHE"/$W_PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
         sleep 5
-        w_try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        w_try cp -r "$W_ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
