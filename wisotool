@@ -123,7 +123,7 @@ detect_menu() {
     fi
 }
 
-read_game_key() {
+w_read_key() {
     keyfile="$W_CACHE/$W_PACKAGE/key.txt"
     if ! test -f "$keyfile"
     then
@@ -2576,7 +2576,7 @@ verblist_add cod1 "Call of Duty (Activision, 2003)" \
 load_cod1() {
     iso_mount "$W_CACHE"/$W_PACKAGE/COD1.iso
 
-    read_game_key
+    w_read_key
 
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -3523,7 +3523,7 @@ load_dirt2_demo() {
 verblist_add dragonage     "Dragon Age: Origins (Bioware / EA, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
 load_dragonage() {
-    read_game_key
+    w_read_key
 
     # Installer has a non-fatal crash on exit, so ignore it.
     sh "$WINETRICKS" -q nocrashdialog physx vcrun2005
@@ -3700,7 +3700,7 @@ verblist_add fable_tlc "Fable: The Lost Chapters (Microsoft, 2005)" \
 
 load_fable_tlc() {
 
-    read_game_key
+    w_read_key
 
     if w_workaround_wine_bug 657
     then
@@ -7623,8 +7623,7 @@ load_sims3() {
         try sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    # Get user's key
-    read_game_key
+    w_read_key
 
     echo KEY is $KEY
     iso_mount "$W_CACHE"/$W_PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
