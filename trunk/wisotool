@@ -30,7 +30,7 @@ case "$OS" in
     esac
     WINE=""
     WINESERVER=true
-    DRIVE_C="C:/"
+    W_DRIVE_C="C:/"
     XXXPATH=cygpath
     ;;
  *)
@@ -38,7 +38,7 @@ case "$OS" in
     WINEVERSION=`$WINE --version`
     WINESERVER=${WINESERVER:-`which wineserver`}
     WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
-    DRIVE_C="$WINEPREFIX/dosdevices/c:"
+    W_DRIVE_C="$WINEPREFIX/dosdevices/c:"
     XXXPATH="early_wine winepath"
     USERID=`id -u`
     ;;
@@ -57,7 +57,7 @@ WISOTOOL_POST="${WISOTOOL_POST:-$WISOTOOL_DIR/postinstall}"
 W_CACHE="${W_CACHE:-$HOME/.wisotoolcache}"
 test -d "$W_CACHE" || W_CACHE="$WISOTOOL_DIR/cache"
 W_CACHE_WIN="`$XXXPATH -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
-WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
+WISOTOOL_TMP="$W_DRIVE_C"/wisotooltmp
 WISOTOOL_TMP_WIN='c:\wisotooltmp'
 
 # Clean up after failed runs, if needed
@@ -90,7 +90,7 @@ USERNAME=${USERNAME:-$LOGNAME}
 ISO_MOUNT_ROOT=/mnt/wisotool
 ISO_MOUNT_LETTER=i
 
-WINDIR="$DRIVE_C/windows"
+WINDIR="$W_DRIVE_C/windows"
 
 #---- Functions -------------------------------------------------
 
@@ -383,7 +383,7 @@ workaround_wine_bug()
 # Please double any backslashes in path or exe for portability
 w_declare_exe()
 {
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $1
 $2
@@ -1046,7 +1046,7 @@ load_3dmark2000() {
         ControlClick Button4  ; Finish
     "
 
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\MadOnion.com\3DMark2000"
 REM possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
@@ -1169,7 +1169,7 @@ load_3dmark05() {
         warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
         ARGS="-nosysteminfo"
     fi
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark05"
 3DMark05 $ARGS
@@ -1229,7 +1229,7 @@ load_3dmark06() {
         ARGS="-nosysteminfo"
     fi
 
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark06"
 3DMark06 $ARGS
@@ -1661,15 +1661,15 @@ load_anno1404_demo() {
 
     if workaround_wine_bug 22762
     then
-        if test -f "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini"
+        if test -f "$W_DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini"
         then
-            cd "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/"
+            cd "$W_DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/"
             mv Engine.ini oldEngine.ini
             sed '/LanguageTAG/s,eng,usa,;
                  /DirectXVersion/s,0,9,' oldEngine.ini > Engine.ini
         else
-            mkdir -p "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/"
-            cat > "$DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini" <<__EOF__
+            mkdir -p "$W_DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/"
+            cat > "$W_DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini" <<__EOF__
 <InitFile>
 <DirectXVersion>9</DirectXVersion>
 <LanguageTAG>usa</LanguageTAG>
@@ -1975,7 +1975,7 @@ load_batman_arkham_asylum_demo() {
         download $W_PACKAGE http://www.glio.net/UserEngine.ini
         download $W_PACKAGE http://www.glio.net/UserInput.ini
         download $W_PACKAGE http://www.glio.net/UserGame.ini
-        configdir="$DRIVE_C/users/$USERNAME/My Documents/Eidos/Batman Arkham Asylum Demo/BmGame/Config"
+        configdir="$W_DRIVE_C/users/$USERNAME/My Documents/Eidos/Batman Arkham Asylum Demo/BmGame/Config"
         mkdir -p "$configdir"
         cp "$W_CACHE/$W_PACKAGE"/*.ini "$configdir"
     fi
@@ -2040,7 +2040,7 @@ load_bfbc2() {
 
     if workaround_wine_bug 22762
     then
-        cd "$DRIVE_C/users/$USERNAME/My Documents"
+        cd "$W_DRIVE_C/users/$USERNAME/My Documents"
         if test -f BFBC2/settings.ini
         then
             mv BFBC2/settings.ini BFBC2/oldsettings.ini
@@ -2266,7 +2266,7 @@ verblist_add bioshock_demo       "Bioshock Demo (2K Games, 2007) [download]" \
 
 load_bioshock_demo() {
     download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
-    cd "$DRIVE_C"
+    cd "$W_DRIVE_C"
     rm -rf bioshock-temp
     mkdir bioshock-temp
     cd bioshock-temp
@@ -2333,7 +2333,7 @@ load_bladekitten_demo() {
         WinWait "Blade Kitten Demo", Complete
         ControlClick Button1 ;  Close
     "
-    mv "$WISOTOOL_TMP/BladeKittenDemo" "$DRIVE_C/Program Files"
+    mv "$WISOTOOL_TMP/BladeKittenDemo" "$W_DRIVE_C/Program Files"
 
     if workaround_wine_bug 24681
     then
@@ -2355,9 +2355,9 @@ load_blobby_volley() {
     fi
     # FIXME: verify sha1sum c7057c77a5009a88d9d877e17a63b5536ebeb177
 
-    mkdir -p "$DRIVE_C/BlobbyVolley"
+    mkdir -p "$W_DRIVE_C/BlobbyVolley"
     cd "$W_CACHE/$W_PACKAGE"
-    try unzip blobby.zip -d "$DRIVE_C/BlobbyVolley"
+    try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
     w_declare_exe "c:\\BlobbyVolley" "volley.exe"
 
     if workaround_wine_bug 4432
@@ -2504,7 +2504,7 @@ load_braid()
     w_declare_exe "$programfilesdir_x86_win\\Braid" "braid.exe"
 
     # Enter the key
-    cd "$DRIVE_C"
+    cd "$W_DRIVE_C"
     ahk_do "
         SetTitleMatchMode, 2
         run, run-$W_PACKAGE.bat
@@ -2556,7 +2556,7 @@ load_cod_demo() {
     else
         setvar=
     fi
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 $setvar
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Call of Duty Single Player Demo"
@@ -2633,7 +2633,7 @@ load_cod1() {
     else
         setvar=
     fi
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 $setvar
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Call of Duty"
@@ -2959,7 +2959,7 @@ load_cnc4()
     iso_umount
 
     # Bypass the game's launcher: see AppDB
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\Data\\CNC4.game" -config "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\CNC4_English.SkuDef"
 __EOF__
@@ -3156,7 +3156,7 @@ load_daytona_usa_evolutions() {
 
     warn "Gives an error when closing the game, seems safe to ignore."
 
-    w_declare_exe "$DRIVE_C\\SEGA\\DAYTONA USA Evolution Demo CD" "DAYTONA USA Evolution Demo CD.exe"
+    w_declare_exe "$W_DRIVE_C\\SEGA\\DAYTONA USA Evolution Demo CD" "DAYTONA USA Evolution Demo CD.exe"
 }
 
 #----------------------------------------------------------------
@@ -3672,8 +3672,8 @@ load_ewj_demo() {
         mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
         cd "$WISOTOOL_TMP/$W_PACKAGE"
         arj e "$W_CACHE/$W_PACKAGE/ewjdemo.exe"
-        mkdir -p "$DRIVE_C/ewj_demo"
-        cd "$DRIVE_C/ewj_demo"
+        mkdir -p "$W_DRIVE_C/ewj_demo"
+        cd "$W_DRIVE_C/ewj_demo"
         arj e "$WISOTOOL_TMP/$W_PACKAGE/EWJFILES.EXE"
     fi
 
@@ -3684,7 +3684,7 @@ load_ewj_demo() {
         sh "$WINETRICKS" win98
     fi
 
-    w_declare_exe "$DRIVE_C\\ewj_demo" "WORM.EXE"
+    w_declare_exe "$W_DRIVE_C\\ewj_demo" "WORM.EXE"
 }
 
 #----------------------------------------------------------------
@@ -4143,7 +4143,7 @@ load_fifaonline3_beta()
     w_declare_exe "$programfilesdir_x86_win\\EA Sports\\FIFA Online" "Launch.exe"
 
     # Download audio commentary
-    cd "$DRIVE_C"
+    cd "$W_DRIVE_C"
     ahk_do "
         SetTitleMatchMode, 2
         run, cmd /c run-$W_PACKAGE.bat
@@ -4339,14 +4339,14 @@ RESOLUTION=0
 LOOP=0
 __EOF__
 
-cat > "$DRIVE_C/run-$W_PACKAGE-low.bat" <<__EOF__
+cat > "$W_DRIVE_C/run-$W_PACKAGE-low.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\FFXIVBenchmark\\data"
 copy config.low config.ini /y
 FFXivWinBenchmark.exe
 __EOF__
 
-cat > "$DRIVE_C/run-$W_PACKAGE-high.bat" <<__EOF__
+cat > "$W_DRIVE_C/run-$W_PACKAGE-high.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\FFXIVBenchmark\\data"
 copy config.high config.ini /y
@@ -4706,7 +4706,7 @@ load_half_life_goty() {
 
     # The key is put in on first run:
     HALF_LIFE_GOTY_KEY=`cat "$W_CACHE"/$W_PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.txt`
-    cd $DRIVE_C/SIERRA/Half-Life
+    cd $W_DRIVE_C/SIERRA/Half-Life
 
     # Forcefully closing the process later will screw up the screen resolution, so store the user's current resolution so we can restore it later:
     current_res=`xrandr -q | awk -F'current' -F',' 'NR==1 {gsub("( |current)","");print $2}'`
@@ -4934,7 +4934,7 @@ load_hphbp_demo()
     # Not sure I trust putting \U2122 in a batch file, so use a wild card to cd to the right dir.
     # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
     # Have to be in the pc directory for the app to find its files.
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince* Demo
 cd pc
@@ -4976,7 +4976,7 @@ load_hphbp()
     $WINESERVER -w
     iso_umount
 
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince*
 cd pc
@@ -5172,7 +5172,7 @@ load_imvu() {
         WinKill,IMVU Login, chrome
     "
 
-    w_declare_exe "$DRIVE_C\\users\\$USERNAME\\Application Data\\IMVUClient" "IMVUClient.exe"
+    w_declare_exe "$W_DRIVE_C\\users\\$USERNAME\\Application Data\\IMVUClient" "IMVUClient.exe"
 }
 
 #----------------------------------------------------------------
@@ -5334,7 +5334,7 @@ load_lol()
                 else
                     break
             }
-            ; After it finishing download, move the files from $DRIVE_C/users/$LOGNAME/Desktop to $W_CACHE/$W_PACKAGE
+            ; After it finishing download, move the files from $W_DRIVE_C/users/$LOGNAME/Desktop to $W_CACHE/$W_PACKAGE
             winwaitclose, League of Legends Downloader
             process, close, setup.exe
             process, close, PMB.exe
@@ -5376,7 +5376,7 @@ load_lol()
         sh "$WINETRICKS" -q ie6
     fi
 
-cat > "${DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
+cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 C:
 cd "C:\\Riot Games\\League of Legends"
 lol.launcher.exe
@@ -5384,15 +5384,15 @@ __EOF__
 
 set -x
     # Run once to accept EULA and start autoupdater
-    rm -f "$DRIVE_C/Riot Games/League of Legends/patcher_lib.log"
-    cd "$DRIVE_C"
+    rm -f "$W_DRIVE_C/Riot Games/League of Legends/patcher_lib.log"
+    cd "$W_DRIVE_C"
     ahk_do "
         SetTitleMatchMode, 2
         run, run-$W_PACKAGE.bat
         winwait, League of Legends Launcher,Accept
         send {Enter}
     "
-    log="$DRIVE_C/Riot Games/League of Legends/patcher_lib.log"
+    log="$W_DRIVE_C/Riot Games/League of Legends/patcher_lib.log"
     # Wait for autoupdate to start
     while true
     do
@@ -5428,11 +5428,11 @@ verblist_add lol_standalone "League of Legends standalone client (Riot Games, 20
 
 load_lol_standalone() {
     download ${W_PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
-    mkdir -p "$DRIVE_C/Riot Games"
-    cd "$DRIVE_C/Riot Games"
+    mkdir -p "$W_DRIVE_C/Riot Games"
+    cd "$W_DRIVE_C/Riot Games"
     try_unrar x "$W_CACHE/$W_PACKAGE/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar"
 
-cat > "${DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
+cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 C:
 cd "C:\\Riot Games\\StandAlone_9_21_2010_NA"
 lol.launcher.exe
@@ -5657,8 +5657,8 @@ load_manhole() {
     cd $WISOTOOL_TMP
 
     iso_mount "$W_CACHE"/$W_PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
-    mkdir -p "$DRIVE_C"/manhole
-    try cp -r "$ISO_MOUNT_ROOT"/* "$DRIVE_C"/manhole
+    mkdir -p "$W_DRIVE_C"/manhole
+    try cp -r "$ISO_MOUNT_ROOT"/* "$W_DRIVE_C"/manhole
     iso_umount
 
     if workaround_wine_bug 22502
@@ -5921,7 +5921,7 @@ load_metro2033() {
 
     warn "You'll need the Xinput2 patch from http://bugs2.winehq.org/attachment.cgi?id=29313 to be able to use the mouse."
 
-cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Steam"
 Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110
@@ -6062,7 +6062,7 @@ load_moh_beta()
     # This is identical to the BFBC2 bug. Should I file an app specific bug?
     if workaround_wine_bug 22762
     then
-        cd "$DRIVE_C/users/$USERNAME/My Documents"
+        cd "$W_DRIVE_C/users/$USERNAME/My Documents"
         if test -f "Medal of Honor MP Beta"/settings.ini
         then
             mv "Medal of Honor MP Beta"/settings.ini "Medal of Honor MP Beta"/oldsettings.ini
@@ -6182,7 +6182,7 @@ load_nd23_saw_demo() {
     # http://www.herinteractive.com/Mystery_Games/Nancy_Drew/Shadow_at_the_Waters_Edge/pc
     download $W_PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
 
-    cd "$DRIVE_C"
+    cd "$W_DRIVE_C"
     mkdir $W_PACKAGE
     cd $W_PACKAGE
     try unzip "$W_CACHE/$W_PACKAGE"/SAW_demo1.zip
@@ -6191,7 +6191,7 @@ load_nd23_saw_demo() {
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
-    cat > "${DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
+    cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 c:
 cd "${W_PACKAGE}"
 Shadow.exe
@@ -7243,8 +7243,8 @@ load_rom()
     $WINESERVER -w
     # Create settings file so patches can find game.  Normally this is created on first run of game.
     # Use funny tr and | to avoid embedded carriage returns, some editors strip them
-    mkdir -p "$DRIVE_C/users/$USERNAME/My Documents/Runes of Magic"
-    tr '|' '\015' > "$DRIVE_C/users/$USERNAME/My Documents/Runes of Magic/GameSettings.ini" <<_EOF_
+    mkdir -p "$W_DRIVE_C/users/$USERNAME/My Documents/Runes of Magic"
+    tr '|' '\015' > "$W_DRIVE_C/users/$USERNAME/My Documents/Runes of Magic/GameSettings.ini" <<_EOF_
 [Install]|
 GamePath=$programfilesdir_x86_win\\Runes of Magic\\|
 _EOF_
@@ -8254,7 +8254,7 @@ load_sf4bench()
     # You can disable it and tweak benchmark settings via the config.ini file.
     if workaround_wine_bug 23647
     then
-        cd "$DRIVE_C/users/$USERNAME/Local Settings/Application Data"
+        cd "$W_DRIVE_C/users/$USERNAME/Local Settings/Application Data"
         if test -f CAPCOM/STREETFIGHTERIVBENCHMARK/config.ini
         then
             cd CAPCOM/STREETFIGHTERIVBENCHMARK
@@ -8345,7 +8345,7 @@ load_smbx() {
         Send {Enter}
     "
     # FIXME: tries to install Bing Bar, hangs.
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SMBX
 smbx.exe
@@ -8382,7 +8382,7 @@ load_timezattack_demo() {
     # fixme: only works on linux
     killall TimezAttack.exe
 
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\TimezAttack
 TimezAttack.app\\TimezAttack.exe
@@ -8714,7 +8714,7 @@ load_unigine_heaven() {
     # Should start Heaven.exe, but that doesn't run in Wine
     # Should give option to run Heaven_gl.bat (even works in Wine)
     # or the dx10 or dx11 versions (doesn't).
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Unigine\Heaven"
 cmd /c Heaven_d3d9.bat
@@ -8973,7 +8973,7 @@ load_vf2_demo()
 
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SEGA\\VF2DEMO
 rem FIXME: __COMPAT_LAYER seems to be needed for XP, but breaks vista
@@ -9132,7 +9132,7 @@ load_wowbc() {
     fi
 
     # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
-    if ! test -d "$DRIVE_C/Program Files/World of Warcraft"
+    if ! test -d "$W_DRIVE_C/Program Files/World of Warcraft"
     then
       ahk_do "
           run "$WISOTOOL_TMP_WIN"/$W_PACKAGE/tempcd/Installer.exe
@@ -9493,7 +9493,7 @@ _load_steam_app()
     fi
 
 
-cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Steam"
 .\Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
