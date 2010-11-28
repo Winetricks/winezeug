@@ -343,13 +343,13 @@ cabextract() {
     w_die oops, bug, please report
 }
 
-# Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
+# Usage: w_workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
 # False (nonzero status) on Windows.
 # True (zero status) on Wine unless good-wineversion-shell-pattern is set
 # and matches the current wine version.
 # For debugging: if you want to skip a bug's workaround, put the bug number in the
 # environment variable WISOTOOL_BLACKLIST to disable it.
-workaround_wine_bug()
+w_workaround_wine_bug()
 {
     if test "$WINE" = ""
     then
@@ -1164,7 +1164,7 @@ load_3dmark05() {
         ControlClick Button3 ; Finish
     "
     ARGS=""
-    if workaround_wine_bug 22392
+    if w_workaround_wine_bug 22392
     then
         w_warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
         ARGS="-nosysteminfo"
@@ -1211,19 +1211,19 @@ load_3dmark06() {
         WinWaitClose, ahk_class #32770, Complete
     "
 
-    if workaround_wine_bug 9210
+    if w_workaround_wine_bug 9210
     then
         w_warn "You may need to apply the patch in http://bugs.winehq.org/show_bug.cgi?id=9210 to fix pCaps->MaxPointSize, or the benchmark will w_warn that shader model 2.0 is not present, and refuse to run."
     fi
 
-    if workaround_wine_bug 22393
+    if w_workaround_wine_bug 22393
     then
         # "Demo" button doesn't work without this
         sh "$WINETRICKS" -q d3dx9_28 d3dx9_36
     fi
 
     ARGS=""
-    if workaround_wine_bug 22392
+    if w_workaround_wine_bug 22392
     then
         w_warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
         ARGS="-nosysteminfo"
@@ -1309,7 +1309,7 @@ load_aoe3_demo() {
     download $W_PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
         2b0a123243092d79f910db5691d99d469f7c17c3
 
-    if workaround_wine_bug 24897
+    if w_workaround_wine_bug 24897
     then
         try sh "$WINETRICKS" -q msxml4
     fi
@@ -1331,14 +1331,14 @@ load_aoe3_demo() {
         WinWaitClose
     "
 
-    if workaround_wine_bug 24911
+    if w_workaround_wine_bug 24911
     then
         # On some systems, only quartz is needed?
         # appdb says that l3codecx is also needed?
         try sh "$WINETRICKS" -q devenum dmsynth quartz
     fi
 
-    if workaround_wine_bug 24912
+    if w_workaround_wine_bug 24912
     then
         # kill off lingering installer
         w_ahk_do "
@@ -1381,12 +1381,12 @@ load_aoe3cc() {
         done
     fi
 
-    if workaround_wine_bug 657
+    if w_workaround_wine_bug 657
     then
         try sh "$WINETRICKS" -q mfc42
     fi
 
-    if workaround_wine_bug 24897
+    if w_workaround_wine_bug 24897
     then
         try sh "$WINETRICKS" -q msxml4
     fi
@@ -1414,12 +1414,12 @@ load_aoe3cc() {
         WinWaitClose
     "
 
-    if workaround_wine_bug 24911
+    if w_workaround_wine_bug 24911
     then
         try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
     fi
 
-    if workaround_wine_bug 24912
+    if w_workaround_wine_bug 24912
     then
         # kill off lingering installer
         w_ahk_do "
@@ -1455,12 +1455,12 @@ load_aoe3cc_ad() {
         iso_umount
     fi
 
-    if workaround_wine_bug 657
+    if w_workaround_wine_bug 657
     then
         try sh "$WINETRICKS" -q mfc42
     fi
 
-    if workaround_wine_bug 24897
+    if w_workaround_wine_bug 24897
     then
         try sh "$WINETRICKS" -q msxml4
     fi
@@ -1485,12 +1485,12 @@ load_aoe3cc_ad() {
         WinWaitClose
     "
 
-    if workaround_wine_bug 24911
+    if w_workaround_wine_bug 24911
     then
         try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
     fi
 
-    if workaround_wine_bug 24912
+    if w_workaround_wine_bug 24912
     then
         # kill off lingering installer
         w_ahk_do "
@@ -1526,12 +1526,12 @@ load_aoe3cc_wc() {
         iso_umount
     fi
 
-    if workaround_wine_bug 657
+    if w_workaround_wine_bug 657
     then
         try sh "$WINETRICKS" -q mfc42
     fi
 
-    if workaround_wine_bug 24897
+    if w_workaround_wine_bug 24897
     then
         try sh "$WINETRICKS" -q msxml4
     fi
@@ -1556,12 +1556,12 @@ load_aoe3cc_wc() {
         WinWaitClose
     "
 
-    if workaround_wine_bug 24911
+    if w_workaround_wine_bug 24911
     then
         try sh "$WINETRICKS" -q devenum dmsynth quartz l3codecx
     fi
 
-    if workaround_wine_bug 24912
+    if w_workaround_wine_bug 24912
     then
         # kill off lingering installer
         w_ahk_do "
@@ -1659,7 +1659,7 @@ load_anno1404_demo() {
         Controlclick Button4  ; Finish
     "
 
-    if workaround_wine_bug 22762
+    if w_workaround_wine_bug 22762
     then
         if test -f "$W_DRIVE_C/users/$USERNAME/Application Data/Ubisoft/Anno1404Demo/Config/Engine.ini"
         then
@@ -1688,7 +1688,7 @@ __EOF__
 verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
 
 load_assassinscreed() {
-    if workaround_wine_bug 22392
+    if w_workaround_wine_bug 22392
     then
         # Don't hang at a dialog box when Detection crashes
         sh "$WINETRICKS" nocrashdialog
@@ -1731,7 +1731,7 @@ load_avatar_demo()
 {
     download $W_PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
 
-    if workaround_wine_bug 23094
+    if w_workaround_wine_bug 23094
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
@@ -1863,13 +1863,13 @@ load_baldursgate2() {
     cd -
     try rm "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
 
-    if workaround_wine_bug 22482
+    if w_workaround_wine_bug 22482
     then
         sh "$WINETRICKS" -q ddr=opengl
         w_warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
     fi
 
-    if workaround_wine_bug 22493
+    if w_workaround_wine_bug 22493
     then
         w_warn "Enabling 3d acceleration in BGConfig.exe will improve performance."
     fi
@@ -1966,11 +1966,11 @@ load_batman_arkham_asylum_demo() {
 
     w_declare_exe "$programfilesdir_x86_win\\Eidos\\Batman Arkham Asylum Demo\\Binaries" "ShippingPC-BmGame.exe"
 
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         w_warn "The mouse is still broken in wine, but winetricks mwo=force will make the game much more playable, try it."
     fi
-    if workaround_wine_bug 20651
+    if w_workaround_wine_bug 20651
     then
         download $W_PACKAGE http://www.glio.net/UserEngine.ini
         download $W_PACKAGE http://www.glio.net/UserInput.ini
@@ -1979,7 +1979,7 @@ load_batman_arkham_asylum_demo() {
         mkdir -p "$configdir"
         cp "$W_CACHE/$W_PACKAGE"/*.ini "$configdir"
     fi
-    if workaround_wine_bug 24471
+    if w_workaround_wine_bug 24471
     then
         sh "$WINETRICKS" mmdevapi=disabled
     fi
@@ -2038,7 +2038,7 @@ load_bfbc2() {
         ControlClick,No, Updater, successfully updated
     "
 
-    if workaround_wine_bug 22762
+    if w_workaround_wine_bug 22762
     then
         cd "$W_DRIVE_C/users/$USERNAME/My Documents"
         if test -f BFBC2/settings.ini
@@ -2054,7 +2054,7 @@ load_bfbc2() {
     fi
     cd "$olddir"
 
-    if workaround_wine_bug 22961
+    if w_workaround_wine_bug 22961
     then
         w_warn "If you get a Securom 'No CD/DVD error', check your mount settings. See http://bugs.winehq.org/show_bug.cgi?id=22961 for more info."
     fi
@@ -2077,7 +2077,7 @@ verblist_add bioshock       "Bioshock (2K Games, 2007)" \
 
 load_bioshock() {
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
-    if workaround_wine_bug 22501
+    if w_workaround_wine_bug 22501
     then
         sh "$WINETRICKS" -q vcrun2005
     fi
@@ -2153,7 +2153,7 @@ load_bioshock() {
         " || (  $WINESERVER -k ; w_warn "Bioshock failed to install properly, likely the Securom check failed" )
 
     # According to the AppDB, 1.1 may have problems with Wine. For now, don't run it.
-    # FIXME: Test and if there's a Wine bug, file one/put this in an if workaround_wine_bug().
+    # FIXME: Test and if there's a Wine bug, file one/put this in an if w_workaround_wine_bug().
     #
     #download $W_PACKAGE http://downloads.2kgames.com/bioshock/patch/Bioshock_Version_11_Patch_Worldwide_Retail.zip
     #cd $WISOTOOL_TMP
@@ -2173,12 +2173,12 @@ load_bioshock() {
     #    sleep 1000
     #    ControlClick, Button1, BioShock Patched Successfully!, BioShock patched to version 1.1 successfully!
     #    "
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         sh "$WINETRICKS" -q mwo=force
     fi
 
-    if workaround_wine_bug 23884
+    if w_workaround_wine_bug 23884
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -2246,12 +2246,12 @@ load_bioshock_iso()
 
     iso_umount
 
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         sh "$WINETRICKS" -q mwo=force
     fi
 
-    if workaround_wine_bug 23884
+    if w_workaround_wine_bug 23884
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -2335,7 +2335,7 @@ load_bladekitten_demo() {
     "
     mv "$WISOTOOL_TMP/BladeKittenDemo" "$W_DRIVE_C/Program Files"
 
-    if workaround_wine_bug 24681
+    if w_workaround_wine_bug 24681
     then
         set_app_winver BladeKitten_Demo.exe win2k
     fi
@@ -2360,7 +2360,7 @@ load_blobby_volley() {
     try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
     w_declare_exe "c:\\BlobbyVolley" "volley.exe"
 
-    if workaround_wine_bug 4432
+    if w_workaround_wine_bug 4432
     then
         w_warn "Go bug Wolfram Sang for the bugfix :-)"
     fi
@@ -2403,7 +2403,7 @@ load_blur() {
     # The game runs without the physx trick but frame rate improves with physx.
     try sh "$WINETRICKS" -q physx
 
-    if workaround_wine_bug 24509
+    if w_workaround_wine_bug 24509
     then
         w_warn "Game will crash on first run (which is in full screen). On second run, it will go to windowed mode. Workaround this by defaulting to a 1024x768 window."
         try mkdir -p "$appdata_unix/bizarre creations/blur"
@@ -2449,7 +2449,7 @@ load_braid_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 22161
+    if w_workaround_wine_bug 22161
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -2496,7 +2496,7 @@ load_braid()
         controlclick, TButton3
     "
 
-    if workaround_wine_bug 22161
+    if w_workaround_wine_bug 22161
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -2549,7 +2549,7 @@ load_cod_demo() {
        ControlClick Button1 ; Finish
     "
 
-    if workaround_wine_bug 21558
+    if w_workaround_wine_bug 21558
     then
         # Work around a buffer overflow - not really Wine's fault
         setvar="@if not defined %__GL_ExtensionStringVersion% then echo \"If you get a buffer overflow error, set __GL_ExtensionStringVersion=17700 before starting Wine.  See http://bugs.winehq.org/show_bug.cgi?id=21558.\""
@@ -2626,7 +2626,7 @@ load_cod1() {
     "
     iso_umount
 
-    if workaround_wine_bug 21558
+    if w_workaround_wine_bug 21558
     then
         # Work around a buffer overflow - not really Wine's fault
         setvar="@if not defined %__GL_ExtensionStringVersion% then echo \"If you get a buffer overflow error, set __GL_ExtensionStringVersion=17700 before starting Wine.  See http://bugs.winehq.org/show_bug.cgi?id=21558.\""
@@ -2767,16 +2767,16 @@ load_cnc2()
 verblist_add civ4 "Civilization IV (Firaxis Games, 2005) [broken-wine-drm]" 6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso 231eee984062c9acadd336b4c0852fac829b76a8.iso
 
 load_civ4() {
-    if workaround_wine_bug 219
+    if w_workaround_wine_bug 219
     then
         w_warn "This game's DRM is not supported by Wine :-( but try patch 3.19 or later, it's said to remove the DRM"
     fi
 
-    if workaround_wine_bug 6856
+    if w_workaround_wine_bug 6856
     then
         try sh "$WINETRICKS" -q msxml3
     fi
-    if workaround_wine_bug 11675
+    if w_workaround_wine_bug 11675
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -2831,11 +2831,11 @@ load_civ4() {
         ControlClick &Next >, Civilization 4
         winwait, Civilization 4, Update Complete
     "
-    if workaround_wine_bug 6856
+    if w_workaround_wine_bug 6856
     then
         try sh "$WINETRICKS" -q msxml3
     fi
-    if workaround_wine_bug 11675
+    if w_workaround_wine_bug 11675
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -2881,11 +2881,11 @@ load_civ4_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 6856
+    if w_workaround_wine_bug 6856
     then
         try sh "$WINETRICKS" -q msxml3
     fi
-    if workaround_wine_bug 6856 # part 2, still need to file a bug
+    if w_workaround_wine_bug 6856 # part 2, still need to file a bug
     then
         try sh "$WINETRICKS" -q d3dx9_26
     fi
@@ -3023,22 +3023,22 @@ load_dao_ue()
     "
     iso_umount
 
-    if workaround_wine_bug 22307
+    if w_workaround_wine_bug 22307
     then
         w_warn "Turn off frame buffer effects to avoid blurry cut scenes.  See http://bugs.winehq.org/show_bug.cgi?id=22307"
     fi
 
-    if workaround_wine_bug 22383
+    if w_workaround_wine_bug 22383
     then
         try "$WINETRICKS" -q strictdrawordering=enabled
     fi
 
-    if workaround_wine_bug 23730
+    if w_workaround_wine_bug 23730
     then
         w_warn "Run with WINEDEBUG=-all to reduce flickering."
     fi
 
-    if workaround_wine_bug 23081
+    if w_workaround_wine_bug 23081
     then
         w_warn "If you still see flickering, try applying the patch from http://bugs.winehq.org/show_bug.cgi?id=23081"
     fi
@@ -3088,7 +3088,7 @@ load_darknesswithin2_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 23041
+    if w_workaround_wine_bug 23041
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -3166,7 +3166,7 @@ load_dc2ba() {
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
     download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
 
-    if workaround_wine_bug 23749
+    if w_workaround_wine_bug 23749
     then
         sh "$WINETRICKS" -q ie6
     fi
@@ -3203,7 +3203,7 @@ load_dc2ba() {
     w_declare_exe "$programfilesdir_x86_win\\Shockwave.com\\Dora's Carnival 2 - Boardwalk Adventure" "Dora's Carnival 2 - Boardwalk Adventure.exe"
 
     # Workarounds needed by the game but not the installer should come at end of verb
-    if workaround_wine_bug 13496
+    if w_workaround_wine_bug 13496
     then
         sh "$WINETRICKS" -q vcrun6
     fi
@@ -3217,7 +3217,7 @@ verblist_add deadspace       "Dead Space (EA, 2008)" \
 load_deadspace() {
     DEADSPACEKEY=`cat "$W_CACHE"/$W_PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
 
-    if workaround_wine_bug 23324
+    if w_workaround_wine_bug 23324
     then
         msvcrun_me_harder="
             winwait, Microsoft
@@ -3384,7 +3384,7 @@ load_deusex2_demo()
 
     cd "$olddir"
 
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         w_warn "This game suffers from The Mouse Bug, see http://wiki.winehq.org/Bug6971 for tips"
     fi
@@ -3505,12 +3505,12 @@ load_dirt2_demo() {
         WinWaitClose
         "
 
-    if workaround_wine_bug 23532
+    if w_workaround_wine_bug 23532
     then
         try "$WINETRICKS" -q xlive
     fi
 
-    if workaround_wine_bug 24868
+    if w_workaround_wine_bug 24868
     then
         sh "$WINETRICKS" d3dx9_36
     fi
@@ -3558,19 +3558,19 @@ load_dragonage() {
     "
     iso_umount
 
-    if workaround_wine_bug 22307
+    if w_workaround_wine_bug 22307
     then
         w_warn "Turn off frame buffer effects to avoid blurry cut scenes.  See http://bugs.winehq.org/show_bug.cgi?id=22307"
     fi
-    if workaround_wine_bug 22383
+    if w_workaround_wine_bug 22383
     then
         try "$WINETRICKS" -q strictdrawordering=enabled
     fi
-    if workaround_wine_bug 23730
+    if w_workaround_wine_bug 23730
     then
         w_warn "Run with WINEDEBUG=-all to reduce flickering."
     fi
-    if workaround_wine_bug 23081
+    if w_workaround_wine_bug 23081
     then
         w_warn "If you still see flickering, try applying the patch from http://bugs.winehq.org/show_bug.cgi?id=23081"
     fi
@@ -3643,7 +3643,7 @@ load_eve() {
         Send {Enter}         ; Finish
         WinWaitClose
     "
-    if workaround_wine_bug 18221
+    if w_workaround_wine_bug 18221
     then
         sh "$WINETRICKS" -q corefonts
     fi
@@ -3677,7 +3677,7 @@ load_ewj_demo() {
         arj e "$WISOTOOL_TMP/$W_PACKAGE/EWJFILES.EXE"
     fi
 
-    if workaround_wine_bug 19531
+    if w_workaround_wine_bug 19531
     then
         w_warn "Sound does not work in Windows NT+ mode. It does in win98 mode, but then locks up the game. See http://bugs.winehq.org/show_bug.cgi?id=19531"
     else
@@ -3702,7 +3702,7 @@ load_fable_tlc() {
 
     read_game_key
 
-    if workaround_wine_bug 657
+    if w_workaround_wine_bug 657
     then
         try sh "$WINETRICKS" -q mfc42
     fi
@@ -3771,7 +3771,7 @@ REGEDIT4
 _EOF_
     try_regedit "$WISOTOOL_TMP_WIN"\\$W_PACKAGE.reg
 
-    if workaround_wine_bug 24912
+    if w_workaround_wine_bug 24912
     then
         # kill off lingering installer
         w_ahk_do "
@@ -3783,12 +3783,12 @@ _EOF_
 
     w_declare_exe "$programfilesdir_x86_win\\Microsoft Games\\Fable - The Lost Chapters" "Fable.exe"
 
-    if workaround_wine_bug 24941
+    if w_workaround_wine_bug 24941
     then
         try sh "$WINETRICKS" -q devenum quartz wmp9
     fi
 
-    if workaround_wine_bug 24942
+    if w_workaround_wine_bug 24942
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -3802,7 +3802,7 @@ load_fallout3()
 {
     iso_mount "$W_CACHE"/$W_PACKAGE/4994dca9fa2e105ea592899644f48d754338663f.iso
 
-    if workaround_wine_bug 23532
+    if w_workaround_wine_bug 23532
     then
         try "$WINETRICKS" -q xlive
     fi
@@ -3884,7 +3884,7 @@ load_fallout3_goty() {
         controlclick, Button4, Fallout 3 - DLC EN - InstallShield Wizard, InstallShield Wizard Complete
     "
 
-    if workaround_wine_bug 23532
+    if w_workaround_wine_bug 23532
     then
         try "$WINETRICKS" -q xlive
     fi
@@ -3981,7 +3981,7 @@ load_fifa10() {
     # Get user's key
     fifakey=`cat "$W_CACHE"/$W_PACKAGE/2038b86319862e1177912949e9f826f333571c48.txt | tr -d -`
 
-    if workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
+    if w_workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
     then
         fifatitle="DisplayName from default.wxl"
     else
@@ -4081,7 +4081,7 @@ load_fifa11_demo()
         controlclick, Button1, FIFA 11, Click the Finish button to exit the Setup Wizard.
     "
 
-if workaround_wine_bug 22161
+if w_workaround_wine_bug 22161
 then
     sh "$WINETRICKS" -q d3dx9_36
 fi
@@ -4174,7 +4174,7 @@ load_fifa10_demo() {
     mkdir "$WISOTOOL_TMP/fifa10"
     cd "$WISOTOOL_TMP/fifa10"
 
-    if workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
+    if w_workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
     then
         fifatitle="DisplayName from default.wxl"
     else
@@ -4230,7 +4230,7 @@ load_ffvii_demo() {
     cd "$programfilesdir_x86_unix/ffvii_demo"
     try unzip "$W_CACHE/$W_PACKAGE/ff7demo.zip"
 
-    if workaround_wine_bug 9220
+    if w_workaround_wine_bug 9220
     then
         w_warn "Doesn't work very well, see http://bugs.winehq.org/show_bug.cgi?id=9220"
     fi
@@ -4298,13 +4298,13 @@ load_ffxiv_beta() {
     Controlclick, Button4, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
     "
 
-    if workaround_wine_bug 24358
+    if w_workaround_wine_bug 24358
     then
         sh "$WINETRICKS" winhttp
         w_warn "You'll want to forward ports TCP/UDP 55296-55551 and UDP 443 to your computer to speed up the download. See also http://bugs.winehq.org/show_bug.cgi?id=24358"
     fi
 
-    if workaround_wine_bug 24375
+    if w_workaround_wine_bug 24375
     then
         sh "$WINETRICKS" -q ie6
     fi
@@ -4353,7 +4353,7 @@ copy config.high config.ini /y
 FFXivWinBenchmark.exe
 __EOF__
 
-if workaround_wine_bug 22555
+if w_workaround_wine_bug 22555
 then
         try "$WINETRICKS" -q d3dx9_36
 fi
@@ -4401,7 +4401,7 @@ load_fm10_demo() {
     click
     "
 
-    if workaround_wine_bug 24417
+    if w_workaround_wine_bug 24417
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -4455,7 +4455,7 @@ load_futurepinball() {
         if fpid != 0
             Process, close, Future Pinball.exe
     "
-    if workaround_wine_bug 8780
+    if w_workaround_wine_bug 8780
     then
         try "$WINETRICKS" -q wsh56vb dcom98
     fi
@@ -4519,17 +4519,17 @@ load_gothic4_demo() {
         controlclick, TNewButton4, Setup - ArcaniA, Completing
     "
 
-if workaround_wine_bug 21939
+if w_workaround_wine_bug 21939
 then
     sh "$WINETRICKS" -q wmp9
 fi
 
-if workaround_wine_bug 24250
+if w_workaround_wine_bug 24250
 then
     sh "$WINETRICKS" -q vcrun2008
 fi
 
-if workaround_wine_bug 7065
+if w_workaround_wine_bug 7065
 then
     w_warn "Game has Securom protection, doesn't work in Wine yet."
 fi
@@ -4545,7 +4545,7 @@ verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " Gran
 load_grand_ages_rome_demo() {
     download $W_PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
 
-    if workaround_wine_bug 24819
+    if w_workaround_wine_bug 24819
     then
         sh "$WINETRICKS" -q gameux=disabled
         $WINESERVER -w
@@ -4627,7 +4627,7 @@ load_gta_vc() {
     "
     iso_umount
 
-    if workaround_wine_bug 22414
+    if w_workaround_wine_bug 22414
     then
         try "$WINETRICKS" -q quartz
     fi
@@ -4776,11 +4776,11 @@ load_hko() {
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=19076
     try sh "$WINETRICKS" -q flash
 
-    if workaround_wine_bug 25132
+    if w_workaround_wine_bug 25132
     then
         try sh "$WINETRICKS" -q ie6
     fi
-    if workaround_wine_bug 25133
+    if w_workaround_wine_bug 25133
     then
         try sh "$WINETRICKS" -q msxml3
     fi
@@ -4825,12 +4825,12 @@ load_hm_demo() {
         controlclick, Button2, Hearts Medicine, Completing the Hearts Medicine
     "
 
-    if workaround_wine_bug 25187
+    if w_workaround_wine_bug 25187
     then
         sh "$WINETRICKS" -q ie6
     fi
 
-    if workaround_wine_bug 25274
+    if w_workaround_wine_bug 25274
     then
         w_warn "Game fails to run, see http://bugs.winehq.org/show_bug.cgi?id=25274"
     fi
@@ -5004,7 +5004,7 @@ load_hegemonypom_demo()
         cd "$W_CACHE/$W_PACKAGE"
     fi
 
-    if workaround_wine_bug 24819
+    if w_workaround_wine_bug 24819
     then
         sh "$WINETRICKS" gameux=disabled
         $WINESERVER -w
@@ -5216,7 +5216,7 @@ load_kq1vga() {
         WinWait King's Quest I Launcher
         WinClose
     "
-    if workaround_wine_bug 23892
+    if w_workaround_wine_bug 23892
     then
         w_ahk_do "
             winwait Adventure Game Studio
@@ -5259,7 +5259,7 @@ load_lhp_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 23397
+    if w_workaround_wine_bug 23397
     then
         w_warn "If you have sound problems, try switching to OSS sound in winecfg"
     fi
@@ -5283,34 +5283,34 @@ load_lol()
     fi
 
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
-    if workaround_wine_bug 20296
+    if w_workaround_wine_bug 20296
     then
         w_warn "You'll need a patch from http://bugs.winehq.org/show_bug.cgi?id=20296 to avoid a crash when starting LoL"
     fi
 
-    if workaround_wine_bug 21870
+    if w_workaround_wine_bug 21870
     then
         sh "$WINETRICKS" -q secur32
     fi
 
-    if workaround_wine_bug 22152
+    if w_workaround_wine_bug 22152
     then
         export GC_DONT_GC=1
     fi
 
-    if workaround_wine_bug 24019 'wine-1.3.[2-9]|wine-1.3.1[0-9]'   # fixed in wine-1.3.2
+    if w_workaround_wine_bug 24019 'wine-1.3.[2-9]|wine-1.3.1[0-9]'   # fixed in wine-1.3.2
     then
         # Avoid crash in downloader
         w_warn "Please apply patch from wine bug 24019"
     fi
 
-    if workaround_wine_bug 24020
+    if w_workaround_wine_bug 24020
     then
         # Avoid crash in downloader
         sh "$WINETRICKS" -q vcrun2008
     fi
 
-    if workaround_wine_bug 24025
+    if w_workaround_wine_bug 24025
     then
         w_warn "The installer's background will be white. Known wine bug, no workaround yet. See http://bugs.winehq.org/show_bug.cgi?id=24025"
     fi
@@ -5371,7 +5371,7 @@ load_lol()
         controlclick, Button4, League of Legends, Click Finish to exit the wizard
     "
 
-    if workaround_wine_bug 24015
+    if w_workaround_wine_bug 24015
     then
         sh "$WINETRICKS" -q ie6
     fi
@@ -5439,24 +5439,24 @@ lol.launcher.exe
 __EOF__
 
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
-    if workaround_wine_bug 20296
+    if w_workaround_wine_bug 20296
     then
         w_warn "You'll need a patch from http://bugs.winehq.org/show_bug.cgi?id=20296 to avoid a crash when starting LoL"
     fi
-    if workaround_wine_bug 21870
+    if w_workaround_wine_bug 21870
     then
         w_warn "Please apply patch attached to bug 21870, or client will crash on start."
     fi
-    if workaround_wine_bug 24102  # fixed in wine-1.3.3, but wine-1.3.3 crashes in secur32 on start? wine-1.3.1 is ok...
+    if w_workaround_wine_bug 24102  # fixed in wine-1.3.3, but wine-1.3.3 crashes in secur32 on start? wine-1.3.1 is ok...
     then
         # Crashes on startup in wine below 1.3.3 without this
         sh "$WINETRICKS" -q d3dx9_36
     fi
-    if workaround_wine_bug 24015
+    if w_workaround_wine_bug 24015
     then
         sh "$WINETRICKS" -q ie6_full
     fi
-    if workaround_wine_bug 24432
+    if w_workaround_wine_bug 24432
     then
         sh "$WINETRICKS" -q vcrun2005
     fi
@@ -5498,7 +5498,7 @@ load_lotsn()
 
     w_declare_exe "${programfilesdir_x86_win}\\Telltale Games\\Tales of Monkey Island\\Launch of the Screaming Narwhal" "MonkeyIsland101.exe"
 
-    if workaround_wine_bug 22161
+    if w_workaround_wine_bug 22161
     then
         # Crashes on startup without this
         sh "$WINETRICKS" -q d3dx9_36
@@ -5551,14 +5551,14 @@ load_lp2bench()
         sleep 1000
         controlclick, Button1, LOST PLANET 2 Benchmark, InstallShield Wizard Completed
     "
-    if workaround_wine_bug 21939
+    if w_workaround_wine_bug 21939
     then
         sh "$WINETRICKS" -q wmp9
     fi
 
     w_declare_exe "$programfilesdir_x86_win\\CAPCOM\\LOST PLANET 2 Benchmark Version" ".\\LP2DX9.exe"
 
-    if workaround_wine_bug 24043
+    if w_workaround_wine_bug 24043
     then
         w_warn "Benchmark crashes on launch, see http://bugs.winehq.org/show_bug.cgi?id=24043"
     fi
@@ -5661,7 +5661,7 @@ load_manhole() {
     try cp -r "$ISO_MOUNT_ROOT"/* "$W_DRIVE_C"/manhole
     iso_umount
 
-    if workaround_wine_bug 22502
+    if w_workaround_wine_bug 22502
     then
         w_warn "Run with wine-1.0 to avoid crash on startup.  Also cancel when prompted to install Quicktime."
     fi
@@ -5677,26 +5677,26 @@ load_masseffect2() {
     iso_mount "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
     ME2_KEY=`cat "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
 
-    if workaround_wine_bug 22091
+    if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
         try sh "$WINETRICKS" -q nocrashdialog
     fi
 
-    if workaround_wine_bug 23126 "wine-1.3.[0-9]*"
+    if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
-    if workaround_wine_bug 23125 "wine-1.3.[0-9]*"
+    if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
         try sh "$WINETRICKS" d3dx10
     fi
-    if workaround_wine_bug 23151
+    if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
         try sh "$WINETRICKS" -q glsl-disable
     fi
-    if workaround_wine_bug 22919
+    if w_workaround_wine_bug 22919
     then
         try sh "$WINETRICKS" -q physx
     fi
@@ -5743,7 +5743,7 @@ load_masseffect2() {
             sleep 1000
         }
     "
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
     fi
@@ -5758,26 +5758,26 @@ verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010) [download]" MassE
 load_masseffect2_demo() {
     download ${W_PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
 
-    if workaround_wine_bug 22091
+    if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
         try sh "$WINETRICKS" -q nocrashdialog
     fi
 
-    if workaround_wine_bug 23126 "wine-1.3.[0-9]*"
+    if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
-    if workaround_wine_bug 23125 "wine-1.3.[0-9]*"
+    if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
         try sh "$WINETRICKS" d3dx10
     fi
-    if workaround_wine_bug 23151
+    if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
         try sh "$WINETRICKS" -q glsl-disable
     fi
-    if workaround_wine_bug 22919
+    if w_workaround_wine_bug 22919
     then
         try sh "$WINETRICKS" -q physx
     fi
@@ -5821,7 +5821,7 @@ load_masseffect2_demo() {
             sleep 1000
         }
     "
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         echo "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
     fi
@@ -5941,19 +5941,19 @@ load_mise() {
         w_die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $W_CACHE/$W_PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
     fi
 
-    if workaround_wine_bug 22161
+    if w_workaround_wine_bug 22161
     then
         # Doesn't crash, but you only get a black screen and a flood of d3dx fixme's without native d3dx9_36
         sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    if workaround_wine_bug 24545
+    if w_workaround_wine_bug 24545
     then
         # Game wants to install directx, but we delete it. It really only needs xact for x3daudio?_?.dll
         sh "$WINETRICKS" -q xact
     fi
 
-    if workaround_wine_bug 24547
+    if w_workaround_wine_bug 24547
     then
         # It really does need vcrun2005, for msvp80.dll (and potentially one stub from msvcr80)
         sh "$WINETRICKS" -q vcrun2005
@@ -6060,7 +6060,7 @@ load_moh_beta()
 
     # Game defaults to Dx10. Must force DxVersion=9
     # This is identical to the BFBC2 bug. Should I file an app specific bug?
-    if workaround_wine_bug 22762
+    if w_workaround_wine_bug 22762
     then
         cd "$W_DRIVE_C/users/$USERNAME/My Documents"
         if test -f "Medal of Honor MP Beta"/settings.ini
@@ -6187,7 +6187,7 @@ load_nd23_saw_demo() {
     cd $W_PACKAGE
     try unzip "$W_CACHE/$W_PACKAGE"/SAW_demo1.zip
 
-    if workaround_wine_bug 24754
+    if w_workaround_wine_bug 24754
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -6246,7 +6246,7 @@ verblist_add nfsshift    "Need For Speed: Shift (EA, 2009)" 83d3b7499742ccf77da1
 
 load_nfsshift()
 {
-    if workaround_wine_bug 23324
+    if w_workaround_wine_bug 23324
     then
         msvcrun_me_harder="
             winwait, Microsoft
@@ -6499,7 +6499,7 @@ load_osmos_demo() {
         controlclick, Button2, Osmos Demo Setup, Installation Complete
     "
 
-    if workaround_wine_bug 24416
+    if w_workaround_wine_bug 24416
     then
         sh "$WINETRICKS" -q vcrun2005
     fi
@@ -6552,7 +6552,7 @@ load_pcmark04() {
         Send {Tab}
         Send {Enter}
     "
-    if workaround_wine_bug 22402
+    if w_workaround_wine_bug 22402
     then
         w_warn "You may need to apply the patch from bug 22402 to avoid a crash in the tumbling blocks test."
     fi
@@ -6655,7 +6655,7 @@ load_pscs5() {
     try Photoshop_12_LS1.exe /s /x /d .
     try cd "Adobe CS5"
 
-    if workaround_wine_bug 22679
+    if w_workaround_wine_bug 22679
     then
         try sh "$WINETRICKS" -q msxml3
     fi
@@ -6879,7 +6879,7 @@ load_popfs()
     "
     iso_umount
 
-if workaround_wine_bug 24346
+if w_workaround_wine_bug 24346
 then
     sh "$WINETRICKS" -q dsoundbug9612
 fi
@@ -7009,7 +7009,7 @@ load_procycling08_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 17512
+    if w_workaround_wine_bug 17512
     then
         w_warn "This game crashes under Wine; see http://bugs.winehq.org/show_bug.cgi?id=17512"
     fi
@@ -7051,7 +7051,7 @@ load_proevolution2010_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 23104
+    if w_workaround_wine_bug 23104
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -7069,7 +7069,7 @@ load_proevolution2011_demo()
     # http://www.bigdownload.com/games/pro-evolution-soccer-2011/pc/pro-evolution-soccer-2011-demo/
     download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
 
-    if workaround_wine_bug 24438
+    if w_workaround_wine_bug 24438
     then
         w_warn "Installer probably won't work, see http://bugs.winehq.org/show_bug.cgi?id=24438"
     fi
@@ -7100,7 +7100,7 @@ load_proevolution2011_demo()
     "
     cd "$olddir"
 
-    if workaround_wine_bug 23104
+    if w_workaround_wine_bug 23104
     then
         sh "$WINETRICKS" d3dx9_36
     fi
@@ -7145,7 +7145,7 @@ load_puzzleagent_demo() {
         WinWaitClose
     "
 
-    if workaround_wine_bug 25210  # fixed in 1.3.8
+    if w_workaround_wine_bug 25210  # fixed in 1.3.8
     then
         try sh "$WINETRICKS" -q vcrun2008
     fi
@@ -7292,12 +7292,12 @@ _EOF_
         "
     done
 
-    if workaround_wine_bug 23217
+    if w_workaround_wine_bug 23217
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
 
-    if workaround_wine_bug 22002
+    if w_workaround_wine_bug 22002
     then
         try sh "$WINETRICKS" -q ie6
     fi
@@ -7351,7 +7351,7 @@ load_re5bench() {
         }
     "
 
-    if workaround_wine_bug 21939
+    if w_workaround_wine_bug 21939
     then
         try sh "$WINETRICKS" -q wmp9
     fi
@@ -7386,7 +7386,7 @@ load_riseofnations_demo() {
         ControlClick CButtonClassName7
     "
 
-    if workaround_wine_bug 9027
+    if w_workaround_wine_bug 9027
     then
         try sh "$WINETRICKS" -q directmusic
     fi
@@ -7453,7 +7453,7 @@ load_sammax304_demo() {
         ControlClick Button2 ; Finish
     "
 
-    if workaround_wine_bug 24250
+    if w_workaround_wine_bug 24250
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
@@ -7510,7 +7510,7 @@ load_sega_rally_2() {
     "
     cd "$olddir"
 
-    if workaround_wine_bug 22668
+    if w_workaround_wine_bug 22668
     then
         w_warn "The game is unplayable due to http://bugs.winehq.org/show_bug.cgi?id=22668. No known workaround."
     fi
@@ -7553,7 +7553,7 @@ load_7million() {
 
     w_declare_exe "users\\$LOGNAME\\Local Settings\\Application Data\\7Million" "7million"
 
-   if workaround_wine_bug 23248
+   if w_workaround_wine_bug 23248
    then
        w_warn "This game doesn't work on wine yet"
    fi
@@ -7613,12 +7613,12 @@ verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a
 
 load_sims3() {
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
-    if false && workaround_wine_bug 22350
+    if false && w_workaround_wine_bug 22350
     then
         try sh "$WINETRICKS" -q dotnet20
     fi
 
-    if workaround_wine_bug 21517
+    if w_workaround_wine_bug 21517
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
@@ -7725,12 +7725,12 @@ load_singularity() {
         "
     iso_umount
 
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         sh "$WINETRICKS" -q mwo=force
     fi
 
-    if workaround_wine_bug 22548
+    if w_workaround_wine_bug 22548
     then
     echo "Disabling \'depth of field\'"
     cat > "$WISOTOOL_TMP"/dof.reg <<_EOF_
@@ -7758,12 +7758,12 @@ load_splitsecond_demo()
         w_die "You must download the demo to $W_CACHE/$W_PACKAGE before running this script.  See http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo"
     fi
 
-    if workaround_wine_bug 22774 "wine-1.3.[0-9]*"
+    if w_workaround_wine_bug 22774 "wine-1.3.[0-9]*"
     then
         echo "On wine, install takes an extra 7 minutes at the end, please be patient."
     fi
 
-    if workaround_wine_bug 22865
+    if w_workaround_wine_bug 22865
     then
         echo "This game is currently unplayable on wine due to rendering problems; see winehq bug 22865."
     fi
@@ -7805,12 +7805,12 @@ verblist_add splitsecond    "Split Second (Black Rock Studios, 2010) [wine bug 2
 
 load_splitsecond()
 {
-    if workaround_wine_bug 22774 "wine-1.3.[0-9]*"
+    if w_workaround_wine_bug 22774 "wine-1.3.[0-9]*"
     then
         echo "On wine, install takes an extra 7 minutes at the end, please be patient."
     fi
 
-    if workaround_wine_bug 22865
+    if w_workaround_wine_bug 22865
     then
         echo "This game is currently unplayable on wine due to rendering problems; see winehq bug 22865."
     fi
@@ -7902,7 +7902,7 @@ load_ssdd2()
     # 27 Oct 2010: 440c4f2e9484ba150782cae8754ff8eaaad3b01e
     download $W_PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 440c4f2e9484ba150782cae8754ff8eaaad3b01e
 
-    if workaround_wine_bug 23749
+    if w_workaround_wine_bug 23749
     then
         sh "$WINETRICKS" -q ie6
     fi
@@ -8020,7 +8020,7 @@ load_stalker_pripyat_bench() {
         ControlClick TNewButton4 ; Finish
     "
 
-    if workaround_wine_bug 24868
+    if w_workaround_wine_bug 24868
     then
         sh "$WINETRICKS" d3dx9_31 d3dx9_42
     fi
@@ -8125,7 +8125,7 @@ load_sto()
     # Note: http://www.startrekonline.com/download shows how to download the
     # client using bittorrent.  If the iso is not present, we should try that path.
 
-    if workaround_wine_bug 22943
+    if w_workaround_wine_bug 22943
     then
         # Install is fine without ie6, but can't log in or download patch without ie6,
         # and the installer launches the app when it's done.
@@ -8252,7 +8252,7 @@ load_sf4bench()
 
     # The game has a flickering graphics problem when parallel rendering is enabled.
     # You can disable it and tweak benchmark settings via the config.ini file.
-    if workaround_wine_bug 23647
+    if w_workaround_wine_bug 23647
     then
         cd "$W_DRIVE_C/users/$USERNAME/Local Settings/Application Data"
         if test -f CAPCOM/STREETFIGHTERIVBENCHMARK/config.ini
@@ -8309,7 +8309,7 @@ load_smbx() {
     # This winetricks verb doesn't work on Windows yet, but that's ok-ish, Windows comes with vb6 runtime
     sh "$WINETRICKS" -q vb6run
 
-    if workaround_wine_bug 23821
+    if w_workaround_wine_bug 23821
     then
         # http://www.supermariobrothers.org/forums/viewtopic.php?f=8&t=6711
         # claims this works
@@ -8388,7 +8388,7 @@ cd C:\\TimezAttack
 TimezAttack.app\\TimezAttack.exe
 __EOF__
 
-    if workaround_wine_bug 24537
+    if w_workaround_wine_bug 24537
     then
         sh "$WINETRICKS" -q corefonts
     fi
@@ -8447,7 +8447,7 @@ load_tlr_demo() {
 verblist_add tmnationsforever "TrackMania Nations Forever (Nadeo, 2009) [download]" tmnationsforever_setup.exe
 
 load_tmnationsforever() {
-    if workaround_wine_bug 20915
+    if w_workaround_wine_bug 20915
     then
         w_warn "Gameplay and sound may be very choppy on some machines :-("
     fi
@@ -8542,7 +8542,7 @@ load_twfc() {
     "
     iso_umount
 
-    if workaround_wine_bug 6971
+    if w_workaround_wine_bug 6971
     then
         sh "$WINETRICKS" mwo=force
     fi
@@ -8593,7 +8593,7 @@ load_tropico3_demo() {
     fi
     # FIXME: check sha1sum e031749db346ac3a87a675787c81eb1ca8cb5909
 
-    if workaround_wine_bug 24819
+    if w_workaround_wine_bug 24819
     then
         sh "$WINETRICKS" gameux=disabled
         $WINESERVER -w
@@ -8624,13 +8624,13 @@ load_tropico3_demo() {
 
     w_declare_exe "$programfilesdir_x86_win\\Kalypso\\Tropico 3 Demo" "Tropico3 Demo.exe"
 
-    if workaround_wine_bug 16328
+    if w_workaround_wine_bug 16328
     then
         # 20540 is a dup of 16328, but it describes the problem nicely
         w_warn "seawater is invisible due to wine bug 20540, work around this by applying the patch from http://bugs.winehq.org/show_bug.cgi?id=16328#c180"
     fi
 
-    if workaround_wine_bug 24845
+    if w_workaround_wine_bug 24845
     then
         sh "$WINETRICKS" mmdevapi=disabled
     fi
@@ -8705,7 +8705,7 @@ load_unigine_heaven() {
         Send {Enter}
     "
 
-    if workaround_wine_bug 22614
+    if w_workaround_wine_bug 22614
     then
         # hope your card actually has 1GB of RAM
         sh "$WINETRICKS" videomemorysize=1024
@@ -8728,7 +8728,7 @@ verblist_add vegas     "Rainbow Six: Vegas (Ubisoft, 2006) [broken-wine-drm]" \
     abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
 
 load_vegas() {
-    if workaround_wine_bug 7065
+    if w_workaround_wine_bug 7065
     then
         w_warn "This game's DRM is not supported by wine"
     fi
@@ -8794,7 +8794,7 @@ verblist_add vegas2     "Rainbow Six: Vegas 2 (Ubisoft, 2008) [broken-wine-drm]"
     1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
 
 load_vegas2() {
-    if workaround_wine_bug 219
+    if w_workaround_wine_bug 219
     then
         w_warn "This game's DRM is not supported by wine"
     fi
@@ -8915,11 +8915,11 @@ load_victoria2_demo() {
         ControlClick, Button4, InstallShield, InstallShield Wizard Complete
         winwaitclose, InstallShield, InstallShield Wizard Complete
     "
-    if workaround_wine_bug 24422
+    if w_workaround_wine_bug 24422
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
-    if workaround_wine_bug 24217
+    if w_workaround_wine_bug 24217
     then
         sh "$WINETRICKS" -q dsoundbug9612
     fi
@@ -9282,11 +9282,11 @@ verblist_add gsb_demo "Gratuitous Space Battles demo (Positech Games, 2009) [dow
 
 load_gsb_demo() {
     _load_positech "http://www.positech.co.uk/gratuitousspacebattles/downloads/GSBDemoInstaller.exe" 83dab80aa3bb94aa886c94b2cb68fa54558fe563 "GSBDemoInstaller.exe" "Setup - Gratuitous Space Battles Demo" "Gratuitous Space Battles Demo" "GSBDemo.exe"
-    if workaround_wine_bug 22393
+    if w_workaround_wine_bug 22393
     then
         sh "$WINETRICKS" -q d3dx9_36
     fi
-    if workaround_wine_bug 24395
+    if w_workaround_wine_bug 24395
     then
         w_warn "If the game crashes with 'Error initializing output device.  ..\src\GUI_Sounds.cpp 661', try disabling pulseaudio, and post a comment to bug 24395 saying whether it helped."
     fi
@@ -9579,7 +9579,7 @@ load_total_war_and_empire_demo_steam()
 {
     _load_steam_app "10620" "Empire: Total War" "empire total war demo main.ncf" "empire total war demo" "empire total war demo english.ncf,empire total war demo executable.ncf,empire total war demo redist.ncf"
 
-    if workaround_wine_bug 18490
+    if w_workaround_wine_bug 18490
     then
         w_warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490. Otherwise, the game will crash when starting a battle."
     fi
@@ -9592,17 +9592,17 @@ load_napoleon_total_war_demo_steam()
 {
     _load_steam_app "34050" "Napoleon: Total War" "napoleon total war demo english.ncf" "napoleon total war demo" "napoleon total war demo data_34052.ncf,napoleon total war demo exe_34051.ncf,napoleon total war demo redist_34053.ncf"
 
-    if workaround_wine_bug 23126
+    if w_workaround_wine_bug 23126
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
 
-    if workaround_wine_bug 23356
+    if w_workaround_wine_bug 23356
     then
         try sh "$WINETRICKS" -q d3dx9
     fi
 
-    if workaround_wine_bug 18490
+    if w_workaround_wine_bug 18490
     then
         w_warn "You'll probably want the patch from http://bugs.winehq.org/show_bug.cgi?id=18490. Otherwise, the game will crash when starting a battle."
     fi
