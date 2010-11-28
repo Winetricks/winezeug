@@ -111,8 +111,8 @@ Recipes may call any of the following shell functions:
  * w_ahk_do - execute an Autohotkey script
  * w_declare_exe - tell the framework how to run the app
  * w_die - abort with an error message
- * w_download - takes a URL and an sha1sum, downloads the given file to the directory $W_CACHE/$W_PACKAGE
- * w_download_manual - takes a URL, a filename, and an sha1sum, and asks the user to download a file from the given page
+ * w_download - takes an appid, a URL and an sha1sum, downloads the given file to the directory $W_CACHE/$appid
+ * w_download_manual - takes an appid, a URL, a filename, and an sha1sum, and asks the user to download a file from the given page
  * w_metadata - called before verb is defined to add it to the list of verbs
  * w_mount - takes a volume name; mounts the given volume (either from a disc or an iso)
  * w_pathconv - convert between unix and windows paths (fixme: split into two functions)
