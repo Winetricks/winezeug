@@ -91,6 +91,7 @@ Recipes can rely on the following variables being set before they are executed:
  * W_CACHE - a Unix path to the directory where downloaded files are cached.
  * W_CACHE_WIN - a Windows path version of W_CACHE
  * W_DRIVE_C - a Unix path to the C:\ directory
+ * W_ISO_MOUNT_ROOT - the Unix path to where the install disc is mounted
  * W_ISO_MOUNT_LETTER - the drive letter the install disc is mounted on
  * W_KEY - the key for this package (set by w_read_key) 
  * W_OPT_UNATTENDED - if 1, install app without asking any questions
