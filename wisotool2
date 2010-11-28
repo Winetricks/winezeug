@@ -463,13 +463,13 @@ wisotool_mainmenu()
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
-         _W_msg_apps='Anwendung installieren'
-         _W_msg_games='Spiel installieren'
+         _W_msg_apps='Programm mit Wine installieren'
+         _W_msg_games='Spiel mit Wine installieren'
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
-         _W_msg_apps='Install a program'
-         _W_msg_games='Install a game'
+         _W_msg_apps='Install a program with Wine'
+         _W_msg_games='Install a game with Wine'
          ;;
     esac
 
