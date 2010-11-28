@@ -183,7 +183,7 @@ w_verify_sha1sum()
     _W_vs_file=$2
 
     _W_vs_gotsum=`$WISOTOOL_SHA1SUM < $_W_file | sed 's/ .*//'`
-    if [ "$_W_vs_gotsum"x != "$_W_wantsum"x ]
+    if [ "$_W_vs_gotsum"x != "$_W_vs_wantsum"x ]
     then
        w_die "sha1sum mismatch!  Rename $_W_vs_file and try again."
     fi
@@ -191,34 +191,35 @@ w_verify_sha1sum()
 }
 
 # Download a file
-# Usage: w_download url [sha1sum [filename [cookie jar]]]
-# Caches downloads in wisotoolcache/$package
+# Usage: w_download packagename url [sha1sum [filename [cookie jar]]]
+# Caches downloads in wisotoolcache/$packagename
 w_download()
 {
-    url="$1"
-    sum="$2"
-    file="$3"
-    cookiejar="$4"
+    _W_packagename="$1"
+    _W_url="$2"
+    _W_sum="$3"
+    _W_file="$4"
+    _W_cookiejar="$5"
 
-    if [ "$file"x = ""x ]
+    if [ "$_W_file"x = ""x ]
     then
-        file=`basename "$url"`
+        _W_file=`basename "$_W_url"`
     fi
-    cache="$W_CACHE/$W_PACKAGE"
-    mkdir -p "$cache"
-    if test ! -s "$cache/$file" && test -f "$cache/$file"
+    _W_cache="$W_CACHE/$_W_packagename"
+    mkdir -p "$_W_cache"
+    if test ! -s "$_W_cache/$_W_file" && test -f "$_W_cache/$_W_file"
     then
         # zero size - bad download?
-        rm "$cache/$file"
+        rm "$_W_cache/$_W_file"
     fi
-    if test "$nosizecheck" != "" || test ! -f "$cache/$file" || test "$WISOTOOL_CONTINUE_DOWNLOAD"
+    if test "$nosizecheck" != "" || test ! -f "$_W_cache/$_W_file" || test "$WISOTOOL_CONTINUE_DOWNLOAD"
     then
-        cd "$cache"
+        cd "$_W_cache"
         # Mac folks tend to have curl rather than wget
         # On Mac, 'which' doesn't return good exit status
         # Need to jam in --header "Accept-Encoding: gzip,deflate" else
         # redhat.com decompresses liberation-fonts.tar.gz!
-        echo Downloading $url
+        echo Downloading $_W_url
         if [ -x "`which wget 2>/dev/null`" ]
         then
            # Use -nd to insulate ourselves from people who set -x in WGETRC
@@ -228,54 +229,55 @@ w_download()
            # close the connection unless you tell it to (control-C or closing
            # the socket)
            # Disable retries for gog.com (which requires higher level retries)
-           wget -O "$file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${cookiejar:+--load-cookies "$cookiejar"} "$url"
+           wget -O "$_W_file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${_W_cookiejar:+--load-cookies "$_W_cookiejar"} "$_W_url"
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
-           curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" ${cookiejar:+--cookie "$cookiejar"} "$url"
+           curl -L -o "$_W_file" -C - --header "Accept-Encoding: gzip,deflate" ${_W_cookiejar:+--cookie "$_W_cookiejar"} "$_W_url"
         fi
         if test $? != 0
         then
-            test -f "$file" && rm "$file"
-            w_die "Downloading $url failed"
+            test -f "$_W_file" && rm "$_W_file"
+            w_die "Downloading $_W_url failed"
         fi
         # Need to decompress .exe's that are compressed, else cygwin fails
         # Only affects cygwin, so don't barf if 'file' not installed
-        FILE=`which file 2>/dev/null`
-        case $FILE-$file in
+        _W_filetype=`which file 2>/dev/null`
+        case $_W_filetype-$_W_file in
         /*-*.exe)
-            case `file $file` in
-            *gzip*) mv $file $file.gz; gunzip < $file.gz > $file;;
+            case `file $_W_file` in
+            *gzip*) mv $_W_file $_W_file.gz; gunzip < $_W_file.gz > $_W_file;;
             esac
         esac
 
         # On cygwin, .exe's must be marked +x
-        case $file in
-        *.exe) chmod +x $file ;;
+        case $_W_file in
+        *.exe) chmod +x $_W_file ;;
         esac
 
-        if [ "$sum"x != ""x ]
+        if [ "$_W_sum"x != ""x ]
         then
-            w_verify_sha1sum $sum "$cache/$file"
+            w_verify_sha1sum $_W_sum "$_W_cache/$_W_file"
         fi
     fi
 }
 
 w_download_manual()
 {
-    _W_url="$1"
-    _W_file="$2"
-    _W_sha1sum="$3"
+    _W_packagename="$1"
+    _W_url="$2"
+    _W_file="$3"
+    _W_sha1sum="$4"
 
     case $LANG in
-    da*) _W_dlmsg="Hent venligst filen $_W_file fra $_W_url og placér den i $W_CACHE/W_PACKAGE, kør derefter dette skript.";;
-    de*) _W_dlmsg="Bitte laden Sie $_W_file von $_W_url runter, stellen Sie's in $W_CACHE/$W_PACKAGE, dann wiederholen Sie diesen Kommando.";;
-    *) _W_dlmsg="Please download $_W_file from $_W_url, place it in $W_CACHE/$W_PACKAGE, then re-run this script.";;
+    da*) _W_dlmsg="Hent venligst filen $_W_file fra $_W_url og placér den i $W_CACHE/$_W_packagename, kør derefter dette skript.";;
+    de*) _W_dlmsg="Bitte laden Sie $_W_file von $_W_url runter, stellen Sie's in $W_CACHE/$_W_packagename, dann wiederholen Sie diesen Kommando.";;
+    *) _W_dlmsg="Please download $_W_file from $_W_url, place it in $W_CACHE/$_W_packagename, then re-run this script.";;
     esac
 
-    if ! test -f "$W_CACHE/$W_PACKAGE/$_W_file"
+    if ! test -f "$W_CACHE/$_W_packagename/$_W_file"
     then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
+        mkdir -p "$W_CACHE/$_W_packagename"
         xdg-open "$_W_url"
         sleep 3   # give some time for browser to open
         w_die "$_W_dlmsg"
@@ -1059,7 +1061,7 @@ wisotool_init()
     if ! test -f "$WISOTOOL_WINETRICKS"
     then
         WISOTOOL_WINETRICKS="$W_CACHE/winetricks/winetricks"
-        W_PACKAGE=winetricks w_download http://kegel.com/wine/winetricks
+        w_download winetricks http://kegel.com/wine/winetricks
     fi
 
     # Handle case where z: doesn't exist
@@ -1192,7 +1194,7 @@ w_metadata  safari apps \
 
 load_safari()
 {
-    w_download http://appldnld.apple.com.edgesuite.net/content.info.apple.com/Safari5/061-7138.20100607.Y7U87/SafariSetup.exe e56d5d79d9cfbb85ac46ac78aa497d7f3d8dbc3d
+    w_download safari http://appldnld.apple.com.edgesuite.net/content.info.apple.com/Safari5/061-7138.20100607.Y7U87/SafariSetup.exe e56d5d79d9cfbb85ac46ac78aa497d7f3d8dbc3d
 
     cd "$W_CACHE"/$W_PACKAGE
 
@@ -1313,7 +1315,7 @@ w_metadata  blobby_volley games \
 
 load_blobby_volley()
 {
-    w_download_manual http://www.chip.de/downloads/Blobby-Volley_12990993.html blobby.zip c7057c77a5009a88d9d877e17a63b5536ebeb177
+    w_download_manual blobby_volley http://www.chip.de/downloads/Blobby-Volley_12990993.html blobby.zip c7057c77a5009a88d9d877e17a63b5536ebeb177
 
     mkdir -p "$W_DRIVE_C/BlobbyVolley"
     cd "$W_CACHE/$W_PACKAGE"
@@ -1337,7 +1339,7 @@ w_metadata civ4_demo games \
 
 load_civ4_demo()
 {
-    w_download_manual http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html Civilization4_Demo.zip b54f1e5d0a1c2d1ef456d0c20098c23bbb6a0ea7
+    w_download_manual civ4_demo http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html Civilization4_Demo.zip b54f1e5d0a1c2d1ef456d0c20098c23bbb6a0ea7
 
     cd "$W_CACHE/$W_PACKAGE"
     w_try unzip Civilization4_Demo.zip -d "$W_TMP"
@@ -1650,12 +1652,12 @@ load_wog()
     if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
         # Get temporary download location
-        w_download "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+        w_download wog "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
         URL=`cat "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" |
            grep WorldOfGooDemo.1.0.exe | sed 's,.*http,http,;s,".*,,'`
         rm "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
 
-        w_download "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
+        w_download wog "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
