@@ -314,16 +314,16 @@ w_umount()
     then
         w_die Windows not yet supported
     else
-        echo "Running $WISOTOOL_SUDO umount $WISOTOOL_ISO_MOUNT_ROOT"
+        echo "Running $WISOTOOL_SUDO umount $W_ISO_MOUNT_ROOT"
         case "$WISOTOOL_SUDO" in
         gksudo)
           # -l lazy unmount in case executable still running
-          $WISOTOOL_SUDO "umount -l $WISOTOOL_ISO_MOUNT_ROOT"
-          w_try $WISOTOOL_SUDO "rm -rf $WISOTOOL_ISO_MOUNT_ROOT"
+          $WISOTOOL_SUDO "umount -l $W_ISO_MOUNT_ROOT"
+          w_try $WISOTOOL_SUDO "rm -rf $W_ISO_MOUNT_ROOT"
           ;;
         *)
-          $WISOTOOL_SUDO umount -l $WISOTOOL_ISO_MOUNT_ROOT
-          w_try $WISOTOOL_SUDO rm -rf $WISOTOOL_ISO_MOUNT_ROOT
+          $WISOTOOL_SUDO umount -l $W_ISO_MOUNT_ROOT
+          w_try $WISOTOOL_SUDO rm -rf $W_ISO_MOUNT_ROOT
           ;;
         esac
         rm -f "$WINEPREFIX"/dosdevices/${W_ISO_MOUNT_LETTER}:
@@ -826,12 +826,12 @@ wisotool_mount_cached_iso()
         _W_USERID=`id -u`
         case "$WISOTOOL_SUDO" in
         gksudo)
-          w_try $WISOTOOL_SUDO "mkdir -p $WISOTOOL_ISO_MOUNT_ROOT"
-          w_try $WISOTOOL_SUDO "mount -o ro,loop,uid=$_W_USERID,unhide $WISOTOOL_IMG $WISOTOOL_ISO_MOUNT_ROOT"
+          w_try $WISOTOOL_SUDO "mkdir -p $W_ISO_MOUNT_ROOT"
+          w_try $WISOTOOL_SUDO "mount -o ro,loop,uid=$_W_USERID,unhide $WISOTOOL_IMG $W_ISO_MOUNT_ROOT"
           ;;
         *)
-          w_try $WISOTOOL_SUDO mkdir -p $WISOTOOL_ISO_MOUNT_ROOT
-          w_try $WISOTOOL_SUDO mount -o ro,loop,uid=$_W_USERID,unhide "$WISOTOOL_IMG" $WISOTOOL_ISO_MOUNT_ROOT
+          w_try $WISOTOOL_SUDO mkdir -p $W_ISO_MOUNT_ROOT
+          w_try $WISOTOOL_SUDO mount -o ro,loop,uid=$_W_USERID,unhide "$WISOTOOL_IMG" $W_ISO_MOUNT_ROOT
           ;;
         esac
 
@@ -839,7 +839,7 @@ wisotool_mount_cached_iso()
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         rm -f "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"*
         ln -sf "$WISOTOOL_IMG" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
-        ln -sf "$WISOTOOL_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
+        ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
         unset _W_USERID
     fi
 }
@@ -929,12 +929,12 @@ wisotool_mount_real_volume()
             sleep 2
         done
         WISOTOOL_DEV=$_W_dev
-        WISOTOOL_ISO_MOUNT_ROOT="$_W_mountpoint"
+        W_ISO_MOUNT_ROOT="$_W_mountpoint"
 
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         rm -f "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"*
         ln -sf "$WISOTOOL_DEV" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
-        ln -sf "$WISOTOOL_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
+        ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
     fi
 
     # FIXME: need to remount some discs with unhide option, 
@@ -986,10 +986,6 @@ wisotool_init()
     WISOTOOL_GUI=none
 
     WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
-
-    # Overridden for windows
-    WISOTOOL_ISO_MOUNT_ROOT=/mnt/wisotool
-    W_ISO_MOUNT_LETTER=i
 
     # Whether to always cache cached iso's (1) or only use cache if present (0)
     # Can be inherited from environment or set via -c, defaults to off
@@ -1083,6 +1079,10 @@ wisotool_init()
         done
         ;;
     esac
+
+    # Overridden for windows
+    W_ISO_MOUNT_ROOT=/mnt/wisotool
+    W_ISO_MOUNT_LETTER=i
 }
 
 wisotool_usage()
