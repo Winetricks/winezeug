@@ -54,9 +54,9 @@ mkdir -p "$WISOTOOL_VERBS"
 WISOTOOL_POST="${WISOTOOL_POST:-$WISOTOOL_DIR/postinstall}"
 
 # Internal variables; these locations are not too important
-WISOTOOL_CACHE="${WISOTOOL_CACHE:-$HOME/.wisotoolcache}"
-test -d "$WISOTOOL_CACHE" || WISOTOOL_CACHE="$WISOTOOL_DIR/cache"
-WISOTOOL_CACHE_WIN="`$XXXPATH -w $WISOTOOL_CACHE | tr '\012' ' ' | sed 's/ $//'`"
+W_CACHE="${W_CACHE:-$HOME/.wisotoolcache}"
+test -d "$W_CACHE" || W_CACHE="$WISOTOOL_DIR/cache"
+W_CACHE_WIN="`$XXXPATH -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 WISOTOOL_TMP="$DRIVE_C"/wisotooltmp
 WISOTOOL_TMP_WIN='c:\wisotooltmp'
 
@@ -65,17 +65,17 @@ rm -rf "$WISOTOOL_TMP"
 mkdir -p "$WISOTOOL_TMP"
 
 # Handle case where z: doesn't exist
-case "$WISOTOOL_CACHE_WIN" in
+case "$W_CACHE_WIN" in
 ""|*\?\\unix*)
-    # WISOTOOL_CACHE isn't accessible via a drive letter mapping, so make one,
+    # W_CACHE isn't accessible via a drive letter mapping, so make one,
     # but be sure to clean it up later.
     for letter in y x w v u t s r q
     do
         if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
         then
-            WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
-            ln -sf "$WISOTOOL_CACHE" "$WISOTOOL_CACHE_SYMLINK"
-            WISOTOOL_CACHE_WIN=${letter}:
+            W_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+            ln -sf "$W_CACHE" "$W_CACHE_SYMLINK"
+            W_CACHE_WIN=${letter}:
             break
         fi
     done
@@ -124,15 +124,15 @@ detect_menu() {
 }
 
 read_game_key() {
-    keyfile="$WISOTOOL_CACHE/$PACKAGE/key.txt"
+    keyfile="$W_CACHE/$W_PACKAGE/key.txt"
     if ! test -f "$keyfile"
     then
         # read key from user
         case $MENU in
-        *zenity) KEY=`zenity --entry --text "Enter the disc key for $PACKAGE"` ;;
-        *kdialog) KEY=`kdialog --inputbox "Enter the disc key for $PACKAGE"` ;; 
+        *zenity) KEY=`zenity --entry --text "Enter the disc key for $W_PACKAGE"` ;;
+        *kdialog) KEY=`kdialog --inputbox "Enter the disc key for $W_PACKAGE"` ;; 
         *xmessage) die "sorry, can't read key from gui with xmessage" ;;
-        none) echo "Enter the disc key for $PACKAGE": ; read $KEY ;;
+        none) echo "Enter the disc key for $W_PACKAGE": ; read $KEY ;;
         esac
         if test "$KEY" = ""
         then
@@ -383,7 +383,7 @@ workaround_wine_bug()
 # Please double any backslashes in path or exe for portability
 w_declare_exe()
 {
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $1
 $2
@@ -427,7 +427,7 @@ download() {
     else
         file=`basename "$2"`
     fi
-    cache="$WISOTOOL_CACHE/$1"
+    cache="$W_CACHE/$1"
     mkdir -p "$cache"
     if test ! -s "$cache/$file" && test -f "$cache/$file"
     then
@@ -488,12 +488,12 @@ download() {
 
 # Download one or more files via bittorrent
 # Usage: package [foo.torrent]
-# Caches downloads in $WISOTOOL_CACHE/$PACKAGE, torrent files are assumed to be there
-# If no foo.torrent is given, will add ALL .torrent files in $WISOTOOL_CACHE/$PACKAGE
+# Caches downloads in $W_CACHE/$W_PACKAGE, torrent files are assumed to be there
+# If no foo.torrent is given, will add ALL .torrent files in $W_CACHE/$W_PACKAGE
 download_torrent() {
     test -f "$WINDIR"/utorrent.exe || try sh $WINETRICKS utorrent
-    UT_WINPATH="$WISOTOOL_CACHE_WIN\\$1"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    UT_WINPATH="$W_CACHE_WIN\\$1"
+    cd "$W_CACHE/$W_PACKAGE"
 
     if [ "$2"x != ""x ] # foo.torrent parameter supplied
     then
@@ -583,8 +583,8 @@ load_vcdmount()
         warn "Installing Virtual CloneDrive"
         download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
         # have to use cmd else vista won't let cygwin run .exe's?
-        chmod +x "$WISOTOOL_CACHE"/SetupVirtualCloneDrive.exe
-        cd "$WISOTOOL_CACHE"
+        chmod +x "$W_CACHE"/SetupVirtualCloneDrive.exe
+        cd "$W_CACHE"
         cmd /c SetupVirtualCloneDrive.exe
         cd "$olddir"
     fi
@@ -610,7 +610,7 @@ iso_mount()
     # FIXME: Should we check somehow that the user put in the right disk?
     if [ ! -f "$my_img" ]
     then
-        warn "You don't seem to have an iso in $WISOTOOL_CACHE/$PACKAGE. Please insert the disk so I can prepare one for you."
+        warn "You don't seem to have an iso in $W_CACHE/$W_PACKAGE. Please insert the disk so I can prepare one for you."
         load_iso dd
     fi
 
@@ -788,7 +788,7 @@ cleanup()
   *) kill $pid ;;
   esac
   # TODO: merge this with cleanup code at end of script
-  test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
+  test "$W_CACHE_SYMLINK" && rm -f "$W_CACHE_SYMLINK"
   echo "Done cleanup, quitting."
   exit 1
 }
@@ -798,7 +798,7 @@ load_iso() {
    method=$1
    key="$2"
 
-   die_if_user_not_dirowner "$WISOTOOL_CACHE"
+   die_if_user_not_dirowner "$W_CACHE"
 
    # Detect raw device
    dev=/dev/null
@@ -821,7 +821,7 @@ load_iso() {
    # Use conv=noerror,sync to replace unreadable blocks with zeroes
    case $method in
    dd)
-     dd if=$dev of="$WISOTOOL_CACHE"/temp.iso bs=2048 conv=noerror,sync &
+     dd if=$dev of="$W_CACHE"/temp.iso bs=2048 conv=noerror,sync &
      pid=$!
      ;;
    ddrescue)
@@ -829,7 +829,7 @@ load_iso() {
      then
          die "Please install ddrescue first."
      fi
-     ddrescue -v -b 2048 $dev "$WISOTOOL_CACHE"/temp.iso &
+     ddrescue -v -b 2048 $dev "$W_CACHE"/temp.iso &
      pid=$!
      ;;
    esac
@@ -839,20 +839,20 @@ load_iso() {
    while ps -p $pid > /dev/null 2>&1
    do
      sleep 5
-     ls -l "$WISOTOOL_CACHE"/temp.iso
+     ls -l "$W_CACHE"/temp.iso
    done
    pid=""
 
    echo "Computing sha1sum..."
-   # FIXME: can't handle spaces in "$WISOTOOL_CACHE"
-   sum=`sha1sum "$WISOTOOL_CACHE"/temp.iso | awk '{print $1}'`
+   # FIXME: can't handle spaces in "$W_CACHE"
+   sum=`sha1sum "$W_CACHE"/temp.iso | awk '{print $1}'`
    echo "Sha1sum of iso is $sum"
 
-   mv "$WISOTOOL_CACHE"/temp.iso "$WISOTOOL_CACHE"/$sum.iso
+   mv "$W_CACHE"/temp.iso "$W_CACHE"/$sum.iso
    if test "$key" != ""
    then
        # FIXME: in gui, prompt user for key if load= was chosen?
-       echo "$key" > "$WISOTOOL_CACHE"/$sum.txt
+       echo "$key" > "$W_CACHE"/$sum.txt
    fi
 
    # Note: if you haven't written the verb for this disc yet,
@@ -930,7 +930,7 @@ verblist_add()
     for file
     do
        file_map="$file_map \"$file\") echo $verbname;; "
-       if ! test -f "$WISOTOOL_CACHE/$verbname/$file"
+       if ! test -f "$W_CACHE/$verbname/$file"
        then
            present=''
        fi
@@ -962,7 +962,7 @@ list_available_verbs()
 {
     # Find files in cache, output pathnames without top level directory.
     # Use "while read" rather than "for", since we have some filenames with spaces.
-    (cd "$WISOTOOL_CACHE"; find . -type f) | sed 's,^./[^/]*/,,' | while read file
+    (cd "$W_CACHE"; find . -type f) | sed 's,^./[^/]*/,,' | while read file
     do
         map_file_to_verb "$file"
     done | sort -u
@@ -971,11 +971,11 @@ list_available_verbs()
 # Move any/all *.iso or *.exe still at top level into the proper subdirectory
 migrate_files()
 {
-    for file in "$WISOTOOL_CACHE"/*.iso "$WISOTOOL_CACHE"/*.exe
+    for file in "$W_CACHE"/*.iso "$W_CACHE"/*.exe
     do
         set -x
         # Did wildcard fail to match?
-        if test "$file" = "$WISOTOOL_CACHE/*.iso" || test "$file" = "$WISOTOOL_CACHE/*.exe"
+        if test "$file" = "$W_CACHE/*.iso" || test "$file" = "$W_CACHE/*.exe"
         then
             continue
         fi
@@ -992,17 +992,17 @@ migrate_files()
                 verb=`map_file_to_verb "$vname.iso"`
                     if test "$verb" != ""
                     then
-                        mv "$file" "$WISOTOOL_CACHE/$vname.iso"
-                        file="$WISOTOOL_CACHE/$vname.iso"
+                        mv "$file" "$W_CACHE/$vname.iso"
+                        file="$W_CACHE/$vname.iso"
                     fi
             fi
         fi
         if test "$verb" != ""
         then
-            mkdir -p "$WISOTOOL_CACHE"/$verb
+            mkdir -p "$W_CACHE"/$verb
             movee=`echo $file | sed 's,\(\.iso\)$\|\(\.exe\)$,,g'`
-            echo Moving $movee.* to $WISOTOOL_CACHE/$verb/
-            mv "$movee".* "$WISOTOOL_CACHE"/$verb/
+            echo Moving $movee.* to $W_CACHE/$verb/
+            mv "$movee".* "$W_CACHE"/$verb/
         fi
     done
 }
@@ -1017,15 +1017,15 @@ verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000) [download]" 3dmark2000_
 
 load_3dmark2000() {
     # http://www.futuremark.com/download/3dmark2000/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3dmark2000_v11_100308.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/3dmark2000_v11_100308.exe"
     then
-        download $PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
+        download $W_PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
     fi
 
     cd "$WISOTOOL_TMP"
-    mkdir $PACKAGE
-    cd $PACKAGE
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/3dmark2000_v11_100308.exe
+    mkdir $W_PACKAGE
+    cd $W_PACKAGE
+    try unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
     ahk_do "
         SetTitleMatchMode, 2
         run Setup.exe
@@ -1046,7 +1046,7 @@ load_3dmark2000() {
         ControlClick Button4  ; Finish
     "
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\MadOnion.com\3DMark2000"
 REM possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
@@ -1061,12 +1061,12 @@ verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001) [download]" 3dmark2001s
 
 load_3dmark2001() {
     # http://www.futuremark.com/download/3dmark2001/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/3dmark2001se_330_100308.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/3dmark2001se_330_100308.exe
     then
-        download $PACKAGE http://www.ocinside.de/download/3dmark2001se_330_100308.exe 643bacbcc1615bb4f46d3b045b1b8d78371a6b54
+        download $W_PACKAGE http://www.ocinside.de/download/3dmark2001se_330_100308.exe 643bacbcc1615bb4f46d3b045b1b8d78371a6b54
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run 3dmark2001se_330_100308.exe
@@ -1094,12 +1094,12 @@ verblist_add 3dmark03 "3D Mark 03 (Futuremark, 2003) [download]" 3DMark03_v360_1
 load_3dmark03() {
 
     # http://www.futuremark.com/benchmarks/3dmark03/download/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark03_v360_1901.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/3DMark03_v360_1901.exe"
     then
-        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe 46a439101ddbbe3c9563b5e9651cb61b46ce0619
+        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe 46a439101ddbbe3c9563b5e9651cb61b46ce0619
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     warn "Don't use mouse while this installer is running.  Sorry..."
     # This old installer doesn't seem to be scriptable the usual way, so spray and pray.
     ahk_do "
@@ -1140,12 +1140,12 @@ verblist_add 3dmark05 "3D Mark 05 (Futuremark, 2005) [download]" 3DMark05_v130_1
 load_3dmark05() {
 
     # http://www.futuremark.com/download/3dmark05/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark05_v130_1901.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/3DMark05_v130_1901.exe"
     then
-        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe 8ad6bc2917e22edf5fc95d1fa96cc82515093fb2
+        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe 8ad6bc2917e22edf5fc95d1fa96cc82515093fb2
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run 3DMark05_v130_1901.exe
         WinWait ahk_class #32770, Welcome
@@ -1169,7 +1169,7 @@ load_3dmark05() {
         warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
         ARGS="-nosysteminfo"
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark05"
 3DMark05 $ARGS
@@ -1182,12 +1182,12 @@ verblist_add 3dmark06 "3D Mark 06 (Futuremark, 2006) [download]" 3DMark06_v120_1
 
 load_3dmark06() {
     # http://www.futuremark.com/benchmarks/3dmark06/download/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/3DMark06_v120_1901.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/3DMark06_v120_1901.exe"
     then
-        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
+        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run 3DMark06_v120_1901.exe
         WinWait ahk_class #32770, Welcome
@@ -1229,7 +1229,7 @@ load_3dmark06() {
         ARGS="-nosysteminfo"
     fi
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Futuremark\3DMark06"
 3DMark06 $ARGS
@@ -1241,9 +1241,9 @@ __EOF__
 verblist_add algodoo_demo  "Algodoo Demo (Algoryx, 2009) [download]" Algodoo_1_7_1-Win32.exe
 
 load_algodoo_demo() {
-    download $PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
+    download $W_PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         ; This one's funny... on Wine, keyboard works once you click manually, but until then, only ControlClick seems to work.
         run, Algodoo_1_7_1-Win32.exe
@@ -1280,9 +1280,9 @@ load_algodoo_demo() {
 verblist_add msaoe_demo  "Age of Empires Demo (Microsoft, 1997) [download]" MSAoE.exe
 
 load_msaoe_demo() {
-    download $PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
+    download $W_PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run, MSAoE.exe
         SetTitleMatchMode, 2
@@ -1306,7 +1306,7 @@ verblist_add aoe3_demo "Age of Empires III (Microsoft, 2005) [download]" aoe3tri
 
 load_aoe3_demo() {
 
-    download $PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
+    download $W_PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
         2b0a123243092d79f910db5691d99d469f7c17c3
 
     if workaround_wine_bug 24897
@@ -1314,7 +1314,7 @@ load_aoe3_demo() {
         try sh "$WINETRICKS" -q msxml4
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -1358,8 +1358,8 @@ load_aoe3_demo() {
 verblist_add aoe3cc "Age Of Empires III: Complete Collection - Age of Empires III (Microsoft, 2009)" "AOE III DISC 1".iso "AOE III DISC 2".iso "AOE III DISC 3".iso
 
 load_aoe3cc() {
-# Not using $PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
-# where $PACKAGE would be set differently
+# Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
+# where $W_PACKAGE would be set differently
 
     mkdir -p "$WISOTOOL_TMP/aoe3cc"
 
@@ -1371,9 +1371,9 @@ load_aoe3cc() {
         for disc in 1 2 3
         do
             echo Copying disc $disc
-	    # Not using $PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
-	    # where $PACKAGE would be set differently
-            iso_mount "$WISOTOOL_CACHE/aoe3cc/AOE III DISC $disc.iso"
+	    # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
+	    # where $W_PACKAGE would be set differently
+            iso_mount "$W_CACHE/aoe3cc/AOE III DISC $disc.iso"
             cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/aoe3cc/tempcd
             chmod -R +w "$WISOTOOL_TMP"/aoe3cc/tempcd
             iso_umount
@@ -1391,7 +1391,7 @@ load_aoe3cc() {
         try sh "$WINETRICKS" -q msxml4
     fi
 
-    AOE3CC_KEY="`cat "$WISOTOOL_CACHE/aoe3cc/AOE III DISC 1.txt" | tr -d -`"
+    AOE3CC_KEY="`cat "$W_CACHE/aoe3cc/AOE III DISC 1.txt" | tr -d -`"
 
     cd "$WISOTOOL_TMP"/aoe3cc/tempcd
     ahk_do "
@@ -1437,7 +1437,7 @@ verblist_add aoe3cc_ad "Age Of Empires III: Complete Collection - Asian Dynastie
 
 load_aoe3cc_ad() {
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
 
     if ! test -f "$programfilesdir_x86_unix/Microsoft Games/Age of Empires III/age3.exe"
     then
@@ -1446,12 +1446,12 @@ load_aoe3cc_ad() {
 
     # This app is protected by SmartE, so we have to copy
     # all the files to hard disk before installing.
-    if ! test -f "$WISOTOOL_TMP/$PACKAGE/aoe3y/Setup.exe"
+    if ! test -f "$WISOTOOL_TMP/$W_PACKAGE/aoe3y/Setup.exe"
     then
-        mkdir -p "$WISOTOOL_TMP/$PACKAGE/aoe3y"
-        iso_mount "$WISOTOOL_CACHE/$PACKAGE/AOE3Y.iso"
-        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/aoe3y
-        chmod -R +w "$WISOTOOL_TMP"/$PACKAGE/aoe3y
+        mkdir -p "$WISOTOOL_TMP/$W_PACKAGE/aoe3y"
+        iso_mount "$W_CACHE/$W_PACKAGE/AOE3Y.iso"
+        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
+        chmod -R +w "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
         iso_umount
     fi
 
@@ -1465,9 +1465,9 @@ load_aoe3cc_ad() {
         try sh "$WINETRICKS" -q msxml4
     fi
 
-    AOE3Y_KEY="`cat "$WISOTOOL_CACHE/$PACKAGE/AOE3Y.txt" | tr -d -`"
+    AOE3Y_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3Y.txt" | tr -d -`"
 
-    cd "$WISOTOOL_TMP"/$PACKAGE/aoe3y
+    cd "$WISOTOOL_TMP"/$W_PACKAGE/aoe3y
     ahk_do "
         Run, Setup.exe
         SetTitleMatchMode, 2
@@ -1508,7 +1508,7 @@ verblist_add aoe3cc_wc "Age Of Empires III: Complete Collection - WarChiefs Expa
 
 load_aoe3cc_wc() {
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
 
     if ! test -f "$programfilesdir_x86_unix/Microsoft Games/Age of Empires III/age3.exe"
     then
@@ -1517,12 +1517,12 @@ load_aoe3cc_wc() {
 
     # This app is protected by SmartE, so we have to copy
     # all the files to hard disk before installing.
-    if ! test -f "$WISOTOOL_TMP/$PACKAGE/aoe3x/Setup.exe"
+    if ! test -f "$WISOTOOL_TMP/$W_PACKAGE/aoe3x/Setup.exe"
     then
-        mkdir -p "$WISOTOOL_TMP/$PACKAGE/aoe3x"
-        iso_mount "$WISOTOOL_CACHE/$PACKAGE/AOE3X.iso"
-        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/aoe3x
-        chmod -R +w "$WISOTOOL_TMP"/$PACKAGE/aoe3x
+        mkdir -p "$WISOTOOL_TMP/$W_PACKAGE/aoe3x"
+        iso_mount "$W_CACHE/$W_PACKAGE/AOE3X.iso"
+        cp -rf "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
+        chmod -R +w "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
         iso_umount
     fi
 
@@ -1536,9 +1536,9 @@ load_aoe3cc_wc() {
         try sh "$WINETRICKS" -q msxml4
     fi
 
-    AOE3X_KEY="`cat "$WISOTOOL_CACHE/$PACKAGE/AOE3X.txt" | tr -d -`"
+    AOE3X_KEY="`cat "$W_CACHE/$W_PACKAGE/AOE3X.txt" | tr -d -`"
 
-    cd "$WISOTOOL_TMP"/$PACKAGE/aoe3x
+    cd "$WISOTOOL_TMP"/$W_PACKAGE/aoe3x
     ahk_do "
         Run, Setup.exe
         SetTitleMatchMode, 2
@@ -1579,14 +1579,14 @@ verblist_add amnesia_tdd_demo "Amnesia: The Dark Descent Demo (Frictional Games,
 
 load_amnesia_tdd_demo() {
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/amnesia_tdd_demo_1.0.1.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/amnesia_tdd_demo_1.0.1.exe
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please visit http://www.amnesiagame.com/#demo, download amnesia_tdd_demo_1.0.1.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please visit http://www.amnesiagame.com/#demo, download amnesia_tdd_demo_1.0.1.exe, and place it in directory $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: check sha1sum 0bf0bc6e9c8ea76f1c44582d9302a9b22d31d1b6
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -1631,15 +1631,15 @@ load_amnesia_tdd_demo() {
 verblist_add anno1404_demo  "Anno 1404 Demo (Ubisoft, 2009) [download]" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
 
 load_anno1404_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip"
+    if ! test -f "$W_CACHE/$W_PACKAGE/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download demo from http://www.filefront.com/thankyou.php?f=13908918 and place it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download demo from http://www.filefront.com/thankyou.php?f=13908918 and place it in $W_CACHE/$W_PACKAGE"
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_TMP/$PACKAGE"
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip 
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    try unzip "$W_CACHE/$W_PACKAGE"/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip 
     try cd "Anno1404_Demo_US_2009_06_15_18_22"
     ahk_do "
         run, setup.exe
@@ -1694,7 +1694,7 @@ load_assassinscreed() {
         sh "$WINETRICKS" nocrashdialog
     fi
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
@@ -1729,16 +1729,16 @@ verblist_add avatar_demo    "James Camerons Avatar The Game Demo (Ubisoft, 2009)
 
 load_avatar_demo()
 {
-    download $PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
+    download $W_PACKAGE http://gamedaily.newaol.com/pub/Avatar_The_Game_Demo.exe 8d8e4c82312962706bd2620406d592db4f0fa9c1
 
     if workaround_wine_bug 23094
     then
         try sh "$WINETRICKS" -q vcrun2005
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_TMP/$PACKAGE"
-    try_unrar x "$WISOTOOL_CACHE/$PACKAGE/Avatar_The_Game_Demo.exe"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    try_unrar x "$W_CACHE/$W_PACKAGE/Avatar_The_Game_Demo.exe"
     ahk_do "
         SetTitleMatchMode, 2
         run, setup.exe
@@ -1784,29 +1784,29 @@ load_baldursgate2() {
     # Possible wine bug: cd is still in use, even if wine eject is used. Workaround it by
     # copying all the cd's to a directory, and running the installer from there.
     # You still need the first CD mounted at the end, however...
-    if test ! -d "$WISOTOOL_TMP"/$PACKAGE/tempcd
+    if test ! -d "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     then
-        try mkdir -p "$WISOTOOL_TMP"/$PACKAGE/tempcd
-        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
+        try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        iso_mount "$W_CACHE"/$W_PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
-        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        iso_mount "$W_CACHE"/$W_PACKAGE/429872605dad10433c3c581a1c11eba4d0988c46.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
-        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        iso_mount "$W_CACHE"/$W_PACKAGE/a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
-        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        iso_mount "$W_CACHE"/$W_PACKAGE/94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Will perform a full install, so no cd's needed
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso
 
     ahk_do "
         SetTitleMatchMode, 2
-        run "$WISOTOOL_TMP"/$PACKAGE/tempcd/setup.exe
+        run "$WISOTOOL_TMP"/$W_PACKAGE/tempcd/setup.exe
         winwait, Baldur's Gate, Welcome to the Baldur's Gate
         sleep 1000
         ControlClick, Button1, Baldur's Gate, Welcome to the Baldur's Gate
@@ -1841,13 +1841,13 @@ load_baldursgate2() {
         sleep 1000
         ControlClick, Button4, Baldur's Gate, Setup has finished installing
         "
-    try chmod +w -R "$WISOTOOL_TMP"/$PACKAGE/tempcd
-    try rm -rf "$WISOTOOL_TMP"/$PACKAGE/tempcd
+    try chmod +w -R "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+    try rm -rf "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
 
     # Install latest patch
     download baldursgate2 http://downloads.bioware.com/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe 4706c0dc1e282bae14946c87a38e2781f89ebdc4
     # AHK doesn't like its name...
-    try cp -f "$WISOTOOL_CACHE/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
+    try cp -f "$W_CACHE/baldursgate2/Baldur%27sGateII-ShadowsofAmnPatchENGLISH.exe" "$WISOTOOL_TMP/baldurs_gate_2_patch.exe"
 
     cd "$WISOTOOL_TMP"
     ahk_do "
@@ -1885,9 +1885,9 @@ load_baldursgate2() {
 verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix 2009) (size: 2.0 GB)[download]" BMDemo_installer.exe
 
 load_batman_arkham_asylum_demo() {
-    download $PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
+    download $W_PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         run BMDemo_installer.exe
@@ -1972,12 +1972,12 @@ load_batman_arkham_asylum_demo() {
     fi
     if workaround_wine_bug 20651
     then
-        download $PACKAGE http://www.glio.net/UserEngine.ini
-        download $PACKAGE http://www.glio.net/UserInput.ini
-        download $PACKAGE http://www.glio.net/UserGame.ini
+        download $W_PACKAGE http://www.glio.net/UserEngine.ini
+        download $W_PACKAGE http://www.glio.net/UserInput.ini
+        download $W_PACKAGE http://www.glio.net/UserGame.ini
         configdir="$DRIVE_C/users/$USERNAME/My Documents/Eidos/Batman Arkham Asylum Demo/BmGame/Config"
         mkdir -p "$configdir"
-        cp "$WISOTOOL_CACHE/$PACKAGE"/*.ini "$configdir"
+        cp "$W_CACHE/$W_PACKAGE"/*.ini "$configdir"
     fi
     if workaround_wine_bug 24471
     then
@@ -1996,8 +1996,8 @@ verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010)" \
 load_bfbc2() {
     exedir="$programfilesdir_x86_unix/Electronic Arts/Battlefield Bad Company 2"
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/BFBC2.iso
-    BFBC2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/BFBC2.txt | tr -d -`
+    iso_mount "$W_CACHE"/$W_PACKAGE/BFBC2.iso
+    BFBC2_KEY=`cat "$W_CACHE"/$W_PACKAGE/BFBC2.txt | tr -d -`
     ahk_do "
         SetTitleMatchMode, 2
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -2085,14 +2085,14 @@ load_bioshock() {
     # If .iso is present, use it rather than the .mds (.mds is still flaky, maybe we should just get rid of mds support)
     # FIXME: 'wisotool ls' only shows apps as loaded if all files present, so we need a way to
     # tell it either iso or mds is ok.
-    if test -f "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+    if test -f "$W_CACHE"/$W_PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
     then
         load_bioshock_iso
         return 0
     fi
 
     # Will perform a full install, so no cd's needed
-    mds_mount "$WISOTOOL_CACHE/$PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.mds"
+    mds_mount "$W_CACHE/$W_PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.mds"
 
     # Setup cdemu for Bioshock (dpm on, tr off):
     # FIXME: I'm assuming different programs may want different emulation settings. If not, move up to mds_mount().
@@ -2100,7 +2100,7 @@ load_bioshock() {
     cdemu tr-emulation 0 0
 
     # Don't trim the hyphen's "-", the installer won't proceed without them.
-    BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.txt`
+    BIOSHOCK_KEY=`cat "$W_CACHE"/$W_PACKAGE/391042ea19b4eace5d532dbade10931ebbc4def6.txt`
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -2155,9 +2155,9 @@ load_bioshock() {
     # According to the AppDB, 1.1 may have problems with Wine. For now, don't run it.
     # FIXME: Test and if there's a Wine bug, file one/put this in an if workaround_wine_bug().
     #
-    #download $PACKAGE http://downloads.2kgames.com/bioshock/patch/Bioshock_Version_11_Patch_Worldwide_Retail.zip
+    #download $W_PACKAGE http://downloads.2kgames.com/bioshock/patch/Bioshock_Version_11_Patch_Worldwide_Retail.zip
     #cd $WISOTOOL_TMP
-    #unzip "$WISOTOOL_CACHE/$PACKAGE/Bioshock_Version_11_Patch_Worldwide_Retail.zip"
+    #unzip "$W_CACHE/$W_PACKAGE/Bioshock_Version_11_Patch_Worldwide_Retail.zip"
     #ahk_do "
     #    run Bioshock Version 1.1 Patch Worldwide Retail.exe
     #    winwait, BioShock 1.1 Patch, This patch is to be applied ONLY to the Uncensored Retail Version of BioShock
@@ -2191,8 +2191,8 @@ load_bioshock() {
 load_bioshock_iso()
 {
 
-    BIOSHOCK_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.txt`
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+    BIOSHOCK_KEY=`cat "$W_CACHE"/$W_PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.txt`
+    iso_mount "$W_CACHE"/$W_PACKAGE/deaf00ebee6e73aecf38f704c3f516008a68d888.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -2265,12 +2265,12 @@ verblist_add bioshock_demo       "Bioshock Demo (2K Games, 2007) [download]" \
   nzd_BioShockPC.zip
 
 load_bioshock_demo() {
-    download $PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
+    download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
     cd "$DRIVE_C"
     rm -rf bioshock-temp
     mkdir bioshock-temp
     cd bioshock-temp
-    try unzip -q "$WISOTOOL_CACHE/$PACKAGE"/nzd_BioShockPC.zip
+    try unzip -q "$W_CACHE/$W_PACKAGE"/nzd_BioShockPC.zip
     try cd "BioShock PC Demo"
     ahk_do "
         SetTitleMatchMode, 2
@@ -2308,15 +2308,15 @@ load_bioshock_demo() {
 verblist_add bladekitten_demo "Blade Kitten Demo (Krome Studios Pty Ltd., 2010) [download]" BladeKittenDemoInstall.exe
 
 load_bladekitten_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/BladeKittenDemoInstall.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/BladeKittenDemoInstall.exe"
     then
-        download $PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
-        cd "$WISOTOOL_CACHE/$PACKAGE"
+        download $W_PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
+        cd "$W_CACHE/$W_PACKAGE"
         mv 'download.php?file=BladeKittenDemoInstall.exe' "BladeKittenDemoInstall.exe"
     fi
 
     mkdir "$WISOTOOL_TMP/BladeKittenDemo"
-    cp "$WISOTOOL_CACHE/$PACKAGE"/BladeKittenDemoInstall.exe "$WISOTOOL_TMP"/BladeKittenDemo
+    cp "$W_CACHE/$W_PACKAGE"/BladeKittenDemoInstall.exe "$WISOTOOL_TMP"/BladeKittenDemo
     cd "$WISOTOOL_TMP"/BladeKittenDemo
     ahk_do "
         SetTitleMatchMode, 3
@@ -2348,15 +2348,15 @@ load_bladekitten_demo() {
 verblist_add blobby_volley "Blobby Volley (Daniel Skoraszewsky, 2000) [download]" blobby.zip
 
 load_blobby_volley() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/blobby.zip"
+    if ! test -f "$W_CACHE/$W_PACKAGE/blobby.zip"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download demo from http://www.chip.de/downloads/Blobby-Volley_12990993.html and place it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download demo from http://www.chip.de/downloads/Blobby-Volley_12990993.html and place it in $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: verify sha1sum c7057c77a5009a88d9d877e17a63b5536ebeb177
 
     mkdir -p "$DRIVE_C/BlobbyVolley"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     try unzip blobby.zip -d "$DRIVE_C/BlobbyVolley"
     w_declare_exe "c:\\BlobbyVolley" "volley.exe"
 
@@ -2372,7 +2372,7 @@ verblist_add blur       "Blur (Activision, 2010)" \
   30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
 load_blur() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -2423,11 +2423,11 @@ verblist_add braid_demo    "Braid Demo (Number None, 2009) [download]" braid_win
 
 load_braid_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/braid_windows_r3.exe"
     then
-        download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+        download $W_PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
     fi
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, braid_windows_r3.exe
@@ -2463,18 +2463,18 @@ verblist_add braid    "Braid (Number None, 2009) [download]" braid_windows_r3.ex
 
 load_braid()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
+    if ! test -f "$W_CACHE/$W_PACKAGE/braid-key.txt"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please enter your registration key into $WISOTOOL_CACHE/$PACKAGE/braid-key.txt"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please enter your registration key into $W_CACHE/$W_PACKAGE/braid-key.txt"
     fi
-    BRAID_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/braid-key.txt`
+    BRAID_KEY=`cat "$W_CACHE"/$W_PACKAGE/braid-key.txt`
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/braid_windows_r3.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/braid_windows_r3.exe"
     then
-        download $PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
+        download $W_PACKAGE http://download.instantaction.com/games/pgh_legacy/braid_windows_r3.exe 7ea08ddbf5f2fb2f38057d930389b5af7d737e2c
     fi
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     mv downloads.php* braid_windows_r3.exe 2>/dev/null
     ahk_do "
         SetTitleMatchMode, 2
@@ -2507,7 +2507,7 @@ load_braid()
     cd "$DRIVE_C"
     ahk_do "
         SetTitleMatchMode, 2
-        run, run-$PACKAGE.bat
+        run, run-$W_PACKAGE.bat
         winwait, Braid, Enter Registration
         controlclick, Button4
         winwait, Enter Registration
@@ -2525,9 +2525,9 @@ load_braid()
 verblist_add cod_demo "Call of Duty (Activision, 2003) [download]" Call_Of_Duty_Demo.exe
 
 load_cod_demo() {
-    download $PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
+    download $W_PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
        SetTitleMatchMode, 2
        run Call_Of_Duty_Demo.exe 
@@ -2556,7 +2556,7 @@ load_cod_demo() {
     else
         setvar=
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 $setvar
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Call of Duty Single Player Demo"
@@ -2574,7 +2574,7 @@ verblist_add cod1 "Call of Duty (Activision, 2003)" \
     CoD2.iso
 
 load_cod1() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/COD1.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/COD1.iso
 
     read_game_key
 
@@ -2601,7 +2601,7 @@ load_cod1() {
         WinWait, Insert CD, Please
         "
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/CoD2.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/CoD2.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -2609,7 +2609,7 @@ load_cod1() {
         WinWait, Insert CD, Please
     "
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/COD1.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/COD1.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -2633,7 +2633,7 @@ load_cod1() {
     else
         setvar=
     fi
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 $setvar
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Call of Duty"
@@ -2656,9 +2656,9 @@ load_codmw2()
     test -f "$programfilesdir_x86_unix"/Steam/Steam.exe || try sh $WINETRICKS -q steam
 
     # Get user's key
-    CODMW2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.txt | tr -d -`
+    CODMW2_KEY=`cat "$W_CACHE"/$W_PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.txt | tr -d -`
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/6f572261ed954733806daf5b42edf92b3127cd14.iso
     cd "$programfilesdir_x86_unix"/Steam
     ahk_do "
         SetTitleMatchMode, 2
@@ -2684,7 +2684,7 @@ load_codmw2()
         sendEvent {Enter}
         winwait, Insert
     "
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
     ahk_do "
         SetTitleMatchMode, 2
         Send {Enter}
@@ -2716,9 +2716,9 @@ load_codmw2()
 verblist_add cod4mw_demo "Call of Duty 4 Modern Warfare (Activision, 2007) [download]" CoD4MWDemoSetup_v2.exe
 
 load_cod4mw_demo() {
-    download $PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
+    download $W_PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
        SetTitleMatchMode, 2
        run CoD4MWDemoSetup_v2.exe
@@ -2750,12 +2750,12 @@ verblist_add cnc2    "Command and Conquer Tiberian Sun & Firestorm (Westwood, 20
 
 load_cnc2()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/OfficialCncTiberianSun.rar"
+    if ! test -f "$W_CACHE/$W_PACKAGE/OfficialCncTiberianSun.rar"
     then
-        download $PACKAGE http://na.llnet.cnc3tv.ea.com/u/f/eagames/cnc3/cnc3tv/Classic/OfficialCnCTiberianSun.rar 591aabd639fb9f2d2476a2150f3c00b1162674f5
+        download $W_PACKAGE http://na.llnet.cnc3tv.ea.com/u/f/eagames/cnc3/cnc3tv/Classic/OfficialCnCTiberianSun.rar 591aabd639fb9f2d2476a2150f3c00b1162674f5
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     try_unrar x OfficialCnCTiberianSun.rar "$programfilesdir_x86_unix"
 
@@ -2781,7 +2781,7 @@ load_civ4() {
         try sh "$WINETRICKS" -q d3dx9_36
     fi
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
 
     cd "$ISO_MOUNT_ROOT"
     ahk_do "
@@ -2801,7 +2801,7 @@ load_civ4() {
         winwait, Setup Needs The Next Disk
     "
     iso_umount
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/231eee984062c9acadd336b4c0852fac829b76a8.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/231eee984062c9acadd336b4c0852fac829b76a8.iso
     ahk_do "
         SetTitleMatchMode, 2
         ControlClick OK, Setup Needs The Next Disk
@@ -2811,7 +2811,7 @@ load_civ4() {
         winwait, Setup Needs The Next Disk
     "
     iso_umount
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso
     ahk_do "
         SetTitleMatchMode, 2
         ControlClick OK, Setup Needs The Next Disk
@@ -2819,8 +2819,8 @@ load_civ4() {
         ControlClick Finish, Sid Meier's Civilization 4 - InstallShield Wizard
     "
 
-    download $PACKAGE http://www.firaxis.com/downloads/Patch/Civ4v161.exe 4712e96ef34dcc5aa961d2b75f49ada8bd6b0d92
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    download $W_PACKAGE http://www.firaxis.com/downloads/Patch/Civ4v161.exe 4712e96ef34dcc5aa961d2b75f49ada8bd6b0d92
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run Civ4v161.exe
@@ -2849,16 +2849,16 @@ verblist_add civ4_demo    "Civilization IV Demo (Firaxis Games, 2005) [download]
 
 load_civ4_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Civilization4_Demo.zip"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Civilization4_Demo.zip"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download demo from http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html and place it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download demo from http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html and place it in $W_CACHE/$W_PACKAGE"
     fi
 
     mkdir -p "$WISOTOOL_TMP"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     try unzip Civilization4_Demo.zip -d "$WISOTOOL_TMP"
-    cd "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
     chmod +x setup.exe
     ahk_do "
         SetTitleMatchMode, 2
@@ -2899,12 +2899,12 @@ verblist_add cnc3_demo    "Command and Conquer 3 Demo (EA, 2007) [download]" CnC
 
 load_cnc3_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/CnC3Demo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/CnC3Demo.exe"
     then
-        download $PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7
+        download $W_PACKAGE http://largedownloads.ea.com/pub/demos/CommandandConquer3/CnC3Demo.exe f6af21eba2d17eb6d8bb6a131b501b41c3a7eaf7
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, CnC3Demo.exe
@@ -2940,9 +2940,9 @@ verblist_add cnc4    "Command and Conquer 4 (EA, 2010) [broken-wine-drm]" f3308e
 
 load_cnc4()
 {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:EASetup.exe
@@ -2959,7 +2959,7 @@ load_cnc4()
     iso_umount
 
     # Bypass the game's launcher: see AppDB
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\Data\\CNC4.game" -config "$programfilesdir_x86_win\\Electronic Arts\\Command & Conquer 4 Tiberian Twilight\\CNC4_English.SkuDef"
 __EOF__
@@ -2973,9 +2973,9 @@ verblist_add dao_ue     "Dragon Age: Origins - Ultimate Edition (Bioware / EA, 2
 load_dao_ue()
 {
     # Get user's key
-    DAO_UE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.txt | tr -d -`
+    DAO_UE_KEY=`cat "$W_CACHE"/$W_PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.txt | tr -d -`
     
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso
 
     # Annoyingly, it runs a webrowser so you can activate the extra stuff. Disable that, and warn the user after install:
     export WINEDLLOVERRIDES="winebrowser.exe="
@@ -3006,7 +3006,7 @@ load_dao_ue()
         controlclick, Button1
         winwait, Insert Disc...
     "
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso
     
     ahk_do "
         sleep 5000
@@ -3054,13 +3054,13 @@ verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interacti
 
 load_darknesswithin2_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/DarknessWithin2Demo.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download $WISOTOOL_CACHE/$PACKAGE/DarknessWithin2Demo.exe from http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download $W_CACHE/$W_PACKAGE/DarknessWithin2Demo.exe from http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo"
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, DarknessWithin2Demo.exe
@@ -3106,11 +3106,11 @@ load_daytona_usa_evolutions() {
     # Refuses to run on anything newer...
     sh "$WINETRICKS" -q win98
 
-    download $PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
+    download $W_PACKAGE http://www2.sega.co.jp/download/pc/daytonae/daytonev.exe 65c51766e01b582c15200afb0fd569e0ec5ca1ac
 
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
     # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, daytonev.exe
@@ -3164,14 +3164,14 @@ load_daytona_usa_evolutions() {
 verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, 2008)" InstallDorasCarnival2BoardwalkAdventure.exe
 load_dc2ba() {
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
-    download $PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
+    download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
 
     if workaround_wine_bug 23749
     then
         sh "$WINETRICKS" -q ie6
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run InstallDorasCarnival2BoardwalkAdventure.exe
@@ -3215,7 +3215,7 @@ verblist_add deadspace       "Dead Space (EA, 2008)" \
   abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
 
 load_deadspace() {
-    DEADSPACEKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
+    DEADSPACEKEY=`cat "$W_CACHE"/$W_PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
 
     if workaround_wine_bug 23324
     then
@@ -3227,7 +3227,7 @@ load_deadspace() {
         msvcrun_me_harder=""
     fi
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
     ahk_do "
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
@@ -3271,13 +3271,13 @@ verblist_add demolition_company_demo  "Demolition Company demo [download]" Demol
 
 load_demolition_company_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/DemolitionCompanyDemoEN.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/DemolitionCompanyDemoEN.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Download the demo from http://www.demolitioncompany-thegame.com/demo.php and put it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Download the demo from http://www.demolitioncompany-thegame.com/demo.php and put it in $W_CACHE/$W_PACKAGE"
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, DemolitionCompanyDemoEN.exe
@@ -3308,7 +3308,7 @@ verblist_add desperados2  "Desperados 2 (Atari, 2006)" ff13e7c5a96c70a24f9152891
 
 load_desperados2()
 {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso
     ahk_do "
         SetTitleMatchMode, 2
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -3346,17 +3346,17 @@ load_desperados2()
 verblist_add deusex2_demo   "Deus Ex 2 / Deus Ex: Invisible War Demo (Eidos, 2003) [download]" dxiw_demo.zip
 load_deusex2_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/dxiw_demo.zip"
+    if ! test -f "$W_CACHE/$W_PACKAGE/dxiw_demo.zip"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download the demo from http://www.techpowerup.com/downloads/1730/Deus_Ex:_Invisible_War_Demo.html and put it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download the demo from http://www.techpowerup.com/downloads/1730/Deus_Ex:_Invisible_War_Demo.html and put it in $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: sha1sum ccae48fb046d912b3714ea1b4be4294e74bb3092
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
-    try unzip dxiw_demo.zip -d "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
+    try unzip dxiw_demo.zip -d "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
     chmod +x setup.exe
     ahk_do "
         SetTitleMatchMode, 2
@@ -3408,9 +3408,9 @@ load_diablo2() {
     test -d "$programfilesdir_unix/Diablo II" && rm -rf "$programfilesdir_unix/Diablo II"
 
     # Get user's key
-    DIABLOIIKEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.txt | tr -d -`
+    DIABLOIIKEY=`cat "$W_CACHE"/$W_PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.txt | tr -d -`
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         winwait, Diablo II Setup
@@ -3426,19 +3426,19 @@ load_diablo2() {
         winwait, Desktop Shortcut
         send {N}
         winwait, Insert Disc"
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso
     # Needed by patch 1.13c to avoid disc swapping
     cp "$ISO_MOUNT_ROOT"/d2music.mpq "$programfilesdir_unix/Diablo II/"
     ahk_do "
         send, {Enter}
         Sleep 1000
         winwait, Insert Disc"
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/382ea98f270e39855b558b8fac0d609712a54ae8.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/382ea98f270e39855b558b8fac0d609712a54ae8.iso
     ahk_do "
         send, {Enter}
         Sleep 1000
         winwait, Insert Disc"
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
     ahk_do "
         send, {Enter}
         Sleep 1000
@@ -3451,7 +3451,7 @@ load_diablo2() {
         winclose, Diablo II Setup"
     iso_umount
 
-    try "$WINE" "$WISOTOOL_CACHE"/diablo2/D2Patch_113c.exe
+    try "$WINE" "$W_CACHE"/diablo2/D2Patch_113c.exe
     ahk_do "
         winwait Blizzard Updater v2.72
         send {Enter}
@@ -3470,12 +3470,12 @@ load_diablo2() {
 verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009) [download]" Dirt2Demo.zip
 
 load_dirt2_demo() {
-    download $PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
+    download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
 
-    mkdir "$WISOTOOL_TMP/$PACKAGE"
-    try unzip -d "$WISOTOOL_TMP/$PACKAGE" "$WISOTOOL_CACHE/$PACKAGE/Dirt2Demo.zip"
+    mkdir "$WISOTOOL_TMP/$W_PACKAGE"
+    try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
 
-    cd "$WISOTOOL_TMP/$PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
 
     ahk_do "
         Run, "Setup.exe"
@@ -3527,7 +3527,7 @@ load_dragonage() {
 
     # Installer has a non-fatal crash on exit, so ignore it.
     sh "$WINETRICKS" -q nocrashdialog physx vcrun2005
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/705a6b06d0dd807bf62b4391d278649d728ebda4.iso
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -3584,7 +3584,7 @@ verblist_add dts     "Death to Spies (1C Company / Haggard Games, 2007)" 3cf30e6
 
 load_dts() {
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:Death_to_Spies_Setup.exe
@@ -3619,9 +3619,9 @@ verblist_add eve "EVE Online Tyrannis (CCP Games, 2010) [download]" EVE_Premium_
 
 load_eve() {
     # FIXME: download function should avoid checksumming huge old files
-    test -s "$WISOTOOL_CACHE/$PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
-        download $PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    test -s "$W_CACHE/$W_PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
+        download $W_PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run, EVE_Premium_Setup_177290_m.exe
         WinWait, EVE Online Installer
@@ -3657,10 +3657,10 @@ verblist_add ewj_demo     "Earthworm Jim demo (Shiny Entertainment, 1996) [downl
 
 load_ewj_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=4233
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ewjdemo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/ewjdemo.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download the demo from http://download.cnet.com/Earthworm-Jim-demo/3000-2099_4-10000793.html and put it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download the demo from http://download.cnet.com/Earthworm-Jim-demo/3000-2099_4-10000793.html and put it in $W_CACHE/$W_PACKAGE"
     fi
 
     # FIXME: If the user is on a 32-bit OS and has vm.mmap_min_addr=0, they can use Wine to extract the files.
@@ -3669,12 +3669,12 @@ load_ewj_demo() {
     then
         die "You need to install the `arj` utility to extract the demo files. (e.g., sudo apt-get install arj or sudo yum install arj)"
     else
-        mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-        cd "$WISOTOOL_TMP/$PACKAGE"
-        arj e "$WISOTOOL_CACHE/$PACKAGE/ewjdemo.exe"
+        mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+        cd "$WISOTOOL_TMP/$W_PACKAGE"
+        arj e "$W_CACHE/$W_PACKAGE/ewjdemo.exe"
         mkdir -p "$DRIVE_C/ewj_demo"
         cd "$DRIVE_C/ewj_demo"
-        arj e "$WISOTOOL_TMP/$PACKAGE/EWJFILES.EXE"
+        arj e "$WISOTOOL_TMP/$W_PACKAGE/EWJFILES.EXE"
     fi
 
     if workaround_wine_bug 19531
@@ -3707,7 +3707,7 @@ load_fable_tlc() {
         try sh "$WINETRICKS" -q mfc42
     fi
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/FABLE_DISK_1.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/FABLE_DISK_1.iso
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:setup.exe
@@ -3723,7 +3723,7 @@ load_fable_tlc() {
 	Send {Enter}
         WinWait,Fable,Disk 2
         "
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso
     ahk_do "
         SetTitleMatchMode, 2
         WinWait,Fable,Disk 2
@@ -3732,7 +3732,7 @@ load_fable_tlc() {
         WinWait,Fable,Disk 3
 	"
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/755eaa37cd52c1171339d2dae11979147cf62080.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/755eaa37cd52c1171339d2dae11979147cf62080.iso
     ahk_do "
         SetTitleMatchMode, 2
         WinWait,Fable,Disk 3
@@ -3741,7 +3741,7 @@ load_fable_tlc() {
         WinWait,Fable,Disk 4
 	"
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e435cfeb975e596db1bf953170462e3b81c41396.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/e435cfeb975e596db1bf953170462e3b81c41396.iso
     ahk_do "
         SetTitleMatchMode, 2
         WinWait,Fable,Disk 4
@@ -3752,24 +3752,24 @@ load_fable_tlc() {
 	"
 
     # Now tell game what the real disc is so user can insert disc 1 and run the game!
-    cat > "$WISOTOOL_TMP"/$PACKAGE.reg <<_EOF_
+    cat > "$WISOTOOL_TMP"/$W_PACKAGE.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\D3BE9C3CAF4226447B48E06CAACF2DDD\InstallProperties]
 "InstallSource"="D:\\"
 
 _EOF_
-    try_regedit "$WISOTOOL_TMP_WIN"\\$PACKAGE.reg
+    try_regedit "$WISOTOOL_TMP_WIN"\\$W_PACKAGE.reg
 
     # Also accept EULA
-    cat > "$WISOTOOL_TMP"/$PACKAGE.reg <<_EOF_
+    cat > "$WISOTOOL_TMP"/$W_PACKAGE.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Microsoft\Microsoft Games\Fable TLC]
 "FIRSTRUN"=dword:00000001
 
 _EOF_
-    try_regedit "$WISOTOOL_TMP_WIN"\\$PACKAGE.reg
+    try_regedit "$WISOTOOL_TMP_WIN"\\$W_PACKAGE.reg
 
     if workaround_wine_bug 24912
     then
@@ -3800,14 +3800,14 @@ verblist_add fallout3  "Fallout 3 Windows Live Version (Bethesda, 2009)" 4994dca
 
 load_fallout3()
 {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4994dca9fa2e105ea592899644f48d754338663f.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/4994dca9fa2e105ea592899644f48d754338663f.iso
 
     if workaround_wine_bug 23532
     then
         try "$WINETRICKS" -q xlive
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:setup.exe
@@ -3835,7 +3835,7 @@ verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2
 
 load_fallout3_goty() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -3863,7 +3863,7 @@ load_fallout3_goty() {
         controlclick, Button3, Fallout 3 - InstallShield Wizard, InstallShield Wizard Complete
     "
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
 
     ahk_do "
         Run, ${ISO_MOUNT_LETTER}:EN_Fallout_3_DLC.EXE
@@ -3898,22 +3898,22 @@ verblist_add fallout_nv  "Fallout New Vegas (Bethesda, 2010)" f603dfc0343ea4257d
 
 load_fallout_nv()
 {
-    warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $WISOTOOL_CACHE. You'll also need your cd-key for Fallout New Vegas already added to your Steam Account."
+    warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $W_CACHE. You'll also need your cd-key for Fallout New Vegas already added to your Steam Account."
 
-    if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    if [ ! "$STEAM_USER" -a ! -f "$W_CACHE"/STEAM_USER ]
     then
-        die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
-    elif [ ! "$STEAM_USER" -a -f "$WISOTOOL_CACHE"/STEAM_USER ]
+        die "You need to set STEAM_USER variable in your environment or put it in "$W_CACHE"/STEAM_USER"
+    elif [ ! "$STEAM_USER" -a -f "$W_CACHE"/STEAM_USER ]
     then
-        STEAM_USER=`cat "$WISOTOOL_CACHE"/STEAM_USER`
+        STEAM_USER=`cat "$W_CACHE"/STEAM_USER`
     fi
 
-    if [ ! "$STEAM_PASS" -a ! -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    if [ ! "$STEAM_PASS" -a ! -f "$W_CACHE"/STEAM_PASS ]
     then
-        die "You need to set STEAM_PASS variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_PASS"
-    elif [ ! "$STEAM_PASS" -a -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+        die "You need to set STEAM_PASS variable in your environment or put it in "$W_CACHE"/STEAM_PASS"
+    elif [ ! "$STEAM_PASS" -a -f "$W_CACHE"/STEAM_PASS ]
     then
-        STEAM_PASS=`cat "$WISOTOOL_CACHE"/STEAM_PASS`
+        STEAM_PASS=`cat "$W_CACHE"/STEAM_PASS`
     fi
 
     steam_dir="$programfilesdir_unix/Steam"
@@ -3921,7 +3921,7 @@ load_fallout_nv()
     # Game uses Steam to install itself
     try sh $WINETRICKS -q steam
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
 
     cd "$steam_dir"
 
@@ -3976,10 +3976,10 @@ verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f3335
 
 load_fifa10() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/2038b86319862e1177912949e9f826f333571c48.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/2038b86319862e1177912949e9f826f333571c48.iso
 
     # Get user's key
-    fifakey=`cat "$WISOTOOL_CACHE"/$PACKAGE/2038b86319862e1177912949e9f826f333571c48.txt | tr -d -`
+    fifakey=`cat "$W_CACHE"/$W_PACKAGE/2038b86319862e1177912949e9f826f333571c48.txt | tr -d -`
 
     if workaround_wine_bug 23433 'wine-1.2-422*|wine-1.2.*'
     then
@@ -4037,11 +4037,11 @@ verblist_add fifa11_demo    "FIFA 11 Demo (EA Sports, 2010) [download]" fifa11_p
 load_fifa11_demo()
 {
     # From http://www.easportsfootball.co.uk/news/item/file/FIFA-11-Demo-Release?om_u=2255229429&om_i=_BMknsPB8Usvnmr
-    download $PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
+    download $W_PACKAGE http://static.cdn.ea.com/fifa/u/f/fifa11_pc_demo_NA.zip c3a66284bffb985f31b11e477dade50c0d4cac52
 
-    mkdir "$WISOTOOL_TMP/$PACKAGE"
-    try unzip -d "$WISOTOOL_TMP/$PACKAGE" "$WISOTOOL_CACHE/$PACKAGE/fifa11_pc_demo_NA.zip"
-    cd "$WISOTOOL_TMP/$PACKAGE"
+    mkdir "$WISOTOOL_TMP/$W_PACKAGE"
+    try unzip -d "$WISOTOOL_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_pc_demo_NA.zip"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -4096,15 +4096,15 @@ verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download
 
 load_fifaonline3_beta()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/FIFAOnlineSetup.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/FIFAOnlineSetup.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
+        mkdir -p "$W_CACHE"/$W_PACKAGE
         die "Download the FIFAOnlineSetup.exe from http://fifa-online.easports.com/web/beta/welcome \
-             or http://www.fileplanet.com/190743/download/FIFA-Online-Game-Client and place it in $WISOTOOL_CACHE/$PACKAGE"
+             or http://www.fileplanet.com/190743/download/FIFA-Online-Game-Client and place it in $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: sha1sum?
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, FIFAOnlineSetup.exe
@@ -4146,7 +4146,7 @@ load_fifaonline3_beta()
     cd "$DRIVE_C"
     ahk_do "
         SetTitleMatchMode, 2
-        run, cmd /c run-$PACKAGE.bat
+        run, cmd /c run-$W_PACKAGE.bat
         winwait, EA SPORTS, Download Commentary
         controlclick, Button1, EA SPORTS, Download Commentary
         "
@@ -4168,7 +4168,7 @@ load_fifaonline3_beta()
 verblist_add fifa10_demo     "Fifa 10 Demo (EA, 2009)" fifa10_pc_demo_ec.exe
 
 load_fifa10_demo() {
-    download $PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
+    download $W_PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
 
     # The installer is a self extracting rar file. Make cleanups easy by using $WISOTOOL_TMP
     mkdir "$WISOTOOL_TMP/fifa10"
@@ -4181,12 +4181,12 @@ load_fifa10_demo() {
         fifatitle="FIFA 10 - Demo"
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         Run fifa10_pc_demo_ec.exe
         winwait, FIFA 10 PC Demo
-        send $WISOTOOL_TMP_WIN\\${PACKAGE}{ENTER}
+        send $WISOTOOL_TMP_WIN\\${W_PACKAGE}{ENTER}
         winwait, FIFA 10 - Demo, View the readme file
         sleep 1000
         controlclick, Button1, FIFA 10 - Demo, View the readme file
@@ -4224,11 +4224,11 @@ load_fifa10_demo() {
 verblist_add ffvii_demo "Final Fantasy VII (Square Enix, 1998)" ff7demo.zip
 
 load_ffvii_demo() {
-    download $PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
+    download $W_PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
 
     mkdir "$programfilesdir_x86_unix/ffvii_demo"
     cd "$programfilesdir_x86_unix/ffvii_demo"
-    try unzip "$WISOTOOL_CACHE/$PACKAGE/ff7demo.zip"
+    try unzip "$W_CACHE/$W_PACKAGE/ff7demo.zip"
 
     if workaround_wine_bug 9220
     then
@@ -4245,14 +4245,14 @@ verblist_add ffxiv_beta "Final Fantasy XIV Beta (Square Enix, 2010)" ffxivsetup.
 
 load_ffxiv_beta() {
     # e6e615e5886c17e744fc4aba7b267e7e3dcbdb52 ffxivsetup.exe
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ffxivsetup.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/ffxivsetup.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE"/$PACKAGE
+        mkdir -p "$W_CACHE"/$W_PACKAGE
         die "Register for the beta and download ffxivsetup.exe from https://dev-na.ffxiv.com/ \
-             and place it in $WISOTOOL_CACHE/$PACKAGE"
+             and place it in $W_CACHE/$W_PACKAGE"
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
     SetTitleMatchMode, 2
     run, ffxivsetup.exe
@@ -4317,10 +4317,10 @@ load_ffxiv_beta() {
 verblist_add ffxivbench "Final Fantasy XIV Benchmark (Square Enix, 2010)" FFXIVBenchmark.zip
 
 load_ffxivbench() {
-    download $PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
+    download $W_PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
 
     cd "$programfilesdir_x86_unix"
-    try unzip "$WISOTOOL_CACHE/$PACKAGE/FFXIVBenchmark.zip"
+    try unzip "$W_CACHE/$W_PACKAGE/FFXIVBenchmark.zip"
 
 # Setup two batch files, one for high res, one for low res:
 cat > FFXIVBenchmark/data/config.low <<__EOF__
@@ -4339,14 +4339,14 @@ RESOLUTION=0
 LOOP=0
 __EOF__
 
-cat > "$DRIVE_C/run-$PACKAGE-low.bat" <<__EOF__
+cat > "$DRIVE_C/run-$W_PACKAGE-low.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\FFXIVBenchmark\\data"
 copy config.low config.ini /y
 FFXivWinBenchmark.exe
 __EOF__
 
-cat > "$DRIVE_C/run-$PACKAGE-high.bat" <<__EOF__
+cat > "$DRIVE_C/run-$W_PACKAGE-high.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\FFXIVBenchmark\\data"
 copy config.high config.ini /y
@@ -4365,13 +4365,13 @@ fi
 verblist_add fm10_demo "Football Manager 2010 demo (Sony, 2009)" Setup_FM2010_Vanilla_Demo.exe
 
 load_fm10_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Setup_FM2010_Vanilla_Demo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Setup_FM2010_Vanilla_Demo.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Download the demo from http://www.mirrorfootball.co.uk/football-manager-2010/ and put it in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Download the demo from http://www.mirrorfootball.co.uk/football-manager-2010/ and put it in $W_CACHE/$W_PACKAGE"
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
     run, Setup_FM2010_Vanilla_Demo.exe
     winwait, Football Manager 2010 Demo
@@ -4413,9 +4413,9 @@ load_fm10_demo() {
 verblist_add futurepinball "Future Pinball (Christopher Leathley, 2008) [download]"
 
 load_futurepinball() {
-    download $PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
+    download $W_PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
     
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         Run, FuturePinballSetup_v1.9.20081225.exe
@@ -4469,11 +4469,11 @@ verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [dow
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
 load_gothic4_demo() {
-    download $PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip 
+    download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip 
 
-    try mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_TMP/$PACKAGE"
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip 
+    try mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
+    try unzip "$W_CACHE/$W_PACKAGE"/ArcaniA_Gothic4_Demo_Setup.zip 
     
     ahk_do "
         Settitlematchmode, 2
@@ -4543,7 +4543,7 @@ verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " Gran
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
 
 load_grand_ages_rome_demo() {
-    download $PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
+    download $W_PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
     
     if workaround_wine_bug 24819
     then
@@ -4551,7 +4551,7 @@ load_grand_ages_rome_demo() {
         $WINESERVER -w
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
     Settitlematchmode, 2
@@ -4585,7 +4585,7 @@ verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
   d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
 
 load_gta_vc() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
     ahk_do "
     SetTitleMatchMode, 2
     Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -4617,7 +4617,7 @@ load_gta_vc() {
     send {enter}
     winwait, Setup Needs The Next Disk, Please insert disk 2
     sleep 1000"
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
     ahk_do "
     sleep 1000
     send {enter}
@@ -4638,9 +4638,9 @@ load_gta_vc() {
 verblist_add guildwars    "Guild Wars (NCsoft, 2005) [download]" GwSetup.exe
 
 load_guildwars() {
-    download $PACKAGE http://guildwars.com/download a7c4c8cb3b8cbee20707dcf8176d3da6a1686c05 GwSetup.exe
+    download $W_PACKAGE http://guildwars.com/download a7c4c8cb3b8cbee20707dcf8176d3da6a1686c05 GwSetup.exe
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         Run, GwSetup.exe
@@ -4665,7 +4665,7 @@ verblist_add half_life_goty     "Half Life: Game of the Year Edition (Sierra, 20
   dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
 
 load_half_life_goty() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
 
     ahk_do "
     SetTitleMatchMode, 2
@@ -4705,7 +4705,7 @@ load_half_life_goty() {
     "
 
     # The key is put in on first run:
-    HALF_LIFE_GOTY_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.txt`
+    HALF_LIFE_GOTY_KEY=`cat "$W_CACHE"/$W_PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.txt`
     cd $DRIVE_C/SIERRA/Half-Life
 
     # Forcefully closing the process later will screw up the screen resolution, so store the user's current resolution so we can restore it later:
@@ -4732,9 +4732,9 @@ load_half_life_goty() {
 verblist_add hko "Hello Kitty Online (Sanrio Digital, 2009) [download]" "Hello Kitty Online Standard Installer.zip"
 
 load_hko() {
-    download $PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
-    download_torrent $PACKAGE hkostandardinstaller.torrent
-    try unzip "$WISOTOOL_CACHE/$PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$WISOTOOL_TMP"
+    download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
+    download_torrent $W_PACKAGE hkostandardinstaller.torrent
+    try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$WISOTOOL_TMP"
     cd "$WISOTOOL_TMP/Hello Kitty Online Standard Installer"
 
     ahk_do "
@@ -4793,8 +4793,8 @@ load_hko() {
 verblist_add hm_demo "Hearts Medicine Demo (Gamehouse, 2010) [download]" HeartsMedicine_Season1_download.exe
 
 load_hm_demo() {
-    download $PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    download $W_PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -4843,14 +4843,14 @@ load_hm_demo() {
 verblist_add hordsoforcs2_demo "Hordes of Orcs 2 Demo (Freeverse, 2010) [download]" HoO2Demo.exe
 
 load_hordsoforcs2_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/HoO2Demo.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/HoO2Demo.exe
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please visit http://www.fileplanet.com/216619/download/Hordes-of-Orcs-2-Demo, download HoO2Demo.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please visit http://www.fileplanet.com/216619/download/Hordes-of-Orcs-2-Demo, download HoO2Demo.exe, and place it in directory $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: check sha1sum 1ba26d35697e359f89a30915140e471fadc675da
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -4905,12 +4905,12 @@ load_hphbp_demo()
     ""|"C") die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$hbpdemoexe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/$hbpdemoexe"
     then
-        download $PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
+        download $W_PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, $hbpdemoexe
@@ -4934,7 +4934,7 @@ load_hphbp_demo()
     # Not sure I trust putting \U2122 in a batch file, so use a wild card to cd to the right dir.
     # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
     # Have to be in the pc directory for the app to find its files.
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince* Demo
 cd pc
@@ -4952,8 +4952,8 @@ load_hphbp()
     ""|"C") die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
-    HPHBP_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.txt | tr -d -`
+    iso_mount "$W_CACHE"/$W_PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
+    HPHBP_KEY=`cat "$W_CACHE"/$W_PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.txt | tr -d -`
     ahk_do "
         SetTItleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:EASetup.exe
@@ -4976,7 +4976,7 @@ load_hphbp()
     $WINESERVER -w
     iso_umount
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd $programfilesdir_x86_win\\Electronic Arts\\Harry Potter and the Half-Blood Prince*
 cd pc
@@ -4991,17 +4991,17 @@ verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Game
 load_hegemonypom_demo()
 {
     # This is awkward because of the rename
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Hegemony_Philip_of_Macedon_Installer.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Hegemony_Philip_of_Macedon_Installer.exe"
     then
         # Oct 2010: d3d2aa020d38b594d112360ae40871662d35dea4
         # Nov 2010: 80cad805ad4bed0d3c493f2d9a40d06512c429a9 http://www.longbowgames.com/forums/topic/?id=2223&start=0#post22184
-        download $PACKAGE http://www.longbowgames.com/downloads/Hegemony%20Philip%20of%20Macedon%20Installer.exe 80cad805ad4bed0d3c493f2d9a40d06512c429a9
+        download $W_PACKAGE http://www.longbowgames.com/downloads/Hegemony%20Philip%20of%20Macedon%20Installer.exe 80cad805ad4bed0d3c493f2d9a40d06512c429a9
         # FIXME: download changes the working directory
-        cd "$WISOTOOL_CACHE/$PACKAGE"
+        cd "$W_CACHE/$W_PACKAGE"
         # Get rid of spaces in exe name, since download leaves them as %20's, and ahk_do might not make it easy to use quotes
         mv Hegemony* Hegemony_Philip_of_Macedon_Installer.exe
     else
-        cd "$WISOTOOL_CACHE/$PACKAGE"
+        cd "$W_CACHE/$W_PACKAGE"
     fi
 
     if workaround_wine_bug 24819
@@ -5067,9 +5067,9 @@ $honexe
 
 load_hon()
 {
-    download $PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
+    download $W_PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, $honexe
@@ -5096,11 +5096,11 @@ load_hon()
 verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005) (broken in wine-1.3.3?) [download]"  hod3_trial.exe
 
 load_hod3_jp_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/hod3_trial.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/hod3_trial.exe"
     then
-        download $PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
+        download $W_PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
     fi
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         ; Use slow matching because otherwise autohotkey cant find the 1-2-12 in the Asian text
@@ -5151,9 +5151,9 @@ verblist_add imvu "IMVU - Instant Messaging Virtual Universe (IMVU, 2004) [downl
 
 load_imvu() {
 
-    download $PACKAGE "http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_447.0_st_conduit.exe" 61963e1c8d45c7dba942d85efadaf6284c556af4
+    download $W_PACKAGE "http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_447.0_st_conduit.exe" 61963e1c8d45c7dba942d85efadaf6284c556af4
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         Run, InstallIMVU_447.0_st_conduit.exe
@@ -5184,9 +5184,9 @@ verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga
 # See also http://en.wikipedia.org/wiki/AGD_Interactive
 
 load_kq1vga() {
-    download $PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
+    download $W_PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run Kq1vga40.exe
         WinWait, King's Quest I Install Program - Welcome
@@ -5238,12 +5238,12 @@ load_lhp_demo()
     *) die "This installer fails in non-utf-8 locales.  Try doing export LANG=en_US.UTF-8"
     esac
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/LEGOHarryPotterDEMO.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/LEGOHarryPotterDEMO.exe"
     then
-        download $PACKAGE http://static.kidswb.com/legoharrypottergame/LEGOHarryPotterDEMO.exe bb0a30ad9a7cc51c80e1bb1f3eec22e6ccc1a706
+        download $W_PACKAGE http://static.kidswb.com/legoharrypottergame/LEGOHarryPotterDEMO.exe bb0a30ad9a7cc51c80e1bb1f3eec22e6ccc1a706
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, LEGOHarryPotterDEMO.exe
@@ -5277,9 +5277,9 @@ load_lol()
 # http://www.leagueoflegends.com/
 
     # Outer installer, fetches the latest client
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LeagueofLegends.exe"
+    if ! test -f "${W_CACHE}/${W_PACKAGE}/LeagueofLegends.exe"
     then
-        download ${PACKAGE} http://l3cdn.riotgames.com/Installer/ProdSource.06_29_2010/LeagueofLegends.exe 89cb958c6430c7840c377b61cae7939a0d276249
+        download ${W_PACKAGE} http://l3cdn.riotgames.com/Installer/ProdSource.06_29_2010/LeagueofLegends.exe 89cb958c6430c7840c377b61cae7939a0d276249
     fi
 
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
@@ -5315,9 +5315,9 @@ load_lol()
         warn "The installer's background will be white. Known wine bug, no workaround yet. See http://bugs.winehq.org/show_bug.cgi?id=24025"
     fi
 
-    if ! test -d "$WISOTOOL_CACHE/$PACKAGE/LeagueofLegends"
+    if ! test -d "$W_CACHE/$W_PACKAGE/LeagueofLegends"
     then
-        cd "${WISOTOOL_CACHE}/${PACKAGE}"
+        cd "${W_CACHE}/${W_PACKAGE}"
         ahk_do "
             settitlematchmode, 2
             run, LeagueofLegends.exe
@@ -5334,7 +5334,7 @@ load_lol()
                 else
                     break
             }
-            ; After it finishing download, move the files from $DRIVE_C/users/$LOGNAME/Desktop to $WISOTOOL_CACHE/$PACKAGE
+            ; After it finishing download, move the files from $DRIVE_C/users/$LOGNAME/Desktop to $W_CACHE/$W_PACKAGE
             winwaitclose, League of Legends Downloader
             process, close, setup.exe
             process, close, PMB.exe
@@ -5343,10 +5343,10 @@ load_lol()
         # FIXME: Make this more generic(move out of this function, so others can use it) / test on XP and Vista+
         WINEDESKTOP="`$WINE cmd /c echo %USERPROFILE% | tr -d '\r' | sed 's,\\\\,\\\\\\\\,g'`"
         DESKTOPDIR="`$XXXPATH -u $WINEDESKTOP`/Desktop"
-        mv "$DESKTOPDIR/LeagueofLegends" "$WISOTOOL_CACHE/$PACKAGE/"
+        mv "$DESKTOPDIR/LeagueofLegends" "$W_CACHE/$W_PACKAGE/"
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE/LeagueofLegends"
+    cd "$W_CACHE/$W_PACKAGE/LeagueofLegends"
     ahk_do "
         settitlematchmode, 2
         run, Setup.exe
@@ -5376,7 +5376,7 @@ load_lol()
         sh "$WINETRICKS" -q ie6
     fi
 
-cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+cat > "${DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 C:
 cd "C:\\Riot Games\\League of Legends"
 lol.launcher.exe
@@ -5388,7 +5388,7 @@ set -x
     cd "$DRIVE_C"
     ahk_do "
         SetTitleMatchMode, 2
-        run, run-$PACKAGE.bat
+        run, run-$W_PACKAGE.bat
         winwait, League of Legends Launcher,Accept
         send {Enter}
     "
@@ -5427,12 +5427,12 @@ set -x
 verblist_add lol_standalone "League of Legends standalone client (Riot Games, 2009)" 'StandAlone_9_21_2010_NA(with%20sse2%20fix).rar'
 
 load_lol_standalone() {
-    download ${PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
+    download ${W_PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
     mkdir -p "$DRIVE_C/Riot Games"
     cd "$DRIVE_C/Riot Games"
-    try_unrar x "$WISOTOOL_CACHE/$PACKAGE/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar"
+    try_unrar x "$W_CACHE/$W_PACKAGE/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar"
 
-cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+cat > "${DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 C:
 cd "C:\\Riot Games\\StandAlone_9_21_2010_NA"
 lol.launcher.exe
@@ -5468,14 +5468,14 @@ verblist_add lotsn   "Launch of the Screaming Narwhal (Telltale Games / Lucasart
 
 load_lotsn()
 {
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe"
+    if ! test -f "${W_CACHE}/${W_PACKAGE}/LaunchOfTheScreamingNarwhal_Setup.exe"
     then
-        download ${PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
+        download ${W_PACKAGE} http://www.telltalegames.com/demo/launchofthescreamingnarwhal 8a9292d89fd5e7efe58e63dcfc84a05bf08ff1d6 LaunchOfTheScreamingNarwhal_Setup.exe
     fi
 
     load_gecko
 
-    cd "${WISOTOOL_CACHE}/${PACKAGE}"
+    cd "${W_CACHE}/${W_PACKAGE}"
     chmod +x LaunchOfTheScreamingNarwhal_Setup.exe
     ahk_do "
         SetTitleMatchMode, 2
@@ -5513,16 +5513,16 @@ load_lp2bench()
 {
     # http://news.bigdownload.com/2010/08/16/lost-planet-2-pc-due-out-on-october-15-benchmark-test-released/
 
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.zip"
+    if ! test -f "${W_CACHE}/${W_PACKAGE}/LostPlanet2_Benchmark.zip"
     then
-        download ${PACKAGE} http://gamedaily.newaol.com/pub/LostPlanet2_Benchmark.zip 2c9862adc81974a61a450a1865cd60decd82587c
+        download ${W_PACKAGE} http://gamedaily.newaol.com/pub/LostPlanet2_Benchmark.zip 2c9862adc81974a61a450a1865cd60decd82587c
     fi
 
-    cd "${WISOTOOL_CACHE}/${PACKAGE}/"
+    cd "${W_CACHE}/${W_PACKAGE}/"
 
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/LostPlanet2_Benchmark.exe"
+    if ! test -f "${W_CACHE}/${W_PACKAGE}/LostPlanet2_Benchmark.exe"
     then
-        try unzip "$WISOTOOL_CACHE/$PACKAGE"/LostPlanet2_Benchmark.zip
+        try unzip "$W_CACHE/$W_PACKAGE"/LostPlanet2_Benchmark.zip
     fi
 
     ahk_do "
@@ -5570,7 +5570,7 @@ load_lp2bench()
 verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
 
 load_lswcs() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         SetTitleMatchMode, 2
@@ -5599,13 +5599,13 @@ verblist_add losthorizon_demo "Lost Horizon Demo (Deep Silver, 2010) [download]"
 
 load_losthorizon_demo() {
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/Lost_Horizon_Demo_EN.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/Lost_Horizon_Demo_EN.exe
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please visit http://www.fileplanet.com/215704/download/Lost-Horizon-Demo, download Lost_Horizon_Demo_EN.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please visit http://www.fileplanet.com/215704/download/Lost-Horizon-Demo, download Lost_Horizon_Demo_EN.exe, and place it in directory $W_CACHE/$W_PACKAGE"
     fi
     
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -5656,7 +5656,7 @@ verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
 load_manhole() {
     cd $WISOTOOL_TMP
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
     mkdir -p "$DRIVE_C"/manhole
     try cp -r "$ISO_MOUNT_ROOT"/* "$DRIVE_C"/manhole
     iso_umount
@@ -5674,8 +5674,8 @@ verblist_add masseffect2       "Mass Effect 2 (BioWare, 2010)" \
   49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
 
 load_masseffect2() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
-    ME2_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
+    iso_mount "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
+    ME2_KEY=`cat "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
 
     if workaround_wine_bug 22091
     then
@@ -5719,7 +5719,7 @@ load_masseffect2() {
         winwait, Insert Disc
     "
     sleep 5
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
     ahk_do "
         SetTitleMatchMode, 2
         winwait, Insert Disc
@@ -5756,7 +5756,7 @@ load_masseffect2() {
 verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010) [download]" MassEffect2DemoEN.exe
 
 load_masseffect2_demo() {
-    download ${PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
+    download ${W_PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
 
     if workaround_wine_bug 22091
     then
@@ -5782,12 +5782,12 @@ load_masseffect2_demo() {
         try sh "$WINETRICKS" -q physx
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     case "$OS" in
         "Windows_NT")
-            cp "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
+            cp "$W_CACHE/$W_PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
         *)
-            ln -sf "$WISOTOOL_CACHE/$PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
+            ln -sf "$W_CACHE/$W_PACKAGE/MassEffect2DemoEN.exe" "$WISOTOOL_TMP" ;;
     esac
     cd "$WISOTOOL_TMP"
     ahk_do "
@@ -5835,15 +5835,15 @@ verblist_add maxmagicmarker_demo "Download: Max & the Magic Marker Demo (2010) [
 
 load_maxmagicmarker_demo() {
 
-    download $PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
+    download $W_PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
 
-    try mkdir "$programfilesdir_x86_unix"/$PACKAGE
-    cd "$programfilesdir_x86_unix"/$PACKAGE
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/max_demo_pc.zip
+    try mkdir "$programfilesdir_x86_unix"/$W_PACKAGE
+    cd "$programfilesdir_x86_unix"/$W_PACKAGE
+    try unzip "$W_CACHE/$W_PACKAGE"/max_demo_pc.zip
     # Work around bug in game?!
     mv "max and the magic markerdemo pc" "max and the magic markerdemo pc"_Data
 
-    w_declare_exe "$programfilesdir_x86_win\\$PACKAGE" "max and the magic markerdemo pc.exe"
+    w_declare_exe "$programfilesdir_x86_win\\$W_PACKAGE" "max and the magic markerdemo pc.exe"
 }
 
 #----------------------------------------------------------------
@@ -5851,22 +5851,22 @@ load_maxmagicmarker_demo() {
 verblist_add metro2033     "Metro 2033 (THQ, 2010)" 3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
 
 load_metro2033() {
-    warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $WISOTOOL_CACHE. You'll also need your cd-key for Metro 2033 already added to your Steam Account."
+    warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $W_CACHE. You'll also need your cd-key for Metro 2033 already added to your Steam Account."
 
-    if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    if [ ! "$STEAM_USER" -a ! -f "$W_CACHE"/STEAM_USER ]
     then
-        die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
-    elif [ ! "$STEAM_USER" -a -f "$WISOTOOL_CACHE"/STEAM_USER ]
+        die "You need to set STEAM_USER variable in your environment or put it in "$W_CACHE"/STEAM_USER"
+    elif [ ! "$STEAM_USER" -a -f "$W_CACHE"/STEAM_USER ]
     then
-        STEAM_USER=`cat "$WISOTOOL_CACHE"/STEAM_USER`
+        STEAM_USER=`cat "$W_CACHE"/STEAM_USER`
     fi
 
-    if [ ! "$STEAM_PASS" -a ! -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    if [ ! "$STEAM_PASS" -a ! -f "$W_CACHE"/STEAM_PASS ]
     then
-        die "You need to set STEAM_PASS variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_PASS"
-    elif [ ! "$STEAM_PASS" -a -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+        die "You need to set STEAM_PASS variable in your environment or put it in "$W_CACHE"/STEAM_PASS"
+    elif [ ! "$STEAM_PASS" -a -f "$W_CACHE"/STEAM_PASS ]
     then
-        STEAM_PASS=`cat "$WISOTOOL_CACHE"/STEAM_PASS`
+        STEAM_PASS=`cat "$W_CACHE"/STEAM_PASS`
     fi
 
     steam_dir="$programfilesdir_unix/Steam"
@@ -5874,8 +5874,8 @@ load_metro2033() {
     # Game uses Steam to install itself
     try sh $WINETRICKS -q steam
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
-    METRO_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.txt | tr -d -`
+    iso_mount "$W_CACHE"/$W_PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
+    METRO_KEY=`cat "$W_CACHE"/$W_PACKAGE/3de89e07449c2573cd4a334b0cd7da012a98f97c.txt | tr -d -`
 
     cd "$steam_dir"
 
@@ -5921,7 +5921,7 @@ load_metro2033() {
 
     warn "You'll need the Xinput2 patch from http://bugs2.winehq.org/attachment.cgi?id=29313 to be able to use the mouse."
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\\Steam"
 Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110
@@ -5935,10 +5935,10 @@ verblist_add mise "Monkey Island: Special Edition (LucasArts, 2009)" SecretOfMon
 
 load_mise() {
     # Archive SHA1SUM 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/SecretOfMonkeyIslandSE_ddsetup.zip" ]
+    if [ ! -f "$W_CACHE/$W_PACKAGE/SecretOfMonkeyIslandSE_ddsetup.zip" ]
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $WISOTOOL_CACHE/$PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $W_CACHE/$W_PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
     fi
 
     if workaround_wine_bug 22161
@@ -5960,11 +5960,11 @@ load_mise() {
     fi
 
     cd "$WISOTOOL_TMP"
-    mkdir $PACKAGE
-    cd $PACKAGE
+    mkdir $W_PACKAGE
+    cd $W_PACKAGE
 
     # Don't extract DirectX/dotnet35 installers, they just take up extra time and aren't needed. Luckily, MISE copes well and just skips them if they are missing:
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip -x DirectX* dotnet*
+    try unzip "$W_CACHE/$W_PACKAGE"/SecretOfMonkeyIslandSE_ddsetup.zip -x DirectX* dotnet*
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -5990,9 +5990,9 @@ load_mise() {
     cd "$olddir"
 
     # Activate
-    if test -f "$WISOTOOL_CACHE"/$PACKAGE/activationcode.txt
+    if test -f "$W_CACHE"/$W_PACKAGE/activationcode.txt
     then
-        MISE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/activationcode.txt`
+        MISE_KEY=`cat "$W_CACHE"/$W_PACKAGE/activationcode.txt`
         ahk_do "
             SetTitleMatchMode, 2
             run, $programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition\\MISE.exe
@@ -6003,9 +6003,9 @@ load_mise() {
             winwait, Product Activation, SUCCESSFUL
             winClose
         "
-    elif test -f "$WISOTOOL_CACHE"/$PACKAGE/unlockcode.txt
+    elif test -f "$W_CACHE"/$W_PACKAGE/unlockcode.txt
     then
-        MISE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/unlockcode.txt`
+        MISE_KEY=`cat "$W_CACHE"/$W_PACKAGE/unlockcode.txt`
         ahk_do "
             SetTitleMatchMode, 2
             run, $programfilesdir_x86_win\\LucasArts\\The Secret of Monkey Island Special Edition\\MISE.exe
@@ -6028,17 +6028,17 @@ verblist_add moh_beta    "Medal of Honor: Beta (EA, 2010) [download]" MOHMP_Beta
 load_moh_beta()
 {
     # Archive SHA1SUM 7585700202ec305017038be4f1cb8ee1b43c24a2
-    file="$WISOTOOL_CACHE/$PACKAGE/MOHMP_Beta_PC_Client_R2_550504_Installer.zip"
-    test -f "$file" || file="$WISOTOOL_CACHE/$PACKAGE/MOH-MPBetaClient_R2550504_Installer.zip"
+    file="$W_CACHE/$W_PACKAGE/MOHMP_Beta_PC_Client_R2_550504_Installer.zip"
+    test -f "$file" || file="$W_CACHE/$W_PACKAGE/MOH-MPBetaClient_R2550504_Installer.zip"
     if ! test -f "$file"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Download the beta from http://medalofhonor.com/beta or http://www.fileplanet.com/213429/210000/fileinfo/Medal-of-Honor---Multiplayer-Beta-Client and place in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Download the beta from http://medalofhonor.com/beta or http://www.fileplanet.com/213429/210000/fileinfo/Medal-of-Honor---Multiplayer-Beta-Client and place in $W_CACHE/$W_PACKAGE"
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    try unzip -o "$file" -d "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    try unzip -o "$file" -d "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, setup.exe
@@ -6095,7 +6095,7 @@ load_morrowind() {
     # FIXME: Only supports the main installer, and the construction set (which follows automatically)
     # eventually should support the expansions as well
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
     ahk_do "
     SetTitleMatchMode, 2
     Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -6152,11 +6152,11 @@ verblist_add mnbw_demo "Mount & Blade Warband Demo (Taleworlds, 2010) [download]
 
 load_mnbw_demo()
 {
-    if ! test -f "${WISOTOOL_CACHE}/${PACKAGE}/${mnbw_demo_exe}"
+    if ! test -f "${W_CACHE}/${W_PACKAGE}/${mnbw_demo_exe}"
     then
-        download ${PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
+        download ${W_PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
     fi
-    cd "${WISOTOOL_CACHE}/${PACKAGE}"
+    cd "${W_CACHE}/${W_PACKAGE}"
     chmod +x ${mnbw_demo_exe}
     ahk_do "
         SetTitleMatchMode, 2
@@ -6180,20 +6180,20 @@ verblist_add nd23_saw_demo    "Nancy Drew 23: Shadow at the Waters Edge Demo (He
 
 load_nd23_saw_demo() {
     # http://www.herinteractive.com/Mystery_Games/Nancy_Drew/Shadow_at_the_Waters_Edge/pc
-    download $PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
+    download $W_PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
 
     cd "$DRIVE_C"
-    mkdir $PACKAGE
-    cd $PACKAGE
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/SAW_demo1.zip
+    mkdir $W_PACKAGE
+    cd $W_PACKAGE
+    try unzip "$W_CACHE/$W_PACKAGE"/SAW_demo1.zip
 
     if workaround_wine_bug 24754
     then
         try sh "$WINETRICKS" -q d3dx9_36
     fi
-    cat > "${DRIVE_C}/run-${PACKAGE}.bat" << __EOF__
+    cat > "${DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
 c:
-cd "${PACKAGE}"
+cd "${W_PACKAGE}"
 Shadow.exe
 __EOF__
 }
@@ -6204,18 +6204,18 @@ verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007) [download
 
 load_nfsps_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ps_pcdemo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/ps_pcdemo.exe"
     then
-        download $PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
+        download $W_PACKAGE http://largedownloads.ea.com/pub/demos/NFS/prostreet/nfsps_pcdemo.exe 9cf74563d28c29a40920e0c0644c2da6e8e2a888
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, nfsps_pcdemo.exe
         winwait, ProStreet, folder
-        send $WISOTOOL_TMP_WIN\\$PACKAGE
+        send $WISOTOOL_TMP_WIN\\$W_PACKAGE
         controlclick, Button2
         winwait, ProStreet, View the readme
         controlclick, Button1
@@ -6256,8 +6256,8 @@ load_nfsshift()
         msvcrun_me_harder=""
     fi
 
-    NFSSHIFT_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.txt | tr -d -`
-    iso_mount "$WISOTOOL_CACHE/$PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.iso"
+    NFSSHIFT_KEY=`cat "$W_CACHE"/$W_PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.txt | tr -d -`
+    iso_mount "$W_CACHE/$W_PACKAGE/83d3b7499742ccf77da11fc2613de422c6f30572.iso"
     ahk_do "
         SetTitleMatchMode, 2
         ; note: if this is the second run, the installer skips the registration code prompt
@@ -6305,9 +6305,9 @@ load_nfsshift()
     "
     iso_umount
 
-    download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/SHIFTPCPATCHV1.02_NA.exe 3ec2bf46aeb223c369ffcb0b57c080fba67d5dd9
+    download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/SHIFTPCPATCHV1.02_NA.exe 3ec2bf46aeb223c369ffcb0b57c080fba67d5dd9
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run SHIFTPCPATCHV1.02_NA.exe
@@ -6325,22 +6325,22 @@ verblist_add nfsshift_demo    "Need For Speed: SHIFT Demo (EA, 2009) [download]"
 
 load_nfsshift_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/NFSSHIFTPCDEMO.exe"
     then
-        download $PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
+        download $W_PACKAGE http://cdn.needforspeed.com/data/downloads/shift/NFSSHIFTPCDEMO.exe 7b267654d08c54f15813f2917d9d74ec40905db7
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
     # FIXME: use ln -s on Linux (in case user has run 'winetricks sandbox'),
     # but run the package from the cache on Windows
-    cp "$WISOTOOL_CACHE/$PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
+    cp "$W_CACHE/$W_PACKAGE/NFSSHIFTPCDEMO.exe" "$WISOTOOL_TMP"
     cd "$WISOTOOL_TMP"
     ahk_do "
         SetTitleMatchMode, 2
         SetTitleMatchMode, slow
         run, NFSSHIFTPCDEMO.exe
         winwait, WinRAR
-        send $PACKAGE
+        send $W_PACKAGE
         ControlClick, Button2
         winwait, SHIFT, View the readme
         controlclick, Button1
@@ -6390,7 +6390,7 @@ verblist_add oblivion    "Elder Scrolls: Oblivion (Bethesda Game Studios, 2006)"
 
 load_oblivion()
 {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/0c6826d55029e7b64150ebe804220284962657e1.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/0c6826d55029e7b64150ebe804220284962657e1.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -6427,8 +6427,8 @@ load_orangebox() {
     # Now, um, let it log in for a few seconds.  Anyone know how to tell when it's done?
     sleep 45
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.iso
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.txt | tr -d -`
+    iso_mount "$W_CACHE"/$W_PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.iso
+    KEY=`cat "$W_CACHE"/$W_PACKAGE/976f67eec4b84331de8f6695272bc9192466da6a.txt | tr -d -`
     ahk_do "
         SetTitleMatchMode, 2
         Run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -6460,7 +6460,7 @@ load_orangebox() {
         sendEvent {Enter}
         winwait, Insert
     "
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -6479,9 +6479,9 @@ verblist_add osmos_demo "Osmos demo (Hemisphere Games, 2009) [download]" OsmosDe
 
 load_osmos_demo() {
     
-    download $PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
+    download $W_PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
     
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run OsmosDemo_Installer_1.5.6.exe
@@ -6512,14 +6512,14 @@ load_osmos_demo() {
 verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
 
 load_pcmark04() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark04_v130_installer.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/PCMark04_v130_installer.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download PCMark04_v130_installer.exe from http://www.futuremark.com/download/pcmark04/ and put it in $WISOTOOL_CACHE/$PACKAGE/"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download PCMark04_v130_installer.exe from http://www.futuremark.com/download/pcmark04/ and put it in $W_CACHE/$W_PACKAGE/"
     fi
 
     warn "Please don't use mouse while this installer is running.  Sorry..."
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run PCMark04_v130_installer.exe
@@ -6566,13 +6566,13 @@ verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005) [download]" PCMark05_v120_1
 
 load_pcmark05() {
     # http://www.futuremark.com/download/pcmark05/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PCMark05_v120_1901.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/PCMark05_v120_1901.exe"
     then
-        download $PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe 8636fce0e4023cd59bcf7f3e1a027e233ee81193
+        download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/PCMark05_v120_1901.exe 8636fce0e4023cd59bcf7f3e1a027e233ee81193
     fi
 
     warn "Don't use mouse while this installer is running.  Sorry..."
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run PCMark05_v120_1901.exe
@@ -6618,12 +6618,12 @@ load_pcmark05() {
 
 load_passmark7() {
     # http://www.passmark.com/download/pt_download.htm
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/petst.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/petst.exe"
     then
-        download $PACKAGE http://www.passmark.com/ftp/petst.exe 6d9db9c1bc53452cf7a2d3ad07a1195218095f8f
+        download $W_PACKAGE http://www.passmark.com/ftp/petst.exe 6d9db9c1bc53452cf7a2d3ad07a1195218095f8f
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run petst.exe
     "
@@ -6638,16 +6638,16 @@ verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010) [download]" \
 
 
 load_pscs5() {
-    try cd "$WISOTOOL_CACHE/$PACKAGE"
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.7z" ]
+    try cd "$W_CACHE/$W_PACKAGE"
+    if [ ! -f "$W_CACHE/$W_PACKAGE/Photoshop_12_LS1.7z" ]
     then
-        die "You must download Photoshop CS5 trial files and put them in $WISOTOOL_CACHE/$PACKAGE"
+        die "You must download Photoshop CS5 trial files and put them in $W_CACHE/$W_PACKAGE"
     else
         verify_sha1sum 0d8fac96f32963194add553b8ca072c40ca4b912 Photoshop_12_LS1.7z
     fi
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/Photoshop_12_LS1.exe" ]
+    if [ ! -f "$W_CACHE/$W_PACKAGE/Photoshop_12_LS1.exe" ]
     then
-        die "You must download Photoshop CS5 trial files and put them in $WISOTOOL_CACHE/$PACKAGE"
+        die "You must download Photoshop CS5 trial files and put them in $W_CACHE/$W_PACKAGE"
     else
         verify_sha1sum abbfeeef9348c79b6cdde5f8762f5c3f96d32f6e Photoshop_12_LS1.exe
     fi
@@ -6702,7 +6702,7 @@ load_pscs5() {
     "
     try cd ..
     # Remove installer temp files:
-    try cd "$WISOTOOL_CACHE/$PACKAGE"
+    try cd "$W_CACHE/$W_PACKAGE"
     try rm -rf "Photoshop CS5 Read Me.pdf" "Adobe CS5"
     try cd "$olddir"
 }
@@ -6764,7 +6764,7 @@ load_pscs5_unpickle() {
     try sh "$WINETRICKS" -q gdiplus ie6 msxml3 vcrun2005sp1 vcrun2008
 
     try cd "$WISOTOOL_TMP"
-    try tar xf "$WISOTOOL_CACHE/$PACKAGE/adobe_cs5.tar"
+    try tar xf "$W_CACHE/$W_PACKAGE/adobe_cs5.tar"
     try $WINE regedit adobe_cs5.reg
     try cd "$programfilesdir_x86_unix"
     try mv "$WISOTOOL_TMP/Program Files/Adobe" .
@@ -6787,12 +6787,12 @@ load_pscs5_unpickle() {
 verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009) [download]" PlantsVsZombiesSetup.exe
 
 load_plantsvszombies() {
-    if ! test -f "$WISOTOOL_CACHE/plantsvszombies/PlantsVsZombiesSetup.exe"
+    if ! test -f "$W_CACHE/plantsvszombies/PlantsVsZombiesSetup.exe"
     then
         download plantsvszombies "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
     fi
 
-    cd "$WISOTOOL_CACHE/plantsvszombies"
+    cd "$W_CACHE/plantsvszombies"
     ahk_do "
         run PlantsVsZombiesSetup.exe
         winwait, Plants vs. Zombies Installer
@@ -6813,7 +6813,7 @@ verblist_add pop2008 "Prince of Persia (Ubisoft, 2008)" e65acd04baaf84481b79589b
 
 load_pop2008()
 {
-    iso_mount "$WISOTOOL_CACHE/$PACKAGE/e65acd04baaf84481b79589b795edb144d24d1b5.iso"
+    iso_mount "$W_CACHE/$W_PACKAGE/e65acd04baaf84481b79589b795edb144d24d1b5.iso"
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -6849,7 +6849,7 @@ bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso
 
 load_popfs()
 {
-    iso_mount "$WISOTOOL_CACHE/$PACKAGE/bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso"
+    iso_mount "$W_CACHE/$W_PACKAGE/bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso"
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -6894,7 +6894,7 @@ a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso
 
 load_popsot()
 {
-    iso_mount "$WISOTOOL_CACHE/$PACKAGE/a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso"
+    iso_mount "$W_CACHE/$W_PACKAGE/a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso"
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:Setup.exe
@@ -6931,12 +6931,12 @@ POP_Demo_Eng.exe
 
 load_popsot_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/POP_Demo_Eng.exe" && ! test -f "$WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/POP_Demo_Eng.exe" && ! test -f "$W_CACHE/$W_PACKAGE/pop_demo_eng.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "You must manually download the Prince of Persia Sands of Time Demo to $WISOTOOL_CACHE/$PACKAGE/pop_demo_eng.exe; expected sha1sum ed62f4da1f898c661ca09bd4e3a22e4a983a822b"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "You must manually download the Prince of Persia Sands of Time Demo to $W_CACHE/$W_PACKAGE/pop_demo_eng.exe; expected sha1sum ed62f4da1f898c661ca09bd4e3a22e4a983a822b"
     fi
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, POP_Demo_Eng.exe
@@ -6983,13 +6983,13 @@ load_procycling08_demo()
 {
     # FIXME sha1sum 008b91a16c388c9965faaeaaa8242409b9db56b9
     # FIXME homepage http://www.cycling-manager.com/
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/ProCyclingManager08_Demo.exe"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download the game to $WISOTOOL_CACHE/$PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download the game to $W_CACHE/$W_PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, ProCyclingManager08_Demo.exe
@@ -7022,12 +7022,12 @@ verblist_add proevolution2010_demo "Pro Evolution Soccer 2010 Demo (Konami, 2009
 load_proevolution2010_demo()
 {
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/PES2010_PC_DEMO_Setup.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/PES2010_PC_DEMO_Setup.exe"
     then
-        download $PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
+        download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2010_PC_DEMO_Setup.exe a1c913c367f121adf5f6e4104c76ab48f8d9457e
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, PES2010_PC_DEMO_Setup.exe
@@ -7067,7 +7067,7 @@ load_proevolution2011_demo()
 {
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=18148
     # http://www.bigdownload.com/games/pro-evolution-soccer-2011/pc/pro-evolution-soccer-2011-demo/
-    download $PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
+    download $W_PACKAGE http://gamedaily.newaol.com/pub/PES2011_Demo.exe 48e281177651637f549fb0ee5b8c4f91affb809a
 
     if workaround_wine_bug 24438
     then
@@ -7076,7 +7076,7 @@ load_proevolution2011_demo()
 
     # Copied from 2010, the first few dialogs are the same, but can't test all of it because of bug 24438.
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, PES2011_Demo.exe
@@ -7114,9 +7114,9 @@ verblist_add puzzleagent_demo "Puzzle Agent Demo (Telltale Games, 2010) [downloa
 
 load_puzzleagent_demo() {
 
-    download $PACKAGE http://telltale.vo.llnwd.net/o15/games/puzzleagent/100/PuzzleAgent_PC_Setup.exe 98337b2f24966c0e8ecb3357173ca16cca39b378
+    download $W_PACKAGE http://telltale.vo.llnwd.net/o15/games/puzzleagent/100/PuzzleAgent_PC_Setup.exe 98337b2f24966c0e8ecb3357173ca16cca39b378
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         Run, PuzzleAgent_PC_Setup.exe
@@ -7161,38 +7161,38 @@ verblist_add rom "Runes of Magic (Frogster Interactive, 2009) [download]" \
 
 load_rom()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$WISOTOOL_CACHE/$PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Runes_of_Magic_3.0.1.2153.part1.exe" || ! test -f "$W_CACHE/$W_PACKAGE/Runes_of_Magic_3.0.1.2153.part2.rar"
     then
-        download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
-        download $PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
+        download $W_PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part1.exe 3263660262c6411f179e80c5ef0906c783d7bb08
+        download $W_PACKAGE http://frogster.vo.llnwd.net/o9/FOG/rom/Runes_of_Magic_3.0.1.2153_two.exe/Runes_of_Magic_3.0.1.2153.part2.rar 569dee9c375fa50394958daa9f8d8a1b02bb9b11
 
     fi
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/cached/ROMSetup.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/cached/ROMSetup.exe"
     then
         # Pre-extract files, if unrar is available
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE/cached"
-        cd "$WISOTOOL_CACHE/$PACKAGE/cached"
+        mkdir -p "$W_CACHE/$W_PACKAGE/cached"
+        cd "$W_CACHE/$W_PACKAGE/cached"
         try_unrar e ../Runes_of_Magic_3.0.1.2153.part1.exe
     fi
     # manual updates from http://forum.runesofmagic.com/showthread.php?t=79267
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2172.en_3.0.1.2175.en.exe ed120bc8140f8c3b2481a78f504a7a9e76c8642f
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2175.en_3.0.1.2178.en.exe 012e679402f2165effbf2aaaffe41a5d9405d319
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe c5f6115aeb2e4627dd0428c0024f177dca6f067c
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe bf3183406bcb848826301bba33775a6dfb611859
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe d576596086395ea83cb8c1422877c81ed45a90c9
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe af3f74030f371ef9bc4cfcecf4a9ad1159f28136
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2231.en_3.0.3.2241.en.exe e46dbb3d2699ddc34a7885a16224c79f80657749
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2241.en_3.0.3.2246.en.exe 17c49fb1381fb6927a19ed58ef210abd98c3e89f
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2246.en_3.0.3.2250.en.exe 6484b2d8b23c1c7389f2f9a38681ecda84d856a4
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2250.en_3.0.4.2237.en.exe a34b20828303cdeaa649b503d0eee915b7a808b3
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2237.en_3.0.4.2261.en.exe 511bf0281a7f87e9912fcf52649307eec5b7d315
-    download $PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2261.en_3.0.4.2263.en.exe 8d01ef99ae2a72e36d9de2b6d021bc3bbd3cd246
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2153.en_3.0.1.2172.en.exe 817391606fd1c05ad6194a06b21f6a5632cacf4f
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2172.en_3.0.1.2175.en.exe ed120bc8140f8c3b2481a78f504a7a9e76c8642f
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2175.en_3.0.1.2178.en.exe 012e679402f2165effbf2aaaffe41a5d9405d319
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2178.en_3.0.1.2181.en.exe c449510566108dfc29882e6229cf716f232102df
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2181.en_3.0.1.2192.en.exe d5afc10ff1126c3dabafa02b4681f411aa689c57
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2192.en_3.0.1.2199.en.exe 542ac3b4d0fc4434aadfb784a46868f1815351da
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.1.2199.en_3.0.2.2189.en.exe c5f6115aeb2e4627dd0428c0024f177dca6f067c
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2189.en_3.0.2.2213.en.exe bf3183406bcb848826301bba33775a6dfb611859
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2213.en_3.0.2.2214.en.exe d576596086395ea83cb8c1422877c81ed45a90c9
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.2.2214.en_3.0.3.2231.en.exe af3f74030f371ef9bc4cfcecf4a9ad1159f28136
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2231.en_3.0.3.2241.en.exe e46dbb3d2699ddc34a7885a16224c79f80657749
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2241.en_3.0.3.2246.en.exe 17c49fb1381fb6927a19ed58ef210abd98c3e89f
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2246.en_3.0.3.2250.en.exe 6484b2d8b23c1c7389f2f9a38681ecda84d856a4
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.3.2250.en_3.0.4.2237.en.exe a34b20828303cdeaa649b503d0eee915b7a808b3
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2237.en_3.0.4.2261.en.exe 511bf0281a7f87e9912fcf52649307eec5b7d315
+    download $W_PACKAGE http://frogster.vo.llnwd.net/o9/patch/en/patch_3.0.4.2261.en_3.0.4.2263.en.exe 8d01ef99ae2a72e36d9de2b6d021bc3bbd3cd246
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     patches=`ls patch*.exe`
     ahk_do "
         SetTitleMatchMode, 2
@@ -7311,12 +7311,12 @@ _EOF_
 verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
 
 load_re5bench() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
     then
-        download $PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
+        download $W_PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run nzd_ResidentEvil5_Benchmark.exe
         WinWait ahk_class MsiDialogCloseClass
@@ -7367,14 +7367,14 @@ verblist_add riseofnations_demo "Rise of Nations Trial (Microsoft/Big Huge Games
 
 load_riseofnations_demo() {
 
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/RiseOfNationsTrial.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/RiseOfNationsTrial.exe
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please visit http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html, download RiseOfNationsTrial.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please visit http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html, download RiseOfNationsTrial.exe, and place it in directory $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: check sha1sum 33cbf1ebc0a93cb840f6296d8b529f6155db95ee
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run RiseOfNationsTrial.exe
@@ -7399,7 +7399,7 @@ load_riseofnations_demo() {
 verblist_add quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
 
 load_quake3() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
     ahk_do "
         Run ${ISO_MOUNT_LETTER}:Setup.exe
         WinWait, Quake III Arena
@@ -7428,15 +7428,15 @@ load_quake3() {
 verblist_add sammax304_demo "Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls (Telltale Games, 2010) [download]" SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
 
 load_sammax304_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
     then
-        download $PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
-        cd "$WISOTOOL_CACHE/$PACKAGE"
+        download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
+        cd "$W_CACHE/$W_PACKAGE"
         try unzip SamMax304_BigDownload.exe.zip
         rm -f SamMax304_BigDownload.exe.zip
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
@@ -7467,11 +7467,11 @@ verblist_add sega_rally_2  "Sega Rally 2 (Sega, 1999) [download]" rally2.exe
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
 load_sega_rally_2() {
-    download $PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
+    download $W_PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
 
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
     # but had no luck. It's only 60 MB extracted, so just extract it fresh each time.
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, rally2.exe
@@ -7523,9 +7523,9 @@ load_sega_rally_2() {
 verblist_add 7million      "7Million (Deep Silver, 2009) [download]" 7Million_0_17_0-full.exe
 
 load_7million() {
-    download $PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
+    download $W_PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, 7Million_0_17_0-full.exe
@@ -7564,9 +7564,9 @@ load_7million() {
 verblist_add secondlife_beta      "Second Life Viewer - Beta (Linden Labs 2003-2010) [download]" Second_Life_2-3-0-213435_BetaViewer_Setup.exe
 
 load_secondlife_beta() {
-    download $PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
+    download $W_PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, Second_Life_2-3-0-213435_BetaViewer_Setup.exe
@@ -7627,7 +7627,7 @@ load_sims3() {
     read_game_key
 
     echo KEY is $KEY
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
     # Default lang, USA, accept defaults, uncheck EA dl mgr, uncheck readme
     ahk_do "
         run ${ISO_MOUNT_LETTER}:Sims3Setup.exe
@@ -7663,7 +7663,7 @@ load_sims3() {
 
     download sims3 http://na.llnet.eadownloads.ea.com/u/f/sims/sims3/patches/Sims3_1.6.6.002001_from_1.0.631.00001.exe 02703d296417750005326ff0d37295fa434a3f49
 
-    cd "$WISOTOOL_CACHE"/sims3
+    cd "$W_CACHE"/sims3
     ahk_do "
         run Sims3_1.6.6.002001_from_1.0.631.00001.exe
         SetTitleMatchMode, 2
@@ -7682,10 +7682,10 @@ verblist_add singularity         "Singularity (Activision, 2010)" cfbba29fa8db1b
 
 load_singularity() {
     # Get user's key
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.txt | tr -d -`
+    KEY=`cat "$W_CACHE"/$W_PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.txt | tr -d -`
 
     echo KEY is $KEY
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
         winwait, Activision(R) - InstallShield, Select the language for the installation from the choices below.
@@ -7752,10 +7752,10 @@ verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [
 
 load_splitsecond_demo()
 {
-    if test ! -f "$WISOTOOL_CACHE/$PACKAGE"/SplitSecond*.exe
+    if test ! -f "$W_CACHE/$W_PACKAGE"/SplitSecond*.exe
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "You must download the demo to $WISOTOOL_CACHE/$PACKAGE before running this script.  See http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "You must download the demo to $W_CACHE/$W_PACKAGE before running this script.  See http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo"
     fi
 
     if workaround_wine_bug 22774 "wine-1.3.[0-9]*"
@@ -7768,7 +7768,7 @@ load_splitsecond_demo()
         echo "This game is currently unplayable on wine due to rendering problems; see winehq bug 22865."
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     exe=`ls SplitSecond*.exe`
     ahk_do "
         SetTitleMatchMode, 2
@@ -7815,10 +7815,10 @@ load_splitsecond()
         echo "This game is currently unplayable on wine due to rendering problems; see winehq bug 22865."
     fi
 
-    #KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.txt`
+    #KEY=`cat "$W_CACHE"/$W_PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.txt`
     # Key is used in first run activation.  TODO: script first run activation.
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/15548fabe350e1b65432400aae8c3acfb1c930d8.iso
 
     # Aborts with dialog about FirewallInstallHelper.dll if that's not on the path (e.g. in current dir)
     cd "$ISO_MOUNT_ROOT"
@@ -7857,8 +7857,8 @@ verblist_add spore    "Spore (EA, 2008)" d08d1985d3161661d4f0ded30a0d11e705f2fcc
 
 load_spore()
 {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso
-    SPORE_KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.txt | tr -d -`
+    iso_mount "$W_CACHE"/$W_PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso
+    SPORE_KEY=`cat "$W_CACHE"/$W_PACKAGE/d08d1985d3161661d4f0ded30a0d11e705f2fcc2.txt | tr -d -`
     ahk_do "
         SetTitleMatchMode, 2
         run, ${ISO_MOUNT_LETTER}:SPORESetup.exe
@@ -7900,14 +7900,14 @@ load_ssdd2()
     # Main page: http://arcade.nick.com/nick/gameinfo.jsp?s=SpongeBobDinerDash2
     # old: 8407dae2c062ce62b38408eeac3a9f95be202b96
     # 27 Oct 2010: 440c4f2e9484ba150782cae8754ff8eaaad3b01e
-    download $PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 440c4f2e9484ba150782cae8754ff8eaaad3b01e
+    download $W_PACKAGE http://nickdownloads.shockwave.com/InstallSpongeBobDinerDash2.exe 440c4f2e9484ba150782cae8754ff8eaaad3b01e
 
     if workaround_wine_bug 23749
     then
         sh "$WINETRICKS" -q ie6
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run InstallSpongeBobDinerDash2.exe
@@ -7946,10 +7946,10 @@ verblist_add sonicdxb_demo     "Sonic Adventure Deluxe Trial B (Sega, 2003) [dow
 load_sonicdxb_demo() {
     # http://sega.jp/pc/sonicdx/
     # http://sega.jp/pc/sonicdx/trial.shtml
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/sadx_trial_b.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/sadx_trial_b.exe"
     then
-        download $PACKAGE 'http://sega.jp/cgi-bin/link.cgi?url=sadx_trial_b' f76fc33d3cb1b062437e03ba4e0687be07d903ad
-        mv "$WISOTOOL_CACHE"/$PACKAGE/'link.cgi?url=sadx_trial_b' "$WISOTOOL_CACHE/$PACKAGE/sadx_trial_b.exe"
+        download $W_PACKAGE 'http://sega.jp/cgi-bin/link.cgi?url=sadx_trial_b' f76fc33d3cb1b062437e03ba4e0687be07d903ad
+        mv "$W_CACHE"/$W_PACKAGE/'link.cgi?url=sadx_trial_b' "$W_CACHE/$W_PACKAGE/sadx_trial_b.exe"
     fi
 
     # Switch to Japanese locale so freedesktop.org menu item works
@@ -7957,7 +7957,7 @@ load_sonicdxb_demo() {
     OLDLANG=${LANG}
     export LANG=ja_JP.utf8
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run, sadx_trial_b.exe
         WinWait ahk_class SONIC_DX_PC_LC_B
@@ -7985,9 +7985,9 @@ load_stalker_pripyat_bench() {
     # FIXME: There's a much faster download at
     # http://www.bigdownload.com/games/stalker-call-of-pripyat/pc/stalker-call-of-pripyat-benchmark
     # Should we direct users to download from there manually?
-    download $PACKAGE http://files.gsc-game.com/st/bench/stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
+    download $W_PACKAGE http://files.gsc-game.com/st/bench/stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     # FIXME: a bit fragile, if you're browsing the web while installing, it sometimes gets stuck.
     ahk_do "
@@ -8039,9 +8039,9 @@ load_starcraft() {
     test -d "$programfilesdir_unix/StarCraft" && rm -rf "$programfilesdir_unix/StarCraft"
 
     # Get user's key
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.txt`
+    KEY=`cat "$W_CACHE"/$W_PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.txt`
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso
     ahk_do "
         run ${ISO_MOUNT_LETTER}:StarCraft (Windows).exe
         winwait, StarCraft - Brood War
@@ -8056,7 +8056,7 @@ load_starcraft() {
         winwait, Installation Destination Directory
         send {Enter}
         winwait,,Please insert"
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/966bae1f2e2035e066139e78137e623c92838254.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/966bae1f2e2035e066139e78137e623c92838254.iso
     ahk_do "
         send, {Enter}
         SetTitleMatchMode, 2
@@ -8080,17 +8080,17 @@ load_starcraft2() {
 
     for x in "Installer Tome 1.MPQE" "Installer UI 1.MPQ" "Installer UI 2.MPQE" "Installer.app" "Installer.exe"
     do
-        if ! test -f "$WISOTOOL_CACHE/$PACKAGE/$x"
+        if ! test -f "$W_CACHE/$W_PACKAGE/$x"
         then
-            mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-            die "Please download the installer files using the Blizzard downloader from https://us.battle.net/account/management/sc2/download.html?gameRegion=NA&lang=en-US&platform=win and put them in $WISOTOOL_CACHE/$PACKAGE"
+            mkdir -p "$W_CACHE/$W_PACKAGE"
+            die "Please download the installer files using the Blizzard downloader from https://us.battle.net/account/management/sc2/download.html?gameRegion=NA&lang=en-US&platform=win and put them in $W_CACHE/$W_PACKAGE"
         fi
     done
 
     # Force clean-ish install
     test -d "$programfilesdir_unix/StarCraft II" && rm -rf "$programfilesdir_unix/StarCraft II"
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         SetTitleMatchMode, 2
         run, Installer.exe
@@ -8121,7 +8121,7 @@ verblist_add sto           "Star Trek Online (Cryptic, 2010)" f891dab46d05d771e0
 
 load_sto()
 {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/f891dab46d05d771e0123a1e7ec969f3601064a6.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/f891dab46d05d771e0123a1e7ec969f3601064a6.iso
     # Note: http://www.startrekonline.com/download shows how to download the
     # client using bittorrent.  If the iso is not present, we should try that path.
 
@@ -8164,7 +8164,7 @@ verblist_add stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e8
 load_stfu() {
     load_autohotkey
 
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
     warn "Starting installer.  This can be very slow, please be patient."
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -8188,7 +8188,7 @@ load_stfu() {
         winwait, Setup Needs the Next Disk
     "
     iso_umount
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
     ahk_do "
         SetTitleMatchMode, 2
         send {Enter}
@@ -8204,7 +8204,7 @@ load_stfu() {
     # URL from http://www.lucasfiles.com/index.php?s=&action=download&id=1537&agree=true
     # See also http://www.forceunleashed.net/news/force-unleashed-patch-1-2/
     download stfu http://xfer.lfnetwork.com/lucasfiles.com/downloads/1537/SWTFU_PC_EF_1.2_Update.exe cfd8043c4b86f4dc0ff0acd4c108b11c4b76e716
-    cd "$WISOTOOL_CACHE/stfu"
+    cd "$W_CACHE/stfu"
     ahk_do "
         run SWTFU_PC_EF_1.2_Update.exe
         SetTitleMatchMode, 2
@@ -8224,12 +8224,12 @@ verblist_add sf4bench "Street Fighter 4: Benchmark (CAPCOM, 2009) [download]" St
 
 load_sf4bench()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/StreetFighterIV_Benchmark.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/StreetFighterIV_Benchmark.exe"
     then
-        download $PACKAGE http://gamedaily.newaol.com/pub/StreetFighterIV_Benchmark.exe f7754210308b3a0ff2bb3be3a62b22767519ca62
+        download $W_PACKAGE http://gamedaily.newaol.com/pub/StreetFighterIV_Benchmark.exe f7754210308b3a0ff2bb3be3a62b22767519ca62
     fi
 
-    cd "$WISOTOOL_CACHE"/$PACKAGE
+    cd "$W_CACHE"/$W_PACKAGE
 
     ahk_do "
         SetTitleMatchmode, 2
@@ -8304,7 +8304,7 @@ verblist_add smbx  "Super Mario Bros. X (Indie, 2009) [download]"  smbx122.exe
 
 load_smbx() {
     # Download URL embedded in http://www.supermariobrothers.org/downloads/smbx122.html
-    download $PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
+    download $W_PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
 
     # This winetricks verb doesn't work on Windows yet, but that's ok-ish, Windows comes with vb6 runtime
     sh "$WINETRICKS" -q vb6run
@@ -8316,7 +8316,7 @@ load_smbx() {
         sh "$WINETRICKS" -q quartz
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -8345,7 +8345,7 @@ load_smbx() {
         Send {Enter}
     "
     # FIXME: tries to install Bing Bar, hangs.
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SMBX
 smbx.exe
@@ -8357,9 +8357,9 @@ __EOF__
 verblist_add timezattack_demo "Timez Attack Demo (BigBrainz, 2005) [download]" Win_TimezAttackFreeInstaller.exe
 
 load_timezattack_demo() {
-    download $PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
+    download $W_PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     # autohotkey can't read any text from this one :-(
     ahk_do "
         settitlematchmode, 2
@@ -8382,7 +8382,7 @@ load_timezattack_demo() {
     # fixme: only works on linux
     killall TimezAttack.exe
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\TimezAttack
 TimezAttack.app\\TimezAttack.exe
@@ -8402,13 +8402,13 @@ load_tlr_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
 # http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
 
-    if ! test -f "$WISOTOOL_CACHE"/$PACKAGE/TheLastRemnant_PC_Demo.zip
+    if ! test -f "$W_CACHE"/$W_PACKAGE/TheLastRemnant_PC_Demo.zip
     then
-        download $PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
+        download $W_PACKAGE http://gamedaily.newaol.com/pub/TheLastRemnant_PC_Demo.zip 86b093eec133393ef47bb1dcd268b38b12927899
     fi
 
     cd "$WISOTOOL_TMP"
-    try unzip "$WISOTOOL_CACHE/$PACKAGE/TheLastRemnant_PC_Demo.zip"
+    try unzip "$W_CACHE/$W_PACKAGE/TheLastRemnant_PC_Demo.zip"
     cd "The Last Remnant Trial Version"
 
     ahk_do "
@@ -8452,9 +8452,9 @@ load_tmnationsforever() {
         warn "Gameplay and sound may be very choppy on some machines :-("
     fi
 
-    download $PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
+    download $W_PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -8498,9 +8498,9 @@ load_tmnationsforever() {
 verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
 load_twfc() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
-    KEY=`cat "$WISOTOOL_CACHE"/$PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
+    KEY=`cat "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
 
     ahk_do "
         run ${ISO_MOUNT_LETTER}:setup.exe
@@ -8556,7 +8556,7 @@ verblist_add torchlight "Torchlight (Runic Games, 2009) [Boxed version]" \
   7cc5d7504b2927c030a0a192f7c9858721b59730.iso
 
 load_torchlight() {
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/7cc5d7504b2927c030a0a192f7c9858721b59730.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/7cc5d7504b2927c030a0a192f7c9858721b59730.iso
     ahk_do "
         SetTitleMatchMode, 2
         Run, ${ISO_MOUNT_LETTER}:Torchlight.exe
@@ -8586,10 +8586,10 @@ load_torchlight() {
 verblist_add tropico3_demo "Tropico 3 Demo (Kalypso Media GmbH, 2009) [download]" Tropico3Demo.exe
 
 load_tropico3_demo() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE"/Tropico3Demo.exe
+    if ! test -f "$W_CACHE/$W_PACKAGE"/Tropico3Demo.exe
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please visit http://www.fileshack.com/file_download.x/15191 or http://www.tropico3.com/?p=downloads, download Tropico3Demo.exe, and place it in directory $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please visit http://www.fileshack.com/file_download.x/15191 or http://www.tropico3.com/?p=downloads, download Tropico3Demo.exe, and place it in directory $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: check sha1sum e031749db346ac3a87a675787c81eb1ca8cb5909
 
@@ -8599,7 +8599,7 @@ load_tropico3_demo() {
         $WINESERVER -w
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -8641,9 +8641,9 @@ load_tropico3_demo() {
 verblist_add typingofthedead_demo "Typing of the Dead Demo (Sega, 1999) [download]" Tod_e_demo.exe
 
 load_typingofthedead_demo() {
-    download $PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
+    download $W_PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     mkdir "$WISOTOOL_TMP/tod-demo"
     cp tod-demo.zip "$WISOTOOL_TMP/tod-demo"
     cd "$WISOTOOL_TMP/tod-demo"
@@ -8671,14 +8671,14 @@ load_typingofthedead_demo() {
 verblist_add unigine_heaven "Unigen Heaven 2.1 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
 
 load_unigine_heaven() {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Unigine_Heaven-2.1.msi"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Unigine_Heaven-2.1.msi"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Please download via http://unigine.com/download/torrents/Unigine_Heaven-2.1.msi.torrent and place in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Please download via http://unigine.com/download/torrents/Unigine_Heaven-2.1.msi.torrent and place in $W_CACHE/$W_PACKAGE"
     fi
     # FIXME sha1sum 3d7b94a3734cdae85f98032b61668e743979c444
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run msiexec /i Unigine_Heaven-2.1.msi
         WinWait ahk_class MsiDialogCloseClass
@@ -8714,7 +8714,7 @@ load_unigine_heaven() {
     # Should start Heaven.exe, but that doesn't run in Wine
     # Should give option to run Heaven_gl.bat (even works in Wine)
     # or the dx10 or dx11 versions (doesn't).
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Unigine\Heaven"
 cmd /c Heaven_d3d9.bat
@@ -8733,7 +8733,7 @@ load_vegas() {
         warn "This game's DRM is not supported by wine"
     fi
     
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/be7cf72572708e9776af73c9bec8ee07952385af.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/be7cf72572708e9776af73c9bec8ee07952385af.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -8757,7 +8757,7 @@ load_vegas() {
         WinWait, Setup Needs The Next Disk
         WinActivate
     "
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -8799,7 +8799,7 @@ load_vegas2() {
         warn "This game's DRM is not supported by wine"
     fi
     
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
 
     ahk_do "
         SetTitleMatchMode, 2
@@ -8820,7 +8820,7 @@ load_vegas2() {
         WinWait, Setup Needs The Next Disk
         WinActivate
     "
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
 
     ahk_do "
          SetTitleMatchMode, 2
@@ -8832,7 +8832,7 @@ load_vegas2() {
          WinActivate
     "
      
-    iso_mount "$WISOTOOL_CACHE"/$PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
+    iso_mount "$W_CACHE"/$W_PACKAGE/e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso
     ahk_do "
         SetTitleMatchMode, 2
         Send {Enter}
@@ -8851,17 +8851,17 @@ verblist_add victoria2_demo       "Victoria 2 Demo (Paradox Interactive, 2010) [
 
 load_victoria2_demo() {
     # download zip file via torrent from http://www.gamershell.com/download_62070.shtml
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/Victoria2_Demo.zip"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Victoria2_Demo.zip"
     then
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        die "Download Victoria2_Demo.zip from http://www.gamershell.com/download_62070.shtml and place in $WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        die "Download Victoria2_Demo.zip from http://www.gamershell.com/download_62070.shtml and place in $W_CACHE/$W_PACKAGE"
     fi
     # FIXME: check sha1sum 20bac88a3ace1010e4fb116d72baf95e92976b39
     # or better, check sha1sum of extracted .exe, since different
     # sources add their own readme in the .zip file
-    mkdir -p "$WISOTOOL_TMP"/$PACKAGE/
-    cd "$WISOTOOL_TMP"/$PACKAGE/
-    try unzip "$WISOTOOL_CACHE/$PACKAGE"/Victoria2_Demo.zip
+    mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/
+    cd "$WISOTOOL_TMP"/$W_PACKAGE/
+    try unzip "$W_CACHE/$W_PACKAGE"/Victoria2_Demo.zip
 
     # Clean up old temp files from installer extractor (it leaves them around)
     rm -rf temp_files_for_v2
@@ -8933,15 +8933,15 @@ verblist_add vf2_demo   "Virtua Fighter 2 demo (Sega, 1997) [download]" vf2_demo
 
 load_vf2_demo()
 {
-    if ! test -f "$WISOTOOL_CACHE/$PACKAGE/vf2_demo.exe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/vf2_demo.exe"
     then
-        download $PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
+        download $W_PACKAGE http://www.sega.com/support/pcdownloads/vf2_demo/vf2_demo.exe efd34dd079cdfd7b2ccc195b584d7ca10ec7e82b
     fi
 
-    mkdir -p "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_CACHE/$PACKAGE"
-    try unzip vf2_demo.exe -d "$WISOTOOL_TMP/$PACKAGE"
-    cd "$WISOTOOL_TMP/$PACKAGE"
+    mkdir -p "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
+    try unzip vf2_demo.exe -d "$WISOTOOL_TMP/$W_PACKAGE"
+    cd "$WISOTOOL_TMP/$W_PACKAGE"
 
     # installer refuses to run in Windows NT 5 or higher, so set win98 mode
     # FIXME: undo this when verb is done
@@ -8973,7 +8973,7 @@ load_vf2_demo()
 
     cd "$olddir"
 
-    cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+    cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SEGA\\VF2DEMO
 rem FIXME: __COMPAT_LAYER seems to be needed for XP, but breaks vista
@@ -8983,10 +8983,10 @@ __EOF__
 
     case "$OS" in
     "Windows_NT")
-        warn "$PACKAGE requires an 8 or 16 bit display, so change desktop settings before running.  Also, on Windows XP, you'll need to set C:\\SEGA\\VF2DEMO\VF2DEMO.exe to Win95 mode."
+        warn "$W_PACKAGE requires an 8 or 16 bit display, so change desktop settings before running.  Also, on Windows XP, you'll need to set C:\\SEGA\\VF2DEMO\VF2DEMO.exe to Win95 mode."
         ;;
     *)
-        warn "$PACKAGE requires an 8 or 16 bit display.  On Linux, try pressing CTRL+ALT+F1, and running 'startx -- :1 -depth 16'. "
+        warn "$W_PACKAGE requires an 8 or 16 bit display.  On Linux, try pressing CTRL+ALT+F1, and running 'startx -- :1 -depth 16'. "
     ;;
     esac
 }
@@ -8996,18 +8996,18 @@ __EOF__
 verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
 
 load_wog() {
-    if ! test -f "$WISOTOOL_CACHE/wog/WorldOfGooDemo.1.0.exe"
+    if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
         # Get temporary download location
         download wog "http://www.worldofgoo.com/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
-        URL=`cat "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" |
+        URL=`cat "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe" |
            grep WorldOfGooDemo.1.0.exe | sed 's,.*http,http,;s,".*,,'`
-        rm "$WISOTOOL_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
+        rm "$W_CACHE/wog/dl2.php?lk=demo&filename=WorldOfGooDemo.1.0.exe"
 
         download wog "$URL" e61d8253b9fe0663cb3c69018bb3d2ec6152d488
     fi
 
-    cd "$WISOTOOL_CACHE/wog"
+    cd "$W_CACHE/wog"
     ahk_do "
         run WorldOfGooDemo.1.0.exe
         winwait, World of Goo Setup, License Agreement
@@ -9030,11 +9030,11 @@ load_wog() {
 verblist_add wowtrial       "World of Warcraft trial (Blizzard, 2009) [download]" TryWoW.exe
 
 load_wowtrial() {
-    download $PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
+    download $W_PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
 
     ahk_do "
         SetTitleMatchMode, slow
-        run "$WISOTOOL_CACHE/$PACKAGE/TryWoW.exe"
+        run "$W_CACHE/$W_PACKAGE/TryWoW.exe"
         winwait, World of Warcraft Trial v2.0.0.373
         sleep 1000
         controlclick, Button2, World of Warcraft Trial v2.0.0.373
@@ -9068,15 +9068,15 @@ load_wowbc() {
 
     # Torrent file URLs found on http://www.wowwiki.com/Patch_mirrors
     # Patches 3.3.2.11403-to-3.3.3.11685-enUS-patch.exe up to 3.3.5 are downloaded from http://alexsmith.im/wow-patches/enus-patches
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" f9e96e7b4edc6a4c22faad084eef147853e3ebb5
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 33bdf8749b3c3781451b5f6ac2a59ba29d6c61bd
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" b7ad37a75713f6d8e578558ca1e321927192c6c6
-    download $PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" f73763541197fecdcca9b9f8cf91e83cde989a49
-    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe" ce73a0a8aa9f6eaf00b5e7cd0a34eb928738fd36
-    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe"
-    download $PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe"
+    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.x.x.x-3.2.0.10192-x86-Win-enUS.torrent" f9e96e7b4edc6a4c22faad084eef147853e3ebb5
+    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.2.0.10192-3.3.0.10958-x86-Win-enUS.torrent" 33bdf8749b3c3781451b5f6ac2a59ba29d6c61bd
+    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.10958-3.3.0.11159-x86-Win-enUS.torrent" b7ad37a75713f6d8e578558ca1e321927192c6c6
+    download $W_PACKAGE "http://a.wirebrain.de/wow/torrent/WoW-3.3.0.11159-to-3.3.2.11403-enUS-patch.torrent" f73763541197fecdcca9b9f8cf91e83cde989a49
+    download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.2.11403-to-3.3.3.11685-enUS-patch.exe" ce73a0a8aa9f6eaf00b5e7cd0a34eb928738fd36
+    download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11685-to-3.3.3.11723-enUS-patch.exe"
+    download $W_PACKAGE "http://uk1.files.alexsmith.im/enUS/WoW-3.3.3.11723-to-3.3.5.12213-enUS-patch.exe"
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     patch1=`stat -Lc%s WoW-3.2.0-enUS-patch.exe`
     patch2=`stat -Lc%s WoW-3.2.0.10192-to-3.3.0.10958-enUS-patch.exe`
     patch3=`stat -Lc%s WoW-3.3.0.10958-to-3.3.0.11159-enUS-patch.exe`
@@ -9094,7 +9094,7 @@ load_wowbc() {
     then
         echo "All patches have been downloaded"
     else
-        UT_WINPATH="$WISOTOOL_CACHE_WIN\\wowbc"
+        UT_WINPATH="$W_CACHE_WIN\\wowbc"
         for torrent in `ls *.torrent`
         do
             try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
@@ -9123,19 +9123,19 @@ load_wowbc() {
     fi
     cd "$olddir"
 
-    if ! test -d "$WISOTOOL_TMP"/$PACKAGE/tempcd
+    if ! test -d "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     then
-        try mkdir -p "$WISOTOOL_TMP"/$PACKAGE/tempcd
-        iso_mount "$WISOTOOL_CACHE"/$PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
+        try mkdir -p "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
+        iso_mount "$W_CACHE"/$W_PACKAGE/c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
         sleep 5
-        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$PACKAGE/tempcd
+        try cp -r "$ISO_MOUNT_ROOT"/* "$WISOTOOL_TMP"/$W_PACKAGE/tempcd
     fi
 
     # Checks if WoW is installed. If so, skips primary install and proceeds to applying patches
     if ! test -d "$DRIVE_C/Program Files/World of Warcraft"
     then
       ahk_do "
-          run "$WISOTOOL_TMP_WIN"/$PACKAGE/tempcd/Installer.exe
+          run "$WISOTOOL_TMP_WIN"/$W_PACKAGE/tempcd/Installer.exe
           SetTitleMatchMode, 2
           winwait, Burning Crusade Installer
           sleep 4000
@@ -9164,7 +9164,7 @@ load_wowbc() {
        killall Installer.exe
     fi
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     for file in \
         WoW-3.2.0-enUS-patch.exe\
         WoW-3.2.0.10192-to-3.3.0.10958-enUS-patch.exe\
@@ -9177,7 +9177,7 @@ load_wowbc() {
 
     do
         ahk_do "
-           run "$WISOTOOL_CACHE"/$PACKAGE/$file
+           run "$W_CACHE"/$W_PACKAGE/$file
            SetTitleMatchMode, 2
            winwait, Blizzard Updater
            IfWinExist, Blizzard Updater, unable to start ;Exit if patch is already applied
@@ -9218,9 +9218,9 @@ load_wowbc() {
 verblist_add zootycoon2_demo  "Zoo Tycoon 2 demo (Microsoft, 2004) [download]" Zoo2Trial.exe
 
 load_zootycoon2_demo() {
-    download $PACKAGE "http://download.microsoft.com/download/9/f/6/9f6a95f0-f34a-4312-9749-77b81d3de245/Zoo2Trial.exe" 60ad1bb34351f97b579c58234b926055f7979126
+    download $W_PACKAGE "http://download.microsoft.com/download/9/f/6/9f6a95f0-f34a-4312-9749-77b81d3de245/Zoo2Trial.exe" 60ad1bb34351f97b579c58234b926055f7979126
 
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         ; Uses winwaitactive, because the windows appear and immediately after another window
         ; gets in the way, then disappears after a second or so
@@ -9253,8 +9253,8 @@ _load_positech()
     window_title="$4"
     installed_dir="$5"
     installed_exe="$6"
-    download $PACKAGE $dl_path $hash_sum
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    download $W_PACKAGE $dl_path $hash_sum
+    cd "$W_CACHE/$W_PACKAGE"
     ahk_do "
         run, $installer_name
         WinWait, $window_title
@@ -9329,24 +9329,24 @@ load_rocklegend_demo() {
 #
 #
 # Note: Requires $STEAMUSER $STEAMPASS to be set in your environment or in
-# "$WISOTOOL_CACHE"/STEAM_USER" and in "$WISOTOOL_CACHE"/STEAM_PASS"
+# "$W_CACHE"/STEAM_USER" and in "$W_CACHE"/STEAM_PASS"
 
 _load_steam_app()
 {
-    if [ ! "$STEAM_USER" -a ! -f "$WISOTOOL_CACHE"/STEAM_USER ]
+    if [ ! "$STEAM_USER" -a ! -f "$W_CACHE"/STEAM_USER ]
     then
-        die "You need to set STEAM_USER variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_USER"
-    elif [ ! "$STEAM_USER" -a -f "$WISOTOOL_CACHE"/STEAM_USER ]
+        die "You need to set STEAM_USER variable in your environment or put it in "$W_CACHE"/STEAM_USER"
+    elif [ ! "$STEAM_USER" -a -f "$W_CACHE"/STEAM_USER ]
     then
-        STEAM_USER=`cat "$WISOTOOL_CACHE"/STEAM_USER`
+        STEAM_USER=`cat "$W_CACHE"/STEAM_USER`
     fi
 
-    if [ ! "$STEAM_PASS" -a ! -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+    if [ ! "$STEAM_PASS" -a ! -f "$W_CACHE"/STEAM_PASS ]
     then
-        die "You need to set STEAM_PASS variable in your environment or put it in "$WISOTOOL_CACHE"/STEAM_PASS"
-    elif [ ! "$STEAM_PASS" -a -f "$WISOTOOL_CACHE"/STEAM_PASS ]
+        die "You need to set STEAM_PASS variable in your environment or put it in "$W_CACHE"/STEAM_PASS"
+    elif [ ! "$STEAM_PASS" -a -f "$W_CACHE"/STEAM_PASS ]
     then
-        STEAM_PASS=`cat "$WISOTOOL_CACHE"/STEAM_PASS`
+        STEAM_PASS=`cat "$W_CACHE"/STEAM_PASS`
     fi
 
     steam_dir="$programfilesdir_unix/Steam"
@@ -9360,7 +9360,7 @@ _load_steam_app()
     game_extra_files="$5"
 
     # If files are already cached, skipped downloading/installing and just restore from cache:
-    if [ ! -f "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" ]
+    if [ ! -f "$W_CACHE/$W_PACKAGE/$game_cache_file" ]
     then
         cd "$steam_dir"
         sleep 5
@@ -9465,35 +9465,35 @@ _load_steam_app()
 
         sleep 30
         $WINE Steam.exe -shutdown
-        mkdir -p "$WISOTOOL_CACHE/$PACKAGE"
-        cp -r "$steam_dir/steamapps/common/$game_folder" "$WISOTOOL_CACHE/$PACKAGE"
-        cp -r "$steam_dir/steamapps/$game_cache_file" "$WISOTOOL_CACHE/$PACKAGE"
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        cp -r "$steam_dir/steamapps/common/$game_folder" "$W_CACHE/$W_PACKAGE"
+        cp -r "$steam_dir/steamapps/$game_cache_file" "$W_CACHE/$W_PACKAGE"
         if test ! "$game_extra_files" = ""
         then
             IFS=$','
             for x in $game_extra_files
             do
-                cp "$steam_dir/steamapps/$x" "$WISOTOOL_CACHE/$PACKAGE"
+                cp "$steam_dir/steamapps/$x" "$W_CACHE/$W_PACKAGE"
             done
             unset IFS
         fi
     else
         mkdir -p "$steam_dir/steamapps/common"
-        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_folder" "$steam_dir/steamapps/common"
-        cp -r "$WISOTOOL_CACHE/$PACKAGE/$game_cache_file" "$steam_dir/steamapps"
+        cp -r "$W_CACHE/$W_PACKAGE/$game_folder" "$steam_dir/steamapps/common"
+        cp -r "$W_CACHE/$W_PACKAGE/$game_cache_file" "$steam_dir/steamapps"
         if test ! "$game_extra_files" = ""
         then
             IFS=$','
             for x in $game_extra_files
             do
-                cp "$WISOTOOL_CACHE/$PACKAGE/$x" "$steam_dir/steamapps"
+                cp "$W_CACHE/$W_PACKAGE/$x" "$steam_dir/steamapps"
             done
             unset IFS
         fi
     fi
 
 
-cat > "$DRIVE_C/run-$PACKAGE.bat" <<__EOF__
+cat > "$DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
 cd "$programfilesdir_x86_win\Steam"
 .\Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
@@ -9681,12 +9681,12 @@ case $GUI in
 1) showmenu ; set $todo ;;
 esac
 
-mkdir -p "$WISOTOOL_CACHE"
+mkdir -p "$W_CACHE"
 
 WINETRICKS="$srcdir/winetricks"
 if ! test -f "$WINETRICKS"
 then
-    WINETRICKS="$WISOTOOL_CACHE/winetricks"
+    WINETRICKS="$W_CACHE/winetricks"
     download . http://kegel.com/wine/winetricks
 fi
 
@@ -9747,14 +9747,14 @@ fi
 
 while test "$1" != ""
 do
-    PACKAGE=$1
+    W_PACKAGE=$1
     # Kludge: shorthand synonyms.  Find some more elegant way of doing this.
-    case $PACKAGE in
-    dao) PACKAGE=dragonage ;;
-    sc2) PACKAGE=starcraft2 ;;
+    case $W_PACKAGE in
+    dao) W_PACKAGE=dragonage ;;
+    sc2) W_PACKAGE=starcraft2 ;;
     esac
 
-    case $PACKAGE in
+    case $W_PACKAGE in
     -q) WISOTOOL_QUIET="/q"
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
@@ -9763,7 +9763,7 @@ do
     ls) list_available_verbs;;
     load) load_iso dd;;
     load_harder) load_iso ddrescue;;
-    load=*) key="`echo $PACKAGE | sed 's/load=//'`"; load_iso dd "$key";;
+    load=*) key="`echo $W_PACKAGE | sed 's/load=//'`"; load_iso dd "$key";;
     refile|migrate) migrate_files;;
     version) print_version;;
 
@@ -9772,22 +9772,22 @@ do
        */*) . $1 ;;
        *) . ./$1 ;;
        esac
-       PACKAGE=`echo $1 | sed 's,.*/,,;s,.verb,,'`
-       load_$PACKAGE
+       W_PACKAGE=`echo $1 | sed 's,.*/,,;s,.verb,,'`
+       load_$W_PACKAGE
        ;;
-    *) if verblist_is_legal_verb $PACKAGE
+    *) if verblist_is_legal_verb $W_PACKAGE
        then
-           load_$PACKAGE
+           load_$W_PACKAGE
        else
-           echo Unknown arg $PACKAGE; usage ; exit 1;
+           echo Unknown arg $W_PACKAGE; usage ; exit 1;
        fi
        ;;
     esac
     # Provide a bit of feedback
-    test "$WISOTOOL_QUIET" = "" && case $PACKAGE in
+    test "$WISOTOOL_QUIET" = "" && case $W_PACKAGE in
     -q) echo Setting quiet mode;;
     -v) echo Setting verbose mode;;
-    *) #echo "$PACKAGE done" ;;
+    *) #echo "$W_PACKAGE done" ;;
     esac
     shift
 
@@ -9796,10 +9796,10 @@ do
 
     # User-specific postinstall hook.
     # Source it so the script can call download() if needed.
-    if [ -f "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh ]
+    if [ -f "$WISOTOOL_POST"/$W_PACKAGE/$W_PACKAGE-postinstall.sh ]
     then
-        chmod +x "$WISOTOOL_POST/$PACKAGE/$PACKAGE-postinstall.sh"
-        ( . "$WISOTOOL_POST"/$PACKAGE/$PACKAGE-postinstall.sh )
+        chmod +x "$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
+        ( . "$WISOTOOL_POST"/$W_PACKAGE/$W_PACKAGE-postinstall.sh )
     fi
 done
 
