@@ -943,6 +943,38 @@ verblist_add()
     menu_add $verbname "$description$present"
 }
 
+# wrapper for new format verbs, call verblist_add
+# Usage:
+# w_metadata civ4_demo games \
+#    title="Civilization IV Demo" \
+#    publisher="Firaxis Games" \
+#    year="2005" \
+#    media="download" \
+#    file1=Civilization4_Demo.zip
+
+w_metadata()
+{
+    verbname=$1
+    category=$2
+    shift
+    shift
+    unset media title publisher year file1
+    for arg
+    do
+        val="`echo $arg | sed 's/.*=//'`"
+        var="`echo $arg | sed 's/=.*//'`"
+        case $var in
+        title) title=$val ;;
+        publisher) publisher=$val ;;
+        year) year=$val ;;
+        media) media=$val ;;
+        file1) file1=$val ;;
+        esac
+    done
+    test "$media" && media=" [$media]"
+    verblist_add $verbname "$title ($publisher, $year)$media" $file1
+}
+
 # Returns true if given verb is in the list
 verblist_is_legal_verb()
 {
@@ -8997,7 +9029,13 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
+#verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
+w_metadata  wog games \
+   title="World of Goo Demo" \
+   publisher="2D Boy" \
+   year="2008" \
+   media="download" \
+   file1="WorldOfGooDemo.1.0.exe"
 
 load_wog() {
     if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
