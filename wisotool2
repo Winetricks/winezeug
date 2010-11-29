@@ -462,18 +462,26 @@ wisotool_mainmenu()
          _W_msg_body='Hvad ønsker du at gøre?'
          _W_msg_apps='Installér et program'
          _W_msg_games='Installér et spil'
+         _W_msg_benchmarks='Install a benchmark with Wine'
+         _W_msg_steam='Install a Steam game with Wine'
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
-         _W_msg_apps='Programm mit Wine installieren'
-         _W_msg_games='Spiel mit Wine installieren'
+         _W_msg_apps='Ein Programm mit Wine installieren'
+         _W_msg_benchmarks='Ein Benchmark mit Wine installieren'
+         _W_msg_games='Ein Spiel mit Wine installieren'
+         _W_msg_steam='Ein Steam-Spiel mit Wine installieren'
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
          _W_msg_apps='Install a program with Wine'
+         _W_msg_benchmarks='Install a benchmark with Wine'
          _W_msg_games='Install a game with Wine'
+         _W_msg_steam='Install a Steam game with Wine'
          ;;
     esac
+
+    # FIXME: add line for Steam below once we have steam game verbs
 
     case $WISOTOOL_GUI in
     zenity)
@@ -488,8 +496,9 @@ wisotool_mainmenu()
             --height 500 \
             --width 800 \
             --hide-column 2 \
-            FALSE apps  "$_W_msg_apps" \
-            FALSE games "$_W_msg_games" \
+            FALSE games      "$_W_msg_games" \
+            FALSE benchmarks "$_W_msg_benchmarks" \
+            FALSE apps       "$_W_msg_apps" \
          | tr '|' ' '
         ;;
 
@@ -499,12 +508,13 @@ wisotool_mainmenu()
                 --separate-output \
                 --radiolist \
                 "$_W_msg_body"\
-                apps  "$_W_msg_apps" off \
-                games "$_W_msg_games" off \
+                games      "$_W_msg_games" off \
+                benchmarks "$_W_msg_benchmarks" off \
+                apps       "$_W_msg_apps" off \
 
         ;;
     esac
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_games _W_msg_steam
 }
 
 # Display the current menu, output list of verbs to execute to stdout
@@ -973,7 +983,10 @@ wisotool_init()
 
     # Registering a verb creates a file in WISOTOOL_METADATA
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
-    for _W_cat in games apps
+
+    # The list of categories is also hardcoded in wisotool_mainmenu() :-(
+    WISOTOOL_CATEGORIES="games apps benchmarks steam"
+    for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
     done
@@ -1222,6 +1235,57 @@ _EOF_
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Safari" "Safari.exe"
+}
+
+#----------------------------------------------------------------
+# Benchmarks
+#----------------------------------------------------------------
+
+w_metadata 3dmark2000 benchmarks \
+    title="3DMark2000" \
+    publisher="MadOnion.com" \
+    year="2000" \
+    media="download" \
+    file1="3dmark2000_v11_100308.exe" 
+
+load_3dmark2000() {
+    # http://www.futuremark.com/download/3dmark2000/
+    if ! test -f "$W_CACHE/$W_PACKAGE/3dmark2000_v11_100308.exe"
+    then
+        w_download $W_PACKAGE http://www.ocinside.de/download/3dmark2000_v11_100308.exe b0400d59cfd45d8c8893d3d4edc58b6285ee1502
+    fi
+
+    cd "$W_TMP"
+    mkdir $W_PACKAGE
+    cd $W_PACKAGE
+    w_try unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run Setup.exe
+        WinWait Welcome
+        ControlClick Button1  ; Next
+        WinWait License
+        ControlClick Button2  ; Yes
+        ;WinWaitClose ahk_class #32770 ; License
+        WinWait ahk_class #32770, Destination
+        ControlClick Button1  ; Next
+        ;WinWaitClose ahk_class #32770 ; Destination
+        WinWait, Start
+        ControlClick Button1  ; Next
+        WinWait Registration
+        ControlClick Button1  ; Next
+        WinWait Complete
+        ControlClick Button1  ; Unclick View Readme
+        ControlClick Button4  ; Finish
+    "
+
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+${programfilesdrive}:
+cd "$W_PROGRAMS_X86_WIN\MadOnion.com\3DMark2000"
+REM possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
+.\3DMark2000
+__EOF__
+
 }
 
 #----------------------------------------------------------------
@@ -1705,10 +1769,11 @@ then
 
     # If user specifies menu on commandline, jump there.
     # FIXME: this code is duplicated several times; unify it
-    case "$1" in
-    games|apps)
-        WISOTOOL_CURMENU=$1; shift;;
-    esac
+    if echo "$WISOTOOL_CATEGORIES" | grep -w "$1" > /dev/null
+    then
+        WISOTOOL_CURMENU=$1
+        shift
+    fi
 
     # If no non-option arguments given, read them from GUI
     case "$1" in
@@ -1721,19 +1786,19 @@ then
             *) verbs="`wisotool_showmenu`" ;;
             esac
 
-            case "$verbs" in
-            games|apps)
-                WISOTOOL_CURMENU=$verbs
-                ;;
-            "") # user didn't pick anything, just exit
+            if test "$verbs" = ""
+            then
+                # user didn't pick anything, just exit
                 break
-                ;;
-            *) # Otherwise user picked a real verb.
+            elif echo "$WISOTOOL_CATEGORIES" | grep -w "$verbs" > /dev/null
+            then
+                WISOTOOL_CURMENU=$verbs
+            else
+                # Otherwise user picked a real verb.
                 # replace $1, $2, $3, ... with words of $verbs
                 set $verbs
                 break
-                ;;
-            esac
+            fi
         done
         ;;
     esac
