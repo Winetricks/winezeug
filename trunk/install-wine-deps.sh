@@ -37,13 +37,13 @@ then
         echo "You must run $0 as root"
         exit 1
     fi
-    
+
     if test ! $PKG_PATH
     then
         echo "\$PKG_PATH is undefined, don't know where to get packages"
         exit 1
     fi
-    
+
     for pkg in \
         git \
         lcms \
@@ -60,7 +60,7 @@ then
     do
         pkg_add $pkg
     done
-    
+
     if test -d /usr/ports/devel/flex/
     then
         cd /usr/ports/devel/flex
@@ -73,8 +73,8 @@ then
     fi
 
 fi
-    
-# Regular Linux distros. Currently just Ubuntu :-/.
+
+# Regular Linux distros.
 
 if test ! -w /
 then
@@ -89,7 +89,7 @@ bison ccache flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
 libcapi20-3 libcapi20-dev libcups2-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev \
-libgstreamer0.10-dev libgstreamer0.10-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
+libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
 libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
 libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libsane-dev \
 libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
