@@ -1919,7 +1919,7 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
-verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix 2009) (size: 2.0 GB)[download]" BMDemo_installer.exe
+verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix, 2009) [download]" BMDemo_installer.exe
 
 load_batman_arkham_asylum_demo() {
     w_download $W_PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
@@ -3304,7 +3304,7 @@ load_deadspace() {
 
 #----------------------------------------------------------------
 
-verblist_add demolition_company_demo  "Demolition Company demo [download]" DemolitionCompanyDemoEN.exe
+verblist_add demolition_company_demo  "Demolition Company demo (Giants Software, 2010) [download]" DemolitionCompanyDemoEN.exe
 
 load_demolition_company_demo()
 {
@@ -5868,7 +5868,8 @@ load_masseffect2_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add maxmagicmarker_demo "Download: Max & the Magic Marker Demo (2010) [download]" max_demo_pc.zip
+# site down 28 Nov 2010?
+verblist_add maxmagicmarker_demo "Max & the Magic Marker Demo (Press Play, 2010) [download]" max_demo_pc.zip
 
 load_maxmagicmarker_demo() {
 
@@ -7400,7 +7401,7 @@ load_re5bench() {
 
 #----------------------------------------------------------------
 
-verblist_add riseofnations_demo "Rise of Nations Trial (Microsoft/Big Huge Games 2003) [download]" RiseOfNationsTrial.exe
+verblist_add riseofnations_demo "Rise of Nations Trial (Microsoft/Big Huge Games, 2003) [download]" RiseOfNationsTrial.exe
 
 load_riseofnations_demo() {
 
@@ -7598,7 +7599,7 @@ load_7million() {
 
 #----------------------------------------------------------------
 
-verblist_add secondlife_beta      "Second Life Viewer - Beta (Linden Labs 2003-2010) [download]" Second_Life_2-3-0-213435_BetaViewer_Setup.exe
+verblist_add secondlife_beta      "Second Life Viewer - Beta (Linden Labs, 2003-2010) [download]" Second_Life_2-3-0-213435_BetaViewer_Setup.exe
 
 load_secondlife_beta() {
     w_download $W_PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
