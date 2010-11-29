@@ -1050,7 +1050,12 @@ verblist_init
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark2000 "3DMark2000 (MadOnion.com, 2000) [download]" 3dmark2000_v11_100308.exe
+w_metadata 3dmark2000 benchmarks \
+    title="3DMark2000" \
+    publisher="MadOnion.com" \
+    year="2000" \
+    media="download" \
+    file1="3dmark2000_v11_100308.exe" 
 
 load_3dmark2000() {
     # http://www.futuremark.com/download/3dmark2000/
@@ -1094,7 +1099,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark2001 "3DMark2001 (MadOnion.com, 2001) [download]" 3dmark2001se_330_100308.exe
+w_metadata 3dmark2001 benchmarks \
+    title="3DMark2001" \
+    publisher="MadOnion.com" \
+    year="2001" \
+    media="download" \
+    file1="3dmark2001se_330_100308.exe" 
 
 load_3dmark2001() {
     # http://www.futuremark.com/download/3dmark2001/
@@ -1126,7 +1136,12 @@ load_3dmark2001() {
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark03 "3D Mark 03 (Futuremark, 2003) [download]" 3DMark03_v360_1901.exe
+w_metadata 3dmark03 benchmarks \
+    title="3D Mark 03" \
+    publisher="Futuremark" \
+    year="2003" \
+    media="download" \
+    file1="3DMark03_v360_1901.exe" 
 
 load_3dmark03() {
 
@@ -1172,7 +1187,12 @@ load_3dmark03() {
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark05 "3D Mark 05 (Futuremark, 2005) [download]" 3DMark05_v130_1901.exe
+w_metadata 3dmark05 benchmarks \
+    title="3D Mark 05" \
+    publisher="Futuremark" \
+    year="2005" \
+    media="download" \
+    file1="3DMark05_v130_1901.exe" 
 
 load_3dmark05() {
 
@@ -1215,7 +1235,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add 3dmark06 "3D Mark 06 (Futuremark, 2006) [download]" 3DMark06_v120_1901.exe
+w_metadata 3dmark06 benchmarks \
+    title="3D Mark 06" \
+    publisher="Futuremark" \
+    year="2006" \
+    media="download" \
+    file1="3DMark06_v120_1901.exe" 
 
 load_3dmark06() {
     # http://www.futuremark.com/benchmarks/3dmark06/download/
@@ -1275,7 +1300,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add algodoo_demo  "Algodoo Demo (Algoryx, 2009) [download]" Algodoo_1_7_1-Win32.exe
+w_metadata algodoo_demo games \
+    title="Algodoo Demo" \
+    publisher="Algoryx" \
+    year="2009" \
+    media="download" \
+    file1="Algodoo_1_7_1-Win32.exe" 
 
 load_algodoo_demo() {
     w_download $W_PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
@@ -1314,7 +1344,12 @@ load_algodoo_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add msaoe_demo  "Age of Empires Demo (Microsoft, 1997) [download]" MSAoE.exe
+w_metadata msaoe_demo games \
+    title="Age of Empires Demo" \
+    publisher="Microsoft" \
+    year="1997" \
+    media="download" \
+    file1="MSAoE.exe" 
 
 load_msaoe_demo() {
     w_download $W_PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
@@ -1339,7 +1374,12 @@ load_msaoe_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add aoe3_demo "Age of Empires III (Microsoft, 2005) [download]" aoe3trial.exe
+w_metadata aoe3_demo games \
+    title="Age of Empires III" \
+    publisher="Microsoft" \
+    year="2005" \
+    media="download" \
+    file1="aoe3trial.exe" 
 
 load_aoe3_demo() {
 
@@ -1392,7 +1432,14 @@ load_aoe3_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add aoe3cc "Age Of Empires III: Complete Collection - Age of Empires III (Microsoft, 2009)" "AOE III DISC 1".iso "AOE III DISC 2".iso "AOE III DISC 3".iso
+w_metadata aoe3cc games \
+    title="Age Of Empires III: Complete Collection - Age of Empires III" \
+    publisher="Microsoft" \
+    year="2009" \
+    media="dvd" \
+    file1="AOE III DISC 1.iso" \
+    file2="AOE III DISC 2.iso" \
+    file3="AOE III DISC 3.iso" 
 
 load_aoe3cc() {
 # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
@@ -1470,7 +1517,12 @@ load_aoe3cc() {
 
 #----------------------------------------------------------------
 
-verblist_add aoe3cc_ad "Age Of Empires III: Complete Collection - Asian Dynasties Expansion (Microsoft, 2009)" AOE3Y.iso
+w_metadata aoe3cc_ad games \
+    title="Age Of Empires III: Complete Collection - Asian Dynasties Expansion" \
+    publisher="Microsoft" \
+    year="2009" \
+    media="dvd" \
+    file1="AOE3Y.iso" 
 
 load_aoe3cc_ad() {
 
@@ -1541,7 +1593,12 @@ load_aoe3cc_ad() {
 
 #----------------------------------------------------------------
 
-verblist_add aoe3cc_wc "Age Of Empires III: Complete Collection - WarChiefs Expansion (Microsoft, 2009)" AOE3X.iso
+w_metadata aoe3cc_wc games \
+    title="Age Of Empires III: Complete Collection - WarChiefs Expansion" \
+    publisher="Microsoft" \
+    year="2009" \
+    media="dvd" \
+    file1="AOE3X.iso" 
 
 load_aoe3cc_wc() {
 
@@ -1612,7 +1669,12 @@ load_aoe3cc_wc() {
 
 #----------------------------------------------------------------
 
-verblist_add amnesia_tdd_demo "Amnesia: The Dark Descent Demo (Frictional Games, 2010) [download]" amnesia_tdd_demo_1.0.1.exe
+w_metadata amnesia_tdd_demo games \
+    title="Amnesia: The Dark Descent Demo" \
+    publisher="Frictional Games" \
+    year="2010" \
+    media="download" \
+    file1="amnesia_tdd_demo_1.0.1.exe" 
 
 load_amnesia_tdd_demo() {
 
@@ -1665,7 +1727,12 @@ load_amnesia_tdd_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add anno1404_demo  "Anno 1404 Demo (Ubisoft, 2009) [download]" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
+w_metadata anno1404_demo games \
+    title="Anno 1404 Demo" \
+    publisher="Ubisoft" \
+    year="2009" \
+    media="download" \
+    file1="DawnofDiscovery_Demo_US_2009_06_15_18_22.zip" 
 
 load_anno1404_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip"
@@ -1722,7 +1789,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add assassinscreed "Assassins Creed (Ubisoft, 2008)" a62112860423b32bf3ea77df6f5fe0b60c772de2.iso
+w_metadata assassinscreed games \
+    title="Assassins Creed" \
+    publisher="Ubisoft" \
+    year="2008" \
+    media="dvd" \
+    file1="a62112860423b32bf3ea77df6f5fe0b60c772de2.iso" 
 
 load_assassinscreed() {
     if w_workaround_wine_bug 22392
@@ -1762,7 +1834,12 @@ load_assassinscreed() {
 
 #----------------------------------------------------------------
 
-verblist_add avatar_demo    "James Camerons Avatar The Game Demo (Ubisoft, 2009) [download]" Avatar_The_Game_Demo.exe
+w_metadata avatar_demo games \
+    title="James Camerons Avatar The Game Demo" \
+    publisher="Ubisoft" \
+    year="2009" \
+    media="download" \
+    file1="Avatar_The_Game_Demo.exe" 
 
 load_avatar_demo()
 {
@@ -1811,11 +1888,15 @@ load_avatar_demo()
 #----------------------------------------------------------------
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=408
-verblist_add baldursgate2       "Baldurs Gate 2 - Shadows of Amn (Bioware, 2000)" \
-  cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso \
-  429872605dad10433c3c581a1c11eba4d0988c46.iso \
-  a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso \
-  94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso
+w_metadata baldursgate2 games \
+    title="Baldurs Gate 2 - Shadows of Amn" \
+    publisher="Bioware" \
+    year="2000" \
+    media="dvd" \
+    file1="cc9359dce1a7be6c64bb6f8e6dea6d14d4a5f716.iso" \
+    file2="429872605dad10433c3c581a1c11eba4d0988c46.iso" \
+    file3="a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso" \
+    file4="94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso" 
 
 load_baldursgate2() {
     # Possible wine bug: cd is still in use, even if wine eject is used. Workaround it by
@@ -1919,7 +2000,12 @@ load_baldursgate2() {
 
 #----------------------------------------------------------------
 
-verblist_add batman_arkham_asylum_demo "Batman: Arkham Asylum Demo (Warner/Eidos/Enix, 2009) [download]" BMDemo_installer.exe
+w_metadata batman_arkham_asylum_demo games \
+    title="Batman: Arkham Asylum Demo" \
+    publisher="Warner/Eidos/Enix" \
+    year="2009" \
+    media="download" \
+    file1="BMDemo_installer.exe" 
 
 load_batman_arkham_asylum_demo() {
     w_download $W_PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
@@ -2027,8 +2113,12 @@ load_batman_arkham_asylum_demo() {
 # Sadly, the SHA1SUM varies!
 # FIXME: change load function to call it by its volume label instead; right now you have to rename it manually.
 
-verblist_add bfbc2       "Battlefield Bad Company 2 (EA, 2010)" \
-  BFBC2.iso
+w_metadata bfbc2 games \
+    title="Battlefield Bad Company 2" \
+    publisher="EA" \
+    year="2010" \
+    media="dvd" \
+    file1="BFBC2.iso" 
 
 load_bfbc2() {
     exedir="$W_PROGRAMS_X86_UNIX/Electronic Arts/Battlefield Bad Company 2"
@@ -2108,9 +2198,13 @@ load_bfbc2() {
 # plain iso, from dd: deaf00ebee6e73aecf38f704c3f516008a68d888
 # mds: 391042ea19b4eace5d532dbade10931ebbc4def6
 # mdf: deaf00ebee6e73aecf38f704c3f516008a68d888
-verblist_add bioshock       "Bioshock (2K Games, 2007)" \
-  391042ea19b4eace5d532dbade10931ebbc4def6.mds \
-  deaf00ebee6e73aecf38f704c3f516008a68d888.iso
+w_metadata bioshock games \
+    title="Bioshock" \
+    publisher="2K Games" \
+    year="2007" \
+    media="dvd" \
+    file1="391042ea19b4eace5d532dbade10931ebbc4def6.mds" \
+    file2="deaf00ebee6e73aecf38f704c3f516008a68d888.iso" 
 
 load_bioshock() {
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
@@ -2298,8 +2392,12 @@ load_bioshock_iso()
 
 #----------------------------------------------------------------
 
-verblist_add bioshock_demo       "Bioshock Demo (2K Games, 2007) [download]" \
-  nzd_BioShockPC.zip
+w_metadata bioshock_demo games \
+    title="Bioshock Demo" \
+    publisher="2K Games" \
+    year="2007" \
+    media="download" \
+    file1="nzd_BioShockPC.zip" 
 
 load_bioshock_demo() {
     w_download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
@@ -2342,7 +2440,12 @@ load_bioshock_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add bladekitten_demo "Blade Kitten Demo (Krome Studios Pty Ltd., 2010) [download]" BladeKittenDemoInstall.exe
+w_metadata bladekitten_demo games \
+    title="Blade Kitten Demo" \
+    publisher="Krome Studios Pty Ltd." \
+    year="2010" \
+    media="download" \
+    file1="BladeKittenDemoInstall.exe" 
 
 load_bladekitten_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE/BladeKittenDemoInstall.exe"
@@ -2382,7 +2485,12 @@ load_bladekitten_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add blobby_volley "Blobby Volley (Daniel Skoraszewsky, 2000) [download]" blobby.zip
+w_metadata blobby_volley games \
+    title="Blobby Volley" \
+    publisher="Daniel Skoraszewsky" \
+    year="2000" \
+    media="download" \
+    file1="blobby.zip" 
 
 load_blobby_volley() {
     if ! test -f "$W_CACHE/$W_PACKAGE/blobby.zip"
@@ -2405,8 +2513,12 @@ load_blobby_volley() {
 
 #----------------------------------------------------------------
 
-verblist_add blur       "Blur (Activision, 2010)" \
-  30fdaf3aad82be846f26b7908c703598d5c3443d.iso
+w_metadata blur games \
+    title="Blur" \
+    publisher="Activision" \
+    year="2010" \
+    media="dvd" \
+    file1="30fdaf3aad82be846f26b7908c703598d5c3443d.iso" 
 
 load_blur() {
     iso_mount "$W_CACHE"/$W_PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
@@ -2456,7 +2568,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add braid_demo    "Braid Demo (Number None, 2009) [download]" braid_windows_r3.exe
+w_metadata braid_demo games \
+    title="Braid Demo" \
+    publisher="Number None" \
+    year="2009" \
+    media="download" \
+    file1="braid_windows_r3.exe" 
 
 load_braid_demo()
 {
@@ -2496,7 +2613,12 @@ load_braid_demo()
 
 #----------------------------------------------------------------
 
-verblist_add braid    "Braid (Number None, 2009) [download]" braid_windows_r3.exe
+w_metadata braid games \
+    title="Braid" \
+    publisher="Number None" \
+    year="2009" \
+    media="download" \
+    file1="braid_windows_r3.exe" 
 
 load_braid()
 {
@@ -2559,7 +2681,12 @@ load_braid()
 
 #----------------------------------------------------------------
 
-verblist_add cod_demo "Call of Duty (Activision, 2003) [download]" Call_Of_Duty_Demo.exe
+w_metadata cod_demo games \
+    title="Call of Duty" \
+    publisher="Activision" \
+    year="2003" \
+    media="download" \
+    file1="Call_Of_Duty_Demo.exe" 
 
 load_cod_demo() {
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
@@ -2606,9 +2733,13 @@ __EOF__
 
 # Use load_harder to load the first disc
 # Checksums vary, have to rename by hand to match volume names
-verblist_add cod1 "Call of Duty (Activision, 2003)" \
-    COD1.iso \
-    CoD2.iso
+w_metadata cod1 games \
+    title="Call of Duty" \
+    publisher="Activision" \
+    year="2003" \
+    media="dvd" \
+    file1="COD1.iso" \
+    file2="CoD2.iso" 
 
 load_cod1() {
     iso_mount "$W_CACHE"/$W_PACKAGE/COD1.iso
@@ -2683,9 +2814,13 @@ __EOF__
 #----------------------------------------------------------------
 
 
-verblist_add codmw2        "Call of Duty Modern Warfare 2 (Activision, 2009) [broken]" \
-  6f572261ed954733806daf5b42edf92b3127cd14.iso \
-  3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso
+w_metadata codmw2 games \
+    title="Call of Duty Modern Warfare 2" \
+    publisher="Activision" \
+    year="2009" \
+    media="dvd" \
+    file1="6f572261ed954733806daf5b42edf92b3127cd14.iso" \
+    file2="3c6e63504d41df4bdb2d4c57f4c5fc7b810d7df8.iso" 
 
 load_codmw2()
 {
@@ -2750,7 +2885,12 @@ load_codmw2()
 
 #----------------------------------------------------------------
 
-verblist_add cod4mw_demo "Call of Duty 4 Modern Warfare (Activision, 2007) [download]" CoD4MWDemoSetup_v2.exe
+w_metadata cod4mw_demo games \
+    title="Call of Duty 4 Modern Warfare" \
+    publisher="Activision" \
+    year="2007" \
+    media="download" \
+    file1="CoD4MWDemoSetup_v2.exe" 
 
 load_cod4mw_demo() {
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
@@ -2783,7 +2923,12 @@ load_cod4mw_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add cnc2    "Command and Conquer Tiberian Sun & Firestorm (Westwood, 2000), [download]" OfficialCnCTiberianSun.rar
+w_metadata cnc2 games \
+    title="Command and Conquer Tiberian Sun & Firestorm" \
+    publisher="Westwood" \
+    year="2000" \
+    media="download" \
+    file1="OfficialCnCTiberianSun.rar" 
 
 load_cnc2()
 {
@@ -2801,7 +2946,13 @@ load_cnc2()
 
 #----------------------------------------------------------------
 
-verblist_add civ4 "Civilization IV (Firaxis Games, 2005) [broken-wine-drm]" 6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso 231eee984062c9acadd336b4c0852fac829b76a8.iso
+w_metadata civ4 games \
+    title="Civilization IV" \
+    publisher="Firaxis Games" \
+    year="2005" \
+    media="dvd" \
+    file1="6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso" \
+    file2="231eee984062c9acadd336b4c0852fac829b76a8.iso" 
 
 load_civ4() {
     if w_workaround_wine_bug 219
@@ -2882,7 +3033,12 @@ load_civ4() {
 
 #----------------------------------------------------------------
 
-verblist_add civ4_demo    "Civilization IV Demo (Firaxis Games, 2005) [download]" Civilization4_Demo.zip
+w_metadata civ4_demo games \
+    title="Civilization IV Demo" \
+    publisher="Firaxis Games" \
+    year="2005" \
+    media="download" \
+    file1="Civilization4_Demo.zip" 
 
 load_civ4_demo()
 {
@@ -2932,7 +3088,12 @@ load_civ4_demo()
 
 #----------------------------------------------------------------
 
-verblist_add cnc3_demo    "Command and Conquer 3 Demo (EA, 2007) [download]" CnC3Demo.exe
+w_metadata cnc3_demo games \
+    title="Command and Conquer 3 Demo" \
+    publisher="EA" \
+    year="2007" \
+    media="download" \
+    file1="CnC3Demo.exe" 
 
 load_cnc3_demo()
 {
@@ -2973,7 +3134,12 @@ load_cnc3_demo()
 
 #----------------------------------------------------------------
 
-verblist_add cnc4    "Command and Conquer 4 (EA, 2010) [broken-wine-drm]" f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso
+w_metadata cnc4 games \
+    title="Command and Conquer 4" \
+    publisher="EA" \
+    year="2010" \
+    media="dvd" \
+    file1="f3308e6d3a93e7b5dd2643631404e97b66a0c262.iso" 
 
 load_cnc4()
 {
@@ -3005,7 +3171,13 @@ __EOF__
 }
 
 #----------------------------------------------------------------
-verblist_add dao_ue     "Dragon Age: Origins - Ultimate Edition (Bioware / EA, 2010)" 2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso 545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso
+w_metadata dao_ue games \
+    title="Dragon Age: Origins - Ultimate Edition" \
+    publisher="Bioware / EA" \
+    year="2010" \
+    media="dvd" \
+    file1="2dc418441ec0df4c36d5f63ecc3620a3bef718c4.iso" \
+    file2="545bba72cdf8cf4a608d62c2b1f19bd23299edfa.iso" 
 
 load_dao_ue()
 {
@@ -3087,7 +3259,12 @@ load_dao_ue()
 
 #----------------------------------------------------------------
 
-verblist_add darknesswithin2_demo    "Darkness Within 2 Demo (Zoetrope Interactive, 2010) [download]" DarknessWithin2Demo.exe
+w_metadata darknesswithin2_demo games \
+    title="Darkness Within 2 Demo" \
+    publisher="Zoetrope Interactive" \
+    year="2010" \
+    media="download" \
+    file1="DarknessWithin2Demo.exe" 
 
 load_darknesswithin2_demo()
 {
@@ -3136,7 +3313,12 @@ load_darknesswithin2_demo()
 
 #----------------------------------------------------------------
 
-verblist_add daytona_usa_evolutions  "Daytona USA Evolutions (Sega, 1997)" daytonev.exe
+w_metadata daytona_usa_evolutions games \
+    title="Daytona USA Evolutions" \
+    publisher="Sega" \
+    year="1997" \
+    media="dvd" \
+    file1="daytonev.exe" 
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=1136
 load_daytona_usa_evolutions() {
@@ -3198,8 +3380,14 @@ load_daytona_usa_evolutions() {
 
 #----------------------------------------------------------------
 
-verblist_add dc2ba     "Doras Carnival 2: Boardwalk Adventure (Nickelodeon, 2008)" InstallDorasCarnival2BoardwalkAdventure.exe
-load_dc2ba() {
+w_metadata dc2ba_demo games \
+    title="Doras Carnival 2: Boardwalk Adventure Demo" \
+    publisher="Nickelodeon" \
+    year="2008" \
+    media="download" \
+    file1="InstallDorasCarnival2BoardwalkAdventure.exe" 
+
+load_dc2ba_demo() {
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
     w_download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
 
@@ -3248,8 +3436,12 @@ load_dc2ba() {
 
 #----------------------------------------------------------------
 
-verblist_add deadspace       "Dead Space (EA, 2008)" \
-  abf250df77bfa96c74e7bcd0343d381a4f327a26.iso
+w_metadata deadspace games \
+    title="Dead Space" \
+    publisher="EA" \
+    year="2008" \
+    media="dvd" \
+    file1="abf250df77bfa96c74e7bcd0343d381a4f327a26.iso" 
 
 load_deadspace() {
     DEADSPACEKEY=`cat "$W_CACHE"/$W_PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
@@ -3304,7 +3496,12 @@ load_deadspace() {
 
 #----------------------------------------------------------------
 
-verblist_add demolition_company_demo  "Demolition Company demo (Giants Software, 2010) [download]" DemolitionCompanyDemoEN.exe
+w_metadata demolition_company_demo games \
+    title="Demolition Company demo" \
+    publisher="Giants Software" \
+    year="2010" \
+    media="download" \
+    file1="DemolitionCompanyDemoEN.exe" 
 
 load_demolition_company_demo()
 {
@@ -3341,7 +3538,12 @@ load_demolition_company_demo()
 
 #----------------------------------------------------------------
 
-verblist_add desperados2  "Desperados 2 (Atari, 2006)" ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso
+w_metadata desperados2 games \
+    title="Desperados 2" \
+    publisher="Atari" \
+    year="2006" \
+    media="dvd" \
+    file1="ff13e7c5a96c70a24f91528915ea4ff375b0193e.iso" 
 
 load_desperados2()
 {
@@ -3380,7 +3582,13 @@ load_desperados2()
 
 #----------------------------------------------------------------
 
-verblist_add deusex2_demo   "Deus Ex 2 / Deus Ex: Invisible War Demo (Eidos, 2003) [download]" dxiw_demo.zip
+w_metadata deusex2_demo games \
+    title="Deus Ex 2 / Deus Ex: Invisible War Demo" \
+    publisher="Eidos" \
+    year="2003" \
+    media="download" \
+    file1="dxiw_demo.zip" 
+
 load_deusex2_demo()
 {
     if ! test -f "$W_CACHE/$W_PACKAGE/dxiw_demo.zip"
@@ -3431,11 +3639,15 @@ load_deusex2_demo()
 
 #----------------------------------------------------------------
 
-verblist_add diablo2       "Diablo II (Blizzard, 2000)" \
-  e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso \
-  51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso \
-  382ea98f270e39855b558b8fac0d609712a54ae8.iso \
-  e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso
+w_metadata diablo2 games \
+    title="Diablo II" \
+    publisher="Blizzard" \
+    year="2000" \
+    media="dvd" \
+    file1="e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso" \
+    file2="51e2c630d5dd017e6168a8cf3ee24e39010316d9.iso" \
+    file3="382ea98f270e39855b558b8fac0d609712a54ae8.iso" \
+    file4="e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso" 
 
 load_diablo2() {
     w_warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs."
@@ -3504,7 +3716,12 @@ load_diablo2() {
 
 #----------------------------------------------------------------
 
-verblist_add dirt2_demo "Dirt 2 Demo (Codemasters, 2009) [download]" Dirt2Demo.zip
+w_metadata dirt2_demo games \
+    title="Dirt 2 Demo" \
+    publisher="Codemasters" \
+    year="2009" \
+    media="download" \
+    file1="Dirt2Demo.zip" 
 
 load_dirt2_demo() {
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
@@ -3557,7 +3774,12 @@ load_dirt2_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add dragonage     "Dragon Age: Origins (Bioware / EA, 2009)" 705a6b06d0dd807bf62b4391d278649d728ebda4.iso
+w_metadata dragonage games \
+    title="Dragon Age: Origins" \
+    publisher="Bioware / EA" \
+    year="2009" \
+    media="dvd" \
+    file1="705a6b06d0dd807bf62b4391d278649d728ebda4.iso" 
 
 load_dragonage() {
     w_read_key
@@ -3617,7 +3839,12 @@ load_dragonage() {
 
 #----------------------------------------------------------------
 
-verblist_add dts     "Death to Spies (1C Company / Haggard Games, 2007)" 3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
+w_metadata dts games \
+    title="Death to Spies" \
+    publisher="1C Company / Haggard Games" \
+    year="2007" \
+    media="dvd" \
+    file1="3cf30e69986e00794a4ee581a35f3319f82a82dd.iso" 
 
 load_dts() {
 
@@ -3652,7 +3879,12 @@ load_dts() {
 
 #----------------------------------------------------------------
 
-verblist_add eve "EVE Online Tyrannis (CCP Games, 2010) [download]" EVE_Premium_Setup_177290_m.exe
+w_metadata eve games \
+    title="EVE Online Tyrannis" \
+    publisher="CCP Games" \
+    year="2010" \
+    media="download" \
+    file1="EVE_Premium_Setup_177290_m.exe" 
 
 load_eve() {
     # FIXME: download function should avoid checksumming huge old files
@@ -3690,7 +3922,12 @@ load_eve() {
 
 #----------------------------------------------------------------
 
-verblist_add ewj_demo     "Earthworm Jim demo (Shiny Entertainment, 1996) [download]"
+w_metadata ewj_demo games \
+    title="Earthworm Jim demo" \
+    publisher="Shiny Entertainment" \
+    year="1996" \
+    media="download" \
+    file1="ewjdemo.exe"
 
 load_ewj_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=4233
@@ -3729,11 +3966,15 @@ load_ewj_demo() {
 # Sadly, the SHA1SUM of the first disc varies!
 # FIXME: change load function to call it by its volume label instead; right now you have to rename it manually.
 
-verblist_add fable_tlc "Fable: The Lost Chapters (Microsoft, 2005)" \
-    FABLE_DISC_1.iso \
-    755eaa37cd52c1171339d2dae11979147cf62080.iso \
-    ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso \
-    2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso
+w_metadata fable_tlc games \
+    title="Fable: The Lost Chapters" \
+    publisher="Microsoft" \
+    year="2005" \
+    media="dvd" \
+    file1="FABLE_DISC_1.iso" \
+    file2="755eaa37cd52c1171339d2dae11979147cf62080.iso" \
+    file3="ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso" \
+    file4="2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso" 
 
 load_fable_tlc() {
 
@@ -3833,7 +4074,12 @@ _EOF_
 
 #----------------------------------------------------------------
 
-verblist_add fallout3  "Fallout 3 Windows Live Version (Bethesda, 2009)" 4994dca9fa2e105ea592899644f48d754338663f.iso
+w_metadata fallout3 games \
+    title="Fallout 3 Windows Live Version" \
+    publisher="Bethesda" \
+    year="2009" \
+    media="dvd" \
+    file1="4994dca9fa2e105ea592899644f48d754338663f.iso" 
 
 load_fallout3()
 {
@@ -3867,8 +4113,13 @@ load_fallout3()
 
 #----------------------------------------------------------------
 
-verblist_add fallout3_goty     "Fallout 3: Game of the Year Edition (Bethesda, 2009)" 379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso \
-                                f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso
+w_metadata fallout3_goty games \
+    title="Fallout 3: Game of the Year Edition" \
+    publisher="Bethesda" \
+    year="2009" \
+    media="dvd" \
+    file1="379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso" \
+    file2="f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso" 
 
 load_fallout3_goty() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
@@ -3931,7 +4182,12 @@ load_fallout3_goty() {
 
 #----------------------------------------------------------------
 
-verblist_add fallout_nv  "Fallout New Vegas (Bethesda, 2010)" f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso
+w_metadata fallout_nv games \
+    title="Fallout New Vegas" \
+    publisher="Bethesda" \
+    year="2010" \
+    media="dvd" \
+    file1="f603dfc0343ea4257d04946e1cac8c06dfe8707d.iso" 
 
 load_fallout_nv()
 {
@@ -4009,7 +4265,12 @@ load_fallout_nv()
 
 #----------------------------------------------------------------
 
-verblist_add fifa10     "Fifa 10 (EA, 2009)" 2038b86319862e1177912949e9f826f333571c48.iso
+w_metadata fifa10 games \
+    title="Fifa 10" \
+    publisher="EA" \
+    year="2009" \
+    media="dvd" \
+    file1="2038b86319862e1177912949e9f826f333571c48.iso" 
 
 load_fifa10() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
@@ -4069,7 +4330,12 @@ load_fifa10() {
 
 #----------------------------------------------------------------
 
-verblist_add fifa11_demo    "FIFA 11 Demo (EA Sports, 2010) [download]" fifa11_pc_demo_NA.zip
+w_metadata fifa11_demo games \
+    title="FIFA 11 Demo" \
+    publisher="EA Sports" \
+    year="2010" \
+    media="download" \
+    file1="fifa11_pc_demo_NA.zip" 
 
 load_fifa11_demo()
 {
@@ -4129,7 +4395,12 @@ fi
 #----------------------------------------------------------------
 
 
-verblist_add fifaonline3_beta    "FIFA Online 3 Beta (EA Sports, 2010) [download]" FIFAOnlineSetup.exe
+w_metadata fifaonline3_beta games \
+    title="FIFA Online 3 Beta" \
+    publisher="EA Sports" \
+    year="2010" \
+    media="download" \
+    file1="FIFAOnlineSetup.exe" 
 
 load_fifaonline3_beta()
 {
@@ -4202,7 +4473,12 @@ load_fifaonline3_beta()
 
 #----------------------------------------------------------------
 
-verblist_add fifa10_demo     "Fifa 10 Demo (EA, 2009)" fifa10_pc_demo_ec.exe
+w_metadata fifa10_demo games \
+    title="Fifa 10 Demo" \
+    publisher="EA" \
+    year="2009" \
+    media="download" \
+    file1="fifa10_pc_demo_ec.exe" 
 
 load_fifa10_demo() {
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
@@ -4258,7 +4534,12 @@ load_fifa10_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add ffvii_demo "Final Fantasy VII (Square Enix, 1998)" ff7demo.zip
+w_metadata ffvii_demo games \
+    title="Final Fantasy VII" \
+    publisher="Square Enix" \
+    year="1998" \
+    media="download" \
+    file1="ff7demo.zip" 
 
 load_ffvii_demo() {
     w_download $W_PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
@@ -4278,7 +4559,12 @@ load_ffvii_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add ffxiv_beta "Final Fantasy XIV Beta (Square Enix, 2010)" ffxivsetup.exe
+w_metadata ffxiv_beta games \
+    title="Final Fantasy XIV Beta" \
+    publisher="Square Enix" \
+    year="2010" \
+    media="download" \
+    file1="ffxivsetup.exe" 
 
 load_ffxiv_beta() {
     # e6e615e5886c17e744fc4aba7b267e7e3dcbdb52 ffxivsetup.exe
@@ -4351,7 +4637,12 @@ load_ffxiv_beta() {
 
 #----------------------------------------------------------------
 
-verblist_add ffxivbench "Final Fantasy XIV Benchmark (Square Enix, 2010)" FFXIVBenchmark.zip
+w_metadata ffxivbench benchmarks \
+    title="Final Fantasy XIV Benchmark" \
+    publisher="Square Enix" \
+    year="2010" \
+    media="download" \
+    file1="FFXIVBenchmark.zip" 
 
 load_ffxivbench() {
     w_download $W_PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
@@ -4399,7 +4690,12 @@ fi
 
 #----------------------------------------------------------------
 
-verblist_add fm10_demo "Football Manager 2010 demo (Sony, 2009)" Setup_FM2010_Vanilla_Demo.exe
+w_metadata fm10_demo games \
+    title="Football Manager 2010 demo" \
+    publisher="Sony" \
+    year="2009" \
+    media="download" \
+    file1="Setup_FM2010_Vanilla_Demo.exe" 
 
 load_fm10_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE/Setup_FM2010_Vanilla_Demo.exe"
@@ -4447,7 +4743,12 @@ load_fm10_demo() {
 }
 
 # http://www.futurepinball.com/
-verblist_add futurepinball "Future Pinball (Christopher Leathley, 2008) [download]"
+w_metadata futurepinball games \
+    title="Future Pinball" \
+    publisher="Christopher Leathley" \
+    year="2008" \
+    media="download" \
+    file1="FuturePinballSetup_v1.9.20081225.exe"
 
 load_futurepinball() {
     w_download $W_PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
@@ -4502,7 +4803,13 @@ load_futurepinball() {
 
 #----------------------------------------------------------------
 
-verblist_add gothic4_demo  "Gothic 4 demo (Jowood/Dreamcatcher Games, 2010) [download] (broken)" ArcaniA_Gothic4_Demo_Setup.zip
+w_metadata gothic4_demo games \
+    title="Gothic 4 demo" \
+    publisher="Jowood/Dreamcatcher Games" \
+    year="2010" \
+    media="download" \
+    file1="ArcaniA_Gothic4_Demo_Setup.zip" 
+
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
 load_gothic4_demo() {
@@ -4556,27 +4863,33 @@ load_gothic4_demo() {
         controlclick, TNewButton4, Setup - ArcaniA, Completing
     "
 
-if w_workaround_wine_bug 21939
-then
-    w_try_winetricks wmp9
-fi
+    if w_workaround_wine_bug 21939
+    then
+        w_try_winetricks wmp9
+    fi
 
-if w_workaround_wine_bug 24250
-then
-    w_try_winetricks vcrun2008
-fi
+    if w_workaround_wine_bug 24250
+    then
+        w_try_winetricks vcrun2008
+    fi
 
-if w_workaround_wine_bug 7065
-then
-    w_warn "Game has Securom protection, doesn't work in Wine yet."
-fi
+    if w_workaround_wine_bug 7065
+    then
+        w_warn "Game has Securom protection, doesn't work in Wine yet."
+    fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\JoWooD Entertainment AG\\ArcaniA - Gothic 4 Demo" "Arcania.exe"
 }
 
 #----------------------------------------------------------------
 
-verblist_add grand_ages_rome_demo  "Grand Ages: Rome demo (Kalypso, 2009) " GrandAgesRome-EU-XL-Demo.exe
+w_metadata grand_ages_rome_demo games \
+    title="Grand Ages: Rome demo" \
+    publisher="Kalypso" \
+    year="2009" \
+    media="download" \
+    file1="GrandAgesRome-EU-XL-Demo.exe" 
+
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
 
 load_grand_ages_rome_demo() {
@@ -4617,9 +4930,13 @@ load_grand_ages_rome_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add gta_vc     "Grand Theft Auto: Vice City (Rockstar, 2003) " \
-  e98c2d323dd0494989a844442586dc2d48fba8f9.iso \
-  d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso
+w_metadata gta_vc games \
+    title="Grand Theft Auto: Vice City" \
+    publisher="Rockstar" \
+    year="2003" \
+    media="dvd" \
+    file1="e98c2d323dd0494989a844442586dc2d48fba8f9.iso" \
+    file2="d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso" 
 
 load_gta_vc() {
     iso_mount "$W_CACHE"/$W_PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
@@ -4672,7 +4989,12 @@ load_gta_vc() {
 
 #----------------------------------------------------------------
 
-verblist_add guildwars    "Guild Wars (NCsoft, 2005) [download]" GwSetup.exe
+w_metadata guildwars games \
+    title="Guild Wars" \
+    publisher="NCsoft" \
+    year="2005" \
+    media="download" \
+    file1="GwSetup.exe" 
 
 load_guildwars() {
     w_download $W_PACKAGE http://guildwars.com/download a7c4c8cb3b8cbee20707dcf8176d3da6a1686c05 GwSetup.exe
@@ -4698,8 +5020,12 @@ load_guildwars() {
 
 #----------------------------------------------------------------
 
-verblist_add half_life_goty     "Half Life: Game of the Year Edition (Sierra, 2000) " \
-  dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
+w_metadata half_life_goty games \
+    title="Half Life: Game of the Year Edition" \
+    publisher="Sierra" \
+    year="2000" \
+    media="dvd" \
+    file1="dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso" 
 
 load_half_life_goty() {
     iso_mount "$W_CACHE"/$W_PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
@@ -4766,7 +5092,12 @@ load_half_life_goty() {
 
 #----------------------------------------------------------------
 
-verblist_add hko "Hello Kitty Online (Sanrio Digital, 2009) [download]" "Hello Kitty Online Standard Installer.zip"
+w_metadata hko games \
+    title="Hello Kitty Online" \
+    publisher="Sanrio Digital" \
+    year="2009" \
+    media="download" \
+    file1="Hello Kitty Online Standard Installer.zip" 
 
 load_hko() {
     w_download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
@@ -4827,7 +5158,12 @@ load_hko() {
 
 #----------------------------------------------------------------
 
-verblist_add hm_demo "Hearts Medicine Demo (Gamehouse, 2010) [download]" HeartsMedicine_Season1_download.exe
+w_metadata hm_demo games \
+    title="Hearts Medicine Demo" \
+    publisher="Gamehouse" \
+    year="2010" \
+    media="download" \
+    file1="HeartsMedicine_Season1_download.exe" 
 
 load_hm_demo() {
     w_download $W_PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
@@ -4877,7 +5213,12 @@ load_hm_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add hordsoforcs2_demo "Hordes of Orcs 2 Demo (Freeverse, 2010) [download]" HoO2Demo.exe
+w_metadata hordsoforcs2_demo games \
+    title="Hordes of Orcs 2 Demo" \
+    publisher="Freeverse" \
+    year="2010" \
+    media="download" \
+    file1="HoO2Demo.exe" 
 
 load_hordsoforcs2_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE"/HoO2Demo.exe
@@ -4933,8 +5274,12 @@ load_hordsoforcs2_demo() {
 
 #----------------------------------------------------------------
 
-hbpdemoexe=Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe
-verblist_add hphbp_demo    "Harry Potter & The Half Blood Prince Demo (EA, 2009) [download]" $hbpdemoexe
+w_metadata hphbp_demo games \
+    title="Harry Potter & The Half Blood Prince Demo" \
+    publisher="EA" \
+    year="2009" \
+    media="download" \
+    file1="Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe" 
 
 load_hphbp_demo()
 {
@@ -4942,7 +5287,7 @@ load_hphbp_demo()
     ""|"C") w_die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
-    if ! test -f "$W_CACHE/$W_PACKAGE/$hbpdemoexe"
+    if ! test -f "$W_CACHE/$W_PACKAGE/Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe"
     then
         w_download $W_PACKAGE http://largedownloads.ea.com/pub/demos/HarryPotter/Release_HBP_demo_PC_DD_DEMO_Final_348428.exe dadc1366c3b5e641454aa337ad82bc8c5082bad2
     fi
@@ -4950,7 +5295,7 @@ load_hphbp_demo()
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, $hbpdemoexe
+        run, Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe
         winwait, Harry Potter, Install
         controlclick, Button1, Harry Potter
         winwait, Setup, License
@@ -4981,7 +5326,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add hphbp    "Harry Potter & The Half Blood Prince (EA, 2009)" 9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
+w_metadata hphbp games \
+    title="Harry Potter & The Half Blood Prince" \
+    publisher="EA" \
+    year="2009" \
+    media="dvd" \
+    file1="9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso" 
 
 load_hphbp()
 {
@@ -5023,7 +5373,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add hegemonypom_demo    "Hegemony: Philip of Macedon Demo (Longbow Games, 2010) [download]" Hegemony_Philip_of_Macedon_Installer.exe
+w_metadata hegemonypom_demo games \
+    title="Hegemony: Philip of Macedon Demo" \
+    publisher="Longbow Games" \
+    year="2010" \
+    media="download" \
+    file1="Hegemony_Philip_of_Macedon_Installer.exe" 
 
 load_hegemonypom_demo()
 {
@@ -5099,8 +5454,12 @@ load_help() {
 #----------------------------------------------------------------
 
 honexe=HoNClient-1.0.12.1.exe
-verblist_add hon "Heroes of Newerth (S2 Games, 2010) [download]" \
-$honexe
+w_metadata hon games \
+    title="Heroes of Newerth" \
+    publisher="S2 Games" \
+    year="2010" \
+    media="download" \
+    file1="$honexe" 
 
 load_hon()
 {
@@ -5130,7 +5489,12 @@ load_hon()
 
 #----------------------------------------------------------------
 
-verblist_add hod3_jp_demo "The House of the Dead 3 - Japanese - Demo (SEGA, 2005) (broken in wine-1.3.3?) [download]"  hod3_trial.exe
+w_metadata hod3_jp_demo games \
+    title="The House of the Dead 3 - Japanese - Demo" \
+    publisher="SEGA" \
+    year="2005" \
+    media="download" \
+    file1="hod3_trial.exe" 
 
 load_hod3_jp_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE/hod3_trial.exe"
@@ -5184,7 +5548,12 @@ load_hod3_jp_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add imvu "IMVU - Instant Messaging Virtual Universe (IMVU, 2004) [download]" "InstallIMVU_447.0_st_conduit.exe"
+w_metadata imvu games \
+    title="IMVU - Instant Messaging Virtual Universe" \
+    publisher="IMVU" \
+    year="2004" \
+    media="download" \
+    file1="InstallIMVU_447.0_st_conduit.exe" 
 
 load_imvu() {
 
@@ -5214,7 +5583,12 @@ load_imvu() {
 
 #----------------------------------------------------------------
 
-verblist_add kq1vga "King Quest I VGA (AGD Interactive, 2009) [download]" Kq1vga40.exe
+w_metadata kq1vga games \
+    title="King Quest I VGA" \
+    publisher="AGD Interactive" \
+    year="2009" \
+    media="download" \
+    file1="Kq1vga40.exe" 
 
 # http://www.agdinteractive.com/games/kq1/download/download.html
 # http://agdinteractive.com/countdl.php?action=download&game=11
@@ -5266,7 +5640,12 @@ load_kq1vga() {
 
 #----------------------------------------------------------------
 
-verblist_add lhp_demo "LEGO Harry Potter Demo [Years 1-4] (Travellers Tales / WB, 2010) [download]" LEGOHarryPotterDEMO.exe
+w_metadata lhp_demo games \
+    title="LEGO Harry Potter Demo [Years 1-4]" \
+    publisher="Travellers Tales / WB" \
+    year="2010" \
+    media="download" \
+    file1="LEGOHarryPotterDEMO.exe" 
 
 load_lhp_demo()
 {
@@ -5306,7 +5685,12 @@ load_lhp_demo()
 
 #----------------------------------------------------------------
 
-verblist_add lol "League of Legends (Riot Games, 2009)" LeagueofLegends.exe
+w_metadata lol games \
+    title="League of Legends" \
+    publisher="Riot Games" \
+    year="2009" \
+    media="dvd" \
+    file1="LeagueofLegends.exe" 
 
 load_lol()
 {
@@ -5461,7 +5845,12 @@ set -x
     "
 }
 
-verblist_add lol_standalone "League of Legends standalone client (Riot Games, 2009)" 'StandAlone_9_21_2010_NA(with%20sse2%20fix).rar'
+w_metadata lol_standalone games \
+    title="League of Legends standalone client" \
+    publisher="Riot Games" \
+    year="2009" \
+    media="dvd" \
+    file1="StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 
 
 load_lol_standalone() {
     w_download ${W_PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
@@ -5501,7 +5890,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add lotsn   "Launch of the Screaming Narwhal (Telltale Games / Lucasarts, 2009)" LaunchOfTheScreamingNarwhal_Setup.exe
+w_metadata lotsn games \
+    title="Launch of the Screaming Narwhal" \
+    publisher="Telltale Games / Lucasarts" \
+    year="2009" \
+    media="dvd" \
+    file1="LaunchOfTheScreamingNarwhal_Setup.exe" 
 
 load_lotsn()
 {
@@ -5544,7 +5938,12 @@ load_lotsn()
 
 #----------------------------------------------------------------
 
-verblist_add lp2bench "Lost Planet 2 Benchmark (Capcom, 2010)" LostPlanet2_Benchmark.zip
+w_metadata lp2bench benchmarks \
+    title="Lost Planet 2 Benchmark" \
+    publisher="Capcom" \
+    year="2010" \
+    media="download" \
+    file1="LostPlanet2_Benchmark.zip" 
 
 load_lp2bench()
 {
@@ -5604,7 +6003,12 @@ load_lp2bench()
 
 #----------------------------------------------------------------
 
-verblist_add lswcs "Lego Star Wars Complete Saga (Lucasarts, 2009)" dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
+w_metadata lswcs games \
+    title="Lego Star Wars Complete Saga" \
+    publisher="Lucasarts" \
+    year="2009" \
+    media="dvd" \
+    file1="dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso" 
 
 load_lswcs() {
     iso_mount "$W_CACHE"/$W_PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
@@ -5632,7 +6036,12 @@ load_lswcs() {
 
 #----------------------------------------------------------------
 
-verblist_add losthorizon_demo "Lost Horizon Demo (Deep Silver, 2010) [download]" Lost_Horizon_Demo_EN.exe
+w_metadata losthorizon_demo games \
+    title="Lost Horizon Demo" \
+    publisher="Deep Silver" \
+    year="2010" \
+    media="download" \
+    file1="Lost_Horizon_Demo_EN.exe" 
 
 load_losthorizon_demo() {
 
@@ -5687,8 +6096,12 @@ load_losthorizon_demo() {
 
 # Note: may require load_harder.  Result may vary in length and checksum.
 
-verblist_add manhole     "The Manhole Masterpiece Edition (Cyan, 1994)" \
-  39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
+w_metadata manhole games \
+    title="The Manhole Masterpiece Edition" \
+    publisher="Cyan" \
+    year="1994" \
+    media="dvd" \
+    file1="39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso" 
 
 load_manhole() {
     cd $W_TMP
@@ -5706,9 +6119,13 @@ load_manhole() {
 
 #----------------------------------------------------------------
 
-verblist_add masseffect2       "Mass Effect 2 (BioWare, 2010)" \
-  4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso \
-  49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso
+w_metadata masseffect2 games \
+    title="Mass Effect 2" \
+    publisher="BioWare" \
+    year="2010" \
+    media="dvd" \
+    file1="4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso" \
+    file2="49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso" 
 
 load_masseffect2() {
     iso_mount "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
@@ -5790,7 +6207,12 @@ load_masseffect2() {
 
 #----------------------------------------------------------------
 
-verblist_add masseffect2_demo   "Mass Effect 2 (BioWare, 2010) [download]" MassEffect2DemoEN.exe
+w_metadata masseffect2_demo games \
+    title="Mass Effect 2" \
+    publisher="BioWare" \
+    year="2010" \
+    media="download" \
+    file1="MassEffect2DemoEN.exe" 
 
 load_masseffect2_demo() {
     w_download ${W_PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
@@ -5869,7 +6291,12 @@ load_masseffect2_demo() {
 #----------------------------------------------------------------
 
 # site down 28 Nov 2010?
-verblist_add maxmagicmarker_demo "Max & the Magic Marker Demo (Press Play, 2010) [download]" max_demo_pc.zip
+w_metadata maxmagicmarker_demo games \
+    title="Max & the Magic Marker Demo" \
+    publisher="Press Play" \
+    year="2010" \
+    media="download" \
+    file1="max_demo_pc.zip" 
 
 load_maxmagicmarker_demo() {
 
@@ -5886,7 +6313,12 @@ load_maxmagicmarker_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add metro2033     "Metro 2033 (THQ, 2010)" 3de89e07449c2573cd4a334b0cd7da012a98f97c.iso
+w_metadata metro2033 games \
+    title="Metro 2033" \
+    publisher="THQ" \
+    year="2010" \
+    media="dvd" \
+    file1="3de89e07449c2573cd4a334b0cd7da012a98f97c.iso" 
 
 load_metro2033() {
     w_warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $W_CACHE. You'll also need your cd-key for Metro 2033 already added to your Steam Account."
@@ -5969,7 +6401,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add mise "Monkey Island: Special Edition (LucasArts, 2009)" SecretOfMonkeyIslandSE_ddsetup.zip
+w_metadata mise games \
+    title="Monkey Island: Special Edition" \
+    publisher="LucasArts" \
+    year="2009" \
+    media="dvd" \
+    file1="SecretOfMonkeyIslandSE_ddsetup.zip" 
 
 load_mise() {
     # Archive SHA1SUM 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
@@ -6061,7 +6498,12 @@ load_mise() {
 
 #----------------------------------------------------------------
 
-verblist_add moh_beta    "Medal of Honor: Beta (EA, 2010) [download]" MOHMP_Beta_PC_Client_R2_550504_Installer.zip
+w_metadata moh_beta games \
+    title="Medal of Honor: Beta" \
+    publisher="EA" \
+    year="2010" \
+    media="download" \
+    file1="MOHMP_Beta_PC_Client_R2_550504_Installer.zip" 
 
 load_moh_beta()
 {
@@ -6123,8 +6565,12 @@ load_moh_beta()
 
 #----------------------------------------------------------------
 
-verblist_add morrowind     "The Elder Scrolls III: Morrowind (Bethesda, 2002)" \
-  c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso
+w_metadata morrowind games \
+    title="The Elder Scrolls III: Morrowind" \
+    publisher="Bethesda" \
+    year="2002" \
+    media="dvd" \
+    file1="c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso" 
 
 load_morrowind() {
     cd $W_TMP
@@ -6185,17 +6631,22 @@ load_morrowind() {
 
 #----------------------------------------------------------------
 
-mnbw_demo_exe=mb_warband_setup_1113.exe
-verblist_add mnbw_demo "Mount & Blade Warband Demo (Taleworlds, 2010) [download]" ${mnbw_demo_exe}
+
+w_metadata mnbw_demo games \
+    title="Mount & Blade Warband Demo" \
+    publisher="Taleworlds" \
+    year="2010" \
+    media="download" \
+    file1="mb_warband_setup_1113.exe" 
 
 load_mnbw_demo()
 {
-    if ! test -f "${W_CACHE}/${W_PACKAGE}/${mnbw_demo_exe}"
+    if ! test -f "${W_CACHE}/${W_PACKAGE}/mb_warband_setup_1113.exe"
     then
-        w_download ${W_PACKAGE} http://download.taleworlds.com/${mnbw_demo_exe}
+        w_download ${W_PACKAGE} http://download.taleworlds.com/mb_warband_setup_1113.exe
     fi
     cd "${W_CACHE}/${W_PACKAGE}"
-    chmod +x ${mnbw_demo_exe}
+    chmod +x mb_warband_setup_1113.exe
     w_ahk_do "
         SetTitleMatchMode, 2
         run, ${mnbw_demo_exe}
@@ -6214,7 +6665,12 @@ load_mnbw_demo()
 
 #----------------------------------------------------------------
 
-verblist_add nd23_saw_demo    "Nancy Drew 23: Shadow at the Waters Edge Demo (Her Interactive, 2010) [download]" SAW_demo1.zip
+w_metadata nd23_saw_demo games \
+    title="Nancy Drew 23: Shadow at the Waters Edge Demo" \
+    publisher="Her Interactive" \
+    year="2010" \
+    media="download" \
+    file1="SAW_demo1.zip" 
 
 load_nd23_saw_demo() {
     # http://www.herinteractive.com/Mystery_Games/Nancy_Drew/Shadow_at_the_Waters_Edge/pc
@@ -6238,7 +6694,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add nfsps_demo    "Need For Speed: Pro Street Demo (EA, 2007) [download]" nfsps_pcdemo.exe
+w_metadata nfsps_demo games \
+    title="Need For Speed: Pro Street Demo" \
+    publisher="EA" \
+    year="2007" \
+    media="download" \
+    file1="nfsps_pcdemo.exe" 
 
 load_nfsps_demo()
 {
@@ -6280,7 +6741,12 @@ load_nfsps_demo()
 
 #----------------------------------------------------------------
 
-verblist_add nfsshift    "Need For Speed: Shift (EA, 2009)" 83d3b7499742ccf77da11fc2613de422c6f30572.iso
+w_metadata nfsshift games \
+    title="Need For Speed: Shift" \
+    publisher="EA" \
+    year="2009" \
+    media="dvd" \
+    file1="83d3b7499742ccf77da11fc2613de422c6f30572.iso" 
 
 load_nfsshift()
 {
@@ -6359,7 +6825,12 @@ load_nfsshift()
 
 #----------------------------------------------------------------
 
-verblist_add nfsshift_demo    "Need For Speed: SHIFT Demo (EA, 2009) [download]" NFSSHIFTPCDEMO.exe
+w_metadata nfsshift_demo games \
+    title="Need For Speed: SHIFT Demo" \
+    publisher="EA" \
+    year="2009" \
+    media="download" \
+    file1="NFSSHIFTPCDEMO.exe" 
 
 load_nfsshift_demo()
 {
@@ -6424,7 +6895,12 @@ load_nfsshift_demo()
 
 #----------------------------------------------------------------
 
-verblist_add oblivion    "Elder Scrolls: Oblivion (Bethesda Game Studios, 2006)" 0c6826d55029e7b64150ebe804220284962657e1.iso
+w_metadata oblivion games \
+    title="Elder Scrolls: Oblivion" \
+    publisher="Bethesda Game Studios" \
+    year="2006" \
+    media="dvd" \
+    file1="0c6826d55029e7b64150ebe804220284962657e1.iso" 
 
 load_oblivion()
 {
@@ -6454,9 +6930,13 @@ load_oblivion()
 
 #----------------------------------------------------------------
 
-verblist_add orangebox     "Orange Box (Valve, 2007) " \
-    976f67eec4b84331de8f6695272bc9192466da6a.iso \
-    b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso
+w_metadata orangebox games \
+    title="Orange Box" \
+    publisher="Valve" \
+    year="2007" \
+    media="dvd" \
+    file1="976f67eec4b84331de8f6695272bc9192466da6a.iso" \
+    file2="b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso" 
 
 load_orangebox() {
     test -f "$W_PROGRAMS_X86_UNIX"/Steam/Steam.exe || w_try_winetricks -q steam
@@ -6513,7 +6993,12 @@ load_orangebox() {
 
 #----------------------------------------------------------------
 
-verblist_add osmos_demo "Osmos demo (Hemisphere Games, 2009) [download]" OsmosDemo_Installer_1.5.6.exe
+w_metadata osmos_demo games \
+    title="Osmos demo" \
+    publisher="Hemisphere Games" \
+    year="2009" \
+    media="download" \
+    file1="OsmosDemo_Installer_1.5.6.exe" 
 
 load_osmos_demo() {
 
@@ -6547,7 +7032,12 @@ load_osmos_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add pcmark04 "PC Mark 04 (Futuremark, 2004) [download]" PCMark04_v130_installer.exe
+w_metadata pcmark04 benchmarks \
+    title="PC Mark 04" \
+    publisher="Futuremark" \
+    year="2004" \
+    media="download" \
+    file1="PCMark04_v130_installer.exe" 
 
 load_pcmark04() {
     if ! test -f "$W_CACHE/$W_PACKAGE/PCMark04_v130_installer.exe"
@@ -6600,7 +7090,12 @@ load_pcmark04() {
 
 #----------------------------------------------------------------
 
-verblist_add pcmark05 "PC Mark 05 (Futuremark, 2005) [download]" PCMark05_v120_1901.exe
+w_metadata pcmark05 benchmarks \
+    title="PC Mark 05" \
+    publisher="Futuremark" \
+    year="2005" \
+    media="download" \
+    file1="PCMark05_v120_1901.exe" 
 
 load_pcmark05() {
     # http://www.futuremark.com/download/pcmark05/
@@ -6670,10 +7165,13 @@ load_passmark7() {
 
 #----------------------------------------------------------------
 
-verblist_add pscs5       "Photoshop CS5 Demo (Adobe, 2010) [download]" \
-    Photoshop_12_LS1.7z \
-    Photoshop_12_LS1.exe
-
+w_metadata pscs5 apps \
+    title="Photoshop CS5 Demo" \
+    publisher="Adobe" \
+    year="2010" \
+    media="download" \
+    file1="Photoshop_12_LS1.7z" \
+    file2="Photoshop_12_LS1.exe" 
 
 load_pscs5() {
     w_try cd "$W_CACHE/$W_PACKAGE"
@@ -6745,7 +7243,11 @@ load_pscs5() {
     w_try cd "$olddir"
 }
 
-verblist_add pscs5_pickle       "Photoshop CS5 Demo (Adobe, 2010)"
+# Special case!  Probably shouldn't be here.
+w_metadata pscs5_pickle apps \
+    title="Photoshop CS5 Demo" \
+    publisher="Adobe" \
+    year="2010"
 
 load_pscs5_pickle() {
     w_warn "This will tar up Photoshop CS5's files from a Windows install, along with needed registry entries, for use in wine with load_pscs5_unpickle()"
@@ -6792,8 +7294,13 @@ load_pscs5_pickle() {
 
 }
 
-verblist_add pscs5_unpickle       "Photoshop CS5 Demo (Adobe, 2010)" \
-    adobe_cs5.tar
+# Special case, part 2
+w_metadata pscs5_unpickle apps \
+    title="Photoshop CS5 Demo" \
+    publisher="Adobe" \
+    year="2010" \
+    media="dvd" \
+    file1="adobe_cs5.tar" 
 
 load_pscs5_unpickle() {
     w_warn "This will install Photoshop CS5's files from a Windows install made with pscs5_pickle()"
@@ -6822,7 +7329,12 @@ load_pscs5_unpickle() {
 
 #----------------------------------------------------------------
 
-verblist_add plantsvszombies "Plants vs. Zombies (PopCap Games, 2009) [download]" PlantsVsZombiesSetup.exe
+w_metadata plantsvszombies games \
+    title="Plants vs. Zombies" \
+    publisher="PopCap Games" \
+    year="2009" \
+    media="download" \
+    file1="PlantsVsZombiesSetup.exe" 
 
 load_plantsvszombies() {
     if ! test -f "$W_CACHE/$W_PACKAGE/PlantsVsZombiesSetup.exe"
@@ -6847,7 +7359,12 @@ load_plantsvszombies() {
 
 #----------------------------------------------------------------
 
-verblist_add pop2008 "Prince of Persia (Ubisoft, 2008)" e65acd04baaf84481b79589b795edb144d24d1b5.iso
+w_metadata pop2008 games \
+    title="Prince of Persia" \
+    publisher="Ubisoft" \
+    year="2008" \
+    media="dvd" \
+    file1="e65acd04baaf84481b79589b795edb144d24d1b5.iso" 
 
 load_pop2008()
 {
@@ -6882,8 +7399,12 @@ load_pop2008()
 
 #----------------------------------------------------------------
 
-verblist_add popfs "Prince of Persia The Forgotten Sands (Ubisoft, 2010)" \
-bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso
+w_metadata popfs games \
+    title="Prince of Persia The Forgotten Sands" \
+    publisher="Ubisoft" \
+    year="2010" \
+    media="dvd" \
+    file1="bab557c2a75ad67fd1a10804ecd2fb5e5890f03e.iso" 
 
 load_popfs()
 {
@@ -6927,8 +7448,12 @@ fi
 
 #----------------------------------------------------------------
 
-verblist_add popsot "Prince of Persia Sands of Time (Ubisoft, 2003)" \
-a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso
+w_metadata popsot games \
+    title="Prince of Persia Sands of Time" \
+    publisher="Ubisoft" \
+    year="2003" \
+    media="dvd" \
+    file1="a55dc7459b0e8b40b49c16e62761932c90b6ede2.iso" 
 
 load_popsot()
 {
@@ -6964,8 +7489,12 @@ load_popsot()
 
 #----------------------------------------------------------------
 
-verblist_add popsot_demo "Prince of Persia Sands of Time Demo (Ubisoft, 2003) [download]" \
-POP_Demo_Eng.exe
+w_metadata popsot_demo games \
+    title="Prince of Persia Sands of Time Demo" \
+    publisher="Ubisoft" \
+    year="2003" \
+    media="download" \
+    file1="POP_Demo_Eng.exe" 
 
 load_popsot_demo()
 {
@@ -7015,7 +7544,12 @@ load_popsot_demo()
 
 #----------------------------------------------------------------
 
-verblist_add procycling08_demo "Pro Cycling Manager 2008 Demo (Cyanide, 2008) [download, broken in wine]" ProCyclingManager08_Demo.exe
+w_metadata procycling08_demo games \
+    title="Pro Cycling Manager 2008 Demo" \
+    publisher="Cyanide" \
+    year="2008" \
+    media="download" \
+    file1="ProCyclingManager08_Demo.exe" 
 
 load_procycling08_demo()
 {
@@ -7055,7 +7589,12 @@ load_procycling08_demo()
 
 #----------------------------------------------------------------
 
-verblist_add proevolution2010_demo "Pro Evolution Soccer 2010 Demo (Konami, 2009) [download]" PES2010_PC_DEMO_Setup.exe
+w_metadata proevolution2010_demo games \
+    title="Pro Evolution Soccer 2010 Demo" \
+    publisher="Konami" \
+    year="2009" \
+    media="download" \
+    file1="PES2010_PC_DEMO_Setup.exe" 
 
 load_proevolution2010_demo()
 {
@@ -7099,7 +7638,12 @@ load_proevolution2010_demo()
 
 #----------------------------------------------------------------
 
-verblist_add proevolution2011_demo "Pro Evolution Soccer 2011 Demo (Konami, 2010) [download][broken on wine]" PES2011_Demo.exe
+w_metadata proevolution2011_demo games \
+    title="Pro Evolution Soccer 2011 Demo" \
+    publisher="Konami" \
+    year="2010" \
+    media="download" \
+    file1="PES2011_Demo.exe" 
 
 load_proevolution2011_demo()
 {
@@ -7148,7 +7692,12 @@ load_proevolution2011_demo()
 
 #----------------------------------------------------------------
 
-verblist_add puzzleagent_demo "Puzzle Agent Demo (Telltale Games, 2010) [download]" PuzzleAgent_PC_Setup.exe
+w_metadata puzzleagent_demo games \
+    title="Puzzle Agent Demo" \
+    publisher="Telltale Games" \
+    year="2010" \
+    media="download" \
+    file1="PuzzleAgent_PC_Setup.exe" 
 
 load_puzzleagent_demo() {
 
@@ -7193,9 +7742,13 @@ load_puzzleagent_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add rom "Runes of Magic (Frogster Interactive, 2009) [download]" \
-  Runes_of_Magic_3.0.1.2153.part1.exe \
-  Runes_of_Magic_3.0.1.2153.part2.rar
+w_metadata rom games \
+    title="Runes of Magic" \
+    publisher="Frogster Interactive" \
+    year="2009" \
+    media="download" \
+    file1="Runes_of_Magic_3.0.1.2153.part1.exe" \
+    file2="Runes_of_Magic_3.0.1.2153.part2.rar" 
 
 load_rom()
 {
@@ -7346,7 +7899,12 @@ _EOF_
 
 #----------------------------------------------------------------
 
-verblist_add re5bench "Resident Evil 5 Benchmark (Capcom, 2009) [download]" nzd_ResidentEvil5_Benchmark.exe
+w_metadata re5bench benchmarks \
+    title="Resident Evil 5 Benchmark" \
+    publisher="Capcom" \
+    year="2009" \
+    media="download" \
+    file1="nzd_ResidentEvil5_Benchmark.exe" 
 
 load_re5bench() {
     if ! test -f "$W_CACHE/$W_PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
@@ -7401,7 +7959,12 @@ load_re5bench() {
 
 #----------------------------------------------------------------
 
-verblist_add riseofnations_demo "Rise of Nations Trial (Microsoft/Big Huge Games, 2003) [download]" RiseOfNationsTrial.exe
+w_metadata riseofnations_demo games \
+    title="Rise of Nations Trial" \
+    publisher="Microsoft/Big Huge Games" \
+    year="2003" \
+    media="download" \
+    file1="RiseOfNationsTrial.exe" 
 
 load_riseofnations_demo() {
 
@@ -7431,10 +7994,15 @@ load_riseofnations_demo() {
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Rise of Nations Trial" "nations.exe"
 }
-#----------------------------------------------------------------
+
 #----------------------------------------------------------------
 
-verblist_add quake3         "Quake 3 (ID Software, 1999)" 4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
+w_metadata quake3 games \
+    title="Quake 3" \
+    publisher="ID Software" \
+    year="1999" \
+    media="dvd" \
+    file1="4d2102a8df3c1fea237f2a6a141346c436614d5e.iso" 
 
 load_quake3() {
     iso_mount "$W_CACHE"/$W_PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
@@ -7463,7 +8031,12 @@ load_quake3() {
 
 #----------------------------------------------------------------
 
-verblist_add sammax304_demo "Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls (Telltale Games, 2010) [download]" SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+w_metadata sammax304_demo games \
+    title="Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls" \
+    publisher="Telltale Games" \
+    year="2010" \
+    media="download" \
+    file1="SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe" 
 
 load_sammax304_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
@@ -7501,7 +8074,12 @@ load_sammax304_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add sega_rally_2  "Sega Rally 2 (Sega, 1999) [download]" rally2.exe
+w_metadata sega_rally_2 games \
+    title="Sega Rally 2" \
+    publisher="Sega" \
+    year="1999" \
+    media="download" \
+    file1="rally2.exe" 
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
 load_sega_rally_2() {
@@ -7558,7 +8136,12 @@ load_sega_rally_2() {
 
 #----------------------------------------------------------------
 
-verblist_add 7million      "7Million (Deep Silver, 2009) [download]" 7Million_0_17_0-full.exe
+w_metadata 7million games \
+    title="7Million" \
+    publisher="Deep Silver" \
+    year="2009" \
+    media="download" \
+    file1="7Million_0_17_0-full.exe" 
 
 load_7million() {
     w_download $W_PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
@@ -7599,7 +8182,12 @@ load_7million() {
 
 #----------------------------------------------------------------
 
-verblist_add secondlife_beta      "Second Life Viewer - Beta (Linden Labs, 2003-2010) [download]" Second_Life_2-3-0-213435_BetaViewer_Setup.exe
+w_metadata secondlife_beta games \
+    title="Second Life Viewer - Beta" \
+    publisher="Linden Labs" \
+    year="2003-2010" \
+    media="download" \
+    file1="Second_Life_2-3-0-213435_BetaViewer_Setup.exe" 
 
 load_secondlife_beta() {
     w_download $W_PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
@@ -7622,7 +8210,12 @@ load_secondlife_beta() {
 
 #----------------------------------------------------------------
 
-verblist_add segabass "Sega Bass Fishing 2 (SEGA/Activision, 2001) [requires disc]"
+w_metadata segabass games \
+    title="Sega Bass Fishing 2" \
+    publisher="SEGA/Activision" \
+    year="2001" \
+    media="dvd" \
+    file1="does not exist"
 
 load_segabass() {
     # Can't make a .iso of this disc, so assume the disc is in drive d:
@@ -7647,7 +8240,12 @@ load_segabass() {
 
 #----------------------------------------------------------------
 
-verblist_add sims3         "The Sims 3 (EA, 2009)" 8a82a067f3bb8f68d034a06954e9a16ea381958a.iso
+w_metadata sims3 games \
+    title="The Sims 3" \
+    publisher="EA" \
+    year="2009" \
+    media="dvd" \
+    file1="8a82a067f3bb8f68d034a06954e9a16ea381958a.iso" 
 
 load_sims3() {
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
@@ -7715,7 +8313,12 @@ load_sims3() {
 
 #----------------------------------------------------------------
 
-verblist_add singularity         "Singularity (Activision, 2010)" cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso
+w_metadata singularity games \
+    title="Singularity" \
+    publisher="Activision" \
+    year="2010" \
+    media="dvd" \
+    file1="cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso" 
 
 load_singularity() {
     # Get user's key
@@ -7785,7 +8388,12 @@ _EOF_
 
 #----------------------------------------------------------------
 
-verblist_add splitsecond_demo    "Split Second Demo (Black Rock Studios, 2010) [wine bug 22865] [download]" SplitSecond_Demo.exe
+w_metadata splitsecond_demo games \
+    title="Split Second Demo" \
+    publisher="Disney" \
+    year="2010" \
+    media="download" \
+    file1="SplitSecond_Demo.exe" 
 
 load_splitsecond_demo()
 {
@@ -7838,7 +8446,12 @@ load_splitsecond_demo()
 
 #----------------------------------------------------------------
 
-verblist_add splitsecond    "Split Second (Black Rock Studios, 2010) [wine bug 22865]" 15548fabe350e1b65432400aae8c3acfb1c930d8.iso
+w_metadata splitsecond games \
+    title="Split Second" \
+    publisher="Disney" \
+    year="2010" \
+    media="dvd" \
+    file1="15548fabe350e1b65432400aae8c3acfb1c930d8.iso" 
 
 load_splitsecond()
 {
@@ -7890,7 +8503,12 @@ load_splitsecond()
 
 #----------------------------------------------------------------
 
-verblist_add spore    "Spore (EA, 2008)" d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso
+w_metadata spore games \
+    title="Spore" \
+    publisher="EA" \
+    year="2008" \
+    media="dvd" \
+    file1="d08d1985d3161661d4f0ded30a0d11e705f2fcc2.iso" 
 
 load_spore()
 {
@@ -7930,7 +8548,12 @@ load_spore()
 
 #----------------------------------------------------------------
 
-verblist_add ssdd2    "SpongeBob SquarePants Diner Dash 2 (Nickelodeon/Big Fish, 2007) [download]" InstallSpongeBobDinerDash2.exe
+w_metadata ssdd2 games \
+    title="SpongeBob SquarePants Diner Dash 2" \
+    publisher="Nickelodeon/Big Fish" \
+    year="2007" \
+    media="download" \
+    file1="InstallSpongeBobDinerDash2.exe" 
 
 load_ssdd2()
 {
@@ -7978,7 +8601,12 @@ load_ssdd2()
 
 #----------------------------------------------------------------
 
-verblist_add sonicdxb_demo     "Sonic Adventure Deluxe Trial B (Sega, 2003) [download]" sadx_trial_b.exe
+w_metadata sonicdxb_demo games \
+    title="Sonic Adventure Deluxe Trial B" \
+    publisher="Sega" \
+    year="2003" \
+    media="download" \
+    file1="sadx_trial_b.exe" 
 
 load_sonicdxb_demo() {
     # http://sega.jp/pc/sonicdx/
@@ -8016,7 +8644,12 @@ load_sonicdxb_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add stalker_pripyat_bench "S.T.A.L.K.E.R Call of Pripyat benchmark (GSC Game World, 2009) [download]" stkcop-bench-setup.exe
+w_metadata stalker_pripyat_bench benchmarks \
+    title="S.T.A.L.K.E.R Call of Pripyat benchmark" \
+    publisher="GSC Game World" \
+    year="2009" \
+    media="download" \
+    file1="stkcop-bench-setup.exe" 
 
 load_stalker_pripyat_bench() {
     # FIXME: There's a much faster download at
@@ -8067,7 +8700,13 @@ load_stalker_pripyat_bench() {
 
 #----------------------------------------------------------------
 
-verblist_add starcraft     "Starcraft Battle Chest (Blizzard, 1998)" 8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso 966bae1f2e2035e066139e78137e623c92838254.iso
+w_metadata starcraft games \
+    title="Starcraft Battle Chest" \
+    publisher="Blizzard" \
+    year="1998" \
+    media="dvd" \
+    file1="8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso" \
+    file2="966bae1f2e2035e066139e78137e623c92838254.iso" 
 
 load_starcraft() {
     w_warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc."
@@ -8108,7 +8747,16 @@ load_starcraft() {
 
 #----------------------------------------------------------------
 
-verblist_add starcraft2    "Starcraft II (Blizzard, 2010) [download]" Installer Tome 1.MPQE  Installer UI 1.MPQ  Installer UI 2.MPQE  Installer.app  Installer.exe
+w_metadata starcraft2 games \
+    title="Starcraft II" \
+    publisher="Blizzard" \
+    year="2010" \
+    media="download" \
+    file1="Installer Tome 1.MPQE" \
+    file2="Installer UI 1.MPQ" \
+    file3="Installer UI 2.MPQE" \
+    file4="Installer.app" \
+    file5="Installer.exe" 
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=20882
 
@@ -8154,7 +8802,13 @@ load_starcraft2() {
 }
 
 #----------------------------------------------------------------
-verblist_add sto           "Star Trek Online (Cryptic, 2010)" f891dab46d05d771e0123a1e7ec969f3601064a6.iso
+
+w_metadata sto games \
+    title="Star Trek Online" \
+    publisher="Cryptic" \
+    year="2010" \
+    media="dvd" \
+    file1="f891dab46d05d771e0123a1e7ec969f3601064a6.iso" 
 
 load_sto()
 {
@@ -8196,7 +8850,13 @@ load_sto()
 
 #----------------------------------------------------------------
 
-verblist_add stfu          "Starwars: The Force Unleashed (Aspyr, 2009)" 0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso 5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso
+w_metadata stfu games \
+    title="Star Wars: The Force Unleashed" \
+    publisher="Aspyr" \
+    year="2009" \
+    media="dvd" \
+    file1="0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso" \
+    file2="5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso" 
 
 load_stfu() {
     load_autohotkey
@@ -8257,7 +8917,12 @@ load_stfu() {
 
 #----------------------------------------------------------------
 
-verblist_add sf4bench "Street Fighter 4: Benchmark (CAPCOM, 2009) [download]" StreetFighterIV_Benchmark.exe
+w_metadata sf4bench benchmarks \
+    title="Street Fighter 4: Benchmark" \
+    publisher="CAPCOM" \
+    year="2009" \
+    media="download" \
+    file1="StreetFighterIV_Benchmark.exe" 
 
 load_sf4bench()
 {
@@ -8337,7 +9002,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add smbx  "Super Mario Bros. X (Indie, 2009) [download]"  smbx122.exe
+w_metadata smbx games \
+    title="Super Mario Bros. X" \
+    publisher="Indie" \
+    year="2009" \
+    media="download" \
+    file1="smbx122.exe" 
 
 load_smbx() {
     # Download URL embedded in http://www.supermariobrothers.org/downloads/smbx122.html
@@ -8391,7 +9061,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add timezattack_demo "Timez Attack Demo (BigBrainz, 2005) [download]" Win_TimezAttackFreeInstaller.exe
+w_metadata timezattack_demo games \
+    title="Timez Attack Demo" \
+    publisher="BigBrainz" \
+    year="2005" \
+    media="download" \
+    file1="Win_TimezAttackFreeInstaller.exe" 
 
 load_timezattack_demo() {
     w_download $W_PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
@@ -8433,7 +9108,12 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add tlr_demo "The Last Remnant Demo (Square Enix, 2009) [download]" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+w_metadata tlr_demo games \
+    title="The Last Remnant Demo" \
+    publisher="Square Enix" \
+    year="2009" \
+    media="download" \
+    file1="TheLastRemnant_PC_Demo.zip" 
 
 load_tlr_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
@@ -8481,7 +9161,12 @@ load_tlr_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add tmnationsforever "TrackMania Nations Forever (Nadeo, 2009) [download]" tmnationsforever_setup.exe
+w_metadata tmnationsforever games \
+    title="TrackMania Nations Forever" \
+    publisher="Nadeo" \
+    year="2009" \
+    media="download" \
+    file1="tmnationsforever_setup.exe" 
 
 load_tmnationsforever() {
     if w_workaround_wine_bug 20915
@@ -8532,7 +9217,12 @@ load_tmnationsforever() {
 
 #----------------------------------------------------------------
 
-verblist_add twfc "Transformers: War for Cybertron (Activision, 2010)" d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
+w_metadata twfc games \
+    title="Transformers: War for Cybertron" \
+    publisher="Activision" \
+    year="2010" \
+    media="dvd" \
+    file1="d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso" 
 
 load_twfc() {
     iso_mount "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
@@ -8589,8 +9279,12 @@ load_twfc() {
 
 #----------------------------------------------------------------
 
-verblist_add torchlight "Torchlight (Runic Games, 2009) [Boxed version]" \
-  7cc5d7504b2927c030a0a192f7c9858721b59730.iso
+w_metadata torchlight games \
+    title="Torchlight" \
+    publisher="Runic Games" \
+    year="2009" \
+    media="dvd" \
+    file1="7cc5d7504b2927c030a0a192f7c9858721b59730.iso" 
 
 load_torchlight() {
     iso_mount "$W_CACHE"/$W_PACKAGE/7cc5d7504b2927c030a0a192f7c9858721b59730.iso
@@ -8620,7 +9314,12 @@ load_torchlight() {
 
 #----------------------------------------------------------------
 
-verblist_add tropico3_demo "Tropico 3 Demo (Kalypso Media GmbH, 2009) [download]" Tropico3Demo.exe
+w_metadata tropico3_demo games \
+    title="Tropico 3 Demo" \
+    publisher="Kalypso Media GmbH" \
+    year="2009" \
+    media="download" \
+    file1="Tropico3Demo.exe" 
 
 load_tropico3_demo() {
     if ! test -f "$W_CACHE/$W_PACKAGE"/Tropico3Demo.exe
@@ -8675,7 +9374,12 @@ load_tropico3_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add typingofthedead_demo "Typing of the Dead Demo (Sega, 1999) [download]" Tod_e_demo.exe
+w_metadata typingofthedead_demo games \
+    title="Typing of the Dead Demo" \
+    publisher="Sega" \
+    year="1999" \
+    media="download" \
+    file1="Tod_e_demo.exe" 
 
 load_typingofthedead_demo() {
     w_download $W_PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
@@ -8705,7 +9409,12 @@ load_typingofthedead_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add unigine_heaven "Unigen Heaven 2.1 Benchmark (Unigen, 2010) [download]" Unigine_Heaven-2.0.msi
+w_metadata unigine_heaven benchmarks \
+    title="Unigen Heaven 2.1 Benchmark" \
+    publisher="Unigen" \
+    year="2010" \
+    media="download" \
+    file1="Unigine_Heaven-2.0.msi" 
 
 load_unigine_heaven() {
     if ! test -f "$W_CACHE/$W_PACKAGE/Unigine_Heaven-2.1.msi"
@@ -8760,9 +9469,13 @@ __EOF__
 
 #----------------------------------------------------------------
 
-verblist_add vegas     "Rainbow Six: Vegas (Ubisoft, 2006) [broken-wine-drm]" \
-    be7cf72572708e9776af73c9bec8ee07952385af.iso \
-    abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso
+w_metadata vegas games \
+    title="Rainbow Six: Vegas" \
+    publisher="Ubisoft" \
+    year="2006" \
+    media="dvd" \
+    file1="be7cf72572708e9776af73c9bec8ee07952385af.iso" \
+    file2="abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso" 
 
 load_vegas() {
     if w_workaround_wine_bug 7065
@@ -8826,9 +9539,13 @@ load_vegas() {
 
 #----------------------------------------------------------------
 
-verblist_add vegas2     "Rainbow Six: Vegas 2 (Ubisoft, 2008) [broken-wine-drm]" \
-    e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso \
-    1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso
+w_metadata vegas2 games \
+    title="Rainbow Six: Vegas 2" \
+    publisher="Ubisoft" \
+    year="2008" \
+    media="dvd" \
+    file1="e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso" \
+    file2="1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso" 
 
 load_vegas2() {
     if w_workaround_wine_bug 219
@@ -8884,7 +9601,12 @@ load_vegas2() {
 
 #----------------------------------------------------------------
 
-verblist_add victoria2_demo       "Victoria 2 Demo (Paradox Interactive, 2010) [download]"
+w_metadata victoria2_demo games \
+    title="Victoria 2 Demo" \
+    publisher="Paradox Interactive" \
+    year="2010" \
+    media="download" \
+    file1="Victoria2_Demo.zip"
 
 load_victoria2_demo() {
     # download zip file via torrent from http://www.gamershell.com/download_62070.shtml
@@ -8966,7 +9688,12 @@ load_victoria2_demo() {
 
 #----------------------------------------------------------------
 
-verblist_add vf2_demo   "Virtua Fighter 2 demo (Sega, 1997) [download]" vf2_demo.exe
+w_metadata vf2_demo games \
+    title="Virtua Fighter 2 demo" \
+    publisher="Sega" \
+    year="1997" \
+    media="download" \
+    file1="vf2_demo.exe" 
 
 load_vf2_demo()
 {
@@ -9030,7 +9757,6 @@ __EOF__
 
 #----------------------------------------------------------------
 
-#verblist_add wog           "World of Goo demo (2D Boy, 2008) [download]" WorldOfGooDemo.1.0.exe
 w_metadata  wog games \
    title="World of Goo Demo" \
    publisher="2D Boy" \
@@ -9070,7 +9796,12 @@ load_wog() {
 
 #----------------------------------------------------------------
 
-verblist_add wowtrial       "World of Warcraft trial (Blizzard, 2009) [download]" TryWoW.exe
+w_metadata wowtrial games \
+    title="World of Warcraft trial" \
+    publisher="Blizzard" \
+    year="2009" \
+    media="download" \
+    file1="TryWoW.exe" 
 
 load_wowtrial() {
     w_download $W_PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
@@ -9098,8 +9829,12 @@ load_wowtrial() {
 
 #----------------------------------------------------------------
 
-verblist_add wowbc       "World of Warcraft: Battle Chest (Blizzard, 2008)" \
-  c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso
+w_metadata wowbc games \
+    title="World of Warcraft: Battle Chest" \
+    publisher="Blizzard" \
+    year="2008" \
+    media="dvd" \
+    file1="c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso" 
 
 load_wowbc() {
     test -f "$WINDIR"/utorrent.exe || w_try_winetricks utorrent
@@ -9258,7 +9993,12 @@ load_wowbc() {
 
 #----------------------------------------------------------------
 
-verblist_add zootycoon2_demo  "Zoo Tycoon 2 demo (Microsoft, 2004) [download]" Zoo2Trial.exe
+w_metadata zootycoon2_demo games \
+    title="Zoo Tycoon 2 demo" \
+    publisher="Microsoft" \
+    year="2004" \
+    media="download" \
+    file1="Zoo2Trial.exe" 
 
 load_zootycoon2_demo() {
     w_download $W_PACKAGE "http://download.microsoft.com/download/9/f/6/9f6a95f0-f34a-4312-9749-77b81d3de245/Zoo2Trial.exe" 60ad1bb34351f97b579c58234b926055f7979126
@@ -9321,7 +10061,12 @@ _load_positech()
     w_declare_exe "$W_PROGRAMS_X86_WIN\\$installed_dir" "$installed_exe"
 }
 
-verblist_add gsb_demo "Gratuitous Space Battles demo (Positech Games, 2009) [download]" GSBDemoInstaller.exe
+w_metadata gsb_demo games \
+    title="Gratuitous Space Battles demo" \
+    publisher="Positech Games" \
+    year="2009" \
+    media="download" \
+    file1="GSBDemoInstaller.exe" 
 
 load_gsb_demo() {
     _load_positech "http://www.positech.co.uk/gratuitousspacebattles/downloads/GSBDemoInstaller.exe" 83dab80aa3bb94aa886c94b2cb68fa54558fe563 "GSBDemoInstaller.exe" "Setup - Gratuitous Space Battles Demo" "Gratuitous Space Battles Demo" "GSBDemo.exe"
@@ -9335,19 +10080,34 @@ load_gsb_demo() {
     fi
 }
 
-verblist_add democracy2_demo "Democracy2 demo (Positech Games, 2007) [download]" Democracy2Demo.exe
+w_metadata democracy2_demo games \
+    title="Democracy2 demo" \
+    publisher="Positech Games" \
+    year="2007" \
+    media="download" \
+    file1="Democracy2Demo.exe" 
 
 load_democracy2_demo() {
     _load_positech "http://www.positech.co.uk/democracy2/Democracy2Demo.exe" 117cb63119adb3f79034ee3fcf641629dc825615 "Democracy2Demo.exe" "Setup - Democracy 2 Demo" "Democracy2 Demo" "Democracy2.exe"
 }
 
-verblist_add kudos2_demo "Kudos 2 demo (Positech Games, 2008) [download]" Kudos2DemoInstaller.exe
+w_metadata kudos2_demo games \
+    title="Kudos 2 demo" \
+    publisher="Positech Games" \
+    year="2008" \
+    media="download" \
+    file1="Kudos2DemoInstaller.exe" 
 
 load_kudos2_demo() {
     _load_positech "http://www.positech.co.uk/kudos2/Kudos2DemoInstaller.exe" 31abe5a4ce10eb111e0306c8c1b5570f2fd43f33 "Kudos2DemoInstaller.exe" "Setup - Kudos 2 Demo" "Kudos 2 Demo" "Kudos2Demo.exe"
 }
 
-verblist_add rocklegend_demo "Rock Legend demo (Positech Games, 2007) [download]" RockLegendDemo.exe
+w_metadata rocklegend_demo games \
+    title="Rock Legend demo" \
+    publisher="Positech Games" \
+    year="2007" \
+    media="download" \
+    file1="RockLegendDemo.exe" 
 
 load_rocklegend_demo() {
     _load_positech "http://www.positech.co.uk/rocklegend/RockLegendDemo.exe" b9f090d2e6a9e7be860a52c339d599e3c7bfe516 "RockLegendDemo.exe" "Setup - Kudos Rock Legend Demo" "Kudos Rock Legend Demo" "KudosRockLegendDemo.exe"
@@ -9546,77 +10306,132 @@ __EOF__
 
 # Sorted by app_id:
 
-verblist_add multiwinia_demo_steam "Multiwinia: Demo (Steam, 2008)" "multiwinia content.ncf"
+w_metadata multiwinia_demo_steam steam \
+    title="Multiwinia: Demo" \
+    publisher="Steam" \
+    year="2008" \
+    media="download" \
+    file1="multiwinia content.ncf" 
 
 load_multiwinia_demo_steam()
 {
     _load_steam_app "1540" "Multiwinia Demo" "multiwinia content.ncf" "multiwinia"
 }
 
-verblist_add arx_fatalis_demo_steam "Arx Fatalis Demo (Steam, 2008)" "arx fatalis base.ncf"
+w_metadata arx_fatalis_demo_steam steam \
+    title="Arx Fatalis Demo" \
+    publisher="Steam" \
+    year="2008" \
+    media="download" \
+    file1="arx fatalis base.ncf" 
 
 load_arx_fatalis_demo_steam()
 {
     _load_steam_app "1710" "Arx Fatalis" "arx fatalis base.ncf" "arx fatalis"
 }
 
-verblist_add painkiller_demo_steam "Painkiller Demo (Steam, 2004)" "painkiller demo content.ncf"
+w_metadata painkiller_demo_steam steam \
+    title="Painkiller Demo" \
+    publisher="Steam" \
+    year="2004" \
+    media="download" \
+    file1="painkiller demo content.ncf" 
 
 load_painkiller_demo_steam()
 {
     _load_steam_app "3210" "Painkiller Demo" "painkiller demo content.ncf" "painkiller demo"
 }
 
-verblist_add bookworm_adventures_deluxe_demo_steam "Bookworm Adventures Deluxe Demo (Steam, 2007)" "bookworm adventures deluxe content.ncf"
+w_metadata bookworm_adventures_deluxe_demo_steam steam \
+    title="Bookworm Adventures Deluxe Demo" \
+    publisher="Steam" \
+    year="2007" \
+    media="download" \
+    file1="bookworm adventures deluxe content.ncf" 
 
 load_bookworm_adventures_deluxe_demo_steam()
 {
     _load_steam_app "3270" "Bookworm Adventures Deluxe Demo" "bookworm adventures deluxe content.ncf" "bookworm adventures deluxe"
 }
 
-verblist_add zen_of_sudoku_demo_steam "Zen of Sudoku Demo (Steam, 2006)" "zenofsudoku.ncf"
+w_metadata zen_of_sudoku_demo_steam steam \
+    title="Zen of Sudoku Demo" \
+    publisher="Steam" \
+    year="2006" \
+    media="download" \
+    file1="zenofsudoku.ncf" 
 
 load_zen_of_sudoku_demo_steam()
 {
     _load_steam_app "4910" "Zen of Sudoku Demo" "zenofsudoku.ncf" "zen of sudoku"
 }
 
-verblist_add eets_demo_steam "Eets Demo (Steam, 2006)" "eets content.ncf"
+w_metadata eets_demo_steam steam \
+    title="Eets Demo" \
+    publisher="Steam" \
+    year="2006" \
+    media="download" \
+    file1="eets content.ncf" 
 
 load_eets_demo_steam()
 {
     _load_steam_app "6110" "Eets Demo" "eets content.ncf" "eets"
 }
 
-verblist_add longest_journey_demo_steam "The Longest Journey Demo (Steam, 2000)" "the longest journey demo content.ncf"
+w_metadata longest_journey_demo_steam steam \
+    title="The Longest Journey Demo" \
+    publisher="Steam" \
+    year="2000" \
+    media="download" \
+    file1="the longest journey demo content.ncf" 
 
 load_longest_journey_demo_steam()
 {
     _load_steam_app "6320" "The Longest Journey Demo" "the longest journey demo content.ncf" "the longest journey demo"
 }
 
-verblist_add joint_task_force_demo_steam "Joint Task Force Demo (Steam, 2006)" "joint task force demo content.ncf"
+w_metadata joint_task_force_demo_steam steam \
+    title="Joint Task Force Demo" \
+    publisher="Steam" \
+    year="2006" \
+    media="download" \
+    file1="joint task force demo content.ncf" 
 
 load_joint_task_force_demo_steam()
 {
     _load_steam_app "6410" "Joint Task Force Demo" "joint task force demo content.ncf" "joint task force demo"
 }
 
-verblist_add lost_planet_dx9_demo_steam "Lost Planet Extreme Condition Demo (Steam, 2007)" "lost planet demo dx9 content.ncf"
+w_metadata lost_planet_dx9_demo_steam steam \
+    title="Lost Planet Extreme Condition Demo" \
+    publisher="Steam" \
+    year="2007" \
+    media="download" \
+    file1="lost planet demo dx9 content.ncf" 
 
 load_lost_planet_dx9_demo_steam()
 {
     _load_steam_app "6530" "Lost Planet Extreme Condition Demo" "lost planet demo dx9 content.ncf" "lost planet demo"
 }
 
-verblist_add lost_planet_dx10_demo_steam "Lost Planet Extreme Condition DX10 Demo (Steam, 2007)" "lost planet demo dx10 content.ncf"
+w_metadata lost_planet_dx10_demo_steam steam \
+    title="Lost Planet Extreme Condition DX10 Demo" \
+    publisher="Steam" \
+    year="2007" \
+    media="download" \
+    file1="lost planet demo dx10 content.ncf" 
 
 load_lost_planet_dx10_demo_steam()
 {
     _load_steam_app "6540" "Lost Planet Extreme Condition DX10 Demo" "lost planet demo dx10 content.ncf" "lost planet dx10 demo"
 }
 
-verblist_add total_war_and_empire_demo_steam "Empire: Total War Demo (Steam, 2009)" "empire total war demo main.ncf"
+w_metadata total_war_and_empire_demo_steam steam \
+    title="Empire: Total War Demo" \
+    publisher="Steam" \
+    year="2009" \
+    media="download" \
+    file1="empire total war demo main.ncf" 
 
 load_total_war_and_empire_demo_steam()
 {
@@ -9629,7 +10444,12 @@ load_total_war_and_empire_demo_steam()
 
 }
 
-verblist_add napoleon_total_war_demo_steam "Napoleon: Total War Demo (Steam, 2010)" "napoleon total war demo english.ncf"
+w_metadata napoleon_total_war_demo_steam steam \
+    title="Napoleon: Total War Demo" \
+    publisher="Steam" \
+    year="2010" \
+    media="download" \
+    file1="napoleon total war demo english.ncf" 
 
 load_napoleon_total_war_demo_steam()
 {
