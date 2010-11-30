@@ -148,15 +148,9 @@ http://www.gamerankings.com/pc/990077-worms-reloaded/index.html
 Arma II: Operation Arrowhead  (EG said he'd take this?)
 http://www.gamerankings.com/pc/971387-/ 
 
-Borderlands
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
-
 Deathspank (Steam)
 http://store.steampowered.com/app/18040/
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21793
-
-Update Dragon Age Origins to 1.04, supposedly fixes flickering:
-http://zapakitul.wordpress.com/2010/09/10/getting-dragon-age-origins-v-1-04-to-work-on-ubuntu-10-04-and-wine/
 
 Far Cry 2
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
@@ -164,8 +158,8 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
 Final Fantasy XIV (we did the beta, but haven't done retail version yet)
 EG had trouble, he couldn't get past the login screen even with ie6
 
-GTA IV (Scott on this)
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=8757
+Borderlands (Scott on this)
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
 
 Team Fortress 2 (via steam; in timedemo mode, so yagmark, too? )
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
@@ -196,6 +190,9 @@ http://www.3ds.com/products/draftsight/
 
 Supreme Commander 2 - Square Enix
 http://bugs.winehq.org/show_bug.cgi?id=23593
+
+GTA IV (Scott on this)
+http://appdb.winehq.org/objectManager.php?sClass=application&iId=8757
 
 == Probably too painful ==
 
