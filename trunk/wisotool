@@ -612,11 +612,10 @@ iso_mount()
     my_img="$1"
     iso_umount
 
-    # FIXME: Should we check somehow that the user put in the right disk?
     if [ ! -f "$my_img" ]
     then
         w_warn "You don't seem to have an iso in $W_CACHE/$W_PACKAGE. Please insert the disk so I can prepare one for you."
-        load_iso dd
+        load_iso dd - "$my_img"
     fi
 
     if test "$WINE" = ""
@@ -802,6 +801,7 @@ cleanup()
 load_iso() {
    method=$1
    key="$2"
+   img="$3"
 
    die_if_user_not_dirowner "$W_CACHE"
 
@@ -848,13 +848,18 @@ load_iso() {
    done
    pid=""
 
-   echo "Computing sha1sum..."
-   # FIXME: can't handle spaces in "$W_CACHE"
-   sum=`sha1sum "$W_CACHE"/temp.iso | awk '{print $1}'`
-   echo "Sha1sum of iso is $sum"
+   if "$img" != ""
+   then
+       mv "$W_CACHE"/temp.iso "$W_CACHE"/"$img"
+   else
+       echo "Computing sha1sum..."
+       # FIXME: can't handle spaces in "$W_CACHE"
+       sum=`sha1sum "$W_CACHE"/temp.iso | awk '{print $1}'`
+       echo "Sha1sum of iso is $sum"
+   fi
 
    mv "$W_CACHE"/temp.iso "$W_CACHE"/$sum.iso
-   if test "$key" != ""
+   if test "$key" != "" && test "$key" != "-"
    then
        # FIXME: in gui, prompt user for key if load= was chosen?
        echo "$key" > "$W_CACHE"/$sum.txt
@@ -9854,6 +9859,51 @@ __EOF__
         w_warn "$W_PACKAGE requires an 8 or 16 bit display.  On Linux, try pressing CTRL+ALT+F1, and running 'startx -- :1 -depth 16'. "
     ;;
     esac
+}
+
+#----------------------------------------------------------------
+
+w_metadata  wheres_waldo_tfj games \
+   title="Wheres Waldo: The Fantastic Journey" \
+   publisher="Ubisoft" \
+   year="2009" \
+   media="dvd" \
+   file1="WALDO.iso" \
+   drm_broken_in_wine="yes"
+
+load_wheres_waldo_tfj()
+{
+    w_warn "This game is copy-protected, and requires the real disc in a real drive to run.  Wine does not seem to support this copy protection scheme."
+
+    iso_mount "$W_CACHE"/$W_PACKAGE/WALDO.iso
+
+    cd "$W_ISO_MOUNT_ROOT"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, ${W_ISO_MOUNT_LETTER}:setup.exe
+        WinWait,Waldo The Fantastic Journey
+        Sleep 1000
+        ControlClick Button1 ; select English
+        WinWait,Waldo The Fantastic Journey,license
+        Sleep 500
+        ControlClick Button2 ; accept
+        WinWait,Waldo The Fantastic Journey,Location
+        Sleep 500
+        ControlClick Button2 ; Next
+        WinWait,Waldo The Fantastic Journey,few minutes
+        Sleep 500
+        ControlClick Button1 ; OK
+        WinWait,Waldo The Fantastic Journey,shortcut
+        Sleep 500
+        ControlClick Button2 ; No
+        WinWait,Waldo The Fantastic Journey,Completing
+        Sleep 500
+        ControlClick Button2 ; Finish
+        WinWaitClose
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Ubisoft\\Ludia\\Where's Waldo The Fantastic Journey" "Where's Waldo The Fantastic Journey.exe"
 }
 
 #----------------------------------------------------------------
