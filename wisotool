@@ -4330,6 +4330,98 @@ load_fifa10() {
 
 #----------------------------------------------------------------
 
+w_metadata fifa11 games \
+    title="FIFA 11" \
+    publisher="EA Sports" \
+    year="2010" \
+    media="manual download" \
+    file1="fifa11_download.zip" 
+
+load_fifa11()
+{
+    if [ ! -f "$W_CACHE/$W_PACKAGE/fifa11_download.zip" ]
+    then
+        # FIXME: Should probably launch webpage for the user and warn instead...
+        w_die "You need to download the game from http://www.amazon.com/FIFA-Soccer-11-Game-Download/sim/B00452VFZS/2 and put the files in $W_CACHE/$PACKAGE/fifa11_download.zip"
+    fi
+
+    w_try mkdir -p "$W_TMP/$W_PACKAGE"
+    w_try unzip -d "$W_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/fifa11_download.zip"
+    w_try cd "$W_TMP/$W_PACKAGE"
+
+    FIFA11_KEY=`cat "$W_CACHE/$W_PACKAGE/fifa11_download.txt" | tr -d -`
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, EASetup.exe
+        winwait, FIFA 11
+        sleep 1000
+        winactivate, FIFA 11
+        sleep 1000
+        controlclick, Edit1, FIFA 11, Registration Code
+        sleep 1000
+        send, $FIFA11_KEY
+        controlclick, Button2, FIFA 11
+        winwait, Microsoft Visual C++ 2008, This wizard will guide you
+        sleep 1000
+        controlclick, Button12, Microsoft Visual C++ 2008, This wizard will guide you
+        winwait, Microsoft Visual C++ 2008, License Terms
+        sleep 1000
+        controlclick, Button11, Microsoft Visual C++ 2008, License Terms
+        sleep 1000
+        controlclick, Button8, Microsoft Visual C++ 2008, License Terms
+        winwait, Microsoft Visual C++ 2008, Setup Complete
+        sleep 2000
+        controlclick, Button2, Microsoft Visual C++ 2008, Setup Complete
+        ; It doesn't seem to take the first click, so try a second time..
+        sleep 2000
+        controlclick, Button2, Microsoft Visual C++ 2008, Setup Complete
+        ; There are two license agreements...one is for Directx
+        winwait, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button3, FIFA 11, I &accept the terms in the End User License Agreement
+        winwait, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button1, FIFA 11, I &accept the terms in the End User License Agreement
+        sleep 1000
+        controlclick, Button3, FIFA 11, I &accept the terms in the End User License Agreement
+        winwait, FIFA 11, Ready to install FIFA 11
+        sleep 1000
+        controlclick, Button1, FIFA 11, Ready to install FIFA 11
+        winwait, FIFA 11, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button5, FIFA 11, Click the Finish button to exit the Setup Wizard.
+        sleep 1000
+        controlclick, Button1, FIFA 11, Click the Finish button to exit the Setup Wizard.
+        ; Yes, I really don't want to register!
+        winwait, Product Registration, Please log into
+        controlclick, Button4, Product Registration, Please log into
+        winwait, Product Registration, Are you sure
+        controlclick, Button3, Product Registration, Are you sure
+        winwaitclose, FIFA 11
+    "
+
+    # Install latest update, from http://www.ea.com/uk/football/news/pc-patch-2:
+    w_download $W_PACKAGE http://static.cdn.ea.com/fifa/u/f/FIFA11_PATCH101.exe f6b55bfbd66ecd11a9e9c835e4b6c6bc8adbcf6d
+    
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, FIFA11_PATCH101.exe
+        winwait, RTPatch
+        sleep 500
+        controlclick, Button1, RTPatch Binary Update System
+        winwait, RTPatch, FIFA 11 Patch 1.01 has been successfully installed.
+        controlclick, Button1, RTPatch, FIFA 11 Patch 1.01 has been successfully installed.
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\EA Sports\\FIFA 11\\Game" "fifa.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata fifa11_demo games \
     title="FIFA 11 Demo" \
     publisher="EA Sports" \
