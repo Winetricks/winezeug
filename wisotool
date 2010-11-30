@@ -8916,6 +8916,12 @@ load_sto()
         w_try_winetricks ie6
     fi
 
+    if w_workaround_wine_bug 24819
+    then
+        # Prevent hang in installer
+        w_try_winetricks gameux=disabled
+    fi
+
     w_ahk_do "
         SetTitleMatchMode, 2
         run ${W_ISO_MOUNT_LETTER}:setup.exe
@@ -8933,11 +8939,14 @@ load_sto()
         ControlClick, Button2
         winwait, Star Trek, Launch
         ControlClick, Button2
+        winwaitclose
     "
     iso_umount
     # FIXME: register using the key that came with the DVD?
     # FIXME: log in and download patch?
     # FIXME: kill game?
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Cryptic Studios" "Star Trek Online.exe"
 }
 
 #----------------------------------------------------------------
