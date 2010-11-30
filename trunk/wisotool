@@ -9328,7 +9328,7 @@ w_metadata twfc games \
 load_twfc() {
     iso_mount "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
-    KEY=`cat "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.txt | tr -d -`
+    w_read_key
 
     w_ahk_do "
         run ${W_ISO_MOUNT_LETTER}:setup.exe
