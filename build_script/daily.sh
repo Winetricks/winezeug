@@ -232,12 +232,7 @@ exit 1
 
 build() {
 cd "$WINEBUILDDIR"
-if [ $REBASE_TREE = 1 ]
-then
-    ./configure $CONFIGUREFLAGS
-else
-    "$WINETESTGIT"/configure $CONFIGUREFLAGS
-fi
+"$WINETESTGIT"/configure $CONFIGUREFLAGS
 make -j$CORES
 }
 
@@ -381,16 +376,22 @@ runtests
 build_regular() {
 BUILDNAME=regular
 CONFIGUREFLAGS=${CONFIGUREFLAGS}""
-rm -rf "$WINEBUILDDIR"
-mkdir -p "$WINEBUILDDIR"
+if [ $REBASE_TREE = 0 ]
+then
+    rm -rf "$WINEBUILDDIR"
+    mkdir -p "$WINEBUILDDIR"
+fi
 build || build_failed
 }
 
 build_win64() {
 BUILDNAME=win64
-CONFIGUREFLAGS=${CONFIGUREFLAGS}" --enable-win64"
-rm -rf "$WINEBUILDDIR"
-mkdir -p "$WINEBUILDDIR"
+CONFIGUREFLAGS="${CONFIGUREFLAGS} --enable-win64"
+if [ $REBASE_TREE = 0 ]
+then
+    rm -rf "$WINEBUILDDIR"
+    mkdir -p "$WINEBUILDDIR"
+fi
 build || build_failed
 }
 
@@ -829,7 +830,13 @@ do
     case $1 in
     -v) set -x;;
     --no-newtree) export NEWTREE=1;;
-    --rebase-tree) export REBASE_TREE=1; export WINE=$WINEGIT/wine; export WINESERVER=$WINEGIT/server/wineserver;;
+    --rebase-tree)
+        export REBASE_TREE=1;
+        export WINE="$WINEGIT/wine";
+        export WINESERVER="$WINEGIT/server/wineserver";
+        export WINEBUILDDIR="$WINEGIT";
+        export WINETESTGIT="$WINEGIT";
+        ;;
     --no-tests) export NOTESTS=1;;
     --no-regular) export NOREGULAR_TEST=1;;
     --alldebug) export ALLDEBUG_TEST=1;;
