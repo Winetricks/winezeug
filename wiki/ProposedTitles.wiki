@@ -113,6 +113,12 @@ http://universe.lego.com/
 Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 
+Momento Mori demo (french/german/spanish, choose one, no english available)
+http://www.gamershell.com/download_37478.shtml
+http://www.strategyinformer.com/pc/demos/mementomori/demo.html
+Caught my eye because of a more recent release of theirs,
+http://www.ubuntugamer.com/2010/12/wine-how-to-and-review-of-alternativa
+
 NVidia DirectX9 samples
 http://developer.download.nvidia.com/SDK/9.5/Samples/3dgraphics_samples.html
 
