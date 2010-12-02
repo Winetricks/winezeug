@@ -2196,7 +2196,7 @@ if ! test "$WISOTOOL_LIB"
 then
     wisotool_detect_sudo
 
-    # If user specifies menu on commandline, jump there.
+    # If user specifies menu on commandline, execute that command, but don't commit to commandline mode
     # FIXME: this code is duplicated several times; unify it
     if echo "$WISOTOOL_CATEGORIES" | grep -w "$1" > /dev/null
     then
@@ -2204,9 +2204,10 @@ then
         shift
     fi
 
-    # If no non-option arguments given, read them from GUI
     case "$1" in
     "")
+        # GUI case
+        # No non-option arguments given, so read them from GUI, and loop until user quits
         wisotool_detect_gui
         while true
         do
@@ -2218,25 +2219,36 @@ then
 
             if test "$verbs" = ""
             then
-                # user didn't pick anything, just exit
-                break
+                case "$WISOTOOL_CURMENU" in
+                apps|benchmarks|games|run)
+                    # "user didn't pick anything, return to main menu"
+                    WISOTOOL_CURMENU=main
+                    ;;
+                *)
+                    # "user didn't pick anything, just exit"
+                    break
+                    ;;
+                esac
             elif echo "$WISOTOOL_CATEGORIES" | grep -w "$verbs" > /dev/null
             then
                 WISOTOOL_CURMENU=$verbs
             else
-                # Otherwise user picked a real verb.
-                # replace $1, $2, $3, ... with words of $verbs
-                set $verbs
-                break
+                # Otherwise user picked one or more real verbs.
+                for W_PACKAGE in $verbs
+                do
+                    execute_command
+                done
             fi
         done
         ;;
+    *)
+        # Commandline case
+        # User gave commandline arguments, so just run those verbs and exit
+        for W_PACKAGE
+        do
+            execute_command
+        done
+        ;;
+
     esac
-
-    rm -rf "$W_TMP"
-
-    for W_PACKAGE in $*
-    do
-        execute_command
-    done
 fi
