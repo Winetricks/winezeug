@@ -2461,7 +2461,8 @@ load_gfw() {
     # FIXME: This is a huge download for a single dll.
     download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
     cd "$WINETRICKS_TMP"
-    try_cabextract "$WINETRICKS_CACHE"/W2KSP4_EN.EXE i386/msasn1.dl_
+    try_cabextract -F i386/msasn1.dl_ "$WINETRICKS_CACHE"/W2KSP4_EN.EXE
+    try_cabextract i386/msasn1.dl_
     try cp msasn1.dll "$SYSTEM32_DLLS"
     try rm -rf i386
     cd "$olddir"
