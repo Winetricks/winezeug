@@ -715,15 +715,123 @@ wisotool_die_if_user_not_dirowner()
     fi
 }
 
+# See
+# http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-119.pdf (iso9660)
+# http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-167.pdf
+# http://www.osta.org/specs/pdf/udf102.pdf
+# http://www.ecma-international.org/publications/techreports/E-TR-071.htm
+
+# Usage: read_bytes offset count device
+wisotool_read_bytes()
+{
+    dd status=noxfer if=$3 bs=1 skip=$1 count=$2 2>/dev/null
+}
+
+# Usage: read_hex offset count device
+wisotool_read_hex()
+{
+    hexdump -s $1 -n $2 -e $2'/1 "%01x " "\n"' $3 | sed 's/  *$//'
+}
+
+# Usage: read_decimal offset device
+# Reads four byte word, outputs in decimal.
+# Uses default endianness.  
+# udf uses little endian words, so this only works on little endian machines.
+wisotool_read_decimal()
+{
+    hexdump -s $1 -n 4 -e '1/4 "%4d " "\n"' $2
+}
+
+wisotool_read_udf_volume_name()
+{
+    # "Anchor volume descriptor pointer" starts at sector 256
+
+    # AVDP Layout (ECMA-167 3/10.2):
+    # size   offset   contents
+    # 16     0        descriptor tag (id = 2)
+    # 16     8        main (primary?) volume descriptor sequence extent
+    # ...
+
+    # descriptor tag layout (ECMA-167 3/7.2):
+    # size   offset   contents
+    # 2      0        TagIdentifier
+    # ...
+
+    # extent layout (ECMA-167 3/7.1):
+    # size   offset   contents
+    # 4      0        length (in bytes)
+    # 8      4        location (in 2k sectors)
+
+    # primary volume descriptor layout (ECMA-167 3/10.1):
+    # size   offset   contents
+    # 16     0        descriptor tag (id = 1)
+    # ...
+    # 32     24       volume identifier (dstring)
+
+    # 1. check the 16 bit TagIdentifier of the descriptor tag, make sure it's 2
+    tagid=`wisotool_read_hex 524288 2 $1`
+    : echo tagid is $tagid
+    case "$tagid" in
+    "2 0") : echo Found AVDP ;;
+    *) echo Did not find AVDP; exit 1;;
+    esac
+
+    # 2. read the location of the main volume descriptor:
+    offset=`wisotool_read_decimal 524308 $1`
+    : echo MVD is at sector $offset
+    offset=`expr $offset \* 2048`
+    : echo MVD is at byte $offset
+
+    # 3. check the TagIdentifier of the MVD's descriptor tag, make sure it's 1
+    tagid=`wisotool_read_hex $offset 2 $1`
+    : echo tagid is $tagid
+    case "$tagid" in
+    "1 0") : echo Found MVD ;;
+    *) echo Did not find MVD; exit 1;;
+    esac
+
+    # 4. Read whether the name is in 8 or 16 bit chars
+    offset=`expr $offset + 24`
+    width=`wisotool_read_hex $offset 1 $1`
+
+    case $width in
+    8) : ;;
+    *) echo "Unhandled dvd volname character width '$width'"; exit 1;;
+    esac
+
+    # 5. Profit!
+    offset=`expr $offset + 1`
+    wisotool_read_bytes $offset 30 $1 | tr -d '\000' | sed 's/  *$//'
+    echo ""
+}
+
+wisotool_read_volume_name()
+{
+    # ECMA-119 says that CD-ROMs have sector size 2k, and at sector 16 have:
+    # size  offset contents
+    #  1    0      Volume descriptor type (1 for primary volume descriptor)
+    #  5    1      Standard identifier ("CD001" for iso9660)
+    # ECMA-167, section 9.1.2, has a table of standard identifiers:
+    # "BEA01": ecma-167 9.2, Beginning Extended Area Descriptor
+    # "CD001": ecma-119
+    # "CDW02": ecma-168
+
+    std_id=`wisotool_read_bytes 32769 5 $1`
+    : echo std_id is $std_id
+
+    case $std_id in
+    BEA01) wisotool_read_udf_volume_name $1; ;;
+    *) echo "Unrecognized disk type $std_id"; exit 1 ;;
+    esac
+}
+
 wisotool_volname()
 {
     x=`volname $1 | sed 's/  *$//'`
     if test "x$x" = "x"
     then
-        # UDF?  See the ubuntu bug filed against volname
-        # FIXME: test this with more than one DVD, that offset 
-        # probably varies
-        x=`dd if=$1 skip=65562 bs=1 count=28 | tr -d '\000'`
+        # UDF?  See https://bugs.launchpad.net/bugs/678419
+        x=`wisotool_read_volume_name $1`
     fi
     echo $x
 }
@@ -788,7 +896,7 @@ wisotool_cache_iso()
             *)    w_warn "Wrong disc [$_W_volname] inserted.  Please insert disc [$_W_expected_volname]" ;;
             esac
 
-            sleep 5
+            sleep 10
         else
             break
         fi
@@ -1501,6 +1609,103 @@ load_lemonysnicket() {
     "
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Lemony Snicket's A Series of Unfortunate Events" System\\game.exe
+}
+
+#----------------------------------------------------------------
+
+w_metadata masseffect2 games \
+    title="Mass Effect 2" \
+    publisher="BioWare" \
+    year="2010" \
+    media="dvd" \
+    file1="MassEffect2.iso" \
+    file2="ME2_Disc2.iso" 
+
+load_masseffect2()
+{
+    w_mount MassEffect2
+    w_read_key
+
+    if w_workaround_wine_bug 22091
+    then
+        w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
+        w_try_winetricks nocrashdialog
+    fi
+
+    if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
+    then
+        w_try_winetricks vcrun2005
+    fi
+    if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
+    then
+        w_try_winetricks d3dx10
+    fi
+    if w_workaround_wine_bug 23151
+    then
+        w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
+        w_try_winetricks glsl-disable
+    fi
+    if w_workaround_wine_bug 22919
+    then
+        w_try_winetricks physx
+    fi
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, ${W_ISO_MOUNT_LETTER}:Setup.exe
+        winwait, Installer Language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            send {Enter}
+            winwait, Mass Effect
+            send {Enter}
+            winwait, Mass Effect, License
+            ControlClick, Button4
+            ControlClick, Button2
+            winwait, Mass Effect, Registration Code
+            send $W_KEY
+            ControlClick, Button2
+            winwait, Mass Effect, Install Type
+            ControlClick, Button2
+        }
+        winwait, Insert Disc
+    "
+    sleep 5
+    w_mount ME2_Disc2
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            winwait, Insert Disc
+            ControlClick, Button4
+            ; on windows, the first click doesn't seem to do it, so press enter, too
+            sleep 1000
+            send {Enter}
+        }
+        ; Some installs may not get to this point due to an installer hang/crash (bug 22919)
+        ; The hang/crash happens after the Physx install but does not seem to affect gameplay
+        loop
+        {
+            ifwinexist, Mass Effect, Finish
+            {
+                if ( u > 0 ) {
+                    winkill, Mass Effect
+                }
+                break
+            }
+            Process, exist, Installer.exe
+            me2pid = %ErrorLevel%
+            if me2pid = 0
+                break
+            sleep 1000
+        }
+    "
+    if w_workaround_wine_bug 6971
+    then
+        w_warn "See http://appdb.winehq.org/objectManager.php?sClass=version&iId=19125 for info on how to patch wine to work around bug 6971"
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Mass Effect 2\\Binaries" "MassEffect2.EXE"
 }
 
 #----------------------------------------------------------------
