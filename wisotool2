@@ -474,10 +474,11 @@ wisotool_mainmenu()
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
-         _W_msg_apps='Install a program with Wine'
-         _W_msg_benchmarks='Install a benchmark with Wine'
-         _W_msg_games='Install a game with Wine'
-         _W_msg_steam='Install a Steam game with Wine'
+         _W_msg_run='Run an already-installed Windows app'
+         _W_msg_apps='Install a Windows program'
+         _W_msg_benchmarks='Install a Windows benchmark'
+         _W_msg_games='Install a Windows game'
+         _W_msg_steam='Install a Steam game'
          ;;
     esac
 
@@ -496,6 +497,7 @@ wisotool_mainmenu()
             --height 500 \
             --width 800 \
             --hide-column 2 \
+            FALSE run        "$_W_msg_run" \
             FALSE games      "$_W_msg_games" \
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
@@ -508,6 +510,7 @@ wisotool_mainmenu()
                 --separate-output \
                 --radiolist \
                 "$_W_msg_body"\
+                run        "$_W_msg_run" off \
                 games      "$_W_msg_games" off \
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
@@ -515,6 +518,103 @@ wisotool_mainmenu()
         ;;
     esac
     unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_games _W_msg_steam
+}
+
+# Display the menu of apps to run, output list of apps to execute to stdout
+wisotool_runmenu()
+{
+    case $LANG in
+    de*) _W_msg_title='Pakete auswählen'
+         _W_msg_body='Welches Programm möchten Sie starten?'
+         ;;
+    *)   _W_msg_title='Select a program to run'
+         _W_msg_body='Which program would you like to run?'
+         ;;
+    esac
+
+    case $WISOTOOL_GUI in
+    zenity)
+        case $LANG in
+        da*) echo -n "zenity \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Pakke \
+                --column Navn \
+                --column Udgiver \
+                --column År \
+                --column Medie \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+       de*) echo -n "zenity \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Paket \
+                --column Name \
+                --column Herausgeber \
+                --column Jahr \
+                --column Media \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+        *) echo -n "zenity \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Package \
+                --column Title \
+                --column Publisher \
+                --column Year \
+                --column Media \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+        esac > "$WISOTOOL_WORKDIR"/zenity.sh
+
+        for verb in `wisotool_list_installed`
+        do
+            metadatafile="`echo "$WISOTOOL_METADATA"/*/$verb.vars`"
+            if ! test -f "$metadatafile"
+            then
+                continue
+            fi
+            (
+            title='?'
+            author='?'
+            . $metadatafile
+            echo -n " " FALSE \
+                    $verb \
+                    "\"$title\"" \
+                    "\"$publisher\"" \
+                    "\"$year\"" \
+                    "\"$media\""
+            )
+        done >> $WISOTOOL_WORKDIR/zenity.sh
+
+        sh "$WISOTOOL_WORKDIR"/zenity.sh | tr '|' ' '
+        ;;
+
+    kdialog)
+        (
+        echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
+        wisotool_list_installed | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
+        ) > "$WISOTOOL_WORKDIR"/kdialog.sh
+        sh "$WISOTOOL_WORKDIR"/kdialog.sh
+        ;;
+    esac
+
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
 }
 
 # Display the current menu, output list of verbs to execute to stdout
@@ -1111,7 +1211,7 @@ wisotool_init()
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="games apps benchmarks steam"
+    WISOTOOL_CATEGORIES="run games apps benchmarks steam"
     for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
@@ -1321,6 +1421,24 @@ then
 
     wisotool_init
 fi
+
+
+wisotool_run_app()
+{
+    # Find the app
+    WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
+    app="$W_WISOTOOL_RUN_WINEPREFIX"/drive_c/run-$1.bat 
+    if ! test -f "$app"
+    then
+        WISOTOOL_RUN_WINEPREFIX="$WINEPREFIX"
+        app="$W_DRIVE_C/run-$1.bat"
+    fi
+    if ! test -f "$app"
+    then
+        w_die "Can't find app $1"
+    fi
+    WINEPREFIX="$WISOTOOL_RUN_WINEPREFIX" $WINE cmd /c C:\\run-$1.bat
+}
 
 #---- Builtin Verbs ----
 
@@ -2045,7 +2163,7 @@ then
 
         case $W_PACKAGE in
 
-        games|apps)
+        games|apps|run)
             WISOTOOL_CURMENU=$W_PACKAGE
             ;;
 
@@ -2078,6 +2196,12 @@ then
         list-installed) wisotool_list_installed ;;
 
         *)
+            if test "$WISOTOOL_CURMENU" = "run"
+            then
+                wisotool_run_app $W_PACKAGE
+                continue
+            fi
+
             if wisotool_metadata_exists $W_PACKAGE
             then
                 if ! ( load_$W_PACKAGE )
