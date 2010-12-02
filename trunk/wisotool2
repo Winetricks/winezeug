@@ -343,7 +343,7 @@ w_ahk_do() {
 
 load_autohotkey()
 {
-    test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks autohotkey
+    test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks -q autohotkey
 }
 
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
