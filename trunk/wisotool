@@ -9168,6 +9168,95 @@ __EOF__
 
 #----------------------------------------------------------------
 
+w_metadata theundergarden_demo games \
+    title="The UnderGarden Demo" \
+    publisher="Atari" \
+    year="2010" \
+    media="download" \
+    file1="TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe"
+
+load_theundergarden_demo() {
+
+    if ! test -f "$W_CACHE/$W_PACKAGE"/TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe
+    then
+        mkdir -p "$W_CACHE/$W_PACKAGE"
+        w_die "Please visit http://www.bigdownload.com/games/the-undergarden/pc/the-undergarden-demo/, download TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe, and place it in directory $W_CACHE/$W_PACKAGE"
+    fi
+    # FIXME: check sha1sum facf90c422ac2f2f242100f39bedfe7df0c95f7a
+
+    if w_workaround_wine_bug 25384
+    then
+        w_try_winetricks vcrun2008
+    fi
+    if w_workaround_wine_bug 25385
+    then
+        w_try_winetricks d3dx9_36
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        Run, TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe
+        SetTitleMatchMode, 2
+        WinWait,WinRAR self-extracting archive
+        Sleep 500
+        ControlClick Button2 ; Install
+        WinWait,Select Setup Language, during
+        Sleep 500
+        ControlClick TNewButton1 ;OK
+        WinWait,Setup - The UnderGarden, your
+        Sleep 500
+        ControlClick TNewButton1 ;OK
+        WinWait,Setup - The UnderGarden, License
+        Sleep 500
+        ControlClick TNewRadioButton1 ; accept
+        Sleep 500
+        ControlClick TNewButton2 ; Next
+        WinWait,Setup - The UnderGarden, different
+        Sleep 500
+        ControlClick TNewButton3 ;Next
+        WinWait,Setup - The UnderGarden, shortcuts
+        Sleep 500
+        ControlClick TNewButton4 ;OK
+        WinWait,Setup - The UnderGarden, additional
+        Sleep 500
+        ControlFocus,TNewCheckListBox1,desktop
+        Sleep 500
+        Send {Space}
+        Sleep 500
+        ControlClick TNewButton4 ; Next
+        WinWait,Setup - The UnderGarden, review
+        Sleep 500
+        ControlClick TNewButton4 ;Install
+        WinWait,Microsoft Visual C, Visual
+        Sleep 500
+        ControlClick Button13 ;Next
+        WinWait,Microsoft Visual C, want
+        Sleep 500
+        ControlClick Button1 ;Yes
+        WinWait,Microsoft Visual C, chosen
+        Sleep 500
+        ControlClick Button2 ;Finish
+        WinWait,Framework 3, Press
+        Sleep 500
+        ControlClick Button21 ;Cancel
+        WinWait,Framework 3, want
+        Sleep 500
+        ControlClick Button1 ;Yes
+        WinWait,Installing Microsoft, Runtime
+        Sleep 500
+        ControlClick Button6 ;Cancel
+        WinWait,Setup - The UnderGarden, launched
+        Sleep 500
+        ControlClick TNewButton4 ;Finish
+        WinWaitClose
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\The UnderGarden" "TheUndergarden.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata timezattack_demo games \
     title="Timez Attack Demo" \
     publisher="BigBrainz" \
