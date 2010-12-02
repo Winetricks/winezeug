@@ -650,7 +650,25 @@ wisotool_list_cached()
 wisotool_list_download()
 {
     cd "$WISOTOOL_METADATA"
-    grep -l 'media=.download' */*.vars | sed 's,.*/,,;s/\.vars//'
+    grep -l 'media=.download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
+}
+
+# List verbs which are installed and runnable
+# 'Runnable' here means 'has a run-$verbname.bat script'.
+wisotool_list_installed()
+{
+    (
+    # List apps in default bottle
+    ls $W_DRIVE_C/run-*.bat | sed 's,.*/run-,,;s,\.bat$,,'
+
+    case $OS in
+    Windows_NT) ;;
+    *)  
+        # On Wine, assume there's only one app per bottle (!), and list the bottles that have a run batch file.
+        ls $W_PREFIXES_ROOT/*/drive_c/run*.bat | sed 's,.*/\([^/]*\)/[^/]*/run.*,\1,' ;;
+    esac 
+
+    ) | sort -u
 }
 
 # Helper for adding a string to a list of flags
@@ -1140,6 +1158,8 @@ wisotool_init()
         WINE=${WINE:-wine}
         WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
         W_DRIVE_C="$WINEPREFIX/dosdevices/c:"
+        # This needs to go somewhere else soon, like ~/.local/wineprefixes
+        W_PREFIXES_ROOT="${W_PREFIXES_ROOT:-$HOME/prefixes}"
         ;;
     esac
     # Verbs can rely on W_TMP being empty at entry, deleted after return, and a subdir of C:
@@ -1246,6 +1266,7 @@ games: Typ 'Spiele' auswählen
 list: Verben von ausgewählte Typ auflisten
 list-cached: Verben für schon gecachte Installers auflisten
 list-download: Verben für herunterladbare Anwendungen auflisten
+list-installed: Verben für schon installlierte Programme auflisten
 _EOF_
         ;;
     *)
@@ -1265,6 +1286,7 @@ games: select type 'games'
 list: list verbs from selected category
 list-cached: list verbs for already-cached installers
 list-download: list verbs for downloadable applications
+list-installed: list verbs for already-installed applications
 _EOF_
         ;;
     esac
@@ -1988,6 +2010,7 @@ then
         do
             case $WISOTOOL_CURMENU in
             main) verbs=`wisotool_mainmenu` ;;
+            run) verbs=`wisotool_runmenu` ;;
             *) verbs="`wisotool_showmenu`" ;;
             esac
 
@@ -2052,6 +2075,7 @@ then
         list) wisotool_list_all ;;
         list-cached) wisotool_list_cached ;;
         list-download) wisotool_list_download ;;
+        list-installed) wisotool_list_installed ;;
 
         *)
             if wisotool_metadata_exists $W_PACKAGE
