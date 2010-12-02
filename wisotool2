@@ -2112,6 +2112,85 @@ done
 
 #---- Main Program ----
 
+# Usage: set W_PACKAGE to name of command to execute
+execute_command()
+{
+    rm -rf "$W_TMP"
+    mkdir -p "$W_TMP"
+
+    case $LANG in
+    da*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
+    de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
+    *)   fail_msg="Failed to install package $W_PACKAGE" ;;
+    esac
+
+    case $W_PACKAGE in
+
+    games|apps|run)
+        WISOTOOL_CURMENU=$W_PACKAGE
+        ;;
+
+    # Late options
+    -*)
+        if ! wisotool_handle_option $W_PACKAGE
+        then
+            wisotool_usage 
+            exit 1
+        fi
+        ;;
+
+    # External verbs
+    *.verb)
+        case $1 in
+        */*) . $1 ;;
+        *) . ./$1 ;;
+        esac
+        W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
+        if ! ( load_$W_PACKAGE )
+        then
+            w_die "$fail_msg"
+        fi
+        ;;
+
+    # Internal verbs
+    list) wisotool_list_all ;;
+    list-cached) wisotool_list_cached ;;
+    list-download) wisotool_list_download ;;
+    list-installed) wisotool_list_installed ;;
+
+    *)
+        if test "$WISOTOOL_CURMENU" = "run"
+        then
+            wisotool_run_app $W_PACKAGE
+            continue
+        fi
+
+        if wisotool_metadata_exists $W_PACKAGE
+        then
+            if ! ( load_$W_PACKAGE )
+            then
+                w_die "$fail_msg"
+            fi
+        else
+            echo Unknown arg $W_PACKAGE
+            wisotool_usage
+            exit 1
+        fi
+        ;;
+    esac
+
+    # User-specific postinstall hook.
+    # Source it so the script can call w_download() if needed.
+    postfile="$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
+    if test -f "$postfile"
+    then
+        chmod +x "$postfile"
+        ( . "$postfile" )
+    fi
+
+    rm -rf "$W_TMP"
+}
+
 if ! test "$WISOTOOL_LIB"
 then
     wisotool_detect_sudo
@@ -2157,79 +2236,6 @@ then
 
     for W_PACKAGE in $*
     do
-        mkdir -p "$W_TMP"
-
-        case $LANG in
-        da*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
-        de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
-        *)   fail_msg="Failed to install package $W_PACKAGE" ;;
-        esac
-
-        case $W_PACKAGE in
-
-        games|apps|run)
-            WISOTOOL_CURMENU=$W_PACKAGE
-            ;;
-
-        # Late options
-        -*)
-            if ! wisotool_handle_option $W_PACKAGE
-            then
-                wisotool_usage 
-                exit 1
-            fi
-            ;;
-
-        # External verbs
-        *.verb)
-            case $1 in
-            */*) . $1 ;;
-            *) . ./$1 ;;
-            esac
-            W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
-            if ! ( load_$W_PACKAGE )
-            then
-                w_die "$fail_msg"
-            fi
-            ;;
-
-        # Internal verbs
-        list) wisotool_list_all ;;
-        list-cached) wisotool_list_cached ;;
-        list-download) wisotool_list_download ;;
-        list-installed) wisotool_list_installed ;;
-
-        *)
-            if test "$WISOTOOL_CURMENU" = "run"
-            then
-                wisotool_run_app $W_PACKAGE
-                continue
-            fi
-
-            if wisotool_metadata_exists $W_PACKAGE
-            then
-                if ! ( load_$W_PACKAGE )
-                then
-                    w_die "$fail_msg"
-                fi
-            else
-                echo Unknown arg $W_PACKAGE
-                wisotool_usage
-                exit 1
-            fi
-            ;;
-        esac
-
-        # User-specific postinstall hook.
-        # Source it so the script can call w_download() if needed.
-        postfile="$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
-        if test -f "$postfile"
-        then
-            chmod +x "$postfile"
-            ( . "$postfile" )
-        fi
-
-        rm -rf "$W_TMP"
-
+        execute_command
     done
 fi
