@@ -1448,10 +1448,10 @@ wisotool_run_app()
 
 w_metadata  safari apps \
    title="Safari" \
-   publisher=Apple \
-   year=2010 \
-   media=download \
-   file1=SafariSetup.exe
+   publisher="Apple" \
+   year="2010" \
+   media="download" \
+   file1="SafariSetup.exe"
 
 load_safari()
 {
@@ -1542,10 +1542,10 @@ __EOF__
 
 w_metadata  bfbc2 games \
    title="Battlefield Bad Company 2" \
-   publisher=EA \
-   year=2010 \
-   media=dvd \
-   file1=BFBC2.iso
+   publisher="EA" \
+   year="2010" \
+   media="dvd" \
+   file1="BFBC2.iso"
 
 load_bfbc2()
 {
@@ -1697,8 +1697,8 @@ load_civ4_demo()
 w_metadata  lemonysnicket games \
    title="Lemony Snicket's A Series of Unfortunate Events" \
    publisher="Activision" \
-   year=2004 \
-   media=cd \
+   year="2004" \
+   media="cd" \
    file1="Lemony Snicket.iso"
 
 load_lemonysnicket() {
@@ -1851,11 +1851,11 @@ load_masseffect2()
 #----------------------------------------------------------------
 
 w_metadata singularity games \
-    title=Singularity \
-    publisher=Activision \
-    year=2010 \
-    media=dvd \
-    file1=SNG_DVD.iso
+    title="Singularity" \
+    publisher="Activision" \
+    year="2010" \
+    media="dvd" \
+    file1="SNG_DVD.iso"
 
 load_singularity()
 {
@@ -1940,9 +1940,9 @@ _EOF_
 w_metadata  torchlight games \
    title="Torchlight - boxed version" \
    publisher="Runic Games" \
-   year=2009 \
-   media=dvd \
-   file1=Torchlight.iso
+   year="2009" \
+   media="dvd" \
+   file1="Torchlight.iso"
 
 load_torchlight() {
     w_mount "Torchlight"
@@ -1978,10 +1978,10 @@ load_torchlight() {
 
 w_metadata  twfc games \
   title="Transformers: War for Cybertron" \
-  publisher=Activision \
-  year=2010 \
-  media=dvd \
-  file1=TWFC_DVD.iso
+  publisher="Activision" \
+  year="2010" \
+  media="dvd" \
+  file1="TWFC_DVD.iso"
 
 load_twfc()
 {
