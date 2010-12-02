@@ -148,6 +148,9 @@ http://www.gamerankings.com/pc/990077-worms-reloaded/index.html
 Arma II: Operation Arrowhead  (EG said he'd take this?)
 http://www.gamerankings.com/pc/971387-/ 
 
+Borderlands (Scott on this)
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
+
 Deathspank (Steam)
 http://store.steampowered.com/app/18040/
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21793
@@ -158,8 +161,8 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
 Final Fantasy XIV (we did the beta, but haven't done retail version yet)
 EG had trouble, he couldn't get past the login screen even with ie6
 
-Borderlands (Scott on this)
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=18686
+Poker Night at the Inventory (cheap)
+http://www.telltalegames.com/pokernight
 
 Team Fortress 2 (via steam; in timedemo mode, so yagmark, too? )
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
