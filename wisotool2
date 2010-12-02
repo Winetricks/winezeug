@@ -1427,7 +1427,7 @@ wisotool_run_app()
 {
     # Find the app
     WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-    app="$W_WISOTOOL_RUN_WINEPREFIX"/drive_c/run-$1.bat 
+    app="$WISOTOOL_RUN_WINEPREFIX"/drive_c/run-$1.bat 
     if ! test -f "$app"
     then
         WISOTOOL_RUN_WINEPREFIX="$WINEPREFIX"
