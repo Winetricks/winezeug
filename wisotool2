@@ -333,7 +333,8 @@ w_umount()
     fi
 }
 
-w_ahk_do() {
+w_ahk_do()
+{
    load_autohotkey
    _W_CR=`printf \\\\r`
    echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
@@ -467,14 +468,16 @@ wisotool_mainmenu()
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
-         _W_msg_apps='Ein Programm mit Wine installieren'
-         _W_msg_benchmarks='Ein Benchmark mit Wine installieren'
-         _W_msg_games='Ein Spiel mit Wine installieren'
+         _W_msg_apps='Ein Windows-Programm installieren'
+         _W_msg_uninstall='Ein Windows-Programm löschen'
+         _W_msg_benchmarks='Ein Windows-Benchmark installieren'
+         _W_msg_games='Ein Windows-Spiel installieren'
          _W_msg_steam='Ein Steam-Spiel mit Wine installieren'
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
          _W_msg_run='Run an already-installed Windows app'
+         _W_msg_uninstall='Uninstall a Windows app'
          _W_msg_apps='Install a Windows program'
          _W_msg_benchmarks='Install a Windows benchmark'
          _W_msg_games='Install a Windows game'
@@ -497,10 +500,11 @@ wisotool_mainmenu()
             --height 500 \
             --width 800 \
             --hide-column 2 \
-            FALSE run        "$_W_msg_run" \
             FALSE games      "$_W_msg_games" \
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
+            FALSE run        "$_W_msg_run" \
+            FALSE uninstall  "$_W_msg_uninstall" \
          | tr '|' ' '
         ;;
 
@@ -510,26 +514,41 @@ wisotool_mainmenu()
                 --separate-output \
                 --radiolist \
                 "$_W_msg_body"\
-                run        "$_W_msg_run" off \
                 games      "$_W_msg_games" off \
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
+                run        "$_W_msg_run" off \
+                uninstall  "$_W_msg_uninstall" off \
 
         ;;
     esac
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_games _W_msg_steam
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_games _W_msg_steam _W_msg_run _W_msg_uninstall
 }
 
-# Display the menu of apps to run, output list of apps to execute to stdout
-wisotool_runmenu()
+# Display the menu of installed apps, output list of selected apps
+wisotool_installed_menu()
 {
-    case $LANG in
-    de*) _W_msg_title='Pakete auswählen'
-         _W_msg_body='Welches Programm möchten Sie starten?'
-         ;;
-    *)   _W_msg_title='Select a program to run'
-         _W_msg_body='Which program would you like to run?'
-         ;;
+    case $WISOTOOL_CURMENU in
+    run)
+        case $LANG in
+        de*) _W_msg_title='Pakete auswählen'
+             _W_msg_body='Welches Programm möchten Sie starten?'
+             ;;
+        *)   _W_msg_title='Select a program to run'
+             _W_msg_body='Which program would you like to run?'
+             ;;
+        esac
+        ;;
+    uninstall)
+        case $LANG in
+        de*) _W_msg_title='Pakete auswählen'
+             _W_msg_body='Welches Programm möchten Sie löschen?'
+             ;;
+        *)   _W_msg_title='Select a program to delete'
+             _W_msg_body='Which program would you like to uninstall?'
+             ;;
+        esac
+        ;;
     esac
 
     case $WISOTOOL_GUI in
@@ -1215,11 +1234,12 @@ wisotool_init()
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="run games apps benchmarks steam"
+    WISOTOOL_CATEGORIES="apps benchmarks games steam"
     for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
     done
+    WISOTOOL_COMMANDMENUS="run uninstall"
 
     # Which subdirectory of WISOTOOL_METADATA is currently active (or main, if none)
     WISOTOOL_CURMENU=main
@@ -1442,6 +1462,27 @@ wisotool_run_app()
         w_die "Can't find app $1"
     fi
     WINEPREFIX="$WISOTOOL_RUN_WINEPREFIX" $WINE cmd /c C:\\run-$1.bat
+}
+
+wisotool_install_app()
+{
+    # FIXME: initialize a new wineprefix for this app, set lots of global variables
+    if ! ( load_$W_PACKAGE )
+    then
+        w_die "$fail_msg"
+    fi
+}
+
+wisotool_uninstall_app()
+{
+    # Find the app
+    WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
+    app="$WISOTOOL_RUN_WINEPREFIX"/drive_c/run-$1.bat 
+    if ! test -f "$app"
+    then
+        w_die "Can't uninstall app $1"
+    fi
+    rm -rf "$WISOTOOL_RUN_WINEPREFIX"
 }
 
 #---- Builtin Verbs ----
@@ -2127,7 +2168,7 @@ execute_command()
     case $W_PACKAGE in
 
     # FIXME: avoid duplicated code
-    apps|benchmarks|games|run|steam)
+    apps|benchmarks|games|run|uninstall|steam)
         WISOTOOL_CURMENU=$W_PACKAGE
         ;;
 
@@ -2160,18 +2201,20 @@ execute_command()
     list-installed) wisotool_list_installed ;;
 
     *)
-        if test "$WISOTOOL_CURMENU" = "run"
-        then
+        case $WISOTOOL_CURMENU in
+        run)
             wisotool_run_app $W_PACKAGE
             continue
-        fi
+            ;;
+        uninstall)
+            wisotool_uninstall_app $W_PACKAGE
+            continue
+            ;;
+        esac
 
         if wisotool_metadata_exists $W_PACKAGE
         then
-            if ! ( load_$W_PACKAGE )
-            then
-                w_die "$fail_msg"
-            fi
+            wisotool_install_app $W_PACKAGE
         else
             echo Unknown arg $W_PACKAGE
             wisotool_usage
@@ -2198,7 +2241,7 @@ then
 
     # If user specifies menu on commandline, execute that command, but don't commit to commandline mode
     # FIXME: this code is duplicated several times; unify it
-    if echo "$WISOTOOL_CATEGORIES" | grep -w "$1" > /dev/null
+    if echo "$WISOTOOL_CATEGORIES" "$WISOTOOL_COMMANDMENUS" | grep -w "$1" > /dev/null
     then
         WISOTOOL_CURMENU=$1
         shift
@@ -2213,14 +2256,15 @@ then
         do
             case $WISOTOOL_CURMENU in
             main) verbs=`wisotool_mainmenu` ;;
-            run) verbs=`wisotool_runmenu` ;;
+            run) verbs=`wisotool_installed_menu` ;;
+            uninstall) verbs=`wisotool_installed_menu` ;;
             *) verbs="`wisotool_showmenu`" ;;
             esac
 
             if test "$verbs" = ""
             then
                 case "$WISOTOOL_CURMENU" in
-                apps|benchmarks|games|run)
+                apps|benchmarks|games|run|uninstall)
                     # "user didn't pick anything, return to main menu"
                     WISOTOOL_CURMENU=main
                     ;;
@@ -2229,7 +2273,7 @@ then
                     break
                     ;;
                 esac
-            elif echo "$WISOTOOL_CATEGORIES" | grep -w "$verbs" > /dev/null
+            elif echo "$WISOTOOL_CATEGORIES" "$WISOTOOL_COMMANDMENUS" | grep -w "$verbs" > /dev/null
             then
                 WISOTOOL_CURMENU=$verbs
             else
