@@ -790,7 +790,7 @@ wisotool_append_to_flags()
 wisotool_list_all()
 {
     case $WISOTOOL_CURMENU in
-    main) echo "apps"; echo "games"; return;;
+    main) echo "$WISOTOOL_CATEGORIES" | tr ' ' '\012' ; return;;
     esac
 
     case $LANG in
@@ -2126,7 +2126,8 @@ execute_command()
 
     case $W_PACKAGE in
 
-    games|apps|run)
+    # FIXME: avoid duplicated code
+    apps|benchmarks|games|run|steam)
         WISOTOOL_CURMENU=$W_PACKAGE
         ;;
 
