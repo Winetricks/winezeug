@@ -608,7 +608,7 @@ wisotool_runmenu()
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
-        wisotool_list_installed | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
+        wisotool_list_installed | sed 's/\(.*\)/\1 \1 off/' | tr '\012' ' '
         ) > "$WISOTOOL_WORKDIR"/kdialog.sh
         sh "$WISOTOOL_WORKDIR"/kdialog.sh
         ;;
@@ -764,8 +764,12 @@ wisotool_list_installed()
     case $OS in
     Windows_NT) ;;
     *)  
-        # On Wine, assume there's only one app per bottle (!), and list the bottles that have a run batch file.
-        ls $W_PREFIXES_ROOT/*/drive_c/run*.bat | sed 's,.*/\([^/]*\)/[^/]*/run.*,\1,' ;;
+        # On Wine, assume there's only one app per bottle (!), and list the bottles that have a matching run batch file.
+        for verb in `ls "$W_PREFIXES_ROOT"/*/drive_c/run-*.bat | sed 's,.*/\([^/]*\)/[^/]*/run.*,\1,' `
+        do
+            test -f "$W_PREFIXES_ROOT"/$verb/drive_c/run-verb.bat && echo $verb
+        done
+        ;;
     esac 
 
     ) | sort -u
@@ -1196,7 +1200,7 @@ wisotool_kill_handler()
     esac
     wisotool_cleanup
     #echo "Done cleanup, quitting."
-    #exit 1
+    exit
 }
 
 wisotool_init()
