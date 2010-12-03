@@ -492,6 +492,31 @@ w_download() {
     fi
 }
 
+w_download_manual()
+{
+    _W_packagename="$1"
+    _W_url="$2"
+    _W_file="$3"
+    _W_sha1sum="$4"
+
+    case $LANG in
+    da*) _W_dlmsg="Hent venligst filen $_W_file fra $_W_url og placér den i $W_CACHE/$_W_packagename, kør derefter dette skript.";;
+    de*) _W_dlmsg="Bitte laden Sie $_W_file von $_W_url runter, stellen Sie's in $W_CACHE/$_W_packagename, dann wiederholen Sie diesen Kommando.";;
+    *) _W_dlmsg="Please download $_W_file from $_W_url, place it in $W_CACHE/$_W_packagename, then re-run this script.";;
+    esac
+
+    if ! test -f "$W_CACHE/$_W_packagename/$_W_file"
+    then
+        mkdir -p "$W_CACHE/$_W_packagename"
+        xdg-open "$_W_url"
+        sleep 3   # give some time for browser to open
+        w_die "$_W_dlmsg"
+        # FIXME: wait in loop until file is finished?
+    fi
+    # FIXME: verify $sha1sum of $file
+    unset _W_url _W_file _W_sha1sum _W_dlmsg
+}
+
 # Download one or more files via bittorrent
 # Usage: package [foo.torrent]
 # Caches downloads in $W_CACHE/$W_PACKAGE, torrent files are assumed to be there
@@ -1683,13 +1708,7 @@ w_metadata amnesia_tdd_demo games \
     file1="amnesia_tdd_demo_1.0.1.exe" 
 
 load_amnesia_tdd_demo() {
-
-    if ! test -f "$W_CACHE/$W_PACKAGE"/amnesia_tdd_demo_1.0.1.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please visit http://www.amnesiagame.com/#demo, download amnesia_tdd_demo_1.0.1.exe, and place it in directory $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: check sha1sum 0bf0bc6e9c8ea76f1c44582d9302a9b22d31d1b6
+    w_download_manual $W_PACKAGE "http://www.amnesiagame.com/#demo" amnesia_tdd_demo_1.0.1.exe 0bf0bc6e9c8ea76f1c44582d9302a9b22d31d1b6
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -1741,11 +1760,7 @@ w_metadata anno1404_demo games \
     file1="DawnofDiscovery_Demo_US_2009_06_15_18_22.zip" 
 
 load_anno1404_demo() {
-    if ! test -f "$W_CACHE/$W_PACKAGE/DawnofDiscovery_Demo_US_2009_06_15_18_22.zip"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download demo from http://www.filefront.com/thankyou.php?f=13908918 and place it in $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE "http://www.filefront.com/thankyou.php?f=13908918" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
 
     mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_TMP/$W_PACKAGE"
@@ -2499,12 +2514,7 @@ w_metadata blobby_volley games \
     file1="blobby.zip" 
 
 load_blobby_volley() {
-    if ! test -f "$W_CACHE/$W_PACKAGE/blobby.zip"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download demo from http://www.chip.de/downloads/Blobby-Volley_12990993.html and place it in $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: verify sha1sum c7057c77a5009a88d9d877e17a63b5536ebeb177
+    w_download_manual $W_PACKAGE http://www.chip.de/downloads/Blobby-Volley_12990993.html blobby.zip c7057c77a5009a88d9d877e17a63b5536ebeb177
 
     mkdir -p "$W_DRIVE_C/BlobbyVolley"
     cd "$W_CACHE/$W_PACKAGE"
@@ -3048,11 +3058,7 @@ w_metadata civ4_demo games \
 
 load_civ4_demo()
 {
-    if ! test -f "$W_CACHE/$W_PACKAGE/Civilization4_Demo.zip"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download demo from http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html and place it in $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html Civilization4_Demo.zip 
 
     mkdir -p "$W_TMP"
     cd "$W_CACHE/$W_PACKAGE"
@@ -3274,11 +3280,7 @@ w_metadata darknesswithin2_demo games \
 
 load_darknesswithin2_demo()
 {
-    if ! test -f "$W_CACHE/$W_PACKAGE/DarknessWithin2Demo.exe"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download $W_CACHE/$W_PACKAGE/DarknessWithin2Demo.exe from http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo"
-    fi
+    w_download_manual $PACKAGE http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo DarknessWithin2Demo.exe 
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -3511,11 +3513,7 @@ w_metadata demolition_company_demo games \
 
 load_demolition_company_demo()
 {
-    if ! test -f "$W_CACHE/$W_PACKAGE/DemolitionCompanyDemoEN.exe"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Download the demo from http://www.demolitioncompany-thegame.com/demo.php and put it in $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE http://www.demolitioncompany-thegame.com/demo.php DemolitionCompanyDemoEN.exe
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -3597,12 +3595,7 @@ w_metadata deusex2_demo games \
 
 load_deusex2_demo()
 {
-    if ! test -f "$W_CACHE/$W_PACKAGE/dxiw_demo.zip"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download the demo from http://www.techpowerup.com/downloads/1730/Deus_Ex:_Invisible_War_Demo.html and put it in $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: sha1sum ccae48fb046d912b3714ea1b4be4294e74bb3092
+    w_download_manual $W_PACKAGE http://www.techpowerup.com/downloads/1730/Deus_Ex:_Invisible_War_Demo.html dxiw_demo.zip ccae48fb046d912b3714ea1b4be4294e74bb3092
 
     mkdir -p "$W_TMP/$W_PACKAGE"
     cd "$W_CACHE/$W_PACKAGE"
@@ -3937,11 +3930,7 @@ w_metadata ewj_demo games \
 
 load_ewj_demo() {
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=4233
-    if ! test -f "$W_CACHE/$W_PACKAGE/ewjdemo.exe"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download the demo from http://download.cnet.com/Earthworm-Jim-demo/3000-2099_4-10000793.html and put it in $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE http://download.cnet.com/Earthworm-Jim-demo/3000-2099_4-10000793.html ewjdemo.exe
 
     # FIXME: If the user is on a 32-bit OS and has vm.mmap_min_addr=0, they can use Wine to extract the files.
     # So we should try that if arj is not installed.
@@ -4502,13 +4491,7 @@ w_metadata fifaonline3_beta games \
 
 load_fifaonline3_beta()
 {
-    if ! test -f "$W_CACHE/$W_PACKAGE/FIFAOnlineSetup.exe"
-    then
-        mkdir -p "$W_CACHE"/$W_PACKAGE
-        w_die "Download the FIFAOnlineSetup.exe from http://fifa-online.easports.com/web/beta/welcome \
-             or http://www.fileplanet.com/190743/download/FIFA-Online-Game-Client and place it in $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: sha1sum?
+    w_download_manual $W_PACKAGE http://fifa-online.easports.com/web/beta/welcome FIFAOnlineSetup.exe
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -4665,13 +4648,7 @@ w_metadata ffxiv_beta games \
     file1="ffxivsetup.exe" 
 
 load_ffxiv_beta() {
-    # e6e615e5886c17e744fc4aba7b267e7e3dcbdb52 ffxivsetup.exe
-    if ! test -f "$W_CACHE/$W_PACKAGE/ffxivsetup.exe"
-    then
-        mkdir -p "$W_CACHE"/$W_PACKAGE
-        w_die "Register for the beta and download ffxivsetup.exe from https://dev-na.ffxiv.com/ \
-             and place it in $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE https://dev-na.ffxiv.com/ ffxivsetup.exe e6e615e5886c17e744fc4aba7b267e7e3dcbdb52
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -4796,11 +4773,7 @@ w_metadata fm10_demo games \
     file1="Setup_FM2010_Vanilla_Demo.exe" 
 
 load_fm10_demo() {
-    if ! test -f "$W_CACHE/$W_PACKAGE/Setup_FM2010_Vanilla_Demo.exe"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Download the demo from http://www.mirrorfootball.co.uk/football-manager-2010/ and put it in $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE http://www.mirrorfootball.co.uk/football-manager-2010/ Setup_FM2010_Vanilla_Demo.exe
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -5319,12 +5292,7 @@ w_metadata hordsoforcs2_demo games \
     file1="HoO2Demo.exe" 
 
 load_hordsoforcs2_demo() {
-    if ! test -f "$W_CACHE/$W_PACKAGE"/HoO2Demo.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please visit http://www.fileplanet.com/216619/download/Hordes-of-Orcs-2-Demo, download HoO2Demo.exe, and place it in directory $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: check sha1sum 1ba26d35697e359f89a30915140e471fadc675da
+    w_download_manual $W_PACKAGE http://www.fileplanet.com/216619/download/Hordes-of-Orcs-2-Demo HoO2Demo.exe 1ba26d35697e359f89a30915140e471fadc675da
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -6142,12 +6110,7 @@ w_metadata losthorizon_demo games \
     file1="Lost_Horizon_Demo_EN.exe" 
 
 load_losthorizon_demo() {
-
-    if ! test -f "$W_CACHE/$W_PACKAGE"/Lost_Horizon_Demo_EN.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please visit http://www.fileplanet.com/215704/download/Lost-Horizon-Demo, download Lost_Horizon_Demo_EN.exe, and place it in directory $W_CACHE/$W_PACKAGE"
-    fi
+    w_download_manual $W_PACKAGE http://www.fileplanet.com/215704/download/Lost-Horizon-Demo Lost_Horizon_Demo_EN.exe
 
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -6507,12 +6470,7 @@ w_metadata mise games \
     file1="SecretOfMonkeyIslandSE_ddsetup.zip" 
 
 load_mise() {
-    # Archive SHA1SUM 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
-    if [ ! -f "$W_CACHE/$W_PACKAGE/SecretOfMonkeyIslandSE_ddsetup.zip" ]
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Download the game from http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download and place in $W_CACHE/$W_PACKAGE.  Place the activation code in activationcode.txt in that directory, too."
-    fi
+    w_download_manual $W_PACKAGE "http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download" SecretOfMonkeyIslandSE_ddsetup.zip 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
 
     if w_workaround_wine_bug 22161
     then
@@ -6562,7 +6520,7 @@ load_mise() {
 
     cd "$olddir"
 
-    # Activate
+    # FIXME: This app has two different keys - you can use either one.  How do we handle that with w_read_key?
     if test -f "$W_CACHE"/$W_PACKAGE/activationcode.txt
     then
         MISE_KEY=`cat "$W_CACHE"/$W_PACKAGE/activationcode.txt`
@@ -7138,11 +7096,7 @@ w_metadata pcmark04 benchmarks \
     file1="PCMark04_v130_installer.exe" 
 
 load_pcmark04() {
-    if ! test -f "$W_CACHE/$W_PACKAGE/PCMark04_v130_installer.exe"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download PCMark04_v130_installer.exe from http://www.futuremark.com/download/pcmark04/ and put it in $W_CACHE/$W_PACKAGE/"
-    fi
+    w_download_manual $W_PACKAGE http://www.futuremark.com/download/pcmark04/ PCMark04_v130_installer.exe
 
     w_warn "Please don't use mouse while this installer is running.  Sorry..."
     cd "$W_CACHE/$W_PACKAGE"
@@ -7651,13 +7605,8 @@ w_metadata procycling08_demo games \
 
 load_procycling08_demo()
 {
-    # FIXME sha1sum 008b91a16c388c9965faaeaaa8242409b9db56b9
     # FIXME homepage http://www.cycling-manager.com/
-    if ! test -f "$W_CACHE/$W_PACKAGE/ProCyclingManager08_Demo.exe"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download the game to $W_CACHE/$W_PACKAGE/ProCyclingManager08_Demo.exe from e.g. http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo , sha1sum should be 008b91a16c388c9965faaeaaa8242409b9db56b9"
-    fi
+    w_download_manual $W_PACKAGE http://www.fileplanet.com/189566/download/Pro-Cycling-Manager---Tour-de-France-2008---Demo ProCyclingManager08_Demo.exe 008b91a16c388c9965faaeaaa8242409b9db56b9
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -8065,13 +8014,7 @@ w_metadata riseofnations_demo games \
     file1="RiseOfNationsTrial.exe" 
 
 load_riseofnations_demo() {
-
-    if ! test -f "$W_CACHE/$W_PACKAGE"/RiseOfNationsTrial.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please visit http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html, download RiseOfNationsTrial.exe, and place it in directory $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: check sha1sum 33cbf1ebc0a93cb840f6296d8b529f6155db95ee
+    w_download_manual $W_PACKAGE http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html RiseOfNationsTrial.exe 33cbf1ebc0a93cb840f6296d8b529f6155db95ee
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -8491,15 +8434,11 @@ w_metadata splitsecond_demo games \
     publisher="Disney" \
     year="2010" \
     media="download" \
-    file1="SplitSecond_Demo.exe" 
+    file1="SplitSecondDemo_FilePlanet.exe" 
 
 load_splitsecond_demo()
 {
-    if test ! -f "$W_CACHE/$W_PACKAGE"/SplitSecond*.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "You must download the demo to $W_CACHE/$W_PACKAGE before running this script.  See http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo"
-    fi
+    w_download_manual $W_PACKAGE http://www.fileplanet.com/212404/210000/fileinfo/Split/Second-Demo SplitSecondDemo_FilePlanet.exe 72b070712cfe951297263fae143521b45dae16b4
 
     if w_workaround_wine_bug 22774 "wine-1.3.[0-9]*"
     then
@@ -9176,13 +9115,7 @@ w_metadata theundergarden_demo games \
     file1="TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe"
 
 load_theundergarden_demo() {
-
-    if ! test -f "$W_CACHE/$W_PACKAGE"/TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please visit http://www.bigdownload.com/games/the-undergarden/pc/the-undergarden-demo/, download TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe, and place it in directory $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: check sha1sum facf90c422ac2f2f242100f39bedfe7df0c95f7a
+    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/the-undergarden/pc/the-undergarden-demo/ TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe facf90c422ac2f2f242100f39bedfe7df0c95f7a
 
     if w_workaround_wine_bug 25384
     then
@@ -9518,12 +9451,7 @@ w_metadata tropico3_demo games \
     file1="Tropico3Demo.exe" 
 
 load_tropico3_demo() {
-    if ! test -f "$W_CACHE/$W_PACKAGE"/Tropico3Demo.exe
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please visit http://www.fileshack.com/file_download.x/15191 or http://www.tropico3.com/?p=downloads, download Tropico3Demo.exe, and place it in directory $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: check sha1sum e031749db346ac3a87a675787c81eb1ca8cb5909
+    w_download_manual $W_PACKAGE "http://www.tropico3.com/?p=downloads" Tropico3Demo.exe e031749db346ac3a87a675787c81eb1ca8cb5909
 
     if w_workaround_wine_bug 24819
     then
@@ -9610,15 +9538,11 @@ w_metadata unigine_heaven benchmarks \
     publisher="Unigen" \
     year="2010" \
     media="download" \
-    file1="Unigine_Heaven-2.0.msi" 
+    file1="Unigine_Heaven-2.1.msi" 
 
 load_unigine_heaven() {
-    if ! test -f "$W_CACHE/$W_PACKAGE/Unigine_Heaven-2.1.msi"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Please download via http://unigine.com/download/torrents/Unigine_Heaven-2.1.msi.torrent and place in $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME sha1sum 3d7b94a3734cdae85f98032b61668e743979c444
+    # FIXME: use w_download_torrent()
+    w_download_manual $W_PACKAGE  http://unigine.com/download/torrents/Unigine_Heaven-2.1.msi.torrent Unigine_Heaven-2.1.msi 3d7b94a3734cdae85f98032b61668e743979c444
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -9806,14 +9730,8 @@ w_metadata victoria2_demo games \
 
 load_victoria2_demo() {
     # download zip file via torrent from http://www.gamershell.com/download_62070.shtml
-    if ! test -f "$W_CACHE/$W_PACKAGE/Victoria2_Demo.zip"
-    then
-        mkdir -p "$W_CACHE/$W_PACKAGE"
-        w_die "Download Victoria2_Demo.zip from http://www.gamershell.com/download_62070.shtml and place in $W_CACHE/$W_PACKAGE"
-    fi
-    # FIXME: check sha1sum 20bac88a3ace1010e4fb116d72baf95e92976b39
-    # or better, check sha1sum of extracted .exe, since different
-    # sources add their own readme in the .zip file
+    w_download_manual $W_PACKAGE http://www.gamershell.com/download_62070.shtml Victoria2_Demo.zip 20bac88a3ace1010e4fb116d72baf95e92976b39
+
     mkdir -p "$W_TMP"/$W_PACKAGE/
     cd "$W_TMP"/$W_PACKAGE/
     w_try unzip "$W_CACHE/$W_PACKAGE"/Victoria2_Demo.zip
