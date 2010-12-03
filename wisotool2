@@ -2263,16 +2263,8 @@ then
 
             if test "$verbs" = ""
             then
-                case "$WISOTOOL_CURMENU" in
-                apps|benchmarks|games|run|uninstall)
-                    # "user didn't pick anything, return to main menu"
-                    WISOTOOL_CURMENU=main
-                    ;;
-                *)
-                    # "user didn't pick anything, just exit"
-                    break
-                    ;;
-                esac
+                # "user didn't pick anything, just exit"
+                break
             elif echo "$WISOTOOL_CATEGORIES" "$WISOTOOL_COMMANDMENUS" | grep -w "$verbs" > /dev/null
             then
                 WISOTOOL_CURMENU=$verbs
@@ -2282,6 +2274,7 @@ then
                 do
                     execute_command
                 done
+                break
             fi
         done
         ;;
