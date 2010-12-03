@@ -784,9 +784,9 @@ wisotool_list_installed()
     Windows_NT) ;;
     *)  
         # On Wine, assume there's only one app per bottle (!), and list the bottles that have a matching run batch file.
-        for verb in `ls "$W_PREFIXES_ROOT"/*/drive_c/run-*.bat | sed 's,.*/\([^/]*\)/[^/]*/run.*,\1,' `
+        for verb in `ls "$W_PREFIXES_ROOT"/*/dosdevices/c:/run-*.bat | sed 's,.*/\([^/]*\)/[^/]*/run.*,\1,' `
         do
-            test -f "$W_PREFIXES_ROOT"/$verb/drive_c/run-verb.bat && echo $verb
+            test -f "$W_PREFIXES_ROOT"/$verb/dosdevices/c:/run-verb.bat && echo $verb
         done
         ;;
     esac 
@@ -1451,7 +1451,7 @@ wisotool_run_app()
 {
     # Find the app
     WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-    app="$WISOTOOL_RUN_WINEPREFIX"/drive_c/run-$1.bat 
+    app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
     if ! test -f "$app"
     then
         WISOTOOL_RUN_WINEPREFIX="$WINEPREFIX"
@@ -1477,7 +1477,7 @@ wisotool_uninstall_app()
 {
     # Find the app
     WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-    app="$WISOTOOL_RUN_WINEPREFIX"/drive_c/run-$1.bat 
+    app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
     if ! test -f "$app"
     then
         w_die "Can't uninstall app $1"
