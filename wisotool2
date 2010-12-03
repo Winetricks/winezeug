@@ -298,7 +298,7 @@ w_mount()
     then
         wisotool_mount_cached_iso "$1" 
     else
-        case "$WISOTOOL_OPT_SAVE" in
+        case "$WISOTOOL_OPT_KEEPISOS" in
         0)
             wisotool_mount_real_volume "$1"
             ;;
@@ -486,6 +486,7 @@ wisotool_mainmenu()
     esac
 
     # FIXME: add line for Steam below once we have steam game verbs
+    # FIXME: don't show uninstall option when $WISOTOOL_OPT_SHAREDPREFIX is 1
 
     case $WISOTOOL_GUI in
     zenity)
@@ -777,19 +778,19 @@ wisotool_list_download()
 wisotool_list_installed()
 {
     (
-    # List apps in default bottle
-    ls $W_DRIVE_C/run-*.bat | sed 's,.*/run-,,;s,\.bat$,,'
-
-    case $OS in
-    Windows_NT) ;;
-    *)  
-        # On Wine, assume there's only one app per bottle (!), and list the bottles that have a matching run batch file.
-        for verb in `ls "$W_PREFIXES_ROOT"/*/dosdevices/c:/run-*.bat | sed 's,.*/\([^/]*\)/[^/]*/run.*,\1,' `
+    case $WISOTOOL_OPT_SHAREDPREFIX in
+    0)
+        # assume there's only one app per bottle (!), and list the bottles that have a matching run batch file.
+        for verb in `ls "$W_PREFIXES_ROOT"/*/dosdevices/c:/run-*.bat | sed 's,.*/\([^/]*\)/dosdevices.*,\1,' `
         do
-            test -f "$W_PREFIXES_ROOT"/$verb/dosdevices/c:/run-verb.bat && echo $verb
+            test -f "$W_PREFIXES_ROOT"/$verb/dosdevices/c:/run-$verb.bat && echo $verb
         done
         ;;
-    esac 
+    1)
+        # List apps in default bottle
+        ls $W_DRIVE_C/run-*.bat | sed 's,.*/run-,,;s,\.bat$,,'
+        ;;
+    esac
 
     ) | sort -u
 }
@@ -1253,11 +1254,14 @@ wisotool_init()
     WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
 
     # Whether to always cache cached iso's (1) or only use cache if present (0)
-    # Can be inherited from environment or set via -c, defaults to off
-    WISOTOOL_OPT_SAVE=${WISOTOOL_OPT_SAVE:-0}
+    # Can be inherited from environment or set via -k, defaults to off
+    WISOTOOL_OPT_KEEPISOS=${WISOTOOL_OPT_KEEPISOS:-0}
 
     # what program to use to make disc image (dd or ddrescue)
     WISOTOOL_OPT_DD=${WISOTOOL_OPT_DD:-dd}
+
+    # whether to use shared wineprefix (1) or unique wineprefix for each app (0)
+    WISOTOOL_OPT_SHAREDPREFIX=${WISOTOOL_OPT_SHAREDPREFIX:-0}
 
     # Mac folks tend to not have sha1sum, but we can make do with openssl
     if [ -x "`which sha1sum 2>/dev/null`" ]
@@ -1360,7 +1364,7 @@ wisotool_usage()
 Brug: $0 [tilvalg] [verbum|sti-til-verbum] ...
 Kører de angivne verber.  Hvert verbum installerer et program eller ændrer en indstilling.
 Tilvalg:
--s|--save_isos: lagr iso'er lokalt (muliggør senere installation uden disk)
+-k|--keep_isos: lagr iso'er lokalt (muliggør senere installation uden disk)
 -q|--unattended: stil ingen spørgsmål, installér bare automatisk
 -r|--ddrescue: brug alternativ disk-tilgangsmetode (hjælper i tilfælde af en ridset disk)
 -v|--verbose: vis alle kommandoer som de bliver udført
@@ -1378,7 +1382,7 @@ Usage: $0 [options] [verb|path-to-verb] ...
 Angegebene Verben ausführen.
 Jeder Verb installiert z.B. eine Anwendung oder ändert eine Einstellung.
 Optionen:
--s|--save_isos: isos local speichern (erlaubt spätere Installierung ohne Disk)
+-k|--keep_isos: isos local speichern (erlaubt spätere Installierung ohne Disk)
 -q|--unattended: keine Fragen stellen, alles automatisch installieren
 -r|--ddrescue: alternative Zugriffsmodus (hilft bei gekratzten Disks)
 -v|--verbose: alle ausgeführten Kommandos anzeigen
@@ -1398,7 +1402,8 @@ _EOF_
 Usage: $0 [options] [verb|path-to-verb] ...
 Executes given verbs.  Each verb installs an application or changes a setting.
 Options:
--s|--save_isos: cache isos (allows later installation without disc)
+-s|--sharedprefix: don't give each app its own wineprefix
+-k|--keep_isos: cache isos (allows later installation without disc)
 -q|--unattended: don't ask any questions, just install automatically
 -r|--ddrescue: alternate method of disc access (helps with scratched discs)
 -v|--verbose: echo all commands as they are executed
@@ -1419,8 +1424,9 @@ _EOF_
 wisotool_handle_option()
 {
     case "$1" in
+    -s|--sharedprefix) WISOTOOL_OPT_SHAREDPREFIX=1 ;;
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
-    -s|--save_isos) WISOTOOL_OPT_SAVE=1 ;;
+    -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
     -q|--unattended) W_OPT_UNATTENDED=1 ;;
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
@@ -1450,16 +1456,19 @@ fi
 wisotool_run_app()
 {
     # Find the app
-    WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-    app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
-    if ! test -f "$app"
-    then
+    case $WISOTOOL_OPT_SHAREDPREFIX in
+    0)
+        WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
+        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
+        ;;
+    1)
         WISOTOOL_RUN_WINEPREFIX="$WINEPREFIX"
         app="$W_DRIVE_C/run-$1.bat"
-    fi
+        ;;
+    esac
     if ! test -f "$app"
     then
-        w_die "Can't find app $1"
+        w_die "Can't find app $1 (looked for $app)"
     fi
     WINEPREFIX="$WISOTOOL_RUN_WINEPREFIX" $WINE cmd /c C:\\run-$1.bat
 }
@@ -1476,11 +1485,18 @@ wisotool_install_app()
 wisotool_uninstall_app()
 {
     # Find the app
-    WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-    app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
+    case $WISOTOOL_OPT_SHAREDPREFIX in
+    0)
+        WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
+        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
+        ;;
+    1)
+        w_die "Sorry, this tool can't uninstall apps from a shared wineprefix"
+        ;;
+    esac
     if ! test -f "$app"
     then
-        w_die "Can't uninstall app $1"
+        w_die "Can't find app $1 (looked for $app)"
     fi
     rm -rf "$WISOTOOL_RUN_WINEPREFIX"
 }
