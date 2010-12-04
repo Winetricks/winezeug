@@ -136,10 +136,6 @@ http://www.gamerankings.com/pc/952152-risen/index.html
 http://news.bigdownload.com/2009/10/01/download-risen-demo
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=17988
 
-Strong Bad Game for Attractive People (all five demos)
-http://www.telltalegames.com/strongbad
-use verb strongbad_XXX, where xxx is name of episode
-
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
