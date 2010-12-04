@@ -1119,13 +1119,8 @@ load_3dmark2000() {
         ControlClick Button4  ; Finish
     "
 
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$W_PROGRAMS_X86_WIN\MadOnion.com\3DMark2000"
-REM possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
-.\3DMark2000
-__EOF__
-
+    #possible wine cmd bug: "3dmark2000" aborts, but ".\3dmark2000" works
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\MadOnion.com\\3DMark2000" ".\\3DMark2000"
 }
 
 #----------------------------------------------------------------
@@ -1259,11 +1254,8 @@ load_3dmark05() {
         w_warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
         ARGS="-nosysteminfo"
     fi
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$W_PROGRAMS_X86_WIN\Futuremark\3DMark05"
-3DMark05 $ARGS
-__EOF__
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Futuremark\\3DMark05" "3DMark05 $ARGS"
 }
 
 #----------------------------------------------------------------
@@ -1324,11 +1316,7 @@ load_3dmark06() {
         ARGS="-nosysteminfo"
     fi
 
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$W_PROGRAMS_X86_WIN\Futuremark\3DMark06"
-3DMark06 $ARGS
-__EOF__
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Futuremark\\3DMark06" "3DMark06 $ARGS"
 }
 
 #----------------------------------------------------------------
@@ -6425,12 +6413,7 @@ load_metro2033() {
 
     w_warn "You'll need the Xinput2 patch from http://bugs2.winehq.org/attachment.cgi?id=29313 to be able to use the mouse."
 
-cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$W_PROGRAMS_X86_WIN\\Steam"
-Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110
-__EOF__
-
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Steam" "Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110"
 }
 
 #----------------------------------------------------------------
@@ -9523,11 +9506,7 @@ load_unigine_heaven() {
     # Should start Heaven.exe, but that doesn't run in Wine
     # Should give option to run Heaven_gl.bat (even works in Wine)
     # or the dx10 or dx11 versions (doesn't).
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$W_PROGRAMS_X86_WIN\Unigine\Heaven"
-cmd /c Heaven_d3d9.bat
-__EOF__
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Unigine\\Heaven" "cmd /c Heaven_d3d9.bat"
 }
 
 #----------------------------------------------------------------
@@ -10396,13 +10375,7 @@ _load_steam_app()
         fi
     fi
 
-
-cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-${programfilesdrive}:
-cd "$W_PROGRAMS_X86_WIN\Steam"
-.\Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id
-__EOF__
-
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Steam" ".\\Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch $app_id"
 }
 
 # Sorted by app_id:
