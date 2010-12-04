@@ -1163,6 +1163,8 @@ load_3dmark2001() {
         ControlClick Button1  ; Unclick View Readme
         ControlClick Button4  ; Finish
     "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\MadOnion.com\\3DMark2001 SE" "3DMark2001SE.exe"
 }
 
 #----------------------------------------------------------------
@@ -2457,6 +2459,8 @@ load_bioshock_demo() {
     cd ..
     rm -rf bioshock-temp
     cd "$olddir"
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\2K Games\\BioShock Demo\\Builds\\Release" "Bioshock.exe"
 }
 
 #----------------------------------------------------------------
@@ -5863,11 +5867,7 @@ load_lol()
         w_try_winetricks ie6
     fi
 
-cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
-C:
-cd "C:\\Riot Games\\League of Legends"
-lol.launcher.exe
-__EOF__
+    w_declare_exe "C:\\Riot Games\\League of Legends" "lol.launcher.exe"
 
 set -x
     # Run once to accept EULA and start autoupdater
@@ -5924,11 +5924,7 @@ load_lol_standalone() {
     cd "$W_DRIVE_C/Riot Games"
     try_unrar x "$W_CACHE/$W_PACKAGE/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar"
 
-cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
-C:
-cd "C:\\Riot Games\\StandAlone_9_21_2010_NA"
-lol.launcher.exe
-__EOF__
+    w_declare_exe "C:\\Riot Games\\StandAlone_9_21_2010_NA" "lol.launcher.exe"
 
     # Holy crap this is broken under Wine! Prepare for a workaround orgy
     if w_workaround_wine_bug 20296
@@ -6148,7 +6144,6 @@ load_losthorizon_demo() {
         Sleep 500
         ControlClick Button4 ; Finish
     "
-
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Deep Silver\\Lost Horizon Demo" "fsasgame.exe"
 }
@@ -6741,11 +6736,8 @@ load_nd23_saw_demo() {
     then
         w_try_winetricks d3dx9_36
     fi
-    cat > "${W_DRIVE_C}/run-${W_PACKAGE}.bat" << __EOF__
-c:
-cd "${W_PACKAGE}"
-Shadow.exe
-__EOF__
+
+    w_declare_exe "c:\\$W_PACKAGE" "Shadow.exe"
 }
 
 #----------------------------------------------------------------
@@ -7591,6 +7583,9 @@ load_popsot_demo()
         ControlClick, Finish, Prince of Persia, View the Readme
     "
     cd "$olddir"
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\UBISOFT\\Demo\\Prince of Persia The Sands of Time (Demo)" "PrinceOfPersia.exe"
+
     w_warn "Once you're in the Prince of Persia game, turn off fog or you won't be able to see anything (see wine bug 17423 for explanation, but this isn't a wine bug)"
 }
 
@@ -9098,11 +9093,7 @@ load_smbx() {
         Send {Enter}
     "
     # FIXME: tries to install Bing Bar, hangs.
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-C:
-cd C:\\SMBX
-smbx.exe
-__EOF__
+    w_declare_exe "C:\\SMBX" "smbx.exe"
 }
 
 #----------------------------------------------------------------
@@ -9223,11 +9214,7 @@ load_timezattack_demo() {
     # fixme: only works on linux
     killall TimezAttack.exe
 
-    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
-C:
-cd C:\\TimezAttack
-TimezAttack.app\\TimezAttack.exe
-__EOF__
+    w_declare_exe "C:\\TimezAttack" "TimezAttack.app\\TimezAttack.exe"
 
     if w_workaround_wine_bug 24537
     then
@@ -9984,6 +9971,8 @@ load_wowtrial() {
         sleep 1000
         controlclick, Button1, Launcher
         "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\World of Warcraft Trial" "WoW.exe"
 }
 
 #----------------------------------------------------------------
