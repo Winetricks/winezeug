@@ -1370,7 +1370,6 @@ load_algodoo_demo() {
         sleep 500
         send {Space}{Tab}{Space}{Tab}{Space}{Enter}   ; decline to run app or view tutorials
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Algodoo" "algodoo"
 }
@@ -1400,7 +1399,6 @@ load_msaoe_demo() {
         winwait, Microsoft Age of Empires Trial Version, Setup has successfully
         ControlClick Button1
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Age of Empires Trial" "empires"
 }
@@ -1805,8 +1803,6 @@ __EOF__
         fi
     fi
 
-    cd "$olddir"
-
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Ubisoft\\Related Designs\\Dawn of Discovery (Demo)" "Anno4.exe"
 }
 
@@ -1904,7 +1900,6 @@ load_avatar_demo()
             sleep 1000
         }
     "
-    cd "$olddir"
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Ubisoft\\Demo\\James Cameron's AVATAR - THE GAME (Demo)\\bin" "AvatarDemo.exe"
 }
 
@@ -2202,7 +2197,6 @@ load_bfbc2() {
             echo "DxVersion=9" >> BFBC2/settings.ini
         fi
     fi
-    cd "$olddir"
 
     if w_workaround_wine_bug 22961
     then
@@ -2458,7 +2452,6 @@ load_bioshock_demo() {
     "
     cd ..
     rm -rf bioshock-temp
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\2K Games\\BioShock Demo\\Builds\\Release" "Bioshock.exe"
 }
@@ -2621,7 +2614,6 @@ load_braid_demo()
         winwait, Braid, finished
         controlclick, TButton3
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 22161
     then
@@ -2696,7 +2688,6 @@ load_braid()
         ; FIXME: Desktop resolution isn't reset after exit
         process, close, braid.exe
     "
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3088,7 +3079,6 @@ load_civ4_demo()
         ControlClick Finish, Civilization 4
         winwaitclose
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 6856
     then
@@ -3143,7 +3133,6 @@ load_cnc3_demo()
         winwait, Conquer 3, Launch the program
         controlclick, Button1
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Electronic Arts\\Command & Conquer 3 Tiberium Wars Demo" "CNC3Demo.exe"
 }
@@ -3174,7 +3163,6 @@ load_cnc4()
         controlclick, Button5
         controlclick, Button1
     "
-    cd "$olddir"
     iso_umount
 
     # Bypass the game's launcher: see AppDB
@@ -3312,7 +3300,6 @@ load_darknesswithin2_demo()
         ControlClick, TNewListBoxButton1
         ControlClick, TNewButton4
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 23041
     then
@@ -3383,7 +3370,6 @@ load_daytona_usa_evolutions() {
         sleep 1000
         controlclick, Button1, Setup, ???????????????
     "
-    cd "$olddir"
 
     w_warn "Gives an error when closing the game, seems safe to ignore."
 
@@ -3629,8 +3615,6 @@ load_deusex2_demo()
         send {Enter}
         winwaitclose
     "
-
-    cd "$olddir"
 
     if w_workaround_wine_bug 6971
     then
@@ -4553,7 +4537,6 @@ load_fifaonline3_beta()
     # Dont kill game immediately
     sleep 10
     killall "NFE.exe"
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -5381,7 +5364,6 @@ load_hphbp_demo()
         winwait, Setup, Finish
         controlclick, Button1
     "
-    cd "$olddir"
 
     # Not sure I trust putting \U2122 in a batch file, so use a wild card to cd to the right dir.
     # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
@@ -5509,7 +5491,6 @@ load_hegemonypom_demo()
         controlclick, Button4
         controlclick, Button2
     "
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -5552,7 +5533,6 @@ load_hon()
         winwait, Heroes of Newerth, Finish
         controlclick, Button2, Heroes of Newerth, Finish
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Heroes of Newerth" "hon.exe"
 }
@@ -5743,7 +5723,6 @@ load_lhp_demo()
         winwait, LEGO, Finish
         controlclick, Button1
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 23397
     then
@@ -5987,7 +5966,6 @@ load_lotsn()
         ControlClick Button2  ; Finish
         WinWaitClose
     "
-    cd "${olddir}"
 
     w_declare_exe "${W_PROGRAMS_X86_WIN}\\Telltale Games\\Tales of Monkey Island\\Launch of the Screaming Narwhal" "MonkeyIsland101.exe"
 
@@ -6513,8 +6491,6 @@ load_mise() {
         ControlClick, Button2
         "
 
-    cd "$olddir"
-
     # FIXME: This app has two different keys - you can use either one.  How do we handle that with w_read_key?
     if test -f "$W_CACHE"/$W_PACKAGE/activationcode.txt
     then
@@ -6606,8 +6582,6 @@ load_moh_beta()
         fi
     fi
 
-    cd "$olddir"
-
     # fixme: Try to find a way to script this?
     w_warn "After you sign up at http://medalofhonor.com/beta, you will receive a beta key which you will need to enter the first time you run the game."
 
@@ -6677,7 +6651,6 @@ load_morrowind() {
 
     sleep 30s
     iso_umount
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -6709,7 +6682,6 @@ load_mnbw_demo()
         ControlClick, Button4, Warband
         ControlClick, Button2, Warband
     "
-    cd "${olddir}"
 
     w_declare_exe "${W_PROGRAMS_X86_WIN}\\Mount&Blade Warband" "mb_warband.exe"
 }
@@ -6782,7 +6754,6 @@ load_nfsps_demo()
         controlclick, Button7
         controlclick, Button4
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Electronic Arts\\Need for Speed ProStreet Demo" "nfsdemo.exe"
 }
@@ -6936,7 +6907,6 @@ load_nfsshift_demo()
         controlclick, Button5
         controlclick, Button1
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Electronic Arts\\Need for Speed SHIFT Demo" "shiftdemo.exe"
 }
@@ -7284,7 +7254,6 @@ load_pscs5() {
     # Remove installer temp files:
     w_try cd "$W_CACHE/$W_PACKAGE"
     w_try rm -rf "Photoshop CS5 Read Me.pdf" "Adobe CS5"
-    w_try cd "$olddir"
 }
 
 # Special case!  Probably shouldn't be here.
@@ -7334,8 +7303,6 @@ load_pscs5_pickle() {
     w_try tar -c -f "$olddir/adobe_cs5.tar" *
     w_try cd ..
     w_try rm -rf cs5_temp
-    w_try cd "$olddir"
-
 }
 
 # Special case, part 2
@@ -7582,7 +7549,6 @@ load_popsot_demo()
         ControlClick, Button1, Prince of Persia, View the Readme
         ControlClick, Finish, Prince of Persia, View the Readme
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\UBISOFT\\Demo\\Prince of Persia The Sands of Time (Demo)" "PrinceOfPersia.exe"
 
@@ -7621,7 +7587,6 @@ load_procycling08_demo()
         winwait, Pro Cycling, finished
         ControlClick, TButton4, Pro Cycling,  finished ; Finish
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 17512
     then
@@ -7668,7 +7633,6 @@ load_proevolution2010_demo()
         sleep 1000
         ControlClick, Button1, Pro Evolution Soccer 2010 DEMO - InstallShield Wizard, InstallShield Wizard Completed ; Finished
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 23104
     then
@@ -7722,7 +7686,6 @@ load_proevolution2011_demo()
         sleep 1000
         ControlClick, Button1, Pro Evolution Soccer 2011 DEMO - InstallShield Wizard, InstallShield Wizard Completed ; Finished
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 23104
     then
@@ -7936,7 +7899,6 @@ _EOF_
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Runes of Magic" "Runes of Magic.exe"
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -8160,7 +8122,6 @@ load_sega_rally_2() {
         sleep 3000
         process, close, LAUNCH.exe
     "
-    cd "$olddir"
 
     if w_workaround_wine_bug 22668
     then
@@ -8206,7 +8167,6 @@ load_7million() {
         winwait, 7Million - InstallShield Wizard, InstallShield Wizard Complete
         Send {Enter}
     "
-    cd "$olddir"
 
     w_declare_exe "users\\$LOGNAME\\Local Settings\\Application Data\\7Million" "7million"
 
@@ -8239,7 +8199,6 @@ load_secondlife_beta() {
         winwait, Second Life, Start Second Life now
         send {Tab}{Enter}
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\SecondLifeBetaViewer" "SecondLifeBetaViewer.exe"
 }
@@ -8471,7 +8430,6 @@ load_splitsecond_demo()
         ControlClick, Button1, Split, completed
         ControlClick, Button4, Split, completed
     "
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Disney Interactive Studios\\Split Second Demo" "SplitSecondDEMO.exe"
 }
@@ -9035,8 +8993,6 @@ FPS=ON
 __EOF__
         fi
     fi
-
-    cd "$olddir"
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\CAPCOM\\STREETFIGHTERIV_BENCHMARK" "StreetFighterIV_Benchmark.exe"
 }
@@ -9836,8 +9792,6 @@ load_vf2_demo()
         winwaitclose
         "
 
-    cd "$olddir"
-
     cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 C:
 cd C:\\SEGA\\VF2DEMO
@@ -10047,7 +10001,6 @@ load_wowbc() {
             winwaitclose, Torrent
         "
     fi
-    cd "$olddir"
 
     if ! test -d "$W_TMP"/$W_PACKAGE/tempcd
     then
