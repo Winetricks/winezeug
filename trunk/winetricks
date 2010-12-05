@@ -363,9 +363,9 @@ showmenu()
 {
     case $MENU in
     zenity)
-        echo "zenity --title 'Winetricks' --text 'Select packages to install' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$WINETRICKS_TMP"/zenity.sh
-        usage | grep '^ [0-9a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> "$WINETRICKS_TMP"/zenity.sh
-        todo="`sh "$WINETRICKS_TMP"/zenity.sh | tr '|' ' '`"
+        echo "zenity --title 'Winetricks' --text 'Select packages to install' --list --checklist --column '' --column Package --column Description --height 440 --width 600 \\" > "$W_TMP"/zenity.sh
+        usage | grep '^ [0-9a-z]' | sed 's/^ \([^ ]*\) *\(.*\)/FALSE "\1" '"'\2'/" | sed 's/$/ \\/' >> "$W_TMP"/zenity.sh
+        todo="`sh "$W_TMP"/zenity.sh | tr '|' ' '`"
         ;;
     kdialog)
         packages=`usage | awk '/^ [0-9a-z]/ {print $1}'`
@@ -462,9 +462,9 @@ test -d "$WINETRICKS_CACHE" || mkdir -p "$WINETRICKS_CACHE"
 
 # Internal variables; these locations are not too important
 WINETRICKS_CACHE_WIN="`$XXXPATH -w $WINETRICKS_CACHE | tr '\012' ' ' | sed 's/ $//'`"
-WINETRICKS_TMP="$DRIVE_C"/winetrickstmp
-WINETRICKS_TMP_WIN='c:\winetrickstmp'
-mkdir -p "$WINETRICKS_TMP"
+W_TMP="$DRIVE_C"/winetrickstmp
+W_TMP_WIN='c:\winetrickstmp'
+mkdir -p "$W_TMP"
 
 # Handle case where z: doesn't exist
 case "$WINETRICKS_CACHE_WIN" in
@@ -629,14 +629,14 @@ download() {
 
 set_winver() {
     echo "Setting Windows version to $1"
-    cat > "$WINETRICKS_TMP"/set-winver.reg <<_EOF_
+    cat > "$W_TMP"/set-winver.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine]
 "Version"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\set-winver.reg
+    try_regedit "$W_TMP_WIN"\\set-winver.reg
 }
 
 set_app_winver() {
@@ -648,34 +648,34 @@ set_app_winver() {
     echo ""
     echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app]"
     echo "\"Version\"=\"$version\""
-    ) > "$WINETRICKS_TMP"/set-winver.reg
+    ) > "$W_TMP"/set-winver.reg
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\set-winver.reg
-    rm "$WINETRICKS_TMP"/set-winver.reg
+    try_regedit "$W_TMP_WIN"\\set-winver.reg
+    rm "$W_TMP"/set-winver.reg
 }
 
 set_ddr() {
     echo "Setting DirectDrawRenderer to $1"
-    cat > "$WINETRICKS_TMP"/set-ddr.reg <<_EOF_
+    cat > "$W_TMP"/set-ddr.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "DirectDrawRenderer"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-ddr.reg
+    try_regedit "$W_TMP"/set-ddr.reg
 }
 
 set_orm() {
     echo "Setting OffscreenRenderingMode to $1"
-    cat > "$WINETRICKS_TMP"/set-orm.reg <<_EOF_
+    cat > "$W_TMP"/set-orm.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "OffscreenRenderingMode"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\set-orm.reg
+    try_regedit "$W_TMP_WIN"\\set-orm.reg
 }
 
 set_mmdevapi() {
@@ -686,101 +686,101 @@ set_mmdevapi() {
 
 set_rtlm() {
     echo "Setting RenderTargetLockMode to $1"
-    cat > "$WINETRICKS_TMP"/set-rtlm.reg <<_EOF_
+    cat > "$W_TMP"/set-rtlm.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "RenderTargetLockMode"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-rtlm.reg
+    try_regedit "$W_TMP"/set-rtlm.reg
 }
 
 set_sdo() {
     echo "Setting StrictDrawOrdering to $1"
-    cat > "$WINETRICKS_TMP"/set-sdo.reg <<_EOF_
+    cat > "$W_TMP"/set-sdo.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "StrictDrawOrdering"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-sdo.reg
+    try_regedit "$W_TMP"/set-sdo.reg
 
 }
 
 set_vsm() {
     echo "Setting  Vertex Shaders to $1"
-    cat > "$WINETRICKS_TMP"/set-vsm.reg <<_EOF_
+    cat > "$W_TMP"/set-vsm.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "VertexShaderMode"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-vsm.reg
+    try_regedit "$W_TMP"/set-vsm.reg
 
 }
 
 set_multisampling() {
     echo "Setting Multisampling to $1"
-    cat > "$WINETRICKS_TMP"/set-multi.reg <<_EOF_
+    cat > "$W_TMP"/set-multi.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "Multisampling"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-multi.reg
+    try_regedit "$W_TMP"/set-multi.reg
 }
 
 set_mwo () {
     echo "Setting MouseWarpOverride to $1"
-    cat > "$WINETRICKS_TMP"/set-mwo.reg <<_EOF_
+    cat > "$W_TMP"/set-mwo.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\DirectInput]
 "MouseWarpOverride"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-mwo.reg
+    try_regedit "$W_TMP"/set-mwo.reg
 }
 
 npm_repack (){
  echo "Setting Nonpower2Mode to repack"
-    cat > "$WINETRICKS_TMP"/set-npw.reg <<_EOF_
+    cat > "$W_TMP"/set-npw.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "Nonpower2Mode"="repack"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-npw.reg
+    try_regedit "$W_TMP"/set-npw.reg
 
 }
 
 set_psm() {
     echo "Setting PixelShaderMode to $1"
-    cat > "$WINETRICKS_TMP"/set-psm.reg <<_EOF_
+    cat > "$W_TMP"/set-psm.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "PixelShaderMode"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP"/set-psm.reg
+    try_regedit "$W_TMP"/set-psm.reg
 }
 
 set_sound_driver() {
     echo "Setting sound driver to $1"
-    cat > "$WINETRICKS_TMP"/set-sound.reg <<_EOF_
+    cat > "$W_TMP"/set-sound.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Drivers]
 "Audio"="$1"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\set-sound.reg
+    try_regedit "$W_TMP_WIN"\\set-sound.reg
 }
 
 set_videomemorysize() {
@@ -790,7 +790,7 @@ set_videomemorysize() {
     case $size in
     default)
 
-    cat > "$WINETRICKS_TMP"/set-video.reg <<_EOF_
+    cat > "$W_TMP"/set-video.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
@@ -799,7 +799,7 @@ REGEDIT4
 _EOF_
     ;;
     *)
-    cat > "$WINETRICKS_TMP"/set-video.reg <<_EOF_
+    cat > "$W_TMP"/set-video.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
@@ -807,14 +807,14 @@ REGEDIT4
 
 _EOF_
     esac
-    try_regedit "$WINETRICKS_TMP_WIN"\\set-video.reg
+    try_regedit "$W_TMP_WIN"\\set-video.reg
 }
 
 set_virtualdesktop() {
     size=$1
     case $size in
     off|disabled)
-        cat > "$WINETRICKS_TMP"/vd.reg <<_EOF_
+        cat > "$W_TMP"/vd.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Explorer]
@@ -825,7 +825,7 @@ REGEDIT4
 _EOF_
         ;;
     [1-9]*x[1-9]*)
-        cat > "$WINETRICKS_TMP"/vd.reg <<_EOF_
+        cat > "$W_TMP"/vd.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Explorer]
@@ -839,19 +839,19 @@ _EOF_
         die "you want a virtual desktop of $size?  I don't understand."
         ;;
     esac
-    try_regedit "$WINETRICKS_TMP"/vd.reg
+    try_regedit "$W_TMP"/vd.reg
 }
 
 disable_crashdialog() {
     echo "Disabling graphical crash dialog"
-    cat > "$WINETRICKS_TMP"/crashdialog.reg <<_EOF_
+    cat > "$W_TMP"/crashdialog.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\WineDbg]
 "ShowCrashDialog"=dword:00000000
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\crashdialog.reg
+    try_regedit "$W_TMP_WIN"\\crashdialog.reg
 }
 
 sandbox() {
@@ -883,14 +883,14 @@ sandbox() {
 
 unset_winver() {
     echo "Clearing Windows version back to default"
-    cat > "$WINETRICKS_TMP"/unset-winver.reg <<_EOF_
+    cat > "$W_TMP"/unset-winver.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine]
 "Version"=-
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\unset-winver.reg
+    try_regedit "$W_TMP_WIN"\\unset-winver.reg
 }
 
 override_dlls() {
@@ -901,7 +901,7 @@ override_dlls() {
     fi
     shift
     echo Using $mode override for following DLLs: $@
-    cat > "$WINETRICKS_TMP"/override-dll.reg <<_EOF_
+    cat > "$W_TMP"/override-dll.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\DllOverrides]
@@ -916,15 +916,15 @@ _EOF_
 
         # Note: if you want to override even DLLs loaded with an absolute path,
         # you need to add an asterisk:
-        echo "\"*$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
-        #echo "\"$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
+        echo "\"*$1\"=\"$mode\"" >> "$W_TMP"/override-dll.reg
+        #echo "\"$1\"=\"$mode\"" >> "$W_TMP"/override-dll.reg
 
         shift
     done
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\override-dll.reg
-    cat "$WINETRICKS_TMP"/override-dll.reg
-    rm "$WINETRICKS_TMP"/override-dll.reg
+    try_regedit "$W_TMP_WIN"\\override-dll.reg
+    cat "$W_TMP"/override-dll.reg
+    rm "$W_TMP"/override-dll.reg
 }
 
 override_no_dlls() {
@@ -979,7 +979,7 @@ override_app_dlls() {
     echo REGEDIT4
     echo ""
     echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app\\DllOverrides]"
-    ) > "$WINETRICKS_TMP"/override-dll.reg
+    ) > "$W_TMP"/override-dll.reg
 
     while test "$1" != ""
     do
@@ -988,12 +988,12 @@ override_app_dlls() {
            rm -rf "$WINDIR"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
-        echo "\"$1\"=\"$mode\"" >> "$WINETRICKS_TMP"/override-dll.reg
+        echo "\"$1\"=\"$mode\"" >> "$W_TMP"/override-dll.reg
         shift
     done
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\override-dll.reg
-    rm "$WINETRICKS_TMP"/override-dll.reg
+    try_regedit "$W_TMP_WIN"\\override-dll.reg
+    rm "$W_TMP"/override-dll.reg
 }
 
 register_font() {
@@ -1001,14 +1001,14 @@ register_font() {
     shift
     font=$1
     #echo "Registering $file as $font"
-    cat > "$WINETRICKS_TMP"/register-font.reg <<_EOF_
+    cat > "$W_TMP"/register-font.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Fonts]
 "$font"="$file"
 _EOF_
     # too verbose
-    try_regedit "$WINETRICKS_TMP_WIN"\\register-font.reg
+    try_regedit "$W_TMP_WIN"\\register-font.reg
 }
 
 append_path() {
@@ -1016,15 +1016,15 @@ append_path() {
     NEW_PATH="$1"
     WIN_PATH="`WINEDEBUG= $WINE cmd.exe /c echo "%PATH%" | tr -d '\r' | sed 's,\\\\,\\\\\\\\,g'`"
 
-    sed 's/$/\r/' > "$WINETRICKS_TMP"/path.reg <<_EOF_
+    sed 's/$/\r/' > "$W_TMP"/path.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Environment]
 "PATH"="$NEW_PATH;$WIN_PATH"
 _EOF_
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\path.reg
-    rm -f "$WINETRICKS_TMP"/path.reg
+    try_regedit "$W_TMP_WIN"\\path.reg
+    rm -f "$W_TMP"/path.reg
 }
 
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
@@ -1106,8 +1106,8 @@ load_adobeair() {
 load_amstream() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'amstream.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 amstream.dll
     
@@ -1131,7 +1131,7 @@ load_atmlib() {
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
     # FIXME: This is a huge download for a single dll.
     download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
-    cd "$WINETRICKS_TMP"
+    cd "$W_TMP"
     try_cabextract "$WINETRICKS_CACHE"/W2KSP4_EN.EXE i386/atmlib.dl_
     try cp atmlib.dll "$SYSTEM32_DLLS"
     try rm -rf i386
@@ -1154,7 +1154,7 @@ load_baekmuk() {
     # See http://kldp.net/projects/baekmuk for project page
     # Need to download from Debian as the project page has unique captcha tokens per visitor
     download . http://ftp.de.debian.org/debian/pool/main/t/ttf-baekmuk/ttf-baekmuk_2.2.orig.tar.gz afdee34f700007de6ea87b43c92a88b7385ba65b
-    cd "$WINETRICKS_TMP/"
+    cd "$W_TMP/"
     gunzip -dc "$WINETRICKS_CACHE/ttf-baekmuk_2.2.orig.tar.gz" | tar -xf -
     try mv baekmuk-ttf-2.2/ttf/*.ttf "$winefontsdir"
     register_font batang.ttf "Baekmuk Batang"
@@ -1171,9 +1171,9 @@ load_cc580() {
     download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
     try $WINE "$WINETRICKS_CACHE"/cc32inst.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-    try_unzip -d "$WINDIR"/temp "$WINETRICKS_TMP"/comctl32.exe
+    try_unzip -d "$WINDIR"/temp "$W_TMP"/comctl32.exe
     try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-    try cp "$WINETRICKS_TMP"/comcnt.dll "$SYSTEM32_DLLS"/comctl32.dll
+    try cp "$W_TMP"/comcnt.dll "$SYSTEM32_DLLS"/comctl32.dll
 
     override_dlls native,builtin comctl32
 
@@ -1196,9 +1196,9 @@ load_comctl32ocx() {
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=25437D98-51D0-41C1-BB14-64662F5F62FE
     download . http://download.microsoft.com/download/3/a/5/3a5925ac-e779-4b1c-bb01-af67dc2f96fc/VisualBasic6-KB896559-v1-ENU.exe f52cf2034488235b37a1da837d1c40eb2a1bad84
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
-    try cp "$WINETRICKS_TMP"/mscomctl.ocx "$SYSTEM32_DLLS"/mscomctl.ocx
-    try cp "$WINETRICKS_TMP"/comctl32.ocx "$SYSTEM32_DLLS"/comctl32.ocx
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
+    try cp "$W_TMP"/mscomctl.ocx "$SYSTEM32_DLLS"/mscomctl.ocx
+    try cp "$W_TMP"/comctl32.ocx "$SYSTEM32_DLLS"/comctl32.ocx
     try $WINE regsvr32 comctl32.ocx
     try $WINE regsvr32 mscomctl.ocx
 }
@@ -1207,19 +1207,19 @@ load_comctl32ocx() {
 
 load_colorprofile() {
     download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
+    try_unzip -d "$W_TMP" "$WINETRICKS_CACHE"/ColorProfile.exe
 
     # It's in system32 for both win32/win64
     mkdir -p "$WINDIR"/system32/spool/drivers/color
-    try cp -f "$WINETRICKS_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
+    try cp -f "$W_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
 }
 
 #----------------------------------------------------------------
 
 load_comdlg32ocx() {
     download . http://activex.microsoft.com/controls/vb6/comdlg32.cab d4f3e193c6180eccd73bad53a8500beb5b279cbf
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/comdlg32.cab
-    try cp "$WINETRICKS_TMP"/comdlg32.ocx "$SYSTEM32_DLLS"/comdlg32.ocx
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/comdlg32.cab
+    try cp "$W_TMP"/comdlg32.ocx "$SYSTEM32_DLLS"/comdlg32.ocx
     try $WINE regsvr32 comdlg32.ocx
 }
 
@@ -1230,9 +1230,9 @@ load_controlpad() {
     # Fixes error "Failed to load UniText..."
     load_wsh57
     download . http://download.microsoft.com/download/activexcontrolpad/install/4.0.0.950/win98mexp/en-us/setuppad.exe 8921e0f52507ca6a373c94d222777c750fb48af7
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/setuppad.exe
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/setuppad.exe
     echo "If setup says 'Unable to start DDE ...', press Ignore"
-    try $WINE "$WINETRICKS_TMP"/setup $WINETRICKS_QUIET_T
+    try $WINE "$W_TMP"/setup $WINETRICKS_QUIET_T
 }
 
 #----------------------------------------------------------------
@@ -1264,68 +1264,68 @@ load_corefonts() {
     # to obtain the files and register the fonts by hand.
 
     # Andale needs a FontSubstitutes entry
-    # try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/andale32.exe
+    # try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/andale32.exe
 
     # Display EULA
     test x"$WINETRICKS_QUIET" = x"" || try $WINE "$WINETRICKS_CACHE"/arial32.exe $WINETRICKS_QUIET
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/arial32.exe
-    try cp -f "$WINETRICKS_TMP"/Arial*.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/arial32.exe
+    try cp -f "$W_TMP"/Arial*.TTF "$winefontsdir"
     register_font Arial.TTF "Arial (TrueType)"
     register_font Arialbd.TTF "Arial Bold (TrueType)"
     register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
     register_font Ariali.TTF "Arial Italic (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/arialb32.exe
-    try cp -f "$WINETRICKS_TMP"/AriBlk.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/arialb32.exe
+    try cp -f "$W_TMP"/AriBlk.TTF "$winefontsdir"
     register_font AriBlk.TTF "Arial Black (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/comic32.exe
-    try cp -f "$WINETRICKS_TMP"/Comic*.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/comic32.exe
+    try cp -f "$W_TMP"/Comic*.TTF "$winefontsdir"
     register_font Comic.TTF "Comic Sans MS (TrueType)"
     register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/courie32.exe
-    try cp -f "$WINETRICKS_TMP"/cour*.ttf "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/courie32.exe
+    try cp -f "$W_TMP"/cour*.ttf "$winefontsdir"
     register_font Cour.TTF "Courier New (TrueType)"
     register_font CourBD.TTF "Courier New Bold (TrueType)"
     register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
     register_font Couri.TTF "Courier New Italic (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/georgi32.exe
-    try cp -f "$WINETRICKS_TMP"/Georgia*.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/georgi32.exe
+    try cp -f "$W_TMP"/Georgia*.TTF "$winefontsdir"
     register_font Georgia.TTF "Georgia (TrueType)"
     register_font Georgiab.TTF "Georgia Bold (TrueType)"
     register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
     register_font Georgiai.TTF "Georgia Italic (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/impact32.exe
-    try cp -f "$WINETRICKS_TMP"/Impact.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/impact32.exe
+    try cp -f "$W_TMP"/Impact.TTF "$winefontsdir"
     register_font Impact.TTF "Impact (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/times32.exe
-    try cp -f "$WINETRICKS_TMP"/Times*.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/times32.exe
+    try cp -f "$W_TMP"/Times*.TTF "$winefontsdir"
     register_font Times.TTF "Times New Roman (TrueType)"
     register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
     register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
     register_font Timesi.TTF "Times New Roman Italic (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/trebuc32.exe
-    try cp -f "$WINETRICKS_TMP"/trebuc*.ttf "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/trebuc32.exe
+    try cp -f "$W_TMP"/trebuc*.ttf "$winefontsdir"
     register_font Trebuc.TTF "Trebucet MS (TrueType)"
     register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
     register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
     register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/verdan32.exe
-    try cp -f "$WINETRICKS_TMP"/Verdana*.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/verdan32.exe
+    try cp -f "$W_TMP"/Verdana*.TTF "$winefontsdir"
     register_font Verdana.TTF "Verdana (TrueType)"
     register_font Verdanab.TTF "Verdana Bold (TrueType)"
     register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
     register_font Verdanai.TTF "Verdana Italic (TrueType)"
 
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/webdin32.exe
-    try cp -f "$WINETRICKS_TMP"/Webdings.TTF "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/webdin32.exe
+    try cp -f "$W_TMP"/Webdings.TTF "$winefontsdir"
     register_font Webdings.TTF "Webdings (TrueType)"
 }
 
@@ -1365,8 +1365,8 @@ load_d3dx9() {
     helper_directx_dl
 
     # Kinder, less invasive directx - only extract and override d3dx9_??.dll
-    try_cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx9*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in "$WINETRICKS_TMP"/*.cab
+    try_cabextract -d "$W_TMP" -L -F '*d3dx9*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
     do
       try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
@@ -1385,8 +1385,8 @@ load_d3dx9_xx() {
     helper_directx_dl
 
     # Even kinder, less invasive directx - only extract and override d3dx9_xx.dll
-    try_cabextract -d "$WINETRICKS_TMP" -L -F "*$dllname*x86*" "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in "$WINETRICKS_TMP"/*.cab
+    try_cabextract -d "$W_TMP" -L -F "*$dllname*x86*" "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
     do
       try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
@@ -1400,8 +1400,8 @@ load_d3dx10() {
     helper_directx_dl
 
     # Kinder, less invasive directx10 - only extract and override d3dx10_??.dll
-    try_cabextract -d "$WINETRICKS_TMP" -L -F '*d3dx10*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in "$WINETRICKS_TMP"/*.cab
+    try_cabextract -d "$W_TMP" -L -F '*d3dx10*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
     do
       try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
@@ -1416,8 +1416,8 @@ load_d3dx10() {
 load_d3dxof() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'd3dxof.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'd3dxof.dll' "$W_TMP/dxnt.cab"
 
     override_dlls native d3dxof
 }
@@ -1427,8 +1427,8 @@ load_d3dxof() {
 load_devenum() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE/$DIRECTX_NAME"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE/$DIRECTX_NAME"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 devenum.dll
 
@@ -1440,8 +1440,8 @@ load_devenum() {
 load_dinput8() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dinput8.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dinput8.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 dinput8
 
@@ -1461,20 +1461,20 @@ load_directmusic() {
 # Untested. Based off http://bugs.winehq.org/show_bug.cgi?id=4805 and http://bugs.winehq.org/show_bug.cgi?id=24911
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmband.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmcompos.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmime.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmloader.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmscript.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmstyle.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic32.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dswave.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'streamci.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmband.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmcompos.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmime.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmloader.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmscript.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmstyle.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic32.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dswave.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'streamci.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 devenum.dll
     try $WINE regsvr32 dmband.dll
@@ -1496,12 +1496,12 @@ load_directmusic() {
 load_directplay() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dplaysvr.exe' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dplayx.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpnet.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpnhpast.dll' "$WINETRICKS_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpwsockx.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dplaysvr.exe' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dplayx.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpnet.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpnhpast.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpwsockx.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 dplayx.dll
     try $WINE regsvr32 dpnet.dll
@@ -1535,7 +1535,7 @@ load_directx9() {
     fi
     
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
-       try $WINE "$WINETRICKS_CACHE"/$DIRECTX_NAME /t:"$WINETRICKS_TMP_WIN" $WINETRICKS_QUIET
+       try $WINE "$WINETRICKS_CACHE"/$DIRECTX_NAME /t:"$W_TMP_WIN" $WINETRICKS_QUIET
 
     # How many of these do we really need?
     # We should probably remove most of these...?
@@ -1551,12 +1551,12 @@ load_directx9() {
     # Should be below, but fails on Wine when used silently.
     #if [ $WINETRICKS_QUIET ]
     #then
-    #    try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe /silent
+    #    try $WINE "$W_TMP_WIN"/DXSETUP.exe /silent
     #else
-    #    try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe
+    #    try $WINE "$W_TMP_WIN"/DXSETUP.exe
     #fi
 
-    try $WINE "$WINETRICKS_TMP_WIN"/DXSETUP.exe
+    try $WINE "$W_TMP_WIN"/DXSETUP.exe
 
     unset_winver
 
@@ -1597,8 +1597,8 @@ load_dcom98() {
 load_dmsynth() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 dmsynth.dll
     
@@ -1808,14 +1808,14 @@ load_dotnet35() {
     then
         # Thanks to Louis for this partial recipe
         #try $WINE reg add 'HKLM\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727' /v SP /t REG_DWORD /d 0001
-        cat > "$WINETRICKS_TMP"/sp1.reg <<_EOF_
+        cat > "$W_TMP"/sp1.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
 "SP"=dword:00000001
 
 _EOF_
-        try $WINE regedit "$WINETRICKS_TMP"/sp1.reg
+        try $WINE regedit "$W_TMP"/sp1.reg
         cd "$DRIVE_C"/wcu/dotNetFramework/dotNetFX35/x86
         try_cabextract netfx35_x86.exe
         try $WINE msiexec /i vs_setup.msi ADDEPLOY=1
@@ -1852,7 +1852,7 @@ load_dxsdk_nov2006() {
     load_vcrun6   # for mfc42u
     echo "Be patient, the 'installing new services' step at the end takes about five minutes"
     # Yes, they really mixed cabextract and unzip into one package...
-    cd "$WINETRICKS_TMP"
+    cd "$W_TMP"
     try_cabextract "$WINETRICKS_CACHE"/dxsdk_aug2006.exe
     try_unzip dxsdk.exe
     try $WINE Setup.exe $WINETRICKS_QUIET
@@ -1863,8 +1863,8 @@ load_dxsdk_nov2006() {
 load_dsound() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dsound.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dsound.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 dsound.dll
 
@@ -1875,14 +1875,14 @@ load_dsound() {
 
 load_dsoundbug9612() {
     echo "Enabling DirectSound workaround for bug #9612"
-    cat > "$WINETRICKS_TMP"/dsoundmaxshadow.reg <<_EOF_
+    cat > "$W_TMP"/dsoundmaxshadow.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\DirectSound]
 "MaxShadowSize"="0"
 
 _EOF_
-    try $WINE regedit "$WINETRICKS_TMP"/dsoundmaxshadow.reg
+    try $WINE regedit "$W_TMP"/dsoundmaxshadow.reg
 }
 
 #----------------------------------------------------------------
@@ -1890,8 +1890,8 @@ _EOF_
 load_eufonts() {
     # https://www.microsoft.com/downloads/details.aspx?FamilyID=0ec6f335-c3de-44c5-a13d-a1e7cea5ddea&displaylang=en
     download . http://download.microsoft.com/download/a/1/8/a180e21e-9c2b-4b54-9c32-bf7fd7429970/EUupdate.EXE 9b076c40cb63aa0d8512aa8e610ba11d3466e441
-    try_cabextract -q --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/EUupdate.EXE
-    try cp -f "$WINETRICKS_TMP"/*.ttf "$winefontsdir"
+    try_cabextract -q --directory="$W_TMP" "$WINETRICKS_CACHE"/EUupdate.EXE
+    try cp -f "$W_TMP"/*.ttf "$winefontsdir"
 
     register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
     register_font ArialI.ttf "Arial Italic (TrueType)"
@@ -1921,7 +1921,7 @@ load_fakechinese() {
     # Microsoft YaHei --> WenQuanYi Micro Hei
     # SimHei --> WenQuanYi Micro Hei
 
-    cat > "$WINETRICKS_TMP"/faketraditionalchinese.reg <<_EOF_
+    cat > "$W_TMP"/faketraditionalchinese.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
@@ -1931,7 +1931,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\faketraditionalchinese.reg
+    try_regedit "$W_TMP_WIN"\\faketraditionalchinese.reg
 }
 
 #----------------------------------------------------------------
@@ -1946,7 +1946,7 @@ load_fakejapanese() {
     # MS PMincho --> TakaoPMincho
     # These aliases were taken from what was listed in Ubuntu's fontconfig definitions.
 
-    cat > "$WINETRICKS_TMP"/fakejapanese.reg <<_EOF_
+    cat > "$W_TMP"/fakejapanese.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
@@ -1957,7 +1957,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\fakejapanese.reg
+    try_regedit "$W_TMP_WIN"\\fakejapanese.reg
 }
 
 #----------------------------------------------------------------
@@ -1973,7 +1973,7 @@ load_fakekorean() {
     # Dotum --> Baekmuk Dotum
     # DotumChe --> Baekmuk Dotum
 
-    cat > "$WINETRICKS_TMP"/fakekorean.reg <<_EOF_
+    cat > "$W_TMP"/fakekorean.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
@@ -1986,7 +1986,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\fakekorean.reg
+    try_regedit "$W_TMP_WIN"\\fakekorean.reg
 }
 
 #----------------------------------------------------------------
@@ -2079,7 +2079,7 @@ load_fontfix() {
         if [ "$gotsum"x = "96e1121f89953e5169d3e2e7811569148f573985"x ]
         then
             download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
-            cd "$WINETRICKS_TMP/"
+            cd "$W_TMP/"
             gunzip -dc "$WINETRICKS_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | tar -xf -
             try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
@@ -2092,7 +2092,7 @@ load_fontfix() {
         if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
         then
             download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
-            cd "$WINETRICKS_TMP/"
+            cd "$W_TMP/"
             gunzip -dc "$WINETRICKS_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | tar -xf -
             try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
             cd "$olddir"
@@ -2119,7 +2119,7 @@ override_dlls disabled mscorsvw.exe
 
 #----------------------------------------------------------------
 load_fs_disable() {
-    cat > "$WINETRICKS_TMP"/fs_disable.reg <<_EOF_
+    cat > "$W_TMP"/fs_disable.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Control Panel\Desktop]
@@ -2129,11 +2129,11 @@ REGEDIT4
 "FontSmoothingType"=dword:00000000
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\fs_disable.reg
+    try_regedit "$W_TMP_WIN"\\fs_disable.reg
 }
 #----------------------------------------------------------------
 load_fs_grayscale() {
-    cat > "$WINETRICKS_TMP"/fs_grayscale.reg <<_EOF_
+    cat > "$W_TMP"/fs_grayscale.reg <<_EOF_
 
 REGEDIT4
 
@@ -2144,11 +2144,11 @@ REGEDIT4
 "FontSmoothingType"=dword:00000001
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\fs_grayscale.reg
+    try_regedit "$W_TMP_WIN"\\fs_grayscale.reg
 }
 #----------------------------------------------------------------
 load_fs_bgr() {
-    cat > "$WINETRICKS_TMP"/fs_bgr.reg <<_EOF_
+    cat > "$W_TMP"/fs_bgr.reg <<_EOF_
 
 REGEDIT4
 
@@ -2159,11 +2159,11 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\fs_bgr.reg
+    try_regedit "$W_TMP_WIN"\\fs_bgr.reg
 }
 #----------------------------------------------------------------
 load_fs_rgb() {
-    cat > "$WINETRICKS_TMP"/fs_rgb.reg <<_EOF_
+    cat > "$W_TMP"/fs_rgb.reg <<_EOF_
 
 REGEDIT4
 
@@ -2174,7 +2174,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\fs_rgb.reg
+    try_regedit "$W_TMP_WIN"\\fs_rgb.reg
 }
 
 #----------------------------------------------------------------
@@ -2248,21 +2248,21 @@ load_gecko() {
         GECKOPATH="$WINETRICKS_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH.cab
     fi
 
-    cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
+    cat > "$W_TMP"/geckopath.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\\Software\\Wine\\MSHTML\\$GECKO_VERSION]
 _EOF_
 
-    printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
+    printf '"GeckoPath"="' >>"$W_TMP"/geckopath.reg
     case $GECKO_VERSION in
     0.*)
         printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' |
-           sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
+           sed "s/\\\\/\\\\\\\\/g" >> "$W_TMP"/geckopath.reg
         ;;
     1.*)
         printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' |
-           sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
+           sed "s/\\\\/\\\\\\\\/g" >> "$W_TMP"/geckopath.reg
         ;;
     esac
 
@@ -2301,7 +2301,7 @@ _EOF_
     fi
 
     # set install-path
-    try_regedit "$WINETRICKS_TMP_WIN"\\geckopath.reg
+    try_regedit "$W_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
     try $WINE regsvr32 mshtml
@@ -2357,21 +2357,21 @@ load_gecko_dbg() {
        download . "http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.$GECKO_EXTENSION" $GECKO_SHA1SUM wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.$GECKO_EXTENSION
     fi
 
-    cat > "$WINETRICKS_TMP"/geckopath.reg <<_EOF_
+    cat > "$W_TMP"/geckopath.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\\Software\\Wine\\MSHTML\\$GECKO_VERSION]
 _EOF_
 
-    printf '"GeckoPath"="' >>"$WINETRICKS_TMP"/geckopath.reg
+    printf '"GeckoPath"="' >>"$W_TMP"/geckopath.reg
     case $GECKO_VERSION in
     0.*)
         printf 'c:\\windows\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' |
-           sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
+           sed "s/\\\\/\\\\\\\\/g" >> "$W_TMP"/geckopath.reg
         ;;
     1.*)
         printf 'c:\\windows\\system32\\gecko\\'$GECKO_VERSION'\\wine_gecko\\"' |
-           sed "s/\\\\/\\\\\\\\/g" >> "$WINETRICKS_TMP"/geckopath.reg
+           sed "s/\\\\/\\\\\\\\/g" >> "$W_TMP"/geckopath.reg
         ;;
     esac
 
@@ -2425,7 +2425,7 @@ _EOF_
     fi
 
     # set install-path
-    try_regedit "$WINETRICKS_TMP_WIN"\\geckopath.reg
+    try_regedit "$W_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
     try $WINE regsvr32 mshtml
@@ -2439,9 +2439,9 @@ load_gdiplus() {
     # Used to use $WINETRICKS_QUIET, but that mean that in non-q
     # mode, a mysterious "Extraction Complete" dialog was all user saw.
     # Showing that isn't useful, so always use /q.
-    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$WINETRICKS_TMP_WIN /q
+    try $WINE "$WINETRICKS_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
     # And then make it globally available.
-    try cp "$WINETRICKS_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$SYSTEM32_DLLS"
+    try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$SYSTEM32_DLLS"
 
     # For some reason, native,builtin isn't good enough...?
     override_dlls native gdiplus
@@ -2460,7 +2460,7 @@ load_gfw() {
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
     # FIXME: This is a huge download for a single dll.
     download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
-    cd "$WINETRICKS_TMP"
+    cd "$W_TMP"
     try_cabextract -F i386/msasn1.dl_ "$WINETRICKS_CACHE"/W2KSP4_EN.EXE
     try_cabextract i386/msasn1.dl_
     try cp msasn1.dll "$SYSTEM32_DLLS"
@@ -2472,28 +2472,28 @@ load_gfw() {
 
 load_glsl_disable() {
     echo "Disabling GLSL"
-    cat > "$WINETRICKS_TMP"/disableglsl.reg <<_EOF_
+    cat > "$W_TMP"/disableglsl.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "UseGLSL"="disabled"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\disableglsl.reg
+    try_regedit "$W_TMP_WIN"\\disableglsl.reg
 }
 
 #----------------------------------------------------------------
 
 load_glsl_enable() {
     echo "Enabling GLSL"
-    cat > "$WINETRICKS_TMP"/enableglsl.reg <<_EOF_
+    cat > "$W_TMP"/enableglsl.reg <<_EOF_
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "UseGLSL"="enabled"
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\enableglsl.reg
+    try_regedit "$W_TMP_WIN"\\enableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -2524,14 +2524,14 @@ load_hosts() {
 #----------------------------------------------------------------
 
 set_heapcheck() {
-    cat > "$WINETRICKS_TMP"/heapcheck.reg <<_EOF_
+    cat > "$W_TMP"/heapcheck.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager]
 "GlobalFlag"=dword:00200030
 
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\heapcheck.reg
+    try_regedit "$W_TMP_WIN"\\heapcheck.reg
 }
 
 #----------------------------------------------------------------
@@ -2545,7 +2545,7 @@ load_ie6_full() {
 
     download . http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
 
-    cd "$WINETRICKS_TMP"
+    cd "$W_TMP"
     try_unzip "$WINETRICKS_CACHE"/ie60.exe
     cd "IE 6.0 Full"
 
@@ -2877,8 +2877,8 @@ load_kde() {
 load_l3codecx() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F l3codecx.ax "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F l3codecx.ax "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 l3codecx.ax
 }
@@ -2897,10 +2897,10 @@ load_liberation() {
     esac
 
     download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
-    cd "$WINETRICKS_TMP"
+    cd "$W_TMP"
     gunzip -dc "$WINETRICKS_CACHE"/liberation-fonts-1.04.tar.gz | tar -xf -
     mv liberation-fonts-1.04/*.ttf "$winefontsdir"
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$W_TMP"/*
     cd "$olddir"
 }
 
@@ -2970,10 +2970,10 @@ load_mdac28() {
 load_mfc40() {
     # See http://support.microsoft.com/kb/122244
     download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ole2v.exe
-    try cp -f "$WINETRICKS_TMP"/MFC40.DLL "$SYSTEM32_DLLS"
+    try_unzip -d "$W_TMP" "$WINETRICKS_CACHE"/ole2v.exe
+    try cp -f "$W_TMP"/MFC40.DLL "$SYSTEM32_DLLS"
 
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3094,8 +3094,8 @@ load_mshflxgd() {
     # Jan 2009: 7ad74e589d5eefcee67fa14e65417281d237a6b6
     # May 2009: bd8aa796e16e5f213414af78931e0379d9cbe292
     download .  http://activex.microsoft.com/controls/vb6/MSHFLXGD.CAB bd8aa796e16e5f213414af78931e0379d9cbe292
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSHFLXGD.CAB
-    try cp -f "$WINETRICKS_TMP"/[Mm][Ss][Hh][Ff][Ll][Xx][Gg][Dd].[Oo][Cc][Xx] "$SYSTEM32_DLLS"
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/MSHFLXGD.CAB
+    try cp -f "$W_TMP"/[Mm][Ss][Hh][Ff][Ll][Xx][Gg][Dd].[Oo][Cc][Xx] "$SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -3103,8 +3103,8 @@ load_mshflxgd() {
 load_msls31() {
     # Install native Microsoft Line Services (needed by e-Sword, possibly only when using native riched20)
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
-    try cp -f "$WINETRICKS_TMP"/msls31.dll "$SYSTEM32_DLLS"
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
+    try cp -f "$W_TMP"/msls31.dll "$SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -3115,8 +3115,8 @@ load_msmask() {
     # old: 3c6b26f68053364ea2e09414b615dbebafb9d5c3
     # May 2009: 30e55679e4a13fe4d9620404476f215f93239292
     download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
-    try cp -f "$WINETRICKS_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$SYSTEM32_DLLS"/msmask32.ocx
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/MSMASK32.CAB
+    try cp -f "$W_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$SYSTEM32_DLLS"/msmask32.ocx
     try $WINE regsvr32 msmask32.ocx
 }
 
@@ -3135,8 +3135,8 @@ load_msscript() {
     # http://msdn.microsoft.com/scripting/scriptcontrol/x86/sct10en.exe
     # http://www.microsoft.com/downloads/details.aspx?familyid=d7e31492-2595-49e6-8c02-1426fec693ac
     download .  http://download.microsoft.com/download/d/2/a/d2a7430c-6d5b-48e9-96c4-3c751be7bffe/sct10en.exe fd9f2f23357ab11ae70682d6864f7e9f188adf2a
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/sct10en.exe
-    try cp -f "$WINETRICKS_TMP"/msscript.ocx "$SYSTEM32_DLLS"
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/sct10en.exe
+    try cp -f "$W_TMP"/msscript.ocx "$SYSTEM32_DLLS"
     try $WINE regsvr32 msscript.ocx
 }
 
@@ -3226,9 +3226,9 @@ load_ogg() {
 load_ole2() {
     # http://support.microsoft.com/kb/123087/EN-US/
     download . http://download.microsoft.com/download/win31/update/2.03/win/en-us/ww1116.exe b803991c40f387464b61f606536b7c98a88245d2
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/ww1116.exe
+    try_unzip -d "$W_TMP" "$WINETRICKS_CACHE"/ww1116.exe
     set_winver win31
-    cd "$WINETRICKS_TMP"
+    cd "$W_TMP"
     try $WINE setup.exe
     cd "$olddir"
     unset_winver
@@ -3247,7 +3247,7 @@ load_openwatcom() {
         # Options documented at http://bugzilla.openwatcom.org/show_bug.cgi?id=898
         # But they don't seem to work on wine, so jam them into setup.inf
         # Pick smallest installation that supports 16 bit C and C++
-        cd "$WINETRICKS_TMP"
+        cd "$W_TMP"
         cp "$WINETRICKS_CACHE"/open-watcom-c-win32-1.9.exe .
         try_unzip open-watcom-c-win32-1.9.exe setup.inf
         sed -i 's/tools16=.*/tools16=true/' setup.inf
@@ -3268,9 +3268,9 @@ load_openwatcom() {
 load_pdh() {
     # http://support.microsoft.com/kb/284996
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/pdhinst.exe
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/pdh.exe
-    try cp -f "$WINETRICKS_TMP"/x86/Pdh.Dll "$SYSTEM32_DLLS"/pdh.dll
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/pdhinst.exe
+    try_unzip -d "$W_TMP" "$W_TMP"/pdh.exe
+    try cp -f "$W_TMP"/x86/Pdh.Dll "$SYSTEM32_DLLS"/pdh.dll
 }
 
 #----------------------------------------------------------------
@@ -3335,7 +3335,7 @@ load_psdkwin7()
     # FIXME: don't do this if running on real Windows?
     # Work around bug http://bugs.winehq.org/show_bug.cgi?id=21362
     # Assume user installed in default location
-    cat > "$WINETRICKS_TMP"/set-psdk7.reg <<_EOF_
+    cat > "$W_TMP"/set-psdk7.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs]
@@ -3349,7 +3349,7 @@ REGEDIT4
 "ProductVersion"="7.0.7600.16385.40715"
 "ProductName"="Microsoft Windows SDK for Windows 7 (7.0.7600.16385.40715)"
 _EOF_
-    try_regedit "$WINETRICKS_TMP_WIN"\\set-psdk7.reg
+    try_regedit "$W_TMP_WIN"\\set-psdk7.reg
 }
 
 #----------------------------------------------------------------
@@ -3391,8 +3391,8 @@ load_python_comtypes() {
 load_quartz() {
     helper_directx_dl
 
-    try_cabextract -d "$WINETRICKS_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$WINETRICKS_TMP/dxnt.cab"
+    try_cabextract -d "$W_TMP" -L -F dxnt.cab "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 quartz.dll
     
@@ -3500,11 +3500,11 @@ volnum() {
 load_riched20() {
     # http://support.microsoft.com/?kbid=249973
     download . http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/Q249973i.EXE
-    try cp -f "$WINETRICKS_TMP"/riched??.dll "$SYSTEM32_DLLS"
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/Q249973i.EXE
+    try cp -f "$W_TMP"/riched??.dll "$SYSTEM32_DLLS"
     override_dlls native,builtin riched20 riched32
 
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3517,11 +3517,11 @@ load_riched30() {
     # (though not with a corresponding riched32, which might be a problem)
     # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
-    try cp -f "$WINETRICKS_TMP"/riched20.dll "$SYSTEM32_DLLS"
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
+    try cp -f "$W_TMP"/riched20.dll "$SYSTEM32_DLLS"
     override_dlls native,builtin riched20
 
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3607,11 +3607,11 @@ load_tahoma() {
     # The tahoma and tahomabd fonts are needed by e.g. Steam
 
     download . http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe 888ce7b7ab5fd41f9802f3a65fd0622eb651a068
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/tahoma32.exe
-    try cp -f "$WINETRICKS_TMP"/Tahoma.TTF "$winefontsdir"/tahoma.ttf
-    try cp -f "$WINETRICKS_TMP"/Tahomabd.TTF "$winefontsdir"/tahomabd.ttf
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/tahoma32.exe
+    try cp -f "$W_TMP"/Tahoma.TTF "$winefontsdir"/tahoma.ttf
+    try cp -f "$W_TMP"/Tahomabd.TTF "$winefontsdir"/tahomabd.ttf
     chmod +w "$winefontsdir"/tahoma*.ttf
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3620,9 +3620,9 @@ load_takao() {
     # The Takao font provides Japanese glyphs.  May also be needed with fakejapanese function above.
     # See http://launchpad.net/takao-fonts for project page
     download . http://launchpad.net/takao-fonts/003.02/003.02.01/+download/takao-fonts-ttf-003.02.01.zip 4f636d5c7c1bc16b96ea723adb16838cfb6df059
-    cp -f "$WINETRICKS_CACHE"/takao-fonts-ttf-003.02.01.zip "$WINETRICKS_TMP"
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/takao-fonts-ttf-003.02.01.zip
-    try cp -f "$WINETRICKS_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$winefontsdir"
+    cp -f "$WINETRICKS_CACHE"/takao-fonts-ttf-003.02.01.zip "$W_TMP"
+    try_unzip -d "$W_TMP" "$W_TMP"/takao-fonts-ttf-003.02.01.zip
+    try cp -f "$W_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$winefontsdir"
 
     register_font TakaoGothic.ttf "TakaoGothic"
     register_font TakaoPGothic.ttf "TakaoPGothic"
@@ -3638,13 +3638,13 @@ load_unifont() {
     # The GNU Unifont provides glyphs for just about everything in common language.  It is intended for multilingual usage.
     # See http://unifoundry.com/unifont.html for project page
     download . http://unifoundry.com/unifont-5.1.20080907.zip bb8a3960dc0a96aa305de28312ea8a0ab64123d2
-    cp -f "$WINETRICKS_CACHE"/unifont-5.1.20080907.zip "$WINETRICKS_TMP"
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_TMP"/unifont-5.1.20080907.zip
-    try cp -f "$WINETRICKS_TMP"/unifont-5.1.20080907.ttf "$winefontsdir/unifont.ttf"
+    cp -f "$WINETRICKS_CACHE"/unifont-5.1.20080907.zip "$W_TMP"
+    try_unzip -d "$W_TMP" "$W_TMP"/unifont-5.1.20080907.zip
+    try cp -f "$W_TMP"/unifont-5.1.20080907.ttf "$winefontsdir/unifont.ttf"
 
     register_font unifont.ttf "Unifont"
 
-    cat > "$WINETRICKS_TMP"/unifont.reg <<_EOF_
+    cat > "$W_TMP"/unifont.reg <<_EOF_
 REGEDIT4
 
 [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
@@ -3652,7 +3652,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$WINETRICKS_TMP_WIN"\\unifont.reg
+    try_regedit "$W_TMP_WIN"\\unifont.reg
 }
 
 #----------------------------------------------------------------
@@ -3664,16 +3664,16 @@ load_urlmon() {
     # See http://www.microsoft.com/downloads/details.aspx?familyid=85BB441A-5BB1-4A82-86EC-A249AF287513
     # (Works for Dolphin Smalltalk, see http://bugs.winehq.org/show_bug.cgi?id=8258)
     download . http://download.microsoft.com/download/8/2/0/820faffc-3ea0-4914-bca3-584235964ded/Q837251.exe bcc79b92ac3c06c4de3692672c3d70bdd36be892
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE/Q837251.exe"
-    try cp -f "$WINETRICKS_TMP"/URLMON.DLL "$SYSTEM32_DLLS"/urlmon.dll
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE/Q837251.exe"
+    try cp -f "$W_TMP"/URLMON.DLL "$SYSTEM32_DLLS"/urlmon.dll
     override_dlls native,builtin urlmon
 }
 
 load_usp10() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
-    try cp -f "$WINETRICKS_TMP"/usp10.dll "$SYSTEM32_DLLS"
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE"/InstMsiA.exe
+    try cp -f "$W_TMP"/usp10.dll "$SYSTEM32_DLLS"
     override_dlls native,builtin usp10
 }
 
@@ -3695,8 +3695,8 @@ load_vb2run() {
     # Not referenced on MS web anymore. But the old Microsoft Software Library FTP still has it.
     # See ftp://ftp.microsoft.com/Softlib/index.txt
     download . ftp://ftp.microsoft.com/Softlib/MSLFILES/VBRUN200.EXE ac0568b73ee375408778e9b505df995f79ab907e
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
-    try cp -f "$WINETRICKS_TMP/VBRUN200.DLL" "$SYSTEM32_DLLS"
+    try_unzip -d "$W_TMP" "$WINETRICKS_CACHE"/VBRUN200.EXE
+    try cp -f "$W_TMP/VBRUN200.DLL" "$SYSTEM32_DLLS"
 
 }
 
@@ -3705,8 +3705,8 @@ load_vb2run() {
 load_vb3run() {
     # See http://support.microsoft.com/kb/196285
     download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb3run.exe
-    try cp -f "$WINETRICKS_TMP/Vbrun300.dll" "$SYSTEM32_DLLS"
+    try_unzip -d "$W_TMP" "$WINETRICKS_CACHE"/vb3run.exe
+    try cp -f "$W_TMP/Vbrun300.dll" "$SYSTEM32_DLLS"
 
 }
 
@@ -3715,9 +3715,9 @@ load_vb3run() {
 load_vb4run() {
     # See http://support.microsoft.com/kb/196286
     download . http://download.microsoft.com/download/vb40ent/sample27/1/w9xnt4/en-us/vb4run.exe 83e968063272e97bfffd628a73bf0ff5f8e1023b
-    try_unzip -d "$WINETRICKS_TMP" "$WINETRICKS_CACHE"/vb4run.exe
-    try cp -f "$WINETRICKS_TMP/Vb40032.dll" "$SYSTEM32_DLLS"
-    try cp -f "$WINETRICKS_TMP/Vb40016.dll" "$SYSTEM32_DLLS"
+    try_unzip -d "$W_TMP" "$WINETRICKS_CACHE"/vb4run.exe
+    try cp -f "$W_TMP/Vb40032.dll" "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP/Vb40016.dll" "$SYSTEM32_DLLS"
 
 }
 
@@ -3734,14 +3734,14 @@ load_vbrun60() {
     if test ! -f "$WINETRICKS_CACHE"/vbrun60sp6.exe
     then
         download . http://download.microsoft.com/download/5/a/d/5ad868a0-8ecd-4bb0-a882-fe53eb7ef348/VB6.0-KB290887-X86.exe 73ef177008005675134d2f02c6f580515ab0d842
-        rm -rf "$WINETRICKS_TMP"/*
+        rm -rf "$W_TMP"/*
 
         try $WINE "$WINETRICKS_CACHE"/VB6.0-KB290887-X86.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-        if test ! -f "$WINETRICKS_TMP"/vbrun60sp6.exe
+        if test ! -f "$W_TMP"/vbrun60sp6.exe
         then
             die vbrun60sp6.exe not found
         fi
-        try mv "$WINETRICKS_TMP"/vbrun60sp6.exe "$WINETRICKS_CACHE"
+        try mv "$W_TMP"/vbrun60sp6.exe "$WINETRICKS_CACHE"
     fi
 
     # Delete some fake DLLs to ensure that the installer overwrites them.
@@ -3774,14 +3774,14 @@ load_vcrun6() {
     if test ! -f "$WINETRICKS_CACHE"/vcredist.exe
     then
        download . http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
-       rm -rf "$WINETRICKS_TMP"/*
+       rm -rf "$W_TMP"/*
 
        try $WINE "$WINETRICKS_CACHE"/vc6redistsetup_enu.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-       if test ! -f "$WINETRICKS_TMP"/vcredist.exe
+       if test ! -f "$W_TMP"/vcredist.exe
        then
           die vcredist.exe not found
        fi
-       mv "$WINETRICKS_TMP"/vcredist.exe "$WINETRICKS_CACHE"
+       mv "$W_TMP"/vcredist.exe "$WINETRICKS_CACHE"
     fi
     # Delete some fake dlls to avoid vcredist installer warnings
     rm -f "$SYSTEM32_DLLS"/comcat.dll
@@ -3816,8 +3816,8 @@ load_vcrun6sp6() {
         # No EULA is presented when passing command-line extraction arguments,
         # so we'll simplify extraction with cabextract. We'll also try to avoid
         # overwriting the older vcrun6 redist by renaming the extracted file.
-        try_cabextract "$WINETRICKS_CACHE"/Vs6sp6.exe -d "$WINETRICKS_TMP" -F vcredist.exe
-        try mv "$WINETRICKS_TMP"/vcredist.exe "$WINETRICKS_CACHE"/vcredistsp6.exe
+        try_cabextract "$WINETRICKS_CACHE"/Vs6sp6.exe -d "$W_TMP" -F vcredist.exe
+        try mv "$W_TMP"/vcredist.exe "$WINETRICKS_CACHE"/vcredistsp6.exe
     fi
 
     # Delete some fake dlls to avoid vcredist installer warnings
@@ -3973,7 +3973,7 @@ load_vc2005express()
         # "http://go.microsoft.com/fwlink/?LinkId=51417"
         download vc2005express http://download.microsoft.com/download/0/5/A/05AA45B9-A4BE-4872-8D57-733DF5297284/Ixpvc.exe ce0da62b5649f33c7a150de276d799fb2d68d12a
 
-        cd "$WINETRICKS_TMP"
+        cd "$W_TMP"
         rm -rf vc2005express.tmp || true
         mkdir vc2005express.tmp
         cd vc2005express.tmp
@@ -3982,7 +3982,7 @@ load_vc2005express()
         chmod +x Ixpvc.exe
         # Add /qn after ReallySuppress for a really silent install (but then you won't see any errors)
 
-        try $WINE Ixpvc /t:"$WINETRICKS_TMP_WIN\\\\vc2005express.tmp" /q:a /c:"msiexec /i vcsetup.msi VSEXTUI=1 ADDLOCAL=ALL REBOOT=ReallySuppress"
+        try $WINE Ixpvc /t:"$W_TMP_WIN\\\\vc2005express.tmp" /q:a /c:"msiexec /i vcsetup.msi VSEXTUI=1 ADDLOCAL=ALL REBOOT=ReallySuppress"
 
         cd ..
         rm -rf vc2005express.tmp || true
@@ -4384,8 +4384,8 @@ load_wininet() {
     # (Good enough for Active Worlds browser.  Also helps "Avatar - Legends of the Arena" get to login screen.)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
     download . http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
-    try_cabextract --directory="$WINETRICKS_TMP" "$WINETRICKS_CACHE/3725.exe"
-    try cp -f "$WINETRICKS_TMP"/Wininet.dll "$SYSTEM32_DLLS"/wininet.dll
+    try_cabextract --directory="$W_TMP" "$WINETRICKS_CACHE/3725.exe"
+    try cp -f "$W_TMP"/Wininet.dll "$SYSTEM32_DLLS"/wininet.dll
     override_dlls native,builtin wininet
 }
 
@@ -4488,7 +4488,7 @@ load_wenquanyi() {
     # See http://wenq.org/enindex.cgi
     # Donate at http://wenq.org/enindex.cgi?Download(en)#MicroHei_Beta if you want to help support free CJK font development
     download . $SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
-    cd "$WINETRICKS_TMP/"
+    cd "$W_TMP/"
     gunzip -dc "$WINETRICKS_CACHE/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
     try mv wqy-microhei/wqy-microhei.ttc "$winefontsdir"
     register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
@@ -4541,10 +4541,10 @@ load_xact() {
     helper_directx_dl ;
 
     # xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll - extract
-    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_xaudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in "$WINETRICKS_TMP"/*.cab
+    try_cabextract -d "$W_TMP" -L -F '*_xact_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$W_TMP" -L -F '*_x3daudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    try_cabextract -d "$W_TMP" -L -F '*_xaudio_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
     do
       try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
@@ -4562,8 +4562,8 @@ load_xinput() {
     helper_directx_dl ;
 
     # xinput1_1.dll  xinput1_2.dll  xinput1_3.dll  xinput9_1_0.dll
-    try_cabextract -d "$WINETRICKS_TMP" -L -F '*_xinput_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
-    for x in "$WINETRICKS_TMP"/*.cab
+    try_cabextract -d "$W_TMP" -L -F '*_xinput_*x86*' "$WINETRICKS_CACHE"/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
     do
       try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
@@ -4590,7 +4590,7 @@ esac
 detect_menu
 detect_sudo
 
-mkdir -p "$WINETRICKS_TMP"
+mkdir -p "$W_TMP"
 
 case $GUI in
     1) showmenu ; set $todo ;;
@@ -4599,14 +4599,14 @@ esac
 mkdir -p "$WINETRICKS_CACHE"
 olddir=`pwd`
 # Clean up after failed runs, if needed
-rm -rf "$WINETRICKS_TMP"/*
+rm -rf "$W_TMP"/*
 
 # The folder-name is localized!
 programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
-winetricks_tmp_win="`$XXXPATH -w "$WINETRICKS_TMP"`"
+winetricks_tmp_win="`$XXXPATH -w "$W_TMP"`"
 
 # 64 bit windows has a second directory for program files
 programfilesdir_x86_win="${programfilesdir_win} (x86)"
@@ -4891,11 +4891,11 @@ do
     esac
     shift
     # cleanup
-    rm -rf "$WINETRICKS_TMP"/*
+    rm -rf "$W_TMP"/*
 done
 
 # remove the temp directory
-rm -rf "$WINETRICKS_TMP"
+rm -rf "$W_TMP"
 
 test "$WINETRICKS_CACHE_SYMLINK" && rm -f "$WINETRICKS_CACHE_SYMLINK"
 test "$WINETRICKS_QUIET" = "" && echo winetricks done. || true
