@@ -186,6 +186,9 @@ ncsoft:
 Opera
 http://www.opera.com/browser/download/?os=windows&ver=10.63&local=y
 
+Irfanview
+http://www.irfanview.com/
+
 == Already done by someone (though not committed yet - FIXME) ==
 
 Call of Duty 5: World at War
