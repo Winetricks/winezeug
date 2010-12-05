@@ -21,6 +21,7 @@
 #
 # Formatting:
 # - Your terminal and editor must be configured for utf-8
+#   If you do not see an o with two dots over it here [ö], stop!
 # - Do not use tabs in this file or any verbs.
 # - Indent 4 spaces.
 # - Curlies and 'then' at beginning of line.
@@ -112,6 +113,20 @@ w_try_regedit()
     esac
 
     w_try wisotool_early_wine $cmdc regedit "$@"
+}
+
+w_try_cabextract()
+{
+    # Not always installed, but shouldn't be fatal unless it's being used
+    _W_CABEXTRACT="`which cabextract 2>/dev/null`" 
+    if test ! -x "$_W_CABEXTRACT"
+    then
+        w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+    fi
+    
+    w_try $_W_CABEXTRACT "$@"
+
+    unset _W_CABEXTRACT
 }
 
 w_try_winetricks()
@@ -342,9 +357,40 @@ w_ahk_do()
    unset _W_CR
 }
 
-load_autohotkey()
+w_override_dlls()
 {
-    test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks -q autohotkey
+    _W_mode=$1
+    if [ $_W_mode = "disabled" ]
+    then
+        _W_mode=""
+    fi
+    shift
+    echo Using $_W_mode override for following DLLs: $@
+    cat > "$W_TMP"/override-dll.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\DllOverrides]
+_EOF_
+    while test "$1" != ""
+    do
+        case "$1" in
+        comctl32)
+           rm -rf "$WINDIR"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           ;;
+        esac
+
+        # Note: if you want to override even DLLs loaded with an absolute path,
+        # you need to add an asterisk:
+        echo "\"*$1\"=\"$_W_mode\"" >> "$W_TMP"/override-dll.reg
+        #echo "\"$1\"=\"$_W_mode\"" >> "$W_TMP"/override-dll.reg
+
+        shift
+    done
+
+    w_try_regedit "$W_TMP_WIN"\\override-dll.reg
+    cat "$W_TMP"/override-dll.reg
+
+    unset _W_mode
 }
 
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
@@ -464,15 +510,17 @@ wisotool_mainmenu()
          _W_msg_apps='Installér et program'
          _W_msg_games='Installér et spil'
          _W_msg_benchmarks='Install a benchmark with Wine'
+         _W_msg_dlls="Install a Windows DLL"
          _W_msg_steam='Install a Steam game with Wine'
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
-         _W_msg_apps='Ein Windows-Programm installieren'
-         _W_msg_uninstall='Ein Windows-Programm löschen'
-         _W_msg_benchmarks='Ein Windows-Benchmark installieren'
-         _W_msg_games='Ein Windows-Spiel installieren'
-         _W_msg_steam='Ein Steam-Spiel mit Wine installieren'
+         _W_msg_apps='Windows-Programm installieren'
+         _W_msg_uninstall='Windows-Programm löschen'
+         _W_msg_benchmarks='Windows-Benchmark installieren'
+         _W_msg_dlls="Windows-DLL installieren"
+         _W_msg_games='Windows-Spiel installieren'
+         _W_msg_steam='Steam-Spiel installieren'
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
@@ -480,6 +528,7 @@ wisotool_mainmenu()
          _W_msg_uninstall='Uninstall a Windows app'
          _W_msg_apps='Install a Windows program'
          _W_msg_benchmarks='Install a Windows benchmark'
+         _W_msg_dlls="Install a Windows DLL"
          _W_msg_games='Install a Windows game'
          _W_msg_steam='Install a Steam game'
          ;;
@@ -501,6 +550,7 @@ wisotool_mainmenu()
             --height 500 \
             --width 800 \
             --hide-column 2 \
+            FALSE dlls       "$_W_msg_dlls" \
             FALSE games      "$_W_msg_games" \
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
@@ -515,6 +565,7 @@ wisotool_mainmenu()
                 --separate-output \
                 --radiolist \
                 "$_W_msg_body"\
+                dlls       "$_W_msg_dlls" off \
                 games      "$_W_msg_games" off \
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
@@ -523,7 +574,7 @@ wisotool_mainmenu()
 
         ;;
     esac
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_games _W_msg_steam _W_msg_run _W_msg_uninstall
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_steam _W_msg_run _W_msg_uninstall
 }
 
 # Display the menu of installed apps, output list of selected apps
@@ -1235,7 +1286,7 @@ wisotool_init()
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="apps benchmarks games steam"
+    WISOTOOL_CATEGORIES="apps benchmarks dlls games steam"
     for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
@@ -1354,6 +1405,21 @@ wisotool_init()
     # Overridden for windows
     W_ISO_MOUNT_ROOT=/mnt/wisotool
     W_ISO_MOUNT_LETTER=i
+
+    W_WINDIR="$W_DRIVE_C/windows"
+
+    # Win(e) 32/64?
+    # Using the variable W_SYSTEM32_DLLS instead of SYSTEM32 because some stuff does go under system32 for both arch's
+    # e.g., spool/drivers/color
+    if test -d "$W_DRIVE_C/windows/syswow64"
+    then
+        W_ARCH=win64
+        W_SYSTEM32_DLLS="$W_WINDIR/syswow64"
+        W_SYSTEM64_DLLS="$W_WINDIR/system32"
+    else
+        W_ARCH=win32
+        W_SYSTEM32_DLLS="$W_WINDIR/system32"
+    fi
 }
 
 wisotool_usage()
@@ -1427,7 +1493,7 @@ wisotool_handle_option()
     -s|--sharedprefix) WISOTOOL_OPT_SHAREDPREFIX=1 ;;
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
     -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
-    -q|--unattended) W_OPT_UNATTENDED=1 ;;
+    -q|--unattended) W_OPT_UNATTENDED=1 ; W_Q="-q" ;;
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
@@ -1504,8 +1570,66 @@ wisotool_uninstall_app()
 #---- Builtin Verbs ----
 
 #----------------------------------------------------------------
+# DLLs
+#----------------------------------------------------------------
+
+w_metadata  vcrun6 dlls \
+   title="Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)" \
+   publisher="Microsoft" \
+   year="2000" \
+   media="download" \
+   file1="vc6redistsetup_enu.exe"
+
+load_vcrun6()
+{
+    # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
+
+    if test -f "$W_SYSTEM32_DLLS"/mfc42u.dll
+    then
+        echo "vcrun6 already installed, skipping"
+        return
+    fi
+
+    if test ! -f "$W_CACHE"/vcrun6/vcredist.exe
+    then
+       w_download vcrun6 http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
+
+       w_try $WINE "$W_CACHE"/vcrun6/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_Q
+       if test ! -f "$W_TMP"/vcredist.exe
+       then
+          w_die vcredist.exe not found
+       fi
+       mv "$W_TMP"/vcredist.exe "$W_CACHE"/vcrun6
+    fi
+    # Delete some fake dlls to avoid vcredist installer warnings
+    rm -f "$W_SYSTEM32_DLLS"/comcat.dll
+    rm -f "$W_SYSTEM32_DLLS"/msvcrt.dll
+    rm -f "$W_SYSTEM32_DLLS"/oleaut32.dll
+    rm -f "$W_SYSTEM32_DLLS"/olepro32.dll
+    rm -f "$W_SYSTEM32_DLLS"/stdole2.tlb
+    $WINE "$W_CACHE"/vcrun6/vcredist.exe
+
+    status=$?
+    case $status in
+    0|43) ;;
+    *) w_die vcrun6 installation failed
+    esac
+
+    # And then some apps need mfc42u.dll, dunno what right way
+    # is to get it, vcredist doesn't install it by default?
+    w_try_cabextract "$W_CACHE"/vcrun6/vcredist.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
+
+    w_override_dlls native,builtin msvcrt
+}
+
+#----------------------------------------------------------------
 # Apps
 #----------------------------------------------------------------
+
+load_autohotkey()
+{
+    test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks -q autohotkey
+}
 
 w_metadata  safari apps \
    title="Safari" \
@@ -2169,7 +2293,7 @@ done
 
 #---- Main Program ----
 
-# Usage: set W_PACKAGE to name of command to execute
+# Usage: set W_PACKAGE to name of command to execute, and $1 to full path if external verb
 execute_command()
 {
     rm -rf "$W_TMP"
@@ -2184,7 +2308,7 @@ execute_command()
     case $W_PACKAGE in
 
     # FIXME: avoid duplicated code
-    apps|benchmarks|games|run|uninstall|steam)
+    apps|benchmarks|dlls|games|run|uninstall|steam)
         WISOTOOL_CURMENU=$W_PACKAGE
         ;;
 
@@ -2299,7 +2423,7 @@ then
         # User gave commandline arguments, so just run those verbs and exit
         for W_PACKAGE
         do
-            execute_command
+            execute_command $W_PACKAGE
         done
         ;;
 
