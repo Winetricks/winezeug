@@ -131,12 +131,7 @@ w_try_cabextract()
 
 w_try_winetricks()
 {
-    _W_q=
-    case "$W_OPT_UNATTENDED" in
-    1) _W_q="-q" ;;
-    esac
-    
-    w_try "$WISOTOOL_WINETRICKS" $_W_q $*
+    w_try "$WISOTOOL_WINETRICKS" $W_UNATTENDED_Q $*
 }
 
 w_read_key()
@@ -1325,6 +1320,14 @@ wisotool_init()
        w_die "No sha1sum utility available."
     fi
 
+    # Which sourceforge mirror to use.  Rotate based on time, since
+    # their mirror picker sometimes persistantly sends you to a broken
+    # mirror.
+    case `date +%S` in
+    *[3])  WISOTOOL_SOURCEFORGE=http://easynews.dl.sourceforge.net/sourceforge ;;
+    *)     WISOTOOL_SOURCEFORGE=http://downloads.sourceforge.net;;
+    esac
+
     #---- Public Variables ----
 
     # System-specific variables
@@ -1493,7 +1496,8 @@ wisotool_handle_option()
     -s|--sharedprefix) WISOTOOL_OPT_SHAREDPREFIX=1 ;;
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
     -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
-    -q|--unattended) W_OPT_UNATTENDED=1 ; W_Q="-q" ;;
+    -q|--unattended) W_OPT_UNATTENDED=1 ; 
+                     W_UNATTENDED_Q="-q"; W_UNATTENDED_S="/S";;  # fixme: can't make this default easily with these here
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
@@ -1594,7 +1598,7 @@ load_vcrun6()
     then
        w_download vcrun6 http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
 
-       w_try $WINE "$W_CACHE"/vcrun6/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_Q
+       w_try $WINE "$W_CACHE"/vcrun6/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_Q
        if test ! -f "$W_TMP"/vcredist.exe
        then
           w_die vcredist.exe not found
@@ -1620,6 +1624,31 @@ load_vcrun6()
     w_try_cabextract "$W_CACHE"/vcrun6/vcredist.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
 
     w_override_dlls native,builtin msvcrt
+}
+
+#----------------------------------------------------------------
+
+w_metadata  vcrun2003 dlls \
+   title="Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)" \
+   publisher="Microsoft" \
+   year="2003" \
+   media="download" \
+   file1="BZEditW32_1.6.5_Installer.exe"
+
+load_vcrun2003()
+{
+    if test -f "$W_SYSTEM32_DLLS"/msvcp71.dll
+    then
+        echo "vcrun2003 already installed, skipping"
+        return
+    fi
+
+    # Load the Visual C++ 2003 runtime libraries
+    # Sadly, I know of no Microsoft URL for these
+    echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
+    w_download vcrun2003 $WISOTOOL_SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
+    w_try $WINE "$W_CACHE"/vcrun2003/BZEditW32_1.6.5_Installer.exe $W_UNATTENDED_S
+    w_try cp "$W_PROGRAMS_X86_UNIX/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -2162,11 +2191,11 @@ load_torchlight() {
 #----------------------------------------------------------------
 
 w_metadata  twfc games \
-  title="Transformers: War for Cybertron" \
-  publisher="Activision" \
-  year="2010" \
-  media="dvd" \
-  file1="TWFC_DVD.iso"
+    title="Transformers: War for Cybertron" \
+    publisher="Activision" \
+    year="2010" \
+    media="dvd" \
+    file1="TWFC_DVD.iso"
 
 load_twfc()
 {
@@ -2235,11 +2264,11 @@ load_twfc()
 #----------------------------------------------------------------
 
 w_metadata  wog games \
-   title="World of Goo Demo" \
-   publisher="2D Boy" \
-   year="2008" \
-   media="download" \
-   file1="WorldOfGooDemo.1.0.exe"
+    title="World of Goo Demo" \
+    publisher="2D Boy" \
+    year="2008" \
+    media="download" \
+    file1="WorldOfGooDemo.1.0.exe"
 
 load_wog()
 {
