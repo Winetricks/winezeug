@@ -436,16 +436,16 @@ esac
 WINDIR="$W_DRIVE_C/windows"
 
 # Win(e) 32/64?
-# Using the variable SYSTEM32_DLLS instead of SYSTEM32 because some stuff does go under system32 for both arch's
+# Using the variable W_SYSTEM32_DLLS instead of SYSTEM32 because some stuff does go under system32 for both arch's
 # e.g., spool/drivers/color
 if test -d "$W_DRIVE_C/windows/syswow64"
 then
     ARCH=win64
-    SYSTEM32_DLLS="$WINDIR/syswow64"
+    W_SYSTEM32_DLLS="$WINDIR/syswow64"
     SYSTEM64_DLLS="$WINDIR/system32"
 else
     ARCH=win32
-    SYSTEM32_DLLS="$WINDIR/system32"
+    W_SYSTEM32_DLLS="$WINDIR/system32"
 fi
 
 # Decide where to store downloaded files
@@ -1107,7 +1107,7 @@ load_amstream() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 amstream.dll
     
@@ -1133,7 +1133,7 @@ load_atmlib() {
     download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
     cd "$W_TMP"
     try_cabextract "$W_CACHE"/W2KSP4_EN.EXE i386/atmlib.dl_
-    try cp atmlib.dll "$SYSTEM32_DLLS"
+    try cp atmlib.dll "$W_SYSTEM32_DLLS"
     try rm -rf i386
     cd "$olddir"
 }
@@ -1173,7 +1173,7 @@ load_cc580() {
     try $WINE "$W_CACHE"/cc32inst.exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
     try_unzip -d "$WINDIR"/temp "$W_TMP"/comctl32.exe
     try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$winetricks_tmp_win" /c $WINETRICKS_QUIET
-    try cp "$W_TMP"/comcnt.dll "$SYSTEM32_DLLS"/comctl32.dll
+    try cp "$W_TMP"/comcnt.dll "$W_SYSTEM32_DLLS"/comctl32.dll
 
     override_dlls native,builtin comctl32
 
@@ -1197,8 +1197,8 @@ load_comctl32ocx() {
     download . http://download.microsoft.com/download/3/a/5/3a5925ac-e779-4b1c-bb01-af67dc2f96fc/VisualBasic6-KB896559-v1-ENU.exe f52cf2034488235b37a1da837d1c40eb2a1bad84
 
     try_cabextract -q --directory="$W_TMP" "$W_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
-    try cp "$W_TMP"/mscomctl.ocx "$SYSTEM32_DLLS"/mscomctl.ocx
-    try cp "$W_TMP"/comctl32.ocx "$SYSTEM32_DLLS"/comctl32.ocx
+    try cp "$W_TMP"/mscomctl.ocx "$W_SYSTEM32_DLLS"/mscomctl.ocx
+    try cp "$W_TMP"/comctl32.ocx "$W_SYSTEM32_DLLS"/comctl32.ocx
     try $WINE regsvr32 comctl32.ocx
     try $WINE regsvr32 mscomctl.ocx
 }
@@ -1219,7 +1219,7 @@ load_colorprofile() {
 load_comdlg32ocx() {
     download . http://activex.microsoft.com/controls/vb6/comdlg32.cab d4f3e193c6180eccd73bad53a8500beb5b279cbf
     try_cabextract --directory="$W_TMP" "$W_CACHE"/comdlg32.cab
-    try cp "$W_TMP"/comdlg32.ocx "$SYSTEM32_DLLS"/comdlg32.ocx
+    try cp "$W_TMP"/comdlg32.ocx "$W_SYSTEM32_DLLS"/comdlg32.ocx
     try $WINE regsvr32 comdlg32.ocx
 }
 
@@ -1334,7 +1334,7 @@ load_corefonts() {
 load_crypt32() {
     # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
     download . http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
-    try_cabextract -d "$SYSTEM32_DLLS" "$W_CACHE"/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
+    try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
     override_dlls native crypt32
 }
 
@@ -1368,7 +1368,7 @@ load_d3dx9() {
     try_cabextract -d "$W_TMP" -L -F '*d3dx9*x86*' "$W_CACHE"/$DIRECTX_NAME
     for x in "$W_TMP"/*.cab
     do
-      try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
+      try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
 
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
@@ -1388,7 +1388,7 @@ load_d3dx9_xx() {
     try_cabextract -d "$W_TMP" -L -F "*$dllname*x86*" "$W_CACHE"/$DIRECTX_NAME
     for x in "$W_TMP"/*.cab
     do
-      try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
+      try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
 
     override_dlls native $dllname 
@@ -1403,7 +1403,7 @@ load_d3dx10() {
     try_cabextract -d "$W_TMP" -L -F '*d3dx10*x86*' "$W_CACHE"/$DIRECTX_NAME
     for x in "$W_TMP"/*.cab
     do
-      try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
+      try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
 
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
@@ -1417,7 +1417,7 @@ load_d3dxof() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'd3dxof.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'd3dxof.dll' "$W_TMP/dxnt.cab"
 
     override_dlls native d3dxof
 }
@@ -1428,7 +1428,7 @@ load_devenum() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE/$DIRECTX_NAME"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 devenum.dll
 
@@ -1441,7 +1441,7 @@ load_dinput8() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dinput8.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dinput8.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 dinput8
 
@@ -1462,19 +1462,19 @@ load_directmusic() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmband.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmcompos.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmime.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmloader.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmscript.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmstyle.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmusic32.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dswave.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'streamci.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmband.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmcompos.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmime.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmloader.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmscript.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmstyle.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmusic.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmusic32.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dswave.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'streamci.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 devenum.dll
     try $WINE regsvr32 dmband.dll
@@ -1497,11 +1497,11 @@ load_directplay() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dplaysvr.exe' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dplayx.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpnet.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpnhpast.dll' "$W_TMP/dxnt.cab"
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dpwsockx.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dplaysvr.exe' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dplayx.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dpnet.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dpnhpast.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dpwsockx.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 dplayx.dll
     try $WINE regsvr32 dpnet.dll
@@ -1598,7 +1598,7 @@ load_dmsynth() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 dmsynth.dll
     
@@ -1681,7 +1681,7 @@ load_dotnet20() {
     set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
-    try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$SYSTEM32_DLLS"
+    try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
 
     # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
     # Can't we all just play nice..
@@ -1704,7 +1704,7 @@ load_dotnet20() {
     # so for now just remove that file.
     # See http://bugs.winehq.org/show_bug.cgi?id=16577
     # This affects Victoria 2 demo, see http://forum.paradoxplaza.com/forum/showthread.php?p=11523967
-    rm -f "$SYSTEM32_DLLS"/msvc?80.dll
+    rm -f "$W_SYSTEM32_DLLS"/msvc?80.dll
 }
 
 #----------------------------------------------------------------
@@ -1717,7 +1717,7 @@ load_dotnet20sp2() {
     #set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
-    try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$SYSTEM32_DLLS"
+    try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
 
     # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
     # Can't we all just play nice..
@@ -1769,7 +1769,7 @@ load_dotnet30() {
     for lang in ar cs da de el es fi fr he it jp ko nb nl pl pt-BR pt-PT ru \
                 sv tr zh-CHS zh-CHT
     do
-       ln -sf "${SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
+       ln -sf "${W_SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
     done 
 
     #if workaround_wine_bug 25074
@@ -1864,7 +1864,7 @@ load_dsound() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'dsound.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dsound.dll' "$W_TMP/dxnt.cab"
 
     try $WINE regsvr32 dsound.dll
 
@@ -2013,7 +2013,7 @@ load_ffdshow() {
 
 load_flash() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != flash && test -f "$SYSTEM32_DLLS"/Macromed/Flash/flashplayer.xpt
+    if test $PACKAGE != flash && test -f "$W_SYSTEM32_DLLS"/Macromed/Flash/flashplayer.xpt
     then
         echo "prerequisite flash already installed, skipping"
         return
@@ -2203,13 +2203,13 @@ load_gecko() {
         GECKO_SHA1SUM=9a49fc691740596517e381b47096a4bdf19a87d8
         ;;
     wine-1.1.2[789]*|wine-1.1.[34]*|wine-1.2*|wine-1.3|wine-1.3.[01]|wine-1.3.[0]-*)
-        GECKO_DIR="$SYSTEM32_DLLS"
+        GECKO_DIR="$W_SYSTEM32_DLLS"
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
         GECKO_SHA1SUM=afa22c52bca4ca77dcb9edb3c9936eb23793de01
         ;;
     *)
-        GECKO_DIR="$SYSTEM32_DLLS"
+        GECKO_DIR="$W_SYSTEM32_DLLS"
         GECKO_VERSION=1.1.0
         GECKO_ARCH=-x86
         GECKO_SHA1SUM=1b6c637207b6f032ae8a52841db9659433482714
@@ -2333,14 +2333,14 @@ load_gecko_dbg() {
         GECKO_SHA1SUM=a9b58d3330f8c78524fe4683f348302bfce96ff4
         ;;
     wine-1.1.2[789]*|wine-1.1.[34]*|wine-1.2*|wine-1.3|wine-1.3.[01]|wine-1.3.[01]-*)
-        GECKO_DIR="$SYSTEM32_DLLS"
+        GECKO_DIR="$W_SYSTEM32_DLLS"
         GECKO_VERSION=1.0.0
         GECKO_ARCH=-x86
         GECKO_EXTENSION=cab
         GECKO_SHA1SUM=2de16b443826295f646cd5d54313ca421fd71210
         ;;
     *)
-        GECKO_DIR="$SYSTEM32_DLLS"
+        GECKO_DIR="$W_SYSTEM32_DLLS"
         GECKO_VERSION=1.1.0
         GECKO_ARCH=-x86
         GECKO_EXTENSION=tar.bz2
@@ -2441,7 +2441,7 @@ load_gdiplus() {
     # Showing that isn't useful, so always use /q.
     try $WINE "$W_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
     # And then make it globally available.
-    try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$SYSTEM32_DLLS"
+    try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$W_SYSTEM32_DLLS"
 
     # For some reason, native,builtin isn't good enough...?
     override_dlls native gdiplus
@@ -2463,7 +2463,7 @@ load_gfw() {
     cd "$W_TMP"
     try_cabextract -F i386/msasn1.dl_ "$W_CACHE"/W2KSP4_EN.EXE
     try_cabextract i386/msasn1.dl_
-    try cp msasn1.dll "$SYSTEM32_DLLS"
+    try cp msasn1.dll "$W_SYSTEM32_DLLS"
     try rm -rf i386
     cd "$olddir"
 }
@@ -2501,7 +2501,7 @@ _EOF_
 load_glut() {
     download . http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
     try_unzip -d "$W_DRIVE_C" "$W_CACHE"/glut-3.7.6-bin.zip
-    try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$SYSTEM32_DLLS"
+    try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$W_SYSTEM32_DLLS"
     warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
 }
 
@@ -2552,7 +2552,7 @@ load_ie6_full() {
     load_msls31
 
     # Unregister Wine IE
-    if [ ! -f "$SYSTEM32_DLLS"/plugin.ocx ]
+    if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
     then 
         try $WINE iexplore -unregserver
     fi
@@ -2564,8 +2564,8 @@ load_ie6_full() {
     mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
-        test -f "$SYSTEM32_DLLS"/$dll.dll &&
-          mv "$SYSTEM32_DLLS"/$dll.dll "$SYSTEM32_DLLS"/$dll.dll.bak
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+          mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
     done
 
     # The installer doesn't want to install iexplore.exe in XP mode.
@@ -2573,7 +2573,7 @@ load_ie6_full() {
 
     # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
     # See also http://code.google.com/p/winezeug/issues/detail?id=78
-    rm -f "$SYSTEM32_DLLS"/browseui.dll "$SYSTEM32_DLLS"/inseng.dll
+    rm -f "$W_SYSTEM32_DLLS"/browseui.dll "$W_SYSTEM32_DLLS"/inseng.dll
 
     $WINE ie6setup.exe
 
@@ -2586,7 +2586,7 @@ load_ie6_full() {
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
-    cd "$SYSTEM32_DLLS"
+    cd "$W_SYSTEM32_DLLS"
     for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
       dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
       imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
@@ -2611,7 +2611,7 @@ load_icodecs() {
     # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
     download . "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
     try $WINE "$W_CACHE"/"codinstl.exe"
-    try $WINE regsvr32 "$SYSTEM32_DLLS/ir50_32.dll"
+    try $WINE regsvr32 "$W_SYSTEM32_DLLS/ir50_32.dll"
     # Work around bug in codec's installer?
     # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
@@ -2634,7 +2634,7 @@ load_ie6() {
     fi
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != ie6 && test -f "$SYSTEM32_DLLS"/plugin.ocx
+    if test $PACKAGE != ie6 && test -f "$W_SYSTEM32_DLLS"/plugin.ocx
     then
         echo "prerequisite ie6 (or ie7) already installed, skipping"
         return
@@ -2643,7 +2643,7 @@ load_ie6() {
     load_msls31
 
     # Unregister Wine IE
-    if [ ! -f "$SYSTEM32_DLLS"/plugin.ocx ]
+    if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
     then 
         try $WINE iexplore -unregserver
     fi
@@ -2655,8 +2655,8 @@ load_ie6() {
     mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
-        test -f "$SYSTEM32_DLLS"/$dll.dll &&
-          mv "$SYSTEM32_DLLS"/$dll.dll "$SYSTEM32_DLLS"/$dll.dll.bak
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+          mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
     done
 
     # The installer doesn't want to install iexplore.exe in XP mode.
@@ -2673,7 +2673,7 @@ load_ie6() {
     
     # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
     # See also http://code.google.com/p/winezeug/issues/detail?id=78
-    rm -f "$SYSTEM32_DLLS"/browseui.dll "$SYSTEM32_DLLS"/inseng.dll
+    rm -f "$W_SYSTEM32_DLLS"/browseui.dll "$W_SYSTEM32_DLLS"/inseng.dll
 
     # Silent install recipe from:
     # http://www.axonpro.sk/japo/info/MS/SILENT%20INSTALL/Unattended-Silent%20Installation%20Switches%20for%20Windows%20Apps.htm
@@ -2692,7 +2692,7 @@ load_ie6() {
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
-    cd "$SYSTEM32_DLLS"
+    cd "$W_SYSTEM32_DLLS"
     for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
       dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
       imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
@@ -2717,7 +2717,7 @@ load_ie6() {
 
 load_ie7() {
     # Unregister Wine IE
-    if [ ! -f "$SYSTEM32_DLLS"/plugin.ocx ]
+    if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
     then 
         try $WINE iexplore -unregserver
     fi
@@ -2731,8 +2731,8 @@ load_ie7() {
     # Remove the fake dlls from the existing WINEPREFIX
     for dll in itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
-        test -f "$SYSTEM32_DLLS"/$dll.dll &&
-        mv "$SYSTEM32_DLLS"/$dll.dll "$SYSTEM32_DLLS"/$dll.dll.bak
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+        mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
     done
 
     # See http://bugs.winehq.org/show_bug.cgi?id=16013
@@ -2740,8 +2740,8 @@ load_ie7() {
     download . http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
 
     # Put a dummy catalog file in place
-    mkdir -p "$SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
-    try cp -f "$W_CACHE"/winetest.cat "$SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+    mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    try cp -f "$W_CACHE"/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
 
     # Install
     download . http://download.microsoft.com/download/3/8/8/38889DC1-848C-4BF2-8335-86C573AD86D9/IE7-WindowsXP-x86-enu.exe d39b89c360fbaa9706b5181ae4718100687a5326
@@ -2754,7 +2754,7 @@ load_ie7() {
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
-    cd "$SYSTEM32_DLLS"
+    cd "$W_SYSTEM32_DLLS"
     for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
       dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
       imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
@@ -2783,7 +2783,7 @@ load_ie7() {
 
 load_ie8() {
     # Unregister Wine IE
-    if [ ! -f "$SYSTEM32_DLLS"/plugin.ocx ]
+    if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
     then 
         try $WINE iexplore -unregserver
     fi
@@ -2799,8 +2799,8 @@ load_ie8() {
     # Remove the fake dlls from the existing WINEPREFIX
     for dll in browseui.dll inseng.dll itircl itss jscript msctf mshtml  shdoclc shdocvw shlwapi urlmon
     do
-        test -f "$SYSTEM32_DLLS"/$dll.dll &&
-        mv "$SYSTEM32_DLLS"/$dll.dll "$SYSTEM32_DLLS"/$dll.dll.bak
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+        mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
     done
 
     # See http://bugs.winehq.org/show_bug.cgi?id=16013
@@ -2808,8 +2808,8 @@ load_ie8() {
     download . http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
 
     # Put a dummy catalog file in place
-    mkdir -p "$SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
-    try cp -f "$W_CACHE"/winetest.cat "$SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+    mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    try cp -f "$W_CACHE"/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
 
     # FIXME: According to http://www.wine-reviews.net/wine-reviews/microsoft/internet-explorer-8-on-linux-with-wine.html
     # may also need native msctf, msimtf, and uxtheme
@@ -2827,7 +2827,7 @@ load_ie8() {
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
-    cd "$SYSTEM32_DLLS"
+    cd "$W_SYSTEM32_DLLS"
     for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
       dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
       imgutil.dll inetcomm.dll isetup.dll jscript.dll laprxy.dll \
@@ -2878,7 +2878,7 @@ load_l3codecx() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F l3codecx.ax "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F l3codecx.ax "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 l3codecx.ax
 }
@@ -2971,7 +2971,7 @@ load_mfc40() {
     # See http://support.microsoft.com/kb/122244
     download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
     try_unzip -d "$W_TMP" "$W_CACHE"/ole2v.exe
-    try cp -f "$W_TMP"/MFC40.DLL "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/MFC40.DLL "$W_SYSTEM32_DLLS"
 
     rm -rf "$W_TMP"/*
 }
@@ -3075,8 +3075,8 @@ load_msi2() {
     set_winver win98
 
     # Avoid "err:setupapi:SetupDefaultQueueCallbackA copy error 5 ..."
-    rm -f "$SYSTEM32_DLLS"/msi.dll
-    rm -f "$SYSTEM32_DLLS"/msiexec.exe
+    rm -f "$W_SYSTEM32_DLLS"/msi.dll
+    rm -f "$W_SYSTEM32_DLLS"/msiexec.exe
 
     WINEDLLOVERRIDES="msi,msiexec.exe=n" try $WINE "$W_CACHE"/InstMSIA.exe $WINETRICKS_QUIET
 
@@ -3095,7 +3095,7 @@ load_mshflxgd() {
     # May 2009: bd8aa796e16e5f213414af78931e0379d9cbe292
     download .  http://activex.microsoft.com/controls/vb6/MSHFLXGD.CAB bd8aa796e16e5f213414af78931e0379d9cbe292
     try_cabextract --directory="$W_TMP" "$W_CACHE"/MSHFLXGD.CAB
-    try cp -f "$W_TMP"/[Mm][Ss][Hh][Ff][Ll][Xx][Gg][Dd].[Oo][Cc][Xx] "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/[Mm][Ss][Hh][Ff][Ll][Xx][Gg][Dd].[Oo][Cc][Xx] "$W_SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -3104,7 +3104,7 @@ load_msls31() {
     # Install native Microsoft Line Services (needed by e-Sword, possibly only when using native riched20)
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
-    try cp -f "$W_TMP"/msls31.dll "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/msls31.dll "$W_SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -3116,7 +3116,7 @@ load_msmask() {
     # May 2009: 30e55679e4a13fe4d9620404476f215f93239292
     download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292
     try_cabextract --directory="$W_TMP" "$W_CACHE"/MSMASK32.CAB
-    try cp -f "$W_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$SYSTEM32_DLLS"/msmask32.ocx
+    try cp -f "$W_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$W_SYSTEM32_DLLS"/msmask32.ocx
     try $WINE regsvr32 msmask32.ocx
 }
 
@@ -3136,7 +3136,7 @@ load_msscript() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=d7e31492-2595-49e6-8c02-1426fec693ac
     download .  http://download.microsoft.com/download/d/2/a/d2a7430c-6d5b-48e9-96c4-3c751be7bffe/sct10en.exe fd9f2f23357ab11ae70682d6864f7e9f188adf2a
     try_cabextract --directory="$W_TMP" "$W_CACHE"/sct10en.exe
-    try cp -f "$W_TMP"/msscript.ocx "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/msscript.ocx "$W_SYSTEM32_DLLS"
     try $WINE regsvr32 msscript.ocx
 }
 
@@ -3156,7 +3156,7 @@ load_msxml3() {
 
 load_msxml4() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != msxml4 && test -f "$SYSTEM32_DLLS"/msxml4.dll
+    if test $PACKAGE != msxml4 && test -f "$W_SYSTEM32_DLLS"/msxml4.dll
     then
         echo "prerequisite msxml4 already installed, skipping"
         return
@@ -3175,7 +3175,7 @@ load_msxml4() {
 
 load_msxml6() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != msxml6 && test -f "$SYSTEM32_DLLS"/msxml6.dll
+    if test $PACKAGE != msxml6 && test -f "$W_SYSTEM32_DLLS"/msxml6.dll
     then
         echo "prerequisite msxml6 already installed, skipping"
         return
@@ -3270,7 +3270,7 @@ load_pdh() {
     download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
     try_cabextract --directory="$W_TMP" "$W_CACHE"/pdhinst.exe
     try_unzip -d "$W_TMP" "$W_TMP"/pdh.exe
-    try cp -f "$W_TMP"/x86/Pdh.Dll "$SYSTEM32_DLLS"/pdh.dll
+    try cp -f "$W_TMP"/x86/Pdh.Dll "$W_SYSTEM32_DLLS"/pdh.dll
 }
 
 #----------------------------------------------------------------
@@ -3392,7 +3392,7 @@ load_quartz() {
     helper_directx_dl
 
     try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
     
     try $WINE regsvr32 quartz.dll
     
@@ -3501,7 +3501,7 @@ load_riched20() {
     # http://support.microsoft.com/?kbid=249973
     download . http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
     try_cabextract --directory="$W_TMP" "$W_CACHE"/Q249973i.EXE
-    try cp -f "$W_TMP"/riched??.dll "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/riched??.dll "$W_SYSTEM32_DLLS"
     override_dlls native,builtin riched20 riched32
 
     rm -rf "$W_TMP"/*
@@ -3518,7 +3518,7 @@ load_riched30() {
     # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
-    try cp -f "$W_TMP"/riched20.dll "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/riched20.dll "$W_SYSTEM32_DLLS"
     override_dlls native,builtin riched20
 
     rm -rf "$W_TMP"/*
@@ -3528,7 +3528,7 @@ load_riched30() {
 
 load_richtx32() {
     download . http://activex.microsoft.com/controls/vb6/richtx32.cab da404b566df3ad74fe687c39404a36c3e7cadc07
-    try_cabextract "$W_CACHE"/richtx32.cab -d "$SYSTEM32_DLLS" -F RichTx32.Ocx
+    try_cabextract "$W_CACHE"/richtx32.cab -d "$W_SYSTEM32_DLLS" -F RichTx32.Ocx
     try $WINE regsvr32 RichTx32.ocx
 }
 
@@ -3537,7 +3537,7 @@ load_richtx32() {
 load_secur32(){
     # http://www.microsoft.com/downloads/details.aspx?familyid=c4e408d7-6716-4a12-ad3a-8029667f5c84
     download . http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
-    try_cabextract "$W_CACHE"/Windows2000-KB959426-x86-ENU.EXE -d "$SYSTEM32_DLLS" -F secur32.dll
+    try_cabextract "$W_CACHE"/Windows2000-KB959426-x86-ENU.EXE -d "$W_SYSTEM32_DLLS" -F secur32.dll
     override_dlls native,builtin secur32
 }
 
@@ -3665,7 +3665,7 @@ load_urlmon() {
     # (Works for Dolphin Smalltalk, see http://bugs.winehq.org/show_bug.cgi?id=8258)
     download . http://download.microsoft.com/download/8/2/0/820faffc-3ea0-4914-bca3-584235964ded/Q837251.exe bcc79b92ac3c06c4de3692672c3d70bdd36be892
     try_cabextract --directory="$W_TMP" "$W_CACHE/Q837251.exe"
-    try cp -f "$W_TMP"/URLMON.DLL "$SYSTEM32_DLLS"/urlmon.dll
+    try cp -f "$W_TMP"/URLMON.DLL "$W_SYSTEM32_DLLS"/urlmon.dll
     override_dlls native,builtin urlmon
 }
 
@@ -3673,7 +3673,7 @@ load_usp10() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f
     download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
-    try cp -f "$W_TMP"/usp10.dll "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP"/usp10.dll "$W_SYSTEM32_DLLS"
     override_dlls native,builtin usp10
 }
 
@@ -3696,7 +3696,7 @@ load_vb2run() {
     # See ftp://ftp.microsoft.com/Softlib/index.txt
     download . ftp://ftp.microsoft.com/Softlib/MSLFILES/VBRUN200.EXE ac0568b73ee375408778e9b505df995f79ab907e
     try_unzip -d "$W_TMP" "$W_CACHE"/VBRUN200.EXE
-    try cp -f "$W_TMP/VBRUN200.DLL" "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP/VBRUN200.DLL" "$W_SYSTEM32_DLLS"
 
 }
 
@@ -3706,7 +3706,7 @@ load_vb3run() {
     # See http://support.microsoft.com/kb/196285
     download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
     try_unzip -d "$W_TMP" "$W_CACHE"/vb3run.exe
-    try cp -f "$W_TMP/Vbrun300.dll" "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP/Vbrun300.dll" "$W_SYSTEM32_DLLS"
 
 }
 
@@ -3716,8 +3716,8 @@ load_vb4run() {
     # See http://support.microsoft.com/kb/196286
     download . http://download.microsoft.com/download/vb40ent/sample27/1/w9xnt4/en-us/vb4run.exe 83e968063272e97bfffd628a73bf0ff5f8e1023b
     try_unzip -d "$W_TMP" "$W_CACHE"/vb4run.exe
-    try cp -f "$W_TMP/Vb40032.dll" "$SYSTEM32_DLLS"
-    try cp -f "$W_TMP/Vb40016.dll" "$SYSTEM32_DLLS"
+    try cp -f "$W_TMP/Vb40032.dll" "$W_SYSTEM32_DLLS"
+    try cp -f "$W_TMP/Vb40016.dll" "$W_SYSTEM32_DLLS"
 
 }
 
@@ -3745,10 +3745,10 @@ load_vbrun60() {
     fi
 
     # Delete some fake DLLs to ensure that the installer overwrites them.
-    rm -f "$SYSTEM32_DLLS"/comcat.dll
-    rm -f "$SYSTEM32_DLLS"/oleaut32.dll
-    rm -f "$SYSTEM32_DLLS"/olepro32.dll
-    rm -f "$SYSTEM32_DLLS"/stdole2.tlb
+    rm -f "$W_SYSTEM32_DLLS"/comcat.dll
+    rm -f "$W_SYSTEM32_DLLS"/oleaut32.dll
+    rm -f "$W_SYSTEM32_DLLS"/olepro32.dll
+    rm -f "$W_SYSTEM32_DLLS"/stdole2.tlb
     # Exits with status 43 for some reason?
     $WINE "$W_CACHE"/vbrun60sp6.exe $WINETRICKS_QUIET
 
@@ -3765,7 +3765,7 @@ load_vcrun6() {
     # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != vcrun6 && test -f "$SYSTEM32_DLLS"/mfc42u.dll
+    if test $PACKAGE != vcrun6 && test -f "$W_SYSTEM32_DLLS"/mfc42u.dll
     then
         echo "prerequisite vcrun6 already installed, skipping"
         return
@@ -3784,11 +3784,11 @@ load_vcrun6() {
        mv "$W_TMP"/vcredist.exe "$W_CACHE"
     fi
     # Delete some fake dlls to avoid vcredist installer warnings
-    rm -f "$SYSTEM32_DLLS"/comcat.dll
-    rm -f "$SYSTEM32_DLLS"/msvcrt.dll
-    rm -f "$SYSTEM32_DLLS"/oleaut32.dll
-    rm -f "$SYSTEM32_DLLS"/olepro32.dll
-    rm -f "$SYSTEM32_DLLS"/stdole2.tlb
+    rm -f "$W_SYSTEM32_DLLS"/comcat.dll
+    rm -f "$W_SYSTEM32_DLLS"/msvcrt.dll
+    rm -f "$W_SYSTEM32_DLLS"/oleaut32.dll
+    rm -f "$W_SYSTEM32_DLLS"/olepro32.dll
+    rm -f "$W_SYSTEM32_DLLS"/stdole2.tlb
     # vcredist still exits with status 43.  Anyone know why?
     $WINE "$W_CACHE"/vcredist.exe
 
@@ -3800,7 +3800,7 @@ load_vcrun6() {
 
     # And then some apps need mfc42u.dll, dunno what right way
     # is to get it, vcredist doesn't install it by default?
-    try_cabextract "$W_CACHE"/vcredist.exe -d "$SYSTEM32_DLLS" -F mfc42u.dll
+    try_cabextract "$W_CACHE"/vcredist.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
 
     override_dlls native,builtin msvcrt
 
@@ -3821,11 +3821,11 @@ load_vcrun6sp6() {
     fi
 
     # Delete some fake dlls to avoid vcredist installer warnings
-    try rm -f "$SYSTEM32_DLLS"/comcat.dll
-    try rm -f "$SYSTEM32_DLLS"/msvcrt.dll
-    try rm -f "$SYSTEM32_DLLS"/oleaut32.dll
-    try rm -f "$SYSTEM32_DLLS"/olepro32.dll
-    try rm -f "$SYSTEM32_DLLS"/stdole2.tlb
+    try rm -f "$W_SYSTEM32_DLLS"/comcat.dll
+    try rm -f "$W_SYSTEM32_DLLS"/msvcrt.dll
+    try rm -f "$W_SYSTEM32_DLLS"/oleaut32.dll
+    try rm -f "$W_SYSTEM32_DLLS"/olepro32.dll
+    try rm -f "$W_SYSTEM32_DLLS"/stdole2.tlb
     # vcredist still exits with status 43.  Anyone know why?
     $WINE "$W_CACHE"/vcredistsp6.exe
 
@@ -3837,7 +3837,7 @@ load_vcrun6sp6() {
 
     # And then some apps need mfc42u.dll, dunno what right way
     # is to get it, vcredist doesn't install it by default?
-    try_cabextract "$W_CACHE"/vcredistsp6.exe -d "$SYSTEM32_DLLS" -F mfc42u.dll
+    try_cabextract "$W_CACHE"/vcredistsp6.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
 
     override_dlls native,builtin msvcrt
 }
@@ -3850,7 +3850,7 @@ load_vcrun2003() {
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     download . $SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
     try $WINE "$W_CACHE"/BZEditW32_1.6.5_Installer.exe $WINETRICKS_S
-    try cp "$programfilesdir_x86_unix/BZEdit1.6.5"/m*71* "$SYSTEM32_DLLS"
+    try cp "$programfilesdir_x86_unix/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -4358,7 +4358,7 @@ load_windowscodecs() {
     download . http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_enu.exe 53c18652ac2f8a51303deb48a1b7abbdb1db427f
 
     # Avoid a file existence check.
-    rm -f "$SYSTEM32_DLLS"/windowscodecs.dll
+    rm -f "$W_SYSTEM32_DLLS"/windowscodecs.dll
     override_dlls native,builtin windowscodecs
 
     # Always run the WIC installer in passive mode.
@@ -4373,7 +4373,7 @@ load_windowscodecs() {
 load_winhttp() {
     # See https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3ee866a0-3a09-4fdf-8bdb-c906850ab9f2
     download . http://download.microsoft.com/download/5/d/8/5d802926-6bab-45fa-b96e-bee15413523b/Windows2000-KB842773-x86-ENU.EXE e676d47e065a314bbf1d15b096a67aede6b0539a
-    try_cabextract -d "$SYSTEM32_DLLS" -L -F winhttp.dll "$W_CACHE"/Windows2000-KB842773-x86-ENU.EXE
+    try_cabextract -d "$W_SYSTEM32_DLLS" -L -F winhttp.dll "$W_CACHE"/Windows2000-KB842773-x86-ENU.EXE
     override_dlls native,builtin winhttp
 }
 
@@ -4385,7 +4385,7 @@ load_wininet() {
     # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
     download . http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
     try_cabextract --directory="$W_TMP" "$W_CACHE/3725.exe"
-    try cp -f "$W_TMP"/Wininet.dll "$SYSTEM32_DLLS"/wininet.dll
+    try cp -f "$W_TMP"/Wininet.dll "$W_SYSTEM32_DLLS"/wininet.dll
     override_dlls native,builtin wininet
 }
 
@@ -4499,7 +4499,7 @@ load_wenquanyi() {
 
 load_wsh57() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != wsh56 && test $PACKAGE != wsh57 && test -f "$SYSTEM32_DLLS"/scrrun.dll
+    if test $PACKAGE != wsh56 && test $PACKAGE != wsh57 && test -f "$W_SYSTEM32_DLLS"/scrrun.dll
     then
         echo "prerequisite wsh57 already installed, skipping"
         return
@@ -4508,7 +4508,7 @@ load_wsh57() {
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
     download . http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
 
-    try_cabextract -d "$SYSTEM32_DLLS" "$W_CACHE"/scripten.exe 
+    try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/scripten.exe 
 
     # Wine doesn't provide the other dll's (yet?)
     override_dlls native,builtin jscript.dll
@@ -4546,11 +4546,11 @@ load_xact() {
     try_cabextract -d "$W_TMP" -L -F '*_xaudio_*x86*' "$W_CACHE"/$DIRECTX_NAME
     for x in "$W_TMP"/*.cab
     do
-      try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
+      try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
 
     # xactengine?_?.dll, xaudio?_?.dll - register
-    for x in "$SYSTEM32_DLLS"/xactengine* "$SYSTEM32_DLLS"/xaudio*
+    for x in "$W_SYSTEM32_DLLS"/xactengine* "$W_SYSTEM32_DLLS"/xaudio*
     do
       try $WINE regsvr32 `basename "$x"`
     done
@@ -4565,7 +4565,7 @@ load_xinput() {
     try_cabextract -d "$W_TMP" -L -F '*_xinput_*x86*' "$W_CACHE"/$DIRECTX_NAME
     for x in "$W_TMP"/*.cab
     do
-      try_cabextract -d "$SYSTEM32_DLLS" -L -F '*.dll' "$x"
+      try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
 
 }
