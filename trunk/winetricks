@@ -1170,9 +1170,9 @@ load_cc580() {
     # http://www.microsoft.com/downloads/details.aspx?familyid=6f94d31a-d1e0-4658-a566-93af0d8d4a1e
     download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
-    try $WINE "$W_CACHE"/cc32inst.exe "/T:$winetricks_tmp_win" /c $W_UNATTENDED_SLASH_Q
+    try $WINE "$W_CACHE"/cc32inst.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
     try_unzip -d "$WINDIR"/temp "$W_TMP"/comctl32.exe
-    try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$winetricks_tmp_win" /c $W_UNATTENDED_SLASH_Q
+    try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
     try cp "$W_TMP"/comcnt.dll "$W_SYSTEM32_DLLS"/comctl32.dll
 
     override_dlls native,builtin comctl32
@@ -3736,7 +3736,7 @@ load_vbrun60() {
         download . http://download.microsoft.com/download/5/a/d/5ad868a0-8ecd-4bb0-a882-fe53eb7ef348/VB6.0-KB290887-X86.exe 73ef177008005675134d2f02c6f580515ab0d842
         rm -rf "$W_TMP"/*
 
-        try $WINE "$W_CACHE"/VB6.0-KB290887-X86.exe "/T:$winetricks_tmp_win" /c $W_UNATTENDED_SLASH_Q
+        try $WINE "$W_CACHE"/VB6.0-KB290887-X86.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
         if test ! -f "$W_TMP"/vbrun60sp6.exe
         then
             die vbrun60sp6.exe not found
@@ -3776,7 +3776,7 @@ load_vcrun6() {
        download . http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
        rm -rf "$W_TMP"/*
 
-       try $WINE "$W_CACHE"/vc6redistsetup_enu.exe "/T:$winetricks_tmp_win" /c $W_UNATTENDED_SLASH_Q
+       try $WINE "$W_CACHE"/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
        if test ! -f "$W_TMP"/vcredist.exe
        then
           die vcredist.exe not found
@@ -4606,7 +4606,6 @@ programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c
 test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
 test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
-winetricks_tmp_win="`$XXXPATH -w "$W_TMP"`"
 
 # 64 bit windows has a second directory for program files
 programfilesdir_x86_win="${programfilesdir_win} (x86)"
