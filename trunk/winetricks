@@ -53,7 +53,7 @@ detect_menu() {
     fi
 }
 
-warn() {
+w_warn() {
     echo "------------------------------------------------------"
     echo "$@"
     echo "------------------------------------------------------"
@@ -69,8 +69,8 @@ warn() {
     esac
 }
 
-die() {
-    warn "$@"
+w_die() {
+    w_warn "$@"
 
     exit 1
 }
@@ -88,7 +88,7 @@ die_if_user_not_dirowner() {
     nowner=`ls -l -n -d -L "$checkdir" | awk '{print $3}'`
     if test x$nuser != x$nowner
     then
-        die "You (`id -un`) don't own $checkdir. Don't run winetricks as another user!"
+        w_die "You (`id -un`) don't own $checkdir. Don't run winetricks as another user!"
     fi
 }
 
@@ -412,7 +412,7 @@ case "$OS" in
     WINE=${WINE:-wine}
     if [ ! -x "`which "$WINE" 2>/dev/null`" ]
     then
-        die "Cannot find wine ($WINE)"
+        w_die "Cannot find wine ($WINE)"
     fi
 
     WINEPREFIX=${WINEPREFIX:-$HOME/.wine}
@@ -514,7 +514,7 @@ w_try()
     status=$?
     if test $status -ne 0
     then
-        die "Note: command '$@' returned status $status.  Aborting."
+        w_die "Note: command '$@' returned status $status.  Aborting."
     fi
 }
 
@@ -529,7 +529,7 @@ try_regedit() {
 }
 
 regedit() {
-    die oops, bug, please report
+    w_die oops, bug, please report
 }
 
 try_cabextract() {
@@ -537,14 +537,14 @@ try_cabextract() {
     CABEXTRACT="`which cabextract 2>/dev/null`" 
     if test ! -x "$CABEXTRACT"
     then
-        die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
+        w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
     
     w_try $CABEXTRACT "$@"
 }
 
 cabextract() {
-    die oops, bug, please report
+    w_die oops, bug, please report
 }
 
 try_unzip() {
@@ -552,14 +552,14 @@ try_unzip() {
     UNZIP="`which unzip 2>/dev/null`" 
     if test ! -x "$UNZIP"
     then
-        die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
+        w_die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
     fi
     
     w_try $UNZIP -o -q "$@"
 }
 
 unzip() {
-    die oops, bug, please report
+    w_die oops, bug, please report
 }
 
 # verify an sha1sum
@@ -570,7 +570,7 @@ verify_sha1sum() {
     gotsum=`$SHA1SUM < "$file" | sed 's/(stdin)= //;s/ .*//'`
     if [ "$gotsum"x != "$wantsum"x ]
     then
-       die "sha1sum mismatch!  Rename $file and w_try again."
+       w_die "sha1sum mismatch!  Rename $file and w_try again."
     fi
 }
 
@@ -608,7 +608,7 @@ download() {
             # fortunately, we know it
             w_try curl -L -o "$file" -C - --header "Accept-Encoding: gzip,deflate" "$2"
         else
-            die "wget/curl not found, cannot download any files. Please install either wget or curl."
+            w_die "wget/curl not found, cannot download any files. Please install either wget or curl."
         fi
         # Need to decompress .exe's that are compressed, else cygwin fails
         # Only affects cygwin, so don't barf if 'file' not installed
@@ -837,7 +837,7 @@ REGEDIT4
 _EOF_
         ;;
     *)
-        die "you want a virtual desktop of $size?  I don't understand."
+        w_die "you want a virtual desktop of $size?  I don't understand."
         ;;
     esac
     try_regedit "$W_TMP"/vd.reg
@@ -1354,7 +1354,7 @@ load_cygwin() {
     test -f "$W_CACHE/cygwin/cygpkgs.tgz" && (cd "$W_DRIVE_C"; gunzip -dc "$W_CACHE/cygwin/cygpkgs.tgz" | tar -xf -)
     cp "$W_CACHE/cygwin/setup.exe" "$W_DRIVE_C"/cygpkgs
     cd "$W_DRIVE_C"/cygpkgs
-    warn "Paste in ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037 as the repo url for now, until bug 21206 is fixed"
+    w_warn "Paste in ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037 as the repo url for now, until bug 21206 is fixed"
     # -X option is insecure, but we have to use it because fruitbat.org didn't archive .sig files :-(
     w_try $WINE setup.exe -X
     cd "$olddir"
@@ -1590,7 +1590,7 @@ load_divx() {
 #----------------------------------------------------------------
 
 load_dcom98() {
-   die "Installing dcom98 is no longer needed or useful with modern wine."
+   w_die "Installing dcom98 is no longer needed or useful with modern wine."
 }
 
 #----------------------------------------------------------------
@@ -1615,7 +1615,7 @@ load_dotnet11() {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
     then
-        die "This package does not work on a 64-bit installation"
+        w_die "This package does not work on a 64-bit installation"
     fi
 
     # Wine now provides some fake dll's here that conflict.
@@ -1656,7 +1656,7 @@ load_dotnet11() {
 load_dotnet11sdk() {
     load_dotnet11
 
-    warn "Installer hangs at end... not sure if it works fully."
+    w_warn "Installer hangs at end... not sure if it works fully."
     # http://www.microsoft.com/downloads/details.aspx?familyid=9B3A2CA6-3647-4070-9F41-A333C6B9181D
     download dotnet11sdk http://download.microsoft.com/download/5/2/0/5202f918-306e-426d-9637-d7ee26fbe507/setup.exe 9509b14924bcaf84a7780de3f6ad7894004c3450
     cd "$W_CACHE"/dotnet11sdk
@@ -1675,7 +1675,7 @@ load_dotnet20() {
         echo "prerequisite dotnet20 already installed, skipping"
         return
     fi
-    warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
+    w_warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
     load_gecko
@@ -1711,7 +1711,7 @@ load_dotnet20() {
 #----------------------------------------------------------------
 
 load_dotnet20sp2() {
-    warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
+    w_warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
     load_gecko
@@ -1758,7 +1758,7 @@ load_dotnet30() {
         return
     fi
 
-    warn "Instaling .net 3.0 runtime.  Can take 15-30 minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
+    w_warn "Instaling .net 3.0 runtime.  Can take 15-30 minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
     load_dotnet20
 
     # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
@@ -2107,7 +2107,7 @@ load_fontfix() {
     # Call KERNEL32.CreateFileW(0c83b36c L"Z:\\USR\\SHARE\\FONTS\\TRUETYPE\\TTF-ORIYA-FONTS\\SAMYAK-ORIYA.TTF",80000000,00000001,00000000,00000003,00000080,00000000) ret=70d44091
     if xlsfonts 2>/dev/null | egrep -i "samyak|oriya"
     then
-        die "Please uninstall the Samyak/Oriya font, e.g. 'sudo dpkg -r ttf-oriya-fonts', then log out and log in again.  That font causes strange crashes in .net programs."
+        w_die "Please uninstall the Samyak/Oriya font, e.g. 'sudo dpkg -r ttf-oriya-fonts', then log out and log in again.  That font causes strange crashes in .net programs."
     fi
 }
 
@@ -2319,7 +2319,7 @@ load_gecko_dbg() {
     # so we're adding a maintenance burden here.)
     case `$WINE --version` in
     wine-0*|wine-1.0*|wine-1.1|wine-1.1.?|wine-1.1.11)
-        die "There isn't a gecko debug build for your Wine version."
+        w_die "There isn't a gecko debug build for your Wine version."
         ;;
     wine-1.1.1[234]*)
         GECKO_DIR="$WINDIR"
@@ -2387,10 +2387,10 @@ _EOF_
         bunzip2 -cd "$W_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.tar.bz2 | tar -xf -
         if test $? -ne 0
         then
-            die Gecko debug redistributable extraction failed
+            w_die Gecko debug redistributable extraction failed
         fi
     else
-        die unrecognized Gecko debug redistributable extension
+        w_die unrecognized Gecko debug redistributable extension
     fi
 
     cd "$olddir"
@@ -2420,7 +2420,7 @@ _EOF_
         bunzip2 -cd "$W_CACHE"/wine_gecko-$GECKO_VERSION$GECKO64_ARCH-dbg.tar.bz2 | tar -xf -
         if test $? -ne 0
         then
-            die Gecko debug redistributable extraction failed
+            w_die Gecko debug redistributable extraction failed
         fi
         cd "$olddir"
     fi
@@ -2503,7 +2503,7 @@ load_glut() {
     download . http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
     try_unzip -d "$W_DRIVE_C" "$W_CACHE"/glut-3.7.6-bin.zip
     w_try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$W_SYSTEM32_DLLS"
-    warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
+    w_warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
 }
 
 #----------------------------------------------------------------
@@ -2541,7 +2541,7 @@ load_ie6_full() {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
     then
-        die "This package does not work on a 64-bit installation"
+        w_die "This package does not work on a 64-bit installation"
     fi
 
     download . http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
@@ -2582,7 +2582,7 @@ load_ie6_full() {
     status=$?
     case $status in
     0|194) ;;
-    *) die ie6 installation failed
+    *) w_die ie6 installation failed
     esac
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
@@ -2625,7 +2625,7 @@ load_ie6() {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
     then
-        die "This package does not work on a 64-bit installation"
+        w_die "This package does not work on a 64-bit installation"
     fi
 
     if test "$WINE" = ""
@@ -2688,7 +2688,7 @@ load_ie6() {
     status=$?
     case $status in
     0|194) ;;
-    *) die ie6 installation failed
+    *) w_die ie6 installation failed
     esac
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
@@ -2773,10 +2773,10 @@ load_ie7() {
     # Seeing is believing
     if [ "$W_UNATTENDED_SLASH_Q" = "" ]
     then
-        warn "Starting ie7.  To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        w_warn "Starting ie7.  To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
         $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
     else
-        warn "To start ie7, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        w_warn "To start ie7, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
     fi
 }
 
@@ -2846,10 +2846,10 @@ load_ie8() {
     # Seeing is believing
     if [ "$W_UNATTENDED_SLASH_Q" = "" ]
     then
-        warn "Starting ie8. To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        w_warn "Starting ie8. To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
         $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.winehq.org/ > /dev/null 2>&1 &
     else
-        warn "To start ie8, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'. It doesn't work well yet though, see: http://bugs.winehq.org/show_bug.cgi?id=12433"
+        w_warn "To start ie8, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'. It doesn't work well yet though, see: http://bugs.winehq.org/show_bug.cgi?id=12433"
     fi
 }
 
@@ -3062,7 +3062,7 @@ load_mpc() {
     append_path "$programfilesdir_win"'\\Media Player Classic'
 
     cd "$olddir"
-    warn "MPC now available as $programfilesdir_win\Media Player Classic\mpc-hc.exe"
+    w_warn "MPC now available as $programfilesdir_win\Media Player Classic\mpc-hc.exe"
 }
 
 #----------------------------------------------------------------
@@ -3127,7 +3127,7 @@ load_mspaint() {
     # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
     download . http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
     try_unzip "$W_CACHE"/paintnt.exe -d "$WINDIR"
-    warn "Paint is now installed to $WINDIR/MSPAINT.EXE"
+    w_warn "Paint is now installed to $WINDIR/MSPAINT.EXE"
 }
 
 #----------------------------------------------------------------
@@ -3260,7 +3260,7 @@ load_openwatcom() {
     fi
     if test ! -f "$W_DRIVE_C"/WATCOM/binnt/wcc.exe
     then
-        warn "c:/watcom/binnt/wcc.exe not found; you probably didn't select 16 bit tools, and won't be able to buld win16test"
+        w_warn "c:/watcom/binnt/wcc.exe not found; you probably didn't select 16 bit tools, and won't be able to buld win16test"
     fi
 }
 
@@ -3305,7 +3305,7 @@ load_psdk2003()
 load_psdkvista()
 {
     # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
-    warn "Vista SDK doesn't work yet as of wine-1.1.28"
+    w_warn "Vista SDK doesn't work yet as of wine-1.1.28"
     load_dotnet20
     download psdkvista download.microsoft.com/download/c/a/1/ca145d10-e254-475c-85f9-1439f4cd2a9e/Setup.exe 756c21a7fc9b831f7200f3f44ae55cc7689e8063
     #chmod +x "$W_CACHE"/psdkvista/Setup.exe
@@ -3329,7 +3329,7 @@ load_psdkwin7()
     # http://social.msdn.microsoft.com/Forums/en-US/windowssdk/thread/c053b616-7d5b-405d-9841-ec465a8e21d5
     download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
     cd "$W_CACHE"/psdkwin7
-    warn "When given a choice, select only C++ compilers and headers, the other options don't work yet.  See http://bugs.winehq.org/show_bug.cgi?id=21596"
+    w_warn "When given a choice, select only C++ compilers and headers, the other options don't work yet.  See http://bugs.winehq.org/show_bug.cgi?id=21596"
     w_try $WINE winsdk_web.exe
     cd "$olddir"
 
@@ -3563,7 +3563,7 @@ _EOF_
 
     if test "$W_UNATTENDED_SLASH_Q"
     then
-        warn "Safari's silent install is broken under wine. See http://bugs.winehq.org/show_bug.cgi?id=23493. You should do a regular install if you want to use Safari."
+        w_warn "Safari's silent install is broken under wine. See http://bugs.winehq.org/show_bug.cgi?id=23493. You should do a regular install if you want to use Safari."
         w_try $WINE SafariSetup.exe /qn
     else
         w_try $WINE SafariSetup.exe
@@ -3596,10 +3596,10 @@ load_steam() {
     w_try $WINE msiexec /i "$W_CACHE"/SteamInstall.msi $W_UNATTENDED_SLASH_Q
     if ! test -f "$WINDIR/Fonts/Times.TTF"
     then
-        warn "Installing corefonts to prvent a Steam crash; see wine bug 22751"
+        w_warn "Installing corefonts to prvent a Steam crash; see wine bug 22751"
         load_corefonts
     fi
-    warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
+    w_warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
 }
 
 #----------------------------------------------------------------
@@ -3687,7 +3687,7 @@ load_utorrent() {
     download . http://download.utorrent.com/2.0.4/utorrent.exe 263a91693d0976473cd321cd6f1b0103a814f3ad
 
     w_try cp -f "$W_CACHE"/utorrent.exe "$WINDIR"/utorrent.exe
-    warn "utorrent is now installed to $WINDIR/utorrent.exe"
+    w_warn "utorrent is now installed to $WINDIR/utorrent.exe"
 }
 
 #----------------------------------------------------------------
@@ -3740,7 +3740,7 @@ load_vbrun60() {
         w_try $WINE "$W_CACHE"/VB6.0-KB290887-X86.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
         if test ! -f "$W_TMP"/vbrun60sp6.exe
         then
-            die vbrun60sp6.exe not found
+            w_die vbrun60sp6.exe not found
         fi
         w_try mv "$W_TMP"/vbrun60sp6.exe "$W_CACHE"
     fi
@@ -3756,7 +3756,7 @@ load_vbrun60() {
     status=$?
     case $status in
     0|43) ;;
-    *) die $PACKAGE installation failed
+    *) w_die $PACKAGE installation failed
     esac
 }
 
@@ -3780,7 +3780,7 @@ load_vcrun6() {
        w_try $WINE "$W_CACHE"/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
        if test ! -f "$W_TMP"/vcredist.exe
        then
-          die vcredist.exe not found
+          w_die vcredist.exe not found
        fi
        mv "$W_TMP"/vcredist.exe "$W_CACHE"
     fi
@@ -3796,7 +3796,7 @@ load_vcrun6() {
     status=$?
     case $status in
     0|43) ;;
-    *) die $PACKAGE installation failed
+    *) w_die $PACKAGE installation failed
     esac
 
     # And then some apps need mfc42u.dll, dunno what right way
@@ -3833,7 +3833,7 @@ load_vcrun6sp6() {
     status=$?
     case $status in
     0|43) ;;
-    *) die $PACKAGE installation failed
+    *) w_die $PACKAGE installation failed
     esac
 
     # And then some apps need mfc42u.dll, dunno what right way
@@ -3922,7 +3922,7 @@ load_vcrun2010() {
 load_vjrun20() {
     if [ $ARCH = win64 ]
     then
-        warn "vjrun20 depends on dotnet20, which doesn't work on 64-bit wine yet. Skipping."
+        w_warn "vjrun20 depends on dotnet20, which doesn't work on 64-bit wine yet. Skipping."
         return
     fi
     load_dotnet20
@@ -3988,7 +3988,7 @@ load_vc2005express()
         cd ..
         rm -rf vc2005express.tmp || true
     else
-        warn "Don't forget to install the IDE, or mt.exe won't be installed"
+        w_warn "Don't forget to install the IDE, or mt.exe won't be installed"
         cd "$W_CACHE"/vc2005express
         w_try $WINE vcsetup.exe
         # The interactive installer seems to be asynchronous, so wait until one of the last files is created
@@ -4005,10 +4005,10 @@ load_vc2005express()
 
 load_vc2005expresssp1()
 {
-    warn "$PACKAGE does not work yet"
+    w_warn "$PACKAGE does not work yet"
     if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
-        die "install vc2005express first (this verb will be merged into that once it's debugged)"
+        w_die "install vc2005express first (this verb will be merged into that once it's debugged)"
     fi
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=7B0B0339-613A-46E6-AB4D-080D4D4A8C4E
@@ -4035,7 +4035,7 @@ load_vcdmount()
     VCD_DIR="Elaborate Bytes/VirtualCloneDrive"
     if test ! -x "$programfilesdir_unix/$VCD_DIR/vcdmount.exe" && test ! -x "$programfilesdir_x86_unix/$VCD_DIR/vcdmount.exe" 
     then
-        warn "Installing Virtual CloneDrive"
+        w_warn "Installing Virtual CloneDrive"
         download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
         # have to use cmd else vista won't let cygwin run .exe's?
         chmod +x "$W_CACHE"/SetupVirtualCloneDrive.exe
@@ -4050,20 +4050,20 @@ load_vcdmount()
     then
         VCD_DIR="$programfilesdir_x86_unix/$VCD_DIR" 
     else
-        die "can't find Virtual CloneDrive?"
+        w_die "can't find Virtual CloneDrive?"
     fi
 
     # FIXME: Use WMI to locate the drive named
     # "ELBY CLONEDRIVE..." using WMI as described in
     # http://delphihaven.wordpress.com/2009/07/05/using-wmi-to-get-a-drive-friendly-name/
     # For now, you just have to hardcode it for your system :-(
-    warn "You probably need to edit the script to tell it which drive VirtualCloneDrive picked"
+    w_warn "You probably need to edit the script to tell it which drive VirtualCloneDrive picked"
     for letter in e f g h
     do
         ISO_MOUNT_ROOT=/cygdrive/$letter
         test -d $ISO_MOUNT_ROOT || break
     done
-    test -d $ISO_MOUNT_ROOT && die "cannot find the VirtualCloneDrive"
+    test -d $ISO_MOUNT_ROOT && w_die "cannot find the VirtualCloneDrive"
 }
 
 iso_mount()
@@ -4131,14 +4131,14 @@ load_vc2005trial()
 
     if test ! -x "$programfilesdir_unix/7-Zip/7z.exe"
     then
-        warn "Installing 7-zip file archiver for vc2005trial image extraction"
+        w_warn "Installing 7-zip file archiver for vc2005trial image extraction"
         load_7zip
     fi
 
     # This is the last file that 7-zip extracts.
     if test ! -f "$W_CACHE/vc2005trial/vs/wcu/runmsi.exe"
     then
-        warn "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
+        w_warn "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
         download . http://download.microsoft.com/download/6/f/5/6f5f7a01-50bb-422d-8742-c099c8896969/En_vs_2005_vsts_180_Trial.img f66ae07618d67e693ca0524d3582208c20e07823
         w_try $WINE "$programfilesdir_win"/7-Zip/7z.exe x -y -o"$W_CACHE_WIN"/vc2005trial "$W_CACHE_WIN"/En_vs_2005_vsts_180_Trial.img
     fi
@@ -4183,7 +4183,7 @@ load_vc2005sp1()
 {
     if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
-        die "install vc2005trial first (this verb will be merged into that once it's debugged)"
+        w_die "install vc2005trial first (this verb will be merged into that once it's debugged)"
     fi
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=bb4a75ab-e2d4-4c96-b39d-37baf6b5b1dc
@@ -4231,10 +4231,10 @@ load_one_hotfix()
 load_vc2005hotfix()
 {
     # Loads the hotfixes recommended in http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Additional-free-downloads
-    warn "This does not work in Wine yet."
+    w_warn "This does not work in Wine yet."
     if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
-        die "install vc2005trial and vc2005sp1 first"
+        w_die "install vc2005trial and vc2005sp1 first"
     fi
 
     mkdir -p "$W_CACHE/vs2005hotfixes"
@@ -4289,8 +4289,8 @@ load_vc2008trial()
     load_msxml6
     load_vcdmount
 
-    warn "Visual C++ 2008 Trial does not yet work in Wine, and this recipe isn't quite debugged even in windows yet."
-    warn "Downloading/checksumming Visual C++ 2008 Trial.  This will take some time!"
+    w_warn "Visual C++ 2008 Trial does not yet work in Wine, and this recipe isn't quite debugged even in windows yet."
+    w_warn "Downloading/checksumming Visual C++ 2008 Trial.  This will take some time!"
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=83c3a1ec-ed72-4a79-8961-25635db0192b
     download vc2008trial http://download.microsoft.com/download/8/1/d/81d3f35e-fa03-485b-953b-ff952e402520/VS2008ProEdition90dayTrialENUX1435622.iso dfb601096f62fd75af6ad62b277be79793f53b56
 
@@ -4336,7 +4336,7 @@ load_vc2008sp1()
     echo FOO set to $FOO
     if test ! -d "$FOO"
     then
-        die "install vc2008trial first (this verb will be merged into that once it's debugged)"
+        w_die "install vc2008trial first (this verb will be merged into that once it's debugged)"
     fi
 
     # http://www.microsoft.com/downloads/details.aspx?familyid=FBEE1648-7106-44A7-9649-6D9F6D58056E
@@ -4395,7 +4395,7 @@ load_wininet() {
 load_wme9() {
     if [ $ARCH = win64 ]
     then
-        die "Installer doesn't support 64-bit architecture."
+        w_die "Installer doesn't support 64-bit architecture."
     fi
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=5691ba02-e496-465a-bba9-b2f1182cdf24
     download wme9 http://download.microsoft.com/download/8/1/f/81f9402f-efdd-439d-b2a4-089563199d47/WMEncoder.exe 7a3f8781f3e5705651992ef0150ee30bc1295116
@@ -4408,7 +4408,7 @@ load_wme9() {
 load_wmi() {
     if test $ARCH = win64
     then
-        die "Installer doesn't support 64-bit architecture."
+        w_die "Installer doesn't support 64-bit architecture."
     fi
 
     # WMI for NT4.0 need validation: http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c174cfb1-ef67-471d-9277-4c2b1014a31e
@@ -4430,7 +4430,7 @@ load_wmp9() {
 
     if [ $ARCH = win64 ]
     then
-        die "Installer doesn't support 64-bit architecture."
+        w_die "Installer doesn't support 64-bit architecture."
     fi
 
     load_wsh57
@@ -4604,9 +4604,9 @@ rm -rf "$W_TMP"/*
 
 # The folder-name is localized!
 programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
-test x"$programfilesdir_win" != x || die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+test x"$programfilesdir_win" != x || w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
-test x"$programfilesdir_unix" != x || die "winepath -u $programfilesdir_win returned empty string"
+test x"$programfilesdir_unix" != x || w_die "winepath -u $programfilesdir_win returned empty string"
 
 # 64 bit windows has a second directory for program files
 programfilesdir_x86_win="${programfilesdir_win} (x86)"
@@ -4641,13 +4641,13 @@ elif [ -x "`which openssl 2>/dev/null`" ]
 then
    SHA1SUM="openssl dgst -sha1"
 else
-   die "No sha1sum utility available."
+   w_die "No sha1sum utility available."
 fi
 
 # Warn the user if on win(e)64, since a lot of winetricks is broken for it
 if [ "$ARCH" = "win64" ]
 then
-    warn "You're using a 64-bit WINEPREFIX, most of winetricks has been fixed for 64-bit, but you may still have problems. You can force a 32-bit WINEPREFIX by using WINEARCH=win32."
+    w_warn "You're using a 64-bit WINEPREFIX, most of winetricks has been fixed for 64-bit, but you may still have problems. You can force a 32-bit WINEPREFIX by using WINEARCH=win32."
 fi
 
 while test "$1" != ""
