@@ -131,7 +131,7 @@ w_try_cabextract()
 
 w_try_winetricks()
 {
-    w_try "$WISOTOOL_WINETRICKS" $W_UNATTENDED_Q $*
+    w_try "$WISOTOOL_WINETRICKS" $W_UNATTENDED_DASH_Q $*
 }
 
 w_read_key()
@@ -1497,7 +1497,7 @@ wisotool_handle_option()
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
     -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
     -q|--unattended) W_OPT_UNATTENDED=1 ; 
-                     W_UNATTENDED_Q="-q"; W_UNATTENDED_S="/S";;  # fixme: can't make this default easily with these here
+                     W_UNATTENDED_DASH_Q="-q"; W_UNATTENDED_SLASH_Q="/q"; W_UNATTENDED_S="/S";;  # fixme: can't make this default easily with these here
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
@@ -1598,7 +1598,7 @@ load_vcrun6()
     then
        w_download vcrun6 http://download.microsoft.com/download/vc60pro/update/1/w9xnt4/en-us/vc6redistsetup_enu.exe 382c8f5a7f41189af8d4165cf441f274b7e2a457
 
-       w_try $WINE "$W_CACHE"/vcrun6/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_Q
+       w_try $WINE "$W_CACHE"/vcrun6/vc6redistsetup_enu.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
        if test ! -f "$W_TMP"/vcredist.exe
        then
           w_die vcredist.exe not found
