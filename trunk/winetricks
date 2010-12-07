@@ -1841,6 +1841,7 @@ load_dotnet30() {
 
     w_warn "Instaling .net 3.0 runtime.  Can take 15-30 minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
     load_dotnet20
+    set_winver winxp
 
     # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
     w_download dotnet30 http://download.microsoft.com/download/3/F/0/3F0A922C-F239-4B9B-9CB0-DF53621C57D9/dotnetfx3.exe f3d2c3c7e4c0c35450cf6dab1f9f2e9e7ff50039
