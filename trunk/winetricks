@@ -682,7 +682,7 @@ _EOF_
 set_mmdevapi() {
     echo "Setting mmdevapi to $1"
     
-    override_dlls $1 mmdevapi
+    w_override_dlls $1 mmdevapi
 }
 
 set_rtlm() {
@@ -894,7 +894,7 @@ _EOF_
     try_regedit "$W_TMP_WIN"\\unset-winver.reg
 }
 
-override_dlls() {
+w_override_dlls() {
     mode=$1
     if [ $mode = "disabled" ]
     then
@@ -936,7 +936,7 @@ override_all_dlls() {
     # Disable all but the commonly used DLLs Wine doesn't have a credible alternative for
     # i.e. Don't disallow msvcp80 or d3dx9_* for now
     # d3dx9_24.dll d3dx9_25.dll d3dx9_26.dll d3dx9_27.dll d3dx9_28.dll d3dx9_29.dll d3dx9_30.dll d3dx9_31.dll d3dx9_32.dll d3dx9_33.dll d3dx9_34.dll d3dx9_35.dll d3dx9_36.dll d3dx9_37.dll d3dx9_38.dll d3dx9_39.dll d3dx9_40.dll d3dx9_41.dll d3dx9_42.dll d3dxof.dll 
-    override_dlls builtin \
+    w_override_dlls builtin \
         acledit aclui activeds actxprxy advapi32 advpack amstream atl authz avicap32 \
         avifil32 avifilebavrt bcrypt browseui cabinet capi2032 cards cfgmgr32 clusapi \
         comcat comctl32 comdlg32 commdlg compobj compstui credui crtdll crypt32 cryptdlg \
@@ -1112,7 +1112,7 @@ load_amstream() {
     
     w_try $WINE regsvr32 amstream.dll
     
-    override_dlls native amstream
+    w_override_dlls native amstream
     
 }
 
@@ -1176,7 +1176,7 @@ load_cc580() {
     w_try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
     w_try cp "$W_TMP"/comcnt.dll "$W_SYSTEM32_DLLS"/comctl32.dll
 
-    override_dlls native,builtin comctl32
+    w_override_dlls native,builtin comctl32
 
     # some builtin apps don't like native comctl32
     override_app_dlls winecfg.exe builtin comctl32
@@ -1336,7 +1336,7 @@ load_crypt32() {
     # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
     w_download . http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
     try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
-    override_dlls native crypt32
+    w_override_dlls native crypt32
 }
 
 
@@ -1373,9 +1373,9 @@ load_d3dx9() {
     done
 
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
-    override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
-    override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
-    override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42
+    w_override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
+    w_override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
+    w_override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42
 }
 
 #----------------------------------------------------------------
@@ -1392,7 +1392,7 @@ load_d3dx9_xx() {
       try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
     done
 
-    override_dlls native $dllname 
+    w_override_dlls native $dllname 
 }
 
 #----------------------------------------------------------------
@@ -1408,8 +1408,8 @@ load_d3dx10() {
     done
 
     # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
-    override_dlls native d3dx10_33 d3dx10_34 d3dx10_35 d3dx10_36 d3dx10_37
-    override_dlls native d3dx10_38 d3dx10_39 d3dx10_40 d3dx10_41 d3dx10_42
+    w_override_dlls native d3dx10_33 d3dx10_34 d3dx10_35 d3dx10_36 d3dx10_37
+    w_override_dlls native d3dx10_38 d3dx10_39 d3dx10_40 d3dx10_41 d3dx10_42
 }
 
 #----------------------------------------------------------------
@@ -1420,7 +1420,7 @@ load_d3dxof() {
     try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
     try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'd3dxof.dll' "$W_TMP/dxnt.cab"
 
-    override_dlls native d3dxof
+    w_override_dlls native d3dxof
 }
 
 #----------------------------------------------------------------
@@ -1433,7 +1433,7 @@ load_devenum() {
 
     w_try $WINE regsvr32 devenum.dll
 
-    override_dlls native devenum
+    w_override_dlls native devenum
 }
 
 #----------------------------------------------------------------
@@ -1446,7 +1446,7 @@ load_dinput8() {
 
     w_try $WINE regsvr32 dinput8
 
-    override_dlls native dinput8
+    w_override_dlls native dinput8
 }
 
 #----------------------------------------------------------------
@@ -1489,7 +1489,7 @@ load_directmusic() {
     w_try $WINE regsvr32 dswave.dll
     w_try $WINE regsvr32 quartz.dll
     
-    override_dlls native devenum dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci quartz
+    w_override_dlls native devenum dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci quartz
 }
 
 #----------------------------------------------------------------
@@ -1508,7 +1508,7 @@ load_directplay() {
     w_try $WINE regsvr32 dpnet.dll
     w_try $WINE regsvr32 dpnhpast.dll
 
-    override_dlls native dplayx dpnet dpnhpast dpwsockx
+    w_override_dlls native dplayx dpnet dpnhpast dpwsockx
 }
 
 #----------------------------------------------------------------
@@ -1540,14 +1540,14 @@ load_directx9() {
 
     # How many of these do we really need?
     # We should probably remove most of these...?
-    override_dlls native d3dim d3drm d3dx8 d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29
-    override_dlls native d3dx9_30 d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
-    override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42 d3dxof
-    override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle
-    override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby
-    override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
-    override_dlls native dxdiag.exe
-    override_dlls builtin d3d8 d3d9 dinput dinput8 dsound
+    w_override_dlls native d3dim d3drm d3dx8 d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29
+    w_override_dlls native d3dx9_30 d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
+    w_override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42 d3dxof
+    w_override_dlls native dciman32 ddrawex devenum dmband dmcompos dmime dmloader dmscript dmstyle
+    w_override_dlls native dmsynth dmusic dmusic32 dnsapi dplay dplayx dpnaddr dpnet dpnhpast dpnlobby
+    w_override_dlls native dswave dxdiagn mscoree msdmo qcap quartz streamci
+    w_override_dlls native dxdiag.exe
+    w_override_dlls builtin d3d8 d3d9 dinput dinput8 dsound
 
     # Should be below, but fails on Wine when used silently.
     #if [ $W_UNATTENDED_SLASH_Q ]
@@ -1562,7 +1562,7 @@ load_directx9() {
     unset_winver
 
     # reenable mscoree, or other installs may fail, see issue 25
-    override_dlls builtin,native mscoree
+    w_override_dlls builtin,native mscoree
 }
 
 #----------------------------------------------------------------
@@ -1603,7 +1603,7 @@ load_dmsynth() {
     
     w_try $WINE regsvr32 dmsynth.dll
     
-    override_dlls native dmsynth
+    w_override_dlls native dmsynth
     
 }
 
@@ -1869,7 +1869,7 @@ load_dsound() {
 
     w_try $WINE regsvr32 dsound.dll
 
-    override_dlls native dsound
+    w_override_dlls native dsound
 }
 
 #----------------------------------------------------------------
@@ -2114,8 +2114,8 @@ load_fontfix() {
 #----------------------------------------------------------------
 load_forcemono() {
 # For wine/mono debugging
-override_dlls native mscoree.dll
-override_dlls disabled mscorsvw.exe
+w_override_dlls native mscoree.dll
+w_override_dlls disabled mscorsvw.exe
 }
 
 #----------------------------------------------------------------
@@ -2445,7 +2445,7 @@ load_gdiplus() {
     w_try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$W_SYSTEM32_DLLS"
 
     # For some reason, native,builtin isn't good enough...?
-    override_dlls native gdiplus
+    w_override_dlls native gdiplus
 }
 
 #----------------------------------------------------------------
@@ -2559,7 +2559,7 @@ load_ie6_full() {
     fi
 
     # Change the override to the native so we are sure we use and register them
-    override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
 
     # Remove the fake dlls, if any
     mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
@@ -2579,7 +2579,7 @@ load_ie6_full() {
     # Work around http://bugs.winehq.org/show_bug.cgi?id=25432
     try_cabextract -F inseng.dll ACTSETUP.CAB
     mv inseng.dll "$W_SYSTEM32_DLLS"
-    override_dlls native inseng.dll
+    w_override_dlls native inseng.dll
 
     $WINE ie6setup.exe
 
@@ -2621,7 +2621,7 @@ load_icodecs() {
     # Work around bug in codec's installer?
     # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
-    override_dlls native ir50_32.dll
+    w_override_dlls native ir50_32.dll
 }
 
 #----------------------------------------------------------------
@@ -2655,7 +2655,7 @@ load_ie6() {
     fi
 
     # Change the override to the native so we are sure we use and register them
-    override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
 
     # Remove the fake dlls, if any
     mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
@@ -2729,10 +2729,10 @@ load_ie7() {
     fi
     
     # Change the override to the native so we are sure we use and register them
-    override_dlls native,builtin iexplore.exe itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon xmllite
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon xmllite
 
     # Bundled updspapi cannot work on wine
-    override_dlls builtin updspapi
+    w_override_dlls builtin updspapi
 
     # Remove the fake dlls from the existing WINEPREFIX
     for dll in itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon
@@ -2797,10 +2797,10 @@ load_ie8() {
     load_msls31
     
     # Change the override to the native so we are sure we use and register them
-    override_dlls native,builtin iexplore.exe itircl itss jscript msctf mshtml shdoclc shdocvw shlwapi urlmon xmllite
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript msctf mshtml shdoclc shdocvw shlwapi urlmon xmllite
 
     # Bundled updspapi cannot work on wine
-    override_dlls builtin updspapi
+    w_override_dlls builtin updspapi
     
     # Remove the fake dlls from the existing WINEPREFIX
     for dll in browseui.dll inseng.dll itircl itss jscript msctf mshtml  shdoclc shdocvw shlwapi urlmon
@@ -2923,7 +2923,7 @@ load_lucida() {
 set_native_mdac() {
     # Set those overrides globally so user programs get MDAC's odbc
     # instead of wine's unixodbc
-    override_dlls native,builtin odbc32 odbccp32 oledb32
+    w_override_dlls native,builtin odbc32 odbccp32 oledb32
 }
 
 #----------------------------------------------------------------
@@ -3086,7 +3086,7 @@ load_msi2() {
 
     WINEDLLOVERRIDES="msi,msiexec.exe=n" w_try $WINE "$W_CACHE"/InstMSIA.exe $W_UNATTENDED_SLASH_Q
 
-    override_dlls native,builtin msi msiexec.exe
+    w_override_dlls native,builtin msi msiexec.exe
 
     # and undo version win98
     unset_winver
@@ -3154,7 +3154,7 @@ load_msxml3() {
     # Service Pack 7
     w_download . http://download.microsoft.com/download/8/8/8/888f34b7-4f54-4f06-8dac-fa29b19f33dd/msxml3.msi d4c2178dfb807e1a0267fce0fd06b8d51106d913
     # http://bugs.winehq.org/show_bug.cgi?id=7849 fixed since 0.9.37
-    override_dlls native,builtin msxml3
+    w_override_dlls native,builtin msxml3
     w_try $WINE msiexec /i "$W_CACHE"/msxml3.msi $W_UNATTENDED_SLASH_Q
 }
 
@@ -3173,7 +3173,7 @@ load_msxml4() {
     # w_download . http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
     # SP3 (2009): http://www.microsoft.com/downloads/details.aspx?familyid=7F6C0CB4-7A5E-4790-A7CF-9E139E6819C0
     w_download msxml4sp3 http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi aa70c5c1a7a069af824947bcda1d9893a895318b
-    override_dlls native,builtin msxml4
+    w_override_dlls native,builtin msxml4
     w_try $WINE msiexec /i "$W_CACHE"/msxml4sp3/msxml.msi $W_UNATTENDED_SLASH_Q
 }
 
@@ -3194,13 +3194,13 @@ load_msxml6() {
     case $ARCH in
     win32)
         w_download . http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi 5125220e985b33c946bbf9f60e2b222c7570bfa2
-        override_dlls native,builtin msxml6
+        w_override_dlls native,builtin msxml6
         w_try $WINE msiexec /i "$W_CACHE"/msxml6_x86.msi $W_UNATTENDED_SLASH_Q
         ;;
     win64)
         # FIXME: Currently fails, wine bug?
         w_download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6_x64.msi 1eb84eeae7729ea5db7fe79779f4e216114261ba
-        override_dlls native,builtin msxml6
+        w_override_dlls native,builtin msxml6
         w_try $WINE msiexec /i "$W_CACHE"/msxml6_x64.msi $W_UNATTENDED_SLASH_Q
         ;;
     esac
@@ -3239,8 +3239,8 @@ load_ole2() {
     cd "$olddir"
     unset_winver
 
-    override_dlls native,builtin COMPOBJ OLE2CONV OLE2DISP OLE2
-    override_dlls native,builtin OLE2NLS OLE2PROX STORAGE TYPELIB
+    w_override_dlls native,builtin COMPOBJ OLE2CONV OLE2DISP OLE2
+    w_override_dlls native,builtin OLE2NLS OLE2PROX STORAGE TYPELIB
 }
 
 #----------------------------------------------------------------
@@ -3402,7 +3402,7 @@ load_quartz() {
     
     w_try $WINE regsvr32 quartz.dll
     
-    override_dlls native quartz
+    w_override_dlls native quartz
     
 }
 
@@ -3508,7 +3508,7 @@ load_riched20() {
     w_download . http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
     try_cabextract --directory="$W_TMP" "$W_CACHE"/Q249973i.EXE
     w_try cp -f "$W_TMP"/riched??.dll "$W_SYSTEM32_DLLS"
-    override_dlls native,builtin riched20 riched32
+    w_override_dlls native,builtin riched20 riched32
 
     rm -rf "$W_TMP"/*
 }
@@ -3525,7 +3525,7 @@ load_riched30() {
     w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
     w_try cp -f "$W_TMP"/riched20.dll "$W_SYSTEM32_DLLS"
-    override_dlls native,builtin riched20
+    w_override_dlls native,builtin riched20
 
     rm -rf "$W_TMP"/*
 }
@@ -3544,7 +3544,7 @@ load_secur32(){
     # http://www.microsoft.com/downloads/details.aspx?familyid=c4e408d7-6716-4a12-ad3a-8029667f5c84
     w_download . http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
     try_cabextract "$W_CACHE"/Windows2000-KB959426-x86-ENU.EXE -d "$W_SYSTEM32_DLLS" -F secur32.dll
-    override_dlls native,builtin secur32
+    w_override_dlls native,builtin secur32
 }
 
 #----------------------------------------------------------------
@@ -3672,7 +3672,7 @@ load_urlmon() {
     w_download . http://download.microsoft.com/download/8/2/0/820faffc-3ea0-4914-bca3-584235964ded/Q837251.exe bcc79b92ac3c06c4de3692672c3d70bdd36be892
     try_cabextract --directory="$W_TMP" "$W_CACHE/Q837251.exe"
     w_try cp -f "$W_TMP"/URLMON.DLL "$W_SYSTEM32_DLLS"/urlmon.dll
-    override_dlls native,builtin urlmon
+    w_override_dlls native,builtin urlmon
 }
 
 load_usp10() {
@@ -3680,7 +3680,7 @@ load_usp10() {
     w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
     w_try cp -f "$W_TMP"/usp10.dll "$W_SYSTEM32_DLLS"
-    override_dlls native,builtin usp10
+    w_override_dlls native,builtin usp10
 }
 
 #----------------------------------------------------------------
@@ -3808,7 +3808,7 @@ load_vcrun6() {
     # is to get it, vcredist doesn't install it by default?
     try_cabextract "$W_CACHE"/vcredist.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
 
-    override_dlls native,builtin msvcrt
+    w_override_dlls native,builtin msvcrt
 
 }
 
@@ -3845,7 +3845,7 @@ load_vcrun6sp6() {
     # is to get it, vcredist doesn't install it by default?
     try_cabextract "$W_CACHE"/vcredistsp6.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
 
-    override_dlls native,builtin msvcrt
+    w_override_dlls native,builtin msvcrt
 }
 
 #----------------------------------------------------------------
@@ -3875,7 +3875,7 @@ load_vcrun2005() {
     w_download vcrun2005-ms09-035 http://download.microsoft.com/download/6/B/B/6BB661D6-A8AE-4819-B79F-236472F6070C/vcredist_x86.exe e052789ebad7dc8d6f8505a9295b0576babd125e
     cd "$W_CACHE"
     cd vcrun2005-ms09-035
-    override_dlls native,builtin msvcr80
+    w_override_dlls native,builtin msvcr80
     w_try $WINE vcredist_x86.exe $W_UNATTENDED_SLASH_Q
     cd "$olddir"
 }
@@ -3905,7 +3905,7 @@ load_vcrun2008() {
         return
     fi
     w_download vcrun2008-ms09-035 http://download.microsoft.com/download/9/7/7/977B481A-7BA6-4E30-AC40-ED51EB2028F2/vcredist_x86.exe bd18409cfe75b88c2a9432d36d96f4bf125a3237
-    override_dlls native,builtin msvcr90
+    w_override_dlls native,builtin msvcr90
     w_try $WINE "$W_CACHE"/vcrun2008-ms09-035/vcredist_x86.exe $W_UNATTENDED_SLASH_Q
 
 }
@@ -3916,7 +3916,7 @@ load_vcrun2010() {
     # Load the Visual C++ 2010 runtime libraries
     # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84
     w_download vcrun2010 http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe 372d9c1670343d3fb252209ba210d4dc4d67d358
-    override_dlls native,builtin msvcr100
+    w_override_dlls native,builtin msvcr100
     # Workaround Wine bug http://bugs.winehq.org/show_bug.cgi?id=23427
     load_msxml3
     w_try $WINE "$W_CACHE"/vcrun2010/vcredist_x86.exe $W_UNATTENDED_SLASH_Q
@@ -4365,7 +4365,7 @@ load_windowscodecs() {
 
     # Avoid a file existence check.
     rm -f "$W_SYSTEM32_DLLS"/windowscodecs.dll
-    override_dlls native,builtin windowscodecs
+    w_override_dlls native,builtin windowscodecs
 
     # Always run the WIC installer in passive mode.
     # See http://bugs.winehq.org/show_bug.cgi?id=16876 and
@@ -4380,7 +4380,7 @@ load_winhttp() {
     # See https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3ee866a0-3a09-4fdf-8bdb-c906850ab9f2
     w_download . http://download.microsoft.com/download/5/d/8/5d802926-6bab-45fa-b96e-bee15413523b/Windows2000-KB842773-x86-ENU.EXE e676d47e065a314bbf1d15b096a67aede6b0539a
     try_cabextract -d "$W_SYSTEM32_DLLS" -L -F winhttp.dll "$W_CACHE"/Windows2000-KB842773-x86-ENU.EXE
-    override_dlls native,builtin winhttp
+    w_override_dlls native,builtin winhttp
 }
 
 #----------------------------------------------------------------
@@ -4392,7 +4392,7 @@ load_wininet() {
     w_download . http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
     try_cabextract --directory="$W_TMP" "$W_CACHE/3725.exe"
     w_try cp -f "$W_TMP"/Wininet.dll "$W_SYSTEM32_DLLS"/wininet.dll
-    override_dlls native,builtin wininet
+    w_override_dlls native,builtin wininet
 }
 
 #----------------------------------------------------------------
@@ -4421,7 +4421,7 @@ load_wmi() {
     w_download . http://download.microsoft.com/download/platformsdk/wmi9x/1.5/W9X/EN-US/wmi9x.exe 62752e9c1b879688c26f205eebf07d3783906c3e
 
     set_winver win98
-    override_dlls native,builtin wbemprox.dll wmiutils.dll
+    w_override_dlls native,builtin wbemprox.dll wmiutils.dll
     # Note: there is a crash in the background towards the end, doesn't seem to hurt; see http://bugs.winehq.org/show_bug.cgi?id=7920
     w_try $WINE "$W_CACHE"/wmi9x.exe $WINETRICKS_S
     unset_winver
@@ -4517,7 +4517,7 @@ load_wsh57() {
     try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/scripten.exe 
 
     # Wine doesn't provide the other dll's (yet?)
-    override_dlls native,builtin jscript.dll
+    w_override_dlls native,builtin jscript.dll
     w_try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
 }
 
@@ -4845,7 +4845,7 @@ do
     multisampling=enabled|multisampling=on) set_multisampling enabled;;
     multisampling=disabled|multisampling=off) set_multisampling disabled;;
     native_mdac) set_native_mdac;;
-    native_oleaut32) override_dlls native,builtin oleaut32;;
+    native_oleaut32) w_override_dlls native,builtin oleaut32;;
     nocrashdialog) disable_crashdialog;;
     orm=backbuffer|backbuffer) set_orm backbuffer;;
     orm=fbo|fbo) set_orm fbo;;
@@ -4885,7 +4885,7 @@ do
     winver=winxp|winxp) set_winver winxp;;
     winver=vista|vista) set_winver vista;;
     winver=) unset_winver;;
-    *=disabled) arg=`echo $PACKAGE | sed 's/=.*//'`; override_dlls disabled $arg ;;
+    *=disabled) arg=`echo $PACKAGE | sed 's/=.*//'`; w_override_dlls disabled $arg ;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
