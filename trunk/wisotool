@@ -3032,6 +3032,63 @@ load_civ4() {
 
 #----------------------------------------------------------------
 
+w_metadata civ4_colonization games \
+    title="Civilization IV: Colonization" \
+    publisher="Firaxis Games" \
+    year="2008" \
+    media="dvd" \
+    file1="4cdd3f4862a725d608de4dbc45f7ca393c815ced.iso" 
+
+load_civ4_colonization() {
+    iso_mount "$W_CACHE"/$W_PACKAGE/4cdd3f4862a725d608de4dbc45f7ca393c815ced.iso
+
+    cd "$W_ISO_MOUNT_ROOT"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
+        winwait, Civilization IV Colonization - InstallShield Wizard, Select the language
+        sleep 1000
+        ControlClick, Button3, Civilization IV Colonization - InstallShield Wizard, Select the language
+        winwait, Civilization IV Colonization - InstallShield Wizard, Welcome to the
+        sleep 1000
+        ControlClick, Button1, Civilization IV Colonization - InstallShield Wizard, Welcome to the
+        winwait, Civilization IV Colonization - InstallShield Wizard, Please read the following license
+        sleep 1000
+        ControlClick, Button3, Civilization IV Colonization - InstallShield Wizard, Please read the following license
+        sleep 100
+        ControlClick, Button1, Civilization IV Colonization - InstallShield Wizard, Please read the following license
+        winwait, Civilization IV Colonization - InstallShield Wizard, Express install
+        sleep 1000
+        ControlClick, Button1, Civilization IV Colonization - InstallShield Wizard, Express install
+        winwaitclose, Civilization IV Colonization - InstallShield Wizard
+        sleep 1000
+    "
+
+    # Install patch
+    cd "$W_CACHE/$W_PACKAGE/"
+    w_download $W_PACKAGE http://www.firaxis.com/downloads/Patch/ColonizationPatch1.01f.exe d15b4fb734279924dfaadd1f1a121aa7666e9046
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run ColonizationPatch1.01f.exe
+        winwait, Civilization IV Colonization - InstallShield Wizard, Welcome to the
+        sleep 1000
+        ControlClick, Button1, Civilization IV Colonization - InstallShield Wizard, Welcome to the
+        winwait, Civilization IV Colonization - InstallShield Wizard, Update Complete
+        sleep 1000
+        ControlClick, Button4, Civilization IV Colonization - InstallShield Wizard, Update Complete
+        winwaitclose, Civilization IV Colonization - InstallShield Wizard
+    "
+
+    if w_workaround_wine_bug 25349
+    then
+        w_try_winetricks msxml3
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\2K Games\\Firaxis Games\\Sid Meier's Civilization IV Colonization" "Colonization.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata civ4_demo games \
     title="Civilization IV Demo" \
     publisher="Firaxis Games" \
