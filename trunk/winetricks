@@ -620,7 +620,6 @@ w_download() {
             esac
         esac
 
-        cd "$olddir"
     fi
     if [ "$3"x != ""x ]
     then
@@ -1123,7 +1122,6 @@ load_art2kmin() {
     w_download . http://download.microsoft.com/download/D/2/A/D2A2FC8B-0447-491C-A5EF-E8AA3A74FB98/AccessRuntime.exe 571811b7536e97cf4e4e53bbf8260cddd69f9b2d
     cd "$W_CACHE"
     w_try $WINE AccessRuntime.exe $W_UNATTENDED_SLASH_Q
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1136,7 +1134,6 @@ load_atmlib() {
     try_cabextract "$W_CACHE"/W2KSP4_EN.EXE i386/atmlib.dl_
     w_try cp atmlib.dll "$W_SYSTEM32_DLLS"
     w_try rm -rf i386
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1162,7 +1159,6 @@ load_baekmuk() {
     register_font gulim.ttf "Baekmuk Gulim"
     register_font dotum.ttf "Baekmuk Dotum"
     register_font hline.ttf "Baekmuk Headline"
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1357,7 +1353,6 @@ load_cygwin() {
     w_warn "Paste in ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037 as the repo url for now, until bug 21206 is fixed"
     # -X option is insecure, but we have to use it because fruitbat.org didn't archive .sig files :-(
     w_try $WINE setup.exe -X
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1661,7 +1656,6 @@ load_dotnet11sdk() {
     w_download dotnet11sdk http://download.microsoft.com/download/5/2/0/5202f918-306e-426d-9637-d7ee26fbe507/setup.exe 9509b14924bcaf84a7780de3f6ad7894004c3450
     cd "$W_CACHE"/dotnet11sdk
     w_try $WINE setup.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -1745,7 +1739,6 @@ load_dotnet20sdk() {
     w_download dotnet20sdk http://download.microsoft.com/download/c/4/b/c4b15d7d-6f37-4d5a-b9c6-8f07e7d46635/setup.exe 4e4b1072b5e65e855358e2028403f2dc52a62ab4
     cd "$W_CACHE"/dotnet20sdk
     w_try $WINE setup.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -2422,7 +2415,6 @@ _EOF_
         then
             w_die Gecko debug redistributable extraction failed
         fi
-        cd "$olddir"
     fi
 
     # set install-path
@@ -2466,7 +2458,6 @@ load_gfw() {
     try_cabextract i386/msasn1.dl_
     w_try cp msasn1.dll "$W_SYSTEM32_DLLS"
     w_try rm -rf i386
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -2875,7 +2866,6 @@ load_kde() {
     w_try cp "$W_CACHE"/kdewin-installer-gui-0.9.7-0.exe "$programfilesdir_unix/kde"
     cd "$programfilesdir_unix/kde"
     w_try $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.7-0.exe"
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -2906,8 +2896,6 @@ load_liberation() {
     cd "$W_TMP"
     gunzip -dc "$W_CACHE"/liberation-fonts-1.04.tar.gz | tar -xf -
     mv liberation-fonts-1.04/*.ttf "$winefontsdir"
-    rm -rf "$W_TMP"/*
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3063,10 +3051,8 @@ load_mpc() {
     cd "$programfilesdir_unix/Media Player Classic"
     try_unzip "$W_CACHE/MPC-Homecinema.1.3.1249.0.%28x86%29.zip"
 
-
     append_path "$programfilesdir_win"'\\Media Player Classic'
 
-    cd "$olddir"
     w_warn "MPC now available as $programfilesdir_win\Media Player Classic\mpc-hc.exe"
 }
 
@@ -3236,7 +3222,6 @@ load_ole2() {
     set_winver win31
     cd "$W_TMP"
     w_try $WINE setup.exe
-    cd "$olddir"
     unset_winver
 
     w_override_dlls native,builtin COMPOBJ OLE2CONV OLE2DISP OLE2
@@ -3259,7 +3244,6 @@ load_openwatcom() {
         sed -i 's/tools16=.*/tools16=true/' setup.inf
         w_try zip -f open-watcom-c-win32-1.9.exe
         w_try $WINE open-watcom-c-win32-1.9.exe -s
-        cd "$olddir"
     else
         w_try $WINE "$W_CACHE"/open-watcom-c-win32-1.9.exe
     fi
@@ -3302,7 +3286,6 @@ load_psdk2003()
     echo "This can take up to an hour."
     cd "$W_CACHE"/psdk2003
     w_try $WINE PSDK-x86.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3316,7 +3299,6 @@ load_psdkvista()
     #chmod +x "$W_CACHE"/psdkvista/Setup.exe
     cd "$W_CACHE"/psdkvista
     w_try $WINE Setup.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3336,7 +3318,6 @@ load_psdkwin7()
     cd "$W_CACHE"/psdkwin7
     w_warn "When given a choice, select only C++ compilers and headers, the other options don't work yet.  See http://bugs.winehq.org/show_bug.cgi?id=21596"
     w_try $WINE winsdk_web.exe
-    cd "$olddir"
 
     # FIXME: don't do this if running on real Windows?
     # Work around bug http://bugs.winehq.org/show_bug.cgi?id=21362
@@ -3375,7 +3356,6 @@ load_python26() {
     w_try $WINE msiexec /i python-2.6.2.msi ALLUSERS=1 $W_UNATTENDED_SLASH_Q
     # FIXME: unzip this instead of running it if quiet install?
     w_try $WINE pywin32-214.win32-py2.6.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3389,7 +3369,6 @@ load_python_comtypes() {
     try_unzip comtypes-0.6.1-1.zip
     cd comtypes-0.6.1
     w_try $WINE "C:\Python26\python.exe" setup.py install
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3877,7 +3856,6 @@ load_vcrun2005() {
     cd vcrun2005-ms09-035
     w_override_dlls native,builtin msvcr80
     w_try $WINE vcredist_x86.exe $W_UNATTENDED_SLASH_Q
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -3956,7 +3934,6 @@ load_vc2003toolkit()
     w_download . http://npg.dl.ac.uk/MIDAS/MIDAS_Release/VCToolkitSetup.exe 956c81c3106b97042c4126b23c81885c4b5211f4
     cd "$W_CACHE"
     w_try $WINE VCToolkitSetup.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -4003,7 +3980,6 @@ load_vc2005express()
           sleep 10
         done
     fi
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -4178,7 +4154,6 @@ load_vc2005trial()
               echo waiting for setup to finish
           done
       fi
-      cd "$olddir"
     fi
 }
 
@@ -4198,7 +4173,6 @@ load_vc2005sp1()
     cd "$W_CACHE"/vc2005sp1
     w_try $WINE VS80sp1-KB926601-X86-ENU.exe
     w_try $WINE VS80sp1-KB971090-X86-INTL.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -4230,7 +4204,6 @@ load_one_hotfix()
        try_unzip -o $downloadfile
     fi
     w_try $WINE $hotfix
-    cd "$olddir"
 }
 
 load_vc2005hotfix()
@@ -4325,7 +4298,6 @@ load_vc2008trial()
               echo waiting for setup to finish
           done
       fi
-      cd "$olddir"
     fi
 
     iso_umount
@@ -4348,7 +4320,6 @@ load_vc2008sp1()
     w_download vc2008sp1 http://download.microsoft.com/download/f/6/7/f67fdf05-0586-413f-8231-affbe12f80a8/VS90sp1-KB945140-ENU.exe 91c146dffa96c6d8f9ceb2b5235b04349cf93ed9
     cd "$W_CACHE"/vc2008sp1
     w_try $WINE VS90sp1-KB945140-ENU.exe
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
@@ -4498,7 +4469,6 @@ load_wenquanyi() {
     gunzip -dc "$W_CACHE/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
     w_try mv wqy-microhei/wqy-microhei.ttc "$winefontsdir"
     register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
-    cd "$olddir"
 }
 
 #----------------------------------------------------------------
