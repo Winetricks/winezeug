@@ -174,7 +174,6 @@ usage() {
     echo " hosts         Adds empty C:\windows\system32\drivers\etc\{hosts,services} files"
     echo " icodecs       Intel Indeo codecs"
     echo " ie6           Microsoft Internet Explorer 6.0"
-    echo " ie6_full      Microsoft Internet Explorer 6.0, full installer"
     echo " ie7           Microsoft Internet Explorer 7.0"
     echo " ie8           Microsoft Internet Explorer 8.0"
     echo " jet40         MS Jet 4.0 Service Pack 8"
@@ -2617,7 +2616,7 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_ie6_full() {
+load_ie6() {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
     then
@@ -2661,7 +2660,12 @@ load_ie6_full() {
     mv inseng.dll "$W_SYSTEM32_DLLS"
     w_override_dlls native inseng.dll
 
-    $WINE ie6setup.exe
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        $WINE "$W_CACHE"/ie6setup.exe /q:a /r:n /c:"ie6wzd /S:""#e"" /q:a /r:n"
+    else
+        $WINE "$W_CACHE"/ie6setup.exe
+    fi
 
     # IE6 exits with 194 to signal a reboot
     status=$?
@@ -2702,102 +2706,6 @@ load_icodecs() {
     # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
     w_override_dlls native ir50_32.dll
-}
-
-#----------------------------------------------------------------
-
-load_ie6() {
-    # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
-    if [ $ARCH = win64 ]
-    then
-        w_die "This package does not work on a 64-bit installation"
-    fi
-
-    if test "$WINE" = ""
-    then
-        echo "No need to install ie6 on real windows"
-        return 0
-    fi
-
-    # If this is just a dependency check, don't re-install
-    if test $PACKAGE != ie6 && test -f "$W_SYSTEM32_DLLS"/plugin.ocx
-    then
-        echo "prerequisite ie6 (or ie7) already installed, skipping"
-        return
-    fi
-
-    load_msls31
-
-    # Unregister Wine IE
-    if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
-    then 
-        w_try $WINE iexplore -unregserver
-    fi
-
-    # Change the override to the native so we are sure we use and register them
-    w_override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
-
-    # Remove the fake dlls, if any
-    mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
-    for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
-    do
-        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
-          mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
-    done
-
-    # The installer doesn't want to install iexplore.exe in XP mode,
-    # nor inseng.dll in win2k mode.
-    set_winver win2k
-
-    # Workaround a IE6 Installer bug, not Wine's fault
-    # See http://bugs.winehq.org/show_bug.cgi?id=5409
-    # Actual value downloaded doesn't matter
-    rm -f "$W_CACHE"/ie6sites.dat
-    w_download . http://www.microsoft.com/windows/ie/ie6sp1/download/rtw/x86/ie6sites.dat
-
-    # Install
-    w_download . http://download.microsoft.com/download/ie6sp1/finrel/6_sp1/W98NT42KMeXP/EN-US/ie6setup.exe f3ab61a785eb9611fa583612e83f3b69377f2cef
-    
-    # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
-    # See also http://code.google.com/p/winezeug/issues/detail?id=78
-    rm -f "$W_SYSTEM32_DLLS"/browseui.dll "$W_SYSTEM32_DLLS"/inseng.dll
-
-    # Silent install recipe from:
-    # http://www.axonpro.sk/japo/info/MS/SILENT%20INSTALL/Unattended-Silent%20Installation%20Switches%20for%20Windows%20Apps.htm
-    if [ $W_UNATTENDED_SLASH_Q ]
-    then
-        $WINE "$W_CACHE"/ie6setup.exe /q:a /r:n /c:"ie6wzd /S:""#e"" /q:a /r:n"
-    else
-        $WINE "$W_CACHE"/ie6setup.exe
-    fi
-    # IE6 exits with 194 to signal a reboot
-    status=$?
-    case $status in
-    0|194) ;;
-    *) w_die ie6 installation failed
-    esac
-
-    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
-    # FIXME: whittle down this list
-    cd "$W_SYSTEM32_DLLS"
-    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
-      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
-      imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
-      mlang.dll mshtml.dll mshtmled.dll msi.dll msident.dll \
-      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
-      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
-      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
-      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
-      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
-      plugin.ocx proctexe.ocx tdc.ocx webcheck.dll wshom.ocx
-    do
-        $WINE regsvr32 /i $i > /dev/null 2>&1
-    done
-
-    # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
-    unset_winver
-
-    # w_try $WINE "$programfilesdir_unix"/"Internet Explorer"/IEXPLORE.EXE http://www.winehq.org
 }
 
 #----------------------------------------------------------------
@@ -4808,8 +4716,7 @@ do
     glut) w_call glut;;
     hosts) w_call hosts;;
     icodecs) w_call icodecs;;
-    ie6_full) w_call ie6_full;;
-    ie6) w_call ie6;;
+    ie6|ie6_full) w_call ie6;;
     ie7) w_call ie7;;
     ie8) w_call ie8;;
     jet40) w_call jet40;;
