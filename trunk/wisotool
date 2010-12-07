@@ -5647,32 +5647,31 @@ w_metadata imvu games \
     publisher="IMVU" \
     year="2004" \
     media="download" \
-    file1="InstallIMVU_447.0_st_conduit.exe" 
+    file1="InstallIMVU_449.0.exe"
 
 load_imvu() {
 
-    w_download $W_PACKAGE "http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_447.0_st_conduit.exe" 61963e1c8d45c7dba942d85efadaf6284c556af4
+    w_download $W_PACKAGE http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_449.0.exe c537341c5f31015ad4a848681f403fd77643e7d0
 
     cd "$W_CACHE/$W_PACKAGE"
 
     w_ahk_do "
-        Run, InstallIMVU_447.0_st_conduit.exe
+        Run, InstallIMVU_449.0.exe
         SetTitleMatchMode, 2
-        WinWait,IMVU Setup, Earn
+        WinWait,IMVU Setup, Welcome
         Sleep 500
-        ControlClick Button4 ; Toolbar
-        Sleep 500
-        ControlClick Button2 ; Finish
+        ControlClick Button2 ; Install
+	; There's no way to tell it not to launch
         WinWait,IMVU Login, chrome
         Sleep 500
-        Click, Left, 29, 230
+        Click, Left, 29, 230  ; Uncheck [run on startup]
         Sleep 500
-        Click, Left, 416, 11
+        Click, Left, 416, 11  ; Click X on window decoration to close
         Sleep 500
-        WinKill,IMVU Login, chrome
+        WinKill,IMVU Login, chrome ; and then close harshly, just in case?
     "
 
-    w_declare_exe "$W_DRIVE_C\\users\\$USERNAME\\Application Data\\IMVUClient" "IMVUClient.exe"
+    w_declare_exe "${programfilesdrive}:\\users\\$USERNAME\\Application Data\\IMVUClient" "IMVUClient.exe"
 }
 
 #----------------------------------------------------------------
