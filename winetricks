@@ -627,18 +627,107 @@ w_download() {
     fi
 }
 
+# Has to be set in a few places...
 set_winver() {
+    # FIXME: This should really be done with winecfg, but it has no CLI options.
+
+    # First, delete any lingering version info, otherwise it may conflict:
+    $WINE reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion" /v SubVersionNumber /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion" /v VersionNumber /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v CSDVersion /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v CurrentBuildNumber /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v CurrentVersion /f || true
+    $WINE reg delete "HKLM\System\CurrentControlSet\Control\ProductOptions" /v ProductType /f || true
+    $WINE reg delete "HKLM\System\CurrentControlSet\Control\ServiceCurrent" /v OS /f || true
+    $WINE reg delete "HKLM\System\CurrentControlSet\Control\Windows" /v CSDVersion /f || true
+
+    case $1 in
+    win98)
+        # This key is only used for win 95/98:
+
+        echo "Setting Windows version to $1"
+        cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion]
+"SubVersionNumber"=" A "
+"VersionNumber"="4.10.2222"
+
+_EOF_
+        try_regedit "$W_TMP_WIN"\\set-winver.reg
+        return 
+        ;;
+    nt40)
+        # Similar to modern version, but sets two extra keys:
+
+        echo "Setting Windows version to $1"
+        cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion]
+"CSDVersion"="Service Pack 6a"
+"CurrentBuildNumber"="1381"
+"CurrentVersion"="4.0"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ProductOptions]
+"ProductType"="WinNT"
+ 
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceCurrent]
+"OS"="Windows_NT"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows]
+"CSDVersion"=dword:00000600
+
+_EOF_
+        try_regedit "$W_TMP_WIN"\\set-winver.reg
+        return
+        ;;
+    win2k)
+        csdversion="Service Pack 4"
+        currentbuildnumber="2195"
+        currentversion="5.0"
+        csdversion_hex=dword:00000400
+        ;;
+    winxp)
+        csdversion="Service Pack 3"
+        currentbuildnumber="2600"
+        currentversion="5.1"
+        csdversion_hex=dword:00000300
+        ;;
+    vista)
+        csdversion="Service Pack 2"
+        currentbuildnumber="6002"
+        currentversion="6.0"
+        csdversion_hex=dword:00000200
+        ;;
+    win7)
+        csdversion="Service Pack 1"
+        currentbuildnumber="7601"
+        currentversion="6.1"
+        csdversion_hex=dword:00000100
+        ;;
+    *)
+        die "Invalid Windows version given."
+        ;;
+    esac
+
     echo "Setting Windows version to $1"
     cat > "$W_TMP"/set-winver.reg <<_EOF_
 REGEDIT4
 
-[HKEY_CURRENT_USER\Software\Wine]
-"Version"="$1"
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion]
+"CSDVersion"="$csdversion"
+"CurrentBuildNumber"="$currentbuildnumber"
+"CurrentVersion"="$currentversion"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows]
+"CSDVersion"=$csdversion_hex
 
 _EOF_
     try_regedit "$W_TMP_WIN"\\set-winver.reg
 }
 
+# FIXME: has this changed too?
 set_app_winver() {
     app="$1"
     version="$2"
@@ -2656,7 +2745,8 @@ load_ie6() {
           mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
     done
 
-    # The installer doesn't want to install iexplore.exe in XP mode.
+    # The installer doesn't want to install iexplore.exe in XP mode,
+    # nor inseng.dll in win2k mode.
     set_winver win2k
 
     # Workaround a IE6 Installer bug, not Wine's fault
