@@ -2116,6 +2116,123 @@ load_batman_arkham_asylum_demo() {
 
 #--------------------------------------------------------------------------------------
 
+w_metadata bfme2 games \
+    title="Battle for Middle Earth 2" \
+    publisher="EA" \
+    year="2006" \
+    media="cdrom" \
+    file1="5e4dc3f008e5140f35e427539c1900b19ab7391e.iso" \
+    file2="cc3239729f83e76028d6ca8b42c300a5fc039d41.iso" \
+    file3="dfe0f531ff90288554a3cc6b2293f2df801b85a6.iso" \
+    file4="726b84f41549debf0c923d7e7d1b5e950bf00934.iso" \
+    file5="928865c0a87a9249359b855f6c554d2ece336181.iso" \
+    file6="194f1748baa3d0892eddcbc89adbf0e839a68f1f.iso"
+
+load_bfme2()
+{
+    if w_workaround_wine_bug 15606
+    then
+        w_try_winetricks glsl-enable
+    fi
+
+    w_read_key
+    iso_mount "$W_CACHE"/$W_PACKAGE/5e4dc3f008e5140f35e427539c1900b19ab7391e.iso
+
+    # Aborts with dialog about AutoRunGUI.dll if that's not on the path (e.g. in current dir)
+    cd "$ISO_MOUNT_ROOT"
+    # Should still work if there is no key
+    # The Electronic Arts Inc. register notifier (disc1/Support/EReg.exe) uses some Macromedia Flash junk
+    w_ahk_do "
+        run ${ISO_MOUNT_LETTER}:AutoRun.exe
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II
+        ControlClick &OK, The Battle for Middle-earth (tm) II
+        winwait, The Battle for Middle-earth (tm) II,,, Before continuing
+        ControlClick INSTALL, The Battle for Middle-earth (tm) II
+        winwait, License Agreement
+        ControlClick &Yes, License Agreement
+        winwait, The Battle for Middle-earth (tm) II
+        Send {Raw}$KEY
+        ControlClick &Next>, The Battle for Middle-earth (tm) II
+        winwait, The Battle for Middle-earth (tm) II, What type of user are you?
+        ControlClick &Next>, The Battle for Middle-earth (tm) II
+        winwait, Electronic Arts Inc.
+        Sleep 10000
+        ControlClick x120 y300, Electronic Arts Inc.
+        winwait, The Battle for Middle-earth (tm) II, Current File:
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 2 in drive
+    "
+    iso_umount
+    iso_mount "$W_CACHE"/$W_PACKAGE/cc3239729f83e76028d6ca8b42c300a5fc039d41.iso
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 2 in drive
+        ControlClick &OK, The Battle for Middle-earth (tm) II, Please insert CD/DVD 2 in drive
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 3 in drive
+    "
+    iso_umount
+    iso_mount "$W_CACHE"/$W_PACKAGE/dfe0f531ff90288554a3cc6b2293f2df801b85a6.iso
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 3 in drive
+        ControlClick &OK, The Battle for Middle-earth (tm) II, Please insert CD/DVD 3 in drive
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 4 in drive
+    "
+    iso_umount
+    iso_mount "$W_CACHE"/$W_PACKAGE/726b84f41549debf0c923d7e7d1b5e950bf00934.iso
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 4 in drive
+        ControlClick &OK, The Battle for Middle-earth (tm) II, Please insert CD/DVD 4 in drive
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 5 in drive
+    "
+    iso_umount
+    iso_mount "$W_CACHE"/$W_PACKAGE/928865c0a87a9249359b855f6c554d2ece336181.iso
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 5 in drive
+        ControlClick &OK, The Battle for Middle-earth (tm) II, Please insert CD/DVD 5 in drive
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 6 in drive
+    "
+    iso_umount
+    iso_mount "$W_CACHE"/$W_PACKAGE/194f1748baa3d0892eddcbc89adbf0e839a68f1f.iso
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 6 in drive
+        ControlClick &OK, The Battle for Middle-earth (tm) II, Please insert CD/DVD 6 in drive
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 1 in drive
+    "
+    iso_umount
+    iso_mount "$W_CACHE"/$W_PACKAGE/5e4dc3f008e5140f35e427539c1900b19ab7391e.iso
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, The Battle for Middle-earth (tm) II, Please insert CD/DVD 1 in drive
+        ControlClick &OK, The Battle for Middle-earth (tm) II, Please insert CD/DVD 1 in drive
+        winwait, Firewall Detected
+        ControlClick &Yes, Firewall Detected
+        winwait, The Battle for Middle-earth (tm) II
+        ControlClick &Finish, The Battle for Middle-earth (tm) II
+    "
+    iso_umount
+
+    download $PACKAGE ftp://ftp.ea.com/pub/eapacific/lotr/lotrbfme2/LotrBfMe2-65542-english.exe 151c3c61bbe0697e3517136a4f66e1d71a01e079
+    cd "$WISOTOOL_CACHE/$PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run LotrBfMe2-65542-english.exe
+        winwait, Lord of the Rings(tm), The Battle for Middle-earth(tm) II 1.06 Patch
+        ControlClick &OK, Lord of the Rings(tm), The Battle for Middle-earth(tm) II 1.06 Patch
+        winwait, Patch successful
+        ControlClick &OK, Patch successful
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Electronic Arts\\The Battle for Middle-earth (tm) II" "lotrbfme2.exe"
+
+    w_warn "This game is copy-protected, and requires the real disc in a real drive to run."
+}
+
+#----------------------------------------------------------------
+
 # Sadly, the SHA1SUM varies!
 # FIXME: change load function to call it by its volume label instead; right now you have to rename it manually.
 
