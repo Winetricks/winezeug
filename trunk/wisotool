@@ -5492,22 +5492,21 @@ load_help() {
 
 #----------------------------------------------------------------
 
-honexe=HoNClient-1.0.12.1.exe
 w_metadata hon games \
     title="Heroes of Newerth" \
     publisher="S2 Games" \
     year="2010" \
     media="download" \
-    file1="$honexe" 
+    file1="HoNClient-1.0.20.exe"
 
 load_hon()
 {
-    w_download $W_PACKAGE http://dl.heroesofnewerth.com/$honexe 27236eca37ac7b90fe80feaf9b2c0f8eb0e49701
+    w_download $W_PACKAGE http://dl.heroesofnewerth.com/HoNClient-1.0.20.exe 8e6d890aead01bfd033811da757d3515dbb874e0
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, $honexe
+        run, HoNClient-1.0.20.exe
         winwait, Heroes of Newerth
         controlclick, Button2, Heroes of Newerth
         winwait, Heroes of Newerth, License
