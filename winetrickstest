@@ -41,6 +41,7 @@ for verb in \
     dotnet11 \
     dotnet20 \
     dotnet20sp2 \
+    dotnet30 \
     droid \
     dsound \
     dxsdk_nov2006 \
@@ -247,7 +248,6 @@ fi
 
 # Broken
 #    controlpad #Broken on 64-bit karmic/lucid
-#    dotnet30
 #    dotnet35
 #    ie7
 #    ie8
