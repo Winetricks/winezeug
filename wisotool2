@@ -1497,7 +1497,7 @@ wisotool_handle_option()
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
     -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
     -q|--unattended) W_OPT_UNATTENDED=1 ; 
-                     W_UNATTENDED_DASH_Q="-q"; W_UNATTENDED_SLASH_Q="/q"; W_UNATTENDED_S="/S";;  # fixme: can't make this default easily with these here
+                     W_UNATTENDED_DASH_Q="-q"; W_UNATTENDED_SLASH_Q="/q"; W_UNATTENDED_SLASH_S="/S";;  # fixme: can't make this default easily with these here
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
@@ -1647,7 +1647,7 @@ load_vcrun2003()
     # Sadly, I know of no Microsoft URL for these
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     w_download vcrun2003 $WISOTOOL_SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
-    w_try $WINE "$W_CACHE"/vcrun2003/BZEditW32_1.6.5_Installer.exe $W_UNATTENDED_S
+    w_try $WINE "$W_CACHE"/vcrun2003/BZEditW32_1.6.5_Installer.exe $W_UNATTENDED_SLASH_S
     w_try cp "$W_PROGRAMS_X86_UNIX/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
 }
 
@@ -1738,6 +1738,27 @@ load_vcrun2010()
 # Apps
 #----------------------------------------------------------------
 
+w_metadata 7zip apps \
+   title="7-Zip" \
+   publisher="Igor Pavolv" \
+   year="1999" \
+   media="download" \
+   file1="7z465.exe"
+
+load_7zip()
+{
+set -x
+    if test -f "$W_PROGRAMS_X86_UNIX/7-Zip/7z.exe"
+    then
+        echo "7zip already installed, skipping"
+	return
+    fi
+    # FIXME: use more up to date version
+    w_download 7zip http://downloads.sourceforge.net/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
+    w_try $WINE "$W_CACHE"/7zip/7z465.exe $W_UNATTENDED_SLASH_S
+}
+
+# Not really a verb until we import it from winetricks
 load_autohotkey()
 {
     test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks -q autohotkey
