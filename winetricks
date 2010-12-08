@@ -1165,14 +1165,14 @@ helper_directx_dl() {
 
 load_7zip() {
     w_download . $SOURCEFORGE/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
-    w_try $WINE "$W_CACHE"/7z465.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/7z465.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
 
 load_abiword() {
     w_download $PACKAGE http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
-    w_try $WINE "$W_CACHE"/$PACKAGE/abiword-setup-2.8.6.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/$PACKAGE/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
@@ -1229,7 +1229,7 @@ load_atmlib() {
 load_autohotkey() {
     w_download . http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
     cd "$W_CACHE"
-    w_try $WINE AutoHotkey104805_Install.exe $WINETRICKS_S
+    w_try $WINE AutoHotkey104805_Install.exe $W_UNATTENDED_SLASH_S
     cd -
 }
 
@@ -3039,7 +3039,7 @@ load_mono28() {
 
 load_mozillabuild() {
     w_download . http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/win32/MozillaBuildSetup-1.4.exe
-    w_try $WINE "$W_CACHE"/MozillaBuildSetup-1.4.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/MozillaBuildSetup-1.4.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
@@ -3209,7 +3209,7 @@ load_ogg() {
     # http://www.diracvideo.org/git?p=direct-schro.git;a=summary
 
     w_download . http://downloads.xiph.org/releases/oggdsf/opencodecs_0.84.17338.exe 6151ab79e6ae246208cdf707e080f01c93d95deb
-    w_try $WINE "$W_CACHE"/opencodecs_0.84.17338.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/opencodecs_0.84.17338.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
@@ -3559,7 +3559,7 @@ _EOF_
 load_shockwave() {
     # Not silent enough, use msi instead
     #w_download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
-    #w_try $WINE "$W_CACHE"/Shockwave_Installer_Full.exe $WINETRICKS_S
+    #w_try $WINE "$W_CACHE"/Shockwave_Installer_Full.exe $W_UNATTENDED_SLASH_S
     # old sha1sum: 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
     # 2009-07-31 sha1sum: 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
     # 2009-12-13 sha1sum: d35649883bf13cb1a86f5650e1050d15533ac0f4
@@ -3833,7 +3833,7 @@ load_vcrun2003() {
     # Sadly, I know of no Microsoft URL for these
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     w_download . $SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
-    w_try $WINE "$W_CACHE"/BZEditW32_1.6.5_Installer.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/BZEditW32_1.6.5_Installer.exe $W_UNATTENDED_SLASH_S
     w_try cp "$programfilesdir_x86_unix/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
 }
 
@@ -4325,7 +4325,7 @@ load_vc2008sp1()
 
 load_vlc() {
     w_download . $SOURCEFORGE/vlc/vlc-1.1.0-win32.exe 501b6cb12d4916ed11ec9dac9e394add9227b3be
-    w_try $WINE "$W_CACHE"/vlc-1.1.0-win32.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/vlc-1.1.0-win32.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
@@ -4393,7 +4393,7 @@ load_wmi() {
     set_winver win98
     w_override_dlls native,builtin wbemprox.dll wmiutils.dll
     # Note: there is a crash in the background towards the end, doesn't seem to hurt; see http://bugs.winehq.org/show_bug.cgi?id=7920
-    w_try $WINE "$W_CACHE"/wmi9x.exe $WINETRICKS_S
+    w_try $WINE "$W_CACHE"/wmi9x.exe $W_UNATTENDED_SLASH_S
     unset_winver
 }
 
@@ -4644,7 +4644,7 @@ do
         WINETRICKS_UNIXQUIET="-q"
         WINETRICKS_SILENT="/silent"
         WINETRICKS_UNIXSILENT="-silent"
-        WINETRICKS_S="/S"                 # for NSIS installers
+        W_UNATTENDED_SLASH_S="/S"                 # for NSIS installers
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
         ;;
