@@ -54,6 +54,9 @@ the project is shut down.
 
 http://en.wikipedia.org/wiki/Wine-Doors
 
+Likewise, WineBot supported a dozen or so titles, and even used Autohotkey to do it:
+http://winebot.sandbox.cz/tracker/browser/repositories
+
 == Proposed free titles ==
 
 Joerg requests that we add one or more of the titles in
