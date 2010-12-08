@@ -1171,8 +1171,8 @@ load_7zip() {
 #----------------------------------------------------------------
 
 load_abiword() {
-    w_download $PACKAGE http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
-    w_try $WINE "$W_CACHE"/$PACKAGE/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
+    w_download $W_PACKAGE http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
+    w_try $WINE "$W_CACHE"/$W_PACKAGE/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
@@ -1704,7 +1704,7 @@ load_dotnet11() {
     # Wine now provides some fake dll's here that conflict.
     # So check for a file that Wine should never provide, to determine if the install folder is Wine's fake one, or a real one.
     # If real, rm -rf it:
-    if test $PACKAGE != dotnet11 && test -f "$DOTNET_INSTALL_DIR/ndpsetup.ico"
+    if test $W_PACKAGE != dotnet11 && test -f "$DOTNET_INSTALL_DIR/ndpsetup.ico"
     then
         echo "prerequisite dotnet11 already installed, skipping"
         return
@@ -1752,7 +1752,7 @@ load_dotnet20() {
     load_fontfix
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != dotnet20 && test -f "$WINDIR"/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll
+    if test $W_PACKAGE != dotnet20 && test -f "$WINDIR"/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll
     then
         echo "prerequisite dotnet20 already installed, skipping"
         return
@@ -1833,7 +1833,7 @@ load_dotnet20sdk() {
 
 load_dotnet30() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != dotnet30 && test -d "$WINDIR/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0"
+    if test $W_PACKAGE != dotnet30 && test -d "$WINDIR/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0"
     then
         echo "prerequisite dotnet30 already installed, skipping"
         return
@@ -2096,7 +2096,7 @@ load_ffdshow() {
 
 load_flash() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != flash && test -f "$W_SYSTEM32_DLLS"/Macromed/Flash/flashplayer.xpt
+    if test $W_PACKAGE != flash && test -f "$W_SYSTEM32_DLLS"/Macromed/Flash/flashplayer.xpt
     then
         echo "prerequisite flash already installed, skipping"
         return
@@ -2303,7 +2303,7 @@ load_gecko() {
     esac
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != ie6 && test -f "$GECKO_DIR/gecko/$GECKO_VERSION/wine_gecko/nspr4.dll"
+    if test $W_PACKAGE != ie6 && test -f "$GECKO_DIR/gecko/$GECKO_VERSION/wine_gecko/nspr4.dll"
     then
         echo "prerequisite gecko already installed, skipping"
         return
@@ -2973,7 +2973,7 @@ load_mfc40() {
 
 load_mingw_min() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != mingw_min && test $PACKAGE != mingw && test $PACKAGE != mingw-min && test -f "$W_DRIVE_C"/MinGW/bin/gcc.exe
+    if test $W_PACKAGE != mingw_min && test $W_PACKAGE != mingw && test $W_PACKAGE != mingw-min && test -f "$W_DRIVE_C"/MinGW/bin/gcc.exe
     then
         echo "prerequisite mingw_min already installed, skipping"
         return
@@ -3147,7 +3147,7 @@ load_msxml3() {
 
 load_msxml4() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != msxml4 && test -f "$W_SYSTEM32_DLLS"/msxml4.dll
+    if test $W_PACKAGE != msxml4 && test -f "$W_SYSTEM32_DLLS"/msxml4.dll
     then
         echo "prerequisite msxml4 already installed, skipping"
         return
@@ -3166,7 +3166,7 @@ load_msxml4() {
 
 load_msxml6() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != msxml6 && test -f "$W_SYSTEM32_DLLS"/msxml6.dll
+    if test $W_PACKAGE != msxml6 && test -f "$W_SYSTEM32_DLLS"/msxml6.dll
     then
         echo "prerequisite msxml6 already installed, skipping"
         return
@@ -3343,7 +3343,7 @@ _EOF_
 load_python26() {
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != python26 && test -f "$WINEPREFIX"/drive_c/Python26/python.exe
+    if test $W_PACKAGE != python26 && test -f "$WINEPREFIX"/drive_c/Python26/python.exe
     then
         echo "prerequisite python26 already installed, skipping"
         return
@@ -3739,7 +3739,7 @@ load_vbrun60() {
     status=$?
     case $status in
     0|43) ;;
-    *) w_die $PACKAGE installation failed
+    *) w_die $W_PACKAGE installation failed
     esac
 }
 
@@ -3749,7 +3749,7 @@ load_vcrun6() {
     # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
 
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != vcrun6 && test -f "$W_SYSTEM32_DLLS"/mfc42u.dll
+    if test $W_PACKAGE != vcrun6 && test -f "$W_SYSTEM32_DLLS"/mfc42u.dll
     then
         echo "prerequisite vcrun6 already installed, skipping"
         return
@@ -3779,7 +3779,7 @@ load_vcrun6() {
     status=$?
     case $status in
     0|43) ;;
-    *) w_die $PACKAGE installation failed
+    *) w_die $W_PACKAGE installation failed
     esac
 
     # And then some apps need mfc42u.dll, dunno what right way
@@ -3816,7 +3816,7 @@ load_vcrun6sp6() {
     status=$?
     case $status in
     0|43) ;;
-    *) w_die $PACKAGE installation failed
+    *) w_die $W_PACKAGE installation failed
     esac
 
     # And then some apps need mfc42u.dll, dunno what right way
@@ -3845,7 +3845,7 @@ load_vcrun2005() {
 
     # SP1 + ATL security fix build 4053 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
-    if test $PACKAGE != vcrun2005 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
+    if test $W_PACKAGE != vcrun2005 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
     then
         echo "prerequisite vcrun2005 already installed, skipping"
         return
@@ -3876,7 +3876,7 @@ load_vcrun2008() {
     # If this is just a dependency check, don't re-install
     # SP1 + ATL security fix build 4148 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=2051a0c1-c9b5-4b0a-a8f5-770a549fd78c
-    if test $PACKAGE != vcrun2008 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
+    if test $W_PACKAGE != vcrun2008 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
     then
         echo "prerequisite vcrun2008 already installed, skipping"
         return
@@ -3985,7 +3985,7 @@ load_vc2005express()
 
 load_vc2005expresssp1()
 {
-    w_warn "$PACKAGE does not work yet"
+    w_warn "$W_PACKAGE does not work yet"
     if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
         w_die "install vc2005express first (this verb will be merged into that once it's debugged)"
@@ -4474,7 +4474,7 @@ load_wenquanyi() {
 
 load_wsh57() {
     # If this is just a dependency check, don't re-install
-    if test $PACKAGE != wsh56 && test $PACKAGE != wsh57 && test -f "$W_SYSTEM32_DLLS"/scrrun.dll
+    if test $W_PACKAGE != wsh56 && test $W_PACKAGE != wsh57 && test -f "$W_SYSTEM32_DLLS"/scrrun.dll
     then
         echo "prerequisite wsh57 already installed, skipping"
         return
@@ -4637,7 +4637,7 @@ fi
 
 while test "$1" != ""
 do
-    PACKAGE=$1
+    W_PACKAGE=$1
     case $1 in
     -q) W_UNATTENDED_SLASH_Q="/q"
         W_UNATTENDED_SLASH_Q_T="/qt" # Microsoft Control Pad
@@ -4855,7 +4855,7 @@ do
     npm-repack) npm_repack;;
     psm=on) set_psm enabled;;
     psm=off) set_psm disabled;;
-    vd=*) arg=`echo $PACKAGE | sed 's/vd=//'`; set_virtualdesktop $arg ;;
+    vd=*) arg=`echo $W_PACKAGE | sed 's/vd=//'`; set_virtualdesktop $arg ;;
     vsm-hard) set_vsm hardware;;
     winver=nt40|nt40) set_winver nt40;;
     winver=win98|win98) set_winver win98;;
@@ -4864,7 +4864,7 @@ do
     winver=winxp|winxp) set_winver winxp;;
     winver=vista|vista) set_winver vista;;
     winver=) unset_winver;;
-    *=disabled) arg=`echo $PACKAGE | sed 's/=.*//'`; w_override_dlls disabled $arg ;;
+    *=disabled) arg=`echo $W_PACKAGE | sed 's/=.*//'`; w_override_dlls disabled $arg ;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
     # Provide a bit of feedback
