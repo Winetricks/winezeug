@@ -1652,6 +1652,30 @@ load_vcrun2003()
 }
 
 #----------------------------------------------------------------
+
+w_metadata vcrun2005 dlls \
+   title="Visual C++ 2005 libraries (mfc80,msvcp80,msvcr80)" \
+   publisher="Microsoft" \
+   year="2005" \
+   media="download" \
+   file1="vcredist_x86.exe"
+
+load_vcrun2005()
+{
+    # SP1 + ATL security fix build 4053 (MS09-035)
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
+    if test -d "$WINDIR"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
+    then
+        echo "vcrun2005 already installed, skipping"
+        return
+    fi
+    w_download vcrun2005-ms09-035 http://download.microsoft.com/download/6/B/B/6BB661D6-A8AE-4819-B79F-236472F6070C/vcredist_x86.exe e052789ebad7dc8d6f8505a9295b0576babd125e
+    cd "$W_CACHE"/vcrun2005-ms09-035
+    w_override_dlls native,builtin msvcr80
+    w_try $WINE vcredist_x86.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
 # Apps
 #----------------------------------------------------------------
 
