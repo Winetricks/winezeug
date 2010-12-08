@@ -1706,6 +1706,35 @@ load_vcrun2008()
 }
 
 #----------------------------------------------------------------
+
+w_metadata vcrun2010 dlls \
+   title="Visual C++ 2010 libraries (mfc100,msvcp100,msvcr100)" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="vcredist_x86.exe"
+
+load_vcrun2010()
+{
+    if test -f "$W_SYSTEM32_DLLS"/mfc100.dll
+    then
+        echo "vcrun2010 already installed, skipping"
+        return
+    fi
+
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84
+    w_download vcrun2010 http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe 372d9c1670343d3fb252209ba210d4dc4d67d358
+
+    if w_workaround_wine_bug 23427  # fixed in wine-1.3.5
+    then
+        w_try_winetricks msxml3
+    fi
+
+    w_override_dlls native,builtin msvcr100
+    w_try $WINE "$W_CACHE"/vcrun2010/vcredist_x86.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
 # Apps
 #----------------------------------------------------------------
 
