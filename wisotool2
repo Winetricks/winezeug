@@ -1764,6 +1764,30 @@ load_autohotkey()
     test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks -q autohotkey
 }
 
+#----------------------------------------------------------------
+
+w_metadata  abiword apps \
+   title="AbiWord 2.8.6" \
+   publisher="AbiSource" \
+   year="2010" \
+   media="download" \
+   file1="abiword-setup-2.8.6.exe"
+
+load_abiword()
+{
+    if test -f "$W_PROGRAMS_X86_UNIX/AbiWord/bin/AbiWord.exe"
+    then
+       echo "abiword already installed, skipping"
+       return
+    fi
+
+    w_download abiword http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
+    w_try $WINE "$W_CACHE"/abiword/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\AbiWord\\bin" AbiWord.exe
+}
+
+#----------------------------------------------------------------
+
 w_metadata  safari apps \
    title="Safari" \
    publisher="Apple" \
