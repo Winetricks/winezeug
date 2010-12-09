@@ -1186,7 +1186,7 @@ load_adobeair() {
     # 2010-02-20: sha1sum 6f03e723bd855abbe00eb8fdf22da54fb49c62db
     # 2010-07-29: sha1sum 7b93aedaf48ad7854940e7a4e7d9394a255e888b
     w_download . http://airdownload.adobe.com/air/win/download/2.0.2/AdobeAIRInstaller.exe 7b93aedaf48ad7854940e7a4e7d9394a255e888b
-    w_try $WINE "$W_CACHE"/AdobeAIRInstaller.exe $WINETRICKS_UNIXSILENT
+    w_try $WINE "$W_CACHE"/AdobeAIRInstaller.exe $W_UNATTENDED_DASH_SILENT
 }
 
 #----------------------------------------------------------------
@@ -4643,7 +4643,7 @@ do
         W_UNATTENDED_SLASH_Q_T="/qt" # Microsoft Control Pad
         WINETRICKS_UNIXQUIET="-q"
         WINETRICKS_SILENT="/silent"
-        WINETRICKS_UNIXSILENT="-silent"
+        W_UNATTENDED_DASH_SILENT="-silent"
         W_UNATTENDED_SLASH_S="/S"                 # for NSIS installers
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
         export WINEDEBUG
