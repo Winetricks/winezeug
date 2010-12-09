@@ -1496,8 +1496,12 @@ wisotool_handle_option()
     -s|--sharedprefix) WISOTOOL_OPT_SHAREDPREFIX=1 ;;
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
     -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
-    -q|--unattended) W_OPT_UNATTENDED=1 ; 
-                     W_UNATTENDED_DASH_Q="-q"; W_UNATTENDED_SLASH_Q="/q"; W_UNATTENDED_SLASH_S="/S";;  # fixme: can't make this default easily with these here
+    -q|--unattended) W_OPT_UNATTENDED=1
+                     W_UNATTENDED_DASH_Q="-q"
+                     W_UNATTENDED_SLASH_Q="/q"
+                     W_UNATTENDED_SLASH_S="/S"
+                     W_UNATTENDED_DASH_SILENT="-silent"
+                     ;;  # fixme: can't make this default easily with these here
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
@@ -1574,7 +1578,32 @@ wisotool_uninstall_app()
 #---- Builtin Verbs ----
 
 #----------------------------------------------------------------
-# DLLs
+# Runtimes
+#----------------------------------------------------------------
+
+w_metadata  adobeair dlls \
+   title="Adobe AIR 2.5.1" \
+   publisher="Adobe" \
+   year="2010" \
+   media="download" \
+   file1="AdobeAIRInstaller.exe"
+
+load_adobeair()
+{
+    if test -f "$W_PROGRAMS_X86_UNIX/Common Files/Adobe AIR/Versions/1.0/Adobe AIR.dll"
+    then
+        echo "adobeair already installed, skipping"
+        return
+    fi
+
+    # 2010-02-02: sha1sum 5c95f51a680f8c175a92755238127be4ad22c53b
+    # 2010-02-20: sha1sum 6f03e723bd855abbe00eb8fdf22da54fb49c62db
+    # 2010-07-29: 2.0.2 sha1sum 7b93aedaf48ad7854940e7a4e7d9394a255e888b
+    # 2010-12-08: 2.1.5 sha1sum 2664207ca8e836f5070ee356064829a39785a92e
+    w_download . http://airdownload.adobe.com/air/win/download/2.5.1/AdobeAIRInstaller.exe 2664207ca8e836f5070ee356064829a39785a92e
+    w_try $WINE "$W_CACHE"/AdobeAIRInstaller.exe $W_UNATTENDED_DASH_SILENT
+}
+
 #----------------------------------------------------------------
 
 w_metadata  vcrun6 dlls \
