@@ -215,3 +215,11 @@ Downloaded via steam, but doesn't use Steam once downloaded, just like America's
 == Game development IDEs ==
 
 http://www.gamestart3d.com  (said to work quite well in wine)
+
+== Codecs ==
+
+(for winetricks)
+
+http://www.cccp-project.net looks like a reasonable nearly open source codec distribution?
+http://www.cccp-project.net/beta/ has archives of the patches they apply.
+Not sure whether they publish the source for their installer, etc.
