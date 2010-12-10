@@ -1867,7 +1867,8 @@ w_metadata 3dmark2000 benchmarks \
     media="download" \
     file1="3dmark2000_v11_100308.exe" 
 
-load_3dmark2000() {
+load_3dmark2000()
+{
     # http://www.futuremark.com/download/3dmark2000/
     if ! test -f "$W_CACHE/$W_PACKAGE/3dmark2000_v11_100308.exe"
     then
@@ -2072,7 +2073,8 @@ w_metadata  lemonysnicket games \
    media="cd" \
    file1="Lemony Snicket.iso"
 
-load_lemonysnicket() {
+load_lemonysnicket()
+{
     w_mount "Lemony Snicket"
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -2315,7 +2317,8 @@ w_metadata  torchlight games \
    media="dvd" \
    file1="Torchlight.iso"
 
-load_torchlight() {
+load_torchlight()
+{
     w_mount "Torchlight"
     w_ahk_do "
         SetTitleMatchMode, 2
