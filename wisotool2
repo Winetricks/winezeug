@@ -1764,6 +1764,33 @@ load_vcrun2010()
 }
 
 #----------------------------------------------------------------
+
+w_metadata wsh57 dlls \
+   title="MS Windows Scripting Host 5.7" \
+   publisher="Microsoft" \
+   year="2007" \
+   media="download" \
+   file1="scripten.exe"
+
+load_wsh57()
+{
+    if test -f "$W_SYSTEM32_DLLS"/scrrun.dll
+    then
+        echo "wsh57 already installed, skipping"
+        return
+    fi
+
+    # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
+    w_download wsh57 http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
+
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/wsh57/scripten.exe 
+
+    # Wine doesn't provide the other dll's (yet?)
+    w_override_dlls native,builtin jscript.dll
+    w_try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
+}
+
+#----------------------------------------------------------------
 # Apps
 #----------------------------------------------------------------
 
