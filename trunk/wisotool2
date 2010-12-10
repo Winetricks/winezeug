@@ -1817,6 +1817,24 @@ load_abiword()
 
 #----------------------------------------------------------------
 
+w_metadata mspaint apps \
+   title="MS Paint" \
+   publisher="Microsoft" \
+   year="2001" \
+   media="download" \
+   file1="paintnt.exe"
+
+load_mspaint()
+{
+    # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
+    w_download . http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
+    w_try unzip "$W_CACHE"/paintnt.exe -d "$W_WINDIR_UNIX"
+
+    w_declare_exe "$W_WINDIR_UNIX" "mspaint.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  safari apps \
    title="Safari" \
    publisher="Apple" \
