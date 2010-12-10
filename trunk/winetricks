@@ -533,13 +533,15 @@ regedit() {
 
 try_cabextract() {
     # Not always installed, but shouldn't be fatal unless it's being used
-    CABEXTRACT="`which cabextract 2>/dev/null`" 
-    if test ! -x "$CABEXTRACT"
+    _W_cabextract="`which cabextract 2>/dev/null`" 
+    if test ! -x "$_W_cabextract"
     then
         w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
     
-    w_try $CABEXTRACT "$@"
+    w_try $_W_cabextract "$@"
+
+    unset _W_cabextract
 }
 
 cabextract() {
@@ -574,7 +576,7 @@ verify_sha1sum() {
 }
 
 # Download a file
-# Usage: package url [sha1sum [filename]]
+# Usage: w_download package url [sha1sum [filename]]
 # Caches downloads in winetrickscache/$package
 w_download() {
     if [ "$4"x != ""x ]
@@ -4473,17 +4475,16 @@ load_wenquanyi() {
 #----------------------------------------------------------------
 
 load_wsh57() {
-    # If this is just a dependency check, don't re-install
-    if test $W_PACKAGE != wsh56 && test $W_PACKAGE != wsh57 && test -f "$W_SYSTEM32_DLLS"/scrrun.dll
+    if test -f "$W_SYSTEM32_DLLS"/scrrun.dll
     then
-        echo "prerequisite wsh57 already installed, skipping"
+        echo "wsh57 already installed, skipping"
         return
     fi
 
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
-    w_download . http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
+    w_download wsh57 http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
 
-    try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/scripten.exe 
+    try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/wsh57/scripten.exe 
 
     # Wine doesn't provide the other dll's (yet?)
     w_override_dlls native,builtin jscript.dll
