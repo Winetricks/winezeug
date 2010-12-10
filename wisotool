@@ -426,7 +426,8 @@ url_encode() {
 # Download a file
 # Usage: package url [sha1sum [filename [cookie jar]]]
 # Caches downloads in wisotoolcache/$package
-w_download() {
+w_download()
+{
     if [ "$4"x != ""x ]
     then
         file="$4"
@@ -521,7 +522,8 @@ w_download_manual()
 # Usage: package [foo.torrent]
 # Caches downloads in $W_CACHE/$W_PACKAGE, torrent files are assumed to be there
 # If no foo.torrent is given, will add ALL .torrent files in $W_CACHE/$W_PACKAGE
-download_torrent() {
+download_torrent()
+{
     test -f "$W_WINDIR_UNIX"/utorrent.exe || w_try_winetricks utorrent
     UT_WINPATH="$W_CACHE_WIN\\$1"
     cd "$W_CACHE/$W_PACKAGE"
@@ -824,7 +826,8 @@ cleanup()
 }
 
 # FIXME: add support for ripping mdf/mds with Alcohol 120%
-load_iso() {
+load_iso()
+{
    method=$1
    key="$2"
    img="$3"
@@ -1088,7 +1091,8 @@ w_metadata 3dmark2000 benchmarks \
     media="download" \
     file1="3dmark2000_v11_100308.exe" 
 
-load_3dmark2000() {
+load_3dmark2000()
+{
     # http://www.futuremark.com/download/3dmark2000/
     if ! test -f "$W_CACHE/$W_PACKAGE/3dmark2000_v11_100308.exe"
     then
@@ -1132,7 +1136,8 @@ w_metadata 3dmark2001 benchmarks \
     media="download" \
     file1="3dmark2001se_330_100308.exe" 
 
-load_3dmark2001() {
+load_3dmark2001()
+{
     # http://www.futuremark.com/download/3dmark2001/
     if ! test -f "$W_CACHE/$W_PACKAGE"/3dmark2001se_330_100308.exe
     then
@@ -1171,7 +1176,8 @@ w_metadata 3dmark03 benchmarks \
     media="download" \
     file1="3DMark03_v360_1901.exe" 
 
-load_3dmark03() {
+load_3dmark03()
+{
 
     # http://www.futuremark.com/benchmarks/3dmark03/download/
     if ! test -f "$W_CACHE/$W_PACKAGE/3DMark03_v360_1901.exe"
@@ -1222,7 +1228,8 @@ w_metadata 3dmark05 benchmarks \
     media="download" \
     file1="3DMark05_v130_1901.exe" 
 
-load_3dmark05() {
+load_3dmark05()
+{
 
     # http://www.futuremark.com/download/3dmark05/
     if ! test -f "$W_CACHE/$W_PACKAGE/3DMark05_v130_1901.exe"
@@ -1267,7 +1274,8 @@ w_metadata 3dmark06 benchmarks \
     media="download" \
     file1="3DMark06_v120_1901.exe" 
 
-load_3dmark06() {
+load_3dmark06()
+{
     # http://www.futuremark.com/benchmarks/3dmark06/download/
     if ! test -f "$W_CACHE/$W_PACKAGE/3DMark06_v120_1901.exe"
     then
@@ -1328,7 +1336,8 @@ w_metadata algodoo_demo games \
     media="download" \
     file1="Algodoo_1_7_1-Win32.exe" 
 
-load_algodoo_demo() {
+load_algodoo_demo()
+{
     w_download $W_PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1371,7 +1380,8 @@ w_metadata msaoe_demo games \
     media="download" \
     file1="MSAoE.exe" 
 
-load_msaoe_demo() {
+load_msaoe_demo()
+{
     w_download $W_PACKAGE  http://download.microsoft.com/download/aoe/Trial/1.0/WIN98/EN-US/MSAoE.exe 23630a65ce4133038107f3175f8fc54a914bc2f3
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1400,7 +1410,8 @@ w_metadata aoe3_demo games \
     media="download" \
     file1="aoe3trial.exe" 
 
-load_aoe3_demo() {
+load_aoe3_demo()
+{
 
     w_download $W_PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
         2b0a123243092d79f910db5691d99d469f7c17c3
@@ -1460,7 +1471,8 @@ w_metadata aoe3cc games \
     file2="AOE III DISC 2.iso" \
     file3="AOE III DISC 3.iso" 
 
-load_aoe3cc() {
+load_aoe3cc()
+{
 # Not using $W_PACKAGE because it may be called below from aoe3cc_ad/aoe3cc_wc
 # where $W_PACKAGE would be set differently
 
@@ -1543,7 +1555,8 @@ w_metadata aoe3cc_ad games \
     media="dvd" \
     file1="AOE3Y.iso" 
 
-load_aoe3cc_ad() {
+load_aoe3cc_ad()
+{
 
     mkdir -p "$W_TMP/$W_PACKAGE"
 
@@ -1619,7 +1632,8 @@ w_metadata aoe3cc_wc games \
     media="dvd" \
     file1="AOE3X.iso" 
 
-load_aoe3cc_wc() {
+load_aoe3cc_wc()
+{
 
     mkdir -p "$W_TMP/$W_PACKAGE"
 
@@ -1695,7 +1709,8 @@ w_metadata amnesia_tdd_demo games \
     media="download" \
     file1="amnesia_tdd_demo_1.0.1.exe" 
 
-load_amnesia_tdd_demo() {
+load_amnesia_tdd_demo()
+{
     w_download_manual $W_PACKAGE "http://www.amnesiagame.com/#demo" amnesia_tdd_demo_1.0.1.exe 0bf0bc6e9c8ea76f1c44582d9302a9b22d31d1b6
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -1747,7 +1762,8 @@ w_metadata anno1404_demo games \
     media="download" \
     file1="DawnofDiscovery_Demo_US_2009_06_15_18_22.zip" 
 
-load_anno1404_demo() {
+load_anno1404_demo()
+{
     w_download_manual $W_PACKAGE "http://www.filefront.com/thankyou.php?f=13908918" DawnofDiscovery_Demo_US_2009_06_15_18_22.zip
 
     mkdir -p "$W_TMP/$W_PACKAGE"
@@ -1803,7 +1819,8 @@ w_metadata assassinscreed games \
     media="dvd" \
     file1="a62112860423b32bf3ea77df6f5fe0b60c772de2.iso" 
 
-load_assassinscreed() {
+load_assassinscreed()
+{
     if w_workaround_wine_bug 22392
     then
         # Don't hang at a dialog box when Detection crashes
@@ -1904,7 +1921,8 @@ w_metadata baldursgate2 games \
     file3="a6d18fcd7d16ddafbda7aa028b117566b1e09d2a.iso" \
     file4="94ed41768949c89a1a6479305f00a9cee1d2dcd5.iso" 
 
-load_baldursgate2() {
+load_baldursgate2()
+{
     # Possible wine bug: cd is still in use, even if wine eject is used. Workaround it by
     # copying all the cd's to a directory, and running the installer from there.
     # You still need the first CD mounted at the end, however...
@@ -2013,7 +2031,8 @@ w_metadata batman_arkham_asylum_demo games \
     media="download" \
     file1="BMDemo_installer.exe" 
 
-load_batman_arkham_asylum_demo() {
+load_batman_arkham_asylum_demo()
+{
     w_download $W_PACKAGE http://cdn2.netops.eidosinteractive.com/batmanarkhamasylum/BMDemo_installer.exe 7582c87cc3983016c7fbf2104999df087ecce7a6
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -2243,7 +2262,8 @@ w_metadata bfbc2 games \
     media="dvd" \
     file1="BFBC2.iso" 
 
-load_bfbc2() {
+load_bfbc2()
+{
     exedir="$W_PROGRAMS_X86_UNIX/Electronic Arts/Battlefield Bad Company 2"
 
     iso_mount "$W_CACHE"/$W_PACKAGE/BFBC2.iso
@@ -2328,7 +2348,8 @@ w_metadata bioshock games \
     file1="391042ea19b4eace5d532dbade10931ebbc4def6.mds" \
     file2="deaf00ebee6e73aecf38f704c3f516008a68d888.iso" 
 
-load_bioshock() {
+load_bioshock()
+{
     # Bioshock needs MSVCP80.dll to run, which Wine doesn't have yet.
     if w_workaround_wine_bug 22501
     then
@@ -2521,7 +2542,8 @@ w_metadata bioshock_demo games \
     media="download" \
     file1="nzd_BioShockPC.zip" 
 
-load_bioshock_demo() {
+load_bioshock_demo()
+{
     w_download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
     cd "$W_DRIVE_C"
     rm -rf bioshock-temp
@@ -2570,7 +2592,8 @@ w_metadata bladekitten_demo games \
     media="download" \
     file1="BladeKittenDemoInstall.exe" 
 
-load_bladekitten_demo() {
+load_bladekitten_demo()
+{
     if ! test -f "$W_CACHE/$W_PACKAGE/BladeKittenDemoInstall.exe"
     then
         w_download $W_PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7
@@ -2615,7 +2638,8 @@ w_metadata blobby_volley games \
     media="download" \
     file1="blobby.zip" 
 
-load_blobby_volley() {
+load_blobby_volley()
+{
     w_download_manual $W_PACKAGE http://www.chip.de/downloads/Blobby-Volley_12990993.html blobby.zip c7057c77a5009a88d9d877e17a63b5536ebeb177
 
     mkdir -p "$W_DRIVE_C/BlobbyVolley"
@@ -2638,7 +2662,8 @@ w_metadata blur games \
     media="dvd" \
     file1="30fdaf3aad82be846f26b7908c703598d5c3443d.iso" 
 
-load_blur() {
+load_blur()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/30fdaf3aad82be846f26b7908c703598d5c3443d.iso
 
     w_ahk_do "
@@ -2804,7 +2829,8 @@ w_metadata cod_demo games \
     media="download" \
     file1="Call_Of_Duty_Demo.exe" 
 
-load_cod_demo() {
+load_cod_demo()
+{
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -2857,7 +2883,8 @@ w_metadata cod1 games \
     file1="COD1.iso" \
     file2="CoD2.iso" 
 
-load_cod1() {
+load_cod1()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/COD1.iso
 
     w_read_key
@@ -3008,7 +3035,8 @@ w_metadata cod4mw_demo games \
     media="download" \
     file1="CoD4MWDemoSetup_v2.exe" 
 
-load_cod4mw_demo() {
+load_cod4mw_demo()
+{
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -3070,7 +3098,8 @@ w_metadata civ4 games \
     file1="6633e9cfbe06aa292b33fb38ce0779faf5a379bb.iso" \
     file2="231eee984062c9acadd336b4c0852fac829b76a8.iso" 
 
-load_civ4() {
+load_civ4()
+{
     if w_workaround_wine_bug 219
     then
         w_warn "This game's DRM is not supported by Wine :-( but try patch 3.19 or later, it's said to remove the DRM"
@@ -3156,7 +3185,8 @@ w_metadata civ4_colonization games \
     media="dvd" \
     file1="4cdd3f4862a725d608de4dbc45f7ca393c815ced.iso" 
 
-load_civ4_colonization() {
+load_civ4_colonization()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/4cdd3f4862a725d608de4dbc45f7ca393c815ced.iso
 
     cd "$W_ISO_MOUNT_ROOT"
@@ -3482,7 +3512,8 @@ w_metadata daytona_usa_evolutions games \
     file1="daytonev.exe" 
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=1136
-load_daytona_usa_evolutions() {
+load_daytona_usa_evolutions()
+{
     # Refuses to run on anything newer...
     w_try_winetricks win98
 
@@ -3547,7 +3578,8 @@ w_metadata dc2ba_demo games \
     media="download" \
     file1="InstallDorasCarnival2BoardwalkAdventure.exe" 
 
-load_dc2ba_demo() {
+load_dc2ba_demo()
+{
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
     w_download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
 
@@ -3603,7 +3635,8 @@ w_metadata deadspace games \
     media="dvd" \
     file1="abf250df77bfa96c74e7bcd0343d381a4f327a26.iso" 
 
-load_deadspace() {
+load_deadspace()
+{
     DEADSPACEKEY=`cat "$W_CACHE"/$W_PACKAGE/abf250df77bfa96c74e7bcd0343d381a4f327a26.txt | tr -d -`
 
     if w_workaround_wine_bug 23324
@@ -3798,7 +3831,8 @@ w_metadata diablo2 games \
     file3="382ea98f270e39855b558b8fac0d609712a54ae8.iso" \
     file4="e20efb1ea60e58b4a25275a00571aabfe3ab4511.iso" 
 
-load_diablo2() {
+load_diablo2()
+{
     w_warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other three discs."
     w_download $W_PACKAGE http://ftp.blizzard.com/pub/diablo2/patches/PC/D2Patch_113c.exe c78761bfb06999a9788f25a23a1ed30260ffb8ab
 
@@ -3872,7 +3906,8 @@ w_metadata dirt2_demo games \
     media="download" \
     file1="Dirt2Demo.zip" 
 
-load_dirt2_demo() {
+load_dirt2_demo()
+{
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
 
     mkdir "$W_TMP/$W_PACKAGE"
@@ -3996,7 +4031,8 @@ w_metadata dragonage games \
     media="dvd" \
     file1="705a6b06d0dd807bf62b4391d278649d728ebda4.iso" 
 
-load_dragonage() {
+load_dragonage()
+{
     w_read_key
 
     # Installer has a non-fatal crash on exit, so ignore it.
@@ -4061,7 +4097,8 @@ w_metadata dts games \
     media="dvd" \
     file1="3cf30e69986e00794a4ee581a35f3319f82a82dd.iso" 
 
-load_dts() {
+load_dts()
+{
 
     iso_mount "$W_CACHE"/$W_PACKAGE/3cf30e69986e00794a4ee581a35f3319f82a82dd.iso
 
@@ -4101,7 +4138,8 @@ w_metadata eve games \
     media="download" \
     file1="EVE_Premium_Setup_177290_m.exe" 
 
-load_eve() {
+load_eve()
+{
     # FIXME: download function should avoid checksumming huge old files
     test -s "$W_CACHE/$W_PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
         w_download $W_PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
@@ -4144,7 +4182,8 @@ w_metadata ewj_demo games \
     media="download" \
     file1="ewjdemo.exe"
 
-load_ewj_demo() {
+load_ewj_demo()
+{
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=4233
     w_download_manual $W_PACKAGE http://download.cnet.com/Earthworm-Jim-demo/3000-2099_4-10000793.html ewjdemo.exe
 
@@ -4187,7 +4226,8 @@ w_metadata fable_tlc games \
     file3="ed977f38acac7a09b8b6fdcc64a68933076d0cd4.iso" \
     file4="2aa5c8c55d38a4113da4c3ca60d9e69ed2a0d941.iso" 
 
-load_fable_tlc() {
+load_fable_tlc()
+{
 
     w_read_key
 
@@ -4332,7 +4372,8 @@ w_metadata fallout3_goty games \
     file1="379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso" \
     file2="f131e45dba66ed2c98dd7a1e04cc1114b7c5e4b6.iso" 
 
-load_fallout3_goty() {
+load_fallout3_goty()
+{
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
     iso_mount "$W_CACHE"/$W_PACKAGE/379e2daa9bdd1aaf1cb152c1d9f8181f8f24e01b.iso
 
@@ -4483,7 +4524,8 @@ w_metadata fifa10 games \
     media="dvd" \
     file1="2038b86319862e1177912949e9f826f333571c48.iso" 
 
-load_fifa10() {
+load_fifa10()
+{
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=14322
     iso_mount "$W_CACHE"/$W_PACKAGE/2038b86319862e1177912949e9f826f333571c48.iso
 
@@ -4776,7 +4818,8 @@ w_metadata fifa10_demo games \
     media="download" \
     file1="fifa10_pc_demo_ec.exe" 
 
-load_fifa10_demo() {
+load_fifa10_demo()
+{
     w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/fifa10_pc_demo_ec.exe" 96200d4962fd6c34715c448ba22f00edd3d70cd6
 
     # The installer is a self extracting rar file. Make cleanups easy by using $W_TMP
@@ -4837,7 +4880,8 @@ w_metadata ffvii_demo games \
     media="download" \
     file1="ff7demo.zip" 
 
-load_ffvii_demo() {
+load_ffvii_demo()
+{
     w_download $W_PACKAGE "http://software-files-l.cnet.com/s/software/89/10/18/ff7demo.zip?e=1284462275&h=47913b28b2f4a0274af12447d1359776&lop=link&ptype=1901&ontid=7538&siteId=4&edId=3&spi=bc2f47421050036bcf32c99124aba9c2&pid=891018&psid=10020419&fileName=ff7demo.zip" 79a555cd1874410a93952486e511bb8492e82a56 ff7demo.zip
 
     mkdir "$W_PROGRAMS_X86_UNIX/ffvii_demo"
@@ -4862,7 +4906,8 @@ w_metadata ffxiv_beta games \
     media="download" \
     file1="ffxivsetup.exe" 
 
-load_ffxiv_beta() {
+load_ffxiv_beta()
+{
     w_download_manual $W_PACKAGE https://dev-na.ffxiv.com/ ffxivsetup.exe e6e615e5886c17e744fc4aba7b267e7e3dcbdb52
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -4934,7 +4979,8 @@ w_metadata ffxivbench benchmarks \
     media="download" \
     file1="FFXIVBenchmark.zip" 
 
-load_ffxivbench() {
+load_ffxivbench()
+{
     w_download $W_PACKAGE http://uk.download.nvidia.com/nzone/international/benchmarks/ffxiv/FFXIVBenchmark.zip 9c2406540306575bdc738c439e59f54eb44304a8
 
     cd "$W_PROGRAMS_X86_UNIX"
@@ -4987,7 +5033,8 @@ w_metadata fm10_demo games \
     media="download" \
     file1="Setup_FM2010_Vanilla_Demo.exe" 
 
-load_fm10_demo() {
+load_fm10_demo()
+{
     w_download_manual $W_PACKAGE http://www.mirrorfootball.co.uk/football-manager-2010/ Setup_FM2010_Vanilla_Demo.exe
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5036,7 +5083,8 @@ w_metadata futurepinball games \
     media="download" \
     file1="FuturePinballSetup_v1.9.20081225.exe"
 
-load_futurepinball() {
+load_futurepinball()
+{
     w_download $W_PACKAGE "http://members.iinet.net.au/~cleathley/downloads/FuturePinballSetup_v1.9.20081225.exe" 1d7f445c03ea508b8144cd56961c6d59136c2b1b
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5098,7 +5146,8 @@ w_metadata gothic4_demo games \
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=21507
 
-load_gothic4_demo() {
+load_gothic4_demo()
+{
     w_download $W_PACKAGE http://gamedaily.newaol.com/pub/ArcaniA_Gothic4_Demo_Setup.zip
 
     w_try mkdir -p "$W_TMP/$W_PACKAGE"
@@ -5178,7 +5227,8 @@ w_metadata grand_ages_rome_demo games \
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=9378
 
-load_grand_ages_rome_demo() {
+load_grand_ages_rome_demo()
+{
     w_download $W_PACKAGE http://gamedaily.newaol.com/pub/GrandAgesRome-EU-XL-Demo.exe 175c0dcdd6eb7c2b928f4ece0f775772ae94d8cf
 
     if w_workaround_wine_bug 24819
@@ -5224,7 +5274,8 @@ w_metadata gta_vc games \
     file1="e98c2d323dd0494989a844442586dc2d48fba8f9.iso" \
     file2="d31f5c35cc63d804a7ffdb212f550681b97ee5b3.iso" 
 
-load_gta_vc() {
+load_gta_vc()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/e98c2d323dd0494989a844442586dc2d48fba8f9.iso
     w_ahk_do "
     SetTitleMatchMode, 2
@@ -5282,7 +5333,8 @@ w_metadata guildwars games \
     media="download" \
     file1="GwSetup.exe" 
 
-load_guildwars() {
+load_guildwars()
+{
     w_download $W_PACKAGE http://guildwars.com/download a7c4c8cb3b8cbee20707dcf8176d3da6a1686c05 GwSetup.exe
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5313,7 +5365,8 @@ w_metadata half_life_goty games \
     media="dvd" \
     file1="dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso" 
 
-load_half_life_goty() {
+load_half_life_goty()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/dc32c16bca6c19f14e3501e3be3e4a157ddbee20.iso
 
     w_ahk_do "
@@ -5385,7 +5438,8 @@ w_metadata hko games \
     media="download" \
     file1="Hello Kitty Online Standard Installer.zip" 
 
-load_hko() {
+load_hko()
+{
     w_download $W_PACKAGE http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
     download_torrent $W_PACKAGE hkostandardinstaller.torrent
     w_try unzip "$W_CACHE/$W_PACKAGE/Hello Kitty Online Standard Installer.zip" -d "$W_TMP"
@@ -5451,7 +5505,8 @@ w_metadata hm_demo games \
     media="download" \
     file1="HeartsMedicine_Season1_download.exe" 
 
-load_hm_demo() {
+load_hm_demo()
+{
     w_download $W_PACKAGE http://sandlotgames.s3.amazonaws.com/HeartsMedicine_Season1_download.exe cbafe46845a2c598d076b0178406e24f93c5db54
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -5506,7 +5561,8 @@ w_metadata hordsoforcs2_demo games \
     media="download" \
     file1="HoO2Demo.exe" 
 
-load_hordsoforcs2_demo() {
+load_hordsoforcs2_demo()
+{
     w_download_manual $W_PACKAGE http://www.fileplanet.com/216619/download/Hordes-of-Orcs-2-Demo HoO2Demo.exe 1ba26d35697e359f89a30915140e471fadc675da
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5725,7 +5781,8 @@ load_hegemonypom_demo()
 
 verblist_add help     "How to use this tool"
 
-load_help() {
+load_help()
+{
     w_warn "If the game is not marked with {download} or {loaded} in the menu, you have to insert its disc and give the 'load' command before you can choose that game in the menu.  If the game has multiple discs, you have to do this for each disc."
     w_warn "If the game has an install key, you have to enter that when loading the first disc.  (You have to do that from the commandline, e.g. sh wisotool load=XXXX-YYYY-ZZZZ.)"
 }
@@ -5773,7 +5830,8 @@ w_metadata hod3_jp_demo games \
     media="download" \
     file1="hod3_trial.exe" 
 
-load_hod3_jp_demo() {
+load_hod3_jp_demo()
+{
     if ! test -f "$W_CACHE/$W_PACKAGE/hod3_trial.exe"
     then
         w_download $W_PACKAGE http://www2.sega.co.jp/download/pc/hod3/hod3_trial.exe f616ac945bcbb5b897d24f3ce568c0f528801d05
@@ -5832,7 +5890,8 @@ w_metadata imvu games \
     media="download" \
     file1="InstallIMVU_449.0.exe"
 
-load_imvu() {
+load_imvu()
+{
 
     w_download $W_PACKAGE http://static-akm.imvu.com/imvufiles/installers/InstallIMVU_449.0.exe c537341c5f31015ad4a848681f403fd77643e7d0
 
@@ -5870,7 +5929,8 @@ w_metadata kq1vga games \
 # http://agdinteractive.com/countdl.php?action=download&game=11
 # See also http://en.wikipedia.org/wiki/AGD_Interactive
 
-load_kq1vga() {
+load_kq1vga()
+{
     w_download $W_PACKAGE http://www.glorianon.com/agdi/Kq1vga40.exe 68627cf51391a7000ba671253421b47dc2d57005
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -6123,7 +6183,8 @@ w_metadata lol_standalone games \
     media="dvd" \
     file1="StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 
 
-load_lol_standalone() {
+load_lol_standalone()
+{
     w_download ${W_PACKAGE} "http://l3cdn.riotgames.com/Installer/lol/StandAlone_9_21_2010_NA(with%20sse2%20fix).rar" 571f8fbb5bff31fe94f3f08280cb0ff6e432bde5
     mkdir -p "$W_DRIVE_C/Riot Games"
     cd "$W_DRIVE_C/Riot Games"
@@ -6276,7 +6337,8 @@ w_metadata lswcs games \
     media="dvd" \
     file1="dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso" 
 
-load_lswcs() {
+load_lswcs()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/dc5db10e2ad2892ba40015d3856d1d29dc55893a.iso
     w_ahk_do "
         run ${W_ISO_MOUNT_LETTER}:setup.exe
@@ -6309,7 +6371,8 @@ w_metadata losthorizon_demo games \
     media="download" \
     file1="Lost_Horizon_Demo_EN.exe" 
 
-load_losthorizon_demo() {
+load_losthorizon_demo()
+{
     w_download_manual $W_PACKAGE http://www.fileplanet.com/215704/download/Lost-Horizon-Demo Lost_Horizon_Demo_EN.exe
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -6363,7 +6426,8 @@ w_metadata manhole games \
     media="dvd" \
     file1="39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso" 
 
-load_manhole() {
+load_manhole()
+{
     cd $W_TMP
 
     iso_mount "$W_CACHE"/$W_PACKAGE/39aea1267c2b2b22a7d5c1e9f86ea1f4461457e3.iso
@@ -6387,7 +6451,8 @@ w_metadata masseffect2 games \
     file1="4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso" \
     file2="49d1f9b85203049d52a8e34b92cd7d4b96e0c8be.iso" 
 
-load_masseffect2() {
+load_masseffect2()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.iso
     ME2_KEY=`cat "$W_CACHE"/$W_PACKAGE/4b817d67c8b7e8e7bc33f8cb6047210ab554fef6.txt | tr -d -`
 
@@ -6474,7 +6539,8 @@ w_metadata masseffect2_demo games \
     media="download" \
     file1="MassEffect2DemoEN.exe" 
 
-load_masseffect2_demo() {
+load_masseffect2_demo()
+{
     w_download ${W_PACKAGE} http://masseffect.bioware.com/cdn/A/ME2_DEMO/MassEffect2DemoEN.exe cda9a25387a98e29772b3ccdcf609f87188285e2
 
     if w_workaround_wine_bug 22091
@@ -6558,7 +6624,8 @@ w_metadata maxmagicmarker_demo games \
     media="download" \
     file1="max_demo_pc.zip" 
 
-load_maxmagicmarker_demo() {
+load_maxmagicmarker_demo()
+{
 
     w_download $W_PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
 
@@ -6619,7 +6686,8 @@ w_metadata metro2033 games \
     media="dvd" \
     file1="3de89e07449c2573cd4a334b0cd7da012a98f97c.iso" 
 
-load_metro2033() {
+load_metro2033()
+{
     w_warn "You'll need to have STEAM_USER/STEAM_PASS set in your environment or in $W_CACHE. You'll also need your cd-key for Metro 2033 already added to your Steam Account."
 
     if [ ! "$STEAM_USER" -a ! -f "$W_CACHE"/STEAM_USER ]
@@ -6702,7 +6770,8 @@ w_metadata mise games \
     media="dvd" \
     file1="SecretOfMonkeyIslandSE_ddsetup.zip" 
 
-load_mise() {
+load_mise()
+{
     w_download_manual $W_PACKAGE "http://www.direct2drive.com/8241/product/Buy-The-Secret-of-Monkey-Island(R):-Special-Edition-Download" SecretOfMonkeyIslandSE_ddsetup.zip 2e32458698c9ec7ebce94ae5c57531a3fe1dbb9e
 
     if w_workaround_wine_bug 22161
@@ -6857,7 +6926,8 @@ w_metadata morrowind games \
     media="dvd" \
     file1="c8368ed30d3f3fcd7fccf8bffcfcdf0a6d4cb68b.iso" 
 
-load_morrowind() {
+load_morrowind()
+{
     cd $W_TMP
     # FIXME: Untested on Windows!
 
@@ -6955,7 +7025,8 @@ w_metadata nd23_saw_demo games \
     media="download" \
     file1="SAW_demo1.zip" 
 
-load_nd23_saw_demo() {
+load_nd23_saw_demo()
+{
     # http://www.herinteractive.com/Mystery_Games/Nancy_Drew/Shadow_at_the_Waters_Edge/pc
     w_download $W_PACKAGE http://www.herinteractive.com/games/saw/SAW_demo1.zip 29975be19c99f7707c4da218b60e2ed0d70bf4a7
 
@@ -7216,7 +7287,8 @@ w_metadata orangebox games \
     file1="976f67eec4b84331de8f6695272bc9192466da6a.iso" \
     file2="b86c9297cc4c56e98f8c3f3e489091ffa4b4a11d.iso" 
 
-load_orangebox() {
+load_orangebox()
+{
     test -f "$W_PROGRAMS_X86_UNIX"/Steam/Steam.exe || w_try_winetricks -q steam
     # Have to log in before you can install orangebox!
     $WINE 'c:\Program Files\Steam\Steam' -login $STEAMUSER $STEAMPW
@@ -7278,7 +7350,8 @@ w_metadata osmos_demo games \
     media="download" \
     file1="OsmosDemo_Installer_1.5.6.exe" 
 
-load_osmos_demo() {
+load_osmos_demo()
+{
 
     w_download $W_PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
 
@@ -7317,7 +7390,8 @@ w_metadata pcmark04 benchmarks \
     media="download" \
     file1="PCMark04_v130_installer.exe" 
 
-load_pcmark04() {
+load_pcmark04()
+{
     w_download_manual $W_PACKAGE http://www.futuremark.com/download/pcmark04/ PCMark04_v130_installer.exe
 
     w_warn "Please don't use mouse while this installer is running.  Sorry..."
@@ -7371,7 +7445,8 @@ w_metadata pcmark05 benchmarks \
     media="download" \
     file1="PCMark05_v120_1901.exe" 
 
-load_pcmark05() {
+load_pcmark05()
+{
     # http://www.futuremark.com/download/pcmark05/
     if ! test -f "$W_CACHE/$W_PACKAGE/PCMark05_v120_1901.exe"
     then
@@ -7423,7 +7498,8 @@ load_pcmark05() {
 # Not finished
 #verblist_add passmark7 "Performance Test 7 (Passmark, 2010) [download]" petst.exe
 
-load_passmark7() {
+load_passmark7()
+{
     # http://www.passmark.com/download/pt_download.htm
     if ! test -f "$W_CACHE/$W_PACKAGE/petst.exe"
     then
@@ -7447,7 +7523,8 @@ w_metadata pscs5 apps \
     file1="Photoshop_12_LS1.7z" \
     file2="Photoshop_12_LS1.exe" 
 
-load_pscs5() {
+load_pscs5()
+{
     w_try cd "$W_CACHE/$W_PACKAGE"
     if [ ! -f "$W_CACHE/$W_PACKAGE/Photoshop_12_LS1.7z" ]
     then
@@ -7522,7 +7599,8 @@ w_metadata pscs5_pickle apps \
     publisher="Adobe" \
     year="2010"
 
-load_pscs5_pickle() {
+load_pscs5_pickle()
+{
     w_warn "This will tar up Photoshop CS5's files from a Windows install, along with needed registry entries, for use in wine with load_pscs5_unpickle()"
 
     if [ ! -d "$W_PROGRAMS_X86_WIN/Adobe/Adobe Photoshop CS5/" ]
@@ -7573,7 +7651,8 @@ w_metadata pscs5_unpickle apps \
     media="dvd" \
     file1="adobe_cs5.tar" 
 
-load_pscs5_unpickle() {
+load_pscs5_unpickle()
+{
     w_warn "This will install Photoshop CS5's files from a Windows install made with pscs5_pickle()"
 
     # Install dependencies:
@@ -7607,7 +7686,8 @@ w_metadata plantsvszombies games \
     media="download" \
     file1="PlantsVsZombiesSetup.exe" 
 
-load_plantsvszombies() {
+load_plantsvszombies()
+{
     if ! test -f "$W_CACHE/$W_PACKAGE/PlantsVsZombiesSetup.exe"
     then
         w_download $W_PACKAGE "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
@@ -7964,7 +8044,8 @@ w_metadata puzzleagent_demo games \
     media="download" \
     file1="PuzzleAgent_PC_Setup.exe" 
 
-load_puzzleagent_demo() {
+load_puzzleagent_demo()
+{
 
     w_download $W_PACKAGE http://telltale.vo.llnwd.net/o15/games/puzzleagent/100/PuzzleAgent_PC_Setup.exe 98337b2f24966c0e8ecb3357173ca16cca39b378
 
@@ -8170,7 +8251,8 @@ w_metadata re5bench benchmarks \
     media="download" \
     file1="nzd_ResidentEvil5_Benchmark.exe" 
 
-load_re5bench() {
+load_re5bench()
+{
     if ! test -f "$W_CACHE/$W_PACKAGE/nzd_ResidentEvil5_Benchmark.exe"
     then
         w_download $W_PACKAGE http://download.nvidia.com/downloads/nZone/demos/nzd_ResidentEvil5_Benchmark.exe 041492b9af138f67e7acf97fbd8e926dda59ab12
@@ -8230,7 +8312,8 @@ w_metadata riseofnations_demo games \
     media="download" \
     file1="RiseOfNationsTrial.exe" 
 
-load_riseofnations_demo() {
+load_riseofnations_demo()
+{
     w_download_manual $W_PACKAGE http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html RiseOfNationsTrial.exe 33cbf1ebc0a93cb840f6296d8b529f6155db95ee
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -8262,7 +8345,8 @@ w_metadata quake3 games \
     media="dvd" \
     file1="4d2102a8df3c1fea237f2a6a141346c436614d5e.iso" 
 
-load_quake3() {
+load_quake3()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/4d2102a8df3c1fea237f2a6a141346c436614d5e.iso
     w_ahk_do "
         Run ${W_ISO_MOUNT_LETTER}:Setup.exe
@@ -8296,7 +8380,8 @@ w_metadata sammax304_demo games \
     media="download" \
     file1="SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe" 
 
-load_sammax304_demo() {
+load_sammax304_demo()
+{
     if ! test -f "$W_CACHE/$W_PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
     then
         w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
@@ -8340,7 +8425,8 @@ w_metadata sega_rally_2 games \
     file1="rally2.exe" 
 
 # http://appdb.winehq.org/objectManager.php?sClass=application&iId=6961
-load_sega_rally_2() {
+load_sega_rally_2()
+{
     w_download $W_PACKAGE http://www2.sega.co.jp/download/pc/rally2/rally2.exe 1c0560c9f7d22343511a8ad46dbe606c6c7417c9
 
     # Installer starts by extracting files, but doesn't seem to be a zip file or a cab file. I tried a few cli arguments,
@@ -8400,7 +8486,8 @@ w_metadata 7million games \
     media="download" \
     file1="7Million_0_17_0-full.exe" 
 
-load_7million() {
+load_7million()
+{
     w_download $W_PACKAGE http://content.deepsilver.com/kochmedia/downloads/7million/de-uk/7Million_0_17_0-full.exe 99d496817367216180c4b3a59180361c23348e1e
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -8445,7 +8532,8 @@ w_metadata secondlife_beta games \
     media="download" \
     file1="Second_Life_2-3-0-213435_BetaViewer_Setup.exe" 
 
-load_secondlife_beta() {
+load_secondlife_beta()
+{
     w_download $W_PACKAGE http://download.cloud.secondlife.com/beta-releases/Viewer-2-3-0/Second_Life_2-3-0-213435_BetaViewer_Setup.exe
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -8472,7 +8560,8 @@ w_metadata segabass games \
     media="dvd" \
     file1="does not exist"
 
-load_segabass() {
+load_segabass()
+{
     # Can't make a .iso of this disc, so assume the disc is in drive d:
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -8502,7 +8591,8 @@ w_metadata sims3 games \
     media="dvd" \
     file1="8a82a067f3bb8f68d034a06954e9a16ea381958a.iso" 
 
-load_sims3() {
+load_sims3()
+{
     # Launcher needs .net.  (But you don't need the launcher to play the game, so this may be overkill.)
     if false && w_workaround_wine_bug 22350
     then
@@ -8575,7 +8665,8 @@ w_metadata singularity games \
     media="dvd" \
     file1="cfbba29fa8db1b9f87a90ea2f54c63026757c13d.iso" 
 
-load_singularity() {
+load_singularity()
+{
     # Get user's key
     KEY=`cat "$W_CACHE"/$W_PACKAGE/cfbba29fa8db1b9f87a90ea2f54c63026757c13d.txt | tr -d -`
 
@@ -8858,7 +8949,8 @@ w_metadata sonicdxb_demo games \
     media="download" \
     file1="sadx_trial_b.exe" 
 
-load_sonicdxb_demo() {
+load_sonicdxb_demo()
+{
     # http://sega.jp/pc/sonicdx/
     # http://sega.jp/pc/sonicdx/trial.shtml
     if ! test -f "$W_CACHE/$W_PACKAGE/sadx_trial_b.exe"
@@ -8901,7 +8993,8 @@ w_metadata stalker_pripyat_bench benchmarks \
     media="download" \
     file1="stkcop-bench-setup.exe" 
 
-load_stalker_pripyat_bench() {
+load_stalker_pripyat_bench()
+{
     # FIXME: There's a much faster download at
     # http://www.bigdownload.com/games/stalker-call-of-pripyat/pc/stalker-call-of-pripyat-benchmark
     # Should we direct users to download from there manually?
@@ -8958,7 +9051,8 @@ w_metadata starcraft games \
     file1="8d6cc11bc76b8af22868a95e17e0282277e9c53c.iso" \
     file2="966bae1f2e2035e066139e78137e623c92838254.iso" 
 
-load_starcraft() {
+load_starcraft()
+{
     w_warn "You must have already done 'wisotool load=YOURKEY' on the install disc, and 'wisotool load' on the other disc."
 
     # Force clean-ish install
@@ -9010,7 +9104,8 @@ w_metadata starcraft2 games \
 
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=20882
 
-load_starcraft2() {
+load_starcraft2()
+{
     load_gecko
 
     for x in "Installer Tome 1.MPQE" "Installer UI 1.MPQ" "Installer UI 2.MPQE" "Installer.app" "Installer.exe"
@@ -9117,7 +9212,8 @@ w_metadata stfu games \
     file1="0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso" \
     file2="5d6e2eb1b08b9d4a71b2390b385c3048ec91f3df.iso" 
 
-load_stfu() {
+load_stfu()
+{
     load_autohotkey
 
     iso_mount "$W_CACHE"/$W_PACKAGE/0d0f4e826c3a04542a68d7bcc971f4df7526965b.iso
@@ -9266,7 +9362,8 @@ w_metadata smbx games \
     media="download" \
     file1="smbx122.exe" 
 
-load_smbx() {
+load_smbx()
+{
     # Download URL embedded in http://www.supermariobrothers.org/downloads/smbx122.html
     w_download $W_PACKAGE http://www.tehgamez.com/a/smbx122.exe 269eb60d502e57fdfae9c3601ad9ee22801cb5d1
 
@@ -9321,7 +9418,8 @@ w_metadata theundergarden_demo games \
     media="download" \
     file1="TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe"
 
-load_theundergarden_demo() {
+load_theundergarden_demo()
+{
     w_download_manual $W_PACKAGE http://www.bigdownload.com/games/the-undergarden/pc/the-undergarden-demo/ TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe facf90c422ac2f2f242100f39bedfe7df0c95f7a
 
     if w_workaround_wine_bug 25384
@@ -9404,7 +9502,8 @@ w_metadata timezattack_demo games \
     media="download" \
     file1="Win_TimezAttackFreeInstaller.exe" 
 
-load_timezattack_demo() {
+load_timezattack_demo()
+{
     w_download $W_PACKAGE http://s3.amazonaws.com/BigBrainz/Win_TimezAttackFreeInstaller.exe aa30905e064c1f28949b56a8ab5ffe1ffa86618c
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -9447,7 +9546,8 @@ w_metadata tlr_demo games \
     media="download" \
     file1="TheLastRemnant_PC_Demo.zip" 
 
-load_tlr_demo() {
+load_tlr_demo()
+{
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=15997
 # http://news.bigdownload.com/2009/02/26/download-the-last-remnant-demo/
 
@@ -9500,7 +9600,8 @@ w_metadata tmnationsforever games \
     media="download" \
     file1="tmnationsforever_setup.exe" 
 
-load_tmnationsforever() {
+load_tmnationsforever()
+{
     if w_workaround_wine_bug 20915
     then
         w_warn "Gameplay and sound may be very choppy on some machines :-("
@@ -9556,7 +9657,8 @@ w_metadata twfc games \
     media="dvd" \
     file1="d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso" 
 
-load_twfc() {
+load_twfc()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/d96a2ebbd15c3d03286d1b8b5601e7038cab46b1.iso
 
     w_read_key
@@ -9618,7 +9720,8 @@ w_metadata torchlight games \
     media="dvd" \
     file1="7cc5d7504b2927c030a0a192f7c9858721b59730.iso" 
 
-load_torchlight() {
+load_torchlight()
+{
     iso_mount "$W_CACHE"/$W_PACKAGE/7cc5d7504b2927c030a0a192f7c9858721b59730.iso
     w_ahk_do "
         SetTitleMatchMode, 2
@@ -9653,7 +9756,8 @@ w_metadata tropico3_demo games \
     media="download" \
     file1="Tropico3Demo.exe" 
 
-load_tropico3_demo() {
+load_tropico3_demo()
+{
     w_download_manual $W_PACKAGE "http://www.tropico3.com/?p=downloads" Tropico3Demo.exe e031749db346ac3a87a675787c81eb1ca8cb5909
 
     if w_workaround_wine_bug 24819
@@ -9708,7 +9812,8 @@ w_metadata typingofthedead_demo games \
     media="download" \
     file1="Tod_e_demo.exe" 
 
-load_typingofthedead_demo() {
+load_typingofthedead_demo()
+{
     w_download $W_PACKAGE "http://downloads.pcworld.com/pub/new/fun_and_games/other/tod-demo.zip" 96fe3edb2431210932af840e29c59bce6b7fc80f
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -9743,7 +9848,8 @@ w_metadata unigine_heaven benchmarks \
     media="download" \
     file1="Unigine_Heaven-2.1.msi" 
 
-load_unigine_heaven() {
+load_unigine_heaven()
+{
     # FIXME: use w_download_torrent()
     w_download_manual $W_PACKAGE  http://unigine.com/download/torrents/Unigine_Heaven-2.1.msi.torrent Unigine_Heaven-2.1.msi 3d7b94a3734cdae85f98032b61668e743979c444
 
@@ -9796,7 +9902,8 @@ w_metadata vegas games \
     file1="be7cf72572708e9776af73c9bec8ee07952385af.iso" \
     file2="abd625abe57c7a9ffe5083e69ddc9f2a978c9e84.iso" 
 
-load_vegas() {
+load_vegas()
+{
     if w_workaround_wine_bug 7065
     then
         w_warn "This game's DRM is not supported by wine"
@@ -9866,7 +9973,8 @@ w_metadata vegas2 games \
     file1="e720e914eeb98dbd2ec140d15d32ce6317e24f86.iso" \
     file2="1430fdaa49165d1bed439ddffa65e9fa2af4d498.iso" 
 
-load_vegas2() {
+load_vegas2()
+{
     if w_workaround_wine_bug 219
     then
         w_warn "This game's DRM is not supported by wine"
@@ -9927,7 +10035,8 @@ w_metadata victoria2_demo games \
     media="download" \
     file1="Victoria2_Demo.zip"
 
-load_victoria2_demo() {
+load_victoria2_demo()
+{
     # download zip file via torrent from http://www.gamershell.com/download_62070.shtml
     w_download_manual $W_PACKAGE http://www.gamershell.com/download_62070.shtml Victoria2_Demo.zip 20bac88a3ace1010e4fb116d72baf95e92976b39
 
@@ -10120,7 +10229,8 @@ w_metadata  wog games \
    media="download" \
    file1="WorldOfGooDemo.1.0.exe"
 
-load_wog() {
+load_wog()
+{
     if ! test -f "$W_CACHE/wog/WorldOfGooDemo.1.0.exe"
     then
         # Get temporary download location
@@ -10159,7 +10269,8 @@ w_metadata wowtrial games \
     media="download" \
     file1="TryWoW.exe" 
 
-load_wowtrial() {
+load_wowtrial()
+{
     w_download $W_PACKAGE https://www.worldofwarcraft.com/downloads/files/pc/enUS/TryWoW.exe 832866b591ea20fa2e5d30c36dcca92aec9ea36a
 
     w_ahk_do "
@@ -10194,7 +10305,8 @@ w_metadata wowbc games \
     media="dvd" \
     file1="c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso" 
 
-load_wowbc() {
+load_wowbc()
+{
     test -f "$W_WINDIR_UNIX"/utorrent.exe || w_try_winetricks utorrent
 
     case "$LANG" in
@@ -10357,7 +10469,8 @@ w_metadata zootycoon2_demo games \
     media="download" \
     file1="Zoo2Trial.exe" 
 
-load_zootycoon2_demo() {
+load_zootycoon2_demo()
+{
     w_download $W_PACKAGE "http://download.microsoft.com/download/9/f/6/9f6a95f0-f34a-4312-9749-77b81d3de245/Zoo2Trial.exe" 60ad1bb34351f97b579c58234b926055f7979126
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -10425,7 +10538,8 @@ w_metadata gsb_demo games \
     media="download" \
     file1="GSBDemoInstaller.exe" 
 
-load_gsb_demo() {
+load_gsb_demo()
+{
     _load_positech "http://www.positech.co.uk/gratuitousspacebattles/downloads/GSBDemoInstaller.exe" 83dab80aa3bb94aa886c94b2cb68fa54558fe563 "GSBDemoInstaller.exe" "Setup - Gratuitous Space Battles Demo" "Gratuitous Space Battles Demo" "GSBDemo.exe"
     if w_workaround_wine_bug 22393
     then
@@ -10444,7 +10558,8 @@ w_metadata democracy2_demo games \
     media="download" \
     file1="Democracy2Demo.exe" 
 
-load_democracy2_demo() {
+load_democracy2_demo()
+{
     _load_positech "http://www.positech.co.uk/democracy2/Democracy2Demo.exe" 117cb63119adb3f79034ee3fcf641629dc825615 "Democracy2Demo.exe" "Setup - Democracy 2 Demo" "Democracy2 Demo" "Democracy2.exe"
 }
 
@@ -10455,7 +10570,8 @@ w_metadata kudos2_demo games \
     media="download" \
     file1="Kudos2DemoInstaller.exe" 
 
-load_kudos2_demo() {
+load_kudos2_demo()
+{
     _load_positech "http://www.positech.co.uk/kudos2/Kudos2DemoInstaller.exe" 31abe5a4ce10eb111e0306c8c1b5570f2fd43f33 "Kudos2DemoInstaller.exe" "Setup - Kudos 2 Demo" "Kudos 2 Demo" "Kudos2Demo.exe"
 }
 
@@ -10466,7 +10582,8 @@ w_metadata rocklegend_demo games \
     media="download" \
     file1="RockLegendDemo.exe" 
 
-load_rocklegend_demo() {
+load_rocklegend_demo()
+{
     _load_positech "http://www.positech.co.uk/rocklegend/RockLegendDemo.exe" b9f090d2e6a9e7be860a52c339d599e3c7bfe516 "RockLegendDemo.exe" "Setup - Kudos Rock Legend Demo" "Kudos Rock Legend Demo" "KudosRockLegendDemo.exe"
 }
 
