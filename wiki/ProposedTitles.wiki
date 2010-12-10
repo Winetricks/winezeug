@@ -68,6 +68,10 @@ http://news.bigdownload.com/2010/07/16/alien-swarm-to-be-released-by-valve-as-fr
 82%: http://www.gamerankings.com/pc/999022-alien-swarm/index.html
 http://bugs.winehq.org/show_bug.cgi?id=23842
 
+City of Heroes
+http://www.cityofheroes.com
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=2980
+
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
