@@ -432,7 +432,7 @@ case "$OS" in
     ;;
 esac
 
-WINDIR="$W_DRIVE_C/windows"
+W_WINDIR_UNIX="$W_DRIVE_C/windows"
 
 # Win(e) 32/64?
 # Using the variable W_SYSTEM32_DLLS instead of SYSTEM32 because some stuff does go under system32 for both arch's
@@ -440,11 +440,11 @@ WINDIR="$W_DRIVE_C/windows"
 if test -d "$W_DRIVE_C/windows/syswow64"
 then
     ARCH=win64
-    W_SYSTEM32_DLLS="$WINDIR/syswow64"
-    SYSTEM64_DLLS="$WINDIR/system32"
+    W_SYSTEM32_DLLS="$W_WINDIR_UNIX/syswow64"
+    SYSTEM64_DLLS="$W_WINDIR_UNIX/system32"
 else
     ARCH=win32
-    W_SYSTEM32_DLLS="$WINDIR/system32"
+    W_SYSTEM32_DLLS="$W_WINDIR_UNIX/system32"
 fi
 
 # Decide where to store downloaded files
@@ -998,7 +998,7 @@ _EOF_
     do
         case "$1" in
         comctl32)
-           rm -rf "$WINDIR"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           rm -rf "$W_WINDIR_UNIX"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
 
@@ -1073,7 +1073,7 @@ override_app_dlls() {
     do
         case "$1" in
         comctl32)
-           rm -rf "$WINDIR"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           rm -rf "$W_WINDIR_UNIX"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
         echo "\"$1\"=\"$mode\"" >> "$W_TMP"/override-dll.reg
@@ -1256,8 +1256,8 @@ load_cc580() {
     w_download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
     w_try $WINE "$W_CACHE"/cc32inst.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
-    try_unzip -d "$WINDIR"/temp "$W_TMP"/comctl32.exe
-    w_try $WINE "$WINDIR"/temp/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
+    try_unzip -d "$W_WINDIR_UNIX"/temp "$W_TMP"/comctl32.exe
+    w_try $WINE "$W_WINDIR_UNIX"/temp/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
     w_try cp "$W_TMP"/comcnt.dll "$W_SYSTEM32_DLLS"/comctl32.dll
 
     w_override_dlls native,builtin comctl32
@@ -1295,8 +1295,8 @@ load_colorprofile() {
     try_unzip -d "$W_TMP" "$W_CACHE"/ColorProfile.exe
 
     # It's in system32 for both win32/win64
-    mkdir -p "$WINDIR"/system32/spool/drivers/color
-    w_try cp -f "$W_TMP/sRGB Color Space Profile.icm" "$WINDIR"/system32/spool/drivers/color
+    mkdir -p "$W_WINDIR_UNIX"/system32/spool/drivers/color
+    w_try cp -f "$W_TMP/sRGB Color Space Profile.icm" "$W_WINDIR_UNIX"/system32/spool/drivers/color
 }
 
 #----------------------------------------------------------------
@@ -1693,7 +1693,7 @@ load_dmsynth() {
 #----------------------------------------------------------------
 
 load_dotnet11() {
-    DOTNET_INSTALL_DIR="$WINDIR/Microsoft.NET/Framework/v1.1.4322"
+    DOTNET_INSTALL_DIR="$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322"
 
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
@@ -1721,7 +1721,7 @@ load_dotnet11() {
     $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
     # Builtin fusion isn't good enough and sometimes causes install to fail. .Net will install a good one anyway...
-    rm -f "$WINDIR/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
+    rm -f "$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     w_download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
@@ -1752,7 +1752,7 @@ load_dotnet20() {
     load_fontfix
 
     # If this is just a dependency check, don't re-install
-    if test $W_PACKAGE != dotnet20 && test -f "$WINDIR"/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll
+    if test $W_PACKAGE != dotnet20 && test -f "$W_WINDIR_UNIX"/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll
     then
         echo "prerequisite dotnet20 already installed, skipping"
         return
@@ -1833,7 +1833,7 @@ load_dotnet20sdk() {
 
 load_dotnet30() {
     # If this is just a dependency check, don't re-install
-    if test $W_PACKAGE != dotnet30 && test -d "$WINDIR/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0"
+    if test $W_PACKAGE != dotnet30 && test -d "$W_WINDIR_UNIX/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0"
     then
         echo "prerequisite dotnet30 already installed, skipping"
         return
@@ -1847,7 +1847,7 @@ load_dotnet30() {
     w_download dotnet30 http://download.microsoft.com/download/3/F/0/3F0A922C-F239-4B9B-9CB0-DF53621C57D9/dotnetfx3.exe f3d2c3c7e4c0c35450cf6dab1f9f2e9e7ff50039
 
     # AF's workaround to avoid long pause
-    LANGPACKS_BASE_PATH="${WINDIR}/SYSMSICache/Framework/v3.0" 
+    LANGPACKS_BASE_PATH="${W_WINDIR_UNIX}/SYSMSICache/Framework/v3.0" 
     test -d "${LANGPACKS_BASE_PATH}" || mkdir -p "${LANGPACKS_BASE_PATH}" 
     for lang in ar cs da de el es fi fr he it jp ko nb nl pl pt-BR pt-PT ru \
                 sv tr zh-CHS zh-CHT
@@ -1858,9 +1858,9 @@ load_dotnet30() {
     #if workaround_wine_bug 25074
     #then
     #    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
-    #    rm "$WINDIR/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
-    #    rm -rf "$WINDIR/Microsoft.NET/Framework/v4.0.30319"
-#	ls -l "$WINDIR"/Microsoft.NET/Framework
+    #    rm "$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
+    #    rm -rf "$W_WINDIR_UNIX/Microsoft.NET/Framework/v4.0.30319"
+#	ls -l "$W_WINDIR_UNIX"/Microsoft.NET/Framework
 #    fi
 
     if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
@@ -2271,17 +2271,17 @@ load_gecko() {
     # so we're adding a maintenance burden here.)
     case `$WINE --version` in
     wine-0*|wine-1.0*|wine-1.1|wine-1.1.?|wine-1.1.11)
-        GECKO_DIR="$WINDIR"
+        GECKO_DIR="$W_WINDIR_UNIX"
         GECKO_VERSION=0.1.0
         GECKO_SHA1SUM=c16f1072dc6b0ced20935662138dcf019a38cd56
         ;;
     wine-1.1.1[234]*)
-        GECKO_DIR="$WINDIR"
+        GECKO_DIR="$W_WINDIR_UNIX"
         GECKO_VERSION=0.9.0
         GECKO_SHA1SUM=5cf410ff7fdd3f9d625f481f9d409968728d3d09
         ;;
     wine-1.1.1[56789]*|wine-1.1.2[0123456]*)
-        GECKO_DIR="$WINDIR"
+        GECKO_DIR="$W_WINDIR_UNIX"
         GECKO_VERSION=0.9.1
         GECKO_SHA1SUM=9a49fc691740596517e381b47096a4bdf19a87d8
         ;;
@@ -2404,13 +2404,13 @@ load_gecko_dbg() {
         w_die "There isn't a gecko debug build for your Wine version."
         ;;
     wine-1.1.1[234]*)
-        GECKO_DIR="$WINDIR"
+        GECKO_DIR="$W_WINDIR_UNIX"
         GECKO_VERSION=0.9.0
         GECKO_EXTENSION=cab
         GECKO_SHA1SUM=23e354a82d7b7e61a6abe0384cc44669fbf92f86
         ;;
     wine-1.1.1[56789]*|wine-1.1.2[0123456]*)
-        GECKO_DIR="$WINDIR"
+        GECKO_DIR="$W_WINDIR_UNIX"
         GECKO_VERSION=0.9.1
         GECKO_EXTENSION=cab
         GECKO_SHA1SUM=a9b58d3330f8c78524fe4683f348302bfce96ff4
@@ -2597,9 +2597,9 @@ load_hosts() {
     # See http://bugs.winehq.org/show_bug.cgi?id=12076
 
     # It's in system32 for both win32/win64
-    mkdir -p "$WINDIR"/system32/drivers/etc
-    touch "$WINDIR"/system32/drivers/etc/hosts
-    touch "$WINDIR"/system32/drivers/etc/services
+    mkdir -p "$W_WINDIR_UNIX"/system32/drivers/etc
+    touch "$W_WINDIR_UNIX"/system32/drivers/etc/hosts
+    touch "$W_WINDIR_UNIX"/system32/drivers/etc/services
 }
 
 #----------------------------------------------------------------
@@ -3116,8 +3116,8 @@ load_msmask() {
 load_mspaint() {
     # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
     w_download . http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
-    try_unzip "$W_CACHE"/paintnt.exe -d "$WINDIR"
-    w_warn "Paint is now installed to $WINDIR/MSPAINT.EXE"
+    try_unzip "$W_CACHE"/paintnt.exe -d "$W_WINDIR_UNIX"
+    w_warn "Paint is now installed to $W_WINDIR_UNIX/MSPAINT.EXE"
 }
 
 #----------------------------------------------------------------
@@ -3577,7 +3577,7 @@ load_shockwave() {
 load_steam() {
     w_download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
     w_try $WINE msiexec /i "$W_CACHE"/SteamInstall.msi $W_UNATTENDED_SLASH_Q
-    if ! test -f "$WINDIR/Fonts/Times.TTF"
+    if ! test -f "$W_WINDIR_UNIX/Fonts/Times.TTF"
     then
         w_warn "Installing corefonts to prvent a Steam crash; see wine bug 22751"
         load_corefonts
@@ -3669,8 +3669,8 @@ load_utorrent() {
     # Nov 6 2010 sha1sum 263a91693d0976473cd321cd6f1b0103a814f3adx
     w_download . http://download.utorrent.com/2.0.4/utorrent.exe 263a91693d0976473cd321cd6f1b0103a814f3ad
 
-    w_try cp -f "$W_CACHE"/utorrent.exe "$WINDIR"/utorrent.exe
-    w_warn "utorrent is now installed to $WINDIR/utorrent.exe"
+    w_try cp -f "$W_CACHE"/utorrent.exe "$W_WINDIR_UNIX"/utorrent.exe
+    w_warn "utorrent is now installed to $W_WINDIR_UNIX/utorrent.exe"
 }
 
 #----------------------------------------------------------------
@@ -3845,7 +3845,7 @@ load_vcrun2005() {
 
     # SP1 + ATL security fix build 4053 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
-    if test $W_PACKAGE != vcrun2005 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
+    if test $W_PACKAGE != vcrun2005 && test -d "$W_WINDIR_UNIX"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
     then
         echo "prerequisite vcrun2005 already installed, skipping"
         return
@@ -3876,7 +3876,7 @@ load_vcrun2008() {
     # If this is just a dependency check, don't re-install
     # SP1 + ATL security fix build 4148 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=2051a0c1-c9b5-4b0a-a8f5-770a549fd78c
-    if test $W_PACKAGE != vcrun2008 && test -d "$WINDIR"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
+    if test $W_PACKAGE != vcrun2008 && test -d "$W_WINDIR_UNIX"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
     then
         echo "prerequisite vcrun2008 already installed, skipping"
         return
@@ -4610,11 +4610,11 @@ appdata_unix="`unset WINEDEBUG; $XXXPATH -u "$appdata_win" | tr -d '\015' `"
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
 #
 # Did the user rename Fonts to fonts?
-if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts
+if test ! -d "$W_WINDIR_UNIX"/Fonts && test -d "$W_WINDIR_UNIX"/fonts
 then
-    winefontsdir="$WINDIR"/fonts
+    winefontsdir="$W_WINDIR_UNIX"/fonts
 else
-    winefontsdir="$WINDIR"/Fonts
+    winefontsdir="$W_WINDIR_UNIX"/Fonts
 fi
 mkdir -p "${winefontsdir}"
 

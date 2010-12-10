@@ -370,7 +370,7 @@ _EOF_
     do
         case "$1" in
         comctl32)
-           rm -rf "$W_WINDIR"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           rm -rf "$W_WINDIR_UNIX"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
 
@@ -1409,7 +1409,7 @@ wisotool_init()
     W_ISO_MOUNT_ROOT=/mnt/wisotool
     W_ISO_MOUNT_LETTER=i
 
-    W_WINDIR="$W_DRIVE_C/windows"
+    W_WINDIR_UNIX="$W_DRIVE_C/windows"
 
     # Win(e) 32/64?
     # Using the variable W_SYSTEM32_DLLS instead of SYSTEM32 because some stuff does go under system32 for both arch's
@@ -1417,11 +1417,11 @@ wisotool_init()
     if test -d "$W_DRIVE_C/windows/syswow64"
     then
         W_ARCH=win64
-        W_SYSTEM32_DLLS="$W_WINDIR/syswow64"
-        W_SYSTEM64_DLLS="$W_WINDIR/system32"
+        W_SYSTEM32_DLLS="$W_WINDIR_UNIX/syswow64"
+        W_SYSTEM64_DLLS="$W_WINDIR_UNIX/system32"
     else
         W_ARCH=win32
-        W_SYSTEM32_DLLS="$W_WINDIR/system32"
+        W_SYSTEM32_DLLS="$W_WINDIR_UNIX/system32"
     fi
 }
 
@@ -1693,7 +1693,7 @@ load_vcrun2005()
 {
     # SP1 + ATL security fix build 4053 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
-    if test -d "$W_WINDIR"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
+    if test -d "$W_WINDIR_UNIX"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
     then
         echo "vcrun2005 already installed, skipping"
         return
@@ -1724,7 +1724,7 @@ load_vcrun2008()
 
     # SP1 + ATL security fix build 4148 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=2051a0c1-c9b5-4b0a-a8f5-770a549fd78c
-    if test -d "$W_WINDIR"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
+    if test -d "$W_WINDIR_UNIX"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
     then
         echo "vcrun2008 already installed, skipping"
         return
