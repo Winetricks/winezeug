@@ -90,7 +90,7 @@ USERNAME=${USERNAME:-$LOGNAME}
 W_ISO_MOUNT_ROOT=/mnt/wisotool
 W_ISO_MOUNT_LETTER=i
 
-WINDIR="$W_DRIVE_C/windows"
+W_WINDIR_UNIX="$W_DRIVE_C/windows"
 
 #---- Functions -------------------------------------------------
 
@@ -522,7 +522,7 @@ w_download_manual()
 # Caches downloads in $W_CACHE/$W_PACKAGE, torrent files are assumed to be there
 # If no foo.torrent is given, will add ALL .torrent files in $W_CACHE/$W_PACKAGE
 download_torrent() {
-    test -f "$WINDIR"/utorrent.exe || w_try_winetricks utorrent
+    test -f "$W_WINDIR_UNIX"/utorrent.exe || w_try_winetricks utorrent
     UT_WINPATH="$W_CACHE_WIN\\$1"
     cd "$W_CACHE/$W_PACKAGE"
 
@@ -7481,7 +7481,7 @@ load_pscs5_pickle() {
 
     # Then the files:
     userprofile_unix="`cygpath $USERPROFILE`"
-    system32_unix="`cygpath $WINDIR/system32`"
+    system32_unix="`cygpath $W_WINDIR_UNIX/system32`"
 
     w_try cd "Common Files"
     w_try cp -r "$W_PROGRAMS_X86_UNIX/Common Files/Adobe" .
@@ -7522,7 +7522,7 @@ load_pscs5_unpickle() {
     w_try mv "$W_TMP/Common Files/Adobe" .
     w_try cd "$appdata_win/"
     w_try mv "$W_TMP/userhome"/* .
-    w_try cd "$WINDIR/system32"
+    w_try cd "$W_WINDIR_UNIX/system32"
     w_try mv "$W_TMP/odbc32.dll" .
     w_try mv "$W_TMP/odbcint.dll" .
     w_try $WINE regsvr32 odbc32.dll
@@ -10129,7 +10129,7 @@ w_metadata wowbc games \
     file1="c874f5bc676eef8e60d3d232fe6db185c4632fb3.iso" 
 
 load_wowbc() {
-    test -f "$WINDIR"/utorrent.exe || w_try_winetricks utorrent
+    test -f "$W_WINDIR_UNIX"/utorrent.exe || w_try_winetricks utorrent
 
     case "$LANG" in
     en_US*) ;;
@@ -10870,11 +10870,11 @@ appdata_unix="`unset WINEDEBUG; $XXXPATH -u "$appdata_win" | tr -d '\015' `"
 # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
 #
 # Did the user rename Fonts to fonts?
-if test ! -d "$WINDIR"/Fonts && test -d "$WINDIR"/fonts
+if test ! -d "$W_WINDIR_UNIX"/Fonts && test -d "$W_WINDIR_UNIX"/fonts
 then
-    winefontsdir="$WINDIR"/fonts
+    winefontsdir="$W_WINDIR_UNIX"/fonts
 else
-    winefontsdir="$WINDIR"/Fonts
+    winefontsdir="$W_WINDIR_UNIX"/Fonts
 fi
 
 # Mac folks tend to not have sha1sum, but we can make do with openssl
