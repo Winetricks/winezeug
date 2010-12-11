@@ -4558,12 +4558,13 @@ load_xvid() {
 #--------- Main program -----------------------------------------
 
 # Call a verb, don't let it affect environment
+# Supports just one argument at the moment
 w_call()
 {
     rm -rf "$W_TMP"
     mkdir -p "$W_TMP"
 
-    ( load_$1 ) || exit $?
+    ( load_$1 $2 ) || exit $?
 
     rm -rf "$W_TMP"
 }
