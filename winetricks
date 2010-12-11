@@ -1165,21 +1165,24 @@ helper_directx_dl() {
 
 #----- One function per package, in alphabetical order ----------
 
-load_7zip() {
+load_7zip()
+{
     w_download . $SOURCEFORGE/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
     w_try $WINE "$W_CACHE"/7z465.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
 
-load_abiword() {
+load_abiword()
+{
     w_download $W_PACKAGE http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
     w_try $WINE "$W_CACHE"/$W_PACKAGE/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
 
-load_adobeair() {
+load_adobeair()
+{
     # corefonts is necessary to avoid an installer crash.
     load_corefonts
 
@@ -1193,7 +1196,8 @@ load_adobeair() {
 
 #----------------------------------------------------------------
 
-load_amstream() {
+load_amstream()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
@@ -1207,7 +1211,8 @@ load_amstream() {
 
 #----------------------------------------------------------------
 
-load_art2kmin() {
+load_art2kmin()
+{
     # See http://www.microsoft.com/downloads/details.aspx?familyid=d9ae78d9-9dc6-4b38-9fa6-2c745a175aed&displaylang=en
     w_download . http://download.microsoft.com/download/D/2/A/D2A2FC8B-0447-491C-A5EF-E8AA3A74FB98/AccessRuntime.exe 571811b7536e97cf4e4e53bbf8260cddd69f9b2d
     cd "$W_CACHE"
@@ -1216,7 +1221,8 @@ load_art2kmin() {
 
 #----------------------------------------------------------------
 
-load_atmlib() {
+load_atmlib()
+{
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
     # FIXME: This is a huge w_download for a single dll.
     w_download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
@@ -1228,7 +1234,8 @@ load_atmlib() {
 
 #----------------------------------------------------------------
 
-load_autohotkey() {
+load_autohotkey()
+{
     w_download . http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
     cd "$W_CACHE"
     w_try $WINE AutoHotkey104805_Install.exe $W_UNATTENDED_SLASH_S
@@ -1237,7 +1244,8 @@ load_autohotkey() {
 
 #----------------------------------------------------------------
 
-load_baekmuk() {
+load_baekmuk()
+{
     # The Baekmuk fonts provide Korean glyphs.  May also be needed with fakekorean function.
     # See http://kldp.net/projects/baekmuk for project page
     # Need to w_download from Debian as the project page has unique captcha tokens per visitor
@@ -1253,7 +1261,8 @@ load_baekmuk() {
 
 #----------------------------------------------------------------
 
-load_cc580() {
+load_cc580()
+{
     # http://www.microsoft.com/downloads/details.aspx?familyid=6f94d31a-d1e0-4658-a566-93af0d8d4a1e
     w_download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
@@ -1272,14 +1281,16 @@ load_cc580() {
 
 #----------------------------------------------------------------
 
-load_cmake() {
+load_cmake()
+{
     w_download . http://www.cmake.org/files/v2.8/cmake-2.8.2-win32-x86.exe 2c46f4e804787b231c2f45e1b43f1838462e8dfe
     w_try $WINE "$W_CACHE"/cmake-2.8.2-win32-x86.exe
 }
 
 #----------------------------------------------------------------
 
-load_comctl32ocx() {
+load_comctl32ocx()
+{
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=25437D98-51D0-41C1-BB14-64662F5F62FE
     w_download . http://download.microsoft.com/download/3/a/5/3a5925ac-e779-4b1c-bb01-af67dc2f96fc/VisualBasic6-KB896559-v1-ENU.exe f52cf2034488235b37a1da837d1c40eb2a1bad84
 
@@ -1292,7 +1303,8 @@ load_comctl32ocx() {
 
 #----------------------------------------------------------------
 
-load_colorprofile() {
+load_colorprofile()
+{
     w_download . http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
     try_unzip -d "$W_TMP" "$W_CACHE"/ColorProfile.exe
 
@@ -1303,7 +1315,8 @@ load_colorprofile() {
 
 #----------------------------------------------------------------
 
-load_comdlg32ocx() {
+load_comdlg32ocx()
+{
     w_download . http://activex.microsoft.com/controls/vb6/comdlg32.cab d4f3e193c6180eccd73bad53a8500beb5b279cbf
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/comdlg32.cab
     w_try cp "$W_TMP"/comdlg32.ocx "$W_SYSTEM32_DLLS"/comdlg32.ocx
@@ -1312,7 +1325,8 @@ load_comdlg32ocx() {
 
 #----------------------------------------------------------------
 
-load_controlpad() {
+load_controlpad()
+{
     # http://msdn.microsoft.com/en-us/library/ms968493.aspx
     # Fixes error "Failed to load UniText..."
     load_wsh57
@@ -1324,7 +1338,8 @@ load_controlpad() {
 
 #----------------------------------------------------------------
 
-load_corefonts() {
+load_corefonts()
+{
     # See http://corefonts.sf.net
     # TODO: let user pick mirror,
     # see http://corefonts.sourceforge.net/msttcorefonts-2.0-1.spec for how
@@ -1418,7 +1433,8 @@ load_corefonts() {
 
 #----------------------------------------------------------------
 
-load_crypt32() {
+load_crypt32()
+{
     # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
     w_download . http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
     w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
@@ -1428,7 +1444,8 @@ load_crypt32() {
 
 #----------------------------------------------------------------
 
-load_cygwin() {
+load_cygwin()
+{
     # See http://bugs.winehq.org/show_bug.cgi?id=21206
     # Current is 1.7, but that doesn't install on wine, so jump through
     # hoops to get 1.5
@@ -1447,7 +1464,8 @@ load_cygwin() {
 
 #----------------------------------------------------------------
 
-load_d3dx9() {
+load_d3dx9()
+{
     helper_directx_dl
 
     # Kinder, less invasive directx - only extract and override d3dx9_??.dll
@@ -1465,7 +1483,8 @@ load_d3dx9() {
 
 #----------------------------------------------------------------
 
-load_d3dx9_xx() {
+load_d3dx9_xx()
+{
     dllname=d3dx9_$1
 
     helper_directx_dl
@@ -1482,7 +1501,8 @@ load_d3dx9_xx() {
 
 #----------------------------------------------------------------
 
-load_d3dx10() {
+load_d3dx10()
+{
     helper_directx_dl
 
     # Kinder, less invasive directx10 - only extract and override d3dx10_??.dll
@@ -1499,7 +1519,8 @@ load_d3dx10() {
 
 #----------------------------------------------------------------
 
-load_d3dxof() {
+load_d3dxof()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
@@ -1510,7 +1531,8 @@ load_d3dxof() {
 
 #----------------------------------------------------------------
 
-load_devenum() {
+load_devenum()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE/$DIRECTX_NAME"
@@ -1523,7 +1545,8 @@ load_devenum() {
 
 #----------------------------------------------------------------
 
-load_dinput8() {
+load_dinput8()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
@@ -1536,14 +1559,16 @@ load_dinput8() {
 
 #----------------------------------------------------------------
 
-load_dirac() {
+load_dirac()
+{
     w_download . $SOURCEFORGE/dirac/Dirac%20Directshow%20Filter/Diract%20Direct%20Show%20Filter%201.0.2/DiracDirectShowFilter-1.0.2.exe c912d30a8fa500c7841444559feb1f49301611c4
     w_try $WINE "$W_CACHE"/DiracDirectShowFilter-1.0.2.exe
 }
 
 #----------------------------------------------------------------
 
-load_directmusic() {
+load_directmusic()
+{
 # Untested. Based off http://bugs.winehq.org/show_bug.cgi?id=4805 and http://bugs.winehq.org/show_bug.cgi?id=24911
     helper_directx_dl
 
@@ -1579,7 +1604,8 @@ load_directmusic() {
 
 #----------------------------------------------------------------
 
-load_directplay() {
+load_directplay()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
@@ -1598,7 +1624,8 @@ load_directplay() {
 
 #----------------------------------------------------------------
 
-load_directx9() {
+load_directx9()
+{
     helper_directx_dl
 
     # Stefan suggested that, when installing, one should override as follows:
@@ -1652,7 +1679,8 @@ load_directx9() {
 
 #----------------------------------------------------------------
 
-load_divx() {
+load_divx()
+{
     # 6.8.2: 02203fdc4dddd13e789c39b22902837da31d2a1d ?
     # 6.8.2: e36bf87c1675d0cf9169839bc0cd8f866b9db026 as of 4 Jun 2008 as http://download.divx.com/divx/DivXInstaller.exe
     # 6.8.3: f4f4387ef89316aea440a29f3e24c1f1945e14af as of 20 Jun 2008 as http://download.divx.com/divx/abt/b1/DivXInstaller.exe
@@ -1674,13 +1702,15 @@ load_divx() {
 
 #----------------------------------------------------------------
 
-load_dcom98() {
+load_dcom98()
+{
    w_die "Installing dcom98 is no longer needed or useful with modern wine."
 }
 
 #----------------------------------------------------------------
 
-load_dmsynth() {
+load_dmsynth()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
@@ -1694,7 +1724,8 @@ load_dmsynth() {
 
 #----------------------------------------------------------------
 
-load_dotnet11() {
+load_dotnet11()
+{
     DOTNET_INSTALL_DIR="$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322"
 
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
@@ -1738,7 +1769,8 @@ load_dotnet11() {
 
 #----------------------------------------------------------------
 
-load_dotnet11sdk() {
+load_dotnet11sdk()
+{
     load_dotnet11
 
     w_warn "Installer hangs at end... not sure if it works fully."
@@ -1750,7 +1782,8 @@ load_dotnet11sdk() {
 
 #----------------------------------------------------------------
 
-load_dotnet20() {
+load_dotnet20()
+{
     load_fontfix
 
     # If this is just a dependency check, don't re-install
@@ -1794,7 +1827,8 @@ load_dotnet20() {
 
 #----------------------------------------------------------------
 
-load_dotnet20sp2() {
+load_dotnet20sp2()
+{
     w_warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
@@ -1822,7 +1856,8 @@ load_dotnet20sp2() {
 
 #----------------------------------------------------------------
 
-load_dotnet20sdk() {
+load_dotnet20sdk()
+{
     load_dotnet20
 
     # http://www.microsoft.com/downloads/details.aspx?familyid=9B3A2CA6-3647-4070-9F41-A333C6B9181D
@@ -1833,7 +1868,8 @@ load_dotnet20sdk() {
 
 #----------------------------------------------------------------
 
-load_dotnet30() {
+load_dotnet30()
+{
     # If this is just a dependency check, don't re-install
     if test $W_PACKAGE != dotnet30 && test -d "$W_WINDIR_UNIX/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0"
     then
@@ -1875,7 +1911,8 @@ load_dotnet30() {
 
 #----------------------------------------------------------------
 
-load_dotnet35() {
+load_dotnet35()
+{
     # According to AF's recipe, installing dotnet30 first works around msi bugs
     load_dotnet30
 
@@ -1915,7 +1952,8 @@ do_droid() {
     register_font $1 "$2"
 }
 
-load_droid() {
+load_droid()
+{
     # See http://en.wikipedia.org/wiki/Droid_(font)
     DROID_URL='http://android.git.kernel.org/?p=platform/frameworks/base.git;a=blob_plain;f=data/fonts/'
 
@@ -1932,7 +1970,8 @@ load_droid() {
 
 #----------------------------------------------------------------
 
-load_dxsdk_nov2006() {
+load_dxsdk_nov2006()
+{
     w_download . http://download.microsoft.com/download/9/e/5/9e5bfc66-a621-4e0d-8bfe-6688058c3f00/dxsdk_aug2006.exe
     load_vcrun6   # for mfc42u
     echo "Be patient, the 'installing new services' step at the end takes about five minutes"
@@ -1945,7 +1984,8 @@ load_dxsdk_nov2006() {
 
 #----------------------------------------------------------------
 
-load_dsound() {
+load_dsound()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
@@ -1958,7 +1998,8 @@ load_dsound() {
 
 #----------------------------------------------------------------
 
-load_dsoundbug9612() {
+load_dsoundbug9612()
+{
     echo "Enabling DirectSound workaround for bug #9612"
     cat > "$W_TMP"/dsoundmaxshadow.reg <<_EOF_
 REGEDIT4
@@ -1972,7 +2013,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_eufonts() {
+load_eufonts()
+{
     # https://www.microsoft.com/downloads/details.aspx?FamilyID=0ec6f335-c3de-44c5-a13d-a1e7cea5ddea&displaylang=en
     w_download . http://download.microsoft.com/download/a/1/8/a180e21e-9c2b-4b54-9c32-bf7fd7429970/EUupdate.EXE 9b076c40cb63aa0d8512aa8e610ba11d3466e441
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/EUupdate.EXE
@@ -1998,7 +2040,8 @@ load_eufonts() {
 
 #----------------------------------------------------------------
 
-load_fakechinese() {
+load_fakechinese()
+{
     load_wenquanyi
     # Loads Wenquanyi fonts and sets aliases for Microsoft Chinese fonts
     # Aliases to set:
@@ -2021,7 +2064,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_fakejapanese() {
+load_fakejapanese()
+{
     load_takao
     # Loads Takao fonts and sets aliases for MS Gothic and MS PGothic, mainly for Japanese language support
     # Aliases to set:
@@ -2047,7 +2091,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_fakekorean() {
+load_fakekorean()
+{
     load_baekmuk
     # Loads Baekmuk fonts and sets as an alias for Gulim, Dotum, and Batang for Korean language support
     # Aliases to set:
@@ -2076,7 +2121,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_firefox() {
+load_firefox()
+{
     w_download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.12/win32/en-US/Firefox%20Setup%203.6.12.exe" c10562f70de6e0dc656a949931ef9f479623fcd6 "Firefox Setup 3.6.12.exe"
     if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
     then
@@ -2088,7 +2134,8 @@ load_firefox() {
 
 #----------------------------------------------------------------
 
-load_ffdshow() {
+load_ffdshow()
+{
     # ffdshow
     w_download . $SOURCEFORGE/ffdshow-tryout/ffdshow_beta5_rev2033_20080705_clsid.exe 6da6837e2f400923ff5294a6591a88a3eee5ee40
     w_try $WINE "$W_CACHE"/ffdshow_beta5_rev2033_20080705_clsid.exe $WINETRICKS_SILENT
@@ -2096,7 +2143,8 @@ load_ffdshow() {
 
 #----------------------------------------------------------------
 
-load_flash() {
+load_flash()
+{
     # If this is just a dependency check, don't re-install
     if test $W_PACKAGE != flash && test -f "$W_SYSTEM32_DLLS"/Macromed/Flash/flashplayer.xpt
     then
@@ -2153,7 +2201,8 @@ w_download . http://fpdownload.macromedia.com/get/flashplayer/current/install_fl
 
 #----------------------------------------------------------------
 
-load_fontfix() {
+load_fontfix()
+{
     # some versions of ukai.ttf and uming.ttf crash .net and picasa
     # See http://bugs.winehq.org/show_bug.cgi?id=7098#c9
     # Could fix globally, but that needs root, so just fix for wine
@@ -2196,14 +2245,16 @@ load_fontfix() {
 }
 
 #----------------------------------------------------------------
-load_forcemono() {
+load_forcemono()
+{
 # For wine/mono debugging
 w_override_dlls native mscoree.dll
 w_override_dlls disabled mscorsvw.exe
 }
 
 #----------------------------------------------------------------
-load_fs_disable() {
+load_fs_disable()
+{
     cat > "$W_TMP"/fs_disable.reg <<_EOF_
 REGEDIT4
 
@@ -2217,7 +2268,8 @@ _EOF_
     try_regedit "$W_TMP_WIN"\\fs_disable.reg
 }
 #----------------------------------------------------------------
-load_fs_grayscale() {
+load_fs_grayscale()
+{
     cat > "$W_TMP"/fs_grayscale.reg <<_EOF_
 
 REGEDIT4
@@ -2232,7 +2284,8 @@ _EOF_
     try_regedit "$W_TMP_WIN"\\fs_grayscale.reg
 }
 #----------------------------------------------------------------
-load_fs_bgr() {
+load_fs_bgr()
+{
     cat > "$W_TMP"/fs_bgr.reg <<_EOF_
 
 REGEDIT4
@@ -2247,7 +2300,8 @@ _EOF_
     try_regedit "$W_TMP_WIN"\\fs_bgr.reg
 }
 #----------------------------------------------------------------
-load_fs_rgb() {
+load_fs_rgb()
+{
     cat > "$W_TMP"/fs_rgb.reg <<_EOF_
 
 REGEDIT4
@@ -2264,7 +2318,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_gecko() {
+load_gecko()
+{
     # Load the HTML rendering Engine (Gecko)
     # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
@@ -2394,7 +2449,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_gecko_dbg() {
+load_gecko_dbg()
+{
     # Load the HTML rendering Engine (Gecko), with debugging symbols
     # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
@@ -2517,7 +2573,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_gdiplus() {
+load_gdiplus()
+{
     # http://www.microsoft.com/downloads/details.aspx?familyid=6A63AB9C-DF12-4D41-933C-BE590FEAA05A&displaylang=en
     w_download . http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
     # Used to use $W_UNATTENDED_SLASH_Q, but that mean that in non-q
@@ -2533,7 +2590,8 @@ load_gdiplus() {
 
 #----------------------------------------------------------------
 
-load_gfw() {
+load_gfw()
+{
     # http://www.microsoft.com/games/en-us/live/pages/livejoin.aspx
     w_download . http://download.microsoft.com/download/5/5/8/55846E20-4A46-4EF8-B272-7F988BC9090A/gfwlivesetupmin.exe 6f9e0ba052c68c8b51bb0e3ce6024d0e1c7b20b2  
     
@@ -2553,7 +2611,8 @@ load_gfw() {
 
 #----------------------------------------------------------------
 
-load_glsl_disable() {
+load_glsl_disable()
+{
     echo "Disabling GLSL"
     cat > "$W_TMP"/disableglsl.reg <<_EOF_
 REGEDIT4
@@ -2567,7 +2626,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_glsl_enable() {
+load_glsl_enable()
+{
     echo "Enabling GLSL"
     cat > "$W_TMP"/enableglsl.reg <<_EOF_
 REGEDIT4
@@ -2581,7 +2641,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_glut() {
+load_glut()
+{
     w_download . http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
     try_unzip -d "$W_DRIVE_C" "$W_CACHE"/glut-3.7.6-bin.zip
     w_try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$W_SYSTEM32_DLLS"
@@ -2590,7 +2651,8 @@ load_glut() {
 
 #----------------------------------------------------------------
 
-load_hosts() {
+load_hosts()
+{
     # Create fake system32\drivers\etc\hosts and system32\drivers\etc\services files.
     # The hosts file is used to map network names to IP addresses without DNS.
     # The services file is used map service names to network ports.
@@ -2619,7 +2681,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_ie6() {
+load_ie6()
+{
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
     if [ $ARCH = win64 ]
     then
@@ -2700,7 +2763,8 @@ load_ie6() {
 
 #----------------------------------------------------------------
 
-load_icodecs() {
+load_icodecs()
+{
     # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
     w_download . "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
     w_try $WINE "$W_CACHE"/"codinstl.exe"
@@ -2713,7 +2777,8 @@ load_icodecs() {
 
 #----------------------------------------------------------------
 
-load_ie7() {
+load_ie7()
+{
     # Unregister Wine IE
     if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
     then 
@@ -2779,7 +2844,8 @@ load_ie7() {
 
 #----------------------------------------------------------------
 
-load_ie8() {
+load_ie8()
+{
     # Unregister Wine IE
     if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
     then 
@@ -2852,7 +2918,8 @@ load_ie8() {
 
 #----------------------------------------------------------------
 
-load_jet40() {
+load_jet40()
+{
     # http://support.microsoft.com/kb/239114
     # See also http://bugs.winehq.org/show_bug.cgi?id=6085
     w_download . http://download.microsoft.com/download/4/3/9/4393c9ac-e69e-458d-9f6d-2fe191c51469/jet40sp8_9xnt.exe 8cd25342030857969ede2d8fcc34f3f7bcc2d6d4
@@ -2861,7 +2928,8 @@ load_jet40() {
 
 #----------------------------------------------------------------
 
-load_kde() {
+load_kde()
+{
     w_download . http://www.winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.7-0.exe 9fe2f13b76375e70e780ce6850d0de35b08b4ec3 
     mkdir -p "$programfilesdir_unix/kde"
     w_try cp "$W_CACHE"/kdewin-installer-gui-0.9.7-0.exe "$programfilesdir_unix/kde"
@@ -2871,7 +2939,8 @@ load_kde() {
 
 #----------------------------------------------------------------
 
-load_l3codecx() {
+load_l3codecx()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
@@ -2882,7 +2951,8 @@ load_l3codecx() {
 
 #----------------------------------------------------------------
 
-load_liberation() {
+load_liberation()
+{
     # http://www.redhat.com/promo/fonts/
     case `uname -s` in
     SunOS|Solaris)
@@ -2901,7 +2971,8 @@ load_liberation() {
 
 #----------------------------------------------------------------
 
-load_lucida() {
+load_lucida()
+{
     w_download . ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/NT40TSE/hotfixes-postSP3/Euro-fix/eurofixi.exe 64c47ad92265f6f10b0fd909a703d4fd1b05b2d5
     w_try_cabextract -d "$winefontsdir" -L -F 'lucon.ttf' "$W_CACHE"/eurofixi.exe
     register_font lucon.ttf "Lucida Console" 
@@ -2917,7 +2988,8 @@ set_native_mdac() {
 
 #----------------------------------------------------------------
 
-load_mdac25() {
+load_mdac25()
+{
     w_download mdac25 http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
     set_native_mdac
     set_winver nt40
@@ -2932,7 +3004,8 @@ load_mdac25() {
 
 #----------------------------------------------------------------
 
-load_mdac27() {
+load_mdac27()
+{
     w_download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
     set_native_mdac
     set_winver win2k
@@ -2947,7 +3020,8 @@ load_mdac27() {
 
 #----------------------------------------------------------------
 
-load_mdac28() {
+load_mdac28()
+{
     w_download mdac28 http://download.microsoft.com/download/c/d/f/cdfd58f1-3973-4c51-8851-49ae3777586f/MDAC_TYP.EXE 91bd59f0b02b67f3845105b15a0f3502b9a2216a
     set_native_mdac
     set_winver win98
@@ -2962,7 +3036,8 @@ load_mdac28() {
 
 #----------------------------------------------------------------
 
-load_mfc40() {
+load_mfc40()
+{
     # See http://support.microsoft.com/kb/122244
     w_download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
     try_unzip -d "$W_TMP" "$W_CACHE"/ole2v.exe
@@ -2971,7 +3046,8 @@ load_mfc40() {
 
 #----------------------------------------------------------------
 
-load_mingw_min() {
+load_mingw_min()
+{
     # If this is just a dependency check, don't re-install
     if test $W_PACKAGE != mingw_min && test $W_PACKAGE != mingw && test $W_PACKAGE != mingw-min && test -f "$W_DRIVE_C"/MinGW/bin/gcc.exe
     then
@@ -3009,7 +3085,8 @@ load_mingw_min() {
 
 #----------------------------------------------------------------
 
-load_mingw_gdb() {
+load_mingw_gdb()
+{
     # See http://mingw.org/wiki/Getting_Started
     load_mingw_min
 
@@ -3021,7 +3098,8 @@ load_mingw_gdb() {
 
 #----------------------------------------------------------------
 
-load_mono26() {
+load_mono26()
+{
     # Load Mono, have it handle all .net requests
     w_download . http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2 
     w_try $WINE "$W_CACHE"/mono-2.6.7-gtksharp-2.12.10-win32-2.exe $WINETRICKS_SILENT
@@ -3029,7 +3107,8 @@ load_mono26() {
 
 #----------------------------------------------------------------
 
-load_mono28() {
+load_mono28()
+{
     # Load Mono, have it handle all .net requests
     w_download . http://ftp.novell.com/pub/mono/archive/2.8.1/windows-installer/3/mono-2.8.1-gtksharp-2.12.10-win32-3.exe e491cbcadf486bdb3993efe6dc98e90c4e19425e
     w_try $WINE "$W_CACHE"/mono-2.8.1-gtksharp-2.12.10-win32-3.exe $WINETRICKS_SILENT
@@ -3037,14 +3116,16 @@ load_mono28() {
 
 #----------------------------------------------------------------
 
-load_mozillabuild() {
+load_mozillabuild()
+{
     w_download . http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/win32/MozillaBuildSetup-1.4.exe
     w_try $WINE "$W_CACHE"/MozillaBuildSetup-1.4.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
 
-load_mpc() {
+load_mpc()
+{
     w_download . $SOURCEFORGE/mpc-hc/MPC%20HomeCinema%20-%20Win32/MPC-HC%20v1.3.1249.0_32%20bits/MPC-Homecinema.1.3.1249.0.%28x86%29.zip 6c46846b5298f35ccc81925aa5304546b9a7e513
     mkdir -p "$programfilesdir_unix/Media Player Classic"
     cd "$programfilesdir_unix/Media Player Classic"
@@ -3057,7 +3138,8 @@ load_mpc() {
 
 #----------------------------------------------------------------
 
-load_msi2() {
+load_msi2()
+{
     # Install native msi per http://wiki.winehq.org/NativeMsi
     # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
     w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
@@ -3079,7 +3161,8 @@ load_msi2() {
 
 #----------------------------------------------------------------
 
-load_mshflxgd() {
+load_mshflxgd()
+{
     # http://msdn.microsoft.com/en-us/library/aa240864(VS.60).aspx
     # orig: 5f9c7a81022949bfe39b50f2bbd799c448bb7377
     # Jan 2009: 7ad74e589d5eefcee67fa14e65417281d237a6b6
@@ -3091,7 +3174,8 @@ load_mshflxgd() {
 
 #----------------------------------------------------------------
 
-load_msls31() {
+load_msls31()
+{
     # Install native Microsoft Line Services (needed by e-Sword, possibly only when using native riched20)
     w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
@@ -3100,7 +3184,8 @@ load_msls31() {
 
 #----------------------------------------------------------------
 
-load_msmask() {
+load_msmask()
+{
     # http://msdn.microsoft.com/en-us/library/11405hcf(VS.71).aspx
     # http://bugs.winehq.org/show_bug.cgi?id=2934
     # old: 3c6b26f68053364ea2e09414b615dbebafb9d5c3
@@ -3113,7 +3198,8 @@ load_msmask() {
 
 #----------------------------------------------------------------
 
-load_mspaint() {
+load_mspaint()
+{
     # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
     w_download . http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
     try_unzip "$W_CACHE"/paintnt.exe -d "$W_WINDIR_UNIX"
@@ -3122,7 +3208,8 @@ load_mspaint() {
 
 #----------------------------------------------------------------
 
-load_msscript() {
+load_msscript()
+{
     # http://msdn.microsoft.com/scripting/scriptcontrol/x86/sct10en.exe
     # http://www.microsoft.com/downloads/details.aspx?familyid=d7e31492-2595-49e6-8c02-1426fec693ac
     w_download .  http://download.microsoft.com/download/d/2/a/d2a7430c-6d5b-48e9-96c4-3c751be7bffe/sct10en.exe fd9f2f23357ab11ae70682d6864f7e9f188adf2a
@@ -3133,7 +3220,8 @@ load_msscript() {
 
 #----------------------------------------------------------------
 
-load_msxml3() {
+load_msxml3()
+{
     # Service Pack 5
     #w_download http://download.microsoft.com/download/a/5/e/a5e03798-2454-4d4b-89a3-4a47579891d8/msxml3.msi
     # Service Pack 7
@@ -3145,7 +3233,8 @@ load_msxml3() {
 
 #----------------------------------------------------------------
 
-load_msxml4() {
+load_msxml4()
+{
     # If this is just a dependency check, don't re-install
     if test $W_PACKAGE != msxml4 && test -f "$W_SYSTEM32_DLLS"/msxml4.dll
     then
@@ -3164,7 +3253,8 @@ load_msxml4() {
 
 #----------------------------------------------------------------
 
-load_msxml6() {
+load_msxml6()
+{
     # If this is just a dependency check, don't re-install
     if test $W_PACKAGE != msxml6 && test -f "$W_SYSTEM32_DLLS"/msxml6.dll
     then
@@ -3193,14 +3283,16 @@ load_msxml6() {
 
 #----------------------------------------------------------------
 
-load_nvidiasdk95() {
+load_nvidiasdk95()
+{
     w_download . http://developer.download.nvidia.com/SDK/9.5/NVIDIA_SDK_9.52.0324.0405.exe
     w_try $WINE "$W_CACHE"/NVIDIA_SDK_9.52.0324.0405.exe
 }
 
 #----------------------------------------------------------------
 
-load_ogg() {
+load_ogg()
+{
     # flac, ogg, speex, vorbis, ogm source, ogg source
     # see following URLs for more info
     # http://xiph.org/dshow/
@@ -3214,7 +3306,8 @@ load_ogg() {
 
 #----------------------------------------------------------------
 
-load_ole2() {
+load_ole2()
+{
     # http://support.microsoft.com/kb/123087/EN-US/
     w_download . http://download.microsoft.com/download/win31/update/2.03/win/en-us/ww1116.exe b803991c40f387464b61f606536b7c98a88245d2
     try_unzip -d "$W_TMP" "$W_CACHE"/ww1116.exe
@@ -3229,7 +3322,8 @@ load_ole2() {
 
 #----------------------------------------------------------------
 
-load_openwatcom() {
+load_openwatcom()
+{
     # http://www.openwatcom.org
     w_download . "http://ftp.openwatcom.org/ftp/open-watcom-c-win32-1.9.exe" 236ac33ebd463006be4ecd83d7ebea1c026eb55a
     if [ $W_UNATTENDED_SLASH_Q ]
@@ -3254,7 +3348,8 @@ load_openwatcom() {
 
 #----------------------------------------------------------------
 
-load_pdh() {
+load_pdh()
+{
     # http://support.microsoft.com/kb/284996
     w_download . http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/pdhinst.exe
@@ -3340,7 +3435,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_python26() {
+load_python26()
+{
 
     # If this is just a dependency check, don't re-install
     if test $W_PACKAGE != python26 && test -f "$WINEPREFIX"/drive_c/Python26/python.exe
@@ -3359,7 +3455,8 @@ load_python26() {
 
 #----------------------------------------------------------------
 
-load_python_comtypes() {
+load_python_comtypes()
+{
     
     load_python26
     
@@ -3372,7 +3469,8 @@ load_python_comtypes() {
 
 #----------------------------------------------------------------
 
-load_quartz() {
+load_quartz()
+{
     helper_directx_dl
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
@@ -3386,7 +3484,8 @@ load_quartz() {
 
 #----------------------------------------------------------------
 
-load_quicktime72() {
+load_quicktime72()
+{
     echo "Quicktime needs gdiplus..."
     load_gdiplus
     echo "Quicktime needs vcrun2005..."
@@ -3419,7 +3518,8 @@ load_quicktime72() {
 
 #----------------------------------------------------------------
 
-load_quicktime76() {
+load_quicktime76()
+{
     echo "Quicktime needs gdiplus..."
     load_gdiplus
     echo "Quicktime needs vcrun2005..."
@@ -3481,7 +3581,8 @@ volnum() {
 
 #----------------------------------------------------------------
 
-load_riched20() {
+load_riched20()
+{
     # http://support.microsoft.com/?kbid=249973
     w_download . http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/Q249973i.EXE
@@ -3491,7 +3592,8 @@ load_riched20() {
 
 #----------------------------------------------------------------
 
-load_riched30() {
+load_riched30()
+{
     # http://www.novell.com/documentation/nm1/readmeen_web/readmeen_web.html#Akx3j64
     # claims that Groupwise Messenger's View / Text Size command
     # only works with riched30, and recommends getting it by installing
@@ -3506,7 +3608,8 @@ load_riched30() {
 
 #----------------------------------------------------------------
 
-load_richtx32() {
+load_richtx32()
+{
     w_download . http://activex.microsoft.com/controls/vb6/richtx32.cab da404b566df3ad74fe687c39404a36c3e7cadc07
     w_try_cabextract "$W_CACHE"/richtx32.cab -d "$W_SYSTEM32_DLLS" -F RichTx32.Ocx
     w_try $WINE regsvr32 RichTx32.ocx
@@ -3514,7 +3617,8 @@ load_richtx32() {
 
 #----------------------------------------------------------------
 
-load_secur32(){
+load_secur32()
+{
     # http://www.microsoft.com/downloads/details.aspx?familyid=c4e408d7-6716-4a12-ad3a-8029667f5c84
     w_download . http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
     w_try_cabextract "$W_CACHE"/Windows2000-KB959426-x86-ENU.EXE -d "$W_SYSTEM32_DLLS" -F secur32.dll
@@ -3523,7 +3627,8 @@ load_secur32(){
 
 #----------------------------------------------------------------
 
-load_safari() {
+load_safari()
+{
 
     w_download . http://appldnld.apple.com.edgesuite.net/content.info.apple.com/Safari5/061-7138.20100607.Y7U87/SafariSetup.exe e56d5d79d9cfbb85ac46ac78aa497d7f3d8dbc3d
     cd "$W_CACHE"
@@ -3552,7 +3657,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_shockwave() {
+load_shockwave()
+{
     # Not silent enough, use msi instead
     #w_download . http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
     #w_try $WINE "$W_CACHE"/Shockwave_Installer_Full.exe $W_UNATTENDED_SLASH_S
@@ -3570,7 +3676,8 @@ load_shockwave() {
 
 #----------------------------------------------------------------
 
-load_steam() {
+load_steam()
+{
     w_download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
     w_try $WINE msiexec /i "$W_CACHE"/SteamInstall.msi $W_UNATTENDED_SLASH_Q
     if ! test -f "$W_WINDIR_UNIX/Fonts/Times.TTF"
@@ -3583,7 +3690,8 @@ load_steam() {
 
 #----------------------------------------------------------------
 
-load_tahoma() {
+load_tahoma()
+{
     # The tahoma and tahomabd fonts are needed by e.g. Steam
 
     w_download . http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe 888ce7b7ab5fd41f9802f3a65fd0622eb651a068
@@ -3595,7 +3703,8 @@ load_tahoma() {
 
 #----------------------------------------------------------------
 
-load_takao() {
+load_takao()
+{
     # The Takao font provides Japanese glyphs.  May also be needed with fakejapanese function above.
     # See http://launchpad.net/takao-fonts for project page
     w_download . http://launchpad.net/takao-fonts/003.02/003.02.01/+download/takao-fonts-ttf-003.02.01.zip 4f636d5c7c1bc16b96ea723adb16838cfb6df059
@@ -3613,7 +3722,8 @@ load_takao() {
 
 #----------------------------------------------------------------
 
-load_unifont() {
+load_unifont()
+{
     # The GNU Unifont provides glyphs for just about everything in common language.  It is intended for multilingual usage.
     # See http://unifoundry.com/unifont.html for project page
     w_download . http://unifoundry.com/unifont-5.1.20080907.zip bb8a3960dc0a96aa305de28312ea8a0ab64123d2
@@ -3638,7 +3748,8 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_urlmon() {
+load_urlmon()
+{
     # This is an updated urlmon from IE 6.0
     # See http://www.microsoft.com/downloads/details.aspx?familyid=85BB441A-5BB1-4A82-86EC-A249AF287513
     # (Works for Dolphin Smalltalk, see http://bugs.winehq.org/show_bug.cgi?id=8258)
@@ -3648,7 +3759,8 @@ load_urlmon() {
     w_override_dlls native,builtin urlmon
 }
 
-load_usp10() {
+load_usp10()
+{
     # http://www.microsoft.com/downloads/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f
     w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
@@ -3658,7 +3770,8 @@ load_usp10() {
 
 #----------------------------------------------------------------
 
-load_utorrent() {
+load_utorrent()
+{
     # Torrent client supported on Windows,Mac OSX, Linux through WINE 
     # Oct 2010 sha1sum 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee 
     # Nov 6 2010 sha1sum 263a91693d0976473cd321cd6f1b0103a814f3adx
@@ -3670,7 +3783,8 @@ load_utorrent() {
 
 #----------------------------------------------------------------
 
-load_vb2run() {
+load_vb2run()
+{
     # Not referenced on MS web anymore. But the old Microsoft Software Library FTP still has it.
     # See ftp://ftp.microsoft.com/Softlib/index.txt
     w_download . ftp://ftp.microsoft.com/Softlib/MSLFILES/VBRUN200.EXE ac0568b73ee375408778e9b505df995f79ab907e
@@ -3681,7 +3795,8 @@ load_vb2run() {
 
 #----------------------------------------------------------------
 
-load_vb3run() {
+load_vb3run()
+{
     # See http://support.microsoft.com/kb/196285
     w_download . http://download.microsoft.com/download/vb30/utility/1/w9xnt4/en-us/vb3run.exe 518fcfefde9bf680695cadd06512efadc5ac2aa7
     try_unzip -d "$W_TMP" "$W_CACHE"/vb3run.exe
@@ -3691,7 +3806,8 @@ load_vb3run() {
 
 #----------------------------------------------------------------
 
-load_vb4run() {
+load_vb4run()
+{
     # See http://support.microsoft.com/kb/196286
     w_download . http://download.microsoft.com/download/vb40ent/sample27/1/w9xnt4/en-us/vb4run.exe 83e968063272e97bfffd628a73bf0ff5f8e1023b
     try_unzip -d "$W_TMP" "$W_CACHE"/vb4run.exe
@@ -3702,14 +3818,16 @@ load_vb4run() {
 
 #----------------------------------------------------------------
 
-load_vbvm50() {
+load_vbvm50()
+{
     w_download . http://download.microsoft.com/download/vb50pro/utility/1/win98/en-us/msvbvm50.exe 28bfaf09b8ac32cf5ffa81252f3e2fadcb3a8f27
     w_try $WINE "$W_CACHE"/msvbvm50.exe $W_UNATTENDED_SLASH_Q
 }
 
 #----------------------------------------------------------------
 
-load_vbrun60() {
+load_vbrun60()
+{
     if test ! -f "$W_CACHE"/vbrun60sp6.exe
     then
         w_download . http://download.microsoft.com/download/5/a/d/5ad868a0-8ecd-4bb0-a882-fe53eb7ef348/VB6.0-KB290887-X86.exe 73ef177008005675134d2f02c6f580515ab0d842
@@ -3740,7 +3858,8 @@ load_vbrun60() {
 
 #----------------------------------------------------------------
 
-load_vcrun6() {
+load_vcrun6()
+{
     # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
 
     # If this is just a dependency check, don't re-install
@@ -3787,7 +3906,8 @@ load_vcrun6() {
 
 #----------------------------------------------------------------
 
-load_vcrun6sp6() {
+load_vcrun6sp6()
+{
     if test ! -f vcredistsp6.exe
     then
         w_download . http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe 2292437a8967349261c810ae8b456592eeb76620
@@ -3823,7 +3943,8 @@ load_vcrun6sp6() {
 
 #----------------------------------------------------------------
 
-load_vcrun2003() {
+load_vcrun2003()
+{
     # Load the Visual C++ 2003 runtime libraries
     # Sadly, I know of no Microsoft URL for these
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
@@ -3834,7 +3955,8 @@ load_vcrun2003() {
 
 #----------------------------------------------------------------
 
-load_vcrun2005() {
+load_vcrun2005()
+{
     # Load the latest Visual C++ 2005 runtime libraries
     # If this is just a dependency check, don't re-install
 
@@ -3854,7 +3976,8 @@ load_vcrun2005() {
 
 #----------------------------------------------------------------
 
-load_vcrun2008() {
+load_vcrun2008()
+{
     # For the moment, assume windows already has this.
     case "$OS" in
     "Windows_NT")
@@ -3884,7 +4007,8 @@ load_vcrun2008() {
 
 #----------------------------------------------------------------
 
-load_vcrun2010() {
+load_vcrun2010()
+{
     # Load the Visual C++ 2010 runtime libraries
     # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84
     w_download vcrun2010 http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe 372d9c1670343d3fb252209ba210d4dc4d67d358
@@ -3896,7 +4020,8 @@ load_vcrun2010() {
 
 #----------------------------------------------------------------
 
-load_vjrun20() {
+load_vjrun20()
+{
     if [ $ARCH = win64 ]
     then
         w_warn "vjrun20 depends on dotnet20, which doesn't work on 64-bit wine yet. Skipping."
@@ -4318,14 +4443,16 @@ load_vc2008sp1()
 
 #----------------------------------------------------------------
 
-load_vlc() {
+load_vlc()
+{
     w_download . $SOURCEFORGE/vlc/vlc-1.1.0-win32.exe 501b6cb12d4916ed11ec9dac9e394add9227b3be
     w_try $WINE "$W_CACHE"/vlc-1.1.0-win32.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
 
-load_windowscodecs() {
+load_windowscodecs()
+{
     w_download . http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_enu.exe 53c18652ac2f8a51303deb48a1b7abbdb1db427f
 
     # Avoid a file existence check.
@@ -4341,7 +4468,8 @@ load_windowscodecs() {
 
 #----------------------------------------------------------------
 
-load_winhttp() {
+load_winhttp()
+{
     # See https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3ee866a0-3a09-4fdf-8bdb-c906850ab9f2
     w_download . http://download.microsoft.com/download/5/d/8/5d802926-6bab-45fa-b96e-bee15413523b/Windows2000-KB842773-x86-ENU.EXE e676d47e065a314bbf1d15b096a67aede6b0539a
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F winhttp.dll "$W_CACHE"/Windows2000-KB842773-x86-ENU.EXE
@@ -4350,7 +4478,8 @@ load_winhttp() {
 
 #----------------------------------------------------------------
 
-load_wininet() {
+load_wininet()
+{
     # This is an updated wininet from IE 5.0.1.
     # (Good enough for Active Worlds browser.  Also helps "Avatar - Legends of the Arena" get to login screen.)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
@@ -4362,7 +4491,8 @@ load_wininet() {
 
 #----------------------------------------------------------------
 
-load_wme9() {
+load_wme9()
+{
     if [ $ARCH = win64 ]
     then
         w_die "Installer doesn't support 64-bit architecture."
@@ -4375,7 +4505,8 @@ load_wme9() {
 
 #----------------------------------------------------------------
 
-load_wmi() {
+load_wmi()
+{
     if test $ARCH = win64
     then
         w_die "Installer doesn't support 64-bit architecture."
@@ -4394,7 +4525,8 @@ load_wmi() {
 
 #----------------------------------------------------------------
 
-load_wmp9() {
+load_wmp9()
+{
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
 
@@ -4428,7 +4560,8 @@ load_wmp9() {
 
 #----------------------------------------------------------------
 
-load_wmp10() {
+load_wmp10()
+{
     # See http://appdb.winehq.org/appview.php?iVersionId=3212
 
     load_wsh57
@@ -4455,7 +4588,8 @@ load_wmp10() {
 
 #----------------------------------------------------------------
 
-load_wenquanyi() {
+load_wenquanyi()
+{
     # See http://wenq.org/enindex.cgi
     # Donate at http://wenq.org/enindex.cgi?Download(en)#MicroHei_Beta if you want to help support free CJK font development
     w_download . $SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
@@ -4467,7 +4601,8 @@ load_wenquanyi() {
 
 #----------------------------------------------------------------
 
-load_wsh57() {
+load_wsh57()
+{
     if test -f "$W_SYSTEM32_DLLS"/scrrun.dll
     then
         echo "wsh57 already installed, skipping"
@@ -4486,7 +4621,8 @@ load_wsh57() {
 
 #----------------------------------------------------------------
 
-load_wsh56js() {
+load_wsh56js()
+{
     # This installs jscript 5.6 (but not vbscript)
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=16dd21a1-c4ee-4eca-8b80-7bd1dfefb4f8&DisplayLang=en
     w_download . http://download.microsoft.com/download/b/c/3/bc3a0c36-fada-497d-a3de-8b0139766f3b/Windows2000-KB917344-56-x86-enu.exe add5f74c5bd4da6cfae47f8306de213ec6ed52c8
@@ -4496,7 +4632,8 @@ load_wsh56js() {
 
 #----------------------------------------------------------------
 
-load_wsh56vb() {
+load_wsh56vb()
+{
     # This installs vbscript 5.6 (but not jscript)
     # See also http://www.microsoft.com/downloads/details.aspx?familyid=4F728263-83A3-464B-BCC0-54E63714BC75
     w_download . http://download.microsoft.com/download/IE60/Patch/Q318089/W9XNT4Me/EN-US/vbs56men.exe 48f14a93db33caff271da0c93f334971f9d7cb22
@@ -4506,7 +4643,8 @@ load_wsh56vb() {
 
 #----------------------------------------------------------------
 
-load_xact() {
+load_xact()
+{
     helper_directx_dl ;
 
     # xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll - extract
@@ -4527,7 +4665,8 @@ load_xact() {
 
 #----------------------------------------------------------------
 
-load_xinput() {
+load_xinput()
+{
     helper_directx_dl ;
 
     # xinput1_1.dll  xinput1_2.dll  xinput1_3.dll  xinput9_1_0.dll
@@ -4541,7 +4680,8 @@ load_xinput() {
 
 #----------------------------------------------------------------
 
-load_xvid() {
+load_xvid()
+{
     # xvid
     load_vcrun6
     w_download . http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
