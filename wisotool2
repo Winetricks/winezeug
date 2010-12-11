@@ -1610,6 +1610,43 @@ load_adobeair()
 
 #----------------------------------------------------------------
 
+w_metadata  art2kmin dlls \
+   title="MS Access 2007 runtime" \
+   publisher="Microsoft" \
+   year="2007" \
+   media="download" \
+   file1="AccessRuntime.exe"
+
+load_art2kmin()
+{
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=d9ae78d9-9dc6-4b38-9fa6-2c745a175aed&displaylang=en
+    w_download art2kmin http://download.microsoft.com/download/D/2/A/D2A2FC8B-0447-491C-A5EF-E8AA3A74FB98/AccessRuntime.exe 571811b7536e97cf4e4e53bbf8260cddd69f9b2d
+    cd "$W_CACHE"/art2kmin
+    w_try $WINE AccessRuntime.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
+w_metadata  atmlib dlls \
+   title="Adobe Type Manager" \
+   publisher="Adobe" \
+   year="2009" \
+   media="download" \
+   file1="W2KSP4_EN.EXE"
+
+load_atmlib()
+{
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
+    # FIXME: This is a huge download for a single dll.
+    # FIXME: This download is also used to get msasn1.dll, but we can't download into common cache directory until the file1 metadata download check is extended to handle that.  It'd be better to not need the huge download.
+    w_download atmlib http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
+    cd "$W_TMP"
+    w_try_cabextract "$W_CACHE"/atmlib/W2KSP4_EN.EXE i386/atmlib.dl_
+    w_try cp atmlib.dll "$W_SYSTEM32_DLLS"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  vcrun6 dlls \
    title="Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)" \
    publisher="Microsoft" \
