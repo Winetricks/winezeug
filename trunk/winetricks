@@ -1474,7 +1474,7 @@ load_d3dx9_xx() {
     w_try_cabextract -d "$W_TMP" -L -F "*$dllname*x86*" "$W_CACHE"/$DIRECTX_NAME
     for x in "$W_TMP"/*.cab
     do
-      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '$dllname.dll' "$x"
     done
 
     w_override_dlls native $dllname 
