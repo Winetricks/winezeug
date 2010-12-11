@@ -1446,20 +1446,25 @@ load_crypt32()
 
 load_cygwin()
 {
-    # See http://bugs.winehq.org/show_bug.cgi?id=21206
-    # Current is 1.7, but that doesn't install on wine, so jump through
-    # hoops to get 1.5
-    #w_download cygwin http://cygwin.com/setup.exe fdc9379ed58231cddd25bb7b448426681a3dd3c3
-    # this is some random verison of cygwin's setup from mid-2009, before the change that wine couldn't handle.
-    w_download cygwin http://kegel.com/cygwin/1.5/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
+    if workaround_wine_bug 21206
+    then
+        # Wine can't handle current cygwin, so use some random verison of cygwin's setup from mid-2009
+        w_download cygwin http://kegel.com/cygwin/1.5/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
+        w_warn "Paste in ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037 as the repo url for now, until bug 21206 is fixed"
+        # -X option is insecure, but we have to use it because fruitbat.org didn't archive .sig files :-(
+        _W_cygopts="-X"
+    else
+        w_download cygwin http://cygwin.com/setup.exe aaa2552de78e14891937c1fde86032e811cf3c3a
+        _W_cygopts=
+    fi
+
     mkdir -p "$W_DRIVE_C"/cygpkgs
     # If you happen to have saved your cygpkgs directory, unpack it now
     test -f "$W_CACHE/cygwin/cygpkgs.tgz" && (cd "$W_DRIVE_C"; gunzip -dc "$W_CACHE/cygwin/cygpkgs.tgz" | tar -xf -)
     cp "$W_CACHE/cygwin/setup.exe" "$W_DRIVE_C"/cygpkgs
     cd "$W_DRIVE_C"/cygpkgs
-    w_warn "Paste in ftp://www.fruitbat.org/pub/cygwin/circa/2009/09/08/111037 as the repo url for now, until bug 21206 is fixed"
-    # -X option is insecure, but we have to use it because fruitbat.org didn't archive .sig files :-(
-    w_try $WINE setup.exe -X
+    w_try $WINE setup.exe $_W_cygopts
+    unset _W_cygopts
 }
 
 #----------------------------------------------------------------
