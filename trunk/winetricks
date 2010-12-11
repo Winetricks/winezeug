@@ -2967,8 +2967,6 @@ load_mfc40() {
     w_download . http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
     try_unzip -d "$W_TMP" "$W_CACHE"/ole2v.exe
     w_try cp -f "$W_TMP"/MFC40.DLL "$W_SYSTEM32_DLLS"
-
-    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3489,8 +3487,6 @@ load_riched20() {
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/Q249973i.EXE
     w_try cp -f "$W_TMP"/riched??.dll "$W_SYSTEM32_DLLS"
     w_override_dlls native,builtin riched20 riched32
-
-    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3506,8 +3502,6 @@ load_riched30() {
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
     w_try cp -f "$W_TMP"/riched20.dll "$W_SYSTEM32_DLLS"
     w_override_dlls native,builtin riched20
-
-    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
@@ -3597,7 +3591,6 @@ load_tahoma() {
     w_try cp -f "$W_TMP"/Tahoma.TTF "$winefontsdir"/tahoma.ttf
     w_try cp -f "$W_TMP"/Tahomabd.TTF "$winefontsdir"/tahomabd.ttf
     chmod +w "$winefontsdir"/tahoma*.ttf
-    rm -rf "$W_TMP"/*
 }
 
 #----------------------------------------------------------------
