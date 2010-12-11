@@ -211,6 +211,10 @@ w_download()
     _W_file="$4"
     _W_cookiejar="$5"
 
+    case $_W_packagename in
+    .) w_die "bug: please do not download packages to top of cache" ;;
+    esac
+
     if [ "$_W_file"x = ""x ]
     then
         _W_file=`basename "$_W_url"`
