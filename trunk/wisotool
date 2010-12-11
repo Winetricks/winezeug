@@ -6997,13 +6997,13 @@ load_mnbw_demo()
 {
     if ! test -f "${W_CACHE}/${W_PACKAGE}/mb_warband_setup_1113.exe"
     then
-        w_download ${W_PACKAGE} http://download.taleworlds.com/mb_warband_setup_1113.exe
+        w_download ${W_PACKAGE} http://gamedaily.newaol.com/pub/mb_warband_setup_1110_tw.exe 5e04daa009aaac61ff2b55cb3b9ebd6c7073d8b5 mb_warband_setup_1113.exe
     fi
     cd "${W_CACHE}/${W_PACKAGE}"
     chmod +x mb_warband_setup_1113.exe
     w_ahk_do "
         SetTitleMatchMode, 2
-        run, ${mnbw_demo_exe}
+        run, mb_warband_setup_1113.exe
         WinWait, Warband
         ControlClick, Button2, Warband
         WinWait, Warband
