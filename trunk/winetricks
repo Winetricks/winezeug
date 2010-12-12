@@ -224,7 +224,6 @@ usage() {
     echo " tahoma        MS Tahoma font (not part of corefonts)"
     echo " takao         Takao Japanese fonts"
     echo " unifont       Unifont alternative to Arial Unicode MS"
-    echo " urlmon        MS urlmon.dll"
     echo " usp10         MS usp10.dll (Uniscribe)"
     echo " utorrent      uTorrent"
     echo " vb2run        MS Visual Basic 2 runtime"
@@ -3786,17 +3785,6 @@ _EOF_
 
 #----------------------------------------------------------------
 
-load_urlmon()
-{
-    # This is an updated urlmon from IE 6.0
-    # See http://www.microsoft.com/downloads/details.aspx?familyid=85BB441A-5BB1-4A82-86EC-A249AF287513
-    # (Works for Dolphin Smalltalk, see http://bugs.winehq.org/show_bug.cgi?id=8258)
-    w_download . http://download.microsoft.com/download/8/2/0/820faffc-3ea0-4914-bca3-584235964ded/Q837251.exe bcc79b92ac3c06c4de3692672c3d70bdd36be892
-    w_try_cabextract --directory="$W_TMP" "$W_CACHE/Q837251.exe"
-    w_try cp -f "$W_TMP"/URLMON.DLL "$W_SYSTEM32_DLLS"/urlmon.dll
-    w_override_dlls native,builtin urlmon
-}
-
 load_usp10()
 {
     # http://www.microsoft.com/downloads/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f
@@ -4941,7 +4929,6 @@ do
     tahoma) w_call tahoma;;
     takao) w_call takao;;
     unifont) w_call unifont;;
-    urlmon) w_call urlmon;;
     usp10) w_call usp10;;
     utorrent) w_call utorrent;;
     vbrun200|vb2run) w_call vb2run;;
