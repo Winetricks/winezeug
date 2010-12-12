@@ -354,11 +354,11 @@ w_umount()
 
 w_ahk_do()
 {
-   w_call autohotkey
-   _W_CR=`printf \\\\r`
-   echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
-   $WINE "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
-   unset _W_CR
+    w_try w_call autohotkey
+    _W_CR=`printf \\\\r`
+    echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
+    $WINE "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
+    unset _W_CR
 }
 
 w_override_dlls()
@@ -460,9 +460,11 @@ __EOF__
 
 # Call a verb, don't let it affect environment
 # Supports just one argument at the moment
+# Hope that subshell passes through exit status
+# If you don't want to check exit status, use w_try w_call
 w_call()
 {
-    ( load_$1 $2 ) || exit $?
+    ( load_$1 $2 )
 }
 
 w_register_font()
@@ -1615,11 +1617,35 @@ wisotool_run_app()
 
 wisotool_install_app()
 {
+    case $LANG in
+    da*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
+    de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
+    *)   fail_msg="Failed to install package $W_PACKAGE" ;;
+    esac
+
+    W_TMP="$W_DRIVE_C/windows/_temp/_$W_PACKAGE"
+    W_TMP_WIN="C:\\windows\\_temp\\_$W_PACKAGE"
+    rm -rf "$W_TMP"
+    mkdir -p "$W_TMP"
+
     # FIXME: initialize a new wineprefix for this app, set lots of global variables
-    if ! ( load_$W_PACKAGE )
+    if ! w_call $W_PACKAGE
     then
         w_die "$fail_msg"
     fi
+
+    # User-specific postinstall hook.
+    # Source it so the script can call w_download() if needed.
+    postfile="$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
+    if test -f "$postfile"
+    then
+        chmod +x "$postfile"
+        ( . "$postfile" )
+    fi
+
+    rm -rf "$W_TMP"
+    W_TMP="$W_DRIVE_C/windows/_temp"
+    W_TMP_WIN="C:\\windows\\_temp"
 }
 
 wisotool_uninstall_app()
@@ -2760,7 +2786,7 @@ w_metadata  xvid dlls \
 
 load_xvid()
 {
-    w_call vcrun6
+    w_try w_call vcrun6
     w_download xvid http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
     w_try $WINE "$W_CACHE"/xvid/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
 }
@@ -2782,16 +2808,35 @@ done
 
 #---- Main Program ----
 
+# Do whatever the current menu says to the given app
+# Unless you're in the run or uninstall menus, that means to install it.
+wisotool_do_app()
+{
+    case $WISOTOOL_CURMENU in
+    run)
+        wisotool_run_app $W_PACKAGE
+        ;;
+    uninstall)
+        wisotool_uninstall_app $W_PACKAGE
+        ;;
+    *) 
+        wisotool_install_app $W_PACKAGE
+        ;;
+    esac
+}
+
 # Usage: set W_PACKAGE to name of command to execute, and $1 to full path if external verb
 execute_command()
 {
-    rm -rf "$W_TMP"
-    mkdir -p "$W_TMP"
-
-    case $LANG in
-    da*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
-    de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
-    *)   fail_msg="Failed to install package $W_PACKAGE" ;;
+    # Load external verb
+    case $W_PACKAGE in
+    *.verb)
+        case $1 in
+        */*) . $1 ;;
+        *) . ./$1 ;;
+        esac
+        W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
+        ;;
     esac
 
     case $W_PACKAGE in
@@ -2810,41 +2855,18 @@ execute_command()
         fi
         ;;
 
-    # External verbs
-    *.verb)
-        case $1 in
-        */*) . $1 ;;
-        *) . ./$1 ;;
-        esac
-        W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
-        if ! ( load_$W_PACKAGE )
-        then
-            w_die "$fail_msg"
-        fi
-        ;;
-
-    # Internal verbs
+    # Hard-coded verbs
     list) wisotool_list_all ;;
     list-cached) wisotool_list_cached ;;
     list-download) wisotool_list_download ;;
     list-manual-download) wisotool_list_manual_download ;;
     list-installed) wisotool_list_installed ;;
 
+    # load_ functions
     *)
-        case $WISOTOOL_CURMENU in
-        run)
-            wisotool_run_app $W_PACKAGE
-            continue
-            ;;
-        uninstall)
-            wisotool_uninstall_app $W_PACKAGE
-            continue
-            ;;
-        esac
-
         if wisotool_metadata_exists $W_PACKAGE
         then
-            wisotool_install_app $W_PACKAGE
+            wisotool_do_app $W_PACKAGE
         else
             echo Unknown arg $W_PACKAGE
             wisotool_usage
@@ -2852,17 +2874,6 @@ execute_command()
         fi
         ;;
     esac
-
-    # User-specific postinstall hook.
-    # Source it so the script can call w_download() if needed.
-    postfile="$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
-    if test -f "$postfile"
-    then
-        chmod +x "$postfile"
-        ( . "$postfile" )
-    fi
-
-    rm -rf "$W_TMP"
 }
 
 if ! test "$WISOTOOL_LIB"
