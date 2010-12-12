@@ -1844,15 +1844,15 @@ w_metadata 7zip apps \
 
 load_7zip()
 {
-set -x
     if test -f "$W_PROGRAMS_X86_UNIX/7-Zip/7z.exe"
     then
         echo "7zip already installed, skipping"
-	return
+        return
     fi
     # FIXME: use more up to date version
     w_download 7zip http://downloads.sourceforge.net/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
     w_try $WINE "$W_CACHE"/7zip/7z465.exe $W_UNATTENDED_SLASH_S
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\7-Zip" "7z.exe %1 %2 %3 %4 %5"
 }
 
 # Not really a verb until we import it from winetricks
