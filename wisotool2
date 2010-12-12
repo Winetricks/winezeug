@@ -2094,7 +2094,8 @@ w_metadata  abiword apps \
 load_abiword()
 {
     w_download abiword http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
-    w_try $WINE "$W_CACHE"/abiword/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
+    cd "$W_CACHE"/abiword
+    w_try $WINE abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
     w_declare_exe "$W_PROGRAMS_X86_WIN\\AbiWord\\bin" AbiWord.exe
 }
 
