@@ -531,6 +531,11 @@ regedit() {
     w_die oops, bug, please report
 }
 
+w_try_regsvr()
+{
+    w_try $WINE regsvr32 $W_UNATTENDED_SLASH_S $@
+}
+
 w_try_cabextract() {
     # Not always installed, but shouldn't be fatal unless it's being used
     _W_cabextract="`which cabextract 2>/dev/null`" 
@@ -1232,7 +1237,7 @@ load_amstream()
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
-    w_try $WINE regsvr32 amstream.dll
+    w_try_regsvr amstream.dll
     
     w_override_dlls native amstream
 }
@@ -1329,8 +1334,8 @@ load_comctl32ocx()
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
     w_try cp "$W_TMP"/mscomctl.ocx "$W_SYSTEM32_DLLS"/mscomctl.ocx
     w_try cp "$W_TMP"/comctl32.ocx "$W_SYSTEM32_DLLS"/comctl32.ocx
-    w_try $WINE regsvr32 comctl32.ocx
-    w_try $WINE regsvr32 mscomctl.ocx
+    w_try_regsvr comctl32.ocx
+    w_try_regsvr mscomctl.ocx
 }
 
 #----------------------------------------------------------------
@@ -1352,7 +1357,7 @@ load_comdlg32ocx()
     w_download . http://activex.microsoft.com/controls/vb6/comdlg32.cab d4f3e193c6180eccd73bad53a8500beb5b279cbf
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/comdlg32.cab
     w_try cp "$W_TMP"/comdlg32.ocx "$W_SYSTEM32_DLLS"/comdlg32.ocx
-    w_try $WINE regsvr32 comdlg32.ocx
+    w_try_regsvr comdlg32.ocx
 }
 
 #----------------------------------------------------------------
@@ -1575,7 +1580,7 @@ load_devenum()
     w_try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE/$DIRECTX_NAME"
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
 
-    w_try $WINE regsvr32 devenum.dll
+    w_try_regsvr devenum.dll
 
     w_override_dlls native devenum
 }
@@ -1589,7 +1594,7 @@ load_dinput8()
     w_try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dinput8.dll' "$W_TMP/dxnt.cab"
 
-    w_try $WINE regsvr32 dinput8
+    w_try_regsvr dinput8
 
     w_override_dlls native dinput8
 }
@@ -1624,17 +1629,17 @@ load_directmusic()
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'streamci.dll' "$W_TMP/dxnt.cab"
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
     
-    w_try $WINE regsvr32 devenum.dll
-    w_try $WINE regsvr32 dmband.dll
-    w_try $WINE regsvr32 dmcompos.dll
-    w_try $WINE regsvr32 dmime.dll
-    w_try $WINE regsvr32 dmloader.dll
-    w_try $WINE regsvr32 dmscript.dll
-    w_try $WINE regsvr32 dmstyle.dll
-    w_try $WINE regsvr32 dmsynth.dll
-    w_try $WINE regsvr32 dmusic.dll
-    w_try $WINE regsvr32 dswave.dll
-    w_try $WINE regsvr32 quartz.dll
+    w_try_regsvr devenum.dll
+    w_try_regsvr dmband.dll
+    w_try_regsvr dmcompos.dll
+    w_try_regsvr dmime.dll
+    w_try_regsvr dmloader.dll
+    w_try_regsvr dmscript.dll
+    w_try_regsvr dmstyle.dll
+    w_try_regsvr dmsynth.dll
+    w_try_regsvr dmusic.dll
+    w_try_regsvr dswave.dll
+    w_try_regsvr quartz.dll
     
     w_override_dlls native devenum dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci quartz
 }
@@ -1652,9 +1657,9 @@ load_directplay()
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dpnhpast.dll' "$W_TMP/dxnt.cab"
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dpwsockx.dll' "$W_TMP/dxnt.cab"
 
-    w_try $WINE regsvr32 dplayx.dll
-    w_try $WINE regsvr32 dpnet.dll
-    w_try $WINE regsvr32 dpnhpast.dll
+    w_try_regsvr dplayx.dll
+    w_try_regsvr dpnet.dll
+    w_try_regsvr dpnhpast.dll
 
     w_override_dlls native dplayx dpnet dpnhpast dpwsockx
 }
@@ -1753,7 +1758,7 @@ load_dmsynth()
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
     
-    w_try $WINE regsvr32 dmsynth.dll
+    w_try_regsvr dmsynth.dll
     
     w_override_dlls native dmsynth
     
@@ -2028,7 +2033,7 @@ load_dsound()
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dsound.dll' "$W_TMP/dxnt.cab"
 
-    w_try $WINE regsvr32 dsound.dll
+    w_try_regsvr dsound.dll
 
     w_override_dlls native dsound
 }
@@ -2481,7 +2486,7 @@ _EOF_
     w_try_regedit "$W_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
-    w_try $WINE regsvr32 mshtml
+    w_try_regsvr mshtml
 }
 
 #----------------------------------------------------------------
@@ -2605,7 +2610,7 @@ _EOF_
     w_try_regedit "$W_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
-    w_try $WINE regsvr32 mshtml
+    w_try_regsvr mshtml
 }
 
 #----------------------------------------------------------------
@@ -2805,7 +2810,7 @@ load_icodecs()
     # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
     w_download . "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
     w_try $WINE "$W_CACHE"/"codinstl.exe"
-    w_try $WINE regsvr32 "$W_SYSTEM32_DLLS/ir50_32.dll"
+    w_try_regsvr "$W_SYSTEM32_DLLS/ir50_32.dll"
     # Work around bug in codec's installer?
     # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
     # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
@@ -2983,7 +2988,7 @@ load_l3codecx()
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F l3codecx.ax "$W_TMP/dxnt.cab"
     
-    w_try $WINE regsvr32 l3codecx.ax
+    w_try_regsvr l3codecx.ax
 }
 
 #----------------------------------------------------------------
@@ -3230,7 +3235,7 @@ load_msmask()
     w_download .  http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/MSMASK32.CAB
     w_try cp -f "$W_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$W_SYSTEM32_DLLS"/msmask32.ocx
-    w_try $WINE regsvr32 msmask32.ocx
+    w_try_regsvr msmask32.ocx
 }
 
 #----------------------------------------------------------------
@@ -3252,7 +3257,7 @@ load_msscript()
     w_download .  http://download.microsoft.com/download/d/2/a/d2a7430c-6d5b-48e9-96c4-3c751be7bffe/sct10en.exe fd9f2f23357ab11ae70682d6864f7e9f188adf2a
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/sct10en.exe
     w_try cp -f "$W_TMP"/msscript.ocx "$W_SYSTEM32_DLLS"
-    w_try $WINE regsvr32 msscript.ocx
+    w_try_regsvr msscript.ocx
 }
 
 #----------------------------------------------------------------
@@ -3513,7 +3518,7 @@ load_quartz()
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
     
-    w_try $WINE regsvr32 quartz.dll
+    w_try_regsvr quartz.dll
     
     w_override_dlls native quartz
     
@@ -3649,7 +3654,7 @@ load_richtx32()
 {
     w_download . http://activex.microsoft.com/controls/vb6/richtx32.cab da404b566df3ad74fe687c39404a36c3e7cadc07
     w_try_cabextract "$W_CACHE"/richtx32.cab -d "$W_SYSTEM32_DLLS" -F RichTx32.Ocx
-    w_try $WINE regsvr32 RichTx32.ocx
+    w_try_regsvr RichTx32.ocx
 }
 
 #----------------------------------------------------------------
@@ -4643,7 +4648,7 @@ load_wsh57()
 
     # Wine doesn't provide the other dll's (yet?)
     w_override_dlls native,builtin jscript.dll
-    w_try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
+    w_try_regsvr dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
 }
 
 #----------------------------------------------------------------
@@ -4686,7 +4691,7 @@ load_xact()
     # xactengine?_?.dll, xaudio?_?.dll - register
     for x in "$W_SYSTEM32_DLLS"/xactengine* "$W_SYSTEM32_DLLS"/xaudio*
     do
-      w_try $WINE regsvr32 `basename "$x"`
+      w_try_regsvr `basename "$x"`
     done
 }
 
