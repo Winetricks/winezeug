@@ -1117,14 +1117,14 @@ _EOF_
     rm -f "$W_TMP"/path.reg
 }
 
-# Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
+# Usage: w_workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
 # False (nonzero status) on Windows.
 # True (zero status) on Wine unless good-wineversion-shell-pattern is set
 # and matches the current wine version.
 # (FIXME: make that easier to use, maybe by specifying a range instead of a pattern.)
 # For debugging: if you want to skip a bug's workaround, put the bug number in the
 # environment variable WINETRICKS_BUG_BLACKLIST to disable it.
-workaround_wine_bug()
+w_workaround_wine_bug()
 {
     if test "$WINE" = ""
     then
@@ -1446,7 +1446,7 @@ load_crypt32()
 
 load_cygwin()
 {
-    if workaround_wine_bug 21206
+    if w_workaround_wine_bug 21206
     then
         # Wine can't handle current cygwin, so use some random verison of cygwin's setup from mid-2009
         w_download cygwin http://kegel.com/cygwin/1.5/setup.exe 5cfb8ebe4f385b0fcffa04d22d607ec75ea05180
@@ -1898,7 +1898,7 @@ load_dotnet30()
        ln -sf "${W_SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
     done 
 
-    #if workaround_wine_bug 25074
+    #if w_workaround_wine_bug 25074
     #then
     #    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
     #    rm "$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
@@ -1931,7 +1931,7 @@ load_dotnet35()
     $WINE dotNetFx35setup.exe /lang:ENU
 
     # FIXME: Do this only if the above commmand failed (not sure how to detect it... look for some file, I s'pose)
-    if workaround_wine_bug 25060
+    if w_workaround_wine_bug 25060
     then
         # Thanks to Louis for this partial recipe
         #w_try $WINE reg add 'HKLM\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727' /v SP /t REG_DWORD /d 0001
