@@ -2061,7 +2061,7 @@ w_metadata autohotkey apps \
    publisher="autohotkey.org" \
    year="2010" \
    media="download" \
-   file1="AutoHotkey104805_Install"
+   file1="AutoHotkey104805_Install.exe"
 
 load_autohotkey()
 {
