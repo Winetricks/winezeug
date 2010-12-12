@@ -115,7 +115,7 @@ test_install_cached_or_download()
     sh wisotool2 list-cached > cached.txt
     sh wisotool2 list-download > download.txt
     comm -23 download.txt cached.txt > download-but-not-cached.txt
-    if `wc -l < download-but-not-cached.txt` != 0
+    if test `wc -l < download-but-not-cached.txt` != 0
     then
         fail "test_install_cached_or_download: asked to install all downloadable apps, but some not listed as cached afterwards"
     fi
