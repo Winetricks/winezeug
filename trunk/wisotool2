@@ -460,6 +460,22 @@ w_call()
     ( load_$1 $2 ) || exit $?
 }
 
+w_register_font()
+{
+    file=$1
+    shift
+    font=$1
+    # Kludge: use _r to avoid \r expansion in w_try
+    cat > "$W_TMP"/_register-font.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Fonts]
+"$font"="$file"
+_EOF_
+    # too verbose
+    w_try_regedit "$W_TMP_WIN"\\_register-font.reg
+}
+
 #---- Private Functions ----
 
 wisotool_print_version() {
@@ -513,18 +529,23 @@ wisotool_mainmenu()
     case $LANG in
     da*) _W_msg_title='Vælg en pakke-kategori'
          _W_msg_body='Hvad ønsker du at gøre?'
+         _W_msg_run='Run an already-installed Windows app'
+         _W_msg_uninstall='Uninstall a Windows app'
          _W_msg_apps='Installér et program'
-         _W_msg_games='Installér et spil'
-         _W_msg_benchmarks='Install a benchmark with Wine'
+         _W_msg_benchmarks='Install a Windows benchmark'
          _W_msg_dlls="Install a Windows DLL"
+         _W_msg_fonts='Install a font'
+         _W_msg_games='Installér et spil'
          _W_msg_steam='Install a Steam game with Wine'
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
-         _W_msg_apps='Windows-Programm installieren'
+         _W_msg_run='Run an already-installed Windows app'
          _W_msg_uninstall='Windows-Programm löschen'
+         _W_msg_apps='Windows-Programm installieren'
          _W_msg_benchmarks='Windows-Benchmark installieren'
          _W_msg_dlls="Windows-DLL installieren"
+         _W_msg_fonts='Schriftart installieren'
          _W_msg_games='Windows-Spiel installieren'
          _W_msg_steam='Steam-Spiel installieren'
          ;;
@@ -535,6 +556,7 @@ wisotool_mainmenu()
          _W_msg_apps='Install a Windows program'
          _W_msg_benchmarks='Install a Windows benchmark'
          _W_msg_dlls="Install a Windows DLL"
+         _W_msg_fonts='Install a font'
          _W_msg_games='Install a Windows game'
          _W_msg_steam='Install a Steam game'
          ;;
@@ -557,6 +579,7 @@ wisotool_mainmenu()
             --width 800 \
             --hide-column 2 \
             FALSE dlls       "$_W_msg_dlls" \
+            FALSE fonts      "$_W_msg_fonts" \
             FALSE games      "$_W_msg_games" \
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
@@ -572,6 +595,7 @@ wisotool_mainmenu()
                 --radiolist \
                 "$_W_msg_body"\
                 dlls       "$_W_msg_dlls" off \
+                fonts      "$_W_msg_fonts" off \
                 games      "$_W_msg_games" off \
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
@@ -1292,7 +1316,7 @@ wisotool_init()
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="apps benchmarks dlls games steam"
+    WISOTOOL_CATEGORIES="apps benchmarks dlls fonts games steam"
     for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
@@ -1356,8 +1380,11 @@ wisotool_init()
         ;;
     esac
     # Verbs can rely on W_TMP being empty at entry, deleted after return, and a subdir of C:
-    W_TMP="$W_DRIVE_C/windows/temp"
-    W_TMP_WIN="C:\\windows\\temp"
+    # Kludge: use _temp instead of temp to avoid \t expansion in w_try
+    W_TMP="$W_DRIVE_C/windows/_temp"
+    W_TMP_WIN="C:\\windows\\_temp"
+
+    W_WINDIR_UNIX="$W_DRIVE_C/windows"
 
     # Where application installers are cached
     # FIXME: move those tr's and sed's into w_pathconv, if they're still needed?
@@ -1384,6 +1411,18 @@ wisotool_init()
 
     W_APPDATA_WIN="`wisotool_early_wine cmd.exe /c echo "%AppData%" | tr -d '\015'`"
     W_APPDATA_UNIX="`w_pathconv -u "$W_APPDATA_WIN" | tr -d '\015' `"
+
+    # (Fixme: get fonts path from SHGetFolderPath
+    # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
+    #
+    # Did the user rename Fonts to fonts?
+    if test ! -d "$W_WINDIR_UNIX"/Fonts && test -d "$W_WINDIR_UNIX"/fonts
+    then
+        W_FONTSDIR_UNIX="$W_WINDIR_UNIX"/fonts
+    else
+        W_FONTSDIR_UNIX="$W_WINDIR_UNIX"/Fonts
+    fi
+    mkdir -p "${W_FONTSDIR_UNIX}"
 
     # FIXME: don't hardcode
     W_PROGRAMS_DRIVE=c
@@ -1419,8 +1458,6 @@ wisotool_init()
     # Overridden for windows
     W_ISO_MOUNT_ROOT=/mnt/wisotool
     W_ISO_MOUNT_LETTER=i
-
-    W_WINDIR_UNIX="$W_DRIVE_C/windows"
 
     # Win(e) 32/64?
     # Using the variable W_SYSTEM32_DLLS instead of SYSTEM32 because some stuff does go under system32 for both arch's
@@ -1836,6 +1873,37 @@ load_wsh57()
     # Wine doesn't provide the other dll's (yet?)
     w_override_dlls native,builtin jscript.dll
     w_try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
+}
+
+#----------------------------------------------------------------
+# Fonts
+#----------------------------------------------------------------
+
+w_metadata baekmuk fonts \
+   title="Baekmuk Korean fonts" \
+   publisher="Wooderart Inc. / kldp.net" \
+   year="1999" \
+   media="download" \
+   file1="ttf-baekmuk_2.2.orig.tar.gz"
+
+load_baekmuk()
+{
+    if test -f "$W_FONTSDIR_UNIX"/batang.ttf
+    then
+        echo "baekmuk already installed"
+        return
+    fi
+
+    # See http://kldp.net/projects/baekmuk for project page
+    # Need to download from Debian as the project page has unique captcha tokens per visitor
+    w_download baekmuk http://ftp.debian.org/debian/pool/main/t/ttf-baekmuk/ttf-baekmuk_2.2.orig.tar.gz afdee34f700007de6ea87b43c92a88b7385ba65b
+    cd "$W_TMP/"
+    gunzip -dc "$W_CACHE/baekmuk/ttf-baekmuk_2.2.orig.tar.gz" | tar -xf -
+    w_try mv baekmuk-ttf-2.2/ttf/*.ttf "$W_FONTSDIR_UNIX"
+    w_register_font batang.ttf "Baekmuk Batang"
+    w_register_font gulim.ttf "Baekmuk Gulim"
+    w_register_font dotum.ttf "Baekmuk Dotum"
+    w_register_font hline.ttf "Baekmuk Headline"
 }
 
 #----------------------------------------------------------------
@@ -2605,7 +2673,7 @@ execute_command()
     case $W_PACKAGE in
 
     # FIXME: avoid duplicated code
-    apps|benchmarks|dlls|games|run|uninstall|steam)
+    apps|benchmarks|dlls|fonts|games|run|uninstall|steam)
         WISOTOOL_CURMENU=$W_PACKAGE
         ;;
 
