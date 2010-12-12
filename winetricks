@@ -1086,7 +1086,8 @@ override_app_dlls() {
     rm "$W_TMP"/override-dll.reg
 }
 
-register_font() {
+w_register_font()
+{
     file=$1
     shift
     font=$1
@@ -1253,10 +1254,10 @@ load_baekmuk()
     cd "$W_TMP/"
     gunzip -dc "$W_CACHE/ttf-baekmuk_2.2.orig.tar.gz" | tar -xf -
     w_try mv baekmuk-ttf-2.2/ttf/*.ttf "$W_FONTSDIR_UNIX"
-    register_font batang.ttf "Baekmuk Batang"
-    register_font gulim.ttf "Baekmuk Gulim"
-    register_font dotum.ttf "Baekmuk Dotum"
-    register_font hline.ttf "Baekmuk Headline"
+    w_register_font batang.ttf "Baekmuk Batang"
+    w_register_font gulim.ttf "Baekmuk Gulim"
+    w_register_font dotum.ttf "Baekmuk Dotum"
+    w_register_font hline.ttf "Baekmuk Headline"
 }
 
 #----------------------------------------------------------------
@@ -1373,62 +1374,62 @@ load_corefonts()
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/arial32.exe
     w_try cp -f "$W_TMP"/Arial*.TTF "$W_FONTSDIR_UNIX"
-    register_font Arial.TTF "Arial (TrueType)"
-    register_font Arialbd.TTF "Arial Bold (TrueType)"
-    register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
-    register_font Ariali.TTF "Arial Italic (TrueType)"
+    w_register_font Arial.TTF "Arial (TrueType)"
+    w_register_font Arialbd.TTF "Arial Bold (TrueType)"
+    w_register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
+    w_register_font Ariali.TTF "Arial Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/arialb32.exe
     w_try cp -f "$W_TMP"/AriBlk.TTF "$W_FONTSDIR_UNIX"
-    register_font AriBlk.TTF "Arial Black (TrueType)"
+    w_register_font AriBlk.TTF "Arial Black (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/comic32.exe
     w_try cp -f "$W_TMP"/Comic*.TTF "$W_FONTSDIR_UNIX"
-    register_font Comic.TTF "Comic Sans MS (TrueType)"
-    register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
+    w_register_font Comic.TTF "Comic Sans MS (TrueType)"
+    w_register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/courie32.exe
     w_try cp -f "$W_TMP"/cour*.ttf "$W_FONTSDIR_UNIX"
-    register_font Cour.TTF "Courier New (TrueType)"
-    register_font CourBD.TTF "Courier New Bold (TrueType)"
-    register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
-    register_font Couri.TTF "Courier New Italic (TrueType)"
+    w_register_font Cour.TTF "Courier New (TrueType)"
+    w_register_font CourBD.TTF "Courier New Bold (TrueType)"
+    w_register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
+    w_register_font Couri.TTF "Courier New Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/georgi32.exe
     w_try cp -f "$W_TMP"/Georgia*.TTF "$W_FONTSDIR_UNIX"
-    register_font Georgia.TTF "Georgia (TrueType)"
-    register_font Georgiab.TTF "Georgia Bold (TrueType)"
-    register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
-    register_font Georgiai.TTF "Georgia Italic (TrueType)"
+    w_register_font Georgia.TTF "Georgia (TrueType)"
+    w_register_font Georgiab.TTF "Georgia Bold (TrueType)"
+    w_register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
+    w_register_font Georgiai.TTF "Georgia Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/impact32.exe
     w_try cp -f "$W_TMP"/Impact.TTF "$W_FONTSDIR_UNIX"
-    register_font Impact.TTF "Impact (TrueType)"
+    w_register_font Impact.TTF "Impact (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/times32.exe
     w_try cp -f "$W_TMP"/Times*.TTF "$W_FONTSDIR_UNIX"
-    register_font Times.TTF "Times New Roman (TrueType)"
-    register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
-    register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
-    register_font Timesi.TTF "Times New Roman Italic (TrueType)"
+    w_register_font Times.TTF "Times New Roman (TrueType)"
+    w_register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
+    w_register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
+    w_register_font Timesi.TTF "Times New Roman Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/trebuc32.exe
     w_try cp -f "$W_TMP"/trebuc*.ttf "$W_FONTSDIR_UNIX"
-    register_font Trebuc.TTF "Trebucet MS (TrueType)"
-    register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
-    register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
-    register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
+    w_register_font Trebuc.TTF "Trebucet MS (TrueType)"
+    w_register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
+    w_register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
+    w_register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/verdan32.exe
     w_try cp -f "$W_TMP"/Verdana*.TTF "$W_FONTSDIR_UNIX"
-    register_font Verdana.TTF "Verdana (TrueType)"
-    register_font Verdanab.TTF "Verdana Bold (TrueType)"
-    register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
-    register_font Verdanai.TTF "Verdana Italic (TrueType)"
+    w_register_font Verdana.TTF "Verdana (TrueType)"
+    w_register_font Verdanab.TTF "Verdana Bold (TrueType)"
+    w_register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
+    w_register_font Verdanai.TTF "Verdana Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/webdin32.exe
     w_try cp -f "$W_TMP"/Webdings.TTF "$W_FONTSDIR_UNIX"
-    register_font Webdings.TTF "Webdings (TrueType)"
+    w_register_font Webdings.TTF "Webdings (TrueType)"
 }
 
 #----------------------------------------------------------------
@@ -1954,7 +1955,7 @@ _EOF_
 do_droid() {
     w_download . ${DROID_URL}$1';hb=HEAD'   $3  $1
     w_try cp -f "$W_CACHE"/$1 "$W_FONTSDIR_UNIX"
-    register_font $1 "$2"
+    w_register_font $1 "$2"
 }
 
 load_droid()
@@ -2025,21 +2026,21 @@ load_eufonts()
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/EUupdate.EXE
     w_try cp -f "$W_TMP"/*.ttf "$W_FONTSDIR_UNIX"
 
-    register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
-    register_font ArialI.ttf "Arial Italic (TrueType)"
-    register_font Arial.ttf "Arial (TrueType)"
-    register_font TimesBd.ttf "Times New Roman Bold (TrueType)"
-    register_font TimesBI.ttf "Times New Roman Bold Italic (TrueType)"
-    register_font TimesI.ttf "Times New Roman Italic (TrueType)"
-    register_font Times.ttf "Times New Roman (TrueType)"
-    register_font trebucbd.ttf "Trebuchet Bold (TrueType)"
-    register_font trebucbi.ttf "Trebuchet Bold Italic (TrueType)"
-    register_font trebucit.ttf "Trebuchet Italic (TrueType)"
-    register_font trebuc.ttf "Trebuchet (TrueType)"
-    register_font Verdanab.ttf "Verdana Bold (TrueType)"
-    register_font Verdanai.ttf "Verdana Italian (TrueType)"
-    register_font Verdana.ttf "Verdana (TrueType)"
-    register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
+    w_register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
+    w_register_font ArialI.ttf "Arial Italic (TrueType)"
+    w_register_font Arial.ttf "Arial (TrueType)"
+    w_register_font TimesBd.ttf "Times New Roman Bold (TrueType)"
+    w_register_font TimesBI.ttf "Times New Roman Bold Italic (TrueType)"
+    w_register_font TimesI.ttf "Times New Roman Italic (TrueType)"
+    w_register_font Times.ttf "Times New Roman (TrueType)"
+    w_register_font trebucbd.ttf "Trebuchet Bold (TrueType)"
+    w_register_font trebucbi.ttf "Trebuchet Bold Italic (TrueType)"
+    w_register_font trebucit.ttf "Trebuchet Italic (TrueType)"
+    w_register_font trebuc.ttf "Trebuchet (TrueType)"
+    w_register_font Verdanab.ttf "Verdana Bold (TrueType)"
+    w_register_font Verdanai.ttf "Verdana Italian (TrueType)"
+    w_register_font Verdana.ttf "Verdana (TrueType)"
+    w_register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
 
 }
 
@@ -2980,7 +2981,7 @@ load_lucida()
 {
     w_download . ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/NT40TSE/hotfixes-postSP3/Euro-fix/eurofixi.exe 64c47ad92265f6f10b0fd909a703d4fd1b05b2d5
     w_try_cabextract -d "$W_FONTSDIR_UNIX" -L -F 'lucon.ttf' "$W_CACHE"/eurofixi.exe
-    register_font lucon.ttf "Lucida Console" 
+    w_register_font lucon.ttf "Lucida Console" 
 }
 
 #----------------------------------------------------------------
@@ -3717,12 +3718,12 @@ load_takao()
     try_unzip -d "$W_TMP" "$W_TMP"/takao-fonts-ttf-003.02.01.zip
     w_try cp -f "$W_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$W_FONTSDIR_UNIX"
 
-    register_font TakaoGothic.ttf "TakaoGothic"
-    register_font TakaoPGothic.ttf "TakaoPGothic"
-    register_font TakaoMincho.ttf "TakaoMincho"
-    register_font TakaoPMincho.ttf "TakaoPMincho"
-    register_font TakaoExGothic.ttf "TakaoExGothic"
-    register_font TakaoExMincho.ttf "TakaoExMincho"
+    w_register_font TakaoGothic.ttf "TakaoGothic"
+    w_register_font TakaoPGothic.ttf "TakaoPGothic"
+    w_register_font TakaoMincho.ttf "TakaoMincho"
+    w_register_font TakaoPMincho.ttf "TakaoPMincho"
+    w_register_font TakaoExGothic.ttf "TakaoExGothic"
+    w_register_font TakaoExMincho.ttf "TakaoExMincho"
 }
 
 #----------------------------------------------------------------
@@ -3736,7 +3737,7 @@ load_unifont()
     try_unzip -d "$W_TMP" "$W_TMP"/unifont-5.1.20080907.zip
     w_try cp -f "$W_TMP"/unifont-5.1.20080907.ttf "$W_FONTSDIR_UNIX/unifont.ttf"
 
-    register_font unifont.ttf "Unifont"
+    w_register_font unifont.ttf "Unifont"
 
     cat > "$W_TMP"/unifont.reg <<_EOF_
 REGEDIT4
@@ -4601,7 +4602,7 @@ load_wenquanyi()
     cd "$W_TMP/"
     gunzip -dc "$W_CACHE/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
     w_try mv wqy-microhei/wqy-microhei.ttc "$W_FONTSDIR_UNIX"
-    register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
+    w_register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
 }
 
 #----------------------------------------------------------------
