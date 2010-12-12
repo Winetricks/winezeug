@@ -863,6 +863,7 @@ wisotool_list_manual_download()
 
 # List verbs which are installed and runnable
 # 'Runnable' here means 'has a run-$verbname.bat script'.
+# FIXME: doesn't work at all for dlls.
 wisotool_list_installed()
 {
     (
@@ -1683,11 +1684,12 @@ w_metadata amstream dlls \
    publisher="Microsoft" \
    year="2010" \
    media="download" \
-   file1="directx_feb2010_redist.exe"
+   file1="../directx9/directx_feb2010_redist.exe"
 
 load_amstream()
 {
     helper_directx_dl
+    mkdir "$W_CACHE"/amstream   # kludge so test -f $file1 works
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
