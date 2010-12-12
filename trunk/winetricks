@@ -2175,7 +2175,7 @@ load_ffdshow()
 {
     # ffdshow
     w_download . $SOURCEFORGE/ffdshow-tryout/ffdshow_beta5_rev2033_20080705_clsid.exe 6da6837e2f400923ff5294a6591a88a3eee5ee40
-    w_try $WINE "$W_CACHE"/ffdshow_beta5_rev2033_20080705_clsid.exe $WINETRICKS_SILENT
+    w_try $WINE "$W_CACHE"/ffdshow_beta5_rev2033_20080705_clsid.exe $W_UNATTENDED_SLASH_SILENT
 }
 
 #----------------------------------------------------------------
@@ -3139,7 +3139,7 @@ load_mono26()
 {
     # Load Mono, have it handle all .net requests
     w_download . http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2 
-    w_try $WINE "$W_CACHE"/mono-2.6.7-gtksharp-2.12.10-win32-2.exe $WINETRICKS_SILENT
+    w_try $WINE "$W_CACHE"/mono-2.6.7-gtksharp-2.12.10-win32-2.exe $W_UNATTENDED_SLASH_SILENT
 }
 
 #----------------------------------------------------------------
@@ -3148,7 +3148,7 @@ load_mono28()
 {
     # Load Mono, have it handle all .net requests
     w_download . http://ftp.novell.com/pub/mono/archive/2.8.1/windows-installer/3/mono-2.8.1-gtksharp-2.12.10-win32-3.exe e491cbcadf486bdb3993efe6dc98e90c4e19425e
-    w_try $WINE "$W_CACHE"/mono-2.8.1-gtksharp-2.12.10-win32-3.exe $WINETRICKS_SILENT
+    w_try $WINE "$W_CACHE"/mono-2.8.1-gtksharp-2.12.10-win32-3.exe $W_UNATTENDED_SLASH_SILENT
 }
 
 #----------------------------------------------------------------
@@ -4712,7 +4712,7 @@ load_xvid()
     # xvid
     load_vcrun6
     w_download . http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
-    w_try $WINE "$W_CACHE"/Xvid-1.2.2-07062009.exe $WINETRICKS_SILENT
+    w_try $WINE "$W_CACHE"/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
 }
 
 #--------- Main program -----------------------------------------
@@ -4804,7 +4804,7 @@ do
     -q) W_UNATTENDED_SLASH_Q="/q"
         W_UNATTENDED_SLASH_Q_T="/qt" # Microsoft Control Pad
         WINETRICKS_UNIXQUIET="-q"
-        WINETRICKS_SILENT="/silent"
+        W_UNATTENDED_SLASH_SILENT="/silent"
         W_UNATTENDED_DASH_SILENT="-silent"
         W_UNATTENDED_SLASH_S="/S"                 # for NSIS installers
         WINEDEBUG=${WINEDEBUG:-"fixme-all"}
