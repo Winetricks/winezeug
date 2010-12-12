@@ -1691,6 +1691,38 @@ load_atmlib()
 
 #----------------------------------------------------------------
 
+w_metadata  glut dlls \
+   title="The glut utility library for OpenGL" \
+   publisher="Mark J. Kilgard" \
+   year="2001" \
+   media="download" \
+   file1="glut-3.7.6-bin.zip"
+
+load_glut() {
+    w_download glut http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
+    w_try unzip -d "$W_DRIVE_C" "$W_CACHE"/glut/glut-3.7.6-bin.zip
+    w_try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$W_SYSTEM32_DLLS"
+    w_warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
+}
+
+#----------------------------------------------------------------
+
+w_metadata  mfc40 dlls \
+   title="MS mfc40 (Microsoft Foundation Classes from Visual C++ 4.0)" \
+   publisher="Microsoft" \
+   year="2004" \
+   media="download" \
+   file1="ole2v.exe"
+
+load_mfc40() {
+    # See http://support.microsoft.com/kb/122244
+    w_download mfc40 http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
+    w_try unzip -d "$W_TMP" "$W_CACHE"/mfc40/ole2v.exe
+    w_try cp -f "$W_TMP"/MFC40.DLL "$W_SYSTEM32_DLLS"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  vcrun6 dlls \
    title="Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)" \
    publisher="Microsoft" \
