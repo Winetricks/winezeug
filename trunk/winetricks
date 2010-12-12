@@ -949,7 +949,14 @@ _EOF_
     w_try_regedit "$W_TMP_WIN"\\crashdialog.reg
 }
 
-sandbox() {
+sandbox()
+{
+    case "$OS" in
+    "Windows_NT")
+      return
+      ;;
+    esac
+
     # Unmap drive Z
     # Might want to unpack gecko first, since Wine won't be able to get to /usr/lib/wine after this
     rm -f "$WINEPREFIX/dosdevices/z:"
@@ -2362,6 +2369,12 @@ _EOF_
 
 load_gecko()
 {
+    case "$OS" in
+    "Windows_NT")
+      return
+      ;;
+    esac
+
     # Load the HTML rendering Engine (Gecko)
     # FIXME: shouldn't this code be in some script installed
     # as part of Wine instead of in winetricks?
