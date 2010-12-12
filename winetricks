@@ -2714,7 +2714,7 @@ load_ie6()
     w_override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
 
     # Remove the fake dlls, if any
-    mv "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe "$programfilesdir_unix"/"Internet Explorer"/iexplore.exe.bak
+    mv "$W_PROGRAMS_UNIX"/"Internet Explorer"/iexplore.exe "$W_PROGRAMS_UNIX"/"Internet Explorer"/iexplore.exe.bak
     for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
     do
         test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
@@ -2842,10 +2842,10 @@ load_ie7()
     # Seeing is believing
     if [ "$W_UNATTENDED_SLASH_Q" = "" ]
     then
-        w_warn "Starting ie7.  To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
-        $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
+        w_warn "Starting ie7.  To start it later, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
+        $WINE "${W_PROGRAMS_WIN}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
     else
-        w_warn "To start ie7, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
+        w_warn "To start ie7, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
     fi
 }
 
@@ -2916,10 +2916,10 @@ load_ie8()
     # Seeing is believing
     if [ "$W_UNATTENDED_SLASH_Q" = "" ]
     then
-        w_warn "Starting ie8. To start it later, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'"
-        $WINE "${programfilesdir_win}\\Internet Explorer\\iexplore" http://www.winehq.org/ > /dev/null 2>&1 &
+        w_warn "Starting ie8. To start it later, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
+        $WINE "${W_PROGRAMS_WIN}\\Internet Explorer\\iexplore" http://www.winehq.org/ > /dev/null 2>&1 &
     else
-        w_warn "To start ie8, use the command $WINE '${programfilesdir_win}\\\\Internet Explorer\\\\iexplore'. It doesn't work well yet though, see: http://bugs.winehq.org/show_bug.cgi?id=12433"
+        w_warn "To start ie8, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'. It doesn't work well yet though, see: http://bugs.winehq.org/show_bug.cgi?id=12433"
     fi
 }
 
@@ -2938,10 +2938,10 @@ load_jet40()
 load_kde()
 {
     w_download . http://www.winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.7-0.exe 9fe2f13b76375e70e780ce6850d0de35b08b4ec3 
-    mkdir -p "$programfilesdir_unix/kde"
-    w_try cp "$W_CACHE"/kdewin-installer-gui-0.9.7-0.exe "$programfilesdir_unix/kde"
-    cd "$programfilesdir_unix/kde"
-    w_try $WINE "$programfilesdir_win\\kde\\kdewin-installer-gui-0.9.7-0.exe"
+    mkdir -p "$W_PROGRAMS_UNIX/kde"
+    w_try cp "$W_CACHE"/kdewin-installer-gui-0.9.7-0.exe "$W_PROGRAMS_UNIX/kde"
+    cd "$W_PROGRAMS_UNIX/kde"
+    w_try $WINE "$W_PROGRAMS_WIN\\kde\\kdewin-installer-gui-0.9.7-0.exe"
 }
 
 #----------------------------------------------------------------
@@ -3134,13 +3134,13 @@ load_mozillabuild()
 load_mpc()
 {
     w_download . $SOURCEFORGE/mpc-hc/MPC%20HomeCinema%20-%20Win32/MPC-HC%20v1.3.1249.0_32%20bits/MPC-Homecinema.1.3.1249.0.%28x86%29.zip 6c46846b5298f35ccc81925aa5304546b9a7e513
-    mkdir -p "$programfilesdir_unix/Media Player Classic"
-    cd "$programfilesdir_unix/Media Player Classic"
+    mkdir -p "$W_PROGRAMS_UNIX/Media Player Classic"
+    cd "$W_PROGRAMS_UNIX/Media Player Classic"
     try_unzip "$W_CACHE/MPC-Homecinema.1.3.1249.0.%28x86%29.zip"
 
-    append_path "$programfilesdir_win"'\\Media Player Classic'
+    append_path "$W_PROGRAMS_WIN"'\\Media Player Classic'
 
-    w_warn "MPC now available as $programfilesdir_win\Media Player Classic\mpc-hc.exe"
+    w_warn "MPC now available as $W_PROGRAMS_WIN\Media Player Classic\mpc-hc.exe"
 }
 
 #----------------------------------------------------------------
@@ -3511,7 +3511,7 @@ load_quicktime72()
     if test "$W_UNATTENDED_SLASH_Q"x = x
     then
         echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
-        w_try $WINE control "$programfilesdir_win\\QuickTime\\QTSystem\\QuickTime.cpl"
+        w_try $WINE control "$W_PROGRAMS_WIN\\QuickTime\\QTSystem\\QuickTime.cpl"
     fi
 
     unset_winver
@@ -3545,7 +3545,7 @@ load_quicktime76()
     if test "$W_UNATTENDED_SLASH_Q"x = x
     then
         echo "You probably want to select Advanced / Safe Mode in the Quicktime control panel"
-        w_try $WINE control "$programfilesdir_win\\QuickTime\\QTSystem\\QuickTime.cpl"
+        w_try $WINE control "$W_PROGRAMS_WIN\\QuickTime\\QTSystem\\QuickTime.cpl"
     fi
 
     unset_winver
@@ -3957,7 +3957,7 @@ load_vcrun2003()
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
     w_download . $SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
     w_try $WINE "$W_CACHE"/BZEditW32_1.6.5_Installer.exe $W_UNATTENDED_SLASH_S
-    w_try cp "$programfilesdir_x86_unix/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
+    w_try cp "$W_PROGRAMS_X86_UNIX/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
 }
 
 #----------------------------------------------------------------
@@ -4100,7 +4100,7 @@ load_vc2005express()
         cd "$W_CACHE"/vc2005express
         w_try $WINE vcsetup.exe
         # The interactive installer seems to be asynchronous, so wait until one of the last files is created
-        while test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+        while test ! -f "$W_PROGRAMS_UNIX/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
         do
           echo "Waiting for install to finish..."
           sleep 10
@@ -4113,7 +4113,7 @@ load_vc2005express()
 load_vc2005expresssp1()
 {
     w_warn "$W_PACKAGE does not work yet"
-    if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+    if test ! -f "$W_PROGRAMS_UNIX/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
         w_die "install vc2005express first (this verb will be merged into that once it's debugged)"
     fi
@@ -4140,7 +4140,7 @@ load_vcdmount()
 
     # Locate vcdmount.exe.
     VCD_DIR="Elaborate Bytes/VirtualCloneDrive"
-    if test ! -x "$programfilesdir_unix/$VCD_DIR/vcdmount.exe" && test ! -x "$programfilesdir_x86_unix/$VCD_DIR/vcdmount.exe" 
+    if test ! -x "$W_PROGRAMS_UNIX/$VCD_DIR/vcdmount.exe" && test ! -x "$W_PROGRAMS_X86_UNIX/$VCD_DIR/vcdmount.exe" 
     then
         w_warn "Installing Virtual CloneDrive"
         w_download . http://static.slysoft.com/SetupVirtualCloneDrive.exe
@@ -4150,12 +4150,12 @@ load_vcdmount()
         cmd /c SetupVirtualCloneDrive.exe
         cd "$olddir"
     fi
-    if test -x "$programfilesdir_unix/$VCD_DIR/vcdmount.exe"
+    if test -x "$W_PROGRAMS_UNIX/$VCD_DIR/vcdmount.exe"
     then
-        VCD_DIR="$programfilesdir_unix/$VCD_DIR" 
-    elif test -x "$programfilesdir_x86_unix/$VCD_DIR/vcdmount.exe" 
+        VCD_DIR="$W_PROGRAMS_UNIX/$VCD_DIR" 
+    elif test -x "$W_PROGRAMS_X86_UNIX/$VCD_DIR/vcdmount.exe" 
     then
-        VCD_DIR="$programfilesdir_x86_unix/$VCD_DIR" 
+        VCD_DIR="$W_PROGRAMS_X86_UNIX/$VCD_DIR" 
     else
         w_die "can't find Virtual CloneDrive?"
     fi
@@ -4236,7 +4236,7 @@ load_vc2005trial()
     load_msxml6
     load_vcdmount
 
-    if test ! -x "$programfilesdir_unix/7-Zip/7z.exe"
+    if test ! -x "$W_PROGRAMS_UNIX/7-Zip/7z.exe"
     then
         w_warn "Installing 7-zip file archiver for vc2005trial image extraction"
         load_7zip
@@ -4247,7 +4247,7 @@ load_vc2005trial()
     then
         w_warn "Downloading/checksumming Visual C++ 2005 Trial.  This will take some time!"
         w_download . http://download.microsoft.com/download/6/f/5/6f5f7a01-50bb-422d-8742-c099c8896969/En_vs_2005_vsts_180_Trial.img f66ae07618d67e693ca0524d3582208c20e07823
-        w_try $WINE "$programfilesdir_win"/7-Zip/7z.exe x -y -o"$W_CACHE_WIN"/vc2005trial "$W_CACHE_WIN"/En_vs_2005_vsts_180_Trial.img
+        w_try $WINE "$W_PROGRAMS_WIN"/7-Zip/7z.exe x -y -o"$W_CACHE_WIN"/vc2005trial "$W_CACHE_WIN"/En_vs_2005_vsts_180_Trial.img
     fi
 
     verify_sha1sum 15433993ab7573c5154dbea2dcb65450f2adbf5c "$W_CACHE/vc2005trial/vs/wcu/runmsi.exe"
@@ -4287,7 +4287,7 @@ load_vc2005trial()
 
 load_vc2005sp1()
 {
-    if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+    if test ! -f "$W_PROGRAMS_UNIX/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
         w_die "install vc2005trial first (this verb will be merged into that once it's debugged)"
     fi
@@ -4336,7 +4336,7 @@ load_vc2005hotfix()
 {
     # Loads the hotfixes recommended in http://dev.chromium.org/developers/how-tos/build-instructions-windows#TOC-Additional-free-downloads
     w_warn "This does not work in Wine yet."
-    if test ! -f "$programfilesdir_unix/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
+    if test ! -f "$W_PROGRAMS_UNIX/Microsoft Visual Studio 8/Common7/Tools/vsvars32.bat"
     then
         w_die "install vc2005trial and vc2005sp1 first"
     fi
@@ -4363,7 +4363,7 @@ save_vc2005_tarball()
     # In Windows, do "winetricks vc2005trial vc2005sp1 vc2005hotfix vc2005save",
     # then reboot to Linux, grab vc8.tgz from the Windows partition,
     # and do "winetricks vc2005trial vc2005load".
-    tar -C "$programfilesdir_x86_unix" \
+    tar -C "$W_PROGRAMS_X86_UNIX" \
      --exclude "Crystal Reports" \
      --exclude "DIA SDK" \
      --exclude "EnterpriseFrameworks" \
@@ -4381,7 +4381,7 @@ save_vc2005_tarball()
 
 load_vc2005_tarball()
 {
-    tar -C "$programfilesdir_x86_unix" -xzvf vc8.tgz
+    tar -C "$W_PROGRAMS_X86_UNIX" -xzvf vc8.tgz
 }
 
 #----------------------------------------------------------------
@@ -4433,9 +4433,9 @@ load_vc2008trial()
 
 load_vc2008sp1()
 {
-    echo pfdu is ${programfilesdir_unix}
+    echo pfdu is ${W_PROGRAMS_UNIX}
     echo setting FOO
-    FOO="${programfilesdir_unix}/Microsoft Visual Studio 9.0/Microsoft Visual Studio 2008 Professional Edition - ENU"
+    FOO="${W_PROGRAMS_UNIX}/Microsoft Visual Studio 9.0/Microsoft Visual Studio 2008 Professional Edition - ENU"
     echo FOO set to $FOO
     if test ! -d "$FOO"
     then
@@ -4730,18 +4730,18 @@ olddir=`pwd`
 rm -rf "$W_TMP"/*
 
 # The folder-name is localized!
-programfilesdir_win="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
-test x"$programfilesdir_win" != x || w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
-programfilesdir_unix="`unset WINEDEBUG; $XXXPATH -u "$programfilesdir_win" | tr -d '\015' `"
-test x"$programfilesdir_unix" != x || w_die "winepath -u $programfilesdir_win returned empty string"
+W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+test x"$W_PROGRAMS_WIN" != x || w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
+W_PROGRAMS_UNIX="`unset WINEDEBUG; $XXXPATH -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
+test x"$W_PROGRAMS_UNIX" != x || w_die "winepath -u $W_PROGRAMS_WIN returned empty string"
 
 # 64 bit windows has a second directory for program files
-programfilesdir_x86_win="${programfilesdir_win} (x86)"
-programfilesdir_x86_unix="${programfilesdir_unix} (x86)"
-if ! test -d "$programfilesdir_x86_unix"
+W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN} (x86)"
+W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX} (x86)"
+if ! test -d "$W_PROGRAMS_X86_UNIX"
 then
-    programfilesdir_x86_win="${programfilesdir_win}"
-    programfilesdir_x86_unix="${programfilesdir_unix}"
+    W_PROGRAMS_X86_WIN="${W_PROGRAMS_WIN}"
+    W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX}"
 fi
 
 # localized, and different across Windows versions:
