@@ -1629,6 +1629,19 @@ wisotool_uninstall_app()
 # Runtimes
 #----------------------------------------------------------------
 
+#----- common download for several verbs
+
+helper_directx_dl()
+{
+    # February 2010 DirectX 9c User Redistributable
+    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=0cef8180-e94a-4f56-b157-5ab8109cb4f5
+    # FIXME: none of the verbs that use this will show download status right
+    # until file1 metadata is extended to handle common cache dir
+    w_download directx9 http://download.microsoft.com/download/E/E/1/EE17FF74-6C45-4575-9CF4-7FC2597ACD18/directx_feb2010_redist.exe a97c820915dc20929e84b49646ec275760012a42
+
+    DIRECTX_NAME=directx_feb2010_redist.exe
+}
+
 w_metadata  adobeair dlls \
    title="Adobe AIR 2.5.1" \
    publisher="Adobe" \
@@ -1654,6 +1667,25 @@ load_adobeair()
 
 #----------------------------------------------------------------
 
+w_metadata amstream dlls \
+   title="MS amstream.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="directx_feb2010_redist.exe"
+
+load_amstream()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
+    w_try $WINE regsvr32 amstream.dll
+    
+    w_override_dlls native amstream
+}
+
+#----------------------------------------------------------------
 w_metadata  art2kmin dlls \
    title="MS Access 2007 runtime" \
    publisher="Microsoft" \
