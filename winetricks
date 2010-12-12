@@ -517,7 +517,8 @@ w_try()
     fi
 }
 
-try_regedit() {
+w_try_regedit()
+{
     # on windows, doesn't work without cmd /c
     case "$OS" in
     "Windows_NT") cmdc="cmd /c";;
@@ -655,7 +656,7 @@ REGEDIT4
 "VersionNumber"="4.10.2222"
 
 _EOF_
-        try_regedit "$W_TMP_WIN"\\set-winver.reg
+        w_try_regedit "$W_TMP_WIN"\\set-winver.reg
         return 
         ;;
     nt40)
@@ -680,7 +681,7 @@ REGEDIT4
 "CSDVersion"=dword:00000600
 
 _EOF_
-        try_regedit "$W_TMP_WIN"\\set-winver.reg
+        w_try_regedit "$W_TMP_WIN"\\set-winver.reg
         return
         ;;
     win2k)
@@ -725,7 +726,7 @@ REGEDIT4
 "CSDVersion"=$csdversion_hex
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\set-winver.reg
+    w_try_regedit "$W_TMP_WIN"\\set-winver.reg
 }
 
 # FIXME: has this changed too?
@@ -740,7 +741,7 @@ set_app_winver() {
     echo "\"Version\"=\"$version\""
     ) > "$W_TMP"/set-winver.reg
 
-    try_regedit "$W_TMP_WIN"\\set-winver.reg
+    w_try_regedit "$W_TMP_WIN"\\set-winver.reg
     rm "$W_TMP"/set-winver.reg
 }
 
@@ -753,7 +754,7 @@ REGEDIT4
 "DirectDrawRenderer"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-ddr.reg
+    w_try_regedit "$W_TMP"/set-ddr.reg
 }
 
 set_orm() {
@@ -765,7 +766,7 @@ REGEDIT4
 "OffscreenRenderingMode"="$1"
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\set-orm.reg
+    w_try_regedit "$W_TMP_WIN"\\set-orm.reg
 }
 
 set_mmdevapi() {
@@ -783,7 +784,7 @@ REGEDIT4
 "RenderTargetLockMode"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-rtlm.reg
+    w_try_regedit "$W_TMP"/set-rtlm.reg
 }
 
 set_sdo() {
@@ -795,7 +796,7 @@ REGEDIT4
 "StrictDrawOrdering"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-sdo.reg
+    w_try_regedit "$W_TMP"/set-sdo.reg
 
 }
 
@@ -808,7 +809,7 @@ REGEDIT4
 "VertexShaderMode"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-vsm.reg
+    w_try_regedit "$W_TMP"/set-vsm.reg
 
 }
 
@@ -821,7 +822,7 @@ REGEDIT4
 "Multisampling"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-multi.reg
+    w_try_regedit "$W_TMP"/set-multi.reg
 }
 
 set_mwo () {
@@ -833,7 +834,7 @@ REGEDIT4
 "MouseWarpOverride"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-mwo.reg
+    w_try_regedit "$W_TMP"/set-mwo.reg
 }
 
 npm_repack (){
@@ -845,7 +846,7 @@ REGEDIT4
 "Nonpower2Mode"="repack"
 
 _EOF_
-    try_regedit "$W_TMP"/set-npw.reg
+    w_try_regedit "$W_TMP"/set-npw.reg
 
 }
 
@@ -858,7 +859,7 @@ REGEDIT4
 "PixelShaderMode"="$1"
 
 _EOF_
-    try_regedit "$W_TMP"/set-psm.reg
+    w_try_regedit "$W_TMP"/set-psm.reg
 }
 
 set_sound_driver() {
@@ -870,7 +871,7 @@ REGEDIT4
 "Audio"="$1"
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\set-sound.reg
+    w_try_regedit "$W_TMP_WIN"\\set-sound.reg
 }
 
 set_videomemorysize() {
@@ -897,7 +898,7 @@ REGEDIT4
 
 _EOF_
     esac
-    try_regedit "$W_TMP_WIN"\\set-video.reg
+    w_try_regedit "$W_TMP_WIN"\\set-video.reg
 }
 
 set_virtualdesktop() {
@@ -929,7 +930,7 @@ _EOF_
         w_die "you want a virtual desktop of $size?  I don't understand."
         ;;
     esac
-    try_regedit "$W_TMP"/vd.reg
+    w_try_regedit "$W_TMP"/vd.reg
 }
 
 disable_crashdialog() {
@@ -941,7 +942,7 @@ REGEDIT4
 "ShowCrashDialog"=dword:00000000
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\crashdialog.reg
+    w_try_regedit "$W_TMP_WIN"\\crashdialog.reg
 }
 
 sandbox() {
@@ -980,7 +981,7 @@ REGEDIT4
 "Version"=-
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\unset-winver.reg
+    w_try_regedit "$W_TMP_WIN"\\unset-winver.reg
 }
 
 w_override_dlls() {
@@ -1012,7 +1013,7 @@ _EOF_
         shift
     done
 
-    try_regedit "$W_TMP_WIN"\\override-dll.reg
+    w_try_regedit "$W_TMP_WIN"\\override-dll.reg
     cat "$W_TMP"/override-dll.reg
     rm "$W_TMP"/override-dll.reg
 }
@@ -1082,7 +1083,7 @@ override_app_dlls() {
         shift
     done
 
-    try_regedit "$W_TMP_WIN"\\override-dll.reg
+    w_try_regedit "$W_TMP_WIN"\\override-dll.reg
     rm "$W_TMP"/override-dll.reg
 }
 
@@ -1099,7 +1100,7 @@ REGEDIT4
 "$font"="$file"
 _EOF_
     # too verbose
-    try_regedit "$W_TMP_WIN"\\register-font.reg
+    w_try_regedit "$W_TMP_WIN"\\register-font.reg
 }
 
 append_path() {
@@ -1114,7 +1115,7 @@ REGEDIT4
 "PATH"="$NEW_PATH;$WIN_PATH"
 _EOF_
 
-    try_regedit "$W_TMP_WIN"\\path.reg
+    w_try_regedit "$W_TMP_WIN"\\path.reg
     rm -f "$W_TMP"/path.reg
 }
 
@@ -2065,7 +2066,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$W_TMP_WIN"\\faketraditionalchinese.reg
+    w_try_regedit "$W_TMP_WIN"\\faketraditionalchinese.reg
 }
 
 #----------------------------------------------------------------
@@ -2092,7 +2093,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$W_TMP_WIN"\\fakejapanese.reg
+    w_try_regedit "$W_TMP_WIN"\\fakejapanese.reg
 }
 
 #----------------------------------------------------------------
@@ -2122,7 +2123,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$W_TMP_WIN"\\fakekorean.reg
+    w_try_regedit "$W_TMP_WIN"\\fakekorean.reg
 }
 
 #----------------------------------------------------------------
@@ -2271,7 +2272,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000000
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\fs_disable.reg
+    w_try_regedit "$W_TMP_WIN"\\fs_disable.reg
 }
 #----------------------------------------------------------------
 load_fs_grayscale()
@@ -2287,7 +2288,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000001
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\fs_grayscale.reg
+    w_try_regedit "$W_TMP_WIN"\\fs_grayscale.reg
 }
 #----------------------------------------------------------------
 load_fs_bgr()
@@ -2303,7 +2304,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\fs_bgr.reg
+    w_try_regedit "$W_TMP_WIN"\\fs_bgr.reg
 }
 #----------------------------------------------------------------
 load_fs_rgb()
@@ -2319,7 +2320,7 @@ REGEDIT4
 "FontSmoothingType"=dword:00000002
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\fs_rgb.reg
+    w_try_regedit "$W_TMP_WIN"\\fs_rgb.reg
 }
 
 #----------------------------------------------------------------
@@ -2447,7 +2448,7 @@ _EOF_
     fi
 
     # set install-path
-    try_regedit "$W_TMP_WIN"\\geckopath.reg
+    w_try_regedit "$W_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
     w_try $WINE regsvr32 mshtml
@@ -2571,7 +2572,7 @@ _EOF_
     fi
 
     # set install-path
-    try_regedit "$W_TMP_WIN"\\geckopath.reg
+    w_try_regedit "$W_TMP_WIN"\\geckopath.reg
     
     # register the dll, since it was disabled before
     w_try $WINE regsvr32 mshtml
@@ -2627,7 +2628,7 @@ REGEDIT4
 "UseGLSL"="disabled"
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\disableglsl.reg
+    w_try_regedit "$W_TMP_WIN"\\disableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -2642,7 +2643,7 @@ REGEDIT4
 "UseGLSL"="enabled"
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\enableglsl.reg
+    w_try_regedit "$W_TMP_WIN"\\enableglsl.reg
 }
 
 #----------------------------------------------------------------
@@ -2682,7 +2683,7 @@ REGEDIT4
 "GlobalFlag"=dword:00200030
 
 _EOF_
-    try_regedit "$W_TMP_WIN"\\heapcheck.reg
+    w_try_regedit "$W_TMP_WIN"\\heapcheck.reg
 }
 
 #----------------------------------------------------------------
@@ -3436,7 +3437,7 @@ REGEDIT4
 "ProductVersion"="7.0.7600.16385.40715"
 "ProductName"="Microsoft Windows SDK for Windows 7 (7.0.7600.16385.40715)"
 _EOF_
-    try_regedit "$W_TMP_WIN"\\set-psdk7.reg
+    w_try_regedit "$W_TMP_WIN"\\set-psdk7.reg
 }
 
 #----------------------------------------------------------------
@@ -3747,7 +3748,7 @@ REGEDIT4
 
 _EOF_
 
-    try_regedit "$W_TMP_WIN"\\unifont.reg
+    w_try_regedit "$W_TMP_WIN"\\unifont.reg
 }
 
 #----------------------------------------------------------------
@@ -4558,8 +4559,8 @@ load_wmp9()
     w_try $WINE "$W_CACHE"/WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
-    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
-    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     unset_winver
 }
@@ -4586,8 +4587,8 @@ load_wmp10()
     w_try $WINE "$W_CACHE"/WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
-    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
-    try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     unset_winver
 }
