@@ -1233,11 +1233,9 @@ load_amstream()
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
-    
     w_try $WINE regsvr32 amstream.dll
     
     w_override_dlls native amstream
-    
 }
 
 #----------------------------------------------------------------
@@ -1267,10 +1265,14 @@ load_atmlib()
 
 load_autohotkey()
 {
-    w_download . http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
-    cd "$W_CACHE"
+    if test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe"
+    then
+        echo "autohotkey already installed"
+        return
+    fi
+    w_download autohotkey http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
+    cd "$W_CACHE"/autohotkey
     w_try $WINE AutoHotkey104805_Install.exe $W_UNATTENDED_SLASH_S
-    cd -
 }
 
 #----------------------------------------------------------------
@@ -4287,6 +4289,7 @@ load_vc2005trial()
     if [ $W_UNATTENDED_SLASH_Q ]
     then
         w_download . "http://winezeug.googlecode.com/svn/trunk/winetricks_files/vc2005trial.ahk" e22a01c0c6f92dabd3d6d471798357b8c5c01272
+        # FIXME: use standard install of autohotkey
         w_download . "http://winezeug.googlecode.com/svn/trunk/appinstall/tools/autohotkey/autohotkey.exe" 7af551a851da5ccb8a98ba980b6b19ec5892884d
         w_try cd "$W_CACHE"/vc2005trial/vs/Setup
         w_try $WINE "$W_CACHE_WIN"/autohotkey.exe "$W_CACHE_WIN"/vc2005trial.ahk
