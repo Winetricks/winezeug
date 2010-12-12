@@ -1199,8 +1199,15 @@ load_7zip()
 
 load_abiword()
 {
-    w_download $W_PACKAGE http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
-    w_try $WINE "$W_CACHE"/$W_PACKAGE/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
+    if test -f "$W_PROGRAMS_X86_UNIX/AbiWord/bin/AbiWord.exe"
+    then
+       echo "abiword already installed, skipping"
+       return
+    fi
+
+    w_download abiword http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
+    w_try $WINE "$W_CACHE"/abiword/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\AbiWord\\bin" AbiWord.exe
 }
 
 #----------------------------------------------------------------
