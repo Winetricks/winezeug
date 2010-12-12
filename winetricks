@@ -1252,7 +1252,7 @@ load_baekmuk()
     w_download . http://ftp.de.debian.org/debian/pool/main/t/ttf-baekmuk/ttf-baekmuk_2.2.orig.tar.gz afdee34f700007de6ea87b43c92a88b7385ba65b
     cd "$W_TMP/"
     gunzip -dc "$W_CACHE/ttf-baekmuk_2.2.orig.tar.gz" | tar -xf -
-    w_try mv baekmuk-ttf-2.2/ttf/*.ttf "$winefontsdir"
+    w_try mv baekmuk-ttf-2.2/ttf/*.ttf "$W_FONTSDIR_UNIX"
     register_font batang.ttf "Baekmuk Batang"
     register_font gulim.ttf "Baekmuk Gulim"
     register_font dotum.ttf "Baekmuk Dotum"
@@ -1372,62 +1372,62 @@ load_corefonts()
     test x"$W_UNATTENDED_SLASH_Q" = x"" || w_try $WINE "$W_CACHE"/arial32.exe $W_UNATTENDED_SLASH_Q
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/arial32.exe
-    w_try cp -f "$W_TMP"/Arial*.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Arial*.TTF "$W_FONTSDIR_UNIX"
     register_font Arial.TTF "Arial (TrueType)"
     register_font Arialbd.TTF "Arial Bold (TrueType)"
     register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
     register_font Ariali.TTF "Arial Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/arialb32.exe
-    w_try cp -f "$W_TMP"/AriBlk.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/AriBlk.TTF "$W_FONTSDIR_UNIX"
     register_font AriBlk.TTF "Arial Black (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/comic32.exe
-    w_try cp -f "$W_TMP"/Comic*.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Comic*.TTF "$W_FONTSDIR_UNIX"
     register_font Comic.TTF "Comic Sans MS (TrueType)"
     register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/courie32.exe
-    w_try cp -f "$W_TMP"/cour*.ttf "$winefontsdir"
+    w_try cp -f "$W_TMP"/cour*.ttf "$W_FONTSDIR_UNIX"
     register_font Cour.TTF "Courier New (TrueType)"
     register_font CourBD.TTF "Courier New Bold (TrueType)"
     register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
     register_font Couri.TTF "Courier New Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/georgi32.exe
-    w_try cp -f "$W_TMP"/Georgia*.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Georgia*.TTF "$W_FONTSDIR_UNIX"
     register_font Georgia.TTF "Georgia (TrueType)"
     register_font Georgiab.TTF "Georgia Bold (TrueType)"
     register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
     register_font Georgiai.TTF "Georgia Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/impact32.exe
-    w_try cp -f "$W_TMP"/Impact.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Impact.TTF "$W_FONTSDIR_UNIX"
     register_font Impact.TTF "Impact (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/times32.exe
-    w_try cp -f "$W_TMP"/Times*.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Times*.TTF "$W_FONTSDIR_UNIX"
     register_font Times.TTF "Times New Roman (TrueType)"
     register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
     register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
     register_font Timesi.TTF "Times New Roman Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/trebuc32.exe
-    w_try cp -f "$W_TMP"/trebuc*.ttf "$winefontsdir"
+    w_try cp -f "$W_TMP"/trebuc*.ttf "$W_FONTSDIR_UNIX"
     register_font Trebuc.TTF "Trebucet MS (TrueType)"
     register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
     register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
     register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/verdan32.exe
-    w_try cp -f "$W_TMP"/Verdana*.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Verdana*.TTF "$W_FONTSDIR_UNIX"
     register_font Verdana.TTF "Verdana (TrueType)"
     register_font Verdanab.TTF "Verdana Bold (TrueType)"
     register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
     register_font Verdanai.TTF "Verdana Italic (TrueType)"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/webdin32.exe
-    w_try cp -f "$W_TMP"/Webdings.TTF "$winefontsdir"
+    w_try cp -f "$W_TMP"/Webdings.TTF "$W_FONTSDIR_UNIX"
     register_font Webdings.TTF "Webdings (TrueType)"
 }
 
@@ -1953,7 +1953,7 @@ _EOF_
 
 do_droid() {
     w_download . ${DROID_URL}$1';hb=HEAD'   $3  $1
-    w_try cp -f "$W_CACHE"/$1 "$winefontsdir"
+    w_try cp -f "$W_CACHE"/$1 "$W_FONTSDIR_UNIX"
     register_font $1 "$2"
 }
 
@@ -2023,7 +2023,7 @@ load_eufonts()
     # https://www.microsoft.com/downloads/details.aspx?FamilyID=0ec6f335-c3de-44c5-a13d-a1e7cea5ddea&displaylang=en
     w_download . http://download.microsoft.com/download/a/1/8/a180e21e-9c2b-4b54-9c32-bf7fd7429970/EUupdate.EXE 9b076c40cb63aa0d8512aa8e610ba11d3466e441
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/EUupdate.EXE
-    w_try cp -f "$W_TMP"/*.ttf "$winefontsdir"
+    w_try cp -f "$W_TMP"/*.ttf "$W_FONTSDIR_UNIX"
 
     register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
     register_font ArialI.ttf "Arial Italic (TrueType)"
@@ -2220,7 +2220,7 @@ load_fontfix()
             w_download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
             cd "$W_TMP/"
             gunzip -dc "$W_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | tar -xf -
-            w_try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$winefontsdir"
+            w_try mv ttf-arphic-ukai-0.1.20060108/*.ttf "$W_FONTSDIR_UNIX"
             cd "$olddir"
         fi
     fi
@@ -2233,7 +2233,7 @@ load_fontfix()
             w_download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
             cd "$W_TMP/"
             gunzip -dc "$W_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | tar -xf -
-            w_try mv ttf-arphic-uming-0.1.20060108/*.ttf "$winefontsdir"
+            w_try mv ttf-arphic-uming-0.1.20060108/*.ttf "$W_FONTSDIR_UNIX"
             cd "$olddir"
         fi
     fi
@@ -2971,7 +2971,7 @@ load_liberation()
     w_download . https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
     cd "$W_TMP"
     gunzip -dc "$W_CACHE"/liberation-fonts-1.04.tar.gz | tar -xf -
-    mv liberation-fonts-1.04/*.ttf "$winefontsdir"
+    mv liberation-fonts-1.04/*.ttf "$W_FONTSDIR_UNIX"
 }
 
 #----------------------------------------------------------------
@@ -2979,7 +2979,7 @@ load_liberation()
 load_lucida()
 {
     w_download . ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/NT40TSE/hotfixes-postSP3/Euro-fix/eurofixi.exe 64c47ad92265f6f10b0fd909a703d4fd1b05b2d5
-    w_try_cabextract -d "$winefontsdir" -L -F 'lucon.ttf' "$W_CACHE"/eurofixi.exe
+    w_try_cabextract -d "$W_FONTSDIR_UNIX" -L -F 'lucon.ttf' "$W_CACHE"/eurofixi.exe
     register_font lucon.ttf "Lucida Console" 
 }
 
@@ -3701,9 +3701,9 @@ load_tahoma()
 
     w_download . http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe 888ce7b7ab5fd41f9802f3a65fd0622eb651a068
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/tahoma32.exe
-    w_try cp -f "$W_TMP"/Tahoma.TTF "$winefontsdir"/tahoma.ttf
-    w_try cp -f "$W_TMP"/Tahomabd.TTF "$winefontsdir"/tahomabd.ttf
-    chmod +w "$winefontsdir"/tahoma*.ttf
+    w_try cp -f "$W_TMP"/Tahoma.TTF "$W_FONTSDIR_UNIX"/tahoma.ttf
+    w_try cp -f "$W_TMP"/Tahomabd.TTF "$W_FONTSDIR_UNIX"/tahomabd.ttf
+    chmod +w "$W_FONTSDIR_UNIX"/tahoma*.ttf
 }
 
 #----------------------------------------------------------------
@@ -3715,7 +3715,7 @@ load_takao()
     w_download . http://launchpad.net/takao-fonts/003.02/003.02.01/+download/takao-fonts-ttf-003.02.01.zip 4f636d5c7c1bc16b96ea723adb16838cfb6df059
     cp -f "$W_CACHE"/takao-fonts-ttf-003.02.01.zip "$W_TMP"
     try_unzip -d "$W_TMP" "$W_TMP"/takao-fonts-ttf-003.02.01.zip
-    w_try cp -f "$W_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$winefontsdir"
+    w_try cp -f "$W_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$W_FONTSDIR_UNIX"
 
     register_font TakaoGothic.ttf "TakaoGothic"
     register_font TakaoPGothic.ttf "TakaoPGothic"
@@ -3734,7 +3734,7 @@ load_unifont()
     w_download . http://unifoundry.com/unifont-5.1.20080907.zip bb8a3960dc0a96aa305de28312ea8a0ab64123d2
     cp -f "$W_CACHE"/unifont-5.1.20080907.zip "$W_TMP"
     try_unzip -d "$W_TMP" "$W_TMP"/unifont-5.1.20080907.zip
-    w_try cp -f "$W_TMP"/unifont-5.1.20080907.ttf "$winefontsdir/unifont.ttf"
+    w_try cp -f "$W_TMP"/unifont-5.1.20080907.ttf "$W_FONTSDIR_UNIX/unifont.ttf"
 
     register_font unifont.ttf "Unifont"
 
@@ -4600,7 +4600,7 @@ load_wenquanyi()
     w_download . $SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
     cd "$W_TMP/"
     gunzip -dc "$W_CACHE/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
-    w_try mv wqy-microhei/wqy-microhei.ttc "$winefontsdir"
+    w_try mv wqy-microhei/wqy-microhei.ttc "$W_FONTSDIR_UNIX"
     register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
 }
 
@@ -4752,11 +4752,11 @@ appdata_unix="`unset WINEDEBUG; $XXXPATH -u "$appdata_win" | tr -d '\015' `"
 # Did the user rename Fonts to fonts?
 if test ! -d "$W_WINDIR_UNIX"/Fonts && test -d "$W_WINDIR_UNIX"/fonts
 then
-    winefontsdir="$W_WINDIR_UNIX"/fonts
+    W_FONTSDIR_UNIX="$W_WINDIR_UNIX"/fonts
 else
-    winefontsdir="$W_WINDIR_UNIX"/Fonts
+    W_FONTSDIR_UNIX="$W_WINDIR_UNIX"/Fonts
 fi
-mkdir -p "${winefontsdir}"
+mkdir -p "${W_FONTSDIR_UNIX}"
 
 # Mac folks tend to not have sha1sum, but we can make do with openssl
 if [ -x "`which sha1sum 2>/dev/null`" ]
