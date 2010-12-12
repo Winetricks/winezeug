@@ -115,6 +115,11 @@ w_try_regedit()
     w_try wisotool_early_wine $cmdc regedit "$@"
 }
 
+w_try_regsvr()
+{
+    w_try $WINE regsvr32 $W_UNATTENDED_SLASH_S $@
+}
+
 w_try_cabextract()
 {
     # Not always installed, but shouldn't be fatal unless it's being used
@@ -1694,7 +1699,7 @@ load_amstream()
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
-    w_try $WINE regsvr32 amstream.dll
+    w_try_regsvr amstream.dll
     
     w_override_dlls native amstream
 }
@@ -1975,7 +1980,7 @@ load_wsh57()
 
     # Wine doesn't provide the other dll's (yet?)
     w_override_dlls native,builtin jscript.dll
-    w_try $WINE regsvr32 dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
+    w_try_regsvr dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
 }
 
 #----------------------------------------------------------------
