@@ -1,0 +1,22 @@
+#!/bin/sh
+# Regression test for wisotool2
+
+test_speed()
+{
+    (time sh wisotool2 $1) 2> time.log > /dev/null
+    t=`awk '/real/ {print $2}' < time.log`
+    minutes=`echo $t | sed 's/m.*//'`
+    seconds=`echo $t | sed 's/.*m//;s/s//;s/\..*//'`
+    seconds=`expr $seconds + $minutes \* 60`
+    echo test_speed: wisotool2 $1 took $seconds seconds
+    # Longest runtime as of 11 Dec 2010 is 5 seconds on an e8400 with cygwin
+    if test $seconds -gt 7
+    then
+        exit 1
+    fi
+}
+
+test_speed list
+test_speed list-download
+test_speed list-cached
+test_speed list-installed
