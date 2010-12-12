@@ -349,7 +349,7 @@ w_umount()
 
 w_ahk_do()
 {
-   load_autohotkey
+   w_call autohotkey
    _W_CR=`printf \\\\r`
    echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
    $WINE "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
@@ -451,6 +451,13 @@ cd "$_W_dir"
 $_W_exe
 __EOF__
     unset _W_dir _W_exe
+}
+
+# Call a verb, don't let it affect environment
+# Supports just one argument at the moment
+w_call()
+{
+    ( load_$1 $2 ) || exit $?
 }
 
 #---- Private Functions ----
@@ -1855,12 +1862,6 @@ load_7zip()
     w_declare_exe "$W_PROGRAMS_X86_WIN\\7-Zip" "7z.exe %1 %2 %3 %4 %5"
 }
 
-# Not really a verb until we import it from winetricks
-load_autohotkey()
-{
-    test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" || w_try_winetricks -q autohotkey
-}
-
 #----------------------------------------------------------------
 
 w_metadata  abiword apps \
@@ -1881,6 +1882,27 @@ load_abiword()
     w_download abiword http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
     w_try $WINE "$W_CACHE"/abiword/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
     w_declare_exe "$W_PROGRAMS_X86_WIN\\AbiWord\\bin" AbiWord.exe
+}
+
+#----------------------------------------------------------------
+
+w_metadata autohotkey apps \
+   title="Autohotkey" \
+   publisher="autohotkey.org" \
+   year="2010" \
+   media="download" \
+   file1="AutoHotkey104805_Install"
+
+load_autohotkey()
+{
+    if test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe"
+    then
+        echo "autohotkey already installed"
+        return
+    fi
+    w_download autohotkey http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
+    cd "$W_CACHE"/autohotkey
+    w_try $WINE AutoHotkey104805_Install.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------
