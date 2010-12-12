@@ -436,11 +436,16 @@ w_workaround_wine_bug()
 
 w_metadata()
 {
-   file="$WISOTOOL_METADATA/$2/$1.vars"
-   shift
-   shift
-   # FIXME: fall back to posix shell string manipulation if perl not present?
-   perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
+    if test "$installed_exe1" || test "$installed_file1"
+    then
+        w_die "bug: stray metadata tags set: somebody forgot a backslash in a w_metadata somewhere.  Run with sh -x to see where."
+    fi
+
+    file="$WISOTOOL_METADATA/$2/$1.vars"
+    shift
+    shift
+    # FIXME: fall back to posix shell string manipulation if perl not present?
+    perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
 }
 
 # Function for verbs to register their main executable.
@@ -1771,7 +1776,8 @@ w_metadata amstream dlls \
    publisher="Microsoft" \
    year="2010" \
    media="download" \
-   file1="../directx9/directx_feb2010_redist.exe"
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN"\\amstream.dll
 
 load_amstream()
 {
@@ -2064,7 +2070,7 @@ w_metadata 7zip apps \
    publisher="Igor Pavolv" \
    year="1999" \
    media="download" \
-   file1="7z465.exe"
+   file1="7z465.exe" \
    installed_exe1="$W_PROGRAMS_X86_WIN\\7-Zip\\7z.exe"
 
 load_7zip()
@@ -2082,7 +2088,7 @@ w_metadata  abiword apps \
    publisher="AbiSource" \
    year="2010" \
    media="download" \
-   file1="abiword-setup-2.8.6.exe"
+   file1="abiword-setup-2.8.6.exe" \
    installed_exe1="$W_PROGRAMS_X86_WIN\\AbiWord\\bin\\AbiWord.exe"
 
 load_abiword()
