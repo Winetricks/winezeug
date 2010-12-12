@@ -843,15 +843,22 @@ wisotool_list_cached()
             echo $code
         fi
         )
-    done
+    done | sort
     unset _W_metadatafile
 }
 
-# List verbs which are downloadable, regardless of whether they're cached yet
+# List verbs which are automatically downloadable, regardless of whether they're cached yet
 wisotool_list_download()
 {
     cd "$WISOTOOL_METADATA"
     grep -l 'media=.download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
+}
+
+# List verbs which are downloadable with user intervention, regardless of whether they're cached yet
+wisotool_list_manual_download()
+{
+    cd "$WISOTOOL_METADATA"
+    grep -l 'media=.manual_download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
 }
 
 # List verbs which are installed and runnable
@@ -1491,6 +1498,8 @@ Diverse verber:
 list: vis en liste over alle verber
 list-cached: vis en liste over verber for allerede-hentede installationsprogrammer
 list-download: vis en liste over verber for programmer der kan hentes
+list-manual-download: list applications which can be downloaded with some help from the user
+list-installed: list already-installed applications
 _EOF_
         ;;
     de*)
@@ -1511,6 +1520,7 @@ games: Typ 'Spiele' auswählen
 list: Verben von ausgewählte Typ auflisten
 list-cached: Verben für schon gecachte Installers auflisten
 list-download: Verben für herunterladbare Anwendungen auflisten
+list-manual-download: list applications which can be downloaded with some help from the user
 list-installed: Verben für schon installlierte Programme auflisten
 _EOF_
         ;;
@@ -1530,9 +1540,10 @@ Miscellaneous verbs:
 apps: select type 'apps'
 games: select type 'games'
 list: list verbs from selected category
-list-cached: list verbs for already-cached installers
-list-download: list verbs for downloadable applications
-list-installed: list verbs for already-installed applications
+list-cached: list cached-and-ready-to-install applications
+list-download: list applications which can be downloaded automatically
+list-manual-download: list applications which can be downloaded with some help from the user
+list-installed: list already-installed applications
 _EOF_
         ;;
     esac
@@ -2259,7 +2270,7 @@ w_metadata  blobby_volley games \
    title="Blobby Volley" \
    publisher="Daniel Skoraszewsky" \
    year="2000" \
-   media="download" \
+   media="manual_download" \
    file1="blobby.zip"
 
 load_blobby_volley()
@@ -2283,7 +2294,7 @@ w_metadata civ4_demo games \
    title="Civilization IV Demo" \
    publisher="Firaxis Games" \
    year="2005" \
-   media="download" \
+   media="manual_download" \
    file1=Civilization4_Demo.zip
 
 load_civ4_demo()
@@ -2792,6 +2803,7 @@ execute_command()
     list) wisotool_list_all ;;
     list-cached) wisotool_list_cached ;;
     list-download) wisotool_list_download ;;
+    list-manual-download) wisotool_list_manual_download ;;
     list-installed) wisotool_list_installed ;;
 
     *)
