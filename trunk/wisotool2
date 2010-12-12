@@ -464,7 +464,29 @@ __EOF__
 # If you don't want to check exit status, use w_try w_call
 w_call()
 {
-    ( load_$1 $2 )
+    (
+        . "$WISOTOOL_METADATA"/*/$W_PACKAGE.vars
+
+        # Don't install if already installed
+        unset _W_file
+        if test "$installed_exe1" 
+        then
+            _W_file="$installed_exe1"
+        elif test "$installed_file1"
+        then
+            _W_file="$installed_file1"
+        fi
+        if test "$_W_file" 
+        then
+            _W_file_unix="`w_pathconv -u "$_W_file" | tr -d '\015' `"
+            if test -f "$_W_file_unix"
+            then
+                echo "$W_PACKAGE already installed, skipping"
+                return
+            fi
+        fi
+        load_$1 $2
+    )
 }
 
 w_register_font()
@@ -835,6 +857,31 @@ wisotool_is_cached()
     test -f "$W_CACHE/$1/$file1"
 }
 
+# Returns true if given verb has been installed
+# You must have already loaded its metadata before calling
+wisotool_is_installed()
+{
+    unset _W_file
+    if test "$installed_exe1" 
+    then
+        _W_file="$installed_exe1"
+    elif test "$installed_file1"
+    then
+        _W_file="$installed_file1"
+    fi
+    if test "$_W_file" 
+    then
+        _W_file_unix="`w_pathconv -u "$_W_file" | tr -d '\015' `"
+        if test -f "$_W_file_unix"
+        then
+            unset _W_file _W_file_unix
+            return 0  # installed
+        fi
+    fi
+    unset _W_file _W_file_unix
+    return 1  # not installed
+}
+
 # List verbs which are already fully cached locally
 wisotool_list_cached()
 {
@@ -868,9 +915,6 @@ wisotool_list_manual_download()
     grep -l 'media=.manual_download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
 }
 
-# List verbs which are installed and runnable
-# 'Runnable' here means 'has a run-$verbname.bat script'.
-# FIXME: doesn't work at all for dlls.
 wisotool_list_installed()
 {
     (
@@ -883,8 +927,21 @@ wisotool_list_installed()
         done
         ;;
     1)
-        # List apps in default bottle
-        ls $W_DRIVE_C/run-*.bat | sed 's,.*/run-,,;s,\.bat$,,'
+        # List packages in default bottle
+        for _W_metadatafile in "$WISOTOOL_METADATA"/*/*.vars
+        do
+            # Use a subshell to avoid putting metadata in global space
+            # If this is too slow, we can unset known metadata by hand
+            (
+            code=`basename $_W_metadatafile .vars`
+            . $_W_metadatafile
+            if wisotool_is_installed $code
+            then
+                echo $code
+            fi
+            )
+        done | sort
+        unset _W_metadatafile
         ;;
     esac
 
@@ -1357,7 +1414,7 @@ wisotool_init()
     WISOTOOL_OPT_DD=${WISOTOOL_OPT_DD:-dd}
 
     # whether to use shared wineprefix (1) or unique wineprefix for each app (0)
-    WISOTOOL_OPT_SHAREDPREFIX=${WISOTOOL_OPT_SHAREDPREFIX:-0}
+    WISOTOOL_OPT_SHAREDPREFIX=${WISOTOOL_OPT_SHAREDPREFIX:-1}
 
     # Mac folks tend to not have sha1sum, but we can make do with openssl
     if [ -x "`which sha1sum 2>/dev/null`" ]
@@ -1427,9 +1484,11 @@ wisotool_init()
     W_APPDATA_WIN="`wisotool_early_wine cmd.exe /c echo "%AppData%" | tr -d '\015'`"
     W_APPDATA_UNIX="`w_pathconv -u "$W_APPDATA_WIN" | tr -d '\015' `"
 
-    # (Fixme: get fonts path from SHGetFolderPath
-    # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx)
-    #
+    # FIXME: get fonts path from SHGetFolderPath
+    # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
+    W_FONTSDIR_WIN="c:\\windows\\Fonts"
+ 
+    # FIXME: just convert path from windows to unix?
     # Did the user rename Fonts to fonts?
     if test ! -d "$W_WINDIR_UNIX"/Fonts && test -d "$W_WINDIR_UNIX"/fonts
     then
@@ -1481,10 +1540,12 @@ wisotool_init()
     then
         W_ARCH=win64
         W_SYSTEM32_DLLS="$W_WINDIR_UNIX/syswow64"
+        W_SYSTEM32_DLLS_WIN="C:\\windows\\syswow64"
         W_SYSTEM64_DLLS="$W_WINDIR_UNIX/system32"
     else
         W_ARCH=win32
         W_SYSTEM32_DLLS="$W_WINDIR_UNIX/system32"
+        W_SYSTEM32_DLLS_WIN="C:\\windows\\system32"
     fi
 }
 
@@ -1594,7 +1655,6 @@ then
     wisotool_init
 fi
 
-
 wisotool_run_app()
 {
     # Find the app
@@ -1691,16 +1751,11 @@ w_metadata  adobeair dlls \
    publisher="Adobe" \
    year="2010" \
    media="download" \
-   file1="AdobeAIRInstaller.exe"
+   file1="AdobeAIRInstaller.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN\\Common Files\\Adobe AIR\\Versions\\1.0\\Adobe AIR.dll"
 
 load_adobeair()
 {
-    if test -f "$W_PROGRAMS_X86_UNIX/Common Files/Adobe AIR/Versions/1.0/Adobe AIR.dll"
-    then
-        echo "adobeair already installed, skipping"
-        return
-    fi
-
     # 2010-02-02: sha1sum 5c95f51a680f8c175a92755238127be4ad22c53b
     # 2010-02-20: sha1sum 6f03e723bd855abbe00eb8fdf22da54fb49c62db
     # 2010-07-29: 2.0.2 sha1sum 7b93aedaf48ad7854940e7a4e7d9394a255e888b
@@ -1830,17 +1885,12 @@ w_metadata  vcrun6 dlls \
    publisher="Microsoft" \
    year="2000" \
    media="download" \
-   file1="vc6redistsetup_enu.exe"
+   file1="vc6redistsetup_enu.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN"\\mfc42u.dll
 
 load_vcrun6()
 {
     # Load the Visual C++ 6 runtime libraries, including the elusive mfc42u.dll
-
-    if test -f "$W_SYSTEM32_DLLS"/mfc42u.dll
-    then
-        echo "vcrun6 already installed, skipping"
-        return
-    fi
 
     if test ! -f "$W_CACHE"/vcrun6/vcredist.exe
     then
@@ -1881,16 +1931,11 @@ w_metadata  vcrun2003 dlls \
    publisher="Microsoft" \
    year="2003" \
    media="download" \
-   file1="BZEditW32_1.6.5_Installer.exe"
+   file1="BZEditW32_1.6.5_Installer.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN"\\msvcp71.dll
 
 load_vcrun2003()
 {
-    if test -f "$W_SYSTEM32_DLLS"/msvcp71.dll
-    then
-        echo "vcrun2003 already installed, skipping"
-        return
-    fi
-
     # Load the Visual C++ 2003 runtime libraries
     # Sadly, I know of no Microsoft URL for these
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
@@ -1906,17 +1951,13 @@ w_metadata vcrun2005 dlls \
    publisher="Microsoft" \
    year="2005" \
    media="download" \
-   file1="vcredist_x86.exe"
+   file1="vcredist_x86.exe" \
+   installed_file1="c:\\windows\\winsxs\\x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e\\mfc80.dll"
 
 load_vcrun2005()
 {
     # SP1 + ATL security fix build 4053 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=766A6AF7-EC73-40FF-B072-9112BAB119C2
-    if test -d "$W_WINDIR_UNIX"/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e
-    then
-        echo "vcrun2005 already installed, skipping"
-        return
-    fi
     w_download vcrun2005 http://download.microsoft.com/download/6/B/B/6BB661D6-A8AE-4819-B79F-236472F6070C/vcredist_x86.exe e052789ebad7dc8d6f8505a9295b0576babd125e
     cd "$W_CACHE"/vcrun2005
     w_override_dlls native,builtin msvcr80
@@ -1930,24 +1971,13 @@ w_metadata vcrun2008 dlls \
    publisher="Microsoft" \
    year="2008" \
    media="download" \
-   file1="vcredist_x86.exe"
+   file1="vcredist_x86.exe" \
+   installed_file1="C:\\windows\\winsxs\\x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53\\mfc90.dll"
 
 load_vcrun2008()
 {
-    # For the moment, assume windows already has this.
-    case "$OS" in
-    "Windows_NT")
-      return
-      ;;
-    esac
-
     # SP1 + ATL security fix build 4148 (MS09-035)
     # See http://www.microsoft.com/downloads/details.aspx?familyid=2051a0c1-c9b5-4b0a-a8f5-770a549fd78c
-    if test -d "$W_WINDIR_UNIX"/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53
-    then
-        echo "vcrun2008 already installed, skipping"
-        return
-    fi
     w_download vcrun2008 http://download.microsoft.com/download/9/7/7/977B481A-7BA6-4E30-AC40-ED51EB2028F2/vcredist_x86.exe bd18409cfe75b88c2a9432d36d96f4bf125a3237
     w_override_dlls native,builtin msvcr90
     w_try $WINE "$W_CACHE"/vcrun2008/vcredist_x86.exe $W_UNATTENDED_SLASH_Q
@@ -1960,16 +1990,11 @@ w_metadata vcrun2010 dlls \
    publisher="Microsoft" \
    year="2010" \
    media="download" \
-   file1="vcredist_x86.exe"
+   file1="vcredist_x86.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN"\\mfc100.dll
 
 load_vcrun2010()
 {
-    if test -f "$W_SYSTEM32_DLLS"/mfc100.dll
-    then
-        echo "vcrun2010 already installed, skipping"
-        return
-    fi
-
     # See http://www.microsoft.com/downloads/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84
     w_download vcrun2010 http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe 372d9c1670343d3fb252209ba210d4dc4d67d358
 
@@ -1989,16 +2014,11 @@ w_metadata wsh57 dlls \
    publisher="Microsoft" \
    year="2007" \
    media="download" \
-   file1="scripten.exe"
+   file1="scripten.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN"\\scrrun.dll
 
 load_wsh57()
 {
-    if test -f "$W_SYSTEM32_DLLS"/scrrun.dll
-    then
-        echo "wsh57 already installed, skipping"
-        return
-    fi
-
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
     w_download wsh57 http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
 
@@ -2018,16 +2038,11 @@ w_metadata baekmuk fonts \
    publisher="Wooderart Inc. / kldp.net" \
    year="1999" \
    media="download" \
-   file1="ttf-baekmuk_2.2.orig.tar.gz"
+   file1="ttf-baekmuk_2.2.orig.tar.gz" \
+   installed_file1="$W_FONTSDIR_WIN"\\batang.ttf
 
 load_baekmuk()
 {
-    if test -f "$W_FONTSDIR_UNIX"/batang.ttf
-    then
-        echo "baekmuk already installed"
-        return
-    fi
-
     # See http://kldp.net/projects/baekmuk for project page
     # Need to download from Debian as the project page has unique captcha tokens per visitor
     w_download baekmuk http://ftp.debian.org/debian/pool/main/t/ttf-baekmuk/ttf-baekmuk_2.2.orig.tar.gz afdee34f700007de6ea87b43c92a88b7385ba65b
@@ -2050,14 +2065,10 @@ w_metadata 7zip apps \
    year="1999" \
    media="download" \
    file1="7z465.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN\\7-Zip\\7z.exe"
 
 load_7zip()
 {
-    if test -f "$W_PROGRAMS_X86_UNIX/7-Zip/7z.exe"
-    then
-        echo "7zip already installed, skipping"
-        return
-    fi
     # FIXME: use more up to date version
     w_download 7zip http://downloads.sourceforge.net/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
     w_try $WINE "$W_CACHE"/7zip/7z465.exe $W_UNATTENDED_SLASH_S
@@ -2072,15 +2083,10 @@ w_metadata  abiword apps \
    year="2010" \
    media="download" \
    file1="abiword-setup-2.8.6.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN\\AbiWord\\bin\\AbiWord.exe"
 
 load_abiword()
 {
-    if test -f "$W_PROGRAMS_X86_UNIX/AbiWord/bin/AbiWord.exe"
-    then
-       echo "abiword already installed, skipping"
-       return
-    fi
-
     w_download abiword http://www.abisource.com/downloads/abiword/2.8.6/Windows/abiword-setup-2.8.6.exe a91acd3f60e842d23556032d34f1600602768318
     w_try $WINE "$W_CACHE"/abiword/abiword-setup-2.8.6.exe $W_UNATTENDED_SLASH_S
     w_declare_exe "$W_PROGRAMS_X86_WIN\\AbiWord\\bin" AbiWord.exe
@@ -2093,15 +2099,11 @@ w_metadata autohotkey apps \
    publisher="autohotkey.org" \
    year="2010" \
    media="download" \
-   file1="AutoHotkey104805_Install.exe"
+   file1="AutoHotkey104805_Install.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN\\AutoHotkey\\AutoHotkey.exe"
 
 load_autohotkey()
 {
-    if test -f "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe"
-    then
-        echo "autohotkey already installed"
-        return
-    fi
     w_download autohotkey http://www.autohotkey.net/programs/AutoHotkey104805_Install.exe 13e5a9ca6d5b7705f1cd02560c3af4d38b1904fc
     cd "$W_CACHE"/autohotkey
     w_try $WINE AutoHotkey104805_Install.exe $W_UNATTENDED_SLASH_S
@@ -2114,7 +2116,8 @@ w_metadata mspaint apps \
    publisher="Microsoft" \
    year="2001" \
    media="download" \
-   file1="paintnt.exe"
+   file1="paintnt.exe" \
+   installed_exe1="c:\\windows\\mspaint.exe"
 
 load_mspaint()
 {
