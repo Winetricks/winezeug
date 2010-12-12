@@ -1723,6 +1723,31 @@ load_mfc40() {
 
 #----------------------------------------------------------------
 
+w_metadata shockwave dlls \
+   title="Shockwave" \
+   publisher="Adobe" \
+   year="2010" \
+   media="download" \
+   file1="sw_lic_full_installer.msi"
+
+load_shockwave() {
+    # Not silent enough, use msi instead
+    #w_download shockwave http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/Shockwave_Installer_Full.exe 840e34e9b067cf247bfa9092665b8966158f38e3
+    #w_try $WINE "$W_CACHE"/Shockwave_Installer_Full.exe $W_UNATTENDED_SLASH_S
+    # old sha1sum: 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
+    # 2009-07-31 sha1sum: 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
+    # 2009-12-13 sha1sum: d35649883bf13cb1a86f5650e1050d15533ac0f4
+    # 2010-01-23 sha1sum: 4a837d238c28c5f345d73f105711f20c6d059273  
+    # 2010-05-15 sha1sum: bdce02afc82233801e84137e78c2c5fe574db253
+    # 2010-09-02 sha1sum: fed20eccc29fec2f64162b7265343514d43884bc
+    # 2010-11-03 sha1sum: 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
+
+    w_download shockwave http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
+    w_try $WINE msiexec /i "$W_CACHE"/shockwave/sw_lic_full_installer.msi $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
 w_metadata  vcrun6 dlls \
    title="Visual C++ 6 sp4 libraries (mfc42, msvcp60, msvcrt)" \
    publisher="Microsoft" \
