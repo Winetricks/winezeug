@@ -1561,6 +1561,7 @@ wisotool_handle_option()
                      W_UNATTENDED_SLASH_Q="/q"
                      W_UNATTENDED_SLASH_S="/S"
                      W_UNATTENDED_DASH_SILENT="-silent"
+                     W_UNATTENDED_SLASH_SILENT="/silent"
                      ;;  # fixme: can't make this default easily with these here
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
@@ -2741,6 +2742,22 @@ load_wog()
         winwaitclose, World of Goo Setup
         "
     w_declare_exe "$W_PROGRAMS_X86_WIN\\WorldOfGooDemo" WorldOfGoo.exe
+}
+
+#----------------------------------------------------------------
+
+w_metadata  xvid dlls \
+    title="Xvid Video Codec" \
+    publisher="xvid.org" \
+    year="2009" \
+    media="download" \
+    file1="Xvid-1.2.2-07062009.exe"
+
+load_xvid()
+{
+    w_call vcrun6
+    w_download xvid http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
+    w_try $WINE "$W_CACHE"/xvid/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
 }
 
 #----------------------------------------------------------------
