@@ -510,6 +510,22 @@ _EOF_
     w_try_regedit "$W_TMP_WIN"\\_register-font.reg
 }
 
+w_register_font_substitution()
+{
+    _W_alias=$1
+    shift
+    _W_font=$1
+    # Kludge: use _r to avoid \r expansion in w_try
+    cat > "$W_TMP"/_register-font-sub.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+"$_W_alias"="$_W_font"
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\_register-font-sub.reg
+    unset _W_alias _W_font
+}
+
 #---- Private Functions ----
 
 wisotool_print_version() {
@@ -2066,6 +2082,336 @@ load_baekmuk()
     w_register_font dotum.ttf "Baekmuk Dotum"
     w_register_font hline.ttf "Baekmuk Headline"
 }
+
+#----------------------------------------------------------------
+
+w_metadata corefonts fonts \
+   title="MS Arial, Courier, Times fonts" \
+   publisher="Microsoft" \
+   year="2008" \
+   media="download" \
+   file1="arial32.exe" \
+   installed_file1="$W_FONTSDIR_WIN"\\Arial.TTF
+
+load_corefonts()
+{
+    # See http://corefonts.sf.net
+    # TODO: let user pick mirror,
+    # see http://corefonts.sourceforge.net/msttcorefonts-2.0-1.spec for how
+    # TODO: add more fonts
+
+    # Added More Fonts (see msttcorefonts)
+    # [*] Pointed w_download locations to sites that actually contained the
+    # fonts to w_download (as of 04-03-2008)
+    #w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/andale32.exe c4db8cbe42c566d12468f5fdad38c43721844c69
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/arialb32.exe d45cdab84b7f4c1efd6d1b369f50ed0390e3d344
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/comic32.exe 2371d0327683dcc5ec1684fe7c275a8de1ef9a51
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/courie32.exe 06a745023c034f88b4135f5e294fece1a3c1b057
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/georgi32.exe 90e4070cb356f1d811acb943080bf97e419a8f1e
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/impact32.exe 86b34d650cfbbe5d3512d49d2545f7509a55aad2
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/trebuc32.exe 50aab0988423efcc9cf21fac7d64d534d6d0a34a
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/verdan32.exe f5b93cedf500edc67502f116578123618c64a42a
+    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/webdin32.exe 2fb4a42c53e50bc70707a7b3c57baf62ba58398f
+
+    # Natively installed versions of these fonts will cause the installers
+    # to exit silently. Because there are apps out there that depend on the
+    # files being present in the Windows font directory we use cabextract
+    # to obtain the files and register the fonts by hand.
+
+    # Andale needs a FontSubstitutes entry
+    # w_try_cabextract --directory="$W_TMP" "$W_CACHE"/corefonts/andale32.exe
+
+    # Display EULA
+    test x"$W_UNATTENDED_SLASH_Q" = x"" || w_try $WINE "$W_CACHE"/corefonts/arial32.exe $W_UNATTENDED_SLASH_Q
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/arial32.exe
+    w_try cp -f "$W_TMP"/Arial*.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Arial.TTF "Arial (TrueType)"
+    w_register_font Arialbd.TTF "Arial Bold (TrueType)"
+    w_register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
+    w_register_font Ariali.TTF "Arial Italic (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/arialb32.exe
+    w_try cp -f "$W_TMP"/AriBlk.TTF "$W_FONTSDIR_UNIX"
+    w_register_font AriBlk.TTF "Arial Black (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/comic32.exe
+    w_try cp -f "$W_TMP"/Comic*.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Comic.TTF "Comic Sans MS (TrueType)"
+    w_register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/courie32.exe
+    w_try cp -f "$W_TMP"/cour*.ttf "$W_FONTSDIR_UNIX"
+    w_register_font Cour.TTF "Courier New (TrueType)"
+    w_register_font CourBD.TTF "Courier New Bold (TrueType)"
+    w_register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
+    w_register_font Couri.TTF "Courier New Italic (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/georgi32.exe
+    w_try cp -f "$W_TMP"/Georgia*.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Georgia.TTF "Georgia (TrueType)"
+    w_register_font Georgiab.TTF "Georgia Bold (TrueType)"
+    w_register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
+    w_register_font Georgiai.TTF "Georgia Italic (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/impact32.exe
+    w_try cp -f "$W_TMP"/Impact.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Impact.TTF "Impact (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/times32.exe
+    w_try cp -f "$W_TMP"/Times*.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Times.TTF "Times New Roman (TrueType)"
+    w_register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
+    w_register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
+    w_register_font Timesi.TTF "Times New Roman Italic (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/trebuc32.exe
+    w_try cp -f "$W_TMP"/trebuc*.ttf "$W_FONTSDIR_UNIX"
+    w_register_font Trebuc.TTF "Trebucet MS (TrueType)"
+    w_register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
+    w_register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
+    w_register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/verdan32.exe
+    w_try cp -f "$W_TMP"/Verdana*.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Verdana.TTF "Verdana (TrueType)"
+    w_register_font Verdanab.TTF "Verdana Bold (TrueType)"
+    w_register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
+    w_register_font Verdanai.TTF "Verdana Italic (TrueType)"
+
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/webdin32.exe
+    w_try cp -f "$W_TMP"/Webdings.TTF "$W_FONTSDIR_UNIX"
+    w_register_font Webdings.TTF "Webdings (TrueType)"
+}
+
+#----------------------------------------------------------------
+
+w_metadata droid fonts \
+   title="Droid fonts (on LCD, looks better with fontsmooth-rgb)" \
+   publisher="Ascender Corporation" \
+   year="2009" \
+   media="download" \
+   file1="DroidSans-Bold.ttf" \
+   installed_file1="$W_FONTSDIR_WIN"\\DroidSans-Bold.ttf
+
+do_droid() {
+    w_download droid ${DROID_URL}$1';hb=HEAD'   $3  $1
+    w_try cp -f "$W_CACHE"/droid/$1 "$W_FONTSDIR_UNIX"
+    w_register_font $1 "$2"
+}
+
+load_droid()
+{
+    # See http://en.wikipedia.org/wiki/Droid_(font)
+    DROID_URL='http://android.git.kernel.org/?p=platform/frameworks/base.git;a=blob_plain;f=data/fonts/'
+
+    do_droid DroidSans-Bold.ttf        "Droid Sans Bold"         ada4e79c592f3c54546b7587b48f2b232d95ce2f
+    do_droid DroidSansFallback.ttf     "Droid Sans Fallback"     5065cce92e8420232db95ab3ba421e462b09b965
+    do_droid DroidSansJapanese.ttf     "Droid Sans Japanese"     b3a248c11692aa88a30eb25df425b8910fe05dc5
+    do_droid DroidSansMono.ttf         "Droid Sans Mono"         f0815c6f36c72be1d0f2f5e2b82fa85c8bf95655
+    do_droid DroidSans.ttf             "Droid Sans"              da5b3c7758a2c8fbc4775beb69d7150493c7d312
+    do_droid DroidSerif-BoldItalic.ttf "Droid Serif Bold Italic" c1602dc11bf0f7131aec21c7c3888195ad78e486
+    do_droid DroidSerif-Bold.ttf       "Droid Serif Bold"        d7896b9c0723299553e95a00d27cbe52f7515c8c
+    do_droid DroidSerif-Italic.ttf     "Droid Serif Italic"      117941be102c8f38a86a70ebccaecb8078f7027e
+    do_droid DroidSerif-Regular.ttf    "Droid Serif"             7f243858e496ed1bb1faca9f3a7bbe52defcbb5d
+}
+
+#----------------------------------------------------------------
+
+w_metadata eufonts fonts \
+   title="Updated fonts for Romanian and Bulgarian" \
+   publisher="Microsoft" \
+   year="2008" \
+   media="download" \
+   file1="EUupdate.EXE" \
+   installed_file1="$W_FONTSDIR_WIN"\\trebucbd.ttf
+
+load_eufonts()
+{
+    # https://www.microsoft.com/downloads/details.aspx?FamilyID=0ec6f335-c3de-44c5-a13d-a1e7cea5ddea&displaylang=en
+    w_download eufonts http://download.microsoft.com/download/a/1/8/a180e21e-9c2b-4b54-9c32-bf7fd7429970/EUupdate.EXE 9b076c40cb63aa0d8512aa8e610ba11d3466e441
+    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/eufonts/EUupdate.EXE
+    w_try cp -f "$W_TMP"/*.ttf "$W_FONTSDIR_UNIX"
+
+    w_register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
+    w_register_font ArialI.ttf "Arial Italic (TrueType)"
+    w_register_font Arial.ttf "Arial (TrueType)"
+    w_register_font TimesBd.ttf "Times New Roman Bold (TrueType)"
+    w_register_font TimesBI.ttf "Times New Roman Bold Italic (TrueType)"
+    w_register_font TimesI.ttf "Times New Roman Italic (TrueType)"
+    w_register_font Times.ttf "Times New Roman (TrueType)"
+    w_register_font trebucbd.ttf "Trebuchet Bold (TrueType)"
+    w_register_font trebucbi.ttf "Trebuchet Bold Italic (TrueType)"
+    w_register_font trebucit.ttf "Trebuchet Italic (TrueType)"
+    w_register_font trebuc.ttf "Trebuchet (TrueType)"
+    w_register_font Verdanab.ttf "Verdana Bold (TrueType)"
+    w_register_font Verdanai.ttf "Verdana Italian (TrueType)"
+    w_register_font Verdana.ttf "Verdana (TrueType)"
+    w_register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
+}
+
+#----------------------------------------------------------------
+
+w_metadata fakechinese fonts \
+   title="Creates aliases for Chinese fonts using WenQuanYi fonts" \
+   publisher="wenq.org" \
+   year="2009"
+
+load_fakechinese()
+{
+    w_try w_call wenquanyi
+    # Loads Wenquanyi fonts and sets aliases for Microsoft Chinese fonts
+    # Aliases to set:
+    # Microsoft JhengHei --> WenQuanYi Micro Hei
+    # Microsoft YaHei --> WenQuanYi Micro Hei
+    # SimHei --> WenQuanYi Micro Hei
+
+    w_register_font_substitution "Microsoft JhengHei" "WenQuanYi Micro Hei"
+    w_register_font_substitution "Microsoft YaHei" "WenQuanYi Micro Hei"
+    w_register_font_substitution "SimHei" "WenQuanYi Micro Hei"
+}
+
+#----------------------------------------------------------------
+
+w_metadata fakejapanese fonts \
+   title="Creates aliases for Japanese fonts using Takao fonts"
+   publisher="Jun Kobayashi" \
+   year="2010"
+
+load_fakejapanese()
+{
+    w_try w_call takao
+    # Loads Takao fonts and sets aliases for MS Gothic and MS PGothic, mainly for Japanese language support
+    # Aliases to set:
+    # MS Gothic --> TakaoGothic
+    # MS PGothic --> TakaoPGothic
+    # MS Mincho --> TakaoMincho
+    # MS PMincho --> TakaoPMincho
+    # These aliases were taken from what was listed in Ubuntu's fontconfig definitions.
+
+    w_register_font_substitution "MS Gothic" "TakaoGothic"
+    w_register_font_substitution "MS PGothic" "TakaoPGothic"
+    w_register_font_substitution "MS Mincho" "TakaoMincho"
+    w_register_font_substitution "MS PMincho" "TakaoPMincho"
+}
+
+#----------------------------------------------------------------
+
+w_metadata fakekorean fonts \
+   title="Creates aliases for Korean fonts using Baekmuk fonts" \
+   publisher="Wooderart Inc. / kldp.net" \
+   year="1999"
+
+load_fakekorean()
+{
+    w_try w_call baekmuk
+    # Loads Baekmuk fonts and sets as an alias for Gulim, Dotum, and Batang for Korean language support
+    # Aliases to set:
+    # Gulim --> Baekmuk Gulim
+    # GulimChe --> Baekmuk Gulim
+    # Batang --> Baekmuk Batang
+    # BatangChe --> Baekmuk Batang
+    # Dotum --> Baekmuk Dotum
+    # DotumChe --> Baekmuk Dotum
+
+    w_register_font_substitution "Gulim" "Baekmuk Gulim"
+    w_register_font_substitution "GulimChe" "Baekmuk Gulim"
+    w_register_font_substitution "Batang" "Baekmuk Batang"
+    w_register_font_substitution "BatangChe" "Baekmuk Batang"
+    w_register_font_substitution "Dotum" "Baekmuk Dotum"
+    w_register_font_substitution "DotumChe" "Baekmuk Dotum"
+}
+
+#----------------------------------------------------------------
+
+w_metadata lucida fonts \
+   title="MS Lucida Console font" \
+   publisher="Microsoft" \
+   year="1998" \
+   media="download" \
+   file1="eurofixi.exe" \
+   installed_file1="$W_FONTSDIR_WIN"\\lucon.ttf
+
+load_lucida()
+{
+    w_download lucida ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/NT40TSE/hotfixes-postSP3/Euro-fix/eurofixi.exe 64c47ad92265f6f10b0fd909a703d4fd1b05b2d5
+    w_try_cabextract -d "$W_FONTSDIR_UNIX" -L -F 'lucon.ttf' "$W_CACHE"/lucida/eurofixi.exe
+    w_register_font lucon.ttf "Lucida Console" 
+}
+
+#----------------------------------------------------------------
+
+w_metadata takao fonts \
+   title="Takao Japanese fonts" \
+   publisher="Jun Kobayashi" \
+   year="2010" \
+   media="download" \
+   file1="takao-fonts-ttf-003.02.01.zip" \
+   installed_file1="$W_FONTSDIR_WIN"\\TakaoGothic.ttf
+
+load_takao()
+{
+    # The Takao font provides Japanese glyphs.  May also be needed with fakejapanese function above.
+    # See http://launchpad.net/takao-fonts for project page
+    w_download takao http://launchpad.net/takao-fonts/003.02/003.02.01/+download/takao-fonts-ttf-003.02.01.zip 4f636d5c7c1bc16b96ea723adb16838cfb6df059
+    cp -f "$W_CACHE"/takao/takao-fonts-ttf-003.02.01.zip "$W_TMP"
+    w_try unzip -d "$W_TMP" "$W_TMP"/takao-fonts-ttf-003.02.01.zip
+    w_try cp -f "$W_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$W_FONTSDIR_UNIX"
+
+    w_register_font TakaoGothic.ttf "TakaoGothic"
+    w_register_font TakaoPGothic.ttf "TakaoPGothic"
+    w_register_font TakaoMincho.ttf "TakaoMincho"
+    w_register_font TakaoPMincho.ttf "TakaoPMincho"
+    w_register_font TakaoExGothic.ttf "TakaoExGothic"
+    w_register_font TakaoExMincho.ttf "TakaoExMincho"
+}
+
+#----------------------------------------------------------------
+
+w_metadata wenquanyi fonts \
+   title="WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)" \
+   publisher="wenq.org" \
+   year="2009" \
+   media="download" \
+   file1="wqy-microhei-0.2.0-beta.tar.gz" \
+   installed_file1="$W_FONTSDIR_WIN"\\wqy-microhei.ttc
+
+load_wenquanyi()
+{
+    # See http://wenq.org/enindex.cgi
+    # Donate at http://wenq.org/enindex.cgi?Download(en)#MicroHei_Beta if you want to help support free CJK font development
+    w_download wenquanyi $WISOTOOL_SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
+    cd "$W_TMP/"
+    gunzip -dc "$W_CACHE/wenquanyi/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
+    w_try mv wqy-microhei/wqy-microhei.ttc "$W_FONTSDIR_UNIX"
+    w_register_font wqy-microhei.ttc "WenQuanYi Micro Hei"
+}
+
+#----------------------------------------------------------------
+
+w_metadata unifont fonts \
+   title="Unifont alternative to Arial Unicode MS" \
+   publisher="GNU" \
+   year="2008" \
+   media="download" \
+   file1="unifont-5.1.20080907.zip" \
+   installed_file1="$W_FONTSDIR_WIN"\\unifont.ttf
+
+load_unifont()
+{
+    # The GNU Unifont provides glyphs for just about everything in common language.  It is intended for multilingual usage.
+    # See http://unifoundry.com/unifont.html for project page
+    w_download unifont http://unifoundry.com/unifont-5.1.20080907.zip bb8a3960dc0a96aa305de28312ea8a0ab64123d2
+    cp -f "$W_CACHE"/unifont/unifont-5.1.20080907.zip "$W_TMP"
+    w_try unzip -d "$W_TMP" "$W_TMP"/unifont-5.1.20080907.zip
+    w_try cp -f "$W_TMP"/unifont-5.1.20080907.ttf "$W_FONTSDIR_UNIX/unifont.ttf"
+
+    w_register_font unifont.ttf "Unifont"
+    w_register_font_substitution "Arial Unicode MS" "Unifont"
+}
+
 
 #----------------------------------------------------------------
 # Apps
