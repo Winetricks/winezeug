@@ -112,7 +112,7 @@ w_try_regedit()
     *) unset cmdc
     esac
 
-    w_try wisotool_early_wine $cmdc regedit "$@"
+    w_try wisotool_early_wine $cmdc regedit $W_UNATTENDED_SLASH_S "$@"
 }
 
 w_try_regsvr()
@@ -470,7 +470,7 @@ __EOF__
 w_call()
 {
     (
-        . "$WISOTOOL_METADATA"/*/$W_PACKAGE.vars
+        . "$WISOTOOL_METADATA"/*/$1.vars
 
         # Don't install if already installed
         unset _W_file
@@ -486,7 +486,7 @@ w_call()
             _W_file_unix="`w_pathconv -u "$_W_file" | tr -d '\015' `"
             if test -f "$_W_file_unix"
             then
-                echo "$W_PACKAGE already installed, skipping"
+                echo "$1 already installed, skipping"
                 return
             fi
         fi
