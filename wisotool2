@@ -1834,9 +1834,11 @@ w_metadata  glut dlls \
    publisher="Mark J. Kilgard" \
    year="2001" \
    media="download" \
-   file1="glut-3.7.6-bin.zip"
+   file1="glut-3.7.6-bin.zip" \
+   installed_file1="c:\\glut-3.7.6-bin\\glut32.lib"
 
-load_glut() {
+load_glut()
+{
     w_download glut http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
     w_try unzip -d "$W_DRIVE_C" "$W_CACHE"/glut/glut-3.7.6-bin.zip
     w_try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$W_SYSTEM32_DLLS"
@@ -1850,9 +1852,11 @@ w_metadata  mfc40 dlls \
    publisher="Microsoft" \
    year="2004" \
    media="download" \
-   file1="ole2v.exe"
+   file1="ole2v.exe" \
+   installed_file1="$W_SYSTEM32_DLLS/MFC40.DLL"
 
-load_mfc40() {
+load_mfc40()
+{
     # See http://support.microsoft.com/kb/122244
     w_download mfc40 http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
     w_try unzip -d "$W_TMP" "$W_CACHE"/mfc40/ole2v.exe
@@ -1866,7 +1870,8 @@ w_metadata shockwave dlls \
    publisher="Adobe" \
    year="2010" \
    media="download" \
-   file1="sw_lic_full_installer.msi"
+   file1="sw_lic_full_installer.msi" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\Adobe\\Shockwave 11\\shockwave_Projector_Loader.dcr"
 
 load_shockwave() {
     # Not silent enough, use msi instead
@@ -1881,7 +1886,8 @@ load_shockwave() {
     # 2010-11-03 sha1sum: 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
 
     w_download shockwave http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
-    w_try $WINE msiexec /i "$W_CACHE"/shockwave/sw_lic_full_installer.msi $W_UNATTENDED_SLASH_Q
+    cd "$W_CACHE"/shockwave
+    w_try $WINE msiexec /i sw_lic_full_installer.msi $W_UNATTENDED_SLASH_Q
 }
 
 #----------------------------------------------------------------
@@ -2142,7 +2148,8 @@ w_metadata  safari apps \
    publisher="Apple" \
    year="2010" \
    media="download" \
-   file1="SafariSetup.exe"
+   file1="SafariSetup.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN\\Safari\\Safari.exe"
 
 load_safari()
 {
@@ -2748,7 +2755,8 @@ w_metadata  wog games \
     publisher="2D Boy" \
     year="2008" \
     media="download" \
-    file1="WorldOfGooDemo.1.0.exe"
+    file1="WorldOfGooDemo.1.0.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\WorldOfGooDemo\\WorldOfGoo.exe"
 
 load_wog()
 {
