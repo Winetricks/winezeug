@@ -1813,7 +1813,8 @@ w_metadata  art2kmin dlls \
    publisher="Microsoft" \
    year="2007" \
    media="download" \
-   file1="AccessRuntime.exe"
+   file1="AccessRuntime.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN\\Common Files\\Microsoft Shared\\OFFICE12\\ACEES.DLL"
 
 load_art2kmin()
 {
@@ -1830,7 +1831,8 @@ w_metadata  atmlib dlls \
    publisher="Adobe" \
    year="2009" \
    media="download" \
-   file1="W2KSP4_EN.EXE"
+   file1="W2KSP4_EN.EXE" \
+   installed_file1="$W_SYSTEM32_DLLS/atmlib.dll"
 
 load_atmlib()
 {
@@ -2008,7 +2010,8 @@ load_vcrun2008()
     # See http://www.microsoft.com/downloads/details.aspx?familyid=2051a0c1-c9b5-4b0a-a8f5-770a549fd78c
     w_download vcrun2008 http://download.microsoft.com/download/9/7/7/977B481A-7BA6-4E30-AC40-ED51EB2028F2/vcredist_x86.exe bd18409cfe75b88c2a9432d36d96f4bf125a3237
     w_override_dlls native,builtin msvcr90
-    w_try $WINE "$W_CACHE"/vcrun2008/vcredist_x86.exe $W_UNATTENDED_SLASH_Q
+    cd "$W_CACHE"/vcrun2008
+    w_try $WINE vcredist_x86.exe $W_UNATTENDED_SLASH_Q
 }
 
 #----------------------------------------------------------------
@@ -2032,7 +2035,8 @@ load_vcrun2010()
     fi
 
     w_override_dlls native,builtin msvcr100
-    w_try $WINE "$W_CACHE"/vcrun2010/vcredist_x86.exe $W_UNATTENDED_SLASH_Q
+    cd "$W_CACHE"/vcrun2010
+    w_try $WINE vcredist_x86.exe $W_UNATTENDED_SLASH_Q
 }
 
 #----------------------------------------------------------------
@@ -2429,7 +2433,8 @@ load_7zip()
 {
     # FIXME: use more up to date version
     w_download 7zip http://downloads.sourceforge.net/sevenzip/7z465.exe c36012e960fa3932cd23f30ac5b0fe722740243a
-    w_try $WINE "$W_CACHE"/7zip/7z465.exe $W_UNATTENDED_SLASH_S
+    cd "$W_CACHE"/7zip
+    w_try $WINE 7z465.exe $W_UNATTENDED_SLASH_S
     w_declare_exe "$W_PROGRAMS_X86_WIN\\7-Zip" "7z.exe %1 %2 %3 %4 %5"
 }
 
@@ -2669,7 +2674,8 @@ w_metadata  blobby_volley games \
    publisher="Daniel Skoraszewsky" \
    year="2000" \
    media="manual_download" \
-   file1="blobby.zip"
+   file1="blobby.zip" \
+   installed_exe1="c:\\BlobbyVolley\\volley.exe"
 
 load_blobby_volley()
 {
@@ -2693,7 +2699,8 @@ w_metadata civ4_demo games \
    publisher="Firaxis Games" \
    year="2005" \
    media="manual_download" \
-   file1=Civilization4_Demo.zip
+   file1="Civilization4_Demo.zip" \
+   installed_file1="$W_PROGRAMS_X86_WIN\\Firaxis Games\\Sid Meier's Civilization 4 Demo\\Civilization4.exe"
 
 load_civ4_demo()
 {
@@ -2735,7 +2742,7 @@ load_civ4_demo()
         w_try_winetricks d3dx9_26
     fi
 
-    w_declare_exe "$programfilesdir_x86_win\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
 }
 
 #----------------------------------------------------------------
