@@ -2192,7 +2192,8 @@ w_metadata 3dmark2000 benchmarks \
     publisher="MadOnion.com" \
     year="2000" \
     media="download" \
-    file1="3dmark2000_v11_100308.exe" 
+    file1="3dmark2000_v11_100308.exe" \
+    installed_file1="$W_PROGRAMS_X86_WIN\\MadOnion.com\\3DMark2000\\3DMark2000.exe"
 
 load_3dmark2000()
 {
