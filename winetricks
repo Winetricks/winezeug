@@ -4854,7 +4854,6 @@ do
     d3dx9_35) w_call d3dx9_xx 35;;
     d3dx9_36) w_call d3dx9_xx 36;;
     d3dx9_42) w_call d3dx9_xx 42;;
-    d3dx9_43) w_call d3dx9_xx 43;;
     d3dx10) w_call d3dx10;;
     d3dxof) w_call d3dxof;;
     dcom98) w_call dcom98;;
