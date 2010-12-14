@@ -78,10 +78,6 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56
 DeathSpank (EA) (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=12280
 
-Divinity II (DTP Entertainment, 2010)
-http://en.wikipedia.org/wiki/Divinity_II:_Ego_Draconis
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=22059
-
 Football Manager 2011 demo
 http://www.bigdownload.com/games/football-manager-2011/pc/football-manager-2011-vanilla-demo/
 
