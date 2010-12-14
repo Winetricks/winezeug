@@ -4899,28 +4899,30 @@ load_ffvii_demo()
 
 #----------------------------------------------------------------
 
-w_metadata ffxiv_beta games \
-    title="Final Fantasy XIV Beta" \
+w_metadata ffxiv games \
+    title="Final Fantasy XIV" \
     publisher="Square Enix" \
     year="2010" \
-    media="download" \
-    file1="ffxivsetup.exe" 
+    media="dvd" \
+    file1="3df40d83b227484a302d3f51615d1d90f419daf6.iso" 
 
-load_ffxiv_beta()
+load_ffxiv()
 {
-    w_download_manual $W_PACKAGE https://dev-na.ffxiv.com/ ffxivsetup.exe e6e615e5886c17e744fc4aba7b267e7e3dcbdb52
 
-    cd "$W_CACHE/$W_PACKAGE"
+    iso_mount "$W_CACHE/$W_PACKAGE/3df40d83b227484a302d3f51615d1d90f419daf6.iso"
+
+    w_read_key
+    
     w_ahk_do "
     SetTitleMatchMode, 2
-    run, ffxivsetup.exe
-    winwait, FINAL FANTASY XIV Beta Version, Select a region and language
+    run ${W_ISO_MOUNT_LETTER}:ffxivsetup.exe
+    winwait, FINAL FANTASY XIV, Please select a language
     sleep 1000
-    controlclick, Button2, FINAL FANTASY XIV Beta Version, Select a region and language
+    controlclick, Button2, FINAL FANTASY XIV, Please select a language
     ; It forces Directx Install :-(
-    winwait, FINAL FANTASY XIV Beta Version, A new version of DirectX is required for installation
+    winwait, FINAL FANTASY XIV, A new version of DirectX is required for installation
     sleep 1000
-    controlclick, Button2, FINAL FANTASY XIV Beta Version, A new version of DirectX is required for installation
+    controlclick, Button2, FINAL FANTASY XIV, A new version of DirectX is required for installation
     winwait, Installing Microsoft(R) DirectX(R), Welcome to setup for DirectX
     sleep 1000
     controlclick, Button1, Installing Microsoft(R) DirectX(R), Welcome to setup for DirectX
@@ -4932,28 +4934,28 @@ load_ffxiv_beta()
     winwait, Installing Microsoft(R) DirectX(R), Installation Complete
     sleep 1000
     controlclick, Button5, Installing Microsoft(R) DirectX(R), Installation Complete
-    winwait, FINAL FANTASY XIV Beta Version, The InstallShield Wizard will install FINAL FANTASY
+    winwait, FINAL FANTASY XIV, The InstallShield Wizard will install FINAL FANTASY
     sleep 1000
-    Controlclick, Button1, FINAL FANTASY XIV Beta Version, The InstallShield Wizard will install FINAL FANTASY
-    winwait, FINAL FANTASY XIV Beta Version, Please shut down any antivirus
+    Controlclick, Button1, FINAL FANTASY XIV, The InstallShield Wizard will install FINAL FANTASY
+    winwait, FINAL FANTASY XIV, Please shut down any antivirus
     sleep 1000
-    ControlClick, Button1, FINAL FANTASY XIV Beta Version, Please shut down any antivirus
-    winwait, FINAL FANTASY XIV Beta Version, License Agreement
+    ControlClick, Button1, FINAL FANTASY XIV, Please shut down any antivirus
+    winwait, FINAL FANTASY XIV, License Agreement
     sleep 1000
-    Controlclick, Button5, FINAL FANTASY XIV Beta Version, License Agreement
+    Controlclick, Button5, FINAL FANTASY XIV, License Agreement
     sleep 1000
-    Controlclick, Button2, FINAL FANTASY XIV Beta Version, License Agreement
-    winwait, FINAL FANTASY XIV Beta Version, To install to this folder
+    Controlclick, Button2, FINAL FANTASY XIV, License Agreement
+    winwait, FINAL FANTASY XIV, To install to this folder
     sleep 1000
-    controlclick, Button1, FINAL FANTASY XIV Beta Version, To install to this folder
-    winwait, FINAL FANTASY XIV Beta Version, Start Copying Files
+    controlclick, Button1, FINAL FANTASY XIV, To install to this folder
+    winwait, FINAL FANTASY XIV, Start Copying Files
     sleep 1000
-    controlclick, Button1, FINAL FANTASY XIV Beta Version, Start Copying Files
-    winwait, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
+    controlclick, Button1, FINAL FANTASY XIV, Start Copying Files
+    winwait, FINAL FANTASY XIV, InstallShield Wizard Complete
     sleep 1000
-    Controlclick, Button1, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
+    Controlclick, Button1, FINAL FANTASY XIV, InstallShield Wizard Complete
     sleep 1000
-    Controlclick, Button4, FINAL FANTASY XIV Beta Version, InstallShield Wizard Complete
+    Controlclick, Button4, FINAL FANTASY XIV, InstallShield Wizard Complete
     "
 
     if w_workaround_wine_bug 24358
@@ -4967,7 +4969,7 @@ load_ffxiv_beta()
         w_try_winetricks ie6
     fi
 
-    w_declare_exe "$W_PROGRAMS_X86_WIN\\SquareEnix\\FINAL FANTASY XIV Beta Version" "ffxivboot.exe"
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\SquareEnix\\FINAL FANTASY XIV" "ffxivboot.exe"
 }
 
 #----------------------------------------------------------------
