@@ -139,6 +139,9 @@ http://www.gamerankings.com/pc/952152-risen/index.html
 http://news.bigdownload.com/2009/10/01/download-risen-demo
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=17988
 
+Ski Challenge (kind of like tux racer.  Works fine, but adware, lots of clicks to play.)
+http://www.ski-challenge.com/
+
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
