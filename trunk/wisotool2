@@ -2904,6 +2904,50 @@ load_masseffect2()
 
 #----------------------------------------------------------------
 
+w_metadata menofwar games \
+    title="Men of War" \
+    publisher="Aspyr Media" \
+    year="2009" \
+    media="dvd" \
+    file1="Men of War.iso" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\Aspyr\\Men of War\\mow.exe"
+
+load_menofwar()
+{
+    w_mount "Men of War"
+
+    cd "$W_ISO_MOUNT_ROOT"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        SetTitleMatchMode, slow
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
+        winwait, Select Setup Language, Select the language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 1000
+            ControlClick, TNewButton1, Select Setup Language, Select the language
+            winwait, Men of War
+            sleep 1000
+            ControlClick, TButton4, Men of War
+            winwait, Setup - Men of War, ACCEPTANCE OF AGREEMENT
+            sleep 1000
+            ControlClick, TNewRadioButton1, Setup - Men of War, ACCEPTANCE OF AGREEMENT
+            ControlClick, TNewButton1, Setup - Men of War, ACCEPTANCE OF AGREEMENT
+        }
+        winwait, Setup - Men of War, Setup has finished installing
+        if ( u > 0 ) {
+            sleep 1000
+            ControlClick, x242 y254
+            ControlClick, x242 y278
+            ControlClick, TNewButton1, Setup - Men of War, Setup has finished
+        }
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Aspyr\\Men of War" "mow.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata singularity games \
     title="Singularity" \
     publisher="Activision" \
