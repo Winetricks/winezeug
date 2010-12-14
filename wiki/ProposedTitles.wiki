@@ -140,7 +140,11 @@ http://news.bigdownload.com/2009/10/01/download-risen-demo
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=17988
 
 Ski Challenge (kind of like tux racer.  Works fine, but adware, lots of clicks to play.)
+and other similar games from http://www.greentube.com/en/3d_esports
 http://www.ski-challenge.com/
+http://www.fussball-challenge.com/
+http://www.burning-gears.com/
+http://www.mtb-challenge.com/
 
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
