@@ -949,13 +949,29 @@ _EOF_
     w_try_regedit "$W_TMP_WIN"\\crashdialog.reg
 }
 
-sandbox()
+# Function to protect wine-specific sections of code.
+# Outputs a message to console explaining what's being skipped.
+# Usage:
+#   if w_skip_windows name-of-operation
+#   then
+#      return
+#   fi
+#   ... do something that doesn't make sense on windows ...
+
+w_skip_windows()
 {
     case "$OS" in
     "Windows_NT")
-      return
+      echo "Skipping operation '$1' on Windows"
+      return 0
       ;;
     esac
+    return 1
+}
+
+sandbox()
+{
+    w_skip_windows sandbox && return
 
     # Unmap drive Z
     # Might want to unpack gecko first, since Wine won't be able to get to /usr/lib/wine after this
@@ -996,6 +1012,8 @@ _EOF_
 }
 
 w_override_dlls() {
+    w_skip_windows override && return
+
     mode=$1
     if [ $mode = "disabled" ]
     then
@@ -1030,6 +1048,8 @@ _EOF_
 }
 
 override_no_dlls() {
+    w_skip_windows override && return
+
     $WINE regedit /d 'HKEY_CURRENT_USER\Software\Wine\DllOverrides'
 }
 
@@ -1072,6 +1092,8 @@ override_all_dlls() {
 }
 
 override_app_dlls() {
+    w_skip_windows override && return
+
     app=$1
     shift
     mode=$1
@@ -2369,11 +2391,7 @@ _EOF_
 
 load_gecko()
 {
-    case "$OS" in
-    "Windows_NT")
-      return
-      ;;
-    esac
+    w_skip_windows gecko && return
 
     # Load the HTML rendering Engine (Gecko)
     # FIXME: shouldn't this code be in some script installed
