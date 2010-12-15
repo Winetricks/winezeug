@@ -595,6 +595,7 @@ w_download() {
     mkdir -p "$cache"
     if test ! -f "$cache/$file" || test "$WINETRICKS_CONTINUE_DOWNLOAD"
     then
+        _W_dl_olddir=`pwd`
         cd "$cache"
         # Mac folks tend to have curl rather than wget
         # On Mac, 'which' doesn't return good exit status
@@ -627,6 +628,8 @@ w_download() {
             esac
         esac
 
+        cd "$_W_dl_olddir"
+        unset _W_dl_olddir
     fi
     if [ "$3"x != ""x ]
     then
