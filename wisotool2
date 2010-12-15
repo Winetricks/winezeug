@@ -537,6 +537,11 @@ __EOF__
 # If you don't want to check exit status, use w_try w_call
 w_call()
 {
+    if ! wisotool_metadata_exists $1
+    then
+        w_die "No such verb $1"
+    fi
+
     (
         . "$WISOTOOL_METADATA"/*/$1.vars
 
@@ -1932,6 +1937,27 @@ load_comctl32()
 
 #----------------------------------------------------------------
 
+w_metadata  crypt32 dlls \
+   title="MS crypt32" \
+   publisher="Microsoft" \
+   year="2003" \
+   media="download" \
+   file1="823182_XPE_SP2_X86_ENU.EXE" \
+   installed_file1="$W_SYSTEM32_DLLS"/crypt32.dll
+
+load_crypt32()
+{
+    w_try w_call msasn1
+
+    # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
+    w_download crypt32 http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/crypt32/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
+    mv "$W_SYSTEM32_DLLS"/rep/329115_crypt32.dll "$W_SYSTEM32_DLLS"/crypt32.dll
+    w_override_dlls native crypt32
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
@@ -1964,6 +1990,28 @@ load_mfc40()
     w_download mfc40 http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
     w_try_unzip -d "$W_TMP" "$W_CACHE"/mfc40/ole2v.exe
     w_try cp -f "$W_TMP"/MFC40.DLL "$W_SYSTEM32_DLLS"
+}
+
+#----------------------------------------------------------------
+
+w_metadata msasn1 dlls \
+   title="MS ASN1" \
+   publisher="Microsoft" \
+   year="2003" \
+   media="download" \
+   file1="E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE" \
+   installed_file1="$W_SYSTEM32_DLLS/msasn1.dll"
+
+load_msasn1()
+{
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
+    # FIXME: This is a huge w_download for a single dll.
+    w_download msasn1 http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
+    cd "$W_TMP"
+    w_try_cabextract -F i386/msasn1.dl_ "$W_CACHE"/msasn1/W2KSP4_EN.EXE
+    w_try_cabextract i386/msasn1.dl_
+    w_try cp msasn1.dll "$W_SYSTEM32_DLLS"
+    w_try rm -rf i386
 }
 
 #----------------------------------------------------------------
