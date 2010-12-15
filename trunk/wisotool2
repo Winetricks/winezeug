@@ -2357,6 +2357,47 @@ load_fakekorean()
 
 #----------------------------------------------------------------
 
+w_metadata liberation fonts \
+   title="Red Hat Liberation fonts (Sans, Serif, Mono)" \
+   publisher="Red Hat" \
+   year="2008" \
+   media="download" \
+   file1="liberation-fonts-1.04.tar.gz" \
+   installed_file1="$W_FONTSDIR_WIN"\\LiberationMono-BoldItalic.ttf
+
+load_liberation()
+{
+    # http://www.redhat.com/promo/fonts/
+    case `uname -s` in
+    SunOS|Solaris)
+      echo "If you get 'ERROR: Certificate verification error for fedorahosted.org: unable to get local issuer certificate':"
+      echo "Then you need to add Verisign root certificates to your local keystore."
+      echo "OpenSolaris users, see: http://www.linuxtopia.org/online_books/opensolaris_2008/SYSADV1/html/swmgrpatchtasks-14.html"
+      echo "Or edit wisotool2's download function, and add '--no-check-certificate' to the command."
+      ;;
+    esac
+
+    w_download liberation https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz 097882c92e3260742a3dc3bf033792120d8635a3
+    cd "$W_TMP"
+    gunzip -dc "$W_CACHE"/liberation/liberation-fonts-1.04.tar.gz | tar -xf -
+    mv liberation-fonts-1.04/*.ttf "$W_FONTSDIR_UNIX"
+
+    w_register_font LiberationMono-BoldItalic.ttf "LiberationMono-BoldItalic"
+    w_register_font LiberationMono-Bold.ttf "LiberationMono-Bold"
+    w_register_font LiberationMono-Italic.ttf "LiberationMono-Italic"
+    w_register_font LiberationMono-Regular.ttf "LiberationMono-Regular"
+    w_register_font LiberationSans-BoldItalic.ttf "LiberationSans-BoldItalic"
+    w_register_font LiberationSans-Bold.ttf "LiberationSans-Bold"
+    w_register_font LiberationSans-Italic.ttf "LiberationSans-Italic"
+    w_register_font LiberationSans-Regular.ttf "LiberationSans-Regular"
+    w_register_font LiberationSerif-BoldItalic.ttf "LiberationSerif-BoldItalic"
+    w_register_font LiberationSerif-Bold.ttf "LiberationSerif-Bold"
+    w_register_font LiberationSerif-Italic.ttf "LiberationSerif-Italic"
+    w_register_font LiberationSerif-Regular.ttf "LiberationSerif-Regular"
+}
+
+#----------------------------------------------------------------
+
 w_metadata lucida fonts \
    title="MS Lucida Console font" \
    publisher="Microsoft" \
