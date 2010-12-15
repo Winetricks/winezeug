@@ -1005,15 +1005,7 @@ sandbox()
 }
 
 unset_winver() {
-    echo "Clearing Windows version back to default"
-    cat > "$W_TMP"/unset-winver.reg <<_EOF_
-REGEDIT4
-
-[HKEY_CURRENT_USER\Software\Wine]
-"Version"=-
-
-_EOF_
-    w_try_regedit "$W_TMP_WIN"\\unset-winver.reg
+    set_winver winxp
 }
 
 w_override_dlls() {
