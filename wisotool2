@@ -511,22 +511,10 @@ w_call()
         . "$WISOTOOL_METADATA"/*/$1.vars
 
         # Don't install if already installed
-        unset _W_file
-        if test "$installed_exe1" 
+        if wisotool_is_installed $1
         then
-            _W_file="$installed_exe1"
-        elif test "$installed_file1"
-        then
-            _W_file="$installed_file1"
-        fi
-        if test "$_W_file" 
-        then
-            _W_file_unix="`w_pathconv -u "$_W_file" | tr -d '\015' `"
-            if test -f "$_W_file_unix"
-            then
-                echo "$1 already installed, skipping"
-                return
-            fi
+            echo "$1 already installed, skipping"
+            return
         fi
         load_$1 $2
     )
@@ -931,7 +919,7 @@ wisotool_is_installed()
     if test "$_W_file" 
     then
         _W_file_unix="`w_pathconv -u "$_W_file" | tr -d '\015' `"
-        if test -f "$_W_file_unix"
+        if test -f "$_W_file_unix" && ! grep -q "Wine placeholder DLL" "$_W_file_unix"
         then
             unset _W_file _W_file_unix
             return 0  # installed
@@ -1846,6 +1834,7 @@ load_amstream()
 }
 
 #----------------------------------------------------------------
+
 w_metadata  art2kmin dlls \
    title="MS Access 2007 runtime" \
    publisher="Microsoft" \
