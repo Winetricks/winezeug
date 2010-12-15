@@ -139,6 +139,17 @@ w_try_cabextract()
     unset _W_CABEXTRACT
 }
 
+w_try_unzip()
+{
+    # Not always installed, but shouldn't be fatal unless it's being used
+    if test ! -x "`which unzip 2>/dev/null`" 
+    then
+        w_die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
+    fi
+    
+    w_try unzip -o -q "$@"
+}
+
 w_try_winetricks()
 {
     w_try "$WISOTOOL_WINETRICKS" $W_UNATTENDED_DASH_Q $*
@@ -1885,7 +1896,7 @@ w_metadata  glut dlls \
 load_glut()
 {
     w_download glut http://www.xmission.com/~nate/glut/glut-3.7.6-bin.zip fb4731885c05b3cf2c79e85aabe8fc9949616ef4
-    w_try unzip -d "$W_DRIVE_C" "$W_CACHE"/glut/glut-3.7.6-bin.zip
+    w_try_unzip -d "$W_DRIVE_C" "$W_CACHE"/glut/glut-3.7.6-bin.zip
     w_try cp "$W_DRIVE_C"/glut-3.7.6-bin/glut32.dll "$W_SYSTEM32_DLLS"
     w_warn "If you want to compile glut programs, add c:/glut-3.7.6-bin to LIB and INCLUDE"
 }
@@ -1904,7 +1915,7 @@ load_mfc40()
 {
     # See http://support.microsoft.com/kb/122244
     w_download mfc40 http://download.microsoft.com/download/ole/ole2v/3.5/w351/en-us/ole2v.exe c6cac71f32405ccb09c6f375e0738e6e13f073e4
-    w_try unzip -d "$W_TMP" "$W_CACHE"/mfc40/ole2v.exe
+    w_try_unzip -d "$W_TMP" "$W_CACHE"/mfc40/ole2v.exe
     w_try cp -f "$W_TMP"/MFC40.DLL "$W_SYSTEM32_DLLS"
 }
 
@@ -2429,7 +2440,7 @@ load_takao()
     # See http://launchpad.net/takao-fonts for project page
     w_download takao http://launchpad.net/takao-fonts/003.02/003.02.01/+download/takao-fonts-ttf-003.02.01.zip 4f636d5c7c1bc16b96ea723adb16838cfb6df059
     cp -f "$W_CACHE"/takao/takao-fonts-ttf-003.02.01.zip "$W_TMP"
-    w_try unzip -d "$W_TMP" "$W_TMP"/takao-fonts-ttf-003.02.01.zip
+    w_try_unzip -d "$W_TMP" "$W_TMP"/takao-fonts-ttf-003.02.01.zip
     w_try cp -f "$W_TMP"/takao-fonts-ttf-003.02.01/*.ttf "$W_FONTSDIR_UNIX"
 
     w_register_font TakaoGothic.ttf "TakaoGothic"
@@ -2477,7 +2488,7 @@ load_unifont()
     # See http://unifoundry.com/unifont.html for project page
     w_download unifont http://unifoundry.com/unifont-5.1.20080907.zip bb8a3960dc0a96aa305de28312ea8a0ab64123d2
     cp -f "$W_CACHE"/unifont/unifont-5.1.20080907.zip "$W_TMP"
-    w_try unzip -d "$W_TMP" "$W_TMP"/unifont-5.1.20080907.zip
+    w_try_unzip -d "$W_TMP" "$W_TMP"/unifont-5.1.20080907.zip
     w_try cp -f "$W_TMP"/unifont-5.1.20080907.ttf "$W_FONTSDIR_UNIX/unifont.ttf"
 
     w_register_font unifont.ttf "Unifont"
@@ -2555,7 +2566,7 @@ load_mspaint()
 {
     # http://helpforlinux.blogspot.com/2008/12/run-ms-paint-in-linux.html
     w_download mspaint http://download.microsoft.com/download/winntwks40/paint/1/nt4/en-us/paintnt.exe a22c4e367ef9d2cd23f0a8ae8d9ebff5bc1e8a0b
-    w_try unzip "$W_CACHE"/mspaint/paintnt.exe -d "$W_WINDIR_UNIX"
+    w_try_unzip "$W_CACHE"/mspaint/paintnt.exe -d "$W_WINDIR_UNIX"
 
     w_declare_exe "$W_WINDIR_UNIX" "mspaint.exe"
 }
@@ -2625,7 +2636,7 @@ load_3dmark2000()
     cd "$W_TMP"
     mkdir $W_PACKAGE
     cd $W_PACKAGE
-    w_try unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
+    w_try_unzip "$W_CACHE/$W_PACKAGE"/3dmark2000_v11_100308.exe
     w_ahk_do "
         SetTitleMatchMode, 2
         run Setup.exe
@@ -2751,7 +2762,7 @@ load_blobby_volley()
 
     mkdir -p "$W_DRIVE_C/BlobbyVolley"
     cd "$W_CACHE/$W_PACKAGE"
-    w_try unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
+    w_try_unzip blobby.zip -d "$W_DRIVE_C/BlobbyVolley"
     w_declare_exe "c:\\BlobbyVolley" "volley.exe"
 
     if w_workaround_wine_bug 4432
@@ -2775,7 +2786,7 @@ load_civ4_demo()
     w_download_manual civ4_demo http://download.cnet.com/Civilization-IV-demo/3000-7489_4-10465206.html Civilization4_Demo.zip b54f1e5d0a1c2d1ef456d0c20098c23bbb6a0ea7
 
     cd "$W_CACHE/$W_PACKAGE"
-    w_try unzip Civilization4_Demo.zip -d "$W_TMP"
+    w_try_unzip Civilization4_Demo.zip -d "$W_TMP"
     cd "$W_TMP/$W_PACKAGE"
     chmod +x setup.exe
     w_ahk_do "
