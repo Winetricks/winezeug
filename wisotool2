@@ -430,9 +430,39 @@ _EOF_
     done
 
     w_try_regedit "$W_TMP_WIN"\\override-dll.reg
-    cat "$W_TMP"/override-dll.reg
 
     unset _W_mode
+}
+
+w_override_app_dlls()
+{
+    w_skip_windows override && return
+
+    _W_app=$1
+    shift
+    _W_mode=$1
+    shift
+    echo Using $_W_mode override for following DLLs when running $_W_app: $@
+    (
+    echo REGEDIT4
+    echo ""
+    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$app\\DllOverrides]"
+    ) > "$W_TMP"/override-dll.reg
+
+    while test "$1" != ""
+    do
+        case "$1" in
+        comctl32)
+           rm -rf "$W_WINDIR_UNIX"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
+           ;;
+        esac
+        echo "\"$1\"=\"$_W_mode\"" >> "$W_TMP"/override-dll.reg
+        shift
+    done
+
+    w_try_regedit "$W_TMP_WIN"\\override-dll.reg
+    rm "$W_TMP"/override-dll.reg
+    unset _W_app _W_mode
 }
 
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
@@ -1870,6 +1900,34 @@ load_atmlib()
     cd "$W_TMP"
     w_try_cabextract "$W_CACHE"/atmlib/W2KSP4_EN.EXE i386/atmlib.dl_
     w_try cp atmlib.dll "$W_SYSTEM32_DLLS"
+}
+
+#----------------------------------------------------------------
+
+w_metadata  comctl32 dlls \
+   title="MS common controls 5.80" \
+   publisher="Microsoft" \
+   year="2001" \
+   media="download" \
+   file1="cc32inst.exe" \
+   installed_file1="$W_SYSTEM32_DLLS"/comctl32.dll
+
+load_comctl32()
+{
+    # http://www.microsoft.com/downloads/details.aspx?familyid=6f94d31a-d1e0-4658-a566-93af0d8d4a1e
+    w_download comctl32 http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
+
+    w_try $WINE "$W_CACHE"/comctl32/cc32inst.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
+    w_try_unzip -d "$W_TMP" "$W_TMP"/comctl32.exe
+    w_try $WINE "$W_TMP"/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
+    w_try cp "$W_TMP"/comcnt.dll "$W_SYSTEM32_DLLS"/comctl32.dll
+
+    w_override_dlls native,builtin comctl32
+
+    # some builtin apps don't like native comctl32
+    w_override_app_dlls winecfg.exe builtin comctl32
+    w_override_app_dlls explorer.exe builtin comctl32
+    w_override_app_dlls iexplore.exe builtin comctl32
 }
 
 #----------------------------------------------------------------
