@@ -103,7 +103,6 @@ for verb in \
     tahoma \
     takao \
     unifont \
-    urlmon \
     usp10 \
     utorrent \
     vb2run \
@@ -131,6 +130,7 @@ for verb in \
     wsh56vb \
     xact \
     xinput \
+    xmllite \
     xvid \
     alldlls=builtin \
     alldlls=default \
