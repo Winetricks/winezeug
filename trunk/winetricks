@@ -1501,11 +1501,13 @@ load_corefonts()
 load_crypt32()
 {
     # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
-    w_download . http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
-    w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
+    w_download crypt32 http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/crypt32/Q823182_XPE_SP2_X86_ENU.EXE -F rep/329115_crypt32.dll
+    mv "$W_SYSTEM32_DLLS"/rep/329115_crypt32.dll "$W_SYSTEM32_DLLS"/crypt32.dll
     w_override_dlls native crypt32
-}
 
+    load_msasn1
+}
 
 #----------------------------------------------------------------
 
@@ -2670,15 +2672,7 @@ load_gfw()
     # FIXME: Depends on .Net 20, but is it really needed? For now, skip it.
     w_try $WINE "$W_CACHE"/gfwlivesetupmin.exe /nodotnet $W_UNATTENDED_SLASH_Q
  
-    # Now get msasn1.dll, which xlive.dll depends on:
-    # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
-    # FIXME: This is a huge w_download for a single dll.
-    w_download . http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
-    cd "$W_TMP"
-    w_try_cabextract -F i386/msasn1.dl_ "$W_CACHE"/W2KSP4_EN.EXE
-    w_try_cabextract i386/msasn1.dl_
-    w_try cp msasn1.dll "$W_SYSTEM32_DLLS"
-    w_try rm -rf i386
+    load_msasn1
 }
 
 #----------------------------------------------------------------
@@ -3207,6 +3201,23 @@ load_mpc()
     append_path "$W_PROGRAMS_WIN"'\\Media Player Classic'
 
     w_warn "MPC now available as $W_PROGRAMS_WIN\Media Player Classic\mpc-hc.exe"
+}
+
+#----------------------------------------------------------------
+
+load_msasn1()
+{
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
+    # FIXME: This is a huge w_download for a single dll.
+    w_download msasn1 http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
+    (
+    false
+    cd "$W_TMP"
+    w_try_cabextract -F i386/msasn1.dl_ "$W_CACHE"/msasn1/W2KSP4_EN.EXE
+    w_try_cabextract i386/msasn1.dl_
+    w_try cp msasn1.dll "$W_SYSTEM32_DLLS"
+    w_try rm -rf i386
+    )
 }
 
 #----------------------------------------------------------------
@@ -4972,6 +4983,7 @@ do
     mono28) w_call mono28;;
     mozillabuild) w_call mozillabuild;;
     mpc) w_call mpc;;
+    msasn1) w_call msasn1;;
     msi2) w_call msi2;;
     mshflxgd) w_call mshflxgd;;
     msls31) w_call msls31;;
