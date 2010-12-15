@@ -1092,14 +1092,15 @@ override_all_dlls() {
         xinput1_1 xinput1_2 xinput1_3 xinput9_1_0 xmllite
 }
 
-override_app_dlls() {
+w_override_app_dlls()
+{
     w_skip_windows override && return
 
-    app=$1
+    _W_app=$1
     shift
-    mode=$1
+    _W_mode=$1
     shift
-    echo Using $mode override for following DLLs when running $app: $@
+    echo Using $_W_mode override for following DLLs when running $_W_app: $@
     (
     echo REGEDIT4
     echo ""
@@ -1113,12 +1114,13 @@ override_app_dlls() {
            rm -rf "$W_WINDIR_UNIX"/winsxs/manifests/x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.2600.2982_none_deadbeef.manifest
            ;;
         esac
-        echo "\"$1\"=\"$mode\"" >> "$W_TMP"/override-dll.reg
+        echo "\"$1\"=\"$_W_mode\"" >> "$W_TMP"/override-dll.reg
         shift
     done
 
     w_try_regedit "$W_TMP_WIN"\\override-dll.reg
     rm "$W_TMP"/override-dll.reg
+    unset _W_app _W_mode
 }
 
 w_register_font()
@@ -1341,9 +1343,9 @@ load_comctl32()
     w_override_dlls native,builtin comctl32
 
     # some builtin apps don't like native comctl32
-    override_app_dlls winecfg.exe builtin comctl32
-    override_app_dlls explorer.exe builtin comctl32
-    override_app_dlls iexplore.exe builtin comctl32
+    w_override_app_dlls winecfg.exe builtin comctl32
+    w_override_app_dlls explorer.exe builtin comctl32
+    w_override_app_dlls iexplore.exe builtin comctl32
 }
 
 #----------------------------------------------------------------
