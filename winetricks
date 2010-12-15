@@ -4685,8 +4685,29 @@ load_wsh57()
     w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/wsh57/scripten.exe 
 
     # Wine doesn't provide the other dll's (yet?)
-    w_override_dlls native,builtin jscript.dll
+    w_override_dlls native,builtin jscript wscript.exe
     w_try_regsvr dispex.dll jscript.dll scrobj.dll scrrun.dll vbscript.dll wshcon.dll wshext.dll
+
+    # Needed to run vbscript
+    cat > "$W_TMP"/vbscript.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Classes\.vbs]
+@="vbsfile"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\vbsfile]
+@="VBScript Script File"
+"FriendlyTypeName"=hex(2):40,25,53,79,73,74,65,6d,52,6f,6f,74,25,5c,53,79,73,\
+  74,65,6d,33,32,5c,77,73,68,65,78,74,2e,64,6c,6c,2c,2d,34,38,30,32,00
+
+[HKEY_LOCAL_MACHINE\Software\Classes\vbsfile\ScriptEngine]
+@="VBScript"
+
+[HKEY_LOCAL_MACHINE\Software\Classes\vbsfile\Shell\Open\Command]
+@=hex(2):25,53,79,73,74,65,6d,52,6f,6f,74,25,5c,53,79,73,74,65,6d,33,32,5c,57,\
+  53,63,72,69,70,74,2e,65,78,65,20,22,25,31,22,20,25,2a,00
+_EOF_
+    w_try_regedit "$W_TMP"/vbscript.reg
 }
 
 #----------------------------------------------------------------
