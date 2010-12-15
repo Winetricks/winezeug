@@ -257,6 +257,7 @@ usage() {
     echo " wsh56vb       MS Windows scripting 5.6, vbscript only, no cscript"
     echo " xact          MS XACT Engine (x3daudio?_?.dll, xactengine?_?.dll)"
     echo " xinput        MS XInput (Xbox controller support, xinput?_?.dll)"
+    echo " xmllite       MS xmllite dll"
     echo " xvid          xvid video codec"
     echo "Pseudopackages:"
     echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
@@ -4772,6 +4773,24 @@ load_xinput()
 
 #----------------------------------------------------------------
 
+load_xmllite()
+{
+    w_download xmllite http://download.microsoft.com/download/f/9/6/f964059a-3747-4ed8-9326-ba1e639031b1/WindowsXP-KB915865-v11-x86-ENU.exe 226d246a1c64e693791de5c727509002d089b0d5
+
+    # See http://bugs.winehq.org/show_bug.cgi?id=16013
+    # Find instructions to create this file in dlls/wintrust/tests/crypt.c
+    w_download xmllite http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+    # Put a dummy catalog file in place
+    mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    w_try cp -f "$W_CACHE"/xmllite/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+
+    cd "$W_CACHE"/xmllite
+    w_override_dlls native xmllite
+    w_try $WINE WindowsXP-KB915865-v11-x86-ENU.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
 load_xvid()
 {
     # xvid
@@ -5032,6 +5051,7 @@ do
     wsh56vb) w_call wsh56vb;;
     xact|xactengine|x3daudio|xapofx) w_call xact;;
     xinput) w_call xinput;;
+    xmllite) w_call xmllite;;
     xvid) w_call xvid;;
 
     allcodecs|allvcodecs) w_call vcrun6; w_call ffdshow; w_call xvid;  w_call icodecs;;
