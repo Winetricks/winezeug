@@ -1328,14 +1328,14 @@ load_baekmuk()
 
 #----------------------------------------------------------------
 
-load_cc580()
+load_comctl32()
 {
     # http://www.microsoft.com/downloads/details.aspx?familyid=6f94d31a-d1e0-4658-a566-93af0d8d4a1e
-    w_download . http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
+    w_download comctl32 http://download.microsoft.com/download/platformsdk/redist/5.80.2614.3600/w9xnt4/en-us/cc32inst.exe 94c3c494258cc54bd65d2f0153815737644bffde
 
-    w_try $WINE "$W_CACHE"/cc32inst.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
-    w_try_unzip -d "$W_WINDIR_UNIX"/temp "$W_TMP"/comctl32.exe
-    w_try $WINE "$W_WINDIR_UNIX"/temp/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
+    w_try $WINE "$W_CACHE"/comctl32/cc32inst.exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
+    w_try_unzip -d "$W_TMP" "$W_TMP"/comctl32.exe
+    w_try $WINE "$W_TMP"/x86/50ComUpd.Exe "/T:$W_TMP_WIN" /c $W_UNATTENDED_SLASH_Q
     w_try cp "$W_TMP"/comcnt.dll "$W_SYSTEM32_DLLS"/comctl32.dll
 
     w_override_dlls native,builtin comctl32
@@ -4860,7 +4860,7 @@ do
     baekmuk) w_call baekmuk;;
     cmake) w_call cmake;;
     comctl32.ocx) w_call comctl32ocx;;
-    comctl32|cc580) w_call cc580;;
+    comctl32|cc580) w_call comctl32;;
     comdlg32.ocx) w_call comdlg32ocx;;
     colorprofile) w_call colorprofile;;
     controlpad|fm20) w_call controlpad;;
