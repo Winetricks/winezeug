@@ -1350,7 +1350,7 @@ load_cc580()
 load_cmake()
 {
     w_download . http://www.cmake.org/files/v2.8/cmake-2.8.2-win32-x86.exe 2c46f4e804787b231c2f45e1b43f1838462e8dfe
-    w_try $WINE "$W_CACHE"/cmake-2.8.2-win32-x86.exe
+    w_try $WINE "$W_CACHE"/cmake-2.8.2-win32-x86.exe $W_UNATTENDED_SLASH_S
 }
 
 #----------------------------------------------------------------

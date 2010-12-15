@@ -23,6 +23,7 @@ for verb in \
     atmlib \
     autohotkey \
     baekmuk \
+    cmake \
     colorprofile \
     comctl32 \
     comctl32.ocx \
@@ -221,7 +222,6 @@ then
     # Ignores -q
     for verb in \
         allcodecs \
-        cmake \
         cygwin \
         dirac \
         directx9 \
