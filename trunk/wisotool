@@ -5698,7 +5698,7 @@ w_metadata hphbp_demo games \
 load_hphbp_demo()
 {
     case "$LANG" in
-    ""|"C") w_die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
+    ""|"C") w_die "Harry Potter will not install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
     if ! test -f "$W_CACHE/$W_PACKAGE/Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe"
@@ -5726,13 +5726,26 @@ load_hphbp_demo()
         controlclick, Button1
     "
 
-    # Not sure I trust putting \U2122 in a batch file, so use a wild card to cd to the right dir.
-    # Have to "cd pc" as next command, or the wildcard expansion fails on wine?
-    # Have to be in the pc directory for the app to find its files.
+    # Fix locale issues:
+    SAVEIFS=$IFS
+    IFS=$(echo -en "\n\b")
+    cd "$W_PROGRAMS_X86_UNIX/Electronic Arts"
+    for x in `ls -d1 "Harry Potter and the Half-Blood Prince"*/`
+    do
+        # if iconv throws an error, the directory name contains bad characters, so strip them:
+        echo "$x" 2>&1 | iconv -t ASCII >/dev/null 2>&1  
+        if [ $? -ne 0 ]
+        then
+            y=`echo $x | tr -cd '[:print:]'`
+            mv "$x" "$y"
+            echo "moving '$x' to '$y' to avoid locale issues"
+        fi
+    done
+    IFS=$SAVEIFS
+
     cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
-cd $W_PROGRAMS_X86_WIN\\Electronic Arts\\Harry Potter and the Half-Blood Prince* Demo
-cd pc
+cd $W_PROGRAMS_X86_WIN\\Electronic Arts\\Harry Potter and the Half-Blood Prince Demo\pc
 hp6_demo.exe
 __EOF__
 }
@@ -5748,8 +5761,11 @@ w_metadata hphbp games \
 
 load_hphbp()
 {
+    # Annoyingly, it runs a webrowser so you can activate the extra stuff. Disable that, and w_warn the user after install:
+    export WINEDLLOVERRIDES="winebrowser.exe="
+
     case "$LANG" in
-    ""|"C") w_die "Harry Potter won't install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
+    ""|"C") w_die "Harry Potter will not install in the Posix locale; please do 'export LANG=en_US.UTF-8' or something like that" ;;
     esac
 
     iso_mount "$W_CACHE"/$W_PACKAGE/9590f4c4bf2d5e819014cd9b03a5d5408ae2cd7d.iso
@@ -5776,10 +5792,28 @@ load_hphbp()
     $WINESERVER -w
     iso_umount
 
+    # Fix locale issues:
+    SAVEIFS=$IFS
+    IFS=$(echo -en "\n\b")
+    cd "$W_PROGRAMS_X86_UNIX/Electronic Arts"
+    for x in `ls -d1 "Harry Potter and the Half-Blood Prince"*/`
+    do
+        # if iconv throws an error, the directory name contains bad characters, so strip them:
+        echo "$x" 2>&1 | iconv -t ASCII >/dev/null 2>&1  
+        if [ $? -ne 0 ]
+        then
+            y=`echo $x | tr -cd '[:print:]'`
+            mv "$x" "$y"
+            echo "moving '$x' to '$y' to avoid locale issues"
+        fi
+    done
+    IFS=$SAVEIFS
+
+    w_warn "To regsiter the game, visit https://account.ea.com/oreg/selectgameplatform.jsp?site=eaco&app=oreg&pr_game=GAME-HP-HALFBLOODPRINCE&pr_regcode=CLV5SJES6DFVW2355CTH&prodid=OREG&sls=2&locale=en_US&pr_platform=PC&ipath=12&skin=oreg"
+
     cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
 ${programfilesdrive}:
-cd $W_PROGRAMS_X86_WIN\\Electronic Arts\\Harry Potter and the Half-Blood Prince*
-cd pc
+cd $W_PROGRAMS_X86_WIN\\Electronic Arts\\Harry Potter and the Half-Blood Prince\pc
 hp6.exe
 __EOF__
 }
