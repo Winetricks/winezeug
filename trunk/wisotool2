@@ -469,9 +469,118 @@ w_override_app_dlls()
     unset _W_app _W_mode
 }
 
+# Has to be set in a few places...
+w_set_winver()
+{
+    w_skip_windows override && return
+    # FIXME: This should really be done with winecfg, but it has no CLI options.
+
+    # First, delete any lingering version info, otherwise it may conflict:
+    $WINE reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion" /v SubVersionNumber /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion" /v VersionNumber /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v CSDVersion /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v CurrentBuildNumber /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\Windows NT\CurrentVersion" /v CurrentVersion /f || true
+    $WINE reg delete "HKLM\System\CurrentControlSet\Control\ProductOptions" /v ProductType /f || true
+    $WINE reg delete "HKLM\System\CurrentControlSet\Control\ServiceCurrent" /v OS /f || true
+    $WINE reg delete "HKLM\System\CurrentControlSet\Control\Windows" /v CSDVersion /f || true
+
+    case $1 in
+    win98)
+        # This key is only used for win 95/98:
+
+        echo "Setting Windows version to $1"
+        cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion]
+"SubVersionNumber"=" A "
+"VersionNumber"="4.10.2222"
+
+_EOF_
+        w_try_regedit "$W_TMP_WIN"\\set-winver.reg
+        return 
+        ;;
+    nt40)
+        # Similar to modern version, but sets two extra keys:
+
+        echo "Setting Windows version to $1"
+        cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion]
+"CSDVersion"="Service Pack 6a"
+"CurrentBuildNumber"="1381"
+"CurrentVersion"="4.0"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ProductOptions]
+"ProductType"="WinNT"
+ 
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceCurrent]
+"OS"="Windows_NT"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows]
+"CSDVersion"=dword:00000600
+
+_EOF_
+        w_try_regedit "$W_TMP_WIN"\\set-winver.reg
+        return
+        ;;
+    win2k)
+        csdversion="Service Pack 4"
+        currentbuildnumber="2195"
+        currentversion="5.0"
+        csdversion_hex=dword:00000400
+        ;;
+    winxp)
+        csdversion="Service Pack 3"
+        currentbuildnumber="2600"
+        currentversion="5.1"
+        csdversion_hex=dword:00000300
+        ;;
+    vista)
+        csdversion="Service Pack 2"
+        currentbuildnumber="6002"
+        currentversion="6.0"
+        csdversion_hex=dword:00000200
+        ;;
+    win7)
+        csdversion="Service Pack 1"
+        currentbuildnumber="7601"
+        currentversion="6.1"
+        csdversion_hex=dword:00000100
+        ;;
+    *)
+        die "Invalid Windows version given."
+        ;;
+    esac
+
+    echo "Setting Windows version to $1"
+    cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion]
+"CSDVersion"="$csdversion"
+"CurrentBuildNumber"="$currentbuildnumber"
+"CurrentVersion"="$currentversion"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Windows]
+"CSDVersion"=$csdversion_hex
+
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\set-winver.reg
+}
+
+w_unset_winver()
+{
+    w_set_winver winxp
+}
+
 # Present app $1 with the Windows personality $2
 w_set_app_winver()
 {
+    w_skip_windows override && return
+
     _W_app="$1"
     _W_version="$2"
     echo "Setting $_W_app to $_W_version mode"
@@ -529,6 +638,10 @@ w_metadata()
     if test "$installed_exe1" || test "$installed_file1"
     then
         w_die "bug: stray metadata tags set: somebody forgot a backslash in a w_metadata somewhere.  Run with sh -x to see where."
+    fi
+    if wisotool_metadata_exists $1
+    then
+        w_die "bug: a verb named $1 already exists."
     fi
 
     file="$WISOTOOL_METADATA/$2/$1.vars"
@@ -2017,6 +2130,49 @@ load_dotnet11()
 
 #----------------------------------------------------------------
 
+w_metadata dotnet20 dlls \
+   title="MS .NET 2.0" \
+   publisher="Microsoft" \
+   year="2006" \
+   media="download" \
+   file1="dotnetfx.exe" \
+   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v2.0.50727\\mscorlib.dll"
+
+load_dotnet20()
+{
+    load_fontfix
+
+    # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
+    w_set_winver win2k
+    # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
+    w_download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
+    w_try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
+
+    # Remove bits of Wine that conflict with native .net 2.0
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5
+    w_download dotnet20 http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe a3625c59d7a2995fb60877b5f5324892a1693b2a
+    if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
+    then
+       w_try $WINE "$W_CACHE"/dotnet20/dotnetfx.exe
+    else
+       w_try $WINE "$W_CACHE"/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
+    fi
+    w_unset_winver
+
+    # We can't stop installing dotnet20 in win2K mode until wine supports
+    # reparse/junction points
+    # (see http://bugs.winehq.org/show_bug.cgi?id=10467#c57 )
+    # so for now just remove the bogus msvc*80.dll files it installs.
+    # See also http://bugs.winehq.org/show_bug.cgi?id=16577
+    # This affects Victoria 2 demo, see http://forum.paradoxplaza.com/forum/showthread.php?p=11523967
+    rm -f "$W_SYSTEM32_DLLS"/msvc?80.dll
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
@@ -2518,6 +2674,55 @@ load_fakekorean()
     w_register_font_substitution "BatangChe" "Baekmuk Batang"
     w_register_font_substitution "Dotum" "Baekmuk Dotum"
     w_register_font_substitution "DotumChe" "Baekmuk Dotum"
+}
+
+#----------------------------------------------------------------
+
+w_metadata fontfix fonts \
+   title="Updated Arphic fonts" \
+   publisher="Arphic" \
+   year="2007" \
+   media="download" \
+   file1="ttf-arphic-ukai_0.1.20060108.orig.tar.gz" \
+   installed_file1="$W_FONTSDIR_WIN"\\ukai.ttf
+
+load_fontfix()
+{
+    # some versions of ukai.ttf and uming.ttf crash .net and picasa
+    # See http://bugs.winehq.org/show_bug.cgi?id=7098#c9
+    # Could fix globally, but that needs root, so just fix for wine
+    if test -f /usr/share/fonts/truetype/arphic/ukai.ttf
+    then
+        gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/ukai.ttf | sed 's/ .*//'`
+        # FIXME: do all affected versions of the font have same sha1sum as Gutsy?  Seems unlikely.
+        if [ "$gotsum"x = "96e1121f89953e5169d3e2e7811569148f573985"x ]
+        then
+            w_download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
+            gunzip -dc "$W_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | (cd "$W_TMP"; tar -xf -)
+            w_try mv "$W_TMP"/ttf-arphic-ukai-0.1.20060108/*.ttf "$W_FONTSDIR_UNIX"
+        fi
+    fi
+
+    if test -f /usr/share/fonts/truetype/arphic/uming.ttf
+    then
+        gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/uming.ttf | sed 's/ .*//'`
+        if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
+        then
+            w_download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
+            gunzip -dc "$W_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | (cd "$W_TMP"; tar -xf -)
+            w_try mv "$W_TMP"/ttf-arphic-uming-0.1.20060108/*.ttf "$W_FONTSDIR_UNIX"
+        fi
+    fi
+
+    # Focht says Samyak is bad news, and font substitution isn't a good workaround.
+    # I've seen psdkwin7 setup crash because of this; the symptom was a messagebox saying
+    # SDKSetup encountered an error: The type initializer for 'Microsoft.WizardFramework.WizardSettings' threw an exception
+    # and WINEDEBUG=+relay,+seh shows an exception very quickly after
+    # Call KERNEL32.CreateFileW(0c83b36c L"Z:\\USR\\SHARE\\FONTS\\TRUETYPE\\TTF-ORIYA-FONTS\\SAMYAK-ORIYA.TTF",80000000,00000001,00000000,00000003,00000080,00000000) ret=70d44091
+    if xlsfonts 2>/dev/null | egrep -i "samyak|oriya"
+    then
+        w_die "Please uninstall the Samyak/Oriya font, e.g. 'sudo dpkg -r ttf-oriya-fonts', then log out and log in again.  That font causes strange crashes in .net programs."
+    fi
 }
 
 #----------------------------------------------------------------
