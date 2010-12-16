@@ -2758,7 +2758,6 @@ load_ie6()
 
     cd "$W_TMP"
     $WINE "$W_CACHE"/ie60.exe
-    cd "IE 6.0 Full"
 
     load_msls31
 
