@@ -469,6 +469,24 @@ w_override_app_dlls()
     unset _W_app _W_mode
 }
 
+# Present app $1 with the Windows personality $2
+w_set_app_winver()
+{
+    _W_app="$1"
+    _W_version="$2"
+    echo "Setting $_W_app to $_W_version mode"
+    (
+    echo REGEDIT4
+    echo ""
+    echo "[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\$_W_app]"
+    echo "\"Version\"=\"$_W_version\""
+    ) > "$W_TMP"/set-winver.reg
+
+    w_try_regedit "$W_TMP_WIN"\\set-winver.reg
+    rm "$W_TMP"/set-winver.reg
+    unset _W_app
+}
+
 # Usage: workaround_wine_bug bugnumber [good-wineversion-shell-pattern]
 # False (nonzero status) on Windows.
 # True (zero status) on Wine unless good-wineversion-shell-pattern is set
@@ -3046,7 +3064,7 @@ load_bladekitten_demo()
 
     if w_workaround_wine_bug 24681
     then
-        set_app_winver BladeKitten_Demo.exe win2k
+        w_set_app_winver BladeKitten_Demo.exe win2k
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Krome Studios\\Blade Kitten Demo" "BladeKitten_Demo.exe"
