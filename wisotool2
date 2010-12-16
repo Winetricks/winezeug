@@ -3574,6 +3574,37 @@ load_wog()
 
 #----------------------------------------------------------------
 
+w_metadata xact dlls \
+    title="MS XACT Engine" \
+    publisher="Microsoft" \
+    year="2010" \
+    media="download" \
+    file1="../directx9/directx_feb2010_redist.exe" \
+    installed_file1="$W_SYSTEM32_DLLS_WIN"\\xactengine2_0.dll
+
+load_xact()
+{
+    helper_directx_dl
+
+    # Extract xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll
+    w_try_cabextract -d "$W_TMP" -L -F '*_xact_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_TMP" -L -F '*_x3daudio_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_TMP" -L -F '*_xaudio_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
+    do
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xactengine*.dll' "$x"
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xaudio*.dll' "$x"
+    done
+
+    # Register xactengine?_?.dll, xaudio?_?.dll
+    for x in "$W_SYSTEM32_DLLS"/xactengine* "$W_SYSTEM32_DLLS"/xaudio*
+    do
+      w_try_regsvr `basename "$x"`
+    done
+}
+
+#----------------------------------------------------------------
+
 w_metadata  xvid dlls \
     title="Xvid Video Codec" \
     publisher="xvid.org" \
