@@ -1958,6 +1958,43 @@ load_crypt32()
 
 #----------------------------------------------------------------
 
+w_metadata dotnet11 dlls \
+   title="MS .NET 1.1" \
+   publisher="Microsoft" \
+   year="2003" \
+   media="download" \
+   file1="dotnetfx.exe" \
+   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v1.1.4322\\ndpsetup.ico"
+
+load_dotnet11()
+{
+    if [ $ARCH = win64 ]
+    then
+        w_die "This package does not work on a 64-bit installation"
+    fi
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
+    w_download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
+
+    # Remove bits of Wine that conflict with native .net 11
+    rm -rf "$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322"
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
+    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
+
+    # need corefonts, else installer crashes
+    w_try w_call corefonts
+
+    # Use builtin regsvcs.exe to work around http://bugs.winehq.org/show_bug.cgi?id=25120
+    if test $W_OPT_UNATTENDED = 1
+    then
+        WINEDLLOVERRIDES="regsvcs.exe=b" w_try $WINE "$W_CACHE"/dotnet11/dotnetfx.exe /q /C:"install /q"
+    else
+        WINEDLLOVERRIDES="regsvcs.exe=b" w_try $WINE "$W_CACHE"/dotnet11/dotnetfx.exe
+    fi
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
