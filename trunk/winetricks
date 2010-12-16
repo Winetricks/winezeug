@@ -2787,7 +2787,7 @@ load_ie6()
     rm -f "$W_SYSTEM32_DLLS"/browseui.dll "$W_SYSTEM32_DLLS"/inseng.dll
 
     # Work around http://bugs.winehq.org/show_bug.cgi?id=25432
-    w_try_cabextract -F inseng.dll ACTSETUP.CAB
+    w_try_cabextract -F inseng.dll "$W_TMP/IE 6.0 Full/ACTSETUP.CAB"
     mv inseng.dll "$W_SYSTEM32_DLLS"
     w_override_dlls native inseng.dll
 
