@@ -2818,6 +2818,69 @@ __EOF__
 # Games
 #----------------------------------------------------------------
 
+w_metadata aoe3_demo games \
+    title="Age of Empires III" \
+    publisher="Microsoft" \
+    year="2005" \
+    media="download" \
+    file1="aoe3trial.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\Microsoft Games\\Age of Empires III Trial\\age3.exe"
+
+load_aoe3_demo()
+{
+
+    w_download $W_PACKAGE "http://download.microsoft.com/download/a/5/2/a525997e-8423-435b-b694-08118d235064/aoe3trial.exe" \
+        2b0a123243092d79f910db5691d99d469f7c17c3
+
+    if w_workaround_wine_bug 24897
+    then
+        w_try_winetricks msxml4
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run aoe3trial.exe
+        WinWait,Empires,Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick Button1 ; Next
+            WinWait,Empires,Please
+            Sleep 500
+            ControlClick Button4 ; Next
+            WinWait,Empires,Complete
+            Sleep 500
+            ControlClick Button4 ; Finish
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 24911
+    then
+        # On some systems, only quartz is needed?
+        # appdb says that l3codecx is also needed?
+        w_try_winetricks devenum dmsynth quartz
+    fi
+
+    if w_workaround_wine_bug 24912
+    then
+        # kill off lingering installer
+        w_ahk_do "
+            SetTitleMatchMode, 2
+            WinKill,Empires
+        "
+        # or should we just do wineserver -k, like fable_tlc does?
+        PID=`ps augxw | grep IDriver | grep -v grep | awk '{print $2}'`
+        kill $PID
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Age of Empires III Trial" "age3.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  bfbc2 games \
    title="Battlefield Bad Company 2" \
    publisher="EA" \
