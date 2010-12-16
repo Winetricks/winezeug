@@ -370,7 +370,7 @@ w_umount()
 
 w_ahk_do()
 {
-    w_try w_call autohotkey
+    W_UNATTENDED_SLASH_S="/S" w_try w_call autohotkey
     _W_CR=`printf \\\\r`
     echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
     $WINE "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
@@ -2995,6 +2995,60 @@ load_bfbc2()
 
 #----------------------------------------------------------------
 
+w_metadata bladekitten_demo games \
+    title="Blade Kitten Demo" \
+    publisher="Krome Studios Pty Ltd." \
+    year="2010" \
+    media="download" \
+    file1="BladeKittenDemoInstall.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\Krome Studios\\Blade Kitten Demo\\BladeKitten_Demo.exe"
+
+load_bladekitten_demo()
+{
+    if ! test -f "$W_CACHE/$W_PACKAGE/BladeKittenDemoInstall.exe"
+    then
+        w_download $W_PACKAGE "http://downloads.megagames.com/download.php?file=BladeKittenDemoInstall.exe" 8c41706ff3ad029317e5eb6853c34732498d97c7 BladeKittenDemoInstall.exe
+    fi
+
+    cp "$W_CACHE/$W_PACKAGE"/BladeKittenDemoInstall.exe "$W_TMP"
+    cd "$W_TMP"
+    w_ahk_do "
+        ; This script always gives full window title, so no need to set a different title match mode
+        run BladeKittenDemoInstall.exe
+        WinWait Blade Kitten Demo Install Package
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick Button2 ;  Install
+            WinWait Blade Kitten Demo, Next
+            Sleep 500
+            ControlClick Button1
+            WinWait Blade Kitten Demo, Cost
+            Sleep 500
+            ControlClick Button1  ; Next
+            WinWait Blade Kitten Demo, ready
+            Sleep 500
+            ControlClick Button1 ;  Next
+            ; Note - in older versions of wine, the directx installer may take 6-10 minutes at this point
+        }
+        WinWaitClose
+        WinWait Blade Kitten Demo, Complete
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick Button1 ;  Close
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 24681
+    then
+        set_app_winver BladeKitten_Demo.exe win2k
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Krome Studios\\Blade Kitten Demo" "BladeKitten_Demo.exe"
+}
+
+#----------------------------------------------------------------
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
 w_metadata  blobby_volley games \
    title="Blobby Volley" \
