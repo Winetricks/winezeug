@@ -1687,6 +1687,7 @@ Options:
 -v|--verbose: echo all commands as they are executed
 -V|--version: display version and exit
 -h|--help: display this message and exit
+-d|--debug: turn on debug messages and error checking
 Miscellaneous verbs:
 apps: select type 'apps'
 games: select type 'games'
@@ -1716,6 +1717,7 @@ wisotool_handle_option()
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
+    -d|--debug) set -e ;;
     -*) w_die "unknown option $1" ;;
     *) return 1 ;;
     esac
@@ -3672,4 +3674,6 @@ then
         ;;
 
     esac
+
+    echo "Wisotool2 done."
 fi
