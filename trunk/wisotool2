@@ -249,6 +249,7 @@ w_download()
     fi
     if test "$nosizecheck" != "" || test ! -f "$_W_cache/$_W_file" || test "$WISOTOOL_CONTINUE_DOWNLOAD"
     then
+        _W_dl_olddir=`pwd`
         cd "$_W_cache"
         # Mac folks tend to have curl rather than wget
         # On Mac, 'which' doesn't return good exit status
@@ -294,6 +295,9 @@ w_download()
         then
             w_verify_sha1sum $_W_sum "$_W_cache/$_W_file"
         fi
+
+        cd "$_W_dl_olddir"
+        unset _W_dl_olddir
     fi
 }
 
