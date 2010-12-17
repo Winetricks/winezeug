@@ -3447,10 +3447,11 @@ load_pdh()
 load_physx()
 {
     # http://www.nvidia.com/object/physx_9.09.0814.html
-    # w_download . http://us.download.nvidia.com/Windows/9.09.0814/PhysX_9.09.0814_SystemSoftware.exe e19f7c3385a4a68e7acb85301bb4d2d0d1eaa1e2
+    # w_download physx http://us.download.nvidia.com/Windows/9.09.0814/PhysX_9.09.0814_SystemSoftware.exe e19f7c3385a4a68e7acb85301bb4d2d0d1eaa1e2
     # http://www.nvidia.com/object/physx_9.10.0129.html
-    w_download . http://us.download.nvidia.com/Windows/9.10.0129/PhysX_9.10.0129_SystemSoftware.exe 33a8b54d842c7246946de15b1a48209c386c9c4b
-    w_try $WINE "$W_CACHE"/PhysX_9.10.0129_SystemSoftware.exe $W_UNATTENDED_SLASH_Q
+    w_download physx http://us.download.nvidia.com/Windows/9.10.0129/PhysX_9.10.0129_SystemSoftware.exe 33a8b54d842c7246946de15b1a48209c386c9c4b
+    cd "$W_CACHE"/physx
+    w_try $WINE PhysX_9.10.0129_SystemSoftware.exe $W_UNATTENDED_SLASH_Q
 }
 
 #----------------------------------------------------------------
