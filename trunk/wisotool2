@@ -2108,7 +2108,7 @@ w_metadata dotnet11 dlls \
 
 load_dotnet11()
 {
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         w_die "This package does not work on a 64-bit installation"
     fi
