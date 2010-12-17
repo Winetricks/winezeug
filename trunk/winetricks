@@ -439,11 +439,11 @@ W_WINDIR_UNIX="$W_DRIVE_C/windows"
 # e.g., spool/drivers/color
 if test -d "$W_DRIVE_C/windows/syswow64"
 then
-    ARCH=win64
+    W_ARCH=win64
     W_SYSTEM32_DLLS="$W_WINDIR_UNIX/syswow64"
     SYSTEM64_DLLS="$W_WINDIR_UNIX/system32"
 else
-    ARCH=win32
+    W_ARCH=win32
     W_SYSTEM32_DLLS="$W_WINDIR_UNIX/system32"
 fi
 
@@ -639,7 +639,7 @@ w_download() {
 }
 
 # Has to be set in a few places...
-set_winver() {
+w_set_winver() {
     # FIXME: This should really be done with winecfg, but it has no CLI options.
 
     # First, delete any lingering version info, otherwise it may conflict:
@@ -1004,8 +1004,8 @@ sandbox()
     echo disable > "$WINEPREFIX/.update-timestamp"
 }
 
-unset_winver() {
-    set_winver winxp
+w_unset_winver() {
+    w_set_winver winxp
 }
 
 w_override_dlls() {
@@ -1713,9 +1713,9 @@ load_directx9()
     # See http://code.google.com/p/winezeug/issues/detail?id=71
     if [ "`uname -s`" = "Darwin" ]
     then
-        set_winver winxp
+        w_set_winver winxp
     else
-        set_winver $DIRECTX_WINDOWS
+        w_set_winver $DIRECTX_WINDOWS
     fi
     
     WINEDLLOVERRIDES="wintrust=b,mscoree=,ddraw,d3d8,d3d9,dsound,dinput=n" \
@@ -1742,7 +1742,7 @@ load_directx9()
 
     w_try $WINE "$W_TMP_WIN"/DXSETUP.exe
 
-    unset_winver
+    w_unset_winver
 
     # reenable mscoree, or other installs may fail, see issue 25
     w_override_dlls builtin,native mscoree
@@ -1800,7 +1800,7 @@ load_dotnet11()
     DOTNET_INSTALL_DIR="$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322"
 
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         w_die "This package does not work on a 64-bit installation"
     fi
@@ -1867,7 +1867,7 @@ load_dotnet20()
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
     load_gecko
-    set_winver win2k
+    w_set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     w_download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     w_try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
@@ -1885,7 +1885,7 @@ load_dotnet20()
     else
        w_try $WINE "$W_CACHE"/dotnet20/dotnetfx.exe /q /c:"install.exe /q"
     fi
-    unset_winver
+    w_unset_winver
 
     # We can't stop installing dotnet20 in win2K mode until wine supports
     # reparse/junction points
@@ -1904,7 +1904,7 @@ load_dotnet20sp2()
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
     load_gecko
-    #set_winver win2k
+    #w_set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     w_download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     w_try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
@@ -1922,7 +1922,7 @@ load_dotnet20sp2()
     else
        w_try $WINE "$W_CACHE"/dotnet20/NetFx20SP2_x86.exe /q /c:"install.exe /q"
     fi
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -1950,7 +1950,7 @@ load_dotnet30()
 
     w_warn "Instaling .net 3.0 runtime.  Can take 15-30 minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
     load_dotnet20
-    set_winver winxp
+    w_set_winver winxp
 
     # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
     w_download dotnet30 http://download.microsoft.com/download/3/F/0/3F0A922C-F239-4B9B-9CB0-DF53621C57D9/dotnetfx3.exe f3d2c3c7e4c0c35450cf6dab1f9f2e9e7ff50039
@@ -2486,7 +2486,7 @@ _EOF_
     cd "$olddir"
     
     # Repeat for 64-bit. You don't need to set registry, though..
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         GECKOCAB="wine_gecko-$GECKO_VERSION$GECKO64_ARCH.cab"
         for candidate in "$WINEDIR/../share/wine/gecko/$GECKOCAB" "$WINEDIR/../gecko/$GECKOCAB"
@@ -2609,7 +2609,7 @@ _EOF_
     cd "$olddir"
     
     # Repeat for 64-bit. You don't need to set registry, though..
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         if test ! -f "$W_CACHE"/wine_gecko-$GECKO_VERSION$GECKO64_ARCH-dbg.$GECKO_EXTENSION
         then
@@ -2749,7 +2749,7 @@ _EOF_
 load_ie6()
 {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         w_die "This package does not work on a 64-bit installation"
     fi
@@ -2779,7 +2779,7 @@ load_ie6()
     done
 
     # The installer doesn't want to install iexplore.exe in XP mode.
-    set_winver win2k
+    w_set_winver win2k
 
     # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
     # See also http://code.google.com/p/winezeug/issues/detail?id=78
@@ -2823,7 +2823,7 @@ load_ie6()
     done
 
     # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -3057,14 +3057,14 @@ load_mdac25()
 {
     w_download mdac25 http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
     set_native_mdac
-    set_winver nt40
+    w_set_winver nt40
     if [ $W_UNATTENDED_SLASH_Q ]
     then
         w_try $WINE "$W_CACHE"/mdac25/mdac_typ.exe /q /C:"setup /QNT"
     else
         w_try $WINE "$W_CACHE"/mdac25/mdac_typ.exe
     fi
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -3073,14 +3073,14 @@ load_mdac27()
 {
     w_download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
     set_native_mdac
-    set_winver win2k
+    w_set_winver win2k
     if [ $W_UNATTENDED_SLASH_Q ]
     then
         w_try $WINE "$W_CACHE"/mdac27/mdac_typ.exe /q /C:"setup /QNT"
     else
         w_try $WINE "$W_CACHE"/mdac27/mdac_typ.exe
     fi
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -3089,14 +3089,14 @@ load_mdac28()
 {
     w_download mdac28 http://download.microsoft.com/download/c/d/f/cdfd58f1-3973-4c51-8851-49ae3777586f/MDAC_TYP.EXE 91bd59f0b02b67f3845105b15a0f3502b9a2216a
     set_native_mdac
-    set_winver win98
+    w_set_winver win98
     if [ $W_UNATTENDED_SLASH_Q ]
     then
         w_try $WINE "$W_CACHE"/mdac28/mdac_typ.exe /q /C:"setup /QNT"
     else
         w_try $WINE "$W_CACHE"/mdac28/mdac_typ.exe
     fi
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -3224,7 +3224,7 @@ load_msi2()
     w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
 
     # Pick win98 so we can install native msi
-    set_winver win98
+    w_set_winver win98
 
     # Avoid "err:setupapi:SetupDefaultQueueCallbackA copy error 5 ..."
     rm -f "$W_SYSTEM32_DLLS"/msi.dll
@@ -3235,7 +3235,7 @@ load_msi2()
     w_override_dlls native,builtin msi msiexec.exe
 
     # and undo version win98
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -3348,7 +3348,7 @@ load_msxml6()
     # w_download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6.msi 2308743ddb4cb56ae910e461eeb3eab0a9e58058
     # Service Pack 1
     # http://www.microsoft.com/downloads/details.aspx?familyid=D21C292C-368B-4CE1-9DAB-3E9827B70604
-    case $ARCH in
+    case $W_ARCH in
     win32)
         w_download . http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi 5125220e985b33c946bbf9f60e2b222c7570bfa2
         w_override_dlls native,builtin msxml6
@@ -3393,10 +3393,10 @@ load_ole2()
     # http://support.microsoft.com/kb/123087/EN-US/
     w_download . http://download.microsoft.com/download/win31/update/2.03/win/en-us/ww1116.exe b803991c40f387464b61f606536b7c98a88245d2
     w_try_unzip -d "$W_TMP" "$W_CACHE"/ww1116.exe
-    set_winver win31
+    w_set_winver win31
     cd "$W_TMP"
     w_try $WINE setup.exe
-    unset_winver
+    w_unset_winver
 
     w_override_dlls native,builtin COMPOBJ OLE2CONV OLE2DISP OLE2
     w_override_dlls native,builtin OLE2NLS OLE2PROX STORAGE TYPELIB
@@ -3581,7 +3581,7 @@ load_quicktime72()
        QUICKTIME_QUIET="/qn"  # ISSETUPDRIVEN=0
     fi
     # set vista mode to inhibit directdraw overlay use that blacks the screen
-    set_winver vista
+    w_set_winver vista
     w_try $WINE "$W_CACHE"/quicktime72/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET > /dev/null 2>&1
     if test "$W_UNATTENDED_SLASH_Q"x = x
     then
@@ -3589,7 +3589,7 @@ load_quicktime72()
         w_try $WINE control "$W_PROGRAMS_WIN\\QuickTime\\QTSystem\\QuickTime.cpl"
     fi
 
-    unset_winver
+    w_unset_winver
     # user might want to set vista mode himself, or run
     #  wine control ".wine/drive_c/Program Files/QuickTime/QTSystem/QuickTime.cpl"
     # and pick Advanced / Safe Mode (gdi only).
@@ -3615,7 +3615,7 @@ load_quicktime76()
        QUICKTIME_QUIET="/qn"  # ISSETUPDRIVEN=0
     fi
     # set vista mode to inhibit directdraw overlay use that blacks the screen
-    set_winver vista
+    w_set_winver vista
     w_try $WINE "$W_CACHE"/quicktime76/QuickTimeInstaller.exe ALLUSERS=1 DESKTOP_SHORTCUTS=0 QTTaskRunFlags=0 QTINFO.BISQTPRO=1 SCHEDULE_ASUW=0 REBOOT_REQUIRED=No $QUICKTIME_QUIET > /dev/null 2>&1
     if test "$W_UNATTENDED_SLASH_Q"x = x
     then
@@ -3623,7 +3623,7 @@ load_quicktime76()
         w_try $WINE control "$W_PROGRAMS_WIN\\QuickTime\\QTSystem\\QuickTime.cpl"
     fi
 
-    unset_winver
+    w_unset_winver
     # user might want to set vista mode himself, or run
     #  wine control ".wine/drive_c/Program Files/QuickTime/QTSystem/QuickTime.cpl"
     # and pick Advanced / Safe Mode (gdi only).
@@ -4093,7 +4093,7 @@ load_vcrun2010()
 
 load_vjrun20()
 {
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         w_warn "vjrun20 depends on dotnet20, which doesn't work on 64-bit wine yet. Skipping."
         return
@@ -4565,7 +4565,7 @@ load_wininet()
 
 load_wme9()
 {
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         w_die "Installer doesn't support 64-bit architecture."
     fi
@@ -4579,7 +4579,7 @@ load_wme9()
 
 load_wmi()
 {
-    if test $ARCH = win64
+    if test $W_ARCH = win64
     then
         w_die "Installer doesn't support 64-bit architecture."
     fi
@@ -4588,11 +4588,11 @@ load_wmi()
     # See also http://www.microsoft.com/downloads/en/details.aspx?FamilyId=98A4C5BA-337B-4E92-8C18-A63847760EA5
     w_download . http://download.microsoft.com/download/platformsdk/wmi9x/1.5/W9X/EN-US/wmi9x.exe 62752e9c1b879688c26f205eebf07d3783906c3e
 
-    set_winver win98
+    w_set_winver win98
     w_override_dlls native,builtin wbemprox.dll wmiutils.dll
     # Note: there is a crash in the background towards the end, doesn't seem to hurt; see http://bugs.winehq.org/show_bug.cgi?id=7920
     w_try $WINE "$W_CACHE"/wmi9x.exe $W_UNATTENDED_SLASH_S
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -4602,32 +4602,33 @@ load_wmp9()
     # Not really expected to work well yet; see
     # http://appdb.winehq.org/appview.php?versionId=1449
 
-    if [ $ARCH = win64 ]
+    if [ $W_ARCH = win64 ]
     then
         w_die "Installer doesn't support 64-bit architecture."
     fi
 
-    load_wsh57
+    w_call wsh57
 
-    set_winver win2k
+    w_set_winver win2k
 
     # See also http://www.microsoft.com/windows/windowsmedia/player/9series/default.aspx
     w_download wmp9 http://download.microsoft.com/download/1/b/c/1bc0b1a3-c839-4b36-8f3c-19847ba09299/MPSetup.exe 580536d10657fa3868de2869a3902d31a0de791b
 
-    # Have to run twice; see http://bugs.winehq.org/show_bug.cgi?id=1886
-    w_try $WINE "$W_CACHE"/wmp9/MPSetup.exe $W_UNATTENDED_SLASH_Q
-    w_try $WINE "$W_CACHE"/wmp9/MPSetup.exe $W_UNATTENDED_SLASH_Q
-
-    # Also install the codecs
+    # Also grab the codecs
     # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
-    w_download . http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
-    w_try $WINE "$W_CACHE"/WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
+    w_download wmp9 http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
+
+    # Have to run twice; see http://bugs.winehq.org/show_bug.cgi?id=1886
+    cd "$W_CACHE"/wmp9
+    w_try $WINE MPSetup.exe $W_UNATTENDED_SLASH_Q
+    w_try $WINE MPSetup.exe $W_UNATTENDED_SLASH_Q
+    w_try $WINE WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
     w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
     w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -4648,14 +4649,14 @@ load_wmp10()
     # Also install the codecs
     # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
     w_download . http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
-    set_winver win2k
+    w_set_winver win2k
     w_try $WINE "$W_CACHE"/WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
     w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
     w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
-    unset_winver
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -4879,7 +4880,7 @@ else
 fi
 
 # Warn the user if on win(e)64, since a lot of winetricks is broken for it
-if [ "$ARCH" = "win64" ]
+if [ "$W_ARCH" = "win64" ]
 then
     w_warn "You're using a 64-bit WINEPREFIX, most of winetricks has been fixed for 64-bit, but you may still have problems. You can force a 32-bit WINEPREFIX by using WINEARCH=win32."
 fi
@@ -5107,13 +5108,13 @@ do
     psm=off) set_psm disabled;;
     vd=*) arg=`echo $W_PACKAGE | sed 's/vd=//'`; set_virtualdesktop $arg ;;
     vsm-hard) set_vsm hardware;;
-    winver=nt40|nt40) set_winver nt40;;
-    winver=win98|win98) set_winver win98;;
-    winver=win2k|win2k) set_winver win2k;;
-    winver=win7|win7) set_winver win7;;
-    winver=winxp|winxp) set_winver winxp;;
-    winver=vista|vista) set_winver vista;;
-    winver=) unset_winver;;
+    winver=nt40|nt40) w_set_winver nt40;;
+    winver=win98|win98) w_set_winver win98;;
+    winver=win2k|win2k) w_set_winver win2k;;
+    winver=win7|win7) w_set_winver win7;;
+    winver=winxp|winxp) w_set_winver winxp;;
+    winver=vista|vista) w_set_winver vista;;
+    winver=) w_unset_winver;;
     *=disabled) arg=`echo $W_PACKAGE | sed 's/=.*//'`; w_override_dlls disabled $arg ;;
     *) echo Unknown arg $1; usage ; exit 1;;
     esac
