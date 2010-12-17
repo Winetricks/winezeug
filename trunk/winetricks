@@ -2754,10 +2754,10 @@ load_ie6()
         w_die "This package does not work on a 64-bit installation"
     fi
 
-    w_download . http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
+    w_download ie6 http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
 
     cd "$W_TMP"
-    $WINE "$W_CACHE"/ie60.exe
+    $WINE "$W_CACHE"/ie6/ie60.exe
 
     load_msls31
 
@@ -3256,8 +3256,8 @@ load_mshflxgd()
 load_msls31()
 {
     # Install native Microsoft Line Services (needed by e-Sword, possibly only when using native riched20)
-    w_download . http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
-    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/InstMsiA.exe
+    w_download msls31 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msls31/InstMsiA.exe
     w_try cp -f "$W_TMP"/msls31.dll "$W_SYSTEM32_DLLS"
 }
 
