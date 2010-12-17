@@ -2098,6 +2098,33 @@ load_crypt32()
 
 #----------------------------------------------------------------
 
+w_metadata d3dx9 dlls \
+   title="MS d3dx9_??.dll from DirectX 9 redistributable" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\d3dx9_24.dll"
+
+load_d3dx9()
+{
+    helper_directx_dl
+
+    # Kinder, less invasive directx - only extract and override d3dx9_??.dll
+    w_try_cabextract -d "$W_TMP" -L -F '*d3dx9*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
+    do
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'd3dx9*.dll' "$x"
+    done
+
+    # For now, not needed, but when Wine starts preferring our builtin dll over native it will be.
+    w_override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
+    w_override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
+    w_override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42 d3dx9_43
+}
+
+#----------------------------------------------------------------
+
 w_metadata dotnet11 dlls \
    title="MS .NET 1.1" \
    publisher="Microsoft" \
