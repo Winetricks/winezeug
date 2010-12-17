@@ -463,7 +463,10 @@ test -d "$W_CACHE" || mkdir -p "$W_CACHE"
 W_CACHE_WIN="`$XXXPATH -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 W_TMP="$W_DRIVE_C"/winetrickstmp
 W_TMP_WIN='c:\winetrickstmp'
-mkdir -p "$W_TMP"
+
+mkdir -p "$W_TMP" || w_die "can't create $W_TMP"
+# Clean up after failed runs, if needed
+(cd "$W_TMP" && rm -rf ./*)
 
 # Handle case where z: doesn't exist
 case "$W_CACHE_WIN" in
@@ -4814,7 +4817,7 @@ w_call()
         w_die "$1 failed"
     fi
 
-    rm -rf "$W_TMP"
+    (cd "$W_TMP" && rm -rf ./*)
 }
 
 # On Solaris, choose more modern commands (needed for id -u).
@@ -4826,16 +4829,12 @@ esac
 detect_menu
 detect_sudo
 
-mkdir -p "$W_TMP"
-
 case $GUI in
     1) showmenu ; set $todo ;;
 esac
 
 mkdir -p "$W_CACHE"
 olddir=`pwd`
-# Clean up after failed runs, if needed
-rm -rf "$W_TMP"/*
 
 # The folder-name is localized!
 W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
@@ -5126,11 +5125,10 @@ do
     esac
     shift
     # cleanup
-    rm -rf "$W_TMP"/*
+    (cd "$W_TMP" && rm -rf ./*)
 done
 
-# remove the temp directory
-rm -rf "$W_TMP"
+rmdir "$W_TMP"
 
 test "$WINETRICKS_CACHE_SYMLINK" && rm -f "$WINETRICKS_CACHE_SYMLINK"
 test "$W_UNATTENDED_SLASH_Q" = "" && echo winetricks done. || true
