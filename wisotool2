@@ -2152,7 +2152,7 @@ load_d3dx10()
 #----------------------------------------------------------------
 
 w_metadata directmusic dlls \
-   title="Microsoft DirectMusic" \
+   title="MS DirectMusic from DirectX user redistributable" \
    publisher="Microsoft" \
    year="2010" \
    media="download" \
