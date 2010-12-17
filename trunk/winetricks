@@ -3763,14 +3763,18 @@ load_shockwave()
 
 load_steam()
 {
-    w_download . http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
-    w_try $WINE msiexec /i "$W_CACHE"/SteamInstall.msi $W_UNATTENDED_SLASH_Q
-    if ! test -f "$W_WINDIR_UNIX/Fonts/Times.TTF"
+    w_download steam http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
+    cd "$W_CACHE"/steam
+    w_try $WINE msiexec /i SteamInstall.msi $W_UNATTENDED_SLASH_Q
+    if ! test -f "$W_FONTSDIR_UNIX/Times.TTF"
     then
         w_warn "Installing corefonts to prvent a Steam crash; see wine bug 22751"
         load_corefonts
     fi
-    w_warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
+    if w_workaround_wine_bug 22053
+    then
+        w_warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
+    fi
 }
 
 #----------------------------------------------------------------
