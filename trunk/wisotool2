@@ -2339,6 +2339,52 @@ load_msls31()
 
 #----------------------------------------------------------------
 
+w_metadata msxml3 dlls \
+   title="MS XML Core Services 3.0" \
+   publisher="Microsoft" \
+   year="2005" \
+   media="download" \
+   file1="msxml3.msi" \
+   installed_file1="$W_SYSTEM32_DLLS/msxml3.dll"
+
+load_msxml3()
+{
+    # Service Pack 5
+    #w_download msxml3 http://download.microsoft.com/download/a/5/e/a5e03798-2454-4d4b-89a3-4a47579891d8/msxml3.msi
+    # Service Pack 7
+    w_download msxml3 http://download.microsoft.com/download/8/8/8/888f34b7-4f54-4f06-8dac-fa29b19f33dd/msxml3.msi d4c2178dfb807e1a0267fce0fd06b8d51106d913
+    # it won't install on top of wine's msxml3, which has a pretty high version number, so delete wine's fake dll
+    rm "$W_SYSTEM32_DLLS"/msxml3.dll
+    w_override_dlls native msxml3
+    cd "$W_CACHE"/msxml3
+    w_try $WINE msiexec /i msxml3.msi $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
+w_metadata msxml4 dlls \
+   title="MS XML Core Services 4.0" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="msxml4.msi" \
+   installed_file1="$W_SYSTEM32_DLLS/msxml4.dll"
+
+load_msxml4()
+{
+    # MS06-071: http://www.microsoft.com/downloads/details.aspx?familyid=24B7D141-6CDF-4FC4-A91B-6F18FE6921D4
+    # w_download msxml4 http://download.microsoft.com/download/e/2/e/e2e92e52-210b-4774-8cd9-3a7a0130141d/msxml4-KB927978-enu.exe d364f9fe80c3965e79f6f64609fc253dfeb69c25
+    # MS07-042: http://www.microsoft.com/downloads/details.aspx?FamilyId=021E12F5-CB46-43DF-A2B8-185639BA2807
+    # w_download msxml4 http://download.microsoft.com/download/9/4/2/9422e6b6-08ee-49cb-9f05-6c6ee755389e/msxml4-KB936181-enu.exe 73d75d7b41f8a3d49f272e74d4f73bb5e82f1acf
+    # SP3 (2009): http://www.microsoft.com/downloads/details.aspx?familyid=7F6C0CB4-7A5E-4790-A7CF-9E139E6819C0
+    w_download msxml4 http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi aa70c5c1a7a069af824947bcda1d9893a895318b
+    w_override_dlls native,builtin msxml4
+    cd "$W_CACHE"/msxml4
+    w_try $WINE msiexec /i msxml.msi $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
 w_metadata shockwave dlls \
    title="Shockwave" \
    publisher="Adobe" \
