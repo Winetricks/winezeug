@@ -4146,12 +4146,12 @@ load_wog()
 #----------------------------------------------------------------
 
 w_metadata xact dlls \
-    title="MS XACT Engine" \
-    publisher="Microsoft" \
-    year="2010" \
-    media="download" \
-    file1="../directx9/directx_feb2010_redist.exe" \
-    installed_file1="$W_SYSTEM32_DLLS_WIN"\\xactengine2_0.dll
+   title="MS XACT Engine" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\xactengine2_0.dll"
 
 load_xact()
 {
