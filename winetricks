@@ -3852,11 +3852,12 @@ load_usp10()
 load_utorrent()
 {
     # Torrent client supported on Windows,Mac OSX, Linux through WINE 
-    # Oct 2010 sha1sum 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee 
-    # Nov 6 2010 sha1sum 263a91693d0976473cd321cd6f1b0103a814f3adx
-    w_download . http://download.utorrent.com/2.0.4/utorrent.exe 263a91693d0976473cd321cd6f1b0103a814f3ad
+    # Oct 2010 2.0.4 sha1sum 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee 
+    # Nov 6 2010 2.0.4 sha1sum 263a91693d0976473cd321cd6f1b0103a814f3ad
+    # Dev 17 2010 2.2 sha1sum 0c95bdfba07421fe706b30ee2ec6779217c5dce4, hangs, see wine bug 24946
+    w_download utorrent http://download.utorrent.com/2.0.4/utorrent.exe 263a91693d0976473cd321cd6f1b0103a814f3ad
 
-    w_try cp -f "$W_CACHE"/utorrent.exe "$W_WINDIR_UNIX"/utorrent.exe
+    w_try cp -f "$W_CACHE"/utorrent/utorrent.exe "$W_WINDIR_UNIX"/utorrent.exe
     w_warn "utorrent is now installed to $W_WINDIR_UNIX/utorrent.exe"
 }
 
