@@ -787,7 +787,6 @@ wisotool_mainmenu()
          _W_msg_dlls="Install a Windows DLL"
          _W_msg_fonts='Install a font'
          _W_msg_games='Installér et spil'
-         _W_msg_steam='Install a Steam game with Wine'
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
@@ -798,7 +797,6 @@ wisotool_mainmenu()
          _W_msg_dlls="Windows-DLL installieren"
          _W_msg_fonts='Schriftart installieren'
          _W_msg_games='Windows-Spiel installieren'
-         _W_msg_steam='Steam-Spiel installieren'
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
@@ -809,11 +807,9 @@ wisotool_mainmenu()
          _W_msg_dlls="Install a Windows DLL"
          _W_msg_fonts='Install a font'
          _W_msg_games='Install a Windows game'
-         _W_msg_steam='Install a Steam game'
          ;;
     esac
 
-    # FIXME: add line for Steam below once we have steam game verbs
     # FIXME: don't show uninstall option when $WISOTOOL_OPT_SHAREDPREFIX is 1
 
     case $WISOTOOL_GUI in
@@ -855,7 +851,7 @@ wisotool_mainmenu()
 
         ;;
     esac
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_steam _W_msg_run _W_msg_uninstall
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_run _W_msg_uninstall
 }
 
 # Display the menu of installed apps, output list of selected apps
@@ -1610,7 +1606,7 @@ wisotool_init()
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="apps benchmarks dlls fonts games steam"
+    WISOTOOL_CATEGORIES="apps benchmarks dlls fonts games"
     for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
@@ -3369,6 +3365,34 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata steam apps \
+   title="Steam" \
+   publisher="Valve" \
+   year="2010" \
+   media="download" \
+   file1="SteamInstall.msi.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN\\Steam\\Steam.exe"
+
+load_steam()
+{
+    w_download steam http://storefront.steampowered.com/download/SteamInstall.msi a0ca8791b7b2e96665ee059e03eebbfb3d95be55
+    cd "$W_CACHE"/steam
+    w_try $WINE msiexec /i SteamInstall.msi $W_UNATTENDED_SLASH_Q
+    if ! test -f "$W_FONTSDIR_UNIX/Times.TTF"
+    then
+        w_warn "Installing corefonts to prvent a Steam crash; see wine bug 22751"
+        w_call corefonts
+    fi
+    if w_workaround_wine_bug 22053
+    then
+        w_warn "Once Steam is running, disable player notifications and in-game chat in Settings, or games will crash on launch; see wine bug 22053"
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Steam" "Steam.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata wmp9 apps \
    title="Windows Media Player 9" \
    publisher="Microsoft" \
@@ -4438,7 +4462,7 @@ execute_command()
     case $W_PACKAGE in
 
     # FIXME: avoid duplicated code
-    apps|benchmarks|dlls|fonts|games|run|uninstall|steam)
+    apps|benchmarks|dlls|fonts|games|run|uninstall)
         WISOTOOL_CURMENU=$W_PACKAGE
         ;;
 
