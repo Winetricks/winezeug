@@ -403,7 +403,7 @@ w_skip_windows()
 
 w_override_dlls()
 {
-    w_skip_windows override && return
+    w_skip_windows w_override_dlls && return
 
     _W_mode=$1
     if [ $_W_mode = "disabled" ]
@@ -440,7 +440,7 @@ _EOF_
 
 w_override_app_dlls()
 {
-    w_skip_windows override && return
+    w_skip_windows w_override_app_dlls && return
 
     _W_app=$1
     shift
@@ -472,7 +472,7 @@ w_override_app_dlls()
 # Has to be set in a few places...
 w_set_winver()
 {
-    w_skip_windows override && return
+    w_skip_windows w_set_winver && return
     # FIXME: This should really be done with winecfg, but it has no CLI options.
 
     # First, delete any lingering version info, otherwise it may conflict:
@@ -579,7 +579,7 @@ w_unset_winver()
 # Present app $1 with the Windows personality $2
 w_set_app_winver()
 {
-    w_skip_windows override && return
+    w_skip_windows w_set_app_winver && return
 
     _W_app="$1"
     _W_version="$2"
@@ -3267,6 +3267,52 @@ _EOF_
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Safari" "Safari.exe"
+}
+
+#----------------------------------------------------------------
+
+w_metadata wmp9 apps \
+   title="Windows Media Player 9" \
+   publisher="Microsoft" \
+   year="2003" \
+   media="download" \
+   file1="MPSetup.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN\\Windows Media Player\\wmplayer.exe"
+
+load_wmp9()
+{
+    w_skip_windows wmp9 && return
+
+    # Not really expected to work well yet; see
+    # http://appdb.winehq.org/appview.php?versionId=1449
+
+    if [ $W_ARCH = win64 ]
+    then
+        w_die "Installer doesn't support 64-bit architecture."
+    fi
+
+    w_call wsh57
+
+    w_set_winver win2k
+
+    # See also http://www.microsoft.com/windows/windowsmedia/player/9series/default.aspx
+    w_download wmp9 http://download.microsoft.com/download/1/b/c/1bc0b1a3-c839-4b36-8f3c-19847ba09299/MPSetup.exe 580536d10657fa3868de2869a3902d31a0de791b
+
+    # Also grab the codecs
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
+    w_download wmp9 http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
+
+    # Have to run twice; see http://bugs.winehq.org/show_bug.cgi?id=1886
+    cd "$W_CACHE"/wmp9
+    w_try $WINE MPSetup.exe $W_UNATTENDED_SLASH_Q
+    w_try $WINE MPSetup.exe $W_UNATTENDED_SLASH_Q
+    w_try $WINE WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
+
+    # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
