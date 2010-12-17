@@ -2678,6 +2678,82 @@ load_wsh57()
 }
 
 #----------------------------------------------------------------
+
+w_metadata xact dlls \
+   title="MS XACT Engine" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\xactengine2_0.dll"
+
+load_xact()
+{
+    helper_directx_dl
+
+    # Extract xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll
+    w_try_cabextract -d "$W_TMP" -L -F '*_xact_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_TMP" -L -F '*_x3daudio_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_TMP" -L -F '*_xaudio_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
+    do
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xactengine*.dll' "$x"
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xaudio*.dll' "$x"
+    done
+
+    # Register xactengine?_?.dll, xaudio?_?.dll
+    for x in "$W_SYSTEM32_DLLS"/xactengine* "$W_SYSTEM32_DLLS"/xaudio*
+    do
+      w_try_regsvr `basename "$x"`
+    done
+}
+
+#----------------------------------------------------------------
+
+w_metadata xinput dlls \
+   title="Microsoft XInput (Xbox controller support)" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\xinput1_1.dll"
+
+load_xinput()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F '*_xinput_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
+    do
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xinput*.dll' "$x"
+    done
+    w_try_regsvr xinput1_1.dll
+    w_try_regsvr xinput1_2.dll
+    w_try_regsvr xinput1_3.dll
+    w_try_regsvr xinput9_1_0.dll
+    w_override_dlls native xinput1_1
+    w_override_dlls native xinput1_2
+    w_override_dlls native xinput1_3
+    w_override_dlls native xinput9_1_0
+}
+
+#----------------------------------------------------------------
+
+w_metadata  xvid dlls \
+    title="Xvid Video Codec" \
+    publisher="xvid.org" \
+    year="2009" \
+    media="download" \
+    file1="Xvid-1.2.2-07062009.exe"
+
+load_xvid()
+{
+    w_call vcrun6
+    w_download xvid http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
+    w_try $WINE "$W_CACHE"/xvid/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
+}
+
+#----------------------------------------------------------------
 # Fonts
 #----------------------------------------------------------------
 
@@ -4380,80 +4456,6 @@ load_wog()
 }
 
 #----------------------------------------------------------------
-
-w_metadata xact dlls \
-   title="MS XACT Engine" \
-   publisher="Microsoft" \
-   year="2010" \
-   media="download" \
-   file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\xactengine2_0.dll"
-
-load_xact()
-{
-    helper_directx_dl
-
-    # Extract xactengine?_?.dll, X3DAudio?_?.dll, xaudio?_?.dll, xapofx?_?.dll
-    w_try_cabextract -d "$W_TMP" -L -F '*_xact_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
-    w_try_cabextract -d "$W_TMP" -L -F '*_x3daudio_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
-    w_try_cabextract -d "$W_TMP" -L -F '*_xaudio_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
-    for x in "$W_TMP"/*.cab
-    do
-      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xactengine*.dll' "$x"
-      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xaudio*.dll' "$x"
-    done
-
-    # Register xactengine?_?.dll, xaudio?_?.dll
-    for x in "$W_SYSTEM32_DLLS"/xactengine* "$W_SYSTEM32_DLLS"/xaudio*
-    do
-      w_try_regsvr `basename "$x"`
-    done
-}
-
-#----------------------------------------------------------------
-
-w_metadata xinput dlls \
-   title="Microsoft XInput (Xbox controller support)" \
-   publisher="Microsoft" \
-   year="2010" \
-   media="download" \
-   file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\xinput1_1.dll"
-
-load_xinput()
-{
-    helper_directx_dl
-
-    w_try_cabextract -d "$W_TMP" -L -F '*_xinput_*x86*' "$W_CACHE"/directx9/$DIRECTX_NAME
-    for x in "$W_TMP"/*.cab
-    do
-      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'xinput*.dll' "$x"
-    done
-    w_try_regsvr xinput1_1.dll
-    w_try_regsvr xinput1_2.dll
-    w_try_regsvr xinput1_3.dll
-    w_try_regsvr xinput9_1_0.dll
-    w_override_dlls native xinput1_1
-    w_override_dlls native xinput1_2
-    w_override_dlls native xinput1_3
-    w_override_dlls native xinput9_1_0
-}
-
-#----------------------------------------------------------------
-
-w_metadata  xvid dlls \
-    title="Xvid Video Codec" \
-    publisher="xvid.org" \
-    year="2009" \
-    media="download" \
-    file1="Xvid-1.2.2-07062009.exe"
-
-load_xvid()
-{
-    w_call vcrun6
-    w_download xvid http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
-    w_try $WINE "$W_CACHE"/xvid/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
-}
 
 #----------------------------------------------------------------
 
