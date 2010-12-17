@@ -2151,6 +2151,51 @@ load_d3dx10()
 
 #----------------------------------------------------------------
 
+w_metadata directmusic dlls \
+   title="Microsoft DirectMusic" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\dmusic.dll"
+
+load_directmusic()
+{
+# Untested. Based off http://bugs.winehq.org/show_bug.cgi?id=4805 and http://bugs.winehq.org/show_bug.cgi?id=24911
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'devenum.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmband.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmcompos.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmime.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmloader.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmscript.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmstyle.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmusic.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmusic32.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dswave.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'streamci.dll' "$W_TMP/dxnt.cab"
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
+    
+    w_try_regsvr devenum.dll
+    w_try_regsvr dmband.dll
+    w_try_regsvr dmcompos.dll
+    w_try_regsvr dmime.dll
+    w_try_regsvr dmloader.dll
+    w_try_regsvr dmscript.dll
+    w_try_regsvr dmstyle.dll
+    w_try_regsvr dmsynth.dll
+    w_try_regsvr dmusic.dll
+    w_try_regsvr dswave.dll
+    w_try_regsvr quartz.dll
+    
+    w_override_dlls native devenum dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci quartz
+}
+
+#----------------------------------------------------------------
+
 w_metadata dotnet11 dlls \
    title="MS .NET 1.1" \
    publisher="Microsoft" \
