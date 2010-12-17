@@ -3302,6 +3302,60 @@ load_blobby_volley()
 
 #----------------------------------------------------------------
 
+w_metadata cod4mw_demo games \
+    title="Call of Duty 4 Modern Warfare" \
+    publisher="Activision" \
+    year="2007" \
+    media="download" \
+    file1="CoD4MWDemoSetup_v2.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\Activision\\Call of Duty 4 - Modern Warfare Demo\\iw3sp.exe"
+
+load_cod4mw_demo()
+{
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/CoD4MWDemoSetup_v2.exe" 690a5f789a44437ed10784acfdd6418ca4a21886
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, CoD4MWDemoSetup_v2.exe
+        WinWait,Modern Warfare,Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick Button1 ; Next
+            WinWait,Modern Warfare, License
+            Sleep 500
+            ControlClick Button5 ; accept
+            Sleep 500
+            ControlClick Button2 ; Next
+            WinWait,Modern Warfare, System Requirements
+            Sleep 500
+            ControlClick Button1 ; Next
+            Sleep 500
+            ControlClick Button4 ; Next
+            WinWait,Modern Warfare, Typical
+            Sleep 500
+            ControlClick Button4 ; License
+            Sleep 500
+            ControlClick Button1 ; Next
+            WinWait,Question, shortcut
+            Sleep 500
+            ControlClick Button1 ; Yes
+            WinWait,Microsoft DirectX Setup, license
+            Sleep 500
+            ControlClick Button1 ; Yes
+            WinWait,Modern Warfare, finished
+            Sleep 500
+            ControlClick Button1 ; Finished
+        }
+        WinWaitClose,WinZip Self-Extractor - CoD4MWDemoSetup_v2
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Call of Duty 4 - Modern Warfare Demo" "iw3sp.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata civ4_demo games \
    title="Civilization IV Demo" \
    publisher="Firaxis Games" \
