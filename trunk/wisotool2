@@ -114,7 +114,7 @@ w_try_regedit()
     # on windows, doesn't work without cmd /c
     case "$OS" in
     "Windows_NT") cmdc="cmd /c";;
-    *) unset cmdc
+    *) unset cmdc ;;
     esac
 
     w_try wisotool_early_wine $cmdc regedit $W_UNATTENDED_SLASH_S "$@"
