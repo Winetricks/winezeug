@@ -2541,7 +2541,7 @@ load_corefonts()
 #----------------------------------------------------------------
 
 w_metadata droid fonts \
-   title="Droid fonts (on LCD, looks better with fontsmooth-rgb)" \
+   title="Droid fonts" \
    publisher="Ascender Corporation" \
    year="2009" \
    media="download" \
@@ -2813,7 +2813,7 @@ load_takao()
 #----------------------------------------------------------------
 
 w_metadata wenquanyi fonts \
-   title="WenQuanYi CJK font (on LCD looks better with fontsmooth-rgb)" \
+   title="WenQuanYi CJK font" \
    publisher="wenq.org" \
    year="2009" \
    media="download" \
@@ -2835,7 +2835,7 @@ load_wenquanyi()
 
 w_metadata unifont fonts \
    title="Unifont alternative to Arial Unicode MS" \
-   publisher="GNU" \
+   publisher="Roman Czyborra / GNU" \
    year="2008" \
    media="download" \
    file1="unifont-5.1.20080907.zip" \
