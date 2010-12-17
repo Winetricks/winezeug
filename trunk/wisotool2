@@ -2034,7 +2034,7 @@ w_metadata  atmlib dlls \
    year="2009" \
    media="download" \
    file1="W2KSP4_EN.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS/atmlib.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\atmlib.dll"
 
 load_atmlib()
 {
@@ -2287,7 +2287,7 @@ w_metadata  mfc40 dlls \
    year="2004" \
    media="download" \
    file1="ole2v.exe" \
-   installed_file1="$W_SYSTEM32_DLLS/MFC40.DLL"
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\MFC40.DLL"
 
 load_mfc40()
 {
@@ -2305,7 +2305,7 @@ w_metadata msasn1 dlls \
    year="2003" \
    media="download" \
    file1="E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS/msasn1.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\msasn1.dll"
 
 load_msasn1()
 {
@@ -2327,7 +2327,7 @@ w_metadata msls31 dlls \
    year="2001" \
    media="download" \
    file1="InstMsiA.exe" \
-   installed_file1="$W_SYSTEM32_DLLS/msls31.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\msls31.dll"
 
 load_msls31()
 {
@@ -2345,7 +2345,7 @@ w_metadata msxml3 dlls \
    year="2005" \
    media="download" \
    file1="msxml3.msi" \
-   installed_file1="$W_SYSTEM32_DLLS/msxml3.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\msxml3.dll"
 
 load_msxml3()
 {
@@ -2368,7 +2368,7 @@ w_metadata msxml4 dlls \
    year="2009" \
    media="download" \
    file1="msxml4.msi" \
-   installed_file1="$W_SYSTEM32_DLLS/msxml4.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\msxml4.dll"
 
 load_msxml4()
 {
