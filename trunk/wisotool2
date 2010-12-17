@@ -2173,6 +2173,43 @@ load_dotnet20()
 
 #----------------------------------------------------------------
 
+w_metadata dotnet30 dlls \
+   title="MS .NET 3.0" \
+   publisher="Microsoft" \
+   year="2006" \
+   media="download" \
+   file1="dotnetfx3.exe" \
+   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v3.0\\Microsoft .NET Framework 3.0\\logo.bmp"
+
+load_dotnet30()
+{
+    w_try w_call dotnet20
+
+    w_warn "Installing .net 3.0 runtime takes 3 minutes on a very fast machine, and the Finished dialog may hide in the taskbar."
+    # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
+    w_download dotnet30 http://download.microsoft.com/download/3/F/0/3F0A922C-F239-4B9B-9CB0-DF53621C57D9/dotnetfx3.exe f3d2c3c7e4c0c35450cf6dab1f9f2e9e7ff50039
+
+    # AF's workaround to avoid long pause
+    LANGPACKS_BASE_PATH="${W_WINDIR_UNIX}/SYSMSICache/Framework/v3.0" 
+    test -d "${LANGPACKS_BASE_PATH}" || mkdir -p "${LANGPACKS_BASE_PATH}" 
+    for lang in ar cs da de el es fi fr he it jp ko nb nl pl pt-BR pt-PT ru \
+                sv tr zh-CHS zh-CHT
+    do
+       ln -sf "${W_SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
+    done 
+
+    w_set_winver winxp
+
+    if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
+    then
+        w_try $WINE "$W_CACHE"/dotnet30/dotnetfx3.exe
+    else
+        w_try $WINE "$W_CACHE"/dotnet30/dotnetfx3.exe /q /c:"install.exe /q"
+    fi
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
