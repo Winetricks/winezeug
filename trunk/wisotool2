@@ -374,7 +374,7 @@ w_umount()
 
 w_ahk_do()
 {
-    W_UNATTENDED_SLASH_S="/S" w_try w_call autohotkey
+    W_UNATTENDED_SLASH_S="/S" w_call autohotkey
     _W_CR=`printf \\\\r`
     echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
     $WINE "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
@@ -669,8 +669,7 @@ __EOF__
 # Call a verb, don't let it affect environment
 # Supports just one argument at the moment
 # Hope that subshell passes through exit status
-# If you don't want to check exit status, use w_try w_call
-w_call()
+w_do_call()
 {
     if ! wisotool_metadata_exists $1
     then
@@ -688,6 +687,12 @@ w_call()
         fi
         load_$1 $2
     )
+}
+
+# If you want to check exit status yourself, use w_do_call
+w_call()
+{
+    w_try w_do_call $@
 }
 
 w_register_font()
@@ -1906,7 +1911,7 @@ wisotool_install_app()
     mkdir -p "$W_TMP"
 
     # FIXME: initialize a new wineprefix for this app, set lots of global variables
-    if ! w_call $W_PACKAGE
+    if ! w_do_call $W_PACKAGE
     then
         w_die "$fail_msg"
     fi
@@ -2082,7 +2087,7 @@ w_metadata  crypt32 dlls \
 
 load_crypt32()
 {
-    w_try w_call msasn1
+    w_call msasn1
 
     # https://www.microsoft.com/downloads/en/details.aspx?FamilyID=3d733ddd-1182-4d46-87c1-3357ca3fed28&DisplayLang=en
     w_download crypt32 http://download.microsoft.com/download/1/6/2/1629d13a-dc5e-4dc6-a2a4-a6784942b94e/Q823182_XPE_SP2_X86_ENU.EXE c3e0aa35ab5197ede0d495c0edc242cf0fade54a
@@ -2117,7 +2122,7 @@ load_dotnet11()
     $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
     # need corefonts, else installer crashes
-    w_try w_call corefonts
+    w_call corefonts
 
     # Use builtin regsvcs.exe to work around http://bugs.winehq.org/show_bug.cgi?id=25120
     if test $W_OPT_UNATTENDED = 1
@@ -2183,7 +2188,7 @@ w_metadata dotnet30 dlls \
 
 load_dotnet30()
 {
-    w_try w_call dotnet20
+    w_call dotnet20
 
     w_warn "Installing .net 3.0 runtime takes 3 minutes on a very fast machine, and the Finished dialog may hide in the taskbar."
     # http://msdn.microsoft.com/en-us/netframework/bb264589.aspx
@@ -2226,7 +2231,7 @@ load_dotnet35()
     esac
 
     # According to AF's recipe, installing dotnet30 first works around msi bugs
-    w_try w_call dotnet30
+    w_call dotnet30
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6
     w_download dotnet35 http://download.microsoft.com/download/6/0/f/60fc5854-3cb8-4892-b6db-bd4f42510f28/dotnetfx35.exe 
@@ -2698,7 +2703,7 @@ w_metadata fakechinese fonts \
 
 load_fakechinese()
 {
-    w_try w_call wenquanyi
+    w_call wenquanyi
     # Loads Wenquanyi fonts and sets aliases for Microsoft Chinese fonts
     # Aliases to set:
     # Microsoft JhengHei --> WenQuanYi Micro Hei
@@ -2719,7 +2724,7 @@ w_metadata fakejapanese fonts \
 
 load_fakejapanese()
 {
-    w_try w_call takao
+    w_call takao
     # Loads Takao fonts and sets aliases for MS Gothic and MS PGothic, mainly for Japanese language support
     # Aliases to set:
     # MS Gothic --> TakaoGothic
@@ -2743,7 +2748,7 @@ w_metadata fakekorean fonts \
 
 load_fakekorean()
 {
-    w_try w_call baekmuk
+    w_call baekmuk
     # Loads Baekmuk fonts and sets as an alias for Gulim, Dotum, and Batang for Korean language support
     # Aliases to set:
     # Gulim --> Baekmuk Gulim
@@ -3980,7 +3985,7 @@ w_metadata  xvid dlls \
 
 load_xvid()
 {
-    w_try w_call vcrun6
+    w_call vcrun6
     w_download xvid http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
     w_try $WINE "$W_CACHE"/xvid/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
 }
