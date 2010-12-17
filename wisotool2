@@ -1994,7 +1994,7 @@ w_metadata amstream dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN"\\amstream.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\amstream.dll"
 
 load_amstream()
 {
@@ -2418,7 +2418,7 @@ w_metadata  vcrun6 dlls \
    year="2000" \
    media="download" \
    file1="vc6redistsetup_enu.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN"\\mfc42u.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\mfc42u.dll"
 
 load_vcrun6()
 {
@@ -2464,7 +2464,7 @@ w_metadata  vcrun2003 dlls \
    year="2003" \
    media="download" \
    file1="BZEditW32_1.6.5_Installer.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN"\\msvcp71.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\msvcp71.dll"
 
 load_vcrun2003()
 {
@@ -2524,7 +2524,7 @@ w_metadata vcrun2010 dlls \
    year="2010" \
    media="download" \
    file1="vcredist_x86.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN"\\mfc100.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\mfc100.dll"
 
 load_vcrun2010()
 {
@@ -2549,7 +2549,7 @@ w_metadata wsh57 dlls \
    year="2007" \
    media="download" \
    file1="scripten.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN"\\scrrun.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\scrrun.dll"
 
 load_wsh57()
 {
@@ -2573,7 +2573,7 @@ w_metadata baekmuk fonts \
    year="1999" \
    media="download" \
    file1="ttf-baekmuk_2.2.orig.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN"\\batang.ttf
+   installed_file1="$W_FONTSDIR_WIN\\batang.ttf"
 
 load_baekmuk()
 {
@@ -2597,7 +2597,7 @@ w_metadata corefonts fonts \
    year="2008" \
    media="download" \
    file1="arial32.exe" \
-   installed_file1="$W_FONTSDIR_WIN"\\Arial.TTF
+   installed_file1="$W_FONTSDIR_WIN\\Arial.TTF"
 
 load_corefonts()
 {
@@ -2700,7 +2700,7 @@ w_metadata droid fonts \
    year="2009" \
    media="download" \
    file1="DroidSans-Bold.ttf" \
-   installed_file1="$W_FONTSDIR_WIN"\\DroidSans-Bold.ttf
+   installed_file1="$W_FONTSDIR_WIN\\DroidSans-Bold.ttf"
 
 do_droid() {
     w_download droid ${DROID_URL}$1';hb=HEAD'   $3  $1
@@ -2732,7 +2732,7 @@ w_metadata eufonts fonts \
    year="2008" \
    media="download" \
    file1="EUupdate.EXE" \
-   installed_file1="$W_FONTSDIR_WIN"\\trebucbd.ttf
+   installed_file1="$W_FONTSDIR_WIN\\trebucbd.ttf"
 
 load_eufonts()
 {
@@ -2838,7 +2838,7 @@ w_metadata fontfix fonts \
    year="2007" \
    media="download" \
    file1="ttf-arphic-ukai_0.1.20060108.orig.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN"\\ukai.ttf
+   installed_file1="$W_FONTSDIR_WIN\\ukai.ttf"
 
 load_fontfix()
 {
@@ -2887,7 +2887,7 @@ w_metadata liberation fonts \
    year="2008" \
    media="download" \
    file1="liberation-fonts-1.04.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN"\\LiberationMono-BoldItalic.ttf
+   installed_file1="$W_FONTSDIR_WIN\\LiberationMono-BoldItalic.ttf"
 
 load_liberation()
 {
@@ -2928,7 +2928,7 @@ w_metadata lucida fonts \
    year="1998" \
    media="download" \
    file1="eurofixi.exe" \
-   installed_file1="$W_FONTSDIR_WIN"\\lucon.ttf
+   installed_file1="$W_FONTSDIR_WIN\\lucon.ttf"
 
 load_lucida()
 {
@@ -2945,7 +2945,7 @@ w_metadata takao fonts \
    year="2010" \
    media="download" \
    file1="takao-fonts-ttf-003.02.01.zip" \
-   installed_file1="$W_FONTSDIR_WIN"\\TakaoGothic.ttf
+   installed_file1="$W_FONTSDIR_WIN\\TakaoGothic.ttf"
 
 load_takao()
 {
@@ -2972,7 +2972,7 @@ w_metadata wenquanyi fonts \
    year="2009" \
    media="download" \
    file1="wqy-microhei-0.2.0-beta.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN"\\wqy-microhei.ttc
+   installed_file1="$W_FONTSDIR_WIN\\wqy-microhei.ttc"
 
 load_wenquanyi()
 {
@@ -2993,7 +2993,7 @@ w_metadata unifont fonts \
    year="2008" \
    media="download" \
    file1="unifont-5.1.20080907.zip" \
-   installed_file1="$W_FONTSDIR_WIN"\\unifont.ttf
+   installed_file1="$W_FONTSDIR_WIN\\unifont.ttf"
 
 load_unifont()
 {
