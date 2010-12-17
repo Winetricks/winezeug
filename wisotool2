@@ -2055,7 +2055,7 @@ w_metadata  comctl32 dlls \
    year="2001" \
    media="download" \
    file1="cc32inst.exe" \
-   installed_file1="$W_SYSTEM32_DLLS"/comctl32.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\comctl32.dll"
 
 load_comctl32()
 {
@@ -2083,7 +2083,7 @@ w_metadata  crypt32 dlls \
    year="2003" \
    media="download" \
    file1="823182_XPE_SP2_X86_ENU.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS"/crypt32.dll
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\crypt32.dll"
 
 load_crypt32()
 {
