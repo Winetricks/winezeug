@@ -2210,6 +2210,54 @@ load_dotnet30()
 
 #----------------------------------------------------------------
 
+w_metadata dotnet35 dlls \
+   title="MS .NET 3.5" \
+   publisher="Microsoft" \
+   year="2007" \
+   media="download" \
+   file1="dotnetfx35.exe" \
+   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v3.5\\MSBuild.exe"
+
+load_dotnet35()
+{
+    case "$OS" in
+    "Windows_NT") ;;
+    *) w_warn "dotnet35 does not yet fully work or install on wine.  Caveat emptor." ;;
+    esac
+
+    # According to AF's recipe, installing dotnet30 first works around msi bugs
+    w_try w_call dotnet30
+
+    # http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6
+    w_download dotnet35 http://download.microsoft.com/download/6/0/f/60fc5854-3cb8-4892-b6db-bd4f42510f28/dotnetfx35.exe 
+
+    # See also http://blogs.msdn.com/astebner/archive/2008/07/17/8745415.aspx
+    cd "$W_TMP"
+    w_try_cabextract $WINETRICKS_UNIXQUIET "$W_CACHE"/dotnet35/dotnetfx35.exe
+    cd wcu/dotNetFramework
+    $WINE dotNetFx35setup.exe /lang:ENU
+
+    # FIXME: Do this only if the above commmand failed (not sure how to detect it... look for some file, I s'pose)
+    if w_workaround_wine_bug 25060
+    then
+        # Thanks to Louis for this partial recipe
+        #w_try $WINE reg add 'HKLM\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727' /v SP /t REG_DWORD /d 0001
+        cat > "$W_TMP"/sp1.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\NET Framework Setup\NDP\v2.0.50727]
+"SP"=dword:00000001
+
+_EOF_
+        w_try $WINE regedit "$W_TMP"/sp1.reg
+        cd "$W_TMP"/wcu/dotNetFramework/dotNetFX35/x86
+        w_try_cabextract netfx35_x86.exe
+        w_try $WINE msiexec /i vs_setup.msi ADDEPLOY=1
+    fi
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
