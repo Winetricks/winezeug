@@ -2321,6 +2321,24 @@ load_msasn1()
 
 #----------------------------------------------------------------
 
+w_metadata msls31 dlls \
+   title="MS Line Services" \
+   publisher="Microsoft" \
+   year="2001" \
+   media="download" \
+   file1="InstMsiA.exe" \
+   installed_file1="$W_SYSTEM32_DLLS/msls31.dll"
+
+load_msls31()
+{
+    # Needed by native richedit and internet explorer
+    w_download msls31 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msls31/InstMsiA.exe
+    w_try cp -f "$W_TMP"/msls31.dll "$W_SYSTEM32_DLLS"
+}
+
+#----------------------------------------------------------------
+
 w_metadata shockwave dlls \
    title="Shockwave" \
    publisher="Adobe" \
@@ -3052,6 +3070,96 @@ load_cygwin()
     cd "$W_DRIVE_C"/cygpkgs
     w_try $WINE setup.exe $_W_cygopts
     unset _W_cygopts
+}
+
+#----------------------------------------------------------------
+
+w_metadata ie6 apps \
+   title="Internet Explorer 6" \
+   publisher="Microsoft" \
+   year="2002" \
+   media="download" \
+   file1="ie60.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN\\Internet Explorer\\iexplore.exe"
+
+load_ie6()
+{
+    # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
+    if [ $W_ARCH = win64 ]
+    then
+        w_die "This package does not work on a 64-bit installation"
+    fi
+
+    w_download ie6 http://browsers-us.mirrors.zensoft.net/ie/win32/6.0/ie60.exe 8e483db28ff01a7cabd39147ab6c59753ea1f533
+
+    cd "$W_TMP"
+    $WINE "$W_CACHE"/ie6/ie60.exe
+
+    w_call msls31
+
+    # Unregister Wine IE
+    if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
+    then 
+        w_try $WINE iexplore -unregserver
+    fi
+
+    # Change the override to the native so we are sure we use and register them
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+
+    # Remove the fake dlls, if any
+    mv "$W_PROGRAMS_UNIX"/"Internet Explorer"/iexplore.exe "$W_PROGRAMS_UNIX"/"Internet Explorer"/iexplore.exe.bak
+    for dll in itircl itss jscript mlang mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    do
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+        mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
+    done
+
+    # The installer doesn't want to install iexplore.exe in XP mode.
+    w_set_winver win2k
+
+    # Workaround http://bugs.winehq.org/show_bug.cgi?id=21009
+    # See also http://code.google.com/p/winezeug/issues/detail?id=78
+    rm -f "$W_SYSTEM32_DLLS"/browseui.dll "$W_SYSTEM32_DLLS"/inseng.dll
+
+    # Work around http://bugs.winehq.org/show_bug.cgi?id=25432
+    w_try_cabextract -F inseng.dll "$W_TMP/IE 6.0 Full/ACTSETUP.CAB"
+    mv inseng.dll "$W_SYSTEM32_DLLS"
+    w_override_dlls native inseng.dll
+
+    cd "$W_TMP/IE 6.0 Full"
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        $WINE IE6SETUP.EXE /q:a /r:n /c:"ie6wzd /S:""#e"" /q:a /r:n"
+    else
+        $WINE IE6SETUP.EXE
+    fi
+
+    # IE6 exits with 194 to signal a reboot
+    status=$?
+    case $status in
+    0|194) ;;
+    *) w_die ie6 installation failed
+    esac
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: whittle down this list
+    cd "$W_SYSTEM32_DLLS"
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll mshtml.dll mshtmled.dll msi.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx webcheck.dll wshom.ocx
+    do
+        $WINE regsvr32 /i $i > /dev/null 2>&1
+    done
+
+    # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
