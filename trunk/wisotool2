@@ -2390,11 +2390,12 @@ load_dotnet30()
 
     w_set_winver winxp
 
+    cd "$W_CACHE"/dotnet30
     if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
     then
-        w_try $WINE "$W_CACHE"/dotnet30/dotnetfx3.exe
+        w_try $WINE dotnetfx3.exe
     else
-        w_try $WINE "$W_CACHE"/dotnet30/dotnetfx3.exe /q /c:"install.exe /q"
+        w_try $WINE dotnetfx3.exe /q /c:"install.exe /q"
     fi
 }
 
