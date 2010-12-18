@@ -4462,6 +4462,44 @@ load_menofwar()
 
 #----------------------------------------------------------------
 
+w_metadata plantsvszombies games \
+    title="Plants vs. Zombies" \
+    publisher="PopCap Games" \
+    year="2009" \
+    media="download" \
+    file1="PlantsVsZombiesSetup.exe" \
+    installed_file1="$W_PROGRAMS_X86_WIN\\PopCap Games\\Plants vs. Zombies\\PlantsVsZombies.exe"
+
+load_plantsvszombies()
+{
+    if ! test -f "$W_CACHE/$W_PACKAGE/PlantsVsZombiesSetup.exe"
+    then
+        w_download $W_PACKAGE "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        run PlantsVsZombiesSetup.exe
+        winwait, Plants vs. Zombies Installer
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            send {Enter}
+            winwait, Plants vs. Zombies License Agreement
+            ControlClick Button1
+        }
+        winwait, Plants vs. Zombies Installation Complete!
+        if ( u > 0 ) {
+            send {Space}{Enter}
+            ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
+        }
+        WinWaitClose
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\PopCap Games\\Plants vs. Zombies" "PlantsVsZombies.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata singularity games \
     title="Singularity" \
     publisher="Activision" \
