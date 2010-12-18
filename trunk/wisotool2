@@ -1971,6 +1971,8 @@ helper_directx_dl()
     DIRECTX_NAME=directx_feb2010_redist.exe
 }
 
+#----------------------------------------------------------------
+
 w_metadata  adobeair dlls \
    title="Adobe AIR 2.5.1" \
    publisher="Adobe" \
@@ -2502,6 +2504,24 @@ load_physx()
     w_download physx http://us.download.nvidia.com/Windows/9.10.0129/PhysX_9.10.0129_SystemSoftware.exe 33a8b54d842c7246946de15b1a48209c386c9c4b
     cd "$W_CACHE"/physx
     w_try $WINE PhysX_9.10.0129_SystemSoftware.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
+w_metadata secur32 dlls \
+   title="MS Security Support Provider Interface" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="Windows2000-KB959426-x86-ENU.EXE" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\secur32.dll"
+
+load_secur32()
+{
+    # http://www.microsoft.com/downloads/details.aspx?familyid=c4e408d7-6716-4a12-ad3a-8029667f5c84
+    w_download secur32 http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
+    w_try_cabextract "$W_CACHE"/secur32/Windows2000-KB959426-x86-ENU.EXE -d "$W_SYSTEM32_DLLS" -F secur32.dll
+    w_override_dlls native,builtin secur32
 }
 
 #----------------------------------------------------------------
