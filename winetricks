@@ -2244,12 +2244,14 @@ load_flash()
     # 2010-08-11: sha1sum bd3a91fe450a800dbbc8d070159dc0a599043652
     # 2010-10-21: sha1sum c8bc6b4ead9538aeba24c9a5908dc1912ad443c7
     # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866    
-w_download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866 
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866 
+    cd "$W_CACHE"/flash
+
     if [ $W_UNATTENDED_SLASH_Q ]
     then
-        w_try $WINE "$W_CACHE"/install_flash_player_ax.exe /install
+        w_try $WINE install_flash_player_ax.exe /install
     else
-        w_try $WINE "$W_CACHE"/install_flash_player_ax.exe
+        w_try $WINE install_flash_player_ax.exe
     fi
 
     # Mozilla / Firefox plugin
@@ -2264,12 +2266,12 @@ w_download . http://fpdownload.macromedia.com/get/flashplayer/current/install_fl
     # 2010-08-11: sha1sum cb011ab4c74d222c8ddb48171a8aa3b5380f8d5a
     # 2010-10-21: sha1sum 26985ca9f8f9c9926d807b591a28cdf2cc35a76a
     # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f    
-w_download . http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 09f2491c5bec7286155234f4e6e1af70c7cef78f
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 09f2491c5bec7286155234f4e6e1af70c7cef78f
     if [ $W_UNATTENDED_SLASH_Q ]
     then
-        w_try $WINE "$W_CACHE"/install_flash_player.exe /install
+        w_try $WINE install_flash_player.exe /install
     else
-        w_try $WINE "$W_CACHE"/install_flash_player.exe
+        w_try $WINE install_flash_player.exe
     fi
 }
 
@@ -2652,11 +2654,11 @@ _EOF_
 load_gdiplus()
 {
     # http://www.microsoft.com/downloads/details.aspx?familyid=6A63AB9C-DF12-4D41-933C-BE590FEAA05A&displaylang=en
-    w_download . http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
+    w_download gdiplus http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
     # Used to use $W_UNATTENDED_SLASH_Q, but that mean that in non-q
     # mode, a mysterious "Extraction Complete" dialog was all user saw.
     # Showing that isn't useful, so always use /q.
-    w_try $WINE "$W_CACHE"/WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
+    w_try $WINE "$W_CACHE"/gdiplus/WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
     # And then make it globally available.
     w_try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$W_SYSTEM32_DLLS"
 
