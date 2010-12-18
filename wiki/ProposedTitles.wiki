@@ -59,6 +59,14 @@ http://winebot.sandbox.cz/tracker/browser/repositories
 
 == Proposed free titles ==
 
+Free Mega Games Pack Vol 1
+http://www.ubuntugamer.com/2010/09/211-free-wine-compatible-games-in-one-download/
+but see
+http://forum.winehq.org/viewtopic.php?t=10643
+http://bugs.winehq.org/show_bug.cgi?id=25549
+He needs someone to do a regression for him, it looks like.
+(Can we automate the regression by sensing a log entry or a pixel color?)
+
 Joerg requests that we add one or more of the titles in
 http://bugs.winehq.org/show_bug.cgi?id=15030
 since that exposes an installer hang.
