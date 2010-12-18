@@ -28,7 +28,7 @@ C:\PROGRA~2\COMMON~1\INSTAL~1\Driver\7\INTEL3~1\IDriver.exe /M{E4D0E11A-CF32-4F7
 
 C:\Windows\IsUninst.exe -f"C:\Program Files (x86)\MadOnion.com\3DMark2000\Uninst.isu"
 
-C:\Program Files (x86)\PopCap Games\Plants vs. Zombies\PopUninstall.exe "C:\Program Files (x86)\PopCap Games\Plants vs. Zombies\Install.log"
+"C:\Program Files (x86)\PopCap Games\Plants vs. Zombies\PopUninstall.exe" "C:\Program Files (x86)\PopCap Games\Plants vs. Zombies\Install.log"
 
 "C:\Program Files (x86)\Atari\TDU2 Demo\Uninstall\unins000.exe" /SILENT
 
