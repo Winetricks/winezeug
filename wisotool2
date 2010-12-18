@@ -2070,7 +2070,8 @@ load_adobeair()
     # 2010-07-29: 2.0.2 sha1sum 7b93aedaf48ad7854940e7a4e7d9394a255e888b
     # 2010-12-08: 2.1.5 sha1sum 2664207ca8e836f5070ee356064829a39785a92e
     w_download adobeair http://airdownload.adobe.com/air/win/download/2.5.1/AdobeAIRInstaller.exe 2664207ca8e836f5070ee356064829a39785a92e
-    w_try $WINE "$W_CACHE"/adobeair/AdobeAIRInstaller.exe $W_UNATTENDED_DASH_SILENT
+    cd "$W_CACHE"/adobeair
+    w_try $WINE AdobeAIRInstaller.exe $W_UNATTENDED_DASH_SILENT
 }
 
 #----------------------------------------------------------------
@@ -2510,12 +2511,17 @@ w_metadata gdiplus dlls \
 
 load_gdiplus()
 {
+    # FIXME: do newer versions of windows install a gdiplus in winsxs?
+    # If so, and one is present, perhaps we should return without doing
+    # anything here.
+
     # http://www.microsoft.com/downloads/details.aspx?familyid=6A63AB9C-DF12-4D41-933C-BE590FEAA05A&displaylang=en
     w_download gdiplus http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
     # Used to use $W_UNATTENDED_SLASH_Q, but that mean that in non-q
     # mode, a mysterious "Extraction Complete" dialog was all user saw.
     # Showing that isn't useful, so always use /q.
-    w_try $WINE "$W_CACHE"/gdiplus/WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
+    cd "$W_CACHE"/gdiplus
+    w_try $WINE WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
     # And then make it globally available.
     w_try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$W_SYSTEM32_DLLS"
 
@@ -3791,20 +3797,31 @@ load_3dmark2000()
         SetTitleMatchMode, 2
         run Setup.exe
         WinWait Welcome
-        ControlClick Button1  ; Next
+        ;ControlClick Button1  ; Next
+        Sleep 1000
+        Send {Enter}           ; Next
         WinWait License
-        ControlClick Button2  ; Yes
+        ;ControlClick Button2  ; Yes
+        Sleep 1000
+        Send {Enter}           ; Yes
         ;WinWaitClose ahk_class #32770 ; License
         WinWait ahk_class #32770, Destination
-        ControlClick Button1  ; Next
+        ;ControlClick Button1  ; Next
+        Sleep 1000
+        Send {Enter}           ; Next
         ;WinWaitClose ahk_class #32770 ; Destination
         WinWait, Start
-        ControlClick Button1  ; Next
+        ;ControlClick Button1  ; Next
+        Sleep 1000
+        Send {Enter}           ; Next
         WinWait Registration
         ControlClick Button1  ; Next
         WinWait Complete
+        Sleep 1000
         ControlClick Button1  ; Unclick View Readme
-        ControlClick Button4  ; Finish
+        ;ControlClick Button4  ; Finish
+        Send {Enter}           ; Finish
+        WinWaitClose
     "
 
     cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
@@ -3847,6 +3864,8 @@ load_aoe3_demo()
         WinWait,Empires,Welcome
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
+            sleep 1000
+            winactivate          ; else next button click ignored on vista?
             Sleep 500
             ControlClick Button1 ; Next
             WinWait,Empires,Please
