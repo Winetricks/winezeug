@@ -2373,6 +2373,11 @@ w_metadata dotnet30 dlls \
 
 load_dotnet30()
 {
+    osver=`cmd /c ver`
+    case "$osver" in
+    *Version?6*) w_die "Vista and up bundle .net 3.0, so you can't install it like this" ;;
+    esac
+
     w_call dotnet20
 
     w_warn "Installing .net 3.0 runtime takes 3 minutes on a very fast machine, and the Finished dialog may hide in the taskbar."
