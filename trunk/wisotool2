@@ -787,6 +787,7 @@ wisotool_mainmenu()
          _W_msg_dlls="Install a Windows DLL"
          _W_msg_fonts='Install a font'
          _W_msg_games='Installér et spil'
+         _W_msg_settings='Change Wine settings'
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
@@ -797,6 +798,7 @@ wisotool_mainmenu()
          _W_msg_dlls="Windows-DLL installieren"
          _W_msg_fonts='Schriftart installieren'
          _W_msg_games='Windows-Spiel installieren'
+         _W_msg_settings='Change Wine settings'
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
@@ -807,6 +809,7 @@ wisotool_mainmenu()
          _W_msg_dlls="Install a Windows DLL"
          _W_msg_fonts='Install a font'
          _W_msg_games='Install a Windows game'
+         _W_msg_settings='Change Wine settings'
          ;;
     esac
 
@@ -830,6 +833,7 @@ wisotool_mainmenu()
             FALSE games      "$_W_msg_games" \
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
+            FALSE settings   "$_W_msg_settings" \
             FALSE run        "$_W_msg_run" \
             FALSE uninstall  "$_W_msg_uninstall" \
          | tr '|' ' '
@@ -846,12 +850,13 @@ wisotool_mainmenu()
                 games      "$_W_msg_games" off \
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
+                settings   "$_W_msg_settings" off \
                 run        "$_W_msg_run" off \
                 uninstall  "$_W_msg_uninstall" off \
 
         ;;
     esac
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_run _W_msg_uninstall
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_settings _W_msg_run _W_msg_uninstall
 }
 
 # Display the menu of installed apps, output list of selected apps
@@ -965,6 +970,83 @@ wisotool_installed_menu()
     unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
 }
 
+wisotool_settings_menu()
+{
+    case $LANG in
+    *)   _W_msg_title='Pick a setting'
+         _W_msg_body='Which setting(s) would you like to change?'
+         ;;
+    esac
+
+    case $WISOTOOL_GUI in
+    zenity)
+        case $LANG in
+        da*) echo -n "zenity \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Pakke \
+                --column Navn \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+       de*) echo -n "zenity \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Paket \
+                --column Name \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+        *) echo -n "zenity \
+                --title '$_W_msg_title' \
+                --text '$_W_msg_body' \
+                --list \
+                --checklist \
+                --column '' \
+                --column Setting \
+                --column Title \
+                --height 500 \
+                --width 800 \
+                " 
+             ;;
+        esac > "$WISOTOOL_WORKDIR"/zenity.sh
+
+        for metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
+        do
+            code=`basename $metadatafile .vars`
+            (
+            title='?'
+            author='?'
+            . $metadatafile
+            echo -n " " FALSE \
+                    $code \
+                    "\"$title\""
+            )
+        done >> $WISOTOOL_WORKDIR/zenity.sh
+
+        sh "$WISOTOOL_WORKDIR"/zenity.sh | tr '|' ' '
+        ;;
+
+    kdialog)
+        (
+        echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
+        wisotool_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
+        ) > "$WISOTOOL_WORKDIR"/kdialog.sh
+        sh "$WISOTOOL_WORKDIR"/kdialog.sh
+        ;;
+    esac
+
+    unset _W_msg_body _W_msg_title
+}
+
 # Display the current menu, output list of verbs to execute to stdout
 wisotool_showmenu()
 {
@@ -1058,7 +1140,7 @@ wisotool_showmenu()
         ;;
     esac
 
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
+    unset _W_msg_body _W_msg_title
 }
 
 # Returns true if given verb has been registered
@@ -1606,7 +1688,7 @@ wisotool_init()
     WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="apps benchmarks dlls fonts games"
+    WISOTOOL_CATEGORIES="apps benchmarks dlls fonts games settings"
     for _W_cat in $WISOTOOL_CATEGORIES
     do
         mkdir -p "$WISOTOOL_METADATA"/$_W_cat
@@ -4568,6 +4650,27 @@ load_wog()
 }
 
 #----------------------------------------------------------------
+# Settings
+#----------------------------------------------------------------
+
+w_metadata dsoundbug9612 settings \
+    title="Use DirectSound MaxShadowSize=0 workaround for wine bug 9612"
+
+load_dsoundbug9612()
+{
+    if w_workaround_wine_bug 9612
+    then
+        echo "Enabling DirectSound workaround for bug #9612"
+        cat > "$W_TMP"/dsoundmaxshadow.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\DirectSound]
+"MaxShadowSize"="0"
+
+_EOF_
+        w_try_regedit "$W_TMP_WIN"\\dsoundmaxshadow.reg
+    fi
+}
 
 #----------------------------------------------------------------
 
@@ -4620,7 +4723,7 @@ execute_command()
     case $W_PACKAGE in
 
     # FIXME: avoid duplicated code
-    apps|benchmarks|dlls|fonts|games|run|uninstall)
+    apps|benchmarks|dlls|fonts|games|run|uninstall|settings)
         WISOTOOL_CURMENU=$W_PACKAGE
         ;;
 
@@ -4677,6 +4780,7 @@ then
             main) verbs=`wisotool_mainmenu` ;;
             run) verbs=`wisotool_installed_menu` ;;
             uninstall) verbs=`wisotool_installed_menu` ;;
+            settings) verbs=`wisotool_settings_menu` ;;
             *) verbs="`wisotool_showmenu`" ;;
             esac
 
