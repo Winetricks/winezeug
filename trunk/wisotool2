@@ -1622,8 +1622,6 @@ wisotool_init()
     # Which GUI helper to use (none/zenity/kdialog).  See wisotool_detect_gui.
     WISOTOOL_GUI=none
 
-    WISOTOOL_DIR=${WISOTOOL_DIR:-$HOME/.local/wisotool}
-
     # Whether to always cache cached iso's (1) or only use cache if present (0)
     # Can be inherited from environment or set via -k, defaults to off
     WISOTOOL_OPT_KEEPISOS=${WISOTOOL_OPT_KEEPISOS:-0}
@@ -1677,8 +1675,17 @@ wisotool_init()
     W_WINDIR_UNIX="$W_DRIVE_C/windows"
 
     # Where application installers are cached
+    # See http://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
+    if test "$WISOTOOL_DIR"
+    then
+        W_CACHE="$WISOTOOL_DIR/cache"
+    else
+        WISOTOOL_DIR=$HOME/.local/winetricks
+        XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+        W_CACHE="${W_CACHE:-$XDG_CACHE_HOME/winetricks}"
+    fi
+    test -d "$W_CACHE" || mkdir -p "$W_CACHE"
     # FIXME: move those tr's and sed's into w_pathconv, if they're still needed?
-    W_CACHE="${W_CACHE:-$WISOTOOL_DIR/cache}"
     W_CACHE_WIN="`w_pathconv -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 
     # The folder-name is localized!
