@@ -3706,8 +3706,8 @@ load_richtx32()
 load_secur32()
 {
     # http://www.microsoft.com/downloads/details.aspx?familyid=c4e408d7-6716-4a12-ad3a-8029667f5c84
-    w_download . http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
-    w_try_cabextract "$W_CACHE"/Windows2000-KB959426-x86-ENU.EXE -d "$W_SYSTEM32_DLLS" -F secur32.dll
+    w_download secur32 http://download.microsoft.com/download/6/9/5/69501788-B62F-44D8-933F-B6FAA576CA87/Windows2000-KB959426-x86-ENU.EXE bf930a4d2982165a0793465bb255d494ba5b4cf7
+    w_try_cabextract "$W_CACHE"/secur32/Windows2000-KB959426-x86-ENU.EXE -d "$W_SYSTEM32_DLLS" -F secur32.dll
     w_override_dlls native,builtin secur32
 }
 
