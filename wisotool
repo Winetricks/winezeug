@@ -7795,7 +7795,8 @@ w_metadata plantsvszombies games \
     publisher="PopCap Games" \
     year="2009" \
     media="download" \
-    file1="PlantsVsZombiesSetup.exe" 
+    file1="PlantsVsZombiesSetup.exe" \
+    installed_file1="$W_PROGRAMS_X86_WIN\\PopCap Games\\Plants vs. Zombies\\PlantsVsZombies.exe"
 
 load_plantsvszombies()
 {
@@ -7814,9 +7815,10 @@ load_plantsvszombies()
         winwait, Plants vs. Zombies Installation Complete!
         send {Space}{Enter}
         ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
+        WinWaitClose
     "
 
-    w_declare_exe "$W_PROGRAMS_X86_WIN\\PopCap Games\\Plants vs. Zombies" "PlantsVsZombies"
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\PopCap Games\\Plants vs. Zombies" "PlantsVsZombies.exe"
 }
 
 #----------------------------------------------------------------
