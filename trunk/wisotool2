@@ -2366,6 +2366,31 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata gdiplus dlls \
+   title="MS GDI+" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="WindowsXP-KB975337-x86-ENU.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\gdiplus.dll"
+
+load_gdiplus()
+{
+    # http://www.microsoft.com/downloads/details.aspx?familyid=6A63AB9C-DF12-4D41-933C-BE590FEAA05A&displaylang=en
+    w_download gdiplus http://download.microsoft.com/download/a/b/c/abc45517-97a0-4cee-a362-1957be2f24e1/WindowsXP-KB975337-x86-ENU.exe b9a84bc3de92863bba1f5eb1d598446567fbc646
+    # Used to use $W_UNATTENDED_SLASH_Q, but that mean that in non-q
+    # mode, a mysterious "Extraction Complete" dialog was all user saw.
+    # Showing that isn't useful, so always use /q.
+    w_try $WINE "$W_CACHE"/gdiplus/WindowsXP-KB975337-x86-ENU.exe /extract:$W_TMP_WIN /q
+    # And then make it globally available.
+    w_try cp "$W_TMP/asms/10/msft/windows/gdiplus/gdiplus.dll" "$W_SYSTEM32_DLLS"
+
+    # For some reason, native,builtin isn't good enough...?
+    w_override_dlls native gdiplus
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
