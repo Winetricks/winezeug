@@ -16,17 +16,27 @@ faster than the isolated recipe repository for any individual front end.
 
 And what the heck, it would be nice if menu items for the apps disappeared
 properly when you delete the bottle.  (That probably just requires creating
-symlinks from ~/.local/applications/foo into ~/.local/wineprefixes/foo/xdgmenu
+symlinks from ~/.local/applications/foo into ~/.local/share/wine/foo/xdgmenu
 or something like that; the devil is in the details.)
 
 = Directories =
 
- * $XDG_DATA_HOME/wineprefixes (this defaults to $HOME/.local/share/wineprefixes) - directory where all the wineprefixes will live
+ * $XDG_DATA_HOME/wine (this defaults to $HOME/.local/share/wine) - directory where all the wineprefixes will live
  * Any non-standard metadata for frontend 'myfe' will live in subdirectory myfe of the wineprefix
+ * These should be compliant with the XDG spec: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
- * TODO: double-check that these are compliant with the XDG spec: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+= Cleaning up a prefix =
+It is our hope that acceptable removal of a prefix should be as simple as deleting the prefix -- this means, for instance, that menu items disappear and front ends "know" that the prefix and its associated apps are gone.
 
-= Recipes =
+TODO: this is a bit tricky implementation.  Steps:
+ * winemenubuilder should make symlinks in ~/.local/applications rather than .desktop files.  The .desktop files can then reside in the prefix; when they're deleted, the links should become broken and thus not show
+   * winemenubuilder (or other tools, eg front ends or computer janitor) can clean out these broken links
+   * desktop environments need to be double checked that they do the right thing (nothing) when they encounter these links -- these would be normal bugs
+
+== Unresolved issues ==
+Software Center would like to be able to list and remove Wine prefixes, but to do this it needs to know "the purpose" of each one.  This generally means a specific app, however it's quite possible for a given prefix to have more than one program installed.  We'll need some sort of way of indicating this (perhaps new metadata?)
+
+= Recipes (verbs) =
 
 Recipes (also called verbs) are bourne shell scripts that are sourced by the front end.  
 They may call functions defined by the front end; all such functions are lowercase and start with w`_`.
