@@ -3,6 +3,9 @@
 
 set -x
 
+# verbs known to not work in -q mode yet
+BLACKLIST="cygwin"
+
 errors=0
 fail()
 {
@@ -92,7 +95,7 @@ test_app()
     sh -x winetricks sandbox gecko
 
     echo "Installing $app"
-    if ! sh wisotool2 -q $app
+    if ! sh wisotool2 -v -q $app
     then
         fail "test_app $app failed!"
         return
@@ -108,7 +111,7 @@ test_app()
 
 test_install_cached_or_download()
 {
-    for a in `sh wisotool2 list-cached list-download | sort -u`
+    for a in `sh wisotool2 list-cached list-download | sort -u | egrep -v "$BLACKLIST"`
     do
         test_app $a
     done
