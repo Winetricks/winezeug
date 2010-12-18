@@ -80,11 +80,6 @@ w_die()
     exit 1
 }
 
-if test "`which perl`" = ""
-then
-    w_die "please install perl before running this script"
-fi
-
 # Execute with error checking
 w_try()
 {
@@ -647,8 +642,14 @@ w_metadata()
     file="$WISOTOOL_METADATA/$2/$1.vars"
     shift
     shift
-    # FIXME: fall back to posix shell string manipulation if perl not present?
-    perl -e 'for (@ARGV) { if (/(\w*)=(.*)/) { print "$1=\"$2\"\n"; } else { die "bad parameter $_" } }' "$@" > "$file"
+    # Used to use perl here, but that was too slow on cygwin.
+    for arg
+    do
+        # Use longest match when stripping value, 
+        # and shortest match when stripping name,
+        # so descriptions can have embedded equals signs
+        echo ${arg%%=*}=\"${arg#*=}\"
+    done > "$file"
 }
 
 # Function for verbs to register their main executable.
@@ -1021,7 +1022,7 @@ wisotool_settings_menu()
 
         for metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
         do
-            code=`basename $metadatafile .vars`
+            code=`wisotool_metadata_basename $metadatafile`
             (
             title='?'
             author='?'
@@ -1114,7 +1115,7 @@ wisotool_showmenu()
 
         for metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
         do
-            code=`basename $metadatafile .vars`
+            code=`wisotool_metadata_basename $metadatafile`
             (
             title='?'
             author='?'
@@ -1141,6 +1142,19 @@ wisotool_showmenu()
     esac
 
     unset _W_msg_body _W_msg_title
+}
+
+# Converts a metadata abolute path to its app code
+wisotool_metadata_basename()
+{
+    # Classic, but too slow on cygwin
+    #basename $1 .vars
+
+    # first, remove suffix .vars
+    _W_mb_tmp=${1%.vars}
+    # second, remove any directory prefix 
+    echo ${_W_mb_tmp##*/}
+    unset _W_mb_tmp
 }
 
 # Returns true if given verb has been registered
@@ -1171,7 +1185,7 @@ wisotool_is_installed()
     fi
     if test "$_W_file" 
     then
-        _W_file_unix="`w_pathconv -u "$_W_file" | tr -d '\015' `"
+        _W_file_unix="`w_pathconv -u "$_W_file"`"
         if test -f "$_W_file_unix" && ! grep -q "Wine placeholder DLL" "$_W_file_unix"
         then
             unset _W_file _W_file_unix
@@ -1190,7 +1204,7 @@ wisotool_list_cached()
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
         (
-        code=`basename $_W_metadatafile .vars`
+        code=`wisotool_metadata_basename $_W_metadatafile`
         . $_W_metadatafile
         if wisotool_is_cached $code
         then
@@ -1233,7 +1247,7 @@ wisotool_list_installed()
             # Use a subshell to avoid putting metadata in global space
             # If this is too slow, we can unset known metadata by hand
             (
-            code=`basename $_W_metadatafile .vars`
+            code=`wisotool_metadata_basename $_W_metadatafile`
             . $_W_metadatafile
             if wisotool_is_installed $code
             then
@@ -1277,7 +1291,7 @@ wisotool_list_all()
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
         (
-        code=`basename $_W_metadatafile .vars`
+        code=`wisotool_metadata_basename $_W_metadatafile`
         . $_W_metadatafile
 
         # Compute cached and downloadable flags 
