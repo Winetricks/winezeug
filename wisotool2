@@ -4175,14 +4175,25 @@ load_divinity2_demo()
             WinWait,Setup - Divinity II - Ego Draconis - Demo, installation
             Sleep 500
             ControlClick TNewButton4 ; Install
-            WinWait,NVIDIA PhysX Setup, must
-            Sleep 500
-            ControlClick Button3 ;accept
-            Sleep 500
-            ControlClick Button4 ; Next
-            WinWait,NVIDIA PhysX Setup, been
-            Sleep 500
-            ControlClick Button1 ; Finish
+            Loop
+            {
+                IfWinExist, NVIDIA PhysX Setup, must
+                {
+                    WinWait,NVIDIA PhysX Setup, must
+                    Sleep 500
+                    ControlClick Button3 ;accept
+                    Sleep 500
+                    ControlClick Button4 ; Next
+                    WinWait,NVIDIA PhysX Setup, been
+                    Sleep 500
+                    ControlClick Button1 ; Finish
+                }
+                IfWinExist,Setup - Divinity II - Ego Draconis - Demo, launched
+                {
+                    break
+                }
+                Sleep 2000
+            }
             WinWait,Setup - Divinity II - Ego Draconis - Demo, launched
             Sleep 500
             ControlFocus, TNewCheckListBox1, Desktop
