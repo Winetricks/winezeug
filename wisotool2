@@ -2938,13 +2938,15 @@ w_metadata  xvid dlls \
     publisher="xvid.org" \
     year="2009" \
     media="download" \
-    file1="Xvid-1.2.2-07062009.exe"
+    file1="Xvid-1.2.2-07062009.exe" \
+    installed_file1="$W_PROGRAMS_X86_WIN\\Xvid\\xvid.ico"
 
 load_xvid()
 {
     w_call vcrun6
     w_download xvid http://www.koepi.info/Xvid-1.2.2-07062009.exe 435203e7f713c4484ca4f50f43e847f3dc118962
-    w_try $WINE "$W_CACHE"/xvid/Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
+    cd "$W_CACHE"/xvid
+    w_try $WINE Xvid-1.2.2-07062009.exe $W_UNATTENDED_SLASH_SILENT
 }
 
 #----------------------------------------------------------------
