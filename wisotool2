@@ -4097,7 +4097,7 @@ load_cod4mw_demo()
             WinWait,Modern Warfare, License
             Sleep 500
             ControlClick Button5 ; accept
-            Sleep 500
+            Sleep 2000
             ControlClick Button2 ; Next
             WinWait,Modern Warfare, System Requirements
             Sleep 500
