@@ -2366,6 +2366,48 @@ _EOF_
 
 #----------------------------------------------------------------
 
+# FIXME: update wisotool_is_installed to look at installed_file2
+w_metadata flash dlls \
+   title="Flash Player" \
+   publisher="Adobe" \
+   year="2010" \
+   media="download" \
+   file1="install_flash_player.exe" \
+   file2="install_flash_player_ax.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN\\Macromed\\Flash\\FlashUtil10l_Plugin.exe" \
+   installed_file2="$W_SYSTEM32_DLLS_WIN\\Macromed\\Flash\\FlashUtil10l_ActiveX.exe"
+
+load_flash()
+{
+    # www.adobe.com/products/flashplayer/
+
+    # Active X plugin
+    # http://blogs.adobe.com/psirt/2008/03/preparing_for_april_flash_play.html
+    # http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi
+    # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866    
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866 
+    cd "$W_CACHE"/flash
+
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        w_try $WINE install_flash_player_ax.exe /install
+    else
+        w_try $WINE install_flash_player_ax.exe
+    fi
+
+    # Mozilla / Firefox plugin
+    # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f    
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 09f2491c5bec7286155234f4e6e1af70c7cef78f
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        w_try $WINE install_flash_player.exe /install
+    else
+        w_try $WINE install_flash_player.exe
+    fi
+}
+
+#----------------------------------------------------------------
+
 w_metadata gdiplus dlls \
    title="MS GDI+" \
    publisher="Microsoft" \
