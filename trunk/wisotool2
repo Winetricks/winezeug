@@ -326,7 +326,7 @@ w_download_torrent()
         winwait, Torrent
         Loop
         {
-            sleep 3000
+            sleep 6000
             ifwinexist, Torrent, default
             {
                 ;should uTorrent be the default torrent app?
