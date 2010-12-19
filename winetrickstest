@@ -147,7 +147,6 @@ for verb in \
     multisampling=disabled \
     native_mdac \
     native_oleaut32 \
-    nocrashdialog \
     orm=backbuffer \
     orm=fbo \
     rtlm=auto \
@@ -210,7 +209,7 @@ __EOF__
     do
         wineserver -k || true
         rm -rf "$WINEPREFIX"
-        sh winetricks  -q -v $verb
+        sh winetricks -q -v nocrashdialog $verb
         wine dotnet_test.exe | grep "Dotnet works!" || test_failed $verb
     done
     rm dotnet_test.c dotnet_test.exe
@@ -243,7 +242,7 @@ then
     do
         wineserver -k || true
         rm -rf "$WINEPREFIX"
-        sh winetricks -v $verb || test_failed $verb
+        sh winetricks -v nocrashdialog $verb || test_failed $verb
     done
 fi
 
