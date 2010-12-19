@@ -296,6 +296,72 @@ w_download()
     fi
 }
 
+# Download one or more files via bittorrent
+# Usage: w_download_torrent package [foo.torrent]
+# Caches downloads in $W_CACHE/$package, torrent files are assumed to be there
+# If no foo.torrent is given, will add ALL .torrent files in $W_CACHE/$W_PACKAGE
+w_download_torrent()
+{
+    # FIXME: figure out how to extract the filename from the .torrent file
+    # so callers don't need to check if the files are already downloaded.
+
+    w_call utorrent
+
+    UT_WINPATH="$W_CACHE_WIN\\$1"
+    cd "$W_CACHE/$1"
+
+    if [ "$2"x != ""x ] # foo.torrent parameter supplied
+    then
+        w_try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$2" &
+    else # grab all torrents
+        for torrent in `ls *.torrent`
+        do
+            w_try $WINE utorrent "/DIRECTORY" "$UT_WINPATH" "$UT_WINPATH\\$torrent" &
+        done
+    fi
+
+    # Start uTorrent, have it wait until all downloads are finished
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        winwait, Torrent
+        Loop
+        {
+            sleep 3000
+            ifwinexist, Torrent, default
+            {
+                ;should uTorrent be the default torrent app?
+                controlclick, Button1, Torrent, default  ; yes
+                continue
+            }
+            ifwinexist, Torrent, already
+            {
+                ;torrent already registered, fine
+                controlclick, Button1, Torrent, default  ; yes
+                continue
+            }
+            ifwinexist, Torrent, Bandwidth
+            {
+                ;Cancels bandwidth test on first run of uTorrent
+                controlclick, Button5, Torrent, Bandwidth
+                continue
+            }
+            ifwinexist, Torrent, version
+            {
+                ;Decline upgrade to newer version
+                controlclick, Button3, Torrent, version
+                controlclick, Button2, Torrent, version
+                continue
+            }
+            break
+        }
+        ;Sets parameter to close uTorrent once all downloads are complete
+        winactivate, Torrent 2.0
+        send !o
+        send a{Down}{Enter}
+        winwaitclose, Torrent 2.0
+    "
+}
+
 w_download_manual()
 {
     _W_packagename="$1"
@@ -4260,6 +4326,84 @@ load_divinity2_demo()
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Divinity II - Ego Draconis - Demo\\Bin" "Divinity2_Demo.exe"
+}
+
+#----------------------------------------------------------------
+
+w_metadata hko games \
+    title="Hello Kitty Online" \
+    publisher="Sanrio Digital" \
+    year="2009" \
+    media="download" \
+    file1="Hello Kitty Online Standard Installer.zip" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\SanrioTown\\Hello Kitty Online\\HKO.exe"
+
+load_hko()
+{
+    w_download hko http://www.hellokittyonline.com/images/downloads/hkostandardinstaller.torrent fcbb6869551ba251a08402f6de81855e829407e9
+    if ! test -f "$W_CACHE/hko/Hello Kitty Online Standard Installer.zip"
+    then
+        w_download_torrent hko hkostandardinstaller.torrent
+    fi
+    w_try unzip "$W_CACHE/hko/Hello Kitty Online Standard Installer.zip" -d "$W_TMP"
+    cd "$W_TMP/Hello Kitty Online Standard Installer"
+
+    w_ahk_do "
+        Run, setup.exe
+        SetTitleMatchMode, 2
+        WinWait,Setup - Hello Kitty Online, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick TNewButton1 ; Next
+            WinWait,Setup - Hello Kitty Online, License
+            Sleep 500
+            ControlFocus,TNewRadioButton1,Kitty
+            Sleep 500
+            Send {Space}
+            Sleep 500
+            ControlClick TNewButton2 ; Next
+            WinWait,Setup - Hello Kitty Online, Location
+            Sleep 500
+            ControlClick TNewButton3 ; Next
+            WinWait,Setup - Hello Kitty Online, Menu
+            Sleep 500
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - Hello Kitty Online, Additional
+            ControlFocus,TNewCheckListBox1,Kitty
+            Sleep 500
+            Send {Space}
+            Sleep 500
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - Hello Kitty Online, now
+            Sleep 500
+            ControlClick TNewButton4 ; Install
+        }
+        WinWait,Setup - Hello Kitty Online, Completing
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick TNewButton4 ; Finish
+        }
+        WinWaitClose
+    "
+
+    # Appdb says minigames need flash.  Very recent versions of wine
+    # will offer to install flash on demand, just like windows.
+    if test $W_OPT_UNATTENDED = 1
+    then
+        w_call flash
+    fi
+
+    if w_workaround_wine_bug 25132
+    then
+        w_try_winetricks ie6
+    fi
+    if w_workaround_wine_bug 25133
+    then
+        w_try_winetricks msxml3
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\SanrioTown\\Hello Kitty Online" "HKO.exe"
 }
 
 #----------------------------------------------------------------
