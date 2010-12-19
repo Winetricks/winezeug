@@ -4483,12 +4483,14 @@ load_plantsvszombies()
         winwait, Plants vs. Zombies Installer
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
+            sleep 1000
             send {Enter}
             winwait, Plants vs. Zombies License Agreement
             ControlClick Button1
         }
         winwait, Plants vs. Zombies Installation Complete!
         if ( u > 0 ) {
+            sleep 1000
             send {Space}{Enter}
             ControlClick, x309 y278, Plants vs. Zombies Installation Complete!,,,, Pos
         }
