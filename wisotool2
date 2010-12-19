@@ -2450,7 +2450,7 @@ load_dotnet35()
     cd "$W_TMP"
     w_try_cabextract $WINETRICKS_UNIXQUIET "$W_CACHE"/dotnet35/dotnetfx35.exe
     cd wcu/dotNetFramework
-    $WINE dotNetFx35setup.exe /lang:ENU
+    $WINE dotNetFx35setup.exe /lang:ENU $W_UNATTENDED_SLASH_Q
 
     # FIXME: Do this only if the above commmand failed (not sure how to detect it... look for some file, I s'pose)
     if w_workaround_wine_bug 25060
