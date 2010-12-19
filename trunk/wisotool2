@@ -684,9 +684,21 @@ w_do_call()
         if wisotool_is_installed $1
         then
             echo "$1 already installed, skipping"
-            return
+            return 0
         fi
+
+        # We'd like to get rid of W_PACKAGE, but for now, just set it as late as possible.
+        W_PACKAGE=$1
         load_$1 $2
+
+        # User-specific postinstall hook.
+        # Source it so the script can call w_download() if needed.
+        postfile="$WISOTOOL_POST/$1/$1-postinstall.sh"
+        if test -f "$postfile"
+        then
+            chmod +x "$postfile"
+            . "$postfile"
+        fi
     )
 }
 
@@ -1999,29 +2011,20 @@ wisotool_run_app()
 wisotool_install_app()
 {
     case $LANG in
-    da*) fail_msg="Installationen af pakken $W_PACKAGE fejlede" ;;
-    de*) fail_msg="Installieren von Pakete $W_PACKAGE gescheitert" ;;
-    *)   fail_msg="Failed to install package $W_PACKAGE" ;;
+    da*) fail_msg="Installationen af pakken $1 fejlede" ;;
+    de*) fail_msg="Installieren von Pakete $1 gescheitert" ;;
+    *)   fail_msg="Failed to install package $1" ;;
     esac
 
-    W_TMP="$W_DRIVE_C/windows/_temp/_$W_PACKAGE"
-    W_TMP_WIN="C:\\windows\\_temp\\_$W_PACKAGE"
+    W_TMP="$W_DRIVE_C/windows/_temp/_$1"
+    W_TMP_WIN="C:\\windows\\_temp\\_$1"
     rm -rf "$W_TMP"
     mkdir -p "$W_TMP"
 
     # FIXME: initialize a new wineprefix for this app, set lots of global variables
-    if ! w_do_call $W_PACKAGE
+    if ! w_do_call $1
     then
         w_die "$fail_msg"
-    fi
-
-    # User-specific postinstall hook.
-    # Source it so the script can call w_download() if needed.
-    postfile="$WISOTOOL_POST/$W_PACKAGE/$W_PACKAGE-postinstall.sh"
-    if test -f "$postfile"
-    then
-        chmod +x "$postfile"
-        ( . "$postfile" )
     fi
 
     rm -rf "$W_TMP"
@@ -4791,41 +4794,30 @@ wisotool_do_app()
 {
     case $WISOTOOL_CURMENU in
     run)
-        wisotool_run_app $W_PACKAGE
+        wisotool_run_app $1
         ;;
     uninstall)
-        wisotool_uninstall_app $W_PACKAGE
+        wisotool_uninstall_app $1
         ;;
     *) 
-        wisotool_install_app $W_PACKAGE
+        wisotool_install_app $1
         ;;
     esac
 }
 
-# Usage: set W_PACKAGE to name of command to execute, and $1 to full path if external verb
+# Usage: execute_command verbname
 execute_command()
 {
-    # Load external verb
-    case $W_PACKAGE in
-    *.verb)
-        case $1 in
-        */*) . $1 ;;
-        *) . ./$1 ;;
-        esac
-        W_PACKAGE="`echo $1 | sed 's,.*/,,;s,.verb,,'`"
-        ;;
-    esac
-
-    case $W_PACKAGE in
+    case $1 in
 
     # FIXME: avoid duplicated code
     apps|benchmarks|dlls|fonts|games|run|uninstall|settings)
-        WISOTOOL_CURMENU=$W_PACKAGE
+        WISOTOOL_CURMENU=$1
         ;;
 
     # Late options
     -*)
-        if ! wisotool_handle_option $W_PACKAGE
+        if ! wisotool_handle_option $1
         then
             wisotool_usage 
             exit 1
@@ -4839,13 +4831,13 @@ execute_command()
     list-manual-download) wisotool_list_manual_download ;;
     list-installed) wisotool_list_installed ;;
 
-    # load_ functions
+    # Normal verbs, with metadata and load_ functions
     *)
-        if wisotool_metadata_exists $W_PACKAGE
+        if wisotool_metadata_exists $1
         then
-            wisotool_do_app $W_PACKAGE
+            wisotool_do_app $1
         else
-            echo Unknown arg $W_PACKAGE
+            echo Unknown arg $1
             wisotool_usage
             exit 1
         fi
@@ -4889,9 +4881,9 @@ then
                 WISOTOOL_CURMENU=$verbs
             else
                 # Otherwise user picked one or more real verbs.
-                for W_PACKAGE in $verbs
+                for verb in $verbs
                 do
-                    execute_command
+                    execute_command $verb
                 done
                 break
             fi
@@ -4900,9 +4892,20 @@ then
     *)
         # Commandline case
         # User gave commandline arguments, so just run those verbs and exit
-        for W_PACKAGE
+        for verb
         do
-            execute_command $W_PACKAGE
+            case $verb in
+            *.verb)
+                # Load the verb file
+                case $verb in
+                */*) . $verb ;;
+                *) . ./$verb ;;
+                esac
+                # And forget that the verb comes from a file
+                verb="`echo $verb | sed 's,.*/,,;s,.verb,,'`"
+                ;;
+            esac
+            execute_command $verb
         done
         ;;
 
