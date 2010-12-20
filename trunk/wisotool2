@@ -4142,6 +4142,63 @@ load_blobby_volley()
 
 #----------------------------------------------------------------
 
+w_metadata cod_demo games \
+    title="Call of Duty demo" \
+    publisher="Activision" \
+    year="2003" \
+    media="download" \
+    file1="Call_Of_Duty_Demo.exe" 
+
+load_cod_demo()
+{
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Call_Of_Duty_Demo.exe" 1c480a1e64a80f7f97fd0acd9582fe190c64ad8e
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run Call_Of_Duty_Demo.exe
+        WinWait,Call of Duty Single Player Demo,Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            ControlClick Button1 ; I Agree
+            WinWait,Call of Duty Single Player Demo,License
+            ControlClick Button4 ; Next
+            WinWait,Call of Duty Single Player Demo,System
+            ControlClick Button4 ; Next
+            WinWait,Call of Duty Single Player Demo,Location
+            ControlClick Button1 ; Next
+            WinWait,Call of Duty Single Player Demo,Select
+            ControlClick Button1 ; Next
+            WinWait,Call of Duty Single Player Demo,Start
+            ControlClick Button1 ; Install
+            WinWait,Create Shortcut
+            ControlClick Button1 ; Yes
+        }
+        WinWait,Call of Duty Single Player Demo, Complete
+        if ( u > 0 ) {
+            ControlClick Button1 ; Finish
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 21558
+    then
+        # Work around a buffer overflow - not really Wine's fault
+        setvar="@if not defined %__GL_ExtensionStringVersion% then echo \"If you get a buffer overflow error, set __GL_ExtensionStringVersion=17700 before starting Wine.  See http://bugs.winehq.org/show_bug.cgi?id=21558.\""
+    else
+        setvar=
+    fi
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+$setvar
+${programfilesdrive}:
+cd "$W_PROGRAMS_X86_WIN\\Call of Duty Single Player Demo"
+CoDSP.exe
+__EOF__
+
+}
+
+#----------------------------------------------------------------
+
 w_metadata cod4mw_demo games \
     title="Call of Duty 4 Modern Warfare" \
     publisher="Activision" \
