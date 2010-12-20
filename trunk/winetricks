@@ -3417,7 +3417,7 @@ load_opensymbol()
     # Note: The source download package on debian is for _all_ of OpenOffice, which is 266 MB.
     w_download opensymbol http://ftp.us.debian.org/debian/pool/main/o/openoffice.org/ttf-opensymbol_3.2.1-10_all.deb 6b399c9f001ef0aa86661690427d5f84561b6210
     w_try cd "$W_TMP"
-    w_try ar x "$W_CACHE/ttf-opensymbol_3.2.1-10_all.deb" data.tar.bz2
+    w_try ar x "$W_CACHE/opensymbol/ttf-opensymbol_3.2.1-10_all.deb" data.tar.bz2
     w_try tar jvxf data.tar.bz2 ./usr/share/fonts/truetype/openoffice/opens___.ttf
     w_try mv "$W_TMP/usr/share/fonts/truetype/openoffice/opens___.ttf" "$W_FONTSDIR_UNIX"
     w_register_font opens___.ttf "OpenSymbol"
