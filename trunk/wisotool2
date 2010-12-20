@@ -4228,6 +4228,7 @@ load_bladekitten_demo()
 }
 
 #----------------------------------------------------------------
+
 # http://appdb.winehq.org/objectManager.php?sClass=version&iId=9320
 w_metadata  blobby_volley games \
    title="Blobby Volley" \
@@ -4259,7 +4260,8 @@ w_metadata cod_demo games \
     publisher="Activision" \
     year="2003" \
     media="download" \
-    file1="Call_Of_Duty_Demo.exe" 
+    file1="Call_Of_Duty_Demo.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\Call of Duty Single Player Demo\\CoDSP.exe"
 
 load_cod_demo()
 {
