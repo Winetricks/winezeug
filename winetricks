@@ -203,6 +203,7 @@ usage() {
     echo " msxml6        MS XML Core Services 6.0"
     echo " ogg           ogg filters/codecs: flac, theora, speex, vorbis, schroedinger"
     echo " ole2          MS 16 bit OLE"
+    echo " opensymbol    OpenSymbol fonts from OpenOffice.org (replacement for Wingdings)"
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " physx         NVIDIA/AGEIA PhysX runtime"
@@ -262,7 +263,7 @@ usage() {
     echo "Pseudopackages:"
     echo " alldlls=builtin  Force use of builtin dlls (even if loaded with absolute path) (except for msvcp80 and d3dx9_*)"
     echo " alldlls=default  Remove all DLL overrides"
-    echo " allfonts      All listed fonts and aliases (corefonts, droid, eufonts, liberation, lucida, tahoma, cjkfonts)"
+    echo " allfonts      All listed fonts and aliases (corefonts, droid, eufonts, liberation, lucida, opensymbol, tahoma, cjkfonts)"
     echo " allcodecs     All listed codecs (xvid, ffdshow)"
     echo " cjkfonts      All Chinese, Japanese, Korean fonts and aliases (fakechinese, fakejapanese, fakekorean, unifont)"
     echo " ddr=gdi       Set DirectDrawRenderer to GDI (default)"
@@ -3409,6 +3410,21 @@ load_ole2()
 
 #----------------------------------------------------------------
 
+load_opensymbol()
+{
+    # The OpenSymbol fonts are a replacement for the Windows Wingdings font from OpenOffice.org.
+    # Need to w_download from Debian since I can't find a standalone download from OpenOffice
+    # Note: The source download package on debian is for _all_ of OpenOffice, which is 266 MB.
+    w_download opensymbol http://ftp.us.debian.org/debian/pool/main/o/openoffice.org/ttf-opensymbol_3.2.1-10_all.deb 6b399c9f001ef0aa86661690427d5f84561b6210
+    w_try cd "$W_TMP"
+    w_try ar x "$W_CACHE/ttf-opensymbol_3.2.1-10_all.deb" data.tar.bz2
+    w_try tar jvxf data.tar.bz2 ./usr/share/fonts/truetype/openoffice/opens___.ttf
+    w_try mv "$W_TMP/usr/share/fonts/truetype/openoffice/opens___.ttf" "$W_FONTSDIR_UNIX"
+    w_register_font opens___.ttf "OpenSymbol"
+}
+
+#----------------------------------------------------------------
+
 load_openwatcom()
 {
     # http://www.openwatcom.org
@@ -5004,6 +5020,7 @@ do
     nvidiasdk95) w_call nvidiasdk95;;
     ogg) w_call ogg;;
     ole2) w_call ole2;;
+    opensymbol) w_call opensymbol;;
     openwatcom|watcom) w_call openwatcom;;
     pdh) w_call pdh;;
     physx) w_call physx;;
@@ -5067,7 +5084,7 @@ do
     xvid) w_call xvid;;
 
     allcodecs|allvcodecs) w_call vcrun6; w_call ffdshow; w_call xvid;  w_call icodecs;;
-    allfonts) w_call corefonts; w_call droid; w_call eufonts; w_call liberation; w_call lucida; w_call tahoma; w_call fakechinese; w_call fakejapanese; w_call fakekorean; w_call unifont;;
+    allfonts) w_call corefonts; w_call droid; w_call eufonts; w_call liberation; w_call lucida; w_call opensymbol; w_call tahoma; w_call fakechinese; w_call fakejapanese; w_call fakekorean; w_call unifont;;
     alldlls=builtin) override_all_dlls;;
     alldlls=default) override_no_dlls;;
     cjkfonts) w_call fakechinese; w_call fakejapanese; w_call fakekorean; w_call unifont;;
