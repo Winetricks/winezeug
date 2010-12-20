@@ -1507,14 +1507,14 @@ wisotool_read_volume_name()
     : echo std_id is $std_id
 
     case $std_id in
-    BEA01) wisotool_read_udf_volume_name $1; ;;
+    BEA01|CD001) wisotool_read_udf_volume_name $1; ;;
     *) echo "Unrecognized disk type $std_id"; exit 1 ;;
     esac
 }
 
 wisotool_volname()
 {
-    x=`volname $1 | sed 's/  *$//'`
+    x=`volname $1 2> /dev/null| sed 's/  *$//'`
     if test "x$x" = "x"
     then
         # UDF?  See https://bugs.launchpad.net/bugs/678419
@@ -4408,6 +4408,44 @@ load_hko()
 
 #----------------------------------------------------------------
 
+w_metadata lswcs games \
+    title="Lego Star Wars Complete Saga" \
+    publisher="Lucasarts" \
+    year="2009" \
+    media="dvd" \
+    file1="LEGOSAGA.iso" 
+
+load_lswcs()
+{
+    w_mount LEGOSAGA
+    w_ahk_do "
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
+        SetTitleMatchMode, 2
+        winwait, Choose Setup Language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            send {Enter}
+            winwait, LEGO, License Agreement
+            send a{Enter}
+        }
+        winwait, LEGO, method
+        if ( u > 0 ) {
+            ControlClick Easy Installation
+            sleep 1000
+        }
+        winwaitclose, LEGO
+    "
+    # Installer crashes at end (http://bugs.winehq.org/show_bug.cgi?id=22529) but this doesn't seem to hurt.
+    # Wait for all processes to exit, else unmount will fail
+    #$W_WINESERVER -w
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\LucasArts\\LEGO Star Wars - The Complete Saga" "LEGOStarWarsSaga.exe"
+
+    w_warn "This game is copy-protected, and requires the real disc in a real drive to run."
+}
+
+#----------------------------------------------------------------
+
 w_metadata  lemonysnicket games \
    title="Lemony Snicket's A Series of Unfortunate Events" \
    publisher="Activision" \
@@ -5002,6 +5040,16 @@ then
     fi
 
     case "$1" in
+    volname:*)
+        # Since linux's volname command can't handle dvds, wisotool has its own,
+        # implemented using dd, old gum, and some string I had laying around.
+        # You can try it like this: 
+        #  wisotool2 volname:/dev/sr0 
+        # or
+        #  wisotool2 volname:foo.iso
+        # This will read the volname from the given image and put it to stdout.
+        wisotool_volname ${1#volname:}
+        ;;
     "")
         # GUI case
         # No non-option arguments given, so read them from GUI, and loop until user quits
