@@ -4844,6 +4844,27 @@ w_call()
     (cd "$W_TMP" && rm -rf ./*)
 }
 
+report_usage()
+{
+    # If and only if user has opted in to usage tracking, report the usage.
+    case "$W_TRACK_USAGE" in
+    1) ;;
+    *) return;;
+    esac
+
+    echo "You gave the --optin option, so reporting '$CMDLINE' to the winetricks maintainer so he knows which winetricks verbs get used and which don't.  Use --optout to disable future reports."
+
+    # Just do a HEAD request with the raw commandline.  
+    # Yes, this can be fooled by caches.  That's ok.
+    if [ -x "`which wget 2>/dev/null`" ]
+    then
+        wget --spider "http://kegel.com/data/WineTrickUsage?$CMDLINE" > /dev/null 2>&1 || true
+    elif [ -x "`which curl 2>/dev/null`" ]
+    then
+        curl -I "http://kegel.com/data/WineTrickUsage?$CMDLINE" > /dev/null 2>&1 || true
+    fi
+}
+
 # On Solaris, choose more modern commands (needed for id -u).
 case `uname -s` in
 SunOS) PATH="/usr/xpg6/bin:/usr/xpg4/bin:$PATH"
@@ -4908,6 +4929,13 @@ then
     w_warn "You're using a 64-bit WINEPREFIX, most of winetricks has been fixed for 64-bit, but you may still have problems. You can force a 32-bit WINEPREFIX by using WINEARCH=win32."
 fi
 
+# Load opt-in status
+if test -f $W_CACHE/track_usage
+then
+    W_TRACK_USAGE=`cat $W_CACHE/track_usage`
+fi
+
+CMDLINE="$*"
 while test "$1" != ""
 do
     W_PACKAGE=$1
@@ -4922,6 +4950,8 @@ do
         export WINEDEBUG
         ;;
     -v) set -x;;
+    --optin) W_TRACK_USAGE=1; echo $W_TRACK_USAGE > $W_CACHE/track_usage;;
+    --optout) W_TRACK_USAGE=0; echo $W_TRACK_USAGE > $W_CACHE/track_usage;;
     7zip|7-zip) w_call 7zip;;
     abiword) w_call abiword;;
     adobeair) w_call adobeair;;
@@ -5152,6 +5182,8 @@ do
     # cleanup
     (cd "$W_TMP" && rm -rf ./*)
 done
+
+report_usage "$CMDLINE"
 
 rmdir "$W_TMP"
 
