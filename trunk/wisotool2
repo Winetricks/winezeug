@@ -3336,8 +3336,8 @@ load_fontfix()
         # FIXME: do all affected versions of the font have same sha1sum as Gutsy?  Seems unlikely.
         if [ "$gotsum"x = "96e1121f89953e5169d3e2e7811569148f573985"x ]
         then
-            w_download . https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
-            gunzip -dc "$W_CACHE/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | (cd "$W_TMP"; tar -xf -)
+            w_download fontfix https://launchpadlibrarian.net/1499628/ttf-arphic-ukai_0.1.20060108.orig.tar.gz 92e577602d71454a108968e79ab667451f3602a2
+            gunzip -dc "$W_CACHE/fontfix/ttf-arphic-ukai_0.1.20060108.orig.tar.gz" | (cd "$W_TMP"; tar -xf -)
             w_try mv "$W_TMP"/ttf-arphic-ukai-0.1.20060108/*.ttf "$W_FONTSDIR_UNIX"
         fi
     fi
@@ -3347,8 +3347,8 @@ load_fontfix()
         gotsum=`$SHA1SUM < /usr/share/fonts/truetype/arphic/uming.ttf | sed 's/ .*//'`
         if [ "$gotsum"x = "2a4f4a69e343c21c24d044b2cb19fd4f0decc82c"x ]
         then
-            w_download . https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
-            gunzip -dc "$W_CACHE/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | (cd "$W_TMP"; tar -xf -)
+            w_download fontfix https://launchpadlibrarian.net/1564410/ttf-arphic-uming_0.1.20060108.orig.tar.gz 1439cdd731906e9e5311f320c2cb33262b24ef91
+            gunzip -dc "$W_CACHE/fontfix/ttf-arphic-uming_0.1.20060108.orig.tar.gz" | (cd "$W_TMP"; tar -xf -)
             w_try mv "$W_TMP"/ttf-arphic-uming-0.1.20060108/*.ttf "$W_FONTSDIR_UNIX"
         fi
     fi
