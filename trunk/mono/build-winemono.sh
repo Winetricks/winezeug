@@ -26,13 +26,6 @@ function setup ()
 
     NOCONFIGURE=yes
     export NOCONFIGURE
-
-    MONO_VERSION=`git describe --tags 2>/dev/null`
-    if test x"$MONO_VERSION" = x; then
-        MONO_VERSION=mono-`grep AM_INIT_AUTOMAKE configure.in | cut -d ',' -f 2|tr -d '\)'`
-    fi
-    MONO_PREFIX=$INSTALL_DESTDIR/$MONO_VERSION
-    echo Mono Win32 installation prefix: $MONO_PREFIX
 }
 
 function build ()
@@ -84,6 +77,16 @@ function build ()
 
 function doinstall ()
 {
+    if test -e "$CURDIR/build-cross-wine-install/bin/libmono.dll"; then
+        MONO_VERSION=mono-1.0
+    elif test -e "$CURDIR/build-cross-wine-install/bin/libmono-2.0.dll"; then
+        MONO_VERSION=mono-2.0
+    else
+        MONO_VERSION=winemono
+    fi
+
+    MONO_PREFIX=$INSTALL_DESTDIR/$MONO_VERSION
+
     if [ -d "$MONO_PREFIX" ]; then
 	rm -rf "$MONO_PREFIX"
     fi
