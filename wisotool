@@ -6910,9 +6910,7 @@ w_metadata mfsxde games \
 load_mfsxde()
 {
     # The second disk doesn't play well under Wine, see http://bugs.winehq.org/show_bug.cgi?id=25558:
-    # Workaround is to extract the iso's to a temp folder and run installer from there. When it prompts for
-    # second disk, kill the installer, and install msxml4 manually (seems to be the only thing it doesn't install).
-    # From there, start the game and activate it for the user.
+    # Workaround is to extract the iso's to a temp folder and run installer from there.
     mkdir -p "$W_TMP/$W_PACKAGE"
     iso_extract "$W_CACHE"/$W_PACKAGE/3fa08b5d2a24d128413085f4f5af5e4040e2c3c3.iso "$W_TMP/$W_PACKAGE"
 
@@ -6920,7 +6918,11 @@ load_mfsxde()
     # FIXME: Should iso_extract overwrite files by default?
     rm "$W_TMP/$W_PACKAGE"/{DVDCheck.exe,autorun.inf,fsx.ico,vcredist_x86.exe}
 
+    
+    # If you leave it mounted, it doesn't ask for the second disk to be inserted. If you mount it without extracting though,
+    # the install fails. Apparently it uses the files from the cache, but does a disk check.
     iso_extract "$W_CACHE"/$W_PACKAGE/25b822c50c5191451a4621e837bda5d221c034bf.iso "$W_TMP/$W_PACKAGE"
+    iso_mount "$W_CACHE"/$W_PACKAGE/25b822c50c5191451a4621e837bda5d221c034bf.iso
 
     cd "$W_TMP/$W_PACKAGE"
     w_ahk_do "
@@ -6929,36 +6931,22 @@ load_mfsxde()
         winwait, Microsoft Flight Simulator X, To continue, click Install
         sleep 1000
         ControlClick, Button1, Microsoft Flight Simulator X, To continue
-
-        ; Sometimes fails, sometimes succeeds. Grumble...
-        loop
-        {
-            ifwinexist, Microsoft Flight Simulator X, Please insert the disk 
-            {
-                winactivate, Microsoft Flight Simulator X, Please insert the disk
-                process, close %mfs_pid%
-                run, msiexec /i msxml.msi /q
-                setworkingdir, "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Microsoft Flight Simulator X"
-                run, fsx.exe
-                break
-            }
-            ifwinexist, Flight Simulator X - End User License Agreement
-            {
-                break
-            }
-            sleep 1000
-        }
         ; Accept license:
+        winwait, Flight Simulator X - End User License Agreement
         controlclick, Button1, Flight Simulator X - End User License Agreement
         winwait, Microsoft Flight Simulator X Product Activation Wizard
-        sleep 1000,
+        sleep 1000
         ; Activate later, currently broken on Wine, see http://bugs.winehq.org/show_bug.cgi?id=25579
         controlclick, Button2, Microsoft Flight Simulator X Product Activation Wizard
         sleep 1000
         controlclick, Button5, Microsoft Flight Simulator X Product Activation Wizard
+        ; Close main window:
+        winwait, Microsoft Flight Simulator, LEARNING CENTER
+        ; A winclose/winkill isn't forceful enough:
+        process, close, fsx.exe
+        ; Setup doesn't close on its own, because this process doesn't exit cleanly
+        process, close, IDriver.exe
     "
-    
-    # May need a wineserver -k here...
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Microsoft Flight Simulator X" "fsx.exe"
 }
