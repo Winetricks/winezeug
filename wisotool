@@ -718,6 +718,31 @@ iso_umount()
     fi
 }
 
+iso_extract()
+{
+    my_img="$1"
+
+    if [ ! -f "$my_img" ]
+    then
+        w_warn "You don't seem to have an iso in $W_CACHE/$W_PACKAGE. Please insert the disk so I can prepare one for you."
+        load_iso dd - "$my_img"
+    fi
+
+    w_try iso_mount "$my_img"
+    
+    w_try mkdir -p "$2"
+    
+    # FIXME: is there a common utility that can do this? There really should be...
+    # There is poweriso: http://www.mydigitallife.info/2007/12/05/open-extract-and-convert-daa-iso-and-bin-files-in-linux-with-free-poweriso-for-linux/
+    # but it is linux 32bit only, and fails for me when extracting the mfsxde iso's.
+    w_try cd "$2"
+    w_try cp -r "$W_ISO_MOUNT_ROOT"/* .
+
+    # Make the files writable, otherwise you'll get errors when trying to remove the temp directory:
+    w_try chmod -R +w .
+    iso_umount
+}
+
 mds_mount()
 {
 
@@ -6870,6 +6895,72 @@ load_metro2033()
     w_warn "You'll need the Xinput2 patch from http://bugs2.winehq.org/attachment.cgi?id=29313 to be able to use the mouse."
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Steam" "Steam.exe -login $STEAM_USER $STEAM_PASS -applaunch 43110"
+}
+
+#----------------------------------------------------------------
+
+w_metadata mfsxde games \
+    title="Microsoft Flight Simulator X: Deluxe Edition" \
+    publisher="Microsoft" \
+    year="2006" \
+    media="dvd" \
+    file1="3fa08b5d2a24d128413085f4f5af5e4040e2c3c3.iso" \
+    file2="25b822c50c5191451a4621e837bda5d221c034bf.iso"
+
+load_mfsxde()
+{
+    # The second disk doesn't play well under Wine, see http://bugs.winehq.org/show_bug.cgi?id=25558:
+    # Workaround is to extract the iso's to a temp folder and run installer from there. When it prompts for
+    # second disk, kill the installer, and install msxml4 manually (seems to be the only thing it doesn't install).
+    # From there, start the game and activate it for the user.
+    mkdir -p "$W_TMP/$W_PACKAGE"
+    iso_extract "$W_CACHE"/$W_PACKAGE/3fa08b5d2a24d128413085f4f5af5e4040e2c3c3.iso "$W_TMP/$W_PACKAGE"
+
+    # There are a few files that are on both DVDs. Remove them manually so cp doesn't complain.
+    # FIXME: Should iso_extract overwrite files by default?
+    rm "$W_TMP/$W_PACKAGE"/{DVDCheck.exe,autorun.inf,fsx.ico,vcredist_x86.exe}
+
+    iso_extract "$W_CACHE"/$W_PACKAGE/25b822c50c5191451a4621e837bda5d221c034bf.iso "$W_TMP/$W_PACKAGE"
+
+    cd "$W_TMP/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run setup.exe,,,mfs_pid
+        winwait, Microsoft Flight Simulator X, To continue, click Install
+        sleep 1000
+        ControlClick, Button1, Microsoft Flight Simulator X, To continue
+
+        ; Sometimes fails, sometimes succeeds. Grumble...
+        loop
+        {
+            ifwinexist, Microsoft Flight Simulator X, Please insert the disk 
+            {
+                winactivate, Microsoft Flight Simulator X, Please insert the disk
+                process, close %mfs_pid%
+                run, msiexec /i msxml.msi /q
+                setworkingdir, "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Microsoft Flight Simulator X"
+                run, fsx.exe
+                break
+            }
+            ifwinexist, Flight Simulator X - End User License Agreement
+            {
+                break
+            }
+            sleep 1000
+        }
+        ; Accept license:
+        controlclick, Button1, Flight Simulator X - End User License Agreement
+        winwait, Microsoft Flight Simulator X Product Activation Wizard
+        sleep 1000,
+        ; Activate later, currently broken on Wine, see http://bugs.winehq.org/show_bug.cgi?id=25579
+        controlclick, Button2, Microsoft Flight Simulator X Product Activation Wizard
+        sleep 1000
+        controlclick, Button5, Microsoft Flight Simulator X Product Activation Wizard
+    "
+    
+    # May need a wineserver -k here...
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Microsoft Flight Simulator X" "fsx.exe"
 }
 
 #----------------------------------------------------------------
