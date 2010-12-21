@@ -4835,6 +4835,29 @@ load_masseffect2()
 
 #----------------------------------------------------------------
 
+w_metadata maxmagicmarker_demo games \
+    title="Max & the Magic Marker Demo" \
+    publisher="Press Play" \
+    year="2010" \
+    media="download" \
+    file1="max_demo_pc.zip" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\maxmagicmarker_demo\\max and the magic markerdemo pc.exe"
+
+load_maxmagicmarker_demo()
+{
+    w_download $W_PACKAGE http://www.maxandthemagicmarker.com/maxdemo/max_demo_pc.zip 1a79c583ff40e7b2cf05d18a89a806fd6b88a5d1
+
+    w_try mkdir "$W_PROGRAMS_X86_UNIX"/$W_PACKAGE
+    cd "$W_PROGRAMS_X86_UNIX"/$W_PACKAGE
+    w_try unzip "$W_CACHE/$W_PACKAGE"/max_demo_pc.zip
+    # Work around bug in game?!
+    mv "max and the magic markerdemo pc" "max and the magic markerdemo pc"_Data
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\$W_PACKAGE" "max and the magic markerdemo pc.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata menofwar games \
     title="Men of War" \
     publisher="Aspyr Media" \
