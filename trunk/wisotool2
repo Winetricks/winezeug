@@ -10,23 +10,35 @@
 #
 # Portability:
 # - Portability matters, as this script is run on many operating systems
-# - No bash, zsh, or csh extensions
-# - Prefer classic sh idioms
+# - No bash, zsh, or csh extensions; only use features from
+#   the Posix standard shell and utilities; see
+#   http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html
+# - Prefer classic sh idioms as described in e.g.
+#   "Portable Shell Programming" by Bruce Blinn, ISBN: 0-13-451494-7
 # - If there is no universally available program for a needed function,
 #   support the two most frequently available programs.
 #   e.g. fall back to wget if curl is not available; likewise, support
 #   both sha1sum and openssl.
-# - When using unix commands like cp, put options before filenames
-#   so it will work on systems like BSD and MacOSX
+# - When using unix commands like cp, put options before filenames so it will
+#   work on systems like MacOSX.  e.g. "rm -f foo.dat", not "rm foo.dat -f"
 #
 # Formatting:
 # - Your terminal and editor must be configured for utf-8
 #   If you do not see an o with two dots over it here [ö], stop!
 # - Do not use tabs in this file or any verbs.
 # - Indent 4 spaces.
-# - Curlies and 'then' at beginning of line.
-# - cases aligned with 'case' and 'esac'
 # - Try to keep line length below 80 (makes printing easier)
+# - Open curly braces ('{') and 'then' at beginning of line,
+#   close curlies ('}') and 'fi' should line up with the matching { or if, 
+#   cases aligned with 'case' and 'esac'.  For instance,
+#
+#      if test "$FOO" = "bar"
+#      then
+#         echo "FOO is bar"
+#      fi
+#      case "$FOO" of
+#      bar) echo "FOO is still bar" ;;
+#      esac
 #
 # Commenting:
 # - Comments should explain intent in English
@@ -36,10 +48,12 @@
 # Public things defined by this script, for use by verbs:
 # - Variables have uppercase names starting with W_
 # - Functions have lowercase names starting with w_
+#
 # Private things internal to this script, not for use by verbs: 
 # - Local variables have lowercase names starting with uppercase _W_
 # - Global variables have uppercase names starting with WISOTOOL_
 # - Functions have lowercase names starting with wisotool_
+# FIXME: A few verbs still use wisotool-private functions or variables.
 #
 # Internationalization / localization:
 # - Important or frequently used message should be internationalized
@@ -63,7 +77,8 @@ w_warn()
     echo "$@"
     echo "------------------------------------------------------"
 
-    # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
+    # For some reason, nulls were showing up in $@?!, causing truncated output
+    # in zenity, so use tr to replace NUL chars with spaces.
     msg="`echo $@ | tr '\000' ' '`"
     case $WISOTOOL_GUI in
     zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
@@ -72,7 +87,7 @@ w_warn()
     esac
 }
 
-# Display fatal error message
+# Display fatal error message and terminate script
 w_die()
 {
     w_warn "$@"
@@ -81,21 +96,29 @@ w_die()
 }
 
 # Execute with error checking
+# Put this in front of any command that might fail
 w_try()
 {
-    # "VAR=foo try cmd" fails to put VAR in the environment
-    # with some versions of bash if try is a shell function?!
-    # Adding this explicit export works around it.
+    # "VAR=foo w_try cmd" fails to put VAR in the environment
+    # with some versions of bash if w_try is a shell function?!
+    # This is a problem when trying to pass environment variables to e.g. wine.
+    # Adding an explicit export here works around it, so add any we use.
     export WINEDLLOVERRIDES
     echo Executing "$@"
-    # Mark executable - needed if running on windows vista
+
+    # On Vista, we need to jump through a few hoops to run commands in cygwin.
+    # First, .exe's need to have the executable bit set.
+    # Second, only cmd can run setup programs (presumably for security).
+    # If $1 ends in .exe, we know we're running on real windows, otherwise
+    # $1 would be 'wine'.
     case "$1" in
-    *.exe) chmod +x "$1" || true
-      cmd /c "$@"
-      ;;
+    *.exe)
+        chmod +x "$1" || true # don't care if it fails
+        cmd /c "$@"
+        ;;
     *)
-      "$@"
-      ;;
+        "$@"
+        ;;
     esac
     status=$?
     if test $status -ne 0
