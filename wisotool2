@@ -3826,6 +3826,41 @@ load_mspaint()
 
 #----------------------------------------------------------------
 
+w_metadata python26 apps \
+   title="Python Interpreter, version 2.6.2" \
+   publisher="Python Software Foundaton" \
+   year="2009" \
+   media="download" \
+   file1="python-2.6.2.msi" \
+   installed_exe1="c:\\Python26\\python.exe"
+
+load_python26()
+{
+    w_download python26 http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi 2d1503b0e8b7e4c72a276d4d9027cf4856b208b8
+    w_download python26 $WISOTOOL_SOURCEFORGE/project/pywin32/pywin32/Build%20214/pywin32-214.win32-py2.6.exe eca58f29b810d8e3e7951277ebb3e35ac35794a3
+    cd "$W_CACHE"/python26
+    w_try $WINE msiexec /i python-2.6.2.msi ALLUSERS=1 $W_UNATTENDED_SLASH_Q
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run pywin32-214.win32-py2.6.exe
+        WinWait, Setup, Wizard will install pywin32
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+             ControlClick Button2   ; next
+             WinWait, Setup, Python 2.6 is required
+             ControlClick Button3   ; next
+             WinWait, Setup, Click Next to begin
+             ControlClick Button3   ; next
+             WinWait, Setup, finished
+             ControlClick Button4   ; Finish
+        }
+        WinWaitClose
+        "
+}
+
+#----------------------------------------------------------------
+
 w_metadata  safari apps \
    title="Safari" \
    publisher="Apple" \
