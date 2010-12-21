@@ -158,7 +158,6 @@ for verb in \
     rtlm=textex \
     sandbox \
     sound=alsa \
-    sound=audioio \
     sound=coreaudio \
     sound=esd \
     sound=jack \

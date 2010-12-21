@@ -288,7 +288,6 @@ usage() {
     echo " rtlm=textex    Set RenderTargetLockMode to textex"
     echo " sandbox        Sandbox the wineprefix - remove links to ~"
     echo " sound=alsa       Set sound driver to ALSA"
-    echo " sound=audioio    Set sound driver to AudioIO"
     echo " sound=coreaudio  Set sound driver to CoreAudio"
     echo " sound=esd        Set sound driver to Esound"
     echo " sound=jack       Set sound driver to Jack"
@@ -5141,7 +5140,6 @@ do
     rtlm=textex) set_rtlm textex;;
     sandbox) sandbox;;
     sound=alsa|alsa) set_sound_driver alsa;;
-    sound=audioio|audioio) set_sound_driver audioio;;
     sound=coreaudio|coreaudio) set_sound_driver coreaudio;;
     sound=esound|sound=esd|esd|esound) set_sound_driver esd;;
     sound=jack|jack) set_sound_driver jack;;
