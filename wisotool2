@@ -4579,6 +4579,67 @@ load_hko()
 
 #----------------------------------------------------------------
 
+w_metadata losthorizon_demo games \
+    title="Lost Horizon Demo" \
+    publisher="Deep Silver" \
+    year="2010" \
+    media="download" \
+    file1="Lost_Horizon_Demo_EN.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN\\Deep Silver\\Lost Horizon Demo\\fsasgame.exe"
+
+load_losthorizon_demo()
+{
+    w_download_manual $W_PACKAGE http://www.fileplanet.com/215704/download/Lost-Horizon-Demo Lost_Horizon_Demo_EN.exe
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run Lost_Horizon_Demo_EN.exe
+        WinWait,Lost Horizon Demo, Destination
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            Send {RAW}"$W_TMP"
+            ControlClick Button2 ;Install
+            WinWaitClose,Lost Horizon Demo,Installation
+            Sleep 1000
+            Click, Left, 169, 371
+            WinWait,Lost Horizon Demo - InstallShield Wizard,Welcome
+            Sleep 500
+            ControlClick Button1 ;Next
+            WinWait,Lost Horizon Demo - InstallShield Wizard,License
+            ControlFocus,Button3,Lost Horizon Demo
+            Sleep 500
+            Send {Space}
+            ControlClick Button1 ;Next
+            WinWait,Lost Horizon Demo - InstallShield Wizard,program
+            Sleep 500
+            ControlClick Button2 ;Next
+            WinWait,Lost Horizon Demo - InstallShield Wizard,features
+            Sleep 500
+            ControlClick Button4 ;Next
+            WinWait,Lost Horizon Demo - InstallShield Wizard,begin
+            Sleep 500
+            ControlClick Button1 ;Next
+        }
+        WinWaitClose
+        WinWait,Lost Horizon Demo - InstallShield Wizard,Complete
+        if ( u > 0 ) {
+            ControlFocus,Button2,Lost Horizon
+            Sleep 500
+            Send {Space}
+            Sleep 500
+            ControlClick Button4 ; Finish
+        }
+        WinWaitClose
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Deep Silver\\Lost Horizon Demo" "fsasgame.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata lswcs games \
     title="Lego Star Wars Complete Saga" \
     publisher="Lucasarts" \
