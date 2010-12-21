@@ -207,6 +207,7 @@ usage() {
     echo " openwatcom    Open Watcom C/C++ compiler (can compile win16 code!)"
     echo " pdh           MS pdh.dll (Performance Data Helper)"
     echo " physx         NVIDIA/AGEIA PhysX runtime"
+    echo " protectionid  Protection ID (tool for identifying copy protections)"
     echo " psdk2003      MS Platform SDK 2003"
     echo " psdkvista     MS Vista SDK (does not install yet)"
     echo " psdkwin7      MS Windows 7 SDK (installing just headers and c++ compiler works)"
@@ -554,6 +555,21 @@ w_try_cabextract() {
 }
 
 cabextract() {
+    w_die oops, bug, please report
+}
+
+w_try_unrar() {
+    # Not always installed, but shouldn't be fatal unless it's being used
+    UNRAR="`which unrar 2>/dev/null`"
+    if test ! -x "$UNRAR"
+    then
+        w_die "Cannot find unrar.  Please install it (e.g. 'sudo apt-get install unrar' or 'sudo yum install unrar'). For cygwin, you can get it at http://gnuwin32.sourceforge.net/packages/unrar.htm"
+    fi
+
+    w_try $UNRAR "$@"
+}
+
+unrar() {
     w_die oops, bug, please report
 }
 
@@ -3487,6 +3503,16 @@ load_psdk2003()
 
 #----------------------------------------------------------------
 
+load_protectionid()
+{
+    w_download protectionid http://pid.gamecopyworld.com/ProtectionID_v6.4.0.rar 10157e18af14cbbed12944a53523e1b135d350a3
+    w_try cd "$W_WINDIR_UNIX"
+    w_try_unrar x "$W_CACHE/protectionid/ProtectionID_v6.4.0.rar"
+    w_warn "ProtectionID is now installed to $W_WINDIR_UNIX/protection_id.exe"
+}
+
+#----------------------------------------------------------------
+
 load_psdkvista()
 {
     # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
@@ -5053,6 +5079,7 @@ do
     openwatcom|watcom) w_call openwatcom;;
     pdh) w_call pdh;;
     physx) w_call physx;;
+    protectionid) w_call protectionid;;
     psdk2003) w_call psdk2003;;
     psdkvista) w_call psdkvista;;
     psdkwin7) w_call psdkwin7;;
