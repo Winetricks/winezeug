@@ -728,17 +728,31 @@ w_metadata()
         w_die "bug: a verb named $1 already exists."
     fi
 
+    _W_md_cmd="$1"
     file="$WISOTOOL_METADATA/$2/$1.vars"
     shift
     shift
+    # Echo arguments to file, with double quotes around the values.
     # Used to use perl here, but that was too slow on cygwin.
     for arg
     do
         # Use longest match when stripping value, 
         # and shortest match when stripping name,
         # so descriptions can have embedded equals signs
+        # FIXME: backslashes get interpreted here.  This screws up
+        # installed_file1 fairly often.  Fortunately, we can use forward 
+        # slashes in that variable instead of backslashes.
         echo ${arg%%=*}=\"${arg#*=}\"
     done > "$file"
+    # If the problem described above happens, you'd see errors like this:
+    # /tmp/w.dank.4650/metadata/dlls/comctl32.vars: 6: Syntax error: Unterminated quoted string
+    # so check for lines that aren't properly quoted.
+    # FIXME: only check this in maintainer mode, since it's slow on cygwin
+    if grep '[^"]$' "$file"
+    then
+        w_die "bug: w_metadata $_W_md_cmd corrupt, might need forward slashes?" 
+    fi
+    unset _W_md_cmd
 }
 
 # Function for verbs to register their main executable.
@@ -2167,7 +2181,7 @@ w_metadata  adobeair dlls \
    year="2010" \
    media="download" \
    file1="AdobeAIRInstaller.exe" \
-   installed_file1="$W_PROGRAMS_X86_WIN\\Common Files\\Adobe AIR\\Versions\\1.0\\Adobe AIR.dll"
+   installed_file1="$W_PROGRAMS_X86_WIN/Common Files/Adobe AIR/Versions/1.0/Adobe AIR.dll"
 
 load_adobeair()
 {
@@ -2188,7 +2202,7 @@ w_metadata amstream dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\amstream.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/amstream.dll"
 
 load_amstream()
 {
@@ -2210,7 +2224,7 @@ w_metadata  art2kmin dlls \
    year="2007" \
    media="download" \
    file1="AccessRuntime.exe" \
-   installed_file1="$W_PROGRAMS_X86_WIN\\Common Files\\Microsoft Shared\\OFFICE12\\ACEES.DLL"
+   installed_file1="$W_PROGRAMS_X86_WIN/Common Files/Microsoft Shared/OFFICE12/ACEES.DLL"
 
 load_art2kmin()
 {
@@ -2228,7 +2242,7 @@ w_metadata  atmlib dlls \
    year="2009" \
    media="download" \
    file1="W2KSP4_EN.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\atmlib.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/atmlib.dll"
 
 load_atmlib()
 {
@@ -2249,7 +2263,7 @@ w_metadata  comctl32 dlls \
    year="2001" \
    media="download" \
    file1="cc32inst.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\comctl32.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/comctl32.dll"
 
 load_comctl32()
 {
@@ -2277,7 +2291,7 @@ w_metadata  crypt32 dlls \
    year="2003" \
    media="download" \
    file1="823182_XPE_SP2_X86_ENU.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\crypt32.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/crypt32.dll"
 
 load_crypt32()
 {
@@ -2298,7 +2312,7 @@ w_metadata d3dx9 dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\d3dx9_24.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_24.dll"
 
 load_d3dx9()
 {
@@ -2325,7 +2339,7 @@ w_metadata d3dx10 dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\d3dx10_33.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx10_33.dll"
 
 load_d3dx10()
 {
@@ -2351,7 +2365,7 @@ w_metadata devenum dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\devenum.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/devenum.dll"
 
 load_devenum()
 {
@@ -2371,7 +2385,7 @@ w_metadata dinput8 dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\dinput8.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dinput8.dll"
 
 load_dinput8()
 {
@@ -2391,7 +2405,7 @@ w_metadata directmusic dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\dmusic.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dmusic.dll"
 
 load_directmusic()
 {
@@ -2436,7 +2450,7 @@ w_metadata directplay dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\dplayx.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dplayx.dll"
 
 load_directplay()
 {
@@ -2464,7 +2478,7 @@ w_metadata dmsynth dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\dplayx.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dplayx.dll"
 
 load_dmsynth()
 {
@@ -2486,7 +2500,7 @@ w_metadata dotnet11 dlls \
    year="2003" \
    media="download" \
    file1="dotnetfx.exe" \
-   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v1.1.4322\\ndpsetup.ico"
+   installed_file1="c:/windows/Microsoft.NET/Framework/v1.1.4322/ndpsetup.ico"
 
 load_dotnet11()
 {
@@ -2523,7 +2537,7 @@ w_metadata dotnet20 dlls \
    year="2006" \
    media="download" \
    file1="dotnetfx.exe" \
-   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v2.0.50727\\mscorlib.dll"
+   installed_file1="c:/windows/Microsoft.NET/Framework/v2.0.50727/mscorlib.dll"
 
 load_dotnet20()
 {
@@ -2566,7 +2580,7 @@ w_metadata dotnet30 dlls \
    year="2006" \
    media="download" \
    file1="dotnetfx3.exe" \
-   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v3.0\\Microsoft .NET Framework 3.0\\logo.bmp"
+   installed_file1="c:/windows/Microsoft.NET/Framework/v3.0/Microsoft .NET Framework 3.0/logo.bmp"
 
 load_dotnet30()
 {
@@ -2613,7 +2627,7 @@ w_metadata dotnet35 dlls \
    year="2007" \
    media="download" \
    file1="dotnetfx35.exe" \
-   installed_file1="c:\\windows\\Microsoft.NET\\Framework\\v3.5\\MSBuild.exe"
+   installed_file1="c:/windows/Microsoft.NET/Framework/v3.5/MSBuild.exe"
 
 load_dotnet35()
 {
@@ -2661,7 +2675,7 @@ w_metadata dsound dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\dsound.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dsound.dll"
 
 load_dsound()
 {
@@ -2685,8 +2699,8 @@ w_metadata flash dlls \
    media="download" \
    file1="install_flash_player.exe" \
    file2="install_flash_player_ax.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\Macromed\\Flash\\FlashUtil10l_Plugin.exe" \
-   installed_file2="$W_SYSTEM32_DLLS_WIN\\Macromed\\Flash\\FlashUtil10l_ActiveX.exe"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/Macromed/Flash/FlashUtil10l_Plugin.exe" \
+   installed_file2="$W_SYSTEM32_DLLS_WIN/Macromed/Flash/FlashUtil10l_ActiveX.exe"
 
 load_flash()
 {
@@ -2725,7 +2739,7 @@ w_metadata gdiplus dlls \
    year="2009" \
    media="download" \
    file1="WindowsXP-KB975337-x86-ENU.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\gdiplus.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/gdiplus.dll"
 
 load_gdiplus()
 {
@@ -2755,7 +2769,7 @@ w_metadata  glut dlls \
    year="2001" \
    media="download" \
    file1="glut-3.7.6-bin.zip" \
-   installed_file1="c:\\glut-3.7.6-bin\\glut32.lib"
+   installed_file1="c:/glut-3.7.6-bin/glut32.lib"
 
 load_glut()
 {
@@ -2773,7 +2787,7 @@ w_metadata  mfc40 dlls \
    year="2004" \
    media="download" \
    file1="ole2v.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\MFC40.DLL"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/MFC40.DLL"
 
 load_mfc40()
 {
@@ -2791,7 +2805,7 @@ w_metadata msasn1 dlls \
    year="2003" \
    media="download" \
    file1="E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\msasn1.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/msasn1.dll"
 
 load_msasn1()
 {
@@ -2813,7 +2827,7 @@ w_metadata msls31 dlls \
    year="2001" \
    media="download" \
    file1="InstMsiA.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\msls31.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/msls31.dll"
 
 load_msls31()
 {
@@ -2831,7 +2845,7 @@ w_metadata msxml3 dlls \
    year="2005" \
    media="download" \
    file1="msxml3.msi" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\msxml3.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/msxml3.dll"
 
 load_msxml3()
 {
@@ -2854,7 +2868,7 @@ w_metadata msxml4 dlls \
    year="2009" \
    media="download" \
    file1="msxml4.msi" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\msxml4.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/msxml4.dll"
 
 load_msxml4()
 {
@@ -2877,7 +2891,7 @@ w_metadata physx dlls \
    year="2010" \
    media="download" \
    file1="PhysX_9.10.0129_SystemSoftware.exe" \
-   installed_file1="$W_PROGRAMS_WIN\\NVIDIA Corporation\\PhysX\\Engine\\v2.8.3\\PhysXCore.dll"
+   installed_file1="$W_PROGRAMS_WIN/NVIDIA Corporation/PhysX/Engine/v2.8.3/PhysXCore.dll"
 
 load_physx()
 {
@@ -2897,7 +2911,7 @@ w_metadata secur32 dlls \
    year="2009" \
    media="download" \
    file1="Windows2000-KB959426-x86-ENU.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\secur32.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/secur32.dll"
 
 load_secur32()
 {
@@ -2915,7 +2929,7 @@ w_metadata shockwave dlls \
    year="2010" \
    media="download" \
    file1="sw_lic_full_installer.msi" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\Adobe\\Shockwave 11\\shockwave_Projector_Loader.dcr"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/Adobe/Shockwave 11/shockwave_Projector_Loader.dcr"
 
 load_shockwave() {
     # Not silent enough, use msi instead
@@ -2942,7 +2956,7 @@ w_metadata  vcrun6 dlls \
    year="2000" \
    media="download" \
    file1="vc6redistsetup_enu.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\mfc42u.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/mfc42u.dll"
 
 load_vcrun6()
 {
@@ -2988,7 +3002,7 @@ w_metadata  vcrun2003 dlls \
    year="2003" \
    media="download" \
    file1="BZEditW32_1.6.5_Installer.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\msvcp71.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/msvcp71.dll"
 
 load_vcrun2003()
 {
@@ -3008,7 +3022,7 @@ w_metadata vcrun2005 dlls \
    year="2005" \
    media="download" \
    file1="vcredist_x86.exe" \
-   installed_file1="c:\\windows\\winsxs\\x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e\\mfc80.dll"
+   installed_file1="c:/windows/winsxs/x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.4053_x-ww_b77cec8e/mfc80.dll"
 
 load_vcrun2005()
 {
@@ -3028,7 +3042,7 @@ w_metadata vcrun2008 dlls \
    year="2008" \
    media="download" \
    file1="vcredist_x86.exe" \
-   installed_file1="C:\\windows\\winsxs\\x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53\\mfc90.dll"
+   installed_file1="C:/windows/winsxs/x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53/mfc90.dll"
 
 load_vcrun2008()
 {
@@ -3048,7 +3062,7 @@ w_metadata vcrun2010 dlls \
    year="2010" \
    media="download" \
    file1="vcredist_x86.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\mfc100.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/mfc100.dll"
 
 load_vcrun2010()
 {
@@ -3073,7 +3087,7 @@ w_metadata winhttp dlls \
    year="2005" \
    media="download" \
    file1="Windows2000-KB842773-x86-ENU.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\winhttp.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/winhttp.dll"
 
 load_winhttp()
 {
@@ -3091,7 +3105,7 @@ w_metadata wsh57 dlls \
    year="2007" \
    media="download" \
    file1="scripten.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\scrrun.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/scrrun.dll"
 
 load_wsh57()
 {
@@ -3113,7 +3127,7 @@ w_metadata xact dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\xactengine2_0.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/xactengine2_0.dll"
 
 load_xact()
 {
@@ -3144,7 +3158,7 @@ w_metadata xinput dlls \
    year="2010" \
    media="download" \
    file1="../directx9/directx_feb2010_redist.exe" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN\\xinput1_1.dll"
+   installed_file1="$W_SYSTEM32_DLLS_WIN/xinput1_1.dll"
 
 load_xinput()
 {
@@ -3173,7 +3187,7 @@ w_metadata  xvid dlls \
     year="2009" \
     media="download" \
     file1="Xvid-1.2.2-07062009.exe" \
-    installed_file1="$W_PROGRAMS_X86_WIN\\Xvid\\xvid.ico"
+    installed_file1="$W_PROGRAMS_X86_WIN/Xvid/xvid.ico"
 
 load_xvid()
 {
@@ -3193,7 +3207,7 @@ w_metadata baekmuk fonts \
    year="1999" \
    media="download" \
    file1="ttf-baekmuk_2.2.orig.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN\\batang.ttf"
+   installed_file1="$W_FONTSDIR_WIN/batang.ttf"
 
 load_baekmuk()
 {
@@ -3217,7 +3231,7 @@ w_metadata corefonts fonts \
    year="2008" \
    media="download" \
    file1="arial32.exe" \
-   installed_file1="$W_FONTSDIR_WIN\\Arial.TTF"
+   installed_file1="$W_FONTSDIR_WIN/Arial.TTF"
 
 load_corefonts()
 {
@@ -3320,7 +3334,7 @@ w_metadata droid fonts \
    year="2009" \
    media="download" \
    file1="DroidSans-Bold.ttf" \
-   installed_file1="$W_FONTSDIR_WIN\\DroidSans-Bold.ttf"
+   installed_file1="$W_FONTSDIR_WIN/DroidSans-Bold.ttf"
 
 do_droid() {
     w_download droid ${DROID_URL}$1';hb=HEAD'   $3  $1
@@ -3352,7 +3366,7 @@ w_metadata eufonts fonts \
    year="2008" \
    media="download" \
    file1="EUupdate.EXE" \
-   installed_file1="$W_FONTSDIR_WIN\\trebucbd.ttf"
+   installed_file1="$W_FONTSDIR_WIN/trebucbd.ttf"
 
 load_eufonts()
 {
@@ -3458,7 +3472,7 @@ w_metadata fontfix fonts \
    year="2007" \
    media="download" \
    file1="ttf-arphic-ukai_0.1.20060108.orig.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN\\ukai.ttf"
+   installed_file1="$W_FONTSDIR_WIN/ukai.ttf"
 
 load_fontfix()
 {
@@ -3507,7 +3521,7 @@ w_metadata liberation fonts \
    year="2008" \
    media="download" \
    file1="liberation-fonts-1.04.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN\\LiberationMono-BoldItalic.ttf"
+   installed_file1="$W_FONTSDIR_WIN/LiberationMono-BoldItalic.ttf"
 
 load_liberation()
 {
@@ -3548,7 +3562,7 @@ w_metadata lucida fonts \
    year="1998" \
    media="download" \
    file1="eurofixi.exe" \
-   installed_file1="$W_FONTSDIR_WIN\\lucon.ttf"
+   installed_file1="$W_FONTSDIR_WIN/lucon.ttf"
 
 load_lucida()
 {
@@ -3565,7 +3579,7 @@ w_metadata takao fonts \
    year="2010" \
    media="download" \
    file1="takao-fonts-ttf-003.02.01.zip" \
-   installed_file1="$W_FONTSDIR_WIN\\TakaoGothic.ttf"
+   installed_file1="$W_FONTSDIR_WIN/TakaoGothic.ttf"
 
 load_takao()
 {
@@ -3592,7 +3606,7 @@ w_metadata wenquanyi fonts \
    year="2009" \
    media="download" \
    file1="wqy-microhei-0.2.0-beta.tar.gz" \
-   installed_file1="$W_FONTSDIR_WIN\\wqy-microhei.ttc"
+   installed_file1="$W_FONTSDIR_WIN/wqy-microhei.ttc"
 
 load_wenquanyi()
 {
@@ -3613,7 +3627,7 @@ w_metadata unifont fonts \
    year="2008" \
    media="download" \
    file1="unifont-5.1.20080907.zip" \
-   installed_file1="$W_FONTSDIR_WIN\\unifont.ttf"
+   installed_file1="$W_FONTSDIR_WIN/unifont.ttf"
 
 load_unifont()
 {
@@ -3639,7 +3653,7 @@ w_metadata 7zip apps \
    year="1999" \
    media="download" \
    file1="7z465.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\7-Zip\\7z.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/7-Zip/7z.exe"
 
 load_7zip()
 {
@@ -3658,7 +3672,7 @@ w_metadata  abiword apps \
    year="2010" \
    media="download" \
    file1="abiword-setup-2.8.6.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\AbiWord\\bin\\AbiWord.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/AbiWord/bin/AbiWord.exe"
 
 load_abiword()
 {
@@ -3676,7 +3690,7 @@ w_metadata autohotkey apps \
    year="2010" \
    media="download" \
    file1="AutoHotkey104805_Install.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\AutoHotkey\\AutoHotkey.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/AutoHotkey/AutoHotkey.exe"
 
 load_autohotkey()
 {
@@ -3693,7 +3707,7 @@ w_metadata cmake apps \
    year="2010" \
    media="download" \
    file1="cmake-2.8.2-win32-x86.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\CMake 2.8\\bin\\cmake-gui.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/CMake 2.8/bin/cmake-gui.exe"
 
 load_cmake()
 {
@@ -3712,7 +3726,7 @@ w_metadata cygwin apps \
    year="2009" \
    media="download" \
    file1="setup.exe" \
-   installed_exe1="C:\\cygwin\\bin\\sh.exe"
+   installed_exe1="C:/cygwin/bin/sh.exe"
 
 load_cygwin()
 {
@@ -3746,7 +3760,7 @@ w_metadata ie6 apps \
    year="2002" \
    media="download" \
    file1="ie60.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\Internet Explorer\\iexplore.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/Internet Explorer/iexplore.exe"
 
 load_ie6()
 {
@@ -3836,7 +3850,7 @@ w_metadata mspaint apps \
    year="2001" \
    media="download" \
    file1="paintnt.exe" \
-   installed_exe1="c:\\windows\\mspaint.exe"
+   installed_exe1="c:/windows/mspaint.exe"
 
 load_mspaint()
 {
@@ -3855,7 +3869,7 @@ w_metadata python26 apps \
    year="2009" \
    media="download" \
    file1="python-2.6.2.msi" \
-   installed_exe1="c:\\Python26\\python.exe"
+   installed_exe1="c:/Python26/python.exe"
 
 load_python26()
 {
@@ -3890,7 +3904,7 @@ w_metadata  safari apps \
    year="2010" \
    media="download" \
    file1="SafariSetup.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\Safari\\Safari.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/Safari/Safari.exe"
 
 load_safari()
 {
@@ -3932,7 +3946,7 @@ w_metadata steam apps \
    year="2010" \
    media="download" \
    file1="SteamInstall.msi.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\Steam\\Steam.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/Steam/Steam.exe"
 
 load_steam()
 {
@@ -3960,7 +3974,7 @@ w_metadata utorrent apps \
    year="2010" \
    media="download" \
    file1="utorrent.exe" \
-   installed_exe1="c:\\windows\\utorrent.exe"
+   installed_exe1="c:/windows/utorrent.exe"
 
 load_utorrent()
 {
@@ -3984,7 +3998,7 @@ w_metadata wmp9 apps \
    year="2003" \
    media="download" \
    file1="MPSetup.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN\\Windows Media Player\\wmplayer.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/Windows Media Player/wmplayer.exe"
 
 load_wmp9()
 {
@@ -4032,7 +4046,7 @@ w_metadata 3dmark2000 benchmarks \
     year="2000" \
     media="download" \
     file1="3dmark2000_v11_100308.exe" \
-    installed_file1="$W_PROGRAMS_X86_WIN\\MadOnion.com\\3DMark2000\\3DMark2000.exe"
+    installed_file1="$W_PROGRAMS_X86_WIN/MadOnion.com/3DMark2000/3DMark2000.exe"
 
 load_3dmark2000()
 {
@@ -4096,7 +4110,7 @@ w_metadata aoe3_demo games \
     year="2005" \
     media="download" \
     file1="aoe3trial.exe" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\Microsoft Games\\Age of Empires III Trial\\age3.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/Microsoft Games/Age of Empires III Trial/age3.exe"
 
 load_aoe3_demo()
 {
@@ -4238,7 +4252,7 @@ w_metadata bladekitten_demo games \
     year="2010" \
     media="download" \
     file1="BladeKittenDemoInstall.exe" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\Krome Studios\\Blade Kitten Demo\\BladeKitten_Demo.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/Krome Studios/Blade Kitten Demo/BladeKitten_Demo.exe"
 
 load_bladekitten_demo()
 {
@@ -4294,7 +4308,7 @@ w_metadata  blobby_volley games \
    year="2000" \
    media="manual_download" \
    file1="blobby.zip" \
-   installed_exe1="c:\\BlobbyVolley\\volley.exe"
+   installed_exe1="c:/BlobbyVolley/volley.exe"
 
 load_blobby_volley()
 {
@@ -4319,7 +4333,7 @@ w_metadata cod_demo games \
     year="2003" \
     media="download" \
     file1="Call_Of_Duty_Demo.exe" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\Call of Duty Single Player Demo\\CoDSP.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/Call of Duty Single Player Demo/CoDSP.exe"
 
 load_cod_demo()
 {
@@ -4377,7 +4391,7 @@ w_metadata cod4mw_demo games \
     year="2007" \
     media="download" \
     file1="CoD4MWDemoSetup_v2.exe" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\Activision\\Call of Duty 4 - Modern Warfare Demo\\iw3sp.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/Activision/Call of Duty 4 - Modern Warfare Demo/iw3sp.exe"
 
 load_cod4mw_demo()
 {
@@ -4431,7 +4445,7 @@ w_metadata civ4_demo games \
    year="2005" \
    media="manual_download" \
    file1="Civilization4_Demo.zip" \
-   installed_file1="$W_PROGRAMS_X86_WIN\\Firaxis Games\\Sid Meier's Civilization 4 Demo\\Civilization4.exe"
+   installed_file1="$W_PROGRAMS_X86_WIN/Firaxis Games/Sid Meier's Civilization 4 Demo/Civilization4.exe"
 
 load_civ4_demo()
 {
@@ -4484,7 +4498,7 @@ w_metadata divinity2_demo games \
     year="2010" \
     media="download" \
     file1="Divinity2_DEMO_EN.exe" \
-    installed_file1="$W_PROGRAMS_X86_WIN\\Divinity II - Ego Draconis - Demo\\Bin\\Divinity2_Demo.exe"
+    installed_file1="$W_PROGRAMS_X86_WIN/Divinity II - Ego Draconis - Demo/Bin/Divinity2_Demo.exe"
 
 load_divinity2_demo()
 {
@@ -4565,7 +4579,7 @@ w_metadata hko games \
     year="2009" \
     media="download" \
     file1="Hello Kitty Online Standard Installer.zip" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\SanrioTown\\Hello Kitty Online\\HKO.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/SanrioTown/Hello Kitty Online/HKO.exe"
 
 load_hko()
 {
@@ -4643,7 +4657,7 @@ w_metadata losthorizon_demo games \
     year="2010" \
     media="download" \
     file1="Lost_Horizon_Demo_EN.exe" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\Deep Silver\\Lost Horizon Demo\\fsasgame.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/Deep Silver/Lost Horizon Demo/fsasgame.exe"
 
 load_losthorizon_demo()
 {
@@ -4737,7 +4751,7 @@ load_lswcs()
 #----------------------------------------------------------------
 
 w_metadata  lemonysnicket games \
-   title="Lemony Snicket's A Series of Unfortunate Events" \
+   title="Lemony Snicket: A Series of Unfortunate Events" \
    publisher="Activision" \
    year="2004" \
    media="cd" \
@@ -4899,7 +4913,7 @@ w_metadata maxmagicmarker_demo games \
     year="2010" \
     media="download" \
     file1="max_demo_pc.zip" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\maxmagicmarker_demo\\max and the magic markerdemo pc.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/maxmagicmarker_demo/max and the magic markerdemo pc.exe"
 
 load_maxmagicmarker_demo()
 {
@@ -4922,7 +4936,7 @@ w_metadata menofwar games \
     year="2009" \
     media="dvd" \
     file1="Men of War.iso" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\Aspyr\\Men of War\\mow.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/Aspyr/Men of War/mow.exe"
 
 load_menofwar()
 {
@@ -4966,7 +4980,7 @@ w_metadata plantsvszombies games \
     year="2009" \
     media="download" \
     file1="PlantsVsZombiesSetup.exe" \
-    installed_file1="$W_PROGRAMS_X86_WIN\\PopCap Games\\Plants vs. Zombies\\PlantsVsZombies.exe"
+    installed_file1="$W_PROGRAMS_X86_WIN/PopCap Games/Plants vs. Zombies/PlantsVsZombies.exe"
 
 load_plantsvszombies()
 {
@@ -5206,7 +5220,7 @@ w_metadata  wog games \
     year="2008" \
     media="download" \
     file1="WorldOfGooDemo.1.0.exe" \
-    installed_exe1="$W_PROGRAMS_X86_WIN\\WorldOfGooDemo\\WorldOfGoo.exe"
+    installed_exe1="$W_PROGRAMS_X86_WIN/WorldOfGooDemo/WorldOfGoo.exe"
 
 load_wog()
 {
