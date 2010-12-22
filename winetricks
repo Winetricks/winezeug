@@ -540,17 +540,15 @@ w_try_regsvr()
     w_try $WINE regsvr32 $W_UNATTENDED_SLASH_S $@
 }
 
-w_try_cabextract() {
+w_try_cabextract()
+{
     # Not always installed, but shouldn't be fatal unless it's being used
-    _W_cabextract="`which cabextract 2>/dev/null`" 
-    if test ! -x "$_W_cabextract"
+    if test ! -x "`which cabextract 2>/dev/null`" 
     then
         w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
     
-    w_try $_W_cabextract "$@"
-
-    unset _W_cabextract
+    w_try cabextract -q "$@"
 }
 
 cabextract() {

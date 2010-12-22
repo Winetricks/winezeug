@@ -146,15 +146,12 @@ w_try_regsvr()
 w_try_cabextract()
 {
     # Not always installed, but shouldn't be fatal unless it's being used
-    _W_CABEXTRACT="`which cabextract 2>/dev/null`" 
-    if test ! -x "$_W_CABEXTRACT"
+    if test ! -x "`which cabextract 2>/dev/null`" 
     then
         w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
     
-    w_try $_W_CABEXTRACT "$@"
-
-    unset _W_CABEXTRACT
+    w_try cabextract -q "$@"
 }
 
 w_try_unzip()
