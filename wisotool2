@@ -2170,6 +2170,22 @@ helper_directx_dl()
     DIRECTX_NAME=directx_feb2010_redist.exe
 }
 
+helper_d3dx9_xx()
+{
+    dllname=d3dx9_$1
+
+    helper_directx_dl
+
+    # Even kinder, less invasive directx - only extract and override d3dx9_xx.dll
+    w_try_cabextract -d "$W_TMP" -L -F "*$dllname*x86*" "$W_CACHE"/directx9/$DIRECTX_NAME
+    for x in "$W_TMP"/*.cab
+    do
+      w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F "$dllname.dll" "$x"
+    done
+
+    w_override_dlls native $dllname
+}
+
 #----------------------------------------------------------------
 
 w_metadata  adobeair dlls \
@@ -2326,6 +2342,96 @@ load_d3dx9()
     w_override_dlls native d3dx9_24 d3dx9_25 d3dx9_26 d3dx9_27 d3dx9_28 d3dx9_29 d3dx9_30
     w_override_dlls native d3dx9_31 d3dx9_32 d3dx9_33 d3dx9_34 d3dx9_35 d3dx9_36 d3dx9_37
     w_override_dlls native d3dx9_38 d3dx9_39 d3dx9_40 d3dx9_41 d3dx9_42 d3dx9_43
+}
+
+#----------------------------------------------------------------
+
+w_metadata d3dx9_26 dlls \
+   title="MS d3dx9_26.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_26.dll"
+
+load_d3dx9_26()
+{
+    helper_d3dx9_xx 26
+}
+
+#----------------------------------------------------------------
+
+w_metadata d3dx9_28 dlls \
+   title="MS d3dx9_28.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_28.dll"
+
+load_d3dx9_28()
+{
+    helper_d3dx9_xx 28
+}
+
+#----------------------------------------------------------------
+
+w_metadata d3dx9_31 dlls \
+   title="MS d3dx9_31.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_31.dll"
+
+load_d3dx9_31()
+{
+    helper_d3dx9_xx 31
+}
+
+#----------------------------------------------------------------
+
+w_metadata d3dx9_35 dlls \
+   title="MS d3dx9_35.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_35.dll"
+
+load_d3dx9_35()
+{
+    helper_d3dx9_xx 35
+}
+
+#----------------------------------------------------------------
+
+w_metadata d3dx9_36 dlls \
+   title="MS d3dx9_36.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_36.dll"
+
+load_d3dx9_36()
+{
+    helper_d3dx9_xx 36
+}
+
+#----------------------------------------------------------------
+
+w_metadata d3dx9_42 dlls \
+   title="MS d3dx9_42.dll" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dx9_42.dll"
+
+load_d3dx9_42()
+{
+    helper_d3dx9_xx 42
 }
 
 #----------------------------------------------------------------
