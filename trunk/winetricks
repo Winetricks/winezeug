@@ -20,7 +20,7 @@
 #---- Constants -------------------------------------------------
 
 # Name of this version of winetricks (YYYYMMDD)
-VERSION=20101106
+VERSION=20101222
 
 #---- Functions -------------------------------------------------
 
