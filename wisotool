@@ -8850,6 +8850,58 @@ load_sims3()
 
 #----------------------------------------------------------------
 
+w_metadata sims3_latenight games \
+    title="The Sims 3 Late Night Expansion" \
+    publisher="EA" \
+    year="2010" \
+    media="dvd" \
+    file1="ffe08d6730b81514041515ed0a3d6cae0209a98c.iso" 
+
+load_sims3_latenight() {
+
+    if ! test -d "$W_PROGRAMS_UNIX/Electronic Arts/The Sims 3/Game/Bin"
+    then
+        w_die "To install Sims 3 Late Night expansion, you must first install the original Sims 3."
+    fi
+
+    w_read_key
+
+    iso_mount "$W_CACHE"/$W_PACKAGE/ffe08d6730b81514041515ed0a3d6cae0209a98c.iso
+    # Default lang, USA, accept defaults, uncheck EA dl mgr, uncheck readme
+    w_ahk_do "
+        run ${W_ISO_MOUNT_LETTER}:autorun.exe
+        settitlematchmode, 2
+        winwait, The Sims, The InstallShield Wizard will
+        controlclick, Button1
+        winwait, The Sims, I have read and accept
+        controlclick, Button3
+        controlclick, Button1
+        winwait, The Sims, Registration Code
+        sendraw, ${KEY}
+        controlclick, Button2
+        winwait, The Sims, select a setup type
+        controlclick, Button4
+        winwait, The Sims, Click Install to begin
+        controlclick, Button1
+        winwait, The Sims, Would you like
+        controlclick, Button4
+        controlclick, Button1
+        winwait, The Sims, successfully installed
+        controlclick, Button1
+        controlclick, Button4
+    "
+    iso_umount
+
+    if w_workaround_wine_bug 21517
+    then
+        w_try_winetricks d3dx9_36
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Electronic Arts\\The Sims 3 Late Night\\Game\\Bin" "TS3EP03.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata singularity games \
     title="Singularity" \
     publisher="Activision" \
