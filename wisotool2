@@ -5257,6 +5257,70 @@ load_riseofnations_demo()
 
 #----------------------------------------------------------------
 
+w_metadata tmnationsforever games \
+    title="TrackMania Nations Forever" \
+    publisher="Nadeo" \
+    year="2009" \
+    media="download" \
+    file1="tmnationsforever_setup.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/TmNationsForever/TmForever.exe"
+
+load_tmnationsforever()
+{
+    if w_workaround_wine_bug 20915
+    then
+        w_warn "Gameplay and sound may be very choppy on some machines :-("
+    fi
+
+    w_download $W_PACKAGE "http://files.trackmaniaforever.com/tmnationsforever_setup.exe" cab0cf66db0471bc2674a3b1aebc35de0bca6ed0
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, tmnationsforever_setup.exe
+        WinWait,Select Setup Language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 1000
+            ControlClick TNewButton1 ; OK
+            WinWait,Setup - TmNationsForever,Welcome
+            Sleep 1000
+            ControlClick TNewButton1 ; Next
+            WinWait,Setup - TmNationsForever,License
+            Sleep 1000
+            ControlClick TNewRadioButton1 ; Accept
+            Sleep 1000
+            ControlClick TNewButton2 ; Next
+            WinWait,Setup - TmNationsForever,Where
+            Sleep 1000
+            ControlClick TNewButton3 ; Next
+            WinWait,Setup - TmNationsForever,shortcuts
+            Sleep 1000
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - TmNationsForever,perform
+            Sleep 1000
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - TmNationsForever,installing
+            Sleep 1000
+            ControlClick TNewButton4 ; Install
+        }
+        WinWait,Setup - TmNationsForever,finished
+        if ( u > 0 ) {
+            Sleep 1000
+            ControlFocus, TNewCheckListBox1, TmNationsForever, finished
+            Sleep 1000
+            Send {Space} ; don't start game
+            ControlClick TNewButton4 ; Finish
+        }
+        WinWaitClose
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\TmNationsForever" "TmForever.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata singularity games \
     title="Singularity" \
     publisher="Activision" \
