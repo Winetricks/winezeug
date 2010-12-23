@@ -4315,6 +4315,58 @@ load_3dmark03()
 }
 
 #----------------------------------------------------------------
+
+w_metadata 3dmark05 benchmarks \
+    title="3D Mark 05" \
+    publisher="Futuremark" \
+    year="2005" \
+    media="download" \
+    file1="3DMark05_v130_1901.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Futuremark/3DMark05/3DMark05.exe"
+
+load_3dmark05()
+{
+    # http://www.futuremark.com/download/3dmark05/
+    if ! test -f "$W_CACHE/$W_PACKAGE/3DMark05_v130_1901.exe"
+    then
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark05_v130_1901.exe 8ad6bc2917e22edf5fc95d1fa96cc82515093fb2
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        run 3DMark05_v130_1901.exe
+        WinWait ahk_class #32770, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Send {Enter}
+            WinWait, ahk_class #32770, License
+            ControlClick Button1 ; Accept
+            ControlClick Button4 ; Next
+            WinWait, ahk_class #32770, Destination
+            ControlClick Button1 ; Next
+            WinWait, ahk_class #32770, Install
+            ControlClick Button1 ; Install
+            WinWait, ahk_class #32770, Purchase
+            ControlClick Button4 ; Later
+        }
+        WinWait, ahk_class #32770, Complete
+        if ( u > 0 ) {
+            ControlClick Button1 ; Uncheck view readme
+            ControlClick Button3 ; Finish
+        }
+        WinWaitClose, ahk_class #32770, Complete
+    "
+    ARGS=""
+    if w_workaround_wine_bug 22392
+    then
+        w_warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
+        ARGS="-nosysteminfo"
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Futuremark\\3DMark05" "3DMark05 $ARGS"
+}
+
+#----------------------------------------------------------------
 # Games
 #----------------------------------------------------------------
 
