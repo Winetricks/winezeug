@@ -778,6 +778,11 @@ w_do_call()
     fi
 
     (
+        W_TMP="$W_DRIVE_C/windows/_temp/_$1"
+        W_TMP_WIN="C:\\windows\\_temp\\_$1"
+        rm -rf "$W_TMP"
+        mkdir -p "$W_TMP"
+
         # Unset all known used metadata values, in case this is a nested call
         unset installed_dll1 installed_exe1
 
@@ -802,6 +807,9 @@ w_do_call()
             chmod +x "$postfile"
             . "$postfile"
         fi
+
+        # Clean up after this verb
+        rm -rf "$W_TMP"
     )
 }
 
@@ -2119,20 +2127,11 @@ wisotool_install_app()
     *)   fail_msg="Failed to install package $1" ;;
     esac
 
-    W_TMP="$W_DRIVE_C/windows/_temp/_$1"
-    W_TMP_WIN="C:\\windows\\_temp\\_$1"
-    rm -rf "$W_TMP"
-    mkdir -p "$W_TMP"
-
     # FIXME: initialize a new wineprefix for this app, set lots of global variables
     if ! w_do_call $1
     then
         w_die "$fail_msg"
     fi
-
-    rm -rf "$W_TMP"
-    W_TMP="$W_DRIVE_C/windows/_temp"
-    W_TMP_WIN="C:\\windows\\_temp"
 }
 
 wisotool_uninstall_app()
