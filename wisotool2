@@ -5077,6 +5077,50 @@ load_menofwar()
 
 #----------------------------------------------------------------
 
+w_metadata osmos_demo games \
+    title="Osmos demo" \
+    publisher="Hemisphere Games" \
+    year="2009" \
+    media="download" \
+    file1="OsmosDemo_Installer_1.5.6.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/OsmosDemo/OsmosDemo.exe"
+
+load_osmos_demo()
+{
+    w_download $W_PACKAGE http://gamedaily.newaol.com/pub/OsmosDemo_Installer_1.5.6.exe 7568f97100a73985a0fd625b63b205f4477578e8
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run OsmosDemo_Installer_1.5.6.exe
+        winwait, Osmos, License
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 500
+            controlclick, Button2, Osmos Demo Setup, License Agreement
+            winwait, Osmos Demo Setup, Choose Install Location
+            sleep 500
+            controlclick, Button2, Osmos Demo Setup, Choose Install Location
+            winwait, Osmos Demo Setup, Choose Start Menu Folder
+            sleep 500
+            controlclick, Button2, Osmos Demo Setup, Choose Start Menu Folder
+            winwait, Osmos Demo Setup, Installation Complete
+            sleep 500
+            controlclick, Button2, Osmos Demo Setup, Installation Complete
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 24416
+    then
+        w_try_winetricks vcrun2005
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\OsmosDemo" "OsmosDemo.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata plantsvszombies games \
     title="Plants vs. Zombies" \
     publisher="PopCap Games" \
