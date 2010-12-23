@@ -5164,6 +5164,45 @@ load_plantsvszombies()
 
 #----------------------------------------------------------------
 
+w_metadata riseofnations_demo games \
+    title="Rise of Nations Trial" \
+    publisher="Microsoft" \
+    year="2003" \
+    media="download" \
+    file1="RiseOfNationsTrial.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Microsoft Games/Rise of Nations Trial/nations.exe"
+
+load_riseofnations_demo()
+{
+    w_download_manual $W_PACKAGE http://download.cnet.com/Rise-of-Nations-Trial-Version/3000-7562_4-10730812.html RiseOfNationsTrial.exe 33cbf1ebc0a93cb840f6296d8b529f6155db95ee
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run RiseOfNationsTrial.exe
+        WinWait,Rise Of Nations Trial Setup
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 2500
+            ControlClick CButtonClassName2
+            WinWait,Rise Of Nations Trial Setup, installed
+            sleep 2500
+            ControlClick CButtonClassName7
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 9027
+    then
+        w_call directmusic
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Microsoft Games\\Rise of Nations Trial" "nations.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata singularity games \
     title="Singularity" \
     publisher="Activision" \
