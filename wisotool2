@@ -228,7 +228,7 @@ w_verify_sha1sum()
     _W_vs_wantsum=$1
     _W_vs_file=$2
 
-    _W_vs_gotsum=`$WISOTOOL_SHA1SUM < $_W_file | sed 's/ .*//'`
+    _W_vs_gotsum=`$WISOTOOL_SHA1SUM < $_W_vs_file | sed 's/ .*//'`
     if [ "$_W_vs_gotsum"x != "$_W_vs_wantsum"x ]
     then
        w_die "sha1sum mismatch!  Rename $_W_vs_file and try again."
