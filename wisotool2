@@ -5116,7 +5116,7 @@ load_osmos_demo()
 
     if w_workaround_wine_bug 24416
     then
-        w_try_winetricks vcrun2005
+        w_call vcrun2005
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\OsmosDemo" "OsmosDemo.exe"
