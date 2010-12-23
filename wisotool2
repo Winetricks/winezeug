@@ -5321,6 +5321,55 @@ load_tmnationsforever()
 
 #----------------------------------------------------------------
 
+w_metadata sammax304_demo games \
+    title="Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls" \
+    publisher="Telltale Games" \
+    year="2010" \
+    media="download" \
+    file1="SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Telltale Games/Sam and Max - The Devil's Playhouse/Beyond the Alley of the Dolls/SamMax304.exe"
+
+load_sammax304_demo()
+{
+    if ! test -f "$W_CACHE/$W_PACKAGE"/SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+    then
+        w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
+        cd "$W_CACHE/$W_PACKAGE"
+        w_try unzip SamMax304_BigDownload.exe.zip
+        rm -f SamMax304_BigDownload.exe.zip
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, SamMax304_v02.18_unlockable_securom_pa_BigDownload.exe
+        WinWait,Sam and Max Beyond the Alley of the Dolls Setup
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            ControlClick Button2 ; Next
+            WinWait,Sam and Max Beyond the Alley of the Dolls Setup,DirectX
+            ControlClick Button2 ; Next - Directx check defaulted
+            WinWait,Sam and Max Beyond the Alley of the Dolls Setup,License
+            ControlClick Button2 ; Agree
+            WinWait,Sam and Max Beyond the Alley of the Dolls Setup,Location
+            ControlClick Button2 ; Install
+            WinWait,Sam and Max Beyond the Alley of the Dolls Setup,Finish
+            ControlClick Button4 ; Uncheck Play Now
+            ControlClick Button2 ; Finish
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 24250
+    then
+        w_call vcrun2005
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Telltale Games\\Sam and Max - The Devil's Playhouse\\Beyond the Alley of the Dolls" "SamMax304.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata singularity games \
     title="Singularity" \
     publisher="Activision" \
