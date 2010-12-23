@@ -5685,6 +5685,70 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata stalker_pripyat_bench benchmarks \
+    title="S.T.A.L.K.E.R Call of Pripyat benchmark" \
+    publisher="GSC Game World" \
+    year="2009" \
+    media="manual_download" \
+    file1="stkcop-bench-setup.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Call Of Pripyat Benchmark/Benchmark.exe"
+
+load_stalker_pripyat_bench()
+{
+    # Much faster
+    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/stalker-call-of-pripyat/pc/stalker-call-of-pripyat-benchmark stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
+    #w_download $W_PACKAGE http://files.gsc-game.com/st/bench/stkcop-bench-setup.exe 8691c3f289ecd0521bed60ffd46e65ad080206e0
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    # FIXME: a bit fragile, if you're browsing the web while installing, it sometimes gets stuck.
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run stkcop-bench-setup.exe
+        WinWait,Setup - Call Of Pripyat Benchmark
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 1000
+            ControlClick TNewButton1 ; Next
+            WinWait,Setup - Call Of Pripyat Benchmark,License
+            sleep 1000
+            ControlClick TNewRadioButton1 ; accept
+            sleep 1000
+            ControlClick TNewButton2 ; Next
+            WinWait,Setup - Call Of Pripyat Benchmark,Destination
+            sleep 1000
+            ControlClick TNewButton3 ; Next
+            WinWait,Setup - Call Of Pripyat Benchmark,shortcuts
+            sleep 1000
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - Call Of Pripyat Benchmark,performed
+            sleep 1000
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - Call Of Pripyat Benchmark,ready
+            sleep 1000
+            ControlClick, TNewButton4 ; Next  (nah, who reads doc?)
+        }
+        WinWait,Setup - Call Of Pripyat Benchmark,finished
+        if ( u > 0 ) {
+            sleep 1000
+            Send {Space}  ; uncheck launch
+            sleep 1000
+            ControlClick TNewButton4 ; Finish
+        }
+        WinWaitClose,Setup - Call Of Pripyat Benchmark,finished
+    "
+
+    if w_workaround_wine_bug 24868
+    then
+        w_call d3dx9_31
+        w_call d3dx9_42
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Call Of Pripyat Benchmark" "Benchmark.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  torchlight games \
    title="Torchlight - boxed version" \
    publisher="Runic Games" \
