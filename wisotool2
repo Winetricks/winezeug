@@ -4367,6 +4367,75 @@ load_3dmark05()
 }
 
 #----------------------------------------------------------------
+
+w_metadata 3dmark06 benchmarks \
+    title="3D Mark 06" \
+    publisher="Futuremark" \
+    year="2006" \
+    media="download" \
+    file1="3DMark06_v120_1901.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Futuremark/3DMark06/3DMark06.exe"
+
+load_3dmark06()
+{
+    # http://www.futuremark.com/benchmarks/3dmark06/download/
+    if ! test -f "$W_CACHE/$W_PACKAGE/3DMark06_v120_1901.exe"
+    then
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark06_v120_1901.exe 2e4a52d5b0f7caebd7b4407dfa9e258ac623b5dd
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        run 3DMark06_v120_1901.exe
+        WinWait ahk_class #32770, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Send {Enter}
+            WinWait, ahk_class #32770, License
+            ControlClick Button1 ; Accept
+            ControlClick Button4 ; Next
+            WinWait, ahk_class #32770, Destination
+            ControlClick Button1 ; Next
+            WinWait, ahk_class #32770, Install
+            ControlClick Button1 ; Install
+            WinWait ahk_class OpenAL Installer
+            ControlClick Button2 ; OK
+            WinWait ahk_class #32770
+            ControlClick Button1 ; OK
+            WinWait, ahk_class #32770, Purchase
+            ControlClick Button4 ; Later
+        }
+        WinWait, ahk_class #32770, Complete
+        if ( u > 0 ) {
+            ControlClick Button1 ; Uncheck view readme
+            ControlClick Button3 ; Finish
+        }
+        WinWaitClose, ahk_class #32770, Complete
+    "
+
+    if w_workaround_wine_bug 9210
+    then
+        w_warn "You may need to apply the patch in http://bugs.winehq.org/show_bug.cgi?id=9210 to fix pCaps->MaxPointSize, or the benchmark will w_warn that shader model 2.0 is not present, and refuse to run."
+    fi
+
+    if w_workaround_wine_bug 22393
+    then
+        # "Demo" button doesn't work without this
+        w_call d3dx9_28
+        w_call d3dx9_36
+    fi
+
+    ARGS=""
+    if w_workaround_wine_bug 22392
+    then
+        w_warn "You must run the app with the -nosysteminfo option to avoid a crash on startup"
+        ARGS="-nosysteminfo"
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Futuremark\\3DMark06" "3DMark06 $ARGS"
+}
+
+#----------------------------------------------------------------
 # Games
 #----------------------------------------------------------------
 
