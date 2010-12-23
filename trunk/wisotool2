@@ -4438,6 +4438,61 @@ load_3dmark06()
 # Games
 #----------------------------------------------------------------
 
+w_metadata algodoo_demo games \
+    title="Algodoo Demo" \
+    publisher="Algoryx" \
+    year="2009" \
+    media="download" \
+    file1="Algodoo_1_7_1-Win32.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Algodoo/Algodoo.exe"
+
+load_algodoo_demo()
+{
+    w_download $W_PACKAGE  http://www.algodoo.com/download/Algodoo_1_7_1-Win32.exe caa73e73669a8787652a6bed123bbe2682152f12
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        ; This one's funny... on Wine, keyboard works once you click manually, but until then, only ControlClick seems to work.
+        run, Algodoo_1_7_1-Win32.exe
+        SetTitleMatchMode, 2
+        winwait, Algodoo, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            ControlClick, TNewButton1
+            winwait, Algodoo, License
+            ;send {Tab}a{Space}{Enter}
+            ControlClick, TNewRadioButton1  ; Accept
+            ControlClick, TNewButton2  ; Next
+            winwait, Algodoo, Destination
+            ;send {Enter}
+            ControlClick, TNewButton3  ; Next
+            winwait, Algodoo, Folder
+            ;send {Enter}
+            ControlClick, TNewButton4  ; Next
+            winwait, Algodoo, Select Additional Tasks
+            ;send {Enter}
+            ControlClick, TNewButton4  ; Next
+            winwait, Algodoo, Ready to Install
+            ;send {Enter}
+            ControlClick, TNewButton4  ; Next
+            winwait, Algodoo, Completing
+            sleep 500
+            send {Space}{Tab}{Space}{Tab}{Space}{Enter}   ; decline to run app or view tutorials
+        }
+        WinWaitClose, Algodoo, Completing
+    "
+
+    # Since we declined the msvc runtime installer (right?), we have to do it here
+    if w_workaround_wine_bug 23815
+    then
+        w_call vcrun2008
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Algodoo" "Algodoo.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata aoe3_demo games \
     title="Age of Empires III" \
     publisher="Microsoft" \
