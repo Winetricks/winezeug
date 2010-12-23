@@ -4207,6 +4207,114 @@ __EOF__
 }
 
 #----------------------------------------------------------------
+
+w_metadata 3dmark2001 benchmarks \
+    title="3DMark2001" \
+    publisher="MadOnion.com" \
+    year="2001" \
+    media="download" \
+    file1="3dmark2001se_330_100308.exe" \
+    installed_file1="$W_PROGRAMS_X86_WIN/MadOnion.com/3DMark2001 SE/3DMark2001SE.exe"
+
+load_3dmark2001()
+{
+    # http://www.futuremark.com/download/3dmark2001/
+    if ! test -f "$W_CACHE/$W_PACKAGE"/3dmark2001se_330_100308.exe
+    then
+        w_download $W_PACKAGE http://www.ocinside.de/download/3dmark2001se_330_100308.exe 643bacbcc1615bb4f46d3b045b1b8d78371a6b54
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run 3dmark2001se_330_100308.exe
+        WinWait ahk_class #32770 ; welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            ControlClick Button2  ; Next
+            sleep 5000
+            WinWait ahk_class #32770 ; License
+            ControlClick Button2  ; Next
+            WinWait ahk_class #32770, Destination
+            ControlClick Button1  ; Next
+            WinWait ahk_class #32770, Start
+            ControlClick Button1  ; Next
+            WinWait,, Registration
+            ControlClick Button2  ; Next
+        }
+        WinWait,, Complete
+        if ( u > 0 ) {
+            ControlClick Button1  ; Unclick View Readme
+            ControlClick Button4  ; Finish
+        }
+        WinWaitClose
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\MadOnion.com\\3DMark2001 SE" "3DMark2001SE.exe"
+}
+
+#----------------------------------------------------------------
+
+w_metadata 3dmark03 benchmarks \
+    title="3D Mark 03" \
+    publisher="Futuremark" \
+    year="2003" \
+    media="download" \
+    file1="3DMark03_v360_1901.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Futuremark/3DMark03/3DMark03.exe"
+    
+load_3dmark03()
+{
+    # http://www.futuremark.com/benchmarks/3dmark03/download/
+    if ! test -f "$W_CACHE/$W_PACKAGE/3DMark03_v360_1901.exe"
+    then
+        w_download $W_PACKAGE http://www.bulletproofnerds.com/uploadedfiles/futuremark/3DMark03_v360_1901.exe 46a439101ddbbe3c9563b5e9651cb61b46ce0619
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_warn "Don't use mouse while this installer is running.  Sorry..."
+    # This old installer doesn't seem to be scriptable the usual way, so spray and pray.
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run 3DMark03_v360_1901.exe
+        WinWait 3DMark03 - InstallShield Wizard, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            WinActivate
+            Send {Enter}
+            Sleep 2000
+            WinWait 3DMark03 - InstallShield Wizard, License
+            WinActivate
+            ; Accept license
+            Send a
+            Send {Enter}
+            Sleep 2000
+            ; Choose Destination
+            Send {Enter}
+            Sleep 2000
+            ; Begin install
+            Send {Enter}
+            ; Wait for install to finish
+            WinWait 3DMark03, Registration
+            ; Purchase later
+            Send {Tab}
+            Send {Tab}
+            Send {Enter}
+        }
+        WinWait, 3DMark03 - InstallShield Wizard, Complete
+        if ( u > 0 ) {
+            ; Uncheck readme
+            Send {Space}
+            Send {Tab}
+            Send {Tab}
+            Send {Enter}
+        }
+        WinWaitClose, 3DMark03 - InstallShield Wizard, Complete
+    "
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Futuremark\\3DMark03" "3DMark03.exe"
+}
+
+#----------------------------------------------------------------
 # Games
 #----------------------------------------------------------------
 
