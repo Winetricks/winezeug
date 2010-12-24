@@ -768,16 +768,18 @@ __EOF__
 }
 
 # Call a verb, don't let it affect environment
-# Supports just one argument at the moment
 # Hope that subshell passes through exit status
+# Usage: w_do_call foo [bar]       (calls load_foo bar)
+# Or: w_do_call foo=bar            (also calls load_foo bar)
+# Or: w_do_call foo                (calls load_foo)
 w_do_call()
 {
-    if ! wisotool_metadata_exists $1
-    then
-        w_die "No such verb $1"
-    fi
-
     (
+        case $1 in
+        *=*) arg=`echo $1 | sed 's/.*=//'`; cmd=`echo $1 | sed 's/=.*//'`;;
+        *) cmd=$1; arg=$2 ;;
+        esac
+
         W_TMP="$W_DRIVE_C/windows/_temp/_$1"
         W_TMP_WIN="C:\\windows\\_temp\\_$1"
         rm -rf "$W_TMP"
@@ -786,7 +788,15 @@ w_do_call()
         # Unset all known used metadata values, in case this is a nested call
         unset installed_dll1 installed_exe1
 
-        . "$WISOTOOL_METADATA"/*/$1.vars
+        if wisotool_metadata_exists $1
+        then
+            . "$WISOTOOL_METADATA"/*/$1.vars
+        elif wisotool_metadata_exists $cmd
+        then
+            . "$WISOTOOL_METADATA"/*/$cmd.vars 
+        else
+            w_die "No such verb $1"
+        fi
 
         # Don't install if already installed
         if wisotool_is_installed $1
@@ -797,7 +807,7 @@ w_do_call()
 
         # We'd like to get rid of W_PACKAGE, but for now, just set it as late as possible.
         W_PACKAGE=$1
-        load_$1 $2
+        load_$cmd $arg
 
         # User-specific postinstall hook.
         # Source it so the script can call w_download() if needed.
@@ -2128,7 +2138,7 @@ wisotool_install_app()
     esac
 
     # FIXME: initialize a new wineprefix for this app, set lots of global variables
-    if ! w_do_call $1
+    if ! w_do_call $1 $2
     then
         w_die "$fail_msg"
     fi
@@ -6023,6 +6033,80 @@ _EOF_
 }
 
 #----------------------------------------------------------------
+# Direct3D settings
+
+wisotool_set_wined3d_var()
+{
+    # Filter out/correct bad or partial values
+    # Confusing because dinput uses 'disable', but d3d uses 'disabled'
+    # see wined3d_dll_init() in dlls/wined3d/wined3d_main.c
+    # and DllMain() in dlls/ddraw/main.c
+    case $2 in
+    disable*) arg=disabled;;
+    enable*) arg=enabled;;
+    backbuffer|fbo|gdi|none|opengl|readdraw|readtex) arg=$2;;
+    [0-9]*) arg=$2;;
+    *) w_die "illegal value $2 for $1";;
+    esac
+
+    echo "Setting Direct3D/$1 to $2"
+    cat > "$W_TMP"/set-wined3d.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"$1"="$2"
+
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\set-wined3d.reg
+}
+
+#----------------------------------------------------------------
+# DirectDraw settings
+
+w_metadata ddr=gdi settings \
+    title="Set DirectDrawRenderer to gdi"
+w_metadata ddr=opengl settings \
+    title="Set DirectDrawRenderer to opengl"
+
+load_ddr()
+{
+    wisotool_set_wined3d_var DirectDrawRenderer $1
+}
+
+#----------------------------------------------------------------
+# DirectInput settings
+
+w_metadata mwo=force settings \
+    title="Set DirectInput MouseWarpOverride to force (needed by some games)"
+w_metadata mwo=enabled settings \
+    title="Set DirectInput MouseWarpOverride to enabled (default)"
+w_metadata mwo=disable settings \
+    title="Set DirectInput MouseWarpOverride to disable"
+
+load_mwo()
+{
+    # Filter out/correct bad or partial values
+    # Confusing because dinput uses 'disable', but d3d uses 'disabled'
+    # see alloc_device() in dlls/dinput/mouse.c
+    case $1 in
+    enable*) arg=enabled;;
+    disable*) arg=disable;;
+    force) arg=force;;
+    *) w_die "illegal value $1 for MouseWarpOverride";;
+    esac
+
+    echo "Setting MouseWarpOverride to $arg"
+    cat > "$W_TMP"/set-mwo.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\DirectInput]
+"MouseWarpOverride"="$1"
+
+_EOF_
+    w_try_regedit "$W_TMP"/set-mwo.reg
+}
+
+#----------------------------------------------------------------
 
 #---- External Verbs ----
 # This is experimental, just for testing; eventually we'll load from a particular directory
@@ -6056,9 +6140,14 @@ wisotool_do_app()
     esac
 }
 
-# Usage: execute_command verbname
+# Usage: execute_command verb[=argument]
 execute_command()
 {
+    case $1 in
+    *=*) arg=`echo $1 | sed 's/.*=//'`; cmd=`echo $1 | sed 's/=.*//'`;;
+    *) cmd=$1; arg="" ;;
+    esac
+
     case $1 in
 
     # FIXME: avoid duplicated code
@@ -6081,6 +6170,7 @@ execute_command()
     list-download) wisotool_list_download ;;
     list-manual-download) wisotool_list_manual_download ;;
     list-installed) wisotool_list_installed ;;
+    mmdevapi=*|gameux=*) w_override_dlls $arg $cmd;;
 
     # Normal verbs, with metadata and load_ functions
     *)
