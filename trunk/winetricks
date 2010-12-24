@@ -543,12 +543,14 @@ w_try_regsvr()
 w_try_cabextract()
 {
     # Not always installed, but shouldn't be fatal unless it's being used
-    if test ! -x "`which cabextract 2>/dev/null`" 
+    _W_cabextract="`which cabextract 2>/dev/null`"
+    if test ! -x "$_W_cabextract"
     then
         w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
     
-    w_try cabextract -q "$@"
+    w_try $_W_cabextract -q "$@"
+    unset _W_cabextract
 }
 
 cabextract() {
@@ -1374,7 +1376,7 @@ load_comctl32ocx()
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=25437D98-51D0-41C1-BB14-64662F5F62FE
     w_download . http://download.microsoft.com/download/3/a/5/3a5925ac-e779-4b1c-bb01-af67dc2f96fc/VisualBasic6-KB896559-v1-ENU.exe f52cf2034488235b37a1da837d1c40eb2a1bad84
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/VisualBasic6-KB896559-v1-ENU.exe
     w_try cp "$W_TMP"/mscomctl.ocx "$W_SYSTEM32_DLLS"/mscomctl.ocx
     w_try cp "$W_TMP"/comctl32.ocx "$W_SYSTEM32_DLLS"/comctl32.ocx
     w_try_regsvr comctl32.ocx
@@ -1451,62 +1453,62 @@ load_corefonts()
     # Display EULA
     test x"$W_UNATTENDED_SLASH_Q" = x"" || w_try $WINE "$W_CACHE"/arial32.exe $W_UNATTENDED_SLASH_Q
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/arial32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/arial32.exe
     w_try cp -f "$W_TMP"/Arial*.TTF "$W_FONTSDIR_UNIX"
     w_register_font Arial.TTF "Arial (TrueType)"
     w_register_font Arialbd.TTF "Arial Bold (TrueType)"
     w_register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
     w_register_font Ariali.TTF "Arial Italic (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/arialb32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/arialb32.exe
     w_try cp -f "$W_TMP"/AriBlk.TTF "$W_FONTSDIR_UNIX"
     w_register_font AriBlk.TTF "Arial Black (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/comic32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/comic32.exe
     w_try cp -f "$W_TMP"/Comic*.TTF "$W_FONTSDIR_UNIX"
     w_register_font Comic.TTF "Comic Sans MS (TrueType)"
     w_register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/courie32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/courie32.exe
     w_try cp -f "$W_TMP"/cour*.ttf "$W_FONTSDIR_UNIX"
     w_register_font Cour.TTF "Courier New (TrueType)"
     w_register_font CourBD.TTF "Courier New Bold (TrueType)"
     w_register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
     w_register_font Couri.TTF "Courier New Italic (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/georgi32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/georgi32.exe
     w_try cp -f "$W_TMP"/Georgia*.TTF "$W_FONTSDIR_UNIX"
     w_register_font Georgia.TTF "Georgia (TrueType)"
     w_register_font Georgiab.TTF "Georgia Bold (TrueType)"
     w_register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
     w_register_font Georgiai.TTF "Georgia Italic (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/impact32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/impact32.exe
     w_try cp -f "$W_TMP"/Impact.TTF "$W_FONTSDIR_UNIX"
     w_register_font Impact.TTF "Impact (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/times32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/times32.exe
     w_try cp -f "$W_TMP"/Times*.TTF "$W_FONTSDIR_UNIX"
     w_register_font Times.TTF "Times New Roman (TrueType)"
     w_register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
     w_register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
     w_register_font Timesi.TTF "Times New Roman Italic (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/trebuc32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/trebuc32.exe
     w_try cp -f "$W_TMP"/trebuc*.ttf "$W_FONTSDIR_UNIX"
     w_register_font Trebuc.TTF "Trebucet MS (TrueType)"
     w_register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
     w_register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
     w_register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/verdan32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/verdan32.exe
     w_try cp -f "$W_TMP"/Verdana*.TTF "$W_FONTSDIR_UNIX"
     w_register_font Verdana.TTF "Verdana (TrueType)"
     w_register_font Verdanab.TTF "Verdana Bold (TrueType)"
     w_register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
     w_register_font Verdanai.TTF "Verdana Italic (TrueType)"
 
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/webdin32.exe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/webdin32.exe
     w_try cp -f "$W_TMP"/Webdings.TTF "$W_FONTSDIR_UNIX"
     w_register_font Webdings.TTF "Webdings (TrueType)"
 }
@@ -2104,7 +2106,7 @@ load_eufonts()
 {
     # https://www.microsoft.com/downloads/details.aspx?FamilyID=0ec6f335-c3de-44c5-a13d-a1e7cea5ddea&displaylang=en
     w_download . http://download.microsoft.com/download/a/1/8/a180e21e-9c2b-4b54-9c32-bf7fd7429970/EUupdate.EXE 9b076c40cb63aa0d8512aa8e610ba11d3466e441
-    w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/EUupdate.EXE
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/EUupdate.EXE
     w_try cp -f "$W_TMP"/*.ttf "$W_FONTSDIR_UNIX"
 
     w_register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
