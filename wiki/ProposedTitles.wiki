@@ -154,6 +154,9 @@ http://www.fussball-challenge.com/
 http://www.burning-gears.com/
 http://www.mtb-challenge.com/
 
+The new no-battlenet-no-internet-connection-needed demo for Starcraft 2
+http://us.battle.net/sc2/en/blog/1797995
+
 Warhammer Online Trial
 http://mythicmktg.fileburst.com/war/us/home/other/WarhammerOnlineInstaller.exe
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=13139
