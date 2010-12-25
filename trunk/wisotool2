@@ -5550,6 +5550,96 @@ load_riseofnations_demo()
 
 #----------------------------------------------------------------
 
+w_metadata theundergarden_demo games \
+    title="The UnderGarden Demo" \
+    publisher="Atari" \
+    year="2010" \
+    media="download" \
+    file1="TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/The UnderGarden/TheUndergarden.exe"
+
+load_theundergarden_demo()
+{
+    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/the-undergarden/pc/the-undergarden-demo TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe acf90c422ac2f2f242100f39bedfe7df0c95f7a
+
+    if w_workaround_wine_bug 25384
+    then
+        w_call vcrun2008
+    fi
+    if w_workaround_wine_bug 25385
+    then
+        w_call d3dx9_36
+    fi
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe
+        WinWait,WinRAR
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick Button2 ; Install
+            WinWait,Select Setup Language, during
+            Sleep 500
+            ControlClick TNewButton1 ;OK
+            WinWait,Setup - The UnderGarden, your
+            Sleep 500
+            ControlClick TNewButton1 ;OK
+            WinWait,Setup - The UnderGarden, License
+            Sleep 500
+            ControlClick TNewRadioButton1 ; accept
+            Sleep 500
+            ControlClick TNewButton2 ; Next
+            WinWait,Setup - The UnderGarden, different
+            Sleep 500
+            ControlClick TNewButton3 ;Next
+            WinWait,Setup - The UnderGarden, shortcuts
+            Sleep 500
+            ControlClick TNewButton4 ;OK
+            WinWait,Setup - The UnderGarden, additional
+            Sleep 500
+            ControlFocus,TNewCheckListBox1,desktop
+            Sleep 500
+            Send {Space}
+            Sleep 500
+            ControlClick TNewButton4 ; Next
+            WinWait,Setup - The UnderGarden, review
+            Sleep 500
+            ControlClick TNewButton4 ;Install
+            WinWait,Microsoft Visual C, Visual
+            Sleep 500
+            ControlClick Button13 ;Cancel
+            WinWait,Microsoft Visual C, want
+            Sleep 500
+            ControlClick Button1 ;Yes
+            WinWait,Microsoft Visual C, chosen
+            Sleep 500
+            ControlClick Button2 ;Finish
+            WinWait,Framework 3, Press
+            Sleep 500
+            ControlClick Button21 ;Cancel
+            WinWait,Framework 3, want
+            Sleep 500
+            ControlClick Button1 ;Yes
+            WinWait,Installing Microsoft, Runtime
+            Sleep 500
+            ControlClick Button6 ;Cancel
+        }
+        WinWait,Setup,launched
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick TNewButton4 ;Finish
+        }
+        WinWaitClose,Setup,launched
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\The UnderGarden" "TheUndergarden.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata tmnationsforever games \
     title="TrackMania Nations Forever" \
     publisher="Nadeo" \
