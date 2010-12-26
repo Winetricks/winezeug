@@ -83,6 +83,10 @@ http://appdb.winehq.org/objectManager.php?sClass=version&iId=2980
 Darkfall (14 day trial) (Kalypso)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20849&iTestingId=56341
 
+Deadspace 2 demo (EA)
+http://www.funload.de/s/dead-space-2-demo
+(might be a better url out there)
+
 DeathSpank (EA) (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=12280
 
