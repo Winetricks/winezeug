@@ -3234,6 +3234,27 @@ load_winhttp()
 
 #----------------------------------------------------------------
 
+w_metadata wininet dlls \
+   title="MS Windows Internet API" \
+   publisher="Microsoft" \
+   year="1999" \
+   media="download" \
+   file1="3725.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/wininet.dll"
+
+load_wininet()
+{
+    # This is an updated wininet from IE 5.0.1.
+    # (Good enough for Active Worlds browser.  Also helps "Avatar - Legends of the Arena" get to login screen.)
+    # See http://www.microsoft.com/downloads/details.aspx?familyid=6DEE32AB-B618-4FB3-9A45-CDD08162E167
+    w_download wininet http://download.microsoft.com/download/ie5/Update/1/WIN98/EN-US/3725.exe b048e0b4e303298de3317b16f7008c43ca71ddfe
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE/wininet/3725.exe"
+    w_try cp -f "$W_TMP"/Wininet.dll "$W_SYSTEM32_DLLS"/wininet.dll
+    w_override_dlls native,builtin wininet
+}
+
+#----------------------------------------------------------------
+
 w_metadata wsh57 dlls \
    title="MS Windows Scripting Host 5.7" \
    publisher="Microsoft" \
