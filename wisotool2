@@ -2986,6 +2986,39 @@ load_mfc40()
 
 #----------------------------------------------------------------
 
+w_metadata mono26 dlls \
+   title="Mono 2.6 (.NET compatability)" \
+   publisher="Novell" \
+   year="2009" \
+   media="download" \
+   file1="mono-2.6.7-gtksharp-2.12.10-win32-2.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Mono-2.6.7/bin/mono.dll"
+
+load_mono26()
+{
+    # Load Mono, have it handle all .net requests
+    w_download mono26 http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2 
+    w_try $WINE "$W_CACHE"/mono26/mono-2.6.7-gtksharp-2.12.10-win32-2.exe $W_UNATTENDED_SLASH_SILENT
+}
+
+#----------------------------------------------------------------
+
+w_metadata mono28 dlls \
+   title="Mono 2.8 (.NET compatability)" \
+   publisher="Novell" \
+   year="2010" \
+   media="download" \
+   file1="mono-2.8.1-gtksharp-2.12.10-win32-3.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Mono-2.8.1/bin/mono-2.0.dll"
+
+load_mono28()
+{
+    # Load Mono, have it handle all .net requests
+    w_download mono28 http://ftp.novell.com/pub/mono/archive/2.8.1/windows-installer/3/mono-2.8.1-gtksharp-2.12.10-win32-3.exe e491cbcadf486bdb3993efe6dc98e90c4e19425e
+    w_try $WINE "$W_CACHE"/mono28/mono-2.8.1-gtksharp-2.12.10-win32-3.exe $W_UNATTENDED_SLASH_SILENT
+}
+
+#----------------------------------------------------------------
 w_metadata msasn1 dlls \
    title="MS ASN1" \
    publisher="Microsoft" \
