@@ -296,14 +296,14 @@ w_download()
         _W_filetype=`which file 2>/dev/null`
         case $_W_filetype-$_W_file in
         /*-*.exe)
-            case `file $_W_file` in
-            *gzip*) mv $_W_file $_W_file.gz; gunzip < $_W_file.gz > $_W_file;;
+            case `file "$_W_file"` in
+            *gzip*) mv "$_W_file" "$_W_file.gz"; gunzip < "$_W_file.gz" > "$_W_file";;
             esac
         esac
 
         # On cygwin, .exe's must be marked +x
-        case $_W_file in
-        *.exe) chmod +x $_W_file ;;
+        case "$_W_file" in
+        *.exe) chmod +x "$_W_file" ;;
         esac
 
         if [ "$_W_sum"x != ""x ]
@@ -3885,6 +3885,30 @@ load_cygwin()
     cd "$W_DRIVE_C"/cygpkgs
     w_try $WINE setup.exe $_W_cygopts
     unset _W_cygopts
+}
+
+#----------------------------------------------------------------
+
+w_metadata firefox apps \
+   title="Firefox 3.6.13" \
+   publisher="Mozilla" \
+   year="2010" \
+   media="download" \
+   file1="Firefox%20Setup%203.6.13.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN/Mozilla Firefox/firefox.exe"
+
+load_firefox()
+{
+    w_download firefox "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.13/win32/en-US/Firefox%20Setup%203.6.13.exe" ac9a021dc07c9a269b547b2a5b07719f61cd9368 "Firefox Setup 3.6.13.exe"
+    cd "$W_CACHE"/firefox
+    if test $W_OPT_UNATTENDED = 1
+    then
+       w_try $WINE "Firefox Setup 3.6.13.exe" -ms
+    else
+       w_try $WINE "Firefox Setup 3.6.13.exe"
+    fi
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Mozilla Firefox" firefox.exe
 }
 
 #----------------------------------------------------------------
