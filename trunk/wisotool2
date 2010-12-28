@@ -6312,6 +6312,18 @@ _EOF_
 }
 
 #----------------------------------------------------------------
+
+w_metadata glsl=enabled settings \
+    title="Enable glsl shaders (default)"
+w_metadata glsl=disabled settings \
+    title="Disable glsl shaders, use arb shaders (faster, but sometimes breaks)"
+
+load_glsl()
+{
+    wisotool_set_wined3d_var UseGLSL $1
+}
+
+#----------------------------------------------------------------
 # DirectDraw settings
 
 w_metadata ddr=gdi settings \
@@ -6431,6 +6443,10 @@ execute_command()
 
     # Use winecfg if you want a gui for plain old dll overrides
     gameux=*|mmdevapi=*|oleaut32=*) w_override_dlls $arg $cmd;;
+
+    # Hack for backwards compatibility
+    glsl-enable) wisotool_do_app glsl=enabled ;;
+    glsl-disable) wisotool_do_app glsl=disabled ;;
 
     # Normal verbs, with metadata and load_ functions
     *)
