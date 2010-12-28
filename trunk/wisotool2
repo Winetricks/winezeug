@@ -1301,7 +1301,21 @@ wisotool_metadata_exists()
 wisotool_is_cached()
 {
     # FIXME: also check file2... if given
-    test -f "$W_CACHE/$1/$file1"
+    _W_path="$W_CACHE/$1/$file1"
+    case "$_W_path" in
+    *..*)
+        # Remove /foo/.. so verbs that don't have their own cache directories
+        # can refer to siblings
+        _W_path="`echo $_W_path | sed 's,/[^/]*/\.\.,,'`"
+        ;;
+    esac
+    if test -f "$_W_path"
+    then
+        unset _W_path
+        return 0
+    fi
+    unset _W_path
+    return 1
 }
 
 # Returns true if given verb has been installed
@@ -3036,6 +3050,28 @@ load_physx()
     w_download physx http://us.download.nvidia.com/Windows/9.10.0129/PhysX_9.10.0129_SystemSoftware.exe 33a8b54d842c7246946de15b1a48209c386c9c4b
     cd "$W_CACHE"/physx
     w_try $WINE PhysX_9.10.0129_SystemSoftware.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
+w_metadata quartz dlls \
+   title="quartz.dll (from Directx 9 user redistributable)" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/quartz.dll"
+
+load_quartz()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F quartz.dll "$W_TMP/dxnt.cab"
+    
+    w_try_regsvr quartz.dll
+    
+    w_override_dlls native quartz
 }
 
 #----------------------------------------------------------------
