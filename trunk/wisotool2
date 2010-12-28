@@ -6379,19 +6379,6 @@ _EOF_
 
 #----------------------------------------------------------------
 
-#---- External Verbs ----
-# This is experimental, just for testing; eventually we'll load from a particular directory
-
-for verb in *.verb
-do
-    if grep -sqe '^w_metadata ' $verb && grep -sqe '^load_[a-z0-9_]\(\)' $verb
-    then
-        ( . ./$verb )
-    fi
-done
-
-#----------------------------------------------------------------
-
 #---- Main Program ----
 
 # Do whatever the current menu says to the given app
