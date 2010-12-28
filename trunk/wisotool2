@@ -6375,7 +6375,9 @@ execute_command()
     list-download) wisotool_list_download ;;
     list-manual-download) wisotool_list_manual_download ;;
     list-installed) wisotool_list_installed ;;
-    mmdevapi=*|gameux=*) w_override_dlls $arg $cmd;;
+
+    # Use winecfg if you want a gui for plain old dll overrides
+    gameux=*|mmdevapi=*|oleaut32=*) w_override_dlls $arg $cmd;;
 
     # Normal verbs, with metadata and load_ functions
     *)
