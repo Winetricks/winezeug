@@ -3894,7 +3894,7 @@ w_metadata firefox apps \
    publisher="Mozilla" \
    year="2010" \
    media="download" \
-   file1="Firefox%20Setup%203.6.13.exe" \
+   file1="Firefox Setup 3.6.13.exe" \
    installed_exe1="$W_PROGRAMS_X86_WIN/Mozilla Firefox/firefox.exe"
 
 load_firefox()
