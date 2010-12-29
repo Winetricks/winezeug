@@ -3937,6 +3937,27 @@ load_lucida()
 
 #----------------------------------------------------------------
 
+w_metadata tahoma fonts \
+   title="MS Tahoma font (not part of corefonts)" \
+   publisher="Microsoft" \
+   year="2007" \
+   media="download" \
+   file1="tahoma32.exe" \
+   installed_file1="$W_FONTSDIR_WIN/Tahoma.TTF"
+
+load_tahoma()
+{
+    # The tahoma and tahomabd fonts are needed by e.g. Steam
+
+    w_download tahoma http://download.microsoft.com/download/office97pro/fonts/1/w95/en-us/tahoma32.exe 888ce7b7ab5fd41f9802f3a65fd0622eb651a068
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/tahoma/tahoma32.exe
+    w_try cp -f "$W_TMP"/Tahoma.TTF "$W_FONTSDIR_UNIX"/tahoma.ttf
+    w_try cp -f "$W_TMP"/Tahomabd.TTF "$W_FONTSDIR_UNIX"/tahomabd.ttf
+    chmod +w "$W_FONTSDIR_UNIX"/tahoma*.ttf
+}
+
+#----------------------------------------------------------------
+
 w_metadata takao fonts \
    title="Takao Japanese fonts" \
    publisher="Jun Kobayashi" \
