@@ -2766,6 +2766,20 @@ _EOF_
 
 #----------------------------------------------------------------
 
+load_icodecs()
+{
+    # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
+    w_download . "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
+    w_try $WINE "$W_CACHE"/"codinstl.exe"
+    w_try_regsvr "$W_SYSTEM32_DLLS/ir50_32.dll"
+    # Work around bug in codec's installer?
+    # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
+    w_override_dlls native ir50_32.dll
+}
+
+#----------------------------------------------------------------
+
 load_ie6()
 {
     # Installer doesn't support Win64, and I can't find a x64 version on microsoft.com
@@ -2848,20 +2862,6 @@ load_ie6()
 
 #----------------------------------------------------------------
 
-load_icodecs()
-{
-    # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
-    w_download . "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
-    w_try $WINE "$W_CACHE"/"codinstl.exe"
-    w_try_regsvr "$W_SYSTEM32_DLLS/ir50_32.dll"
-    # Work around bug in codec's installer?
-    # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
-    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
-    w_override_dlls native ir50_32.dll
-}
-
-#----------------------------------------------------------------
-
 load_ie7()
 {
     # Unregister Wine IE
@@ -2909,7 +2909,7 @@ load_ie7()
     # FIXME: can't check status, as it always reports failure on wine?
     if w_workaround_wine_bug 21947
     then
-        WINEDEBUG=warn+heap $WINE IE7-WindowsXP-x86-enu.exe $quiet > /dev/null 2>&1
+        WINEDEBUG=warn+heap $WINE IE7-WindowsXP-x86-enu.exe $quiet
     else
         $WINE IE7-WindowsXP-x86-enu.exe $quiet
     fi
@@ -2971,25 +2971,33 @@ load_ie8()
 
     # See http://bugs.winehq.org/show_bug.cgi?id=16013
     # Find instructions to create this file in dlls/wintrust/tests/crypt.c
-    w_download . http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+    w_download ie8 http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
 
     # Put a dummy catalog file in place
     mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
-    w_try cp -f "$W_CACHE"/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+    w_try cp -f "$W_CACHE"/ie8/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
 
-    # FIXME: According to http://www.wine-reviews.net/wine-reviews/microsoft/internet-explorer-8-on-linux-with-wine.html
-    # may also need native msctf, msimtf, and uxtheme
-
-    # Install
-    w_download . http://download.microsoft.com/download/C/C/0/CC0BD555-33DD-411E-936B-73AC6F95AE11/IE8-WindowsXP-x86-ENU.exe e489483e5001f95da04e1ebf3c664173baef3e26 
+    w_download ie8 http://download.microsoft.com/download/C/C/0/CC0BD555-33DD-411E-936B-73AC6F95AE11/IE8-WindowsXP-x86-ENU.exe e489483e5001f95da04e1ebf3c664173baef3e26 
     if [ $W_UNATTENDED_SLASH_Q ]
     then
-        # FIXME: There's an option for /updates-noupdates to disable checking for updates, but that 
-        # forces the install to fail on Wine. Not sure if it's an IE8 or Wine bug...
-        $WINE "$W_CACHE"/IE8-WindowsXP-x86-ENU.exe /quiet /forcerestart
+        quiet="/quiet /forcerestart"
     else
-        $WINE "$W_CACHE"/IE8-WindowsXP-x86-ENU.exe
+        quiet=""
     fi
+    cd "$W_CACHE"/ie8
+
+    # KLUDGE: if / is writable, having a z: mapping to it causes ie8 to put temporary directories on Z:\
+    # so hide it temporarily.  This is not very robust!
+    rm -f "$WINEPREFIX/dosdevices/z:.bak_wt"
+    mv "$WINEPREFIX/dosdevices/z:" "$WINEPREFIX/dosdevices/z:.bak_wt"
+
+    # FIXME: There's an option for /updates-noupdates to disable checking for updates, but that 
+    # forces the install to fail on Wine. Not sure if it's an IE8 or Wine bug...
+    # FIXME: can't check status, as it always reports failure on wine?
+    $WINE IE8-WindowsXP-x86-enu.exe $quiet
+
+    # END KLUDGE: restore z:, assuming user didn't kill us
+    mv "$WINEPREFIX/dosdevices/z:.bak_wt" "$WINEPREFIX/dosdevices/z:"
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
@@ -3008,14 +3016,10 @@ load_ie8()
         $WINE regsvr32 /i $i > /dev/null 2>&1
     done
 
-    # Seeing is believing
-    if [ "$W_UNATTENDED_SLASH_Q" = "" ]
-    then
-        w_warn "Starting ie8. To start it later, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
-        $WINE "${W_PROGRAMS_WIN}\\Internet Explorer\\iexplore" http://www.winehq.org/ > /dev/null 2>&1 &
-    else
-        w_warn "To start ie8, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'. It doesn't work well yet though, see: http://bugs.winehq.org/show_bug.cgi?id=12433"
-    fi
+    # FIXME: According to http://www.wine-reviews.net/wine-reviews/microsoft/internet-explorer-8-on-linux-with-wine.html
+    # may also need native msctf, msimtf, and uxtheme.  Is this why the UI doesn't work yet?
+
+    w_warn "To start ie8, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'... but it doesn't work yet.  See http://code.google.com/p/winezeug/issues/detail?id=159 for an ugly workaround." 
 }
 
 #----------------------------------------------------------------
