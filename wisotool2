@@ -5352,6 +5352,62 @@ load_civ4_demo()
 
 #----------------------------------------------------------------
 
+w_metadata darknesswithin2_demo games \
+    title="Darkness Within 2 Demo" \
+    publisher="Zoetrope Interactive" \
+    year="2010" \
+    media="download" \
+    file1="DarknessWithin2Demo.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Iceberg Interactive/Darkness Within 2 Demo/DarkLineage.exe"
+
+load_darknesswithin2_demo()
+{
+    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo DarknessWithin2Demo.exe 
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, DarknessWithin2Demo.exe
+        winwait, Darkness Within, will install
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            ControlClick, TNewButton1
+            winwait, Darkness, License
+            ControlClick, TNewRadioButton1
+            ControlClick, TNewButton2
+            winwait, Darkness, Location
+            ControlClick, TNewButton3
+            winwait, Darkness, shortcuts
+            ControlClick, TNewButton4
+            winwait, Darkness, additional
+            ControlClick, TNewButton4
+            winwait, Darkness, Ready to Install
+            ControlClick, TNewButton4
+            winwait, PhysX, License
+            ControlClick, Button3
+            ControlClick, Button4
+            winwait, PhysX, successfully
+            ControlClick, Button1
+        }
+        winwait, Darkness, Setup has finished
+        if ( u > 0 ) {
+            ControlClick, TNewListBoxButton1
+            ControlClick, TNewButton4
+        }
+        winwaitclose, Darkness, Setup has finished
+    "
+
+    if w_workaround_wine_bug 23041
+    then
+        w_call d3dx9_36
+    fi
+
+    # you have to cd to the directory containing DarkLineage.exe before running it
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Iceberg Interactive\\Darkness Within 2 Demo" "DarkLineage.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata divinity2_demo games \
     title="Divinity II Demo" \
     publisher="DTP Entertainment" \
