@@ -2010,7 +2010,7 @@ load_dotnet35()
 
     # See also http://blogs.msdn.com/astebner/archive/2008/07/17/8745415.aspx
     cd "$W_DRIVE_C"
-    w_try_cabextract $WINETRICKS_UNIXQUIET "$W_CACHE"/dotnet35/dotnetfx35.exe
+    w_try_cabextract $W_UNATTENDED_DASH_Q "$W_CACHE"/dotnet35/dotnetfx35.exe
     cd wcu/dotNetFramework
     $WINE dotNetFx35setup.exe /lang:ENU
 
@@ -2502,7 +2502,7 @@ _EOF_
     # extract the files
     mkdir -p "$GECKO_DIR/gecko/$GECKO_VERSION"
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
-    w_try_cabextract $WINETRICKS_UNIXQUIET "$GECKOPATH"
+    w_try_cabextract $W_UNATTENDED_DASH_Q "$GECKOPATH"
     cd "$olddir"
     
     # Repeat for 64-bit. You don't need to set registry, though..
@@ -2529,7 +2529,7 @@ _EOF_
 
         mkdir -p "$GECKO64_DIR/gecko/$GECKO_VERSION"
         cd "$GECKO64_DIR/gecko/$GECKO_VERSION"
-        w_try_cabextract $WINETRICKS_UNIXQUIET "$GECKOPATH"
+        w_try_cabextract $W_UNATTENDED_DASH_Q "$GECKOPATH"
         cd "$olddir"
     fi
 
@@ -2614,7 +2614,7 @@ _EOF_
     cd "$GECKO_DIR/gecko/$GECKO_VERSION"
     if [ "$GECKO_EXTENSION" = "cab" ]
     then
-        w_try_cabextract $WINETRICKS_UNIXQUIET "$W_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
+        w_try_cabextract $W_UNATTENDED_DASH_Q "$W_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.cab
     elif [ "$GECKO_EXTENSION" = "tar.bz2" ]
     then
         bunzip2 -cd "$W_CACHE"/wine_gecko-$GECKO_VERSION$GECKO_ARCH-dbg.tar.bz2 | tar -xf -
@@ -4956,7 +4956,7 @@ do
     case $1 in
     -q) W_UNATTENDED_SLASH_Q="/q"
         W_UNATTENDED_SLASH_Q_T="/qt" # Microsoft Control Pad
-        WINETRICKS_UNIXQUIET="-q"
+        W_UNATTENDED_DASH_Q="-q"
         W_UNATTENDED_SLASH_SILENT="/silent"
         W_UNATTENDED_DASH_SILENT="-silent"
         W_UNATTENDED_SLASH_S="/S"                 # for NSIS installers
