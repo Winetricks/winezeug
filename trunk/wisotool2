@@ -2329,7 +2329,7 @@ w_metadata  crypt32 dlls \
    publisher="Microsoft" \
    year="2003" \
    media="download" \
-   file1="823182_XPE_SP2_X86_ENU.EXE" \
+   file1="Q823182_XPE_SP2_X86_ENU.EXE" \
    installed_file1="$W_SYSTEM32_DLLS_WIN/crypt32.dll"
 
 load_crypt32()
@@ -3073,7 +3073,7 @@ w_metadata msasn1 dlls \
    publisher="Microsoft" \
    year="2003" \
    media="download" \
-   file1="E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE" \
+   file1="W2KSP4_EN.EXE" \
    installed_file1="$W_SYSTEM32_DLLS_WIN/msasn1.dll"
 
 load_msasn1()
@@ -3136,7 +3136,7 @@ w_metadata msxml4 dlls \
    publisher="Microsoft" \
    year="2009" \
    media="download" \
-   file1="msxml4.msi" \
+   file1="msxml.msi" \
    installed_file1="$W_SYSTEM32_DLLS_WIN/msxml4.dll"
 
 load_msxml4()
@@ -4329,7 +4329,7 @@ w_metadata steam apps \
    publisher="Valve" \
    year="2010" \
    media="download" \
-   file1="SteamInstall.msi.exe" \
+   file1="SteamInstall.msi" \
    installed_exe1="$W_PROGRAMS_X86_WIN/Steam/Steam.exe"
 
 load_steam()
@@ -5144,6 +5144,103 @@ cd "$W_PROGRAMS_X86_WIN\\Call of Duty Single Player Demo"
 CoDSP.exe
 __EOF__
 
+}
+
+#----------------------------------------------------------------
+
+w_metadata cod1 games \
+    title="Call of Duty" \
+    publisher="Activision" \
+    year="2003" \
+    media="dvd" \
+    file1="COD1.iso" \
+    file2="CoD2.iso" 
+
+load_cod1()
+{
+    # FIXME: port load_harder from wisotool and use it when caching first disc
+    w_mount COD1
+
+    w_read_key
+
+    __GL_ExtensionStringVersion=17700 w_ahk_do "
+        SetTitleMatchMode, 2
+        run ${W_ISO_MOUNT_LETTER}:setup.exe
+        WinWait, CD Key, enter
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            send {Raw}$KEY
+            ControlClick Button1
+            WinWait, CD Key, valid
+            ControlClick Button1
+            WinWait, Call of Duty, Welcome
+            ControlClick Button1
+            WinWait, Call of Duty, License
+            ControlClick Button3
+            WinWait, Call of Duty, Minimum
+            ControlClick Button4
+            WinWait, Call of Duty, Location
+            ControlClick Button1
+            WinWait, Call of Duty, Folder
+            ControlClick Button1
+            WinWait, Call of Duty, Start
+            ControlClick Button1
+        }
+        WinWait, Insert CD, Please insert the Call of Duty CD 2
+        "
+
+    $WINE eject ${W_ISO_MOUNT_LETTER}:
+    w_mount CoD2
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Send {Enter}    ;continue installation
+        }
+        WinWait, Insert CD, Please insert the Call of Duty CD 1
+    "
+
+    $WINE eject ${W_ISO_MOUNT_LETTER}:
+    w_mount COD1
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Send {Enter}    ;finalize install
+            WinWait, Create Shortcut, Desktop
+            ControlClick Button1
+            WinWait, DirectX, Call    ;directx 9
+            ControlClick Button6
+            ControlClick Button1
+            WinWait, Confirm DX settings, Are
+            ControlClick Button2
+        }
+        ; handle crash here
+        WinWait, Installation Complete, Congratulations!
+        if ( u > 0 ) {
+            ControlClick Button1
+        }
+        WinWaitClose
+    "
+    $WINE eject ${W_ISO_MOUNT_LETTER}:
+
+    if w_workaround_wine_bug 21558
+    then
+        # Work around a buffer overflow - not really Wine's fault
+        setvar="@if not defined %__GL_ExtensionStringVersion% then echo \"If you get a buffer overflow error, set __GL_ExtensionStringVersion=17700 before starting Wine.  See http://bugs.winehq.org/show_bug.cgi?id=21558.\""
+    else
+        setvar=
+    fi
+    cat > "$W_DRIVE_C/run-$W_PACKAGE.bat" <<__EOF__
+$setvar
+${programfilesdrive}:
+cd "$W_PROGRAMS_X86_WIN\\Call of Duty"
+CoDSP.exe
+__EOF__
+
+    w_warn "This game is copy-protected, and requires the real disc in a real drive to run."
 }
 
 #----------------------------------------------------------------
