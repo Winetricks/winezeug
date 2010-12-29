@@ -4878,10 +4878,10 @@ report_usage()
     # Yes, this can be fooled by caches.  That's ok.
     if [ -x "`which wget 2>/dev/null`" ]
     then
-        wget --spider "http://kegel.com/data/WineTrickUsage?$CMDLINE" > /dev/null 2>&1 || true
+        wget --spider "http://kegel.com/data/winetricks-usage?$VERSION-$CMDLINE" > /dev/null 2>&1 || true
     elif [ -x "`which curl 2>/dev/null`" ]
     then
-        curl -I "http://kegel.com/data/WineTrickUsage?$CMDLINE" > /dev/null 2>&1 || true
+        curl -I "http://kegel.com/data/winetricks-usage?$VERSION-$CMDLINE" > /dev/null 2>&1 || true
     fi
 }
 
