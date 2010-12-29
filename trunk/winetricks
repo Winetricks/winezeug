@@ -3358,25 +3358,27 @@ load_msxml4()
 load_msxml6()
 {
     # If this is just a dependency check, don't re-install
+    # FIXME: this check broken for win64?
     if test $W_PACKAGE != msxml6 && test -f "$W_SYSTEM32_DLLS"/msxml6.dll
     then
         echo "prerequisite msxml6 already installed, skipping"
         return
     fi
 
-    # http://www.microsoft.com/downloads/details.aspx?FamilyID=993c0bcf-3bcf-4009-be21-27e85e1857b1
-    # w_download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6.msi 2308743ddb4cb56ae910e461eeb3eab0a9e58058
     # Service Pack 1
     # http://www.microsoft.com/downloads/details.aspx?familyid=D21C292C-368B-4CE1-9DAB-3E9827B70604
     case $W_ARCH in
     win32)
-        w_download . http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi 5125220e985b33c946bbf9f60e2b222c7570bfa2
+        w_download msxml6 http://download.microsoft.com/download/e/a/f/eafb8ee7-667d-4e30-bb39-4694b5b3006f/msxml6_x86.msi 5125220e985b33c946bbf9f60e2b222c7570bfa2
+        cd "$W_CACHE"/msxml6
         w_override_dlls native,builtin msxml6
-        w_try $WINE msiexec /i "$W_CACHE"/msxml6_x86.msi $W_UNATTENDED_SLASH_Q
+        rm -f "$W_SYSTEM32_DLLS/msxml6.dll"
+        w_try $WINE msiexec /i msxml6_x86.msi $W_UNATTENDED_SLASH_Q
         ;;
     win64)
         # FIXME: Currently fails, wine bug?
-        w_download . http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6_x64.msi 1eb84eeae7729ea5db7fe79779f4e216114261ba
+        w_download msxml6 http://download.microsoft.com/download/2/e/0/2e01308a-e17f-4bf9-bf48-161356cf9c81/msxml6_x64.msi 1eb84eeae7729ea5db7fe79779f4e216114261ba
+        cd "$W_CACHE"/msxml6
         w_override_dlls native,builtin msxml6
         w_try $WINE msiexec /i "$W_CACHE"/msxml6_x64.msi $W_UNATTENDED_SLASH_Q
         ;;
