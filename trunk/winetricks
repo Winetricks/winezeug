@@ -472,22 +472,18 @@ mkdir -p "$W_TMP" || w_die "can't create $W_TMP"
 # Clean up after failed runs, if needed
 (cd "$W_TMP" && rm -rf ./*)
 
-# Handle case where z: doesn't exist
-case "$W_CACHE_WIN" in
-""|*\?\\unix*)
-    # W_CACHE isn't accessible via a drive letter mapping, so make one,
-    # but be sure to clean it up later.
-    for letter in y x w v u t s r q
-    do
-        if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
-        then
-            WINETRICKS_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
-            ln -sf "$W_CACHE" "$WINETRICKS_CACHE_SYMLINK"
-            break
-        fi
-    done
-    ;;
-esac
+# For case where z: doesn't exist or / is writable (!),
+# make a drive letter for W_CACHE.  Clean it up on exit.
+for letter in y x w v u t s r q p o n m
+do
+    if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
+    then
+        WINETRICKS_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+        WINETRICKS_CACHE_DRIVE=$letter
+        ln -sf "$W_CACHE" "$WINETRICKS_CACHE_SYMLINK"
+        break
+    fi
+done
 
 # Overridden for windows
 ISO_MOUNT_ROOT=/mnt/winetricks
@@ -2889,20 +2885,37 @@ load_ie7()
 
     # See http://bugs.winehq.org/show_bug.cgi?id=16013
     # Find instructions to create this file in dlls/wintrust/tests/crypt.c
-    w_download . http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+    w_download ie7 http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
 
     # Put a dummy catalog file in place
     mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
-    w_try cp -f "$W_CACHE"/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+    w_try cp -f "$W_CACHE"/ie7/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
 
     # Install
-    w_download . http://download.microsoft.com/download/3/8/8/38889DC1-848C-4BF2-8335-86C573AD86D9/IE7-WindowsXP-x86-enu.exe d39b89c360fbaa9706b5181ae4718100687a5326
-    if [ $W_UNATTENDED_SLASH_Q ]
+    w_download ie7 http://download.microsoft.com/download/3/8/8/38889DC1-848C-4BF2-8335-86C573AD86D9/IE7-WindowsXP-x86-enu.exe d39b89c360fbaa9706b5181ae4718100687a5326
+    if test "$W_UNATTENDED_SLASH_Q" = ""
     then
-        $WINE "$W_CACHE"/IE7-WindowsXP-x86-enu.exe /quiet
+        quiet=""
     else
-        $WINE "$W_CACHE"/IE7-WindowsXP-x86-enu.exe
+        quiet="/quiet"
     fi
+    cd "$W_CACHE"/ie7
+    
+    # KLUDGE: if / is writable, having a z: mapping to it causes ie7 to put temporary directories on Z:\
+    # so hide it temporarily.  This is not very robust!
+    rm -f "$WINEPREFIX/dosdevices/z:.bak_wt"
+    mv "$WINEPREFIX/dosdevices/z:" "$WINEPREFIX/dosdevices/z:.bak_wt"
+
+    # FIXME: can't check status, as it always reports failure on wine?
+    if w_workaround_wine_bug 21947
+    then
+        WINEDEBUG=warn+heap $WINE IE7-WindowsXP-x86-enu.exe $quiet > /dev/null 2>&1
+    else
+        $WINE IE7-WindowsXP-x86-enu.exe $quiet
+    fi
+
+    # END KLUDGE: restore z:, assuming user didn't kill us
+    mv "$WINEPREFIX/dosdevices/z:.bak_wt" "$WINEPREFIX/dosdevices/z:"
 
     # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
     # FIXME: whittle down this list
