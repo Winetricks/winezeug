@@ -3196,6 +3196,54 @@ load_quartz()
 
 #----------------------------------------------------------------
 
+w_metadata riched20 dlls \
+   title="MS RichEdit Control version 2.0 (includes riched20.dll, riched32.dll)" \
+   publisher="Microsoft" \
+   year="1999" \
+   media="download" \
+   file1="Q249973i.EXE" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/riched20.dll"
+
+load_riched20()
+{
+    # http://support.microsoft.com/?kbid=249973
+    w_download riched20 http://download.microsoft.com/download/winntsp/Patch/RTF/NT4/EN-US/Q249973i.EXE f0b7663f15dbd31410435483ba832318c7a70470
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/riched20/Q249973i.EXE
+    w_try cp -f "$W_TMP"/riched??.dll "$W_SYSTEM32_DLLS"
+    w_override_dlls native,builtin riched20 riched32
+}
+
+#----------------------------------------------------------------
+
+# Problem - riched20 and riched30 both install riched20.dll!
+# We may need a better way to distinguish between installed files.
+
+w_metadata riched30 dlls \
+   title="MS RichEdit Control version 3.0 (includes riched20.dll and msls31.dll)" \
+   publisher="Microsoft" \
+   year="2001" \
+   media="download" \
+   file1="InstMsiA.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/riched20.dll" \
+   installed_file2="$W_SYSTEM32_DLLS_WIN/msls31.dll"
+
+load_riched30()
+{
+    # http://www.novell.com/documentation/nm1/readmeen_web/readmeen_web.html#Akx3j64
+    # claims that Groupwise Messenger's View / Text Size command
+    # only works with riched30, and recommends getting it by installing
+    # msi 2, which just happens to come with riched30 version of riched20
+    # (though not with a corresponding riched32, which might be a problem)
+    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
+    w_download riched30 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/riched30/InstMsiA.exe
+    w_try cp -f "$W_TMP"/riched20.dll "$W_SYSTEM32_DLLS"
+    w_try cp -f "$W_TMP"/msls31.dll "$W_SYSTEM32_DLLS"
+    w_override_dlls native,builtin riched30
+}
+
+#----------------------------------------------------------------
+
 w_metadata secur32 dlls \
    title="MS Security Support Provider Interface" \
    publisher="Microsoft" \
