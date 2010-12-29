@@ -29,7 +29,7 @@
 # - Indent 4 spaces.
 # - Try to keep line length below 80 (makes printing easier)
 # - Open curly braces ('{') and 'then' at beginning of line,
-#   close curlies ('}') and 'fi' should line up with the matching { or if, 
+#   close curlies ('}') and 'fi' should line up with the matching { or if,
 #   cases aligned with 'case' and 'esac'.  For instance,
 #
 #      if test "$FOO" = "bar"
@@ -49,7 +49,7 @@
 # - Variables have uppercase names starting with W_
 # - Functions have lowercase names starting with w_
 #
-# Private things internal to this script, not for use by verbs: 
+# Private things internal to this script, not for use by verbs:
 # - Local variables have lowercase names starting with uppercase _W_
 # - Global variables have uppercase names starting with WISOTOOL_
 # - Functions have lowercase names starting with wisotool_
@@ -146,22 +146,22 @@ w_try_regsvr()
 w_try_cabextract()
 {
     # Not always installed, but shouldn't be fatal unless it's being used
-    if test ! -x "`which cabextract 2>/dev/null`" 
+    if test ! -x "`which cabextract 2>/dev/null`"
     then
         w_die "Cannot find cabextract.  Please install it (e.g. 'sudo apt-get install cabextract' or 'sudo yum install cabextract')."
     fi
-    
+
     w_try cabextract -q "$@"
 }
 
 w_try_unzip()
 {
     # Not always installed, but shouldn't be fatal unless it's being used
-    if test ! -x "`which unzip 2>/dev/null`" 
+    if test ! -x "`which unzip 2>/dev/null`"
     then
         w_die "Cannot find unzip.  Please install it (e.g. 'sudo apt-get install unzip' or 'sudo yum install unzip')."
     fi
-    
+
     w_try unzip -o -q "$@"
 }
 
@@ -193,7 +193,7 @@ w_read_key()
         esac
         case $WISOTOOL_GUI in
         *zenity) W_KEY=`zenity --entry --text "$_W_keymsg"` ;;
-        *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;; 
+        *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;;
         *xmessage) w_die "sorry, can't read key from gui with xmessage" ;;
         none) echo -n "$_W_keymsg": ; read W_KEY ;;
         esac
@@ -419,15 +419,15 @@ w_mount()
 
     if test -f "$WISOTOOL_IMG"
     then
-        wisotool_mount_cached_iso "$1" 
+        wisotool_mount_cached_iso "$1"
     else
         case "$WISOTOOL_OPT_KEEPISOS" in
         0)
             wisotool_mount_real_volume "$1"
             ;;
         1)
-            wisotool_cache_iso "$1" 
-            wisotool_mount_cached_iso "$1" 
+            wisotool_cache_iso "$1"
+            wisotool_mount_cached_iso "$1"
             ;;
         esac
     fi
@@ -583,7 +583,7 @@ REGEDIT4
 
 _EOF_
         w_try_regedit "$W_TMP_WIN"\\set-winver.reg
-        return 
+        return
         ;;
     nt40)
         # Similar to modern version, but sets two extra keys:
@@ -599,7 +599,7 @@ REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ProductOptions]
 "ProductType"="WinNT"
- 
+
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceCurrent]
 "OS"="Windows_NT"
 
@@ -736,11 +736,11 @@ w_metadata()
     # Used to use perl here, but that was too slow on cygwin.
     for arg
     do
-        # Use longest match when stripping value, 
+        # Use longest match when stripping value,
         # and shortest match when stripping name,
         # so descriptions can have embedded equals signs
         # FIXME: backslashes get interpreted here.  This screws up
-        # installed_file1 fairly often.  Fortunately, we can use forward 
+        # installed_file1 fairly often.  Fortunately, we can use forward
         # slashes in that variable instead of backslashes.
         echo ${arg%%=*}=\"${arg#*=}\"
     done > "$file"
@@ -750,7 +750,7 @@ w_metadata()
     # FIXME: only check this in maintainer mode, since it's slow on cygwin
     if grep '[^"]$' "$file"
     then
-        w_die "bug: w_metadata $_W_md_cmd corrupt, might need forward slashes?" 
+        w_die "bug: w_metadata $_W_md_cmd corrupt, might need forward slashes?"
     fi
     unset _W_md_cmd
 }
@@ -796,7 +796,7 @@ w_do_call()
             . "$WISOTOOL_METADATA"/*/$1.vars
         elif wisotool_metadata_exists $cmd
         then
-            . "$WISOTOOL_METADATA"/*/$cmd.vars 
+            . "$WISOTOOL_METADATA"/*/$cmd.vars
         else
             w_die "No such verb $1"
         fi
@@ -1038,7 +1038,7 @@ wisotool_installed_menu()
                 --column Medie \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
        de*) echo -n "zenity \
                 --title '$_W_msg_title' \
@@ -1053,7 +1053,7 @@ wisotool_installed_menu()
                 --column Media \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
         *) echo -n "zenity \
                 --title '$_W_msg_title' \
@@ -1068,7 +1068,7 @@ wisotool_installed_menu()
                 --column Media \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
 
@@ -1128,7 +1128,7 @@ wisotool_settings_menu()
                 --column Navn \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
        de*) echo -n "zenity \
                 --title '$_W_msg_title' \
@@ -1140,7 +1140,7 @@ wisotool_settings_menu()
                 --column Name \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
         *) echo -n "zenity \
                 --title '$_W_msg_title' \
@@ -1152,7 +1152,7 @@ wisotool_settings_menu()
                 --column Title \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
 
@@ -1215,7 +1215,7 @@ wisotool_showmenu()
                 --column Medie \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
        de*) echo -n "zenity \
                 --title '$_W_msg_title' \
@@ -1230,7 +1230,7 @@ wisotool_showmenu()
                 --column Media \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
         *) echo -n "zenity \
                 --title '$_W_msg_title' \
@@ -1245,7 +1245,7 @@ wisotool_showmenu()
                 --column Media \
                 --height 500 \
                 --width 800 \
-                " 
+                "
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
 
@@ -1288,7 +1288,7 @@ wisotool_metadata_basename()
 
     # first, remove suffix .vars
     _W_mb_tmp=${1%.vars}
-    # second, remove any directory prefix 
+    # second, remove any directory prefix
     echo ${_W_mb_tmp##*/}
     unset _W_mb_tmp
 }
@@ -1326,14 +1326,14 @@ wisotool_is_cached()
 wisotool_is_installed()
 {
     unset _W_file
-    if test "$installed_exe1" 
+    if test "$installed_exe1"
     then
         _W_file="$installed_exe1"
     elif test "$installed_file1"
     then
         _W_file="$installed_file1"
     fi
-    if test "$_W_file" 
+    if test "$_W_file"
     then
         _W_file_unix="`w_pathconv -u "$_W_file"`"
         if test -f "$_W_file_unix" && ! grep -q "Wine placeholder DLL" "$_W_file_unix"
@@ -1444,7 +1444,7 @@ wisotool_list_all()
         code=`wisotool_metadata_basename $_W_metadatafile`
         . $_W_metadatafile
 
-        # Compute cached and downloadable flags 
+        # Compute cached and downloadable flags
         flags=""
         test "$media" = "download" && wisotool_append_to_flags "$_W_download"
         wisotool_is_cached $code   && wisotool_append_to_flags "$_W_cached"
@@ -1494,7 +1494,7 @@ wisotool_read_hex()
 
 # Usage: read_decimal offset device
 # Reads four byte word, outputs in decimal.
-# Uses default endianness.  
+# Uses default endianness.
 # udf uses little endian words, so this only works on little endian machines.
 wisotool_read_decimal()
 {
@@ -1595,7 +1595,7 @@ wisotool_volname()
     echo $x
 }
 
-# Really, should take a volume name as argument, and use 'mount' to get 
+# Really, should take a volume name as argument, and use 'mount' to get
 # mount point if system automounted it.
 wisotool_detect_optical_drive()
 {
@@ -1633,7 +1633,7 @@ wisotool_cache_iso()
 
     while true
     do
-        # Wait for user to insert disc.  
+        # Wait for user to insert disc.
         # Sleep long to make it less likely to close the drive during insertion.
         while ! dd if=$WISOTOOL_DEV of=/dev/null count=1
         do
@@ -1724,7 +1724,7 @@ wisotool_mount_cached_iso()
 }
 
 # List the currently mounted udf or iso9660 filesystems that match the given pattern
-# Output format: 
+# Output format:
 #   dev mountpoint
 #   dev mountpoint
 #   ...
@@ -1732,7 +1732,7 @@ wisotool_mount_cached_iso()
 
 wisotool_list_mounts()
 {
-    mount | egrep 'udf|iso9660' | sed 's,^\([^ ]*\) on \(.*\) type .*,\1 \2,'| grep "$1\$" 
+    mount | egrep 'udf|iso9660' | sed 's,^\([^ ]*\) on \(.*\) type .*,\1 \2,'| grep "$1\$"
 }
 
 # Return success and set _W_dev _W_mountpoint if volume $1 is mounted
@@ -1773,7 +1773,7 @@ wisotool_is_mounted()
 
     if test -f /tmp/_W_tmp.$LOGNAME
     then
-        # Volume found!  Return from function.  
+        # Volume found!  Return from function.
         _W_dev=`cat /tmp/_W_tmp.$LOGNAME | sed 's/ .*//'`
         _W_mountpoint="`cat /tmp/_W_tmp.$LOGNAME | sed 's/^[^ ]* //'`"
         rm -f /tmp/_W_tmp.$LOGNAME
@@ -1789,7 +1789,7 @@ wisotool_mount_real_volume()
 {
     _W_expected_volname="$1"
 
-    # Wait for user to insert disc.  
+    # Wait for user to insert disc.
 
     case $LANG in
     da*)_W_mountmsg="Indsæt og montér venligst disken '$_W_expected_volname' (krævet af pakken '$_PACKAGE')" ;;
@@ -1816,7 +1816,7 @@ wisotool_mount_real_volume()
         ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
     fi
 
-    # FIXME: need to remount some discs with unhide option, 
+    # FIXME: need to remount some discs with unhide option,
     # add that as option to w_mount
 
     unset _W_mountmsg
@@ -1958,7 +1958,7 @@ wisotool_init()
     # FIXME: get fonts path from SHGetFolderPath
     # See also http://blogs.msdn.com/oldnewthing/archive/2003/11/03/55532.aspx
     W_FONTSDIR_WIN="c:\\windows\\Fonts"
- 
+
     # FIXME: just convert path from windows to unix?
     # Did the user rename Fonts to fonts?
     if test ! -d "$W_WINDIR_UNIX"/Fonts && test -d "$W_WINDIR_UNIX"/fonts
@@ -2132,7 +2132,7 @@ wisotool_run_app()
     case $WISOTOOL_OPT_SHAREDPREFIX in
     0)
         WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
+        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat
         ;;
     1)
         WISOTOOL_RUN_WINEPREFIX="$WINEPREFIX"
@@ -2167,7 +2167,7 @@ wisotool_uninstall_app()
     case $WISOTOOL_OPT_SHAREDPREFIX in
     0)
         WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat 
+        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat
         ;;
     1)
         w_die "Sorry, this tool can't uninstall apps from a shared wineprefix"
@@ -2254,7 +2254,7 @@ load_amstream()
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'amstream.dll' "$W_TMP/dxnt.cab"
     w_try_regsvr amstream.dll
-    
+
     w_override_dlls native amstream
 }
 
@@ -2558,7 +2558,7 @@ load_directmusic()
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dswave.dll' "$W_TMP/dxnt.cab"
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'streamci.dll' "$W_TMP/dxnt.cab"
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'quartz.dll' "$W_TMP/dxnt.cab"
-    
+
     w_try_regsvr devenum.dll
     w_try_regsvr dmband.dll
     w_try_regsvr dmcompos.dll
@@ -2570,7 +2570,7 @@ load_directmusic()
     w_try_regsvr dmusic.dll
     w_try_regsvr dswave.dll
     w_try_regsvr quartz.dll
-    
+
     w_override_dlls native devenum dmband dmcompos dmime dmloader dmscript dmstyle dmsynth dmusic dmusic32 dswave streamci quartz
 }
 
@@ -2667,9 +2667,9 @@ load_dmsynth()
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'dmsynth.dll' "$W_TMP/dxnt.cab"
-    
+
     w_try_regsvr dmsynth.dll
-    
+
     w_override_dlls native dmsynth
 }
 
@@ -2781,13 +2781,13 @@ load_dotnet30()
     w_download dotnet30 http://download.microsoft.com/download/3/F/0/3F0A922C-F239-4B9B-9CB0-DF53621C57D9/dotnetfx3.exe f3d2c3c7e4c0c35450cf6dab1f9f2e9e7ff50039
 
     # AF's workaround to avoid long pause
-    LANGPACKS_BASE_PATH="${W_WINDIR_UNIX}/SYSMSICache/Framework/v3.0" 
-    test -d "${LANGPACKS_BASE_PATH}" || mkdir -p "${LANGPACKS_BASE_PATH}" 
+    LANGPACKS_BASE_PATH="${W_WINDIR_UNIX}/SYSMSICache/Framework/v3.0"
+    test -d "${LANGPACKS_BASE_PATH}" || mkdir -p "${LANGPACKS_BASE_PATH}"
     for lang in ar cs da de el es fi fr he it jp ko nb nl pl pt-BR pt-PT ru \
                 sv tr zh-CHS zh-CHT
     do
-       ln -sf "${W_SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
-    done 
+       ln -sf "${W_SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe"
+    done
 
     w_set_winver winxp
 
@@ -2821,7 +2821,7 @@ load_dotnet35()
     w_call dotnet30
 
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6
-    w_download dotnet35 http://download.microsoft.com/download/6/0/f/60fc5854-3cb8-4892-b6db-bd4f42510f28/dotnetfx35.exe 
+    w_download dotnet35 http://download.microsoft.com/download/6/0/f/60fc5854-3cb8-4892-b6db-bd4f42510f28/dotnetfx35.exe
 
     # See also http://blogs.msdn.com/astebner/archive/2008/07/17/8745415.aspx
     cd "$W_TMP"
@@ -2890,8 +2890,8 @@ load_flash()
     # Active X plugin
     # http://blogs.adobe.com/psirt/2008/03/preparing_for_april_flash_play.html
     # http://fpdownload.macromedia.com/get/flashplayer/current/licensing/win/install_flash_player_active_x.msi
-    # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866    
-    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866 
+    # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866
     cd "$W_CACHE"/flash
 
     if [ $W_UNATTENDED_SLASH_Q ]
@@ -2902,7 +2902,7 @@ load_flash()
     fi
 
     # Mozilla / Firefox plugin
-    # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f    
+    # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f
     w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 09f2491c5bec7286155234f4e6e1af70c7cef78f
     if [ $W_UNATTENDED_SLASH_Q ]
     then
@@ -3049,7 +3049,7 @@ w_metadata mono26 dlls \
 load_mono26()
 {
     # Load Mono, have it handle all .net requests
-    w_download mono26 http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2 
+    w_download mono26 http://ftp.novell.com/pub/mono/archive/2.6.7/windows-installer/2/mono-2.6.7-gtksharp-2.12.10-win32-2.exe c31c06063aa82006dff2f8df22dcc6ba046afbc2
     w_try $WINE "$W_CACHE"/mono26/mono-2.6.7-gtksharp-2.12.10-win32-2.exe $W_UNATTENDED_SLASH_SILENT
 }
 
@@ -3071,6 +3071,7 @@ load_mono28()
 }
 
 #----------------------------------------------------------------
+
 w_metadata msasn1 dlls \
    title="MS ASN1" \
    publisher="Microsoft" \
@@ -3191,9 +3192,9 @@ load_quartz()
 
     w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
     w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F quartz.dll "$W_TMP/dxnt.cab"
-    
+
     w_try_regsvr quartz.dll
-    
+
     w_override_dlls native quartz
 }
 
@@ -3280,7 +3281,7 @@ load_shockwave() {
     # old sha1sum: 6a91a9da4b54c3fdc97130a15e1a173117e5f4ff
     # 2009-07-31 sha1sum: 0bb506ef67a268e8d3fb6c7ce556320ee10b9da5
     # 2009-12-13 sha1sum: d35649883bf13cb1a86f5650e1050d15533ac0f4
-    # 2010-01-23 sha1sum: 4a837d238c28c5f345d73f105711f20c6d059273  
+    # 2010-01-23 sha1sum: 4a837d238c28c5f345d73f105711f20c6d059273
     # 2010-05-15 sha1sum: bdce02afc82233801e84137e78c2c5fe574db253
     # 2010-09-02 sha1sum: fed20eccc29fec2f64162b7265343514d43884bc
     # 2010-11-03 sha1sum: 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
@@ -3475,7 +3476,7 @@ load_wsh57()
     # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
     w_download wsh57 http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe b15c6a834b7029e2dfed22127cf905b06857e6f5
 
-    w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/wsh57/scripten.exe 
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" "$W_CACHE"/wsh57/scripten.exe
 
     # Wine doesn't provide the other dll's (yet?)
     w_override_dlls native,builtin jscript.dll
@@ -3931,7 +3932,7 @@ load_lucida()
 {
     w_download lucida ftp://ftp.microsoft.com/bussys/winnt/winnt-public/fixes/usa/NT40TSE/hotfixes-postSP3/Euro-fix/eurofixi.exe 64c47ad92265f6f10b0fd909a703d4fd1b05b2d5
     w_try_cabextract -d "$W_FONTSDIR_UNIX" -L -F 'lucon.ttf' "$W_CACHE"/lucida/eurofixi.exe
-    w_register_font lucon.ttf "Lucida Console" 
+    w_register_font lucon.ttf "Lucida Console"
 }
 
 #----------------------------------------------------------------
@@ -4166,7 +4167,7 @@ load_ie6()
 
     # Unregister Wine IE
     if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
-    then 
+    then
         w_try $WINE iexplore -unregserver
     fi
 
@@ -4365,8 +4366,8 @@ w_metadata utorrent apps \
 
 load_utorrent()
 {
-    # Torrent client supported on Windows,Mac OSX, Linux through WINE 
-    # Oct 2010 2.0.4 sha1sum 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee 
+    # Torrent client supported on Windows,Mac OSX, Linux through WINE
+    # Oct 2010 2.0.4 sha1sum 8382b8a7bc625d68b6efe18a7b9e5488dc0119ee
     # Nov 6 2010 2.0.4 sha1sum 263a91693d0976473cd321cd6f1b0103a814f3ad
     # Dev 17 2010 2.2 sha1sum 0c95bdfba07421fe706b30ee2ec6779217c5dce4, hangs, see wine bug 24946
     w_download utorrent http://download.utorrent.com/2.0.4/utorrent.exe 263a91693d0976473cd321cd6f1b0103a814f3ad
@@ -4543,7 +4544,7 @@ w_metadata 3dmark03 benchmarks \
     media="download" \
     file1="3DMark03_v360_1901.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/Futuremark/3DMark03/3DMark03.exe"
-    
+
 load_3dmark03()
 {
     # http://www.futuremark.com/benchmarks/3dmark03/download/
@@ -5157,7 +5158,7 @@ w_metadata cod1 games \
     year="2003" \
     media="dvd" \
     file1="COD1.iso" \
-    file2="CoD2.iso" 
+    file2="CoD2.iso"
 
 load_cod1()
 {
@@ -5365,7 +5366,7 @@ w_metadata darknesswithin2_demo games \
 
 load_darknesswithin2_demo()
 {
-    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo DarknessWithin2Demo.exe 
+    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo DarknessWithin2Demo.exe
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -5746,7 +5747,7 @@ w_metadata lswcs games \
     publisher="Lucasarts" \
     year="2009" \
     media="dvd" \
-    file1="LEGOSAGA.iso" 
+    file1="LEGOSAGA.iso"
 
 load_lswcs()
 {
@@ -5845,7 +5846,7 @@ w_metadata masseffect2 games \
     year="2010" \
     media="dvd" \
     file1="MassEffect2.iso" \
-    file2="ME2_Disc2.iso" 
+    file2="ME2_Disc2.iso"
 
 load_masseffect2()
 {
@@ -6120,7 +6121,7 @@ load_puzzleagent_demo()
             WinWait,Puzzle Agent Setup, different
             Sleep 500
             ControlClick Button2 ; Install
-            WinWait,Puzzle Agent Setup, your 
+            WinWait,Puzzle Agent Setup, your
             Sleep 500
             ControlClick Button4 ; Play
             Sleep 500
@@ -6874,7 +6875,7 @@ wisotool_do_app()
     uninstall)
         wisotool_uninstall_app $1
         ;;
-    *) 
+    *)
         wisotool_install_app $1
         ;;
     esac
@@ -6899,7 +6900,7 @@ execute_command()
     -*)
         if ! wisotool_handle_option $1
         then
-            wisotool_usage 
+            wisotool_usage
             exit 1
         fi
         ;;
@@ -6948,8 +6949,8 @@ then
     volname:*)
         # Since linux's volname command can't handle dvds, wisotool has its own,
         # implemented using dd, old gum, and some string I had laying around.
-        # You can try it like this: 
-        #  wisotool2 volname:/dev/sr0 
+        # You can try it like this:
+        #  wisotool2 volname:/dev/sr0
         # or
         #  wisotool2 volname:foo.iso
         # This will read the volname from the given image and put it to stdout.
