@@ -5556,6 +5556,50 @@ load_dc2ba_demo()
         w_call vcrun6
     fi
 }
+
+#----------------------------------------------------------------
+
+w_metadata demolition_company_demo games \
+    title="Demolition Company demo" \
+    publisher="Giants Software" \
+    year="2010" \
+    media="download" \
+    file1="DemolitionCompanyDemoENv2.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Demolition Company Demo/DemolitionCompany.exe"
+
+load_demolition_company_demo()
+{
+    w_download_manual $W_PACKAGE http://www.demolitioncompany-thegame.com/demo.php DemolitionCompanyDemoENv2.exe
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run, DemolitionCompanyDemoENv2.exe
+        winwait, Setup - Demolition, This will install
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 1000
+            controlclick, TNewButton1, Setup - Demolition, This will install
+            winwait, Setup - Demolition, License Agreement
+            sleep 1000
+            controlclick, TNewRadioButton1, Setup - Demolition, License Agreement
+            sleep 1000
+            controlclick, TNewButton2, Setup - Demolition, License Agreement
+            winwait, Setup - Demolition, Setup Type
+            sleep 1000
+            controlclick, TNewButton2, Setup - Demolition, Setup Type
+            winwait, Setup - Demolition, Ready to Install
+            sleep 1000
+            controlclick, TNewButton2, Setup - Demolition, Ready to Install
+            winwait, Setup - Demolition, Completing
+            sleep 1000
+            controlclick, TNewButton2, Setup - Demolition, Completing
+        }
+        winwaitclose, Setup - Demolition
+    "
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Demolition Company Demo\\" "DemolitionCompany.exe"
+}
+
 #----------------------------------------------------------------
 
 w_metadata hko games \
