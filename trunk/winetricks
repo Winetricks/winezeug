@@ -4953,6 +4953,29 @@ fi
 if test -f $W_CACHE/track_usage
 then
     W_TRACK_USAGE=`cat $W_CACHE/track_usage`
+else
+    # No opt-in status found.  If GUI active, ask user whether they would like to opt in.
+    case $GUI-$MENU in
+    1-zenity) 
+        case $LANG in
+        *)
+            title="One-time question about helping Winetricks development"
+            question="Would you like to help winetricks development by letting winetricks report statistics?  You can turn reporting off at any time with the command 'winetricks --optout' or by removing the file $W_CACHE/track_usage"
+            thanks='Thanks!  You won'\''t be asked this question again.'
+            declined="OK, winetricks will *not* report statistics.  You won't be asked this question again."
+            ;;
+        esac
+        if zenity --question --text "$question" --title "$title"
+        then
+            zenity --info --text "$thanks"
+            W_TRACK_USAGE=1
+        else
+            zenity --info --text "$declined"
+            W_TRACK_USAGE=0
+        fi
+        echo $W_TRACK_USAGE > $W_CACHE/track_usage
+        ;;
+    esac
 fi
 
 CMDLINE="$*"
