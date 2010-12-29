@@ -398,7 +398,10 @@ w_download_manual()
     if ! test -f "$W_CACHE/$_W_packagename/$_W_file"
     then
         mkdir -p "$W_CACHE/$_W_packagename"
-        xdg-open "$_W_url"
+        case "$OS" in
+        "Windows_NT") cygstart "$_W_url" ;;
+        *) xdg-open "$_W_url" ;;
+        esac
         sleep 3   # give some time for browser to open
         w_die "$_W_dlmsg"
         # FIXME: wait in loop until file is finished?
