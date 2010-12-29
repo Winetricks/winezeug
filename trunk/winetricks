@@ -452,6 +452,10 @@ if test ! "$W_CACHE" -a -d $HOME/.winetrickscache
 then
     # For backwards compatibility
     W_CACHE="$HOME/.winetrickscache"
+elif test -d $HOME/Library/Caches
+then
+    # MacOSX
+    W_CACHE="$HOME/Library/Caches/winetricks"
 else
     # See http://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
     XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
