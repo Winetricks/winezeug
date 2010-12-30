@@ -1988,23 +1988,18 @@ wisotool_init()
         w_download winetricks http://kegel.com/wine/winetricks
     fi
 
-    # Handle case where z: doesn't exist
-    case "$W_CACHE_WIN" in
-    ""|*\?\\unix*)
-        # W_CACHE isn't accessible via a drive letter mapping, so make one,
-        # but be sure to clean it up later.
-        for letter in y x w v u t s r q
-        do
-            if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
-            then
-                WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
-                ln -sf "$W_CACHE" "$WISOTOOL_CACHE_SYMLINK"
-                W_CACHE_WIN=${letter}:
-                break
-            fi
-        done
-        ;;
-    esac
+    # For case where z: doesn't exist or / is writable (!),
+    # make a drive letter for W_CACHE.  Clean it up on exit.
+    for letter in y x w v u t s r q p o n m
+    do
+        if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
+        then
+            WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+            ln -sf "$W_CACHE" "$WISOTOOL_CACHE_SYMLINK"
+            W_CACHE_WIN=${letter}:
+            break
+        fi
+    done
 
     # Overridden for windows
     W_ISO_MOUNT_ROOT=/mnt/wisotool
@@ -4195,7 +4190,7 @@ w_metadata ie6 apps \
    year="2002" \
    media="download" \
    file1="ie60.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN/Internet Explorer/iexplore.exe"
+   installed_file1="$W_PROGRAMS_X86_WIN/Internet Explorer/iedetect.dll"
 
 load_ie6()
 {
@@ -4275,6 +4270,225 @@ load_ie6()
 
     # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
     w_unset_winver
+}
+
+#----------------------------------------------------------------
+
+w_metadata ie7 apps \
+   title="Internet Explorer 7" \
+   publisher="Microsoft" \
+   year="2008" \
+   media="download" \
+   file1="IE7-WindowsXP-x86-enu.exe" \
+   installed_file1="c:/windows/ie7.log"
+
+load_ie7()
+{
+    # Unregister Wine IE
+    if grep -q -i "wine placeholder" "$W_PROGRAMS_X86_UNIX/Internet Explorer/iexplore.exe"
+    then 
+        w_try $WINE iexplore -unregserver
+    fi
+    
+    # Change the override to the native so we are sure we use and register them
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon xmllite
+
+    # Bundled updspapi cannot work on wine
+    w_override_dlls builtin updspapi
+
+    # Remove the fake dlls from the existing WINEPREFIX
+    for dll in itircl itss jscript mshtml msimtf shdoclc shdocvw shlwapi urlmon
+    do
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+        mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
+    done
+
+    # See http://bugs.winehq.org/show_bug.cgi?id=16013
+    # Find instructions to create this file in dlls/wintrust/tests/crypt.c
+    w_download ie7 http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+
+    # Put a dummy catalog file in place
+    mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    w_try cp -f "$W_CACHE"/ie7/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+
+    # Install
+    w_download ie7 http://download.microsoft.com/download/3/8/8/38889DC1-848C-4BF2-8335-86C573AD86D9/IE7-WindowsXP-x86-enu.exe d39b89c360fbaa9706b5181ae4718100687a5326
+    if test "$W_UNATTENDED_SLASH_Q" = ""
+    then
+        quiet=""
+    else
+        quiet="/quiet"
+    fi
+    cd "$W_CACHE"/ie7
+    
+    # KLUDGE: if / is writable, having a z: mapping to it causes ie7 to put temporary directories on Z:\
+    # so hide it temporarily.  This is not very robust!
+    rm -f "$WINEPREFIX/dosdevices/z:.bak_wt"
+    mv "$WINEPREFIX/dosdevices/z:" "$WINEPREFIX/dosdevices/z:.bak_wt"
+
+    # FIXME: can't check status, as it always reports failure on wine?
+    if w_workaround_wine_bug 21947
+    then
+        WINEDEBUG=warn+heap $WINE IE7-WindowsXP-x86-enu.exe $quiet
+    else
+        $WINE IE7-WindowsXP-x86-enu.exe $quiet
+    fi
+
+    # END KLUDGE: restore z:, assuming user didn't kill us
+    mv "$WINEPREFIX/dosdevices/z:.bak_wt" "$WINEPREFIX/dosdevices/z:"
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: whittle down this list
+    cd "$W_SYSTEM32_DLLS"
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll inseng.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll mshtml.dll mshtmled.dll msi.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx webcheck.dll wshom.ocx
+    do
+        $WINE regsvr32 /i $i > /dev/null 2>&1
+    done
+
+    # Seeing is believing
+    case $WISOTOOL_GUI in
+    none)
+        w_warn "To start ie7, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
+        ;;
+    *)
+        w_warn "Starting ie7.  To start it later, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
+        $WINE "${W_PROGRAMS_WIN}\\Internet Explorer\\iexplore" http://www.microsoft.com/windows/internet-explorer/ie7/ > /dev/null 2>&1 &
+        ;;
+    esac
+}
+
+#----------------------------------------------------------------
+
+w_metadata ie8 apps \
+   title="Internet Explorer 8 (broken)" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="IE8-WindowsXP-x86-ENU.exe" \
+   installed_file1="c:/windows/ie8.log"
+
+load_ie8()
+{
+    # Unregister Wine IE
+    if grep -q -i "wine placeholder" "$W_PROGRAMS_X86_UNIX/Internet Explorer/iexplore.exe"
+    #if [ ! -f "$W_SYSTEM32_DLLS"/plugin.ocx ]
+    then 
+        w_try $WINE iexplore -unregserver
+    fi
+
+    w_call msls31
+    
+    # Change the override to the native so we are sure we use and register them
+    w_override_dlls native,builtin iexplore.exe itircl itss jscript msctf mshtml shdoclc shdocvw shlwapi urlmon xmllite
+
+    # Bundled updspapi cannot work on wine
+    w_override_dlls builtin updspapi
+    
+    # Remove the fake dlls from the existing WINEPREFIX
+    for dll in browseui.dll inseng.dll itircl itss jscript msctf mshtml  shdoclc shdocvw shlwapi urlmon
+    do
+        test -f "$W_SYSTEM32_DLLS"/$dll.dll &&
+        mv "$W_SYSTEM32_DLLS"/$dll.dll "$W_SYSTEM32_DLLS"/$dll.dll.bak
+    done
+
+    # See http://bugs.winehq.org/show_bug.cgi?id=16013
+    # Find instructions to create this file in dlls/wintrust/tests/crypt.c
+    w_download ie8 http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+
+    # Put a dummy catalog file in place
+    mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+    w_try cp -f "$W_CACHE"/ie8/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+
+    w_download ie8 http://download.microsoft.com/download/C/C/0/CC0BD555-33DD-411E-936B-73AC6F95AE11/IE8-WindowsXP-x86-ENU.exe e489483e5001f95da04e1ebf3c664173baef3e26 
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        quiet="/quiet /forcerestart"
+    else
+        quiet=""
+    fi
+    cd "$W_CACHE"/ie8
+
+    # KLUDGE: if / is writable, having a z: mapping to it causes ie8 to put temporary directories on Z:\
+    # so hide it temporarily.  This is not very robust!
+    rm -f "$WINEPREFIX/dosdevices/z:.bak_wt"
+    mv "$WINEPREFIX/dosdevices/z:" "$WINEPREFIX/dosdevices/z:.bak_wt"
+
+    # FIXME: There's an option for /updates-noupdates to disable checking for updates, but that 
+    # forces the install to fail on Wine. Not sure if it's an IE8 or Wine bug...
+    # FIXME: can't check status, as it always reports failure on wine?
+    $WINE IE8-WindowsXP-x86-ENU.exe $quiet
+    # END KLUDGE: restore z:, assuming user didn't kill us
+    mv "$WINEPREFIX/dosdevices/z:.bak_wt" "$WINEPREFIX/dosdevices/z:"
+
+    # Work around DLL registration bug until ierunonce/RunOnce/wineboot is fixed
+    # FIXME: whittle down this list
+    cd "$W_SYSTEM32_DLLS"
+    for i in actxprxy.dll browseui.dll browsewm.dll cdfview.dll ddraw.dll \
+      dispex.dll dsound.dll iedkcs32.dll iepeers.dll iesetup.dll \
+      imgutil.dll inetcomm.dll isetup.dll jscript.dll laprxy.dll \
+      mlang.dll msctf.dll mshtml.dll mshtmled.dll msi.dll msimtf.dll msident.dll \
+      msoeacct.dll msrating.dll mstime.dll msxml3.dll occache.dll \
+      ole32.dll oleaut32.dll olepro32.dll pngfilt.dll quartz.dll \
+      rpcrt4.dll rsabase.dll rsaenh.dll scrobj.dll scrrun.dll \
+      shdocvw.dll shell32.dll urlmon.dll vbscript.dll webcheck.dll \
+      wshcon.dll wshext.dll asctrls.ocx hhctrl.ocx mscomct2.ocx \
+      plugin.ocx proctexe.ocx tdc.ocx uxtheme.dll webcheck.dll wshom.ocx
+    do
+        $WINE regsvr32 /i $i > /dev/null 2>&1
+    done
+
+    # FIXME: According to http://www.wine-reviews.net/wine-reviews/microsoft/internet-explorer-8-on-linux-with-wine.html
+    # may also need native msctf, msimtf, and uxtheme.  Is this why the UI doesn't work yet?
+}
+
+#----------------------------------------------------------------
+
+# This whole verb is a workaround for http://bugs.winehq.org/show_bug.cgi?id=25648
+# and http://bugs.winehq.org/show_bug.cgi?id=19313
+w_metadata ie68 apps \
+   title="IE8 with IE6-ish gui.  (Kludge until wine can run ie8 gui.)" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="IE8-WindowsXP-x86-enu.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN/Internet Explorer/iexplore.exe"
+
+load_ie68()
+{
+    # There's probably an easier way to get fake iexplore menus to work with ie8's guts,
+    # but installing ie6 before installing ie8 does the trick for now.
+    w_call ie6
+    sleep 10
+    w_call ie8
+
+    # Set the home page to a search engine so you can at least navigate by searching
+    cat > "$W_TMP"/homepage.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main]
+"Start Page"="http://google.com/"
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\homepage.reg
+
+    # Seeing is believing
+    case $WISOTOOL_GUI in
+    none)
+        w_warn "To start 'ie68', use the command '$WINE iexplore'"
+        ;;
+    *)
+        w_warn "Starting 'ie68'.  To start it later, use the command '$WINE iexplore'"
+        $WINE iexplore > /dev/null 2>&1 &
+        ;;
+    esac
 }
 
 #----------------------------------------------------------------
