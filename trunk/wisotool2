@@ -5795,7 +5795,8 @@ w_metadata dc2ba_demo games \
 load_dc2ba_demo()
 {
     # http://www.nickjr.com/games/p-doras-carnival-2-adventure.jhtml
-    w_download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe a02559c4d8236581f2ee0e51a1a11f67a901eaba
+    # b90fcca3837faafbd7ad0cd8f776976fbd146787 16 Sept 2010
+    w_download $W_PACKAGE http://downloadcdn.shockwave.com/pub/doras-carnival-2-boardwalk-adventure/InstallDorasCarnival2BoardwalkAdventure.exe b90fcca3837faafbd7ad0cd8f776976fbd146787
 
     if w_workaround_wine_bug 23749
     then
