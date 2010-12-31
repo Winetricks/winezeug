@@ -629,11 +629,11 @@ w_download() {
             then
                 return 0
             fi
-        fi
-        if test ! "$WINETRICKS_CONTINUE_DOWNLOAD"
-        then
-            w_warn "Checksum for $cache/$file did not match, retrying download"
-            mv -f "$cache/$file" "$cache/$file".bak
+            if test ! "$WINETRICKS_CONTINUE_DOWNLOAD"
+            then
+                w_warn "Checksum for $cache/$file did not match, retrying download"
+                mv -f "$cache/$file" "$cache/$file".bak
+            fi
         fi
 
         _W_dl_olddir=`pwd`
