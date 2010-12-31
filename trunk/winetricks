@@ -616,24 +616,36 @@ w_download() {
     cache="$W_CACHE/$1"
     mkdir -p "$cache"
     # Try download twice
+    checksum_ok=""
     tries=0
     while test $tries -lt 2
     do
         tries=`expr $tries + 1`
 
-        # If checksum matches, exit loop
-        if test -f "$cache/$file" && test "$3"
+        if test -s "$cache/$file" 
         then
-            gotsum=`$SHA1SUM < "$cache/$file" | sed 's/(stdin)= //;s/ .*//'`
-            if [ "$gotsum"x == "$3"x ]
+            if test "$3"
             then
-                return 0
+                # If checksum matches, declare success and exit loop
+                gotsum=`$SHA1SUM < "$cache/$file" | sed 's/(stdin)= //;s/ .*//'`
+                if [ "$gotsum"x = "$3"x ]
+                then
+                    checksum_ok=1
+                    break
+                fi
+                if test ! "$WINETRICKS_CONTINUE_DOWNLOAD"
+                then
+                    w_warn "Checksum for $cache/$file did not match, retrying download"
+                    mv -f "$cache/$file" "$cache/$file".bak
+                fi
+            else
+                # file exists, no checksum known, declare success and exit loop
+                break
             fi
-            if test ! "$WINETRICKS_CONTINUE_DOWNLOAD"
-            then
-                w_warn "Checksum for $cache/$file did not match, retrying download"
-                mv -f "$cache/$file" "$cache/$file".bak
-            fi
+        elif test -f "$cache/$file"
+        then
+            # zero length file, just delete before retrying
+            rm "$cache/$file"
         fi
 
         _W_dl_olddir=`pwd`
@@ -672,10 +684,11 @@ w_download() {
         cd "$_W_dl_olddir"
         unset _W_dl_olddir
     done
-    if [ "$3"x != ""x ]
+    if test "$3" -a ! "$checksum_ok"
     then
         verify_sha1sum $3  "$cache/$file"
     fi
+    return 0
 }
 
 # Has to be set in a few places...
