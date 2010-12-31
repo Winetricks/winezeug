@@ -2983,6 +2983,29 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata  gfw dlls \
+   title="MS Games For Windows Live (xlive.dll)" \
+   publisher="Microsoft" \
+   year="2008" \
+   media="download" \
+   file1="gfwlivesetupmin.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/xlive.dll"
+
+load_gfw()
+{
+    # http://www.microsoft.com/games/en-us/live/pages/livejoin.aspx
+    # http://www.next-gen.biz/features/should-games-for-windows-live-die
+    w_download gfw http://download.microsoft.com/download/5/5/8/55846E20-4A46-4EF8-B272-7F988BC9090A/gfwlivesetupmin.exe 6f9e0ba052c68c8b51bb0e3ce6024d0e1c7b20b2  
+    
+    # FIXME: Depends on .Net 20, but is it really needed? For now, skip it.
+    cd "$W_CACHE"/gfw
+    w_try $WINE gfwlivesetupmin.exe /nodotnet $W_UNATTENDED_SLASH_Q
+
+    w_call msasn1
+}
+
+#----------------------------------------------------------------
+
 w_metadata  glut dlls \
    title="The glut utility library for OpenGL" \
    publisher="Mark J. Kilgard" \
