@@ -41,6 +41,9 @@ detect_sudo() {
 }
 
 # Detect which menu program to use
+# Thereafter, use $MENU rather than the literal program name
+# to avoid rpmbuild pulling all the alternate menu programs
+# as dependencies.  (Favor for etersoft.)
 detect_menu() {
     # TODO: add 'dialog'
     MENU=xmessage
@@ -63,9 +66,9 @@ w_warn() {
     # For some reason, nulls were showing up in $@?!, causing truncated output in zenity
     msg="`echo $@ | tr '\000' ' '`"
     case $MENU in
-        *zenity) zenity --error --title=Winetricks --text="$msg" --no-wrap;;
-        *kdialog) kdialog --title Winetricks --error "$msg" ;;
-        *xmessage) xmessage -title Winetricks -center "  Error: $msg  " ;;
+        *zenity) $MENU --error --title=Winetricks --text="$msg" --no-wrap;;
+        *kdialog) $MENU --title Winetricks --error "$msg" ;;
+        *xmessage) $MENU -title Winetricks -center "  Error: $msg  " ;;
     esac
 }
 
@@ -332,7 +335,7 @@ kdialog_showmenu() {
         args="$args $1 $1 off"
         shift
     done
-    kdialog --title "$title" --separate-output --checklist "$text" $args
+    $MENU --title "$title" --separate-output --checklist "$text" $args
 }
 
 xmessage_showmenu() {
@@ -355,7 +358,7 @@ xmessage_showmenu() {
         shift
     done
     (echo "$title"; echo ""; echo "$text") | \
-    xmessage -print -file - -buttons "Cancel,$args" | sed 's/Cancel//'
+    $MENU -print -file - -buttons "Cancel,$args" | sed 's/Cancel//'
 }
 
 showmenu()
