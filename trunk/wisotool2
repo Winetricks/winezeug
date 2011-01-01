@@ -7623,6 +7623,16 @@ load_win7()
 
 #----------------------------------------------------------------
 
+w_metadata win98 settings \
+    title="Set windows version to Windows 98"
+
+load_win98()
+{
+    w_set_winver win98
+}
+
+#----------------------------------------------------------------
+
 # Really, we should support other values, since winetricks did
 w_metadata winver= settings \
     title="Set windows version to default (winxp)"
