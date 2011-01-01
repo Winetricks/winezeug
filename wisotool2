@@ -6013,7 +6013,7 @@ load_hko()
     then
         w_download_torrent hko hkostandardinstaller.torrent
     fi
-    w_try unzip "$W_CACHE/hko/Hello Kitty Online Standard Installer.zip" -d "$W_TMP"
+    w_try_unzip "$W_CACHE/hko/Hello Kitty Online Standard Installer.zip" -d "$W_TMP"
     cd "$W_TMP/Hello Kitty Online Standard Installer"
 
     w_ahk_do "
@@ -6346,7 +6346,7 @@ load_maxmagicmarker_demo()
 
     w_try mkdir "$W_PROGRAMS_X86_UNIX"/$W_PACKAGE
     cd "$W_PROGRAMS_X86_UNIX"/$W_PACKAGE
-    w_try unzip "$W_CACHE/$W_PACKAGE"/max_demo_pc.zip
+    w_try_unzip "$W_CACHE/$W_PACKAGE"/max_demo_pc.zip
     # Work around bug in game?!
     mv "max and the magic markerdemo pc" "max and the magic markerdemo pc"_Data
 
@@ -6744,7 +6744,7 @@ load_sammax304_demo()
     then
         w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/SamMax304_BigDownload.exe.zip" 5d3cefcf0c654d3646105e14cb3d06c61feb32f3
         cd "$W_CACHE/$W_PACKAGE"
-        w_try unzip SamMax304_BigDownload.exe.zip
+        w_try_unzip SamMax304_BigDownload.exe.zip
         rm -f SamMax304_BigDownload.exe.zip
     fi
 
