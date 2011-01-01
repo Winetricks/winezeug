@@ -837,6 +837,11 @@ w_register_font()
     file=$1
     shift
     font=$1
+
+    case "$file" in
+    *.TTF|*.ttf) font="$font (TrueType)";;
+    esac
+
     # Kludge: use _r to avoid \r expansion in w_try
     cat > "$W_TMP"/_register-font.reg <<_EOF_
 REGEDIT4
@@ -846,6 +851,17 @@ REGEDIT4
 _EOF_
     # too verbose
     w_try_regedit "$W_TMP_WIN"\\_register-font.reg
+    cp "$W_TMP"/*.reg /tmp/_reg$$.reg
+
+    # Wine also updates the win9x fonts key, so let's do that, too
+    cat > "$W_TMP"/_register-font.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Fonts]
+"$font"="$file"
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\_register-font.reg
+    cp "$W_TMP"/*.reg /tmp/_reg$$-2.reg
 }
 
 w_register_font_substitution()
@@ -3683,62 +3699,62 @@ load_corefonts()
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/arial32.exe
     w_try cp -f "$W_TMP"/Arial*.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Arial.TTF "Arial (TrueType)"
-    w_register_font Arialbd.TTF "Arial Bold (TrueType)"
-    w_register_font Arialbi.TTF "Arial Bold Italic (TrueType)"
-    w_register_font Ariali.TTF "Arial Italic (TrueType)"
+    w_register_font Arial.TTF "Arial"
+    w_register_font Arialbd.TTF "Arial Bold"
+    w_register_font Arialbi.TTF "Arial Bold Italic"
+    w_register_font Ariali.TTF "Arial Italic"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/arialb32.exe
     w_try cp -f "$W_TMP"/AriBlk.TTF "$W_FONTSDIR_UNIX"
-    w_register_font AriBlk.TTF "Arial Black (TrueType)"
+    w_register_font AriBlk.TTF "Arial Black"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/comic32.exe
     w_try cp -f "$W_TMP"/Comic*.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Comic.TTF "Comic Sans MS (TrueType)"
-    w_register_font Comicbd.TTF "Comic Sans MS Bold (TrueType)"
+    w_register_font Comic.TTF "Comic Sans MS"
+    w_register_font Comicbd.TTF "Comic Sans MS Bold"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/courie32.exe
     w_try cp -f "$W_TMP"/cour*.ttf "$W_FONTSDIR_UNIX"
-    w_register_font Cour.TTF "Courier New (TrueType)"
-    w_register_font CourBD.TTF "Courier New Bold (TrueType)"
-    w_register_font CourBI.TTF "Courier New Bold Italic (TrueType)"
-    w_register_font Couri.TTF "Courier New Italic (TrueType)"
+    w_register_font Cour.TTF "Courier New"
+    w_register_font CourBD.TTF "Courier New Bold"
+    w_register_font CourBI.TTF "Courier New Bold Italic"
+    w_register_font Couri.TTF "Courier New Italic"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/georgi32.exe
     w_try cp -f "$W_TMP"/Georgia*.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Georgia.TTF "Georgia (TrueType)"
-    w_register_font Georgiab.TTF "Georgia Bold (TrueType)"
-    w_register_font Georgiaz.TTF "Georgia Bold Italic (TrueType)"
-    w_register_font Georgiai.TTF "Georgia Italic (TrueType)"
+    w_register_font Georgia.TTF "Georgia"
+    w_register_font Georgiab.TTF "Georgia Bold"
+    w_register_font Georgiaz.TTF "Georgia Bold Italic"
+    w_register_font Georgiai.TTF "Georgia Italic"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/impact32.exe
     w_try cp -f "$W_TMP"/Impact.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Impact.TTF "Impact (TrueType)"
+    w_register_font Impact.TTF "Impact"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/times32.exe
     w_try cp -f "$W_TMP"/Times*.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Times.TTF "Times New Roman (TrueType)"
-    w_register_font Timesbd.TTF "Times New Roman Bold (TrueType)"
-    w_register_font Timesbi.TTF "Times New Roman Bold Italic (TrueType)"
-    w_register_font Timesi.TTF "Times New Roman Italic (TrueType)"
+    w_register_font Times.TTF "Times New Roman"
+    w_register_font Timesbd.TTF "Times New Roman Bold"
+    w_register_font Timesbi.TTF "Times New Roman Bold Italic"
+    w_register_font Timesi.TTF "Times New Roman Italic"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/trebuc32.exe
     w_try cp -f "$W_TMP"/trebuc*.ttf "$W_FONTSDIR_UNIX"
-    w_register_font Trebuc.TTF "Trebucet MS (TrueType)"
-    w_register_font Trebucbd.TTF "Trebucet MS Bold (TrueType)"
-    w_register_font Trebucbi.TTF "Trebucet MS Bold Italic (TrueType)"
-    w_register_font Trebucit.TTF "Trebucet MS Italic (TrueType)"
+    w_register_font Trebuc.TTF "Trebucet MS"
+    w_register_font Trebucbd.TTF "Trebucet MS Bold"
+    w_register_font Trebucbi.TTF "Trebucet MS Bold Italic"
+    w_register_font Trebucit.TTF "Trebucet MS Italic"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/verdan32.exe
     w_try cp -f "$W_TMP"/Verdana*.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Verdana.TTF "Verdana (TrueType)"
-    w_register_font Verdanab.TTF "Verdana Bold (TrueType)"
-    w_register_font Verdanaz.TTF "Verdana Bold Italic (TrueType)"
-    w_register_font Verdanai.TTF "Verdana Italic (TrueType)"
+    w_register_font Verdana.TTF "Verdana"
+    w_register_font Verdanab.TTF "Verdana Bold"
+    w_register_font Verdanaz.TTF "Verdana Bold Italic"
+    w_register_font Verdanai.TTF "Verdana Italic"
 
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/corefonts/webdin32.exe
     w_try cp -f "$W_TMP"/Webdings.TTF "$W_FONTSDIR_UNIX"
-    w_register_font Webdings.TTF "Webdings (TrueType)"
+    w_register_font Webdings.TTF "Webdings"
 }
 
 #----------------------------------------------------------------
@@ -3790,21 +3806,21 @@ load_eufonts()
     w_try_cabextract -q --directory="$W_TMP" "$W_CACHE"/eufonts/EUupdate.EXE
     w_try cp -f "$W_TMP"/*.ttf "$W_FONTSDIR_UNIX"
 
-    w_register_font ArialBI.ttf "Arial Bold Italic (TrueType)"
-    w_register_font ArialI.ttf "Arial Italic (TrueType)"
-    w_register_font Arial.ttf "Arial (TrueType)"
-    w_register_font TimesBd.ttf "Times New Roman Bold (TrueType)"
-    w_register_font TimesBI.ttf "Times New Roman Bold Italic (TrueType)"
-    w_register_font TimesI.ttf "Times New Roman Italic (TrueType)"
-    w_register_font Times.ttf "Times New Roman (TrueType)"
-    w_register_font trebucbd.ttf "Trebuchet Bold (TrueType)"
-    w_register_font trebucbi.ttf "Trebuchet Bold Italic (TrueType)"
-    w_register_font trebucit.ttf "Trebuchet Italic (TrueType)"
-    w_register_font trebuc.ttf "Trebuchet (TrueType)"
-    w_register_font Verdanab.ttf "Verdana Bold (TrueType)"
-    w_register_font Verdanai.ttf "Verdana Italian (TrueType)"
-    w_register_font Verdana.ttf "Verdana (TrueType)"
-    w_register_font Verdanaz.ttf "Verdana Bold Italic (TrueType)"
+    w_register_font ArialBI.ttf "Arial Bold Italic"
+    w_register_font ArialI.ttf "Arial Italic"
+    w_register_font Arial.ttf "Arial"
+    w_register_font TimesBd.ttf "Times New Roman Bold"
+    w_register_font TimesBI.ttf "Times New Roman Bold Italic"
+    w_register_font TimesI.ttf "Times New Roman Italic"
+    w_register_font Times.ttf "Times New Roman"
+    w_register_font trebucbd.ttf "Trebuchet Bold"
+    w_register_font trebucbi.ttf "Trebuchet Bold Italic"
+    w_register_font trebucit.ttf "Trebuchet Italic"
+    w_register_font trebuc.ttf "Trebuchet"
+    w_register_font Verdanab.ttf "Verdana Bold"
+    w_register_font Verdanai.ttf "Verdana Italian"
+    w_register_font Verdana.ttf "Verdana"
+    w_register_font Verdanaz.ttf "Verdana Bold Italic"
 }
 
 #----------------------------------------------------------------
@@ -4004,6 +4020,12 @@ load_tahoma()
     w_try_cabextract --directory="$W_TMP" "$W_CACHE"/tahoma/tahoma32.exe
     w_try cp -f "$W_TMP"/Tahoma.TTF "$W_FONTSDIR_UNIX"/tahoma.ttf
     w_try cp -f "$W_TMP"/Tahomabd.TTF "$W_FONTSDIR_UNIX"/tahomabd.ttf
+
+    # FIXME:  Wine seems to nuke the registry entries for Tahoma.  Why?  Font Xplorer always lists it as 'not installed'.
+    w_register_font tahoma.ttf "Tahoma"
+    w_register_font tahomabd.ttf "Tahoma Bold"
+
+    # ? does some app assume it can overwrite these, or is this a leftover from before we had install checks?
     chmod +w "$W_FONTSDIR_UNIX"/tahoma*.ttf
 }
 
@@ -4032,6 +4054,30 @@ load_takao()
     w_register_font TakaoPMincho.ttf "TakaoPMincho"
     w_register_font TakaoExGothic.ttf "TakaoExGothic"
     w_register_font TakaoExMincho.ttf "TakaoExMincho"
+}
+
+#----------------------------------------------------------------
+
+w_metadata uff fonts \
+   title="Ubuntu Font Family" \
+   publisher="Ubuntu" \
+   year="2010" \
+   media="download" \
+   file1="ubuntu-font-family-0.70.1.zip" \
+   installed_file1="$W_FONTSDIR_WIN/Ubuntu-R.ttf" \
+   homepage="https://launchpad.net/ubuntu-font-family"
+
+load_uff()
+{
+    w_download uff http://font.ubuntu.com/download/ubuntu-font-family-0.70.1.zip efbab0d5d8cb5cff091307d2360dcb1bfe1ae6e1
+    cd "$W_TMP"
+    w_try_unzip "$W_CACHE"/uff/ubuntu-font-family-0.70.1.zip
+    mv ubuntu-font-family-0.70.1/*.ttf "$W_FONTSDIR_UNIX"
+
+    w_register_font Ubuntu-R.ttf "Ubuntu"
+    w_register_font Ubuntu-I.ttf "Ubuntu Italic"
+    w_register_font Ubuntu-B.ttf "Ubuntu Bold"
+    w_register_font Ubuntu-BI.ttf "Ubuntu Bold Italic"
 }
 
 #----------------------------------------------------------------
@@ -4210,6 +4256,26 @@ load_firefox()
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Mozilla Firefox" firefox.exe
+}
+
+#----------------------------------------------------------------
+
+w_metadata fontxplorer apps \
+   title="Font Xplorer 1.2.2" \
+   publisher="Moon Software" \
+   year="2001" \
+   media="download" \
+   file1="Font_Xplorer_122_Free.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Font Xplorer/FXplorer.exe" \
+   homepage="http://www.moonsoftware.com/fxplorer.asp"
+
+load_fontxplorer()
+{
+    w_download fontxplorer "http://www.moonsoftware.com/getfile.asp?fxfull" 22feb63be28730cbfad5458b139464490a25a68d Font_Xplorer_122_Free.exe
+
+    cd "$W_CACHE/fontxplorer"
+    w_try $WINE Font_Xplorer_122_Free.exe $W_UNATTENDED_SLASH_S
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Font Xplorer" "FXplorer.exe"
 }
 
 #----------------------------------------------------------------
