@@ -151,7 +151,7 @@ usage() {
     echo " dotnet20      MS .NET 2.0 (requires Windows license, but does not check for one)"
 # Doesn't work yet, don't make it public
 #    echo " dotnet20sdk   MS .NET Framework SDK Version 2.0 (requires Windows license, but does not check for one, may not work yet)"
-    echo " dotnet20sp2   MS .NET 2.0 sp2 (requires Windows license, but does not check for one)"
+#    echo " dotnet20sp2   MS .NET 2.0 sp2 (broken in wine)"
     echo " dotnet30      MS .NET 3.0 (requires Windows license, but does not check for one, might not work yet)"
     echo " droid         Droid fonts (on LCD, looks better with fontsmooth-rgb)"
     echo " dsound        MS dsound.dll (from DirectX 9 user redistributable)"
@@ -1953,11 +1953,14 @@ load_dotnet20()
 
 load_dotnet20sp2()
 {
-    w_warn "Instaling .net 2.0 runtime.  Can take several minutes.  See http://wiki.winehq.org/MicrosoftDotNet for tips."
+    if w_workaround_wine_bug 22521
+    then
+        w_warn "dotnet20sp2 does not currently install properly in wine.  Please use dotnet20 instead."
+    fi
+
+    load_fontfix
 
     # Recipe from http://bugs.winehq.org/show_bug.cgi?id=10467#c57
-    load_gecko
-    #w_set_winver win2k
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     w_download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     w_try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
@@ -1975,7 +1978,6 @@ load_dotnet20sp2()
     else
        w_try $WINE "$W_CACHE"/dotnet20/NetFx20SP2_x86.exe /q /c:"install.exe /q"
     fi
-    w_unset_winver
 }
 
 #----------------------------------------------------------------
@@ -5087,7 +5089,7 @@ do
     dotnet11sdk) w_call dotnet11sdk;;
     dotnet2|dotnet20) w_call dotnet20;;
     dotnet20sdk) w_call dotnet20sdk;;
-    dotnet20sp2) w_call dotnet20sp2; w_call fontfix;;
+    dotnet20sp2) w_call dotnet20sp2;;
     dotnet3|dotnet30) w_call dotnet30; w_call fontfix;;
     dotnet35) w_call dotnet35; w_call fontfix;;
     dmsynth) w_call dmsynth;;
