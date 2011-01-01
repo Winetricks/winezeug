@@ -3481,6 +3481,19 @@ load_vcrun6()
     w_override_dlls native,builtin msvcrt
 }
 
+w_metadata  mfc42 dlls \
+   title="Visual C++ 6 sp4 mfc42 library (mfc42); same as vcrun6" \
+   publisher="Microsoft" \
+   year="2000" \
+   media="download" \
+   file1="../vcrun6/vc6redistsetup_enu.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/mfc42u.dll"
+
+load_mfc42()
+{
+    w_call vcrun6
+}
+
 #----------------------------------------------------------------
 
 # FIXME: we don't currently have an install check that can distinguish
