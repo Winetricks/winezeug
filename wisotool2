@@ -2554,6 +2554,26 @@ load_d3dx10()
 
 #----------------------------------------------------------------
 
+w_metadata d3dxof dlls \
+   title="MS d3dxof.dll from DirectX user redistributable" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/d3dxof.dll"
+
+load_d3dxof()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F 'dxnt.cab' "$W_CACHE"/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'd3dxof.dll' "$W_TMP/dxnt.cab"
+
+    w_override_dlls native d3dxof
+}
+
+#----------------------------------------------------------------
+
 w_metadata devenum dlls \
    title="MS devenum.dll from DirectX user redistributable" \
    publisher="Microsoft" \
