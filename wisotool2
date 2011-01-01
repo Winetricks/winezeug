@@ -7401,6 +7401,7 @@ _EOF_
 #----------------------------------------------------------------
 # Other settings
 
+#----------------------------------------------------------------
 w_metadata nocrashdialog settings \
     title="Disable crash dialog"
 
@@ -7416,6 +7417,36 @@ REGEDIT4
 _EOF_
     cd "$W_TMP"
     w_try_regedit crashdialog.reg
+}
+
+#----------------------------------------------------------------
+
+w_metadata sound=alsa settings \
+    title="Set sound driver to ALSA"
+w_metadata sound=coreaudio settings \
+    title="Set sound driver to Mac CoreAudio"
+w_metadata sound=disabled settings \
+    title="Set sound driver to disabled"
+w_metadata sound=esd settings \
+    title="Set sound driver to esound"
+w_metadata sound=jack settings \
+    title="Set sound driver to Jack"
+w_metadata sound=nas settings \
+    title="Set sound driver to NAS"
+w_metadata sound=oss settings \
+    title="Set sound driver to OSS"
+
+load_sound()
+{
+    echo "Setting sound driver to $1"
+    cat > "$W_TMP"/set-sound.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Drivers]
+"Audio"="$1"
+
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\set-sound.reg
 }
 
 #----------------------------------------------------------------
