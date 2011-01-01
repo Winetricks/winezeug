@@ -3005,6 +3005,24 @@ load_gdiplus()
 
 #----------------------------------------------------------------
 
+w_metadata gecko dlls \
+   title="Gecko (not normally needed)" \
+   publisher="Mozilla" \
+   year="2010" \
+   media="download"
+
+load_gecko()
+{
+    if test -f /usr/share/wine/gecko/wine_gecko-1.0.0-x86.cab && test -f /usr/share/wine/gecko/wine_gecko-1.1.0-x86.cab
+    then
+        w_warn "gecko is already installed in /usr/share/wine"
+    else
+        w_warn "Please install gecko in /usr/share/wine per http://wiki.winehq.org/Gecko.  http://winezeug.googlecode.com/svn/trunk/install-gecko.sh is an easy script to do that.  Then you should never need to do 'winetricks gecko' again."
+    fi
+}
+
+#----------------------------------------------------------------
+
 w_metadata gecko110 dlls \
    title="Gecko 1.1.0 (not normally needed)" \
    publisher="Mozilla" \
