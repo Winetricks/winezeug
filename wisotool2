@@ -7471,6 +7471,17 @@ load_win7()
 
 #----------------------------------------------------------------
 
+# Really, we should support other values, since winetricks did
+w_metadata winver= settings \
+    title="Set windows version to default (winxp)"
+
+load_winver()
+{
+    w_set_winver winxp
+}
+
+#----------------------------------------------------------------
+
 w_metadata winxp settings \
     title="Set windows version to Windows XP"
 
