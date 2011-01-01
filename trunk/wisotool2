@@ -273,7 +273,7 @@ w_download()
                 then
                     # The cache was full.  If the file is larger than 500MB,
                     # don't checksum it, that just annoys the user.
-                    if test `du -k "$_W_cache/$_W_file"` -gt 500000
+                    if test `du -k "$_W_cache/$_W_file" | cut -f1` -gt 500000
                     then
                         checksum_ok=1
                         break
@@ -5802,6 +5802,71 @@ load_darknesswithin2_demo()
 
     # you have to cd to the directory containing DarkLineage.exe before running it
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Iceberg Interactive\\Darkness Within 2 Demo" "DarkLineage.exe"
+}
+
+#----------------------------------------------------------------
+
+w_metadata dirt2_demo games \
+    title="Dirt 2 Demo" \
+    publisher="Codemasters" \
+    year="2009" \
+    media="download" \
+    file1="Dirt2Demo.zip" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Codemasters/DiRT2 Demo/dirt2.exe"
+
+load_dirt2_demo()
+{
+    w_download $W_PACKAGE "http://gamedaily.newaol.com/pub/Dirt2Demo.zip" 13af1beb8c4f6300e4655045b66aea1f8a29f2b3
+
+    mkdir "$W_TMP/$W_PACKAGE"
+    w_try_unzip -d "$W_TMP/$W_PACKAGE" "$W_CACHE/$W_PACKAGE/Dirt2Demo.zip"
+
+    if w_workaround_wine_bug 23532
+    then
+       w_call gfw 
+    fi
+
+    if w_workaround_wine_bug 24868
+    then
+        w_call d3dx9_36
+    fi
+
+    cd "$W_TMP/$W_PACKAGE"
+
+    w_ahk_do "
+        Run, "Setup.exe"
+        WinWait, Choose Setup Language, Select
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 500
+            ControlClick Button1    ;next
+            WinWait, DiRT2 Demo - InstallShield Wizard, Welcome
+            sleep 500
+            ControlClick Button1    ;next
+            WinWait, DiRT2 Demo - InstallShield Wizard, License
+            sleep 500
+            ControlClick Button3    ;i accept
+            sleep 500
+            ControlClick Button1    ;next
+            WinWait, DiRT2 Demo - InstallShield Wizard, Setup
+            sleep 500
+            ControlClick Button4    ;next
+            WinWait, InstallShield Wizard, In order
+            sleep 500
+            ControlClick Button1    ;next
+            WinWait, DiRT2 Demo - InstallShield Wizard, Ready
+            sleep 500
+            ControlClick Button1    ;next
+        }
+        WinWait, DiRT2 Demo - InstallShield Wizard, Complete
+        if ( u > 0 ) {
+            sleep 500
+            ControlClick Button4    ;finish
+        }
+        WinWaitClose, DiRT2 Demo - InstallShield Wizard, Complete
+        "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Codemasters\\DiRT2 Demo" "dirt2.exe"
 }
 
 #----------------------------------------------------------------
