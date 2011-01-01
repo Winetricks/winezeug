@@ -257,13 +257,50 @@ w_download()
     fi
     _W_cache="$W_CACHE/$_W_packagename"
     mkdir -p "$_W_cache"
-    if test ! -s "$_W_cache/$_W_file" && test -f "$_W_cache/$_W_file"
-    then
-        # zero size - bad download?
-        rm "$_W_cache/$_W_file"
-    fi
-    if test "$nosizecheck" != "" || test ! -f "$_W_cache/$_W_file" || test "$WISOTOOL_CONTINUE_DOWNLOAD"
-    then
+
+    # Try download twice
+    checksum_ok=""
+    tries=0
+    while test $tries -lt 2
+    do
+        tries=`expr $tries + 1`
+
+        if test -s "$_W_cache/$_W_file" 
+        then
+            if test "$3"
+            then
+                if test $tries = 1
+                then
+                    # The cache was full.  If the file is larger than 500MB,
+                    # don't checksum it, that just annoys the user.
+                    if test `du -k "$_W_cache/$_W_file"` -gt 500000
+                    then
+                        checksum_ok=1
+                        break
+                    fi
+                fi
+                # If checksum matches, declare success and exit loop
+                gotsum=`$WISOTOOL_SHA1SUM < "$_W_cache/$_W_file" | sed 's/(stdin)= //;s/ .*//'`
+                if [ "$gotsum"x = "$3"x ]
+                then
+                    checksum_ok=1
+                    break
+                fi
+                if test ! "$WISOTOOL_CONTINUE_DOWNLOAD"
+                then
+                    w_warn "Checksum for $_W_cache/$_W_file did not match, retrying download"
+                    mv -f "$_W_cache/$_W_file" "$_W_cache/$_W_file".bak
+                fi
+            else
+                # file exists, no checksum known, declare success and exit loop
+                break
+            fi
+        elif test -f "$_W_cache/$_W_file"
+        then
+            # zero length file, just delete before retrying
+            rm "$_W_cache/$_W_file"
+        fi
+
         _W_dl_olddir=`pwd`
         cd "$_W_cache"
         # Mac folks tend to have curl rather than wget
@@ -306,13 +343,13 @@ w_download()
         *.exe) chmod +x "$_W_file" ;;
         esac
 
-        if [ "$_W_sum"x != ""x ]
-        then
-            w_verify_sha1sum $_W_sum "$_W_cache/$_W_file"
-        fi
-
         cd "$_W_dl_olddir"
         unset _W_dl_olddir
+    done
+
+    if test "$3" -a ! "$checksum_ok"
+    then 
+        w_verify_sha1sum $3  "$_W_cache/$_W_file"
     fi
 }
 
