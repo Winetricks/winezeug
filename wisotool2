@@ -7603,6 +7603,16 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata vista settings \
+    title="Set windows version to Windows Vista"
+
+load_vista()
+{
+    w_set_winver vista
+}
+
+#----------------------------------------------------------------
+
 w_metadata win2k settings \
     title="Set windows version to Windows 2000"
 
