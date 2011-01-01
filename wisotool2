@@ -3483,6 +3483,51 @@ load_vcrun6()
 
 #----------------------------------------------------------------
 
+# FIXME: we don't currently have an install check that can distinguish
+# between sp4 and sp6, it would have to check size or version of a file,
+# or maybe a registry key.
+
+w_metadata  vcrun6sp6 dlls \
+   title="Visual C++ 6 sp6 libraries (with fixes in atl and mfc)" \
+   publisher="Microsoft" \
+   year="2004" \
+   media="download" \
+   file1="Vs6sp6.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/mfc42u.dll"
+
+load_vcrun6sp6()
+{
+    w_download vcrun6sp6 http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe 2292437a8967349261c810ae8b456592eeb76620
+
+    # No EULA is presented when passing command-line extraction arguments,
+    # so we'll simplify extraction with cabextract.
+    w_try_cabextract "$W_CACHE"/vcrun6sp6/Vs6sp6.exe -d "$W_TMP" -F vcredist.exe
+    cd "$W_TMP"
+
+    # Delete some fake dlls to avoid vcredist installer warnings
+    w_try rm -f "$W_SYSTEM32_DLLS"/comcat.dll
+    w_try rm -f "$W_SYSTEM32_DLLS"/msvcrt.dll
+    w_try rm -f "$W_SYSTEM32_DLLS"/oleaut32.dll
+    w_try rm -f "$W_SYSTEM32_DLLS"/olepro32.dll
+    w_try rm -f "$W_SYSTEM32_DLLS"/stdole2.tlb
+    # vcredist still exits with status 43.  Anyone know why?
+    $WINE vcredist.exe
+
+    status=$?
+    case $status in
+    0|43) ;;
+    *) w_die $W_PACKAGE installation failed
+    esac
+
+    # And then some apps need mfc42u.dll, dunno what right way
+    # is to get it, vcredist doesn't install it by default?
+    w_try_cabextract vcredist.exe -d "$W_SYSTEM32_DLLS" -F mfc42u.dll
+
+    w_override_dlls native,builtin msvcrt
+}
+
+#----------------------------------------------------------------
+
 w_metadata  vcrun2003 dlls \
    title="Visual C++ 2003 libraries (mfc71,msvcp71,msvcr71)" \
    publisher="Microsoft" \
