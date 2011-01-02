@@ -236,6 +236,17 @@ w_verify_sha1sum()
     unset _W_vs_wantsum _W_vs_file _W_vs_gotsum
 }
 
+# Execute wget, and if in gui mode, also show a graphical progress bar
+wisotool_wget_progress()
+{
+    case $WISOTOOL_GUI in
+    zenity) wget "$@" 2>&1 |
+            sed -u 's/^.* \+\([0-9]\+%\) \+\([0-9.]\+[GMKB]\) \+\([0-9hms.]\+\).*$/\1\n# Downloading... \2 (\3)/' | \
+            zenity --progress --width 400 --title="$_W_file" --auto-kill --auto-close ;;
+    *) wget "$@" ;;
+    esac
+}
+
 # Download a file
 # Usage: w_download packagename url [sha1sum [filename [cookie jar]]]
 # Caches downloads in wisotoolcache/$packagename
@@ -317,7 +328,7 @@ w_download()
            # close the connection unless you tell it to (control-C or closing
            # the socket)
            # Disable retries for gog.com (which requires higher level retries)
-           wget -O "$_W_file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${_W_cookiejar:+--load-cookies "$_W_cookiejar"} "$_W_url"
+           wisotool_wget_progress -O "$_W_file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${_W_cookiejar:+--load-cookies "$_W_cookiejar"} "$_W_url"
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
