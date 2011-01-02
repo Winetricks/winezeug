@@ -5398,7 +5398,7 @@ w_metadata amnesia_tdd_demo games \
     title="Amnesia: The Dark Descent Demo" \
     publisher="Frictional Games" \
     year="2010" \
-    media="download" \
+    media="manual_download" \
     file1="amnesia_tdd_demo_1.0.1.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/Amnesia - The Dark Descent Demo/redist/Amnesia.exe"
 
@@ -5978,7 +5978,7 @@ w_metadata darknesswithin2_demo games \
     title="Darkness Within 2 Demo" \
     publisher="Zoetrope Interactive" \
     year="2010" \
-    media="download" \
+    media="manual_download" \
     file1="DarknessWithin2Demo.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/Iceberg Interactive/Darkness Within 2 Demo/DarkLineage.exe"
 
@@ -6248,7 +6248,7 @@ w_metadata demolition_company_demo games \
     title="Demolition Company demo" \
     publisher="Giants Software" \
     year="2010" \
-    media="download" \
+    media="manual_download" \
     file1="DemolitionCompanyDemoENv2.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/Demolition Company Demo/DemolitionCompany.exe"
 
@@ -6369,7 +6369,7 @@ w_metadata losthorizon_demo games \
     title="Lost Horizon Demo" \
     publisher="Deep Silver" \
     year="2010" \
-    media="download" \
+    media="manual_download" \
     file1="Lost_Horizon_Demo_EN.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/Deep Silver/Lost Horizon Demo/fsasgame.exe"
 
@@ -6827,7 +6827,7 @@ w_metadata riseofnations_demo games \
     title="Rise of Nations Trial" \
     publisher="Microsoft" \
     year="2003" \
-    media="download" \
+    media="manual_download" \
     file1="RiseOfNationsTrial.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/Microsoft Games/Rise of Nations Trial/nations.exe"
 
@@ -6866,7 +6866,7 @@ w_metadata theundergarden_demo games \
     title="The UnderGarden Demo" \
     publisher="Atari" \
     year="2010" \
-    media="download" \
+    media="manual_download" \
     file1="TheUnderGarden_PC_B34_SRTB.30_28OCT10.exe" \
     installed_exe1="$W_PROGRAMS_X86_WIN/The UnderGarden/TheUndergarden.exe"
 
