@@ -6731,10 +6731,7 @@ w_metadata plantsvszombies games \
 
 load_plantsvszombies()
 {
-    if ! test -f "$W_CACHE/$W_PACKAGE/PlantsVsZombiesSetup.exe"
-    then
-        w_download $W_PACKAGE "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
-    fi
+    w_download $W_PACKAGE "http://downloads.popcap.com/www/popcap_downloads/PlantsVsZombiesSetup.exe" c46979be135ef1c486144fa062466cdc51b740f5
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -7724,6 +7721,7 @@ execute_command()
     fontsmooth-disable) wisotool_do_app fontsmooth=disable ;;
     fontsmooth-gray) wisotool_do_app fontsmooth=gray ;;
     fontsmooth-rgb) wisotool_do_app fontsmooth=rgb ;;
+    wsh56) wisotool_do_app wsh57 ;;
 
     # Normal verbs, with metadata and load_ functions
     *)
