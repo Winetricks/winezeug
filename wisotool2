@@ -242,7 +242,13 @@ wisotool_wget_progress()
     case $WISOTOOL_GUI in
     zenity) wget "$@" 2>&1 |
             sed -u 's/^.* \+\([0-9]\+%\) \+\([0-9.]\+[GMKB]\) \+\([0-9hms.]\+\).*$/\1\n# Downloading... \2 (\3)/' | \
-            zenity --progress --width 400 --title="$_W_file" --auto-kill --auto-close ;;
+            zenity --progress --width 400 --title="$_W_file" --auto-kill --auto-close
+            # Sadly, if the user presses Cancel, wget keeps running.
+            if pid=`ps augxw | grep ."$_W_file" | awk '{print $2}'`
+            then
+                kill $pid
+            fi
+            ;;
     *) wget "$@" ;;
     esac
 }
