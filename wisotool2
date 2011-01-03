@@ -4406,6 +4406,26 @@ load_unifont()
     w_register_font_substitution "Arial Unicode MS" "Unifont"
 }
 
+#----------------------------------------------------------------
+
+w_metadata allfonts fonts \
+   title="All fonts" \
+   publisher="various" \
+   year="1998-2010" \
+   media="download" 
+
+load_allfonts()
+{
+    # This verb uses reflection, should probably do it portably instead, but that would require keeping it up to date
+    for file in "$WISOTOOL_METADATA"/fonts/*.vars
+    do
+        cmd=`basename $file .vars`
+        case $cmd in
+        allfonts) ;;
+        *) w_call $cmd;;
+        esac
+    done
+}
 
 #----------------------------------------------------------------
 # Apps
