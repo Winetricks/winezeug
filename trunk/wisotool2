@@ -7685,6 +7685,26 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata hosts settings \
+    title="Add empty C:\windows\system32\drivers\etc\{hosts,services} files"
+
+load_hosts()
+{
+    # Create fake system32\drivers\etc\hosts and system32\drivers\etc\services files.
+    # The hosts file is used to map network names to IP addresses without DNS.
+    # The services file is used map service names to network ports.
+    # Some apps depend on these files, but they're not implemented in wine.
+    # Fortunately, empty files in the correct location satisfy those apps.
+    # See http://bugs.winehq.org/show_bug.cgi?id=12076
+
+    # It's in system32 for both win32/win64
+    mkdir -p "$W_WINDIR_UNIX"/system32/drivers/etc
+    touch "$W_WINDIR_UNIX"/system32/drivers/etc/hosts
+    touch "$W_WINDIR_UNIX"/system32/drivers/etc/services
+}
+
+#----------------------------------------------------------------
+
 w_metadata nocrashdialog settings \
     title="Disable crash dialog"
 
