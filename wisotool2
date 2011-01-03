@@ -3239,13 +3239,45 @@ w_metadata msasn1 dlls \
 load_msasn1()
 {
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=1001AAF1-749F-49F4-8010-297BD6CA33A0&displaylang=en
-    # FIXME: This is a huge w_download for a single dll.
+    # FIXME: This is a huge download for a single dll.
     w_download msasn1 http://download.microsoft.com/download/E/6/A/E6A04295-D2A8-40D0-A0C5-241BFECD095E/W2KSP4_EN.EXE fadea6d94a014b039839fecc6e6a11c20afa4fa8
     cd "$W_TMP"
     w_try_cabextract -F i386/msasn1.dl_ "$W_CACHE"/msasn1/W2KSP4_EN.EXE
     w_try_cabextract i386/msasn1.dl_
     w_try cp msasn1.dll "$W_SYSTEM32_DLLS"
     w_try rm -rf i386
+}
+
+#----------------------------------------------------------------
+
+w_metadata msi2 dlls \
+   title="Windows Installer 2.0" \
+   publisher="Microsoft" \
+   year="2001" \
+   media="download" \
+   file1="InstMsiA.exe" \
+   installed_exe1="$W_SYSTEM32_DLLS_WIN/msiexec.exe"
+
+load_msi2()
+{
+    # Install native msi per http://wiki.winehq.org/NativeMsi
+    # http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=CEBBACD8-C094-4255-B702-DE3BB768148F
+    w_download msi2 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+
+    # Pick win98 so we can install native msi
+    w_set_winver win98
+
+    # Avoid "err:setupapi:SetupDefaultQueueCallbackA copy error 5 ..."
+    rm -f "$W_SYSTEM32_DLLS"/msi.dll
+    rm -f "$W_SYSTEM32_DLLS"/msiexec.exe
+
+    cd "$W_CACHE"/msi2
+    WINEDLLOVERRIDES="msi,msiexec.exe=n" w_try $WINE InstMSIA.exe $W_UNATTENDED_SLASH_Q
+
+    w_override_dlls native,builtin msi msiexec.exe
+
+    # and undo version win98
+    w_unset_winver
 }
 
 #----------------------------------------------------------------
