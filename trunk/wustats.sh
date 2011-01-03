@@ -11,10 +11,20 @@ cat usage.log |
     cut -d' ' -f1,7 |
     grep winetricks-usage |
     sed 's,/data/winetricks-usage?20101222-,,;s/%20/ /g' |
-    perl -e 'while (<STDIN>) {chomp; @x=split(" "); $ip=shift(@x); foreach (@x) { print "$ip $_\n"; }}' |
-    fgrep -w -v -f wisotool2.loads |
+    perl -e 'while (<STDIN>) {chomp; @x=split(" "); $ip=shift(@x); foreach (@x) { print "$ip $_\n"; }}' > usage.raw
+
+    cat usage.raw |
     sort -u | 
     cut -d' ' -f2 |
     sort |
     uniq -c |
-    sort -nr
+    sort -nr > usage.txt
+
+    cat usage.raw |
+    fgrep -w -v -f wisotool2.loads |
+    egrep -w -v "fontsmooth-.*|-q|dotnet20sp2|wsh56|comdlg32.ocx" |
+    sort -u | 
+    cut -d' ' -f2 |
+    sort |
+    uniq -c |
+    sort -nr > usage-left.txt
