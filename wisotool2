@@ -1004,8 +1004,6 @@ wisotool_mainmenu()
     case $LANG in
     da*) _W_msg_title='Vælg en pakke-kategori'
          _W_msg_body='Hvad ønsker du at gøre?'
-         _W_msg_run='Run an already-installed Windows app'
-         _W_msg_uninstall='Uninstall a Windows app'
          _W_msg_apps='Installér et program'
          _W_msg_benchmarks='Install a Windows benchmark'
          _W_msg_dlls="Install a Windows DLL"
@@ -1015,8 +1013,6 @@ wisotool_mainmenu()
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
-         _W_msg_run='Run an already-installed Windows app'
-         _W_msg_uninstall='Windows-Programm löschen'
          _W_msg_apps='Windows-Programm installieren'
          _W_msg_benchmarks='Windows-Benchmark installieren'
          _W_msg_dlls="Windows-DLL installieren"
@@ -1026,8 +1022,6 @@ wisotool_mainmenu()
          ;;
     *)   _W_msg_title='Select a package category'
          _W_msg_body='What would you like to do?'
-         _W_msg_run='Run an already-installed Windows app'
-         _W_msg_uninstall='Uninstall a Windows app'
          _W_msg_apps='Install a Windows program'
          _W_msg_benchmarks='Install a Windows benchmark'
          _W_msg_dlls="Install a Windows DLL"
@@ -1058,8 +1052,6 @@ wisotool_mainmenu()
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
             FALSE settings   "$_W_msg_settings" \
-            FALSE run        "$_W_msg_run" \
-            FALSE uninstall  "$_W_msg_uninstall" \
          | tr '|' ' '
         ;;
 
@@ -1075,12 +1067,10 @@ wisotool_mainmenu()
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
                 settings   "$_W_msg_settings" off \
-                run        "$_W_msg_run" off \
-                uninstall  "$_W_msg_uninstall" off \
 
         ;;
     esac
-    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_settings _W_msg_run _W_msg_uninstall
+    unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_benchmarks _W_msg_dlls _W_msg_games _W_msg_settings
 }
 
 # Display the menu of installed apps, output list of selected apps
@@ -2169,7 +2159,6 @@ _EOF_
 Usage: $0 [options] [verb|path-to-verb] ...
 Executes given verbs.  Each verb installs an application or changes a setting.
 Options:
--s|--sharedprefix: don't give each app its own wineprefix
 -k|--keep_isos: cache isos (allows later installation without disc)
 -q|--unattended: don't ask any questions, just install automatically
 -r|--ddrescue: alternate method of disc access (helps with scratched discs)
@@ -2192,7 +2181,6 @@ _EOF_
 wisotool_handle_option()
 {
     case "$1" in
-    -s|--sharedprefix) WISOTOOL_OPT_SHAREDPREFIX=1 ;;
     -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
     -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
     -q|--unattended) W_OPT_UNATTENDED=1
