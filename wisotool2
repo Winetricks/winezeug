@@ -3443,7 +3443,7 @@ load_msxml6()
 #----------------------------------------------------------------
 
 w_metadata ogg dlls \
-   title="ogg OpenCodecs 0.84: DirectShow codecs for flac, speex, theora, vorbis, and WebM" \
+   title="OpenCodecs 0.84: DirectShow codecs for flac, speex, theora, vorbis, and WebM" \
    publisher="xiph.org" \
    year="2010" \
    media="download" \
@@ -3938,7 +3938,7 @@ load_wininet()
 #----------------------------------------------------------------
 
 w_metadata wmi dlls \
-   title="Windows Management Instrumentation core 1.5 (requires Windows license, but does not check for one)" \
+   title="Windows Management Instrumentation (aka WBEM) Core 1.5" \
    publisher="Microsoft" \
    year="2000" \
    media="download" \
