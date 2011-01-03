@@ -111,7 +111,14 @@ test_app()
 
 test_install_cached_or_download()
 {
-    for a in `sh wisotool2 list-cached list-download | sort -u | egrep -v "$BLACKLIST"`
+    sh wisotool2 list-cached list-download > ticd.log
+    if grep .------------------- ticd.log
+    then
+        fail "output of list-cached list-download contained garbage"
+        exit 1
+    fi
+    sort -u < ticd.log | egrep -v "$BLACKLIST" > ticd.verbs
+    for a in `cat ticd.verbs`
     do
         test_app $a
     done
