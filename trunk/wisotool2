@@ -165,11 +165,6 @@ w_try_unzip()
     w_try unzip -o -q "$@"
 }
 
-w_try_winetricks()
-{
-    w_try "$WISOTOOL_WINETRICKS" $W_UNATTENDED_DASH_Q $*
-}
-
 w_read_key()
 {
     case "$W_OPT_UNATTENDED" in
@@ -2070,13 +2065,6 @@ wisotool_init()
     # Whether to automate installs (0=no, 1=yes)
     W_OPT_UNATTENDED=${W_OPT_UNATTENDED:-0}
 
-    WISOTOOL_WINETRICKS="$WISOTOOL_SRCDIR/winetricks"
-    if ! test -f "$WISOTOOL_WINETRICKS"
-    then
-        WISOTOOL_WINETRICKS="$W_CACHE/winetricks/winetricks"
-        w_download winetricks http://kegel.com/wine/winetricks
-    fi
-
     # For case where z: doesn't exist or / is writable (!),
     # make a drive letter for W_CACHE.  Clean it up on exit.
     for letter in y x w v u t s r q p o n m
@@ -3883,7 +3871,7 @@ load_vcrun2010()
 
     if w_workaround_wine_bug 23427  # fixed in wine-1.3.5
     then
-        w_try_winetricks msxml3
+        w_call msxml3
     fi
 
     w_override_dlls native,builtin msvcr100
@@ -5631,7 +5619,7 @@ load_aoe3_demo()
 
     if w_workaround_wine_bug 24897
     then
-        w_try_winetricks msxml4
+        w_call msxml4
     fi
 
     cd "$W_CACHE/$W_PACKAGE"
@@ -5660,7 +5648,9 @@ load_aoe3_demo()
     then
         # On some systems, only quartz is needed?
         # appdb says that l3codecx is also needed?
-        w_try_winetricks devenum dmsynth quartz
+        w_call devenum
+        w_call dmsynth
+        w_call quartz
     fi
 
     if w_workaround_wine_bug 24912
@@ -6123,11 +6113,11 @@ load_civ4_demo()
 
     if w_workaround_wine_bug 6856
     then
-        w_try_winetricks msxml3
+        w_call msxml3
     fi
     if w_workaround_wine_bug 6856 # part 2, still need to file a bug
     then
-        w_try_winetricks d3dx9_26
+        w_call d3dx9_26
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Firaxis Games\\Sid Meier's Civilization 4 Demo" "Civilization4.exe"
@@ -6325,7 +6315,7 @@ load_divinity2_demo()
 
     if w_workaround_wine_bug 24417
     then
-        w_try_winetricks -q d3dx9_36
+        w_call d3dx9_36
     fi
     if w_workaround_wine_bug 25329
     then
@@ -6514,11 +6504,11 @@ load_hko()
 
     if w_workaround_wine_bug 25132
     then
-        w_try_winetricks ie6
+        w_call ie6
     fi
     if w_workaround_wine_bug 25133
     then
-        w_try_winetricks msxml3
+        w_call msxml3
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\SanrioTown\\Hello Kitty Online" "HKO.exe"
@@ -6701,25 +6691,25 @@ load_masseffect2()
     if w_workaround_wine_bug 22091
     then
         w_warn "Will probably hang at end of installer.  If a crash dialog comes up, you can kill it, it's done."
-        w_try_winetricks nocrashdialog
+        w_call nocrashdialog
     fi
 
     if w_workaround_wine_bug 23126 "wine-1.3.[0-9]*"
     then
-        w_try_winetricks vcrun2005
+        w_call vcrun2005
     fi
     if w_workaround_wine_bug 23125 "wine-1.3.[0-9]*"
     then
-        w_try_winetricks d3dx10
+        w_call d3dx10
     fi
     if w_workaround_wine_bug 23151
     then
         w_warn "Disabling glsl to workaround wine bug 23151. Users of nvidia cards will get weird effects without this. If you're on ATI/Intel, you can revert this with 'winetricks glsl-enable'"
-        w_try_winetricks glsl-disable
+        w_call glsl=disabled
     fi
     if w_workaround_wine_bug 22919
     then
-        w_try_winetricks physx
+        w_call physx
     fi
 
     w_ahk_do "
@@ -7288,7 +7278,7 @@ load_singularity()
 
     if w_workaround_wine_bug 6971
     then
-        w_try_winetricks mwo=force
+        w_call mwo=force
     fi
 
     if w_workaround_wine_bug 22548
@@ -7478,7 +7468,7 @@ load_twfc()
 
     if w_workaround_wine_bug 6971
     then
-        w_try_winetricks mwo=force
+        w_call mwo=force
     fi
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\Activision\\Transformers - War for Cybertron\\Binaries" "TWFC.exe"
