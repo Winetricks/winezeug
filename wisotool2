@@ -3156,7 +3156,7 @@ load_glut()
 
 #----------------------------------------------------------------
 
-w_metadata jet40 apps \
+w_metadata jet40 dlls \
    title="MS Jet 4.0 Service Pack 8" \
    publisher="Microsoft" \
    year="2003" \
