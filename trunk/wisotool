@@ -54,7 +54,7 @@ mkdir -p "$WISOTOOL_VERBS"
 WISOTOOL_POST="${WISOTOOL_POST:-$WISOTOOL_DIR/postinstall}"
 
 # Internal variables; these locations are not too important
-W_CACHE="${W_CACHE:-$HOME/.wisotoolcache}"
+W_CACHE="${W_CACHE:-$HOME/.cache/winetricks}"
 test -d "$W_CACHE" || W_CACHE="$WISOTOOL_DIR/cache"
 W_CACHE_WIN="`$XXXPATH -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 W_TMP="$W_DRIVE_C"/wisotooltmp
@@ -8191,7 +8191,7 @@ load_proevolution2011_demo()
 
     if w_workaround_wine_bug 24438
     then
-        w_warn "Installer probably won't work, see http://bugs.winehq.org/show_bug.cgi?id=24438"
+        w_warn "Installer requires wine-1.3.4 or later, see http://bugs.winehq.org/show_bug.cgi?id=24438"
     fi
 
     # Copied from 2010, the first few dialogs are the same, but can't test all of it because of bug 24438.
