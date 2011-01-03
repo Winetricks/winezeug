@@ -3442,6 +3442,23 @@ load_msxml6()
 
 #----------------------------------------------------------------
 
+w_metadata ogg dlls \
+   title="ogg OpenCodecs 0.84: DirectShow codecs for flac, speex, theora, vorbis, and WebM" \
+   publisher="xiph.org" \
+   year="2010" \
+   media="download" \
+   file1="opencodecs_0.84.17338.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Xiph.Org/Open Codecs/AxPlayer.dll" \
+   homepage="http://xiph.org/dshow"
+
+load_ogg()
+{
+    w_download ogg http://downloads.xiph.org/releases/oggdsf/opencodecs_0.84.17338.exe 6151ab79e6ae246208cdf707e080f01c93d95deb
+    w_try $WINE "$W_CACHE"/ogg/opencodecs_0.84.17338.exe $W_UNATTENDED_SLASH_S
+}
+
+#----------------------------------------------------------------
+
 w_metadata physx dlls \
    title="PhysX" \
    publisher="NVidia" \
