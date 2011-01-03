@@ -790,7 +790,7 @@ w_workaround_wine_bug()
 
 w_metadata()
 {
-    if test "$installed_exe1" || test "$installed_file1"
+    if test "$installed_exe1" || test "$installed_file1" || test "$publisher" || test "$year"
     then
         w_die "bug: stray metadata tags set: somebody forgot a backslash in a w_metadata somewhere.  Run with sh -x to see where."
     fi
@@ -1537,7 +1537,12 @@ wisotool_list_all()
         wisotool_is_cached $code   && wisotool_append_to_flags "$_W_cached"
         test "$flags" && flags="[$flags]"
 
-        printf "%-24s %s (%s, %s) %s\n" $code "$title" "$publisher" "$year" "$flags"
+        if ! test "$year" && ! test "$publisher"
+        then
+            printf "%-24s %s %s\n" $code "$title" "$flags"
+        else
+            printf "%-24s %s (%s, %s) %s\n" $code "$title" "$publisher" "$year" "$flags"
+        fi
         )
     done
     unset _W_cached _W_metadatafile
@@ -4206,7 +4211,7 @@ load_fakechinese()
 #----------------------------------------------------------------
 
 w_metadata fakejapanese fonts \
-   title="Creates aliases for Japanese fonts using Takao fonts"
+   title="Creates aliases for Japanese fonts using Takao fonts" \
    publisher="Jun Kobayashi" \
    year="2010"
 
