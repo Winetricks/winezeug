@@ -240,15 +240,30 @@ w_verify_sha1sum()
 wisotool_wget_progress()
 {
     case $WISOTOOL_GUI in
-    zenity) wget "$@" 2>&1 |
+    zenity) 
+        # Usa a subshell so if the user clicks 'Cancel',
+        # the --auto-kill kills the subshell, not the current shell
+        (
+            wget "$@" 2>&1 |
             sed -u 's/^.* \+\([0-9]\+%\) \+\([0-9.]\+[GMKB]\) \+\([0-9hms.]\+\).*$/\1\n# Downloading... \2 (\3)/' | \
             zenity --progress --width 400 --title="$_W_file" --auto-kill --auto-close
-            # Sadly, if the user presses Cancel, wget keeps running.
-            if pid=`ps augxw | grep ."$_W_file" | awk '{print $2}'`
+        )
+        err=$?
+        if test $err -gt 128 
+        then
+            # 129 is 'killed by SIGHUP'
+            # Sadly, --auto-kill only applies to parent process,
+            # which was the subshell, not all the elements of the pipeline...
+            # have to go find and kill the wget.
+            # If we ran wget in the background, we could kill it more directly, perhaps...
+            if pid=`ps augxw | grep ."$_W_file" | grep -v grep | awk '{print $2}'`
             then
+                echo User aborted download, killing wget
                 kill $pid
             fi
-            ;;
+        fi
+        return $err
+        ;;
     *) wget "$@" ;;
     esac
 }
