@@ -3200,13 +3200,63 @@ load_jet40()
 
 #----------------------------------------------------------------
 
+w_metadata  mdac25 dlls \
+   title="Microsoft Data Access Components 2.5 sp3" \
+   publisher="Microsoft" \
+   year="2002" \
+   media="download" \
+   file1="mdac_typ.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Common Files/System/ADO/msado21.tlb"
+
+load_mdac25()
+{
+    # http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c57692e9-dde7-4a60-b586-5d4fd6794db6
+    w_download mdac25 http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
+    w_override_dlls native,builtin odbc32 odbccp32 oledb32
+    w_set_winver nt40
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        w_try $WINE "$W_CACHE"/mdac25/mdac_typ.exe /q /C:"setup /QNT"
+    else
+        w_try $WINE "$W_CACHE"/mdac25/mdac_typ.exe
+    fi
+    w_unset_winver
+}
+
+#----------------------------------------------------------------
+
+w_metadata  mdac27 dlls \
+   title="Microsoft Data Access Components 2.7 sp1" \
+   publisher="Microsoft" \
+   year="2006" \
+   media="download" \
+   file1="mdac_typ.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Common Files/System/ADO/msado26.tlb"
+
+load_mdac27()
+{
+    # http://www.microsoft.com/downloads/en/details.aspx?FamilyId=9AD000F2-CAE7-493D-B0F3-AE36C570ADE8&displaylang=en
+    w_download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
+    w_override_dlls native,builtin odbc32 odbccp32 oledb32
+    w_set_winver win2k
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        w_try $WINE "$W_CACHE"/mdac27/mdac_typ.exe /q /C:"setup /QNT"
+    else
+        w_try $WINE "$W_CACHE"/mdac27/mdac_typ.exe
+    fi
+    w_unset_winver
+}
+
+#----------------------------------------------------------------
+
 w_metadata  mdac28 dlls \
    title="Microsoft Data Access Components 2.8" \
    publisher="Microsoft" \
    year="2003" \
    media="download" \
    file1="MDAC_TYP.EXE" \
-   installed_file1="$W_SYSTEM32_DLLS_WIN/MFC40.DLL"
+   installed_file1="$W_PROGRAMS_X86_WIN/Common Files/System/ADO/msado27.tlb"
 
 load_mdac28()
 {
