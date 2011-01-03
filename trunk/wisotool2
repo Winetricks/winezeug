@@ -1044,7 +1044,7 @@ wisotool_mainmenu()
             --column '' \
             --column '' \
             --height 500 \
-            --width 800 \
+            --width 900 \
             --hide-column 2 \
             FALSE dlls       "$_W_msg_dlls" \
             FALSE fonts      "$_W_msg_fonts" \
@@ -1114,7 +1114,7 @@ wisotool_installed_menu()
                 --column År \
                 --column Medie \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
        de*) echo -n "zenity \
@@ -1129,7 +1129,7 @@ wisotool_installed_menu()
                 --column Jahr \
                 --column Media \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
         *) echo -n "zenity \
@@ -1144,7 +1144,7 @@ wisotool_installed_menu()
                 --column Year \
                 --column Media \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
@@ -1204,7 +1204,7 @@ wisotool_settings_menu()
                 --column Pakke \
                 --column Navn \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
        de*) echo -n "zenity \
@@ -1216,7 +1216,7 @@ wisotool_settings_menu()
                 --column Paket \
                 --column Name \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
         *) echo -n "zenity \
@@ -1228,7 +1228,7 @@ wisotool_settings_menu()
                 --column Setting \
                 --column Title \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
@@ -1291,7 +1291,7 @@ wisotool_showmenu()
                 --column År \
                 --column Medie \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
        de*) echo -n "zenity \
@@ -1306,7 +1306,7 @@ wisotool_showmenu()
                 --column Jahr \
                 --column Media \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
         *) echo -n "zenity \
@@ -1321,7 +1321,7 @@ wisotool_showmenu()
                 --column Year \
                 --column Media \
                 --height 500 \
-                --width 800 \
+                --width 900 \
                 "
              ;;
         esac > "$WISOTOOL_WORKDIR"/zenity.sh
@@ -7178,7 +7178,7 @@ load_tmnationsforever()
 #----------------------------------------------------------------
 
 w_metadata sammax304_demo games \
-    title="Sam & Max: The Devils Playhouse - Beyond the Alley of the Dolls" \
+    title="Sam & Max 304: Beyond the Alley of the Dolls" \
     publisher="Telltale Games" \
     year="2010" \
     media="download" \
