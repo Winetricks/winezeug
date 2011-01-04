@@ -302,6 +302,7 @@ usage() {
     echo " nt40          Set windows version to nt40"
     echo " vd=off        Disable virtual desktop"
     echo " vd=1024x768   Enable virtual desktop, set size to 1024x768"
+    echo " win31         Set windows version to Windows 3.1"
     echo " win98         Set windows version to Windows 98"
     echo " win2k         Set windows version to Windows 2000"
     echo " winxp         Set windows version to Windows XP"
@@ -706,6 +707,19 @@ w_set_winver() {
     $WINE reg delete "HKLM\System\CurrentControlSet\Control\Windows" /v CSDVersion /f || true
 
     case $1 in
+    win31)
+        echo "Setting Windows version to $1"
+        cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_USERS\S-1-5-4\Software\Wine]
+"Version"="win31"
+
+_EOF_
+
+        w_try_regedit "$W_TMP_WIN"\\set-winver.reg
+        return
+        ;;
     win98)
         # This key is only used for win 95/98:
 
@@ -5258,8 +5272,9 @@ do
     psm=off) set_psm disabled;;
     vd=*) arg=`echo $W_PACKAGE | sed 's/vd=//'`; set_virtualdesktop $arg ;;
     vsm-hard) set_vsm hardware;;
-    winver=nt40|nt40) w_set_winver nt40;;
+    winver=win31|win31) w_set_winver win31;;    
     winver=win98|win98) w_set_winver win98;;
+    winver=nt40|nt40) w_set_winver nt40;;
     winver=win2k|win2k) w_set_winver win2k;;
     winver=win7|win7) w_set_winver win7;;
     winver=winxp|winxp) w_set_winver winxp;;
