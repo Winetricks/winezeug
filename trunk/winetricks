@@ -5100,7 +5100,7 @@ do
     divx) w_call divx;;
     dotnet1|dotnet11) w_call dotnet11; w_call fontfix;;
     dotnet11sdk) w_call dotnet11sdk;;
-    dotnet2|dotnet20) w_call dotnet20;;
+    dotnet20) w_call dotnet20;;
     dotnet20sdk) w_call dotnet20sdk;;
     dotnet20sp2) w_call dotnet20sp2;;
     dotnet3|dotnet30) w_call dotnet30; w_call fontfix;;
