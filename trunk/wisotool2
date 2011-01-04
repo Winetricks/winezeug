@@ -3179,6 +3179,33 @@ load_glut()
 
 #----------------------------------------------------------------
 
+w_metadata icodecs dlls \
+   title="Indeo codecs" \
+   publisher="Intel" \
+   year="1998" \
+   media="download" \
+   file1="codinstl.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/ir50_32.dll"
+
+load_icodecs()
+{
+    # Note: this codec is insecure, see
+    # http://support.microsoft.com/kb/954157
+    # Original source, ftp://download.intel.com/support/createshare/camerapack/codinstl.exe, had same checksum
+    w_download icodecs "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
+
+    cd "$W_CACHE"/icodecs
+    w_try $WINE codinstl.exe
+
+    # Work around bug in codec's installer?
+    # http://support.britannica.com/other/touchthesky/win/issues/TSTUw_150.htm
+    # http://appdb.winehq.org/objectManager.php?sClass=version&iId=7091
+    w_try_regsvr ir50_32.dll
+}
+
+#----------------------------------------------------------------
+
+
 w_metadata jet40 dlls \
    title="MS Jet 4.0 Service Pack 8" \
    publisher="Microsoft" \
