@@ -633,9 +633,32 @@ w_set_winver()
     $WINE reg delete "HKLM\System\CurrentControlSet\Control\ProductOptions" /v ProductType /f || true
     $WINE reg delete "HKLM\System\CurrentControlSet\Control\ServiceCurrent" /v OS /f || true
     $WINE reg delete "HKLM\System\CurrentControlSet\Control\Windows" /v CSDVersion /f || true
+    # Delete win31 registry key, if present.  Would use reg delete, but it fails?
+    #$WINE reg delete "HKCU\S-1-5-4\Software\Wine" /v Version /f || true
+    cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_USERS\S-1-5-4\Software\Wine]
+"Version"=-
+
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\set-winver.reg
     ) > /dev/null 2>&1
 
     case $1 in
+    win31)
+        echo "Setting Windows version to $1"
+        cat > "$W_TMP"/set-winver.reg <<_EOF_
+REGEDIT4
+
+[HKEY_USERS\S-1-5-4\Software\Wine]
+"Version"="win31"
+
+_EOF_
+
+        w_try_regedit "$W_TMP_WIN"\\set-winver.reg
+        return
+        ;;
     win98)
         # This key is only used for win 95/98:
 
@@ -7971,6 +7994,16 @@ w_metadata win2k settings \
 load_win2k()
 {
     w_set_winver win2k
+}
+
+#----------------------------------------------------------------
+
+w_metadata win31 settings \
+    title="Set windows version to Windows 3.1"
+
+load_win31()
+{
+    w_set_winver win31
 }
 
 #----------------------------------------------------------------
