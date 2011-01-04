@@ -8210,6 +8210,7 @@ execute_command()
     wsh56) wisotool_do_app wsh57 ;;
     vsm-hard) wisotool_do_app vsm=hardware ;;
     comdlg32.ocx) wisotool_do_app comdlg32ocx ;;
+    vcrun2005sp1) wisotool_do_app vcrun2005 ;;
 
     # Normal verbs, with metadata and load_ functions
     *)
