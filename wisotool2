@@ -3199,6 +3199,26 @@ load_jet40()
 
 #----------------------------------------------------------------
 
+w_metadata l3codecx dlls \
+   title="MPEG Layer-3 Audio Codec for Microsoft DirectShow" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/l3codecx.ax"
+
+load_l3codecx()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F 'l3codecx.ax' "$W_TMP/dxnt.cab"
+
+    w_try_regsvr l3codecx.ax
+}
+
+#----------------------------------------------------------------
+
 w_metadata  mdac25 dlls \
    title="Microsoft Data Access Components 2.5 sp3" \
    publisher="Microsoft" \
