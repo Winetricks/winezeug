@@ -7821,6 +7821,7 @@ wisotool_set_wined3d_var()
     case $2 in
     disable*) arg=disabled;;
     enable*) arg=enabled;;
+    hard*) arg=hardware;;
     backbuffer|fbo|gdi|none|opengl|readdraw|readtex) arg=$2;;
     [0-9]*) arg=$2;;
     *) w_die "illegal value $2 for $1";;
@@ -8015,6 +8016,16 @@ load_vista()
 
 #----------------------------------------------------------------
 
+w_metadata vsm=hardware settings \
+    title="Set VertexShaderMode to hardware"
+
+load_vsm()
+{
+    wisotool_set_wined3d_var VertexShaders $1
+}
+
+#----------------------------------------------------------------
+
 w_metadata win2k settings \
     title="Set windows version to Windows 2000"
 
@@ -8137,6 +8148,7 @@ execute_command()
     fontsmooth-gray) wisotool_do_app fontsmooth=gray ;;
     fontsmooth-rgb) wisotool_do_app fontsmooth=rgb ;;
     wsh56) wisotool_do_app wsh57 ;;
+    vsm-hard) wisotool_do_app vsm=hardware ;;
     comdlg32.ocx) wisotool_do_app comdlg32ocx ;;
 
     # Normal verbs, with metadata and load_ functions
