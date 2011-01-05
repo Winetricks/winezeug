@@ -8101,6 +8101,17 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata forcemono settings \
+    title="Force using mono instead of .Net (for debugging)"
+
+load_forcemono()
+{
+    w_override_dlls native mscoree.dll
+    w_override_dlls disabled mscorsvw.exe
+}
+
+#----------------------------------------------------------------
+
 w_metadata hosts settings \
     title="Add empty C:\windows\system32\drivers\etc\{hosts,services} files"
 
