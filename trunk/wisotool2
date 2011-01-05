@@ -3284,7 +3284,7 @@ load_mdac25()
 {
     # http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c57692e9-dde7-4a60-b586-5d4fd6794db6
     w_download mdac25 http://download.microsoft.com/download/e/e/4/ee4fe9ee-6fa1-4ab6-ab8c-fe1769f4edcf/mdac_typ.exe 09e974a5dbebaaa08c7985a4a1126886dc05fd87
-    w_override_dlls native,builtin odbc32 odbccp32 oledb32
+    load_native_mdac
     w_set_winver nt40
     if [ $W_UNATTENDED_SLASH_Q ]
     then
@@ -3309,7 +3309,7 @@ load_mdac27()
 {
     # http://www.microsoft.com/downloads/en/details.aspx?FamilyId=9AD000F2-CAE7-493D-B0F3-AE36C570ADE8&displaylang=en
     w_download mdac27 http://download.microsoft.com/download/3/b/f/3bf74b01-16ba-472d-9a8c-42b2b4fa0d76/mdac_typ.exe f68594d1f578c3b47bf0639c46c11c5da161feee
-    w_override_dlls native,builtin odbc32 odbccp32 oledb32
+    load_native_mdac
     w_set_winver win2k
     if [ $W_UNATTENDED_SLASH_Q ]
     then
@@ -3334,7 +3334,7 @@ load_mdac28()
 {
     # http://www.microsoft.com/downloads/en/details.aspx?FamilyID=6c050fe3-c795-4b7d-b037-185d0506396c
     w_download mdac28 http://download.microsoft.com/download/c/d/f/cdfd58f1-3973-4c51-8851-49ae3777586f/MDAC_TYP.EXE 91bd59f0b02b67f3845105b15a0f3502b9a2216a
-    w_override_dlls native,builtin odbc32 odbccp32 oledb32
+    load_native_mdac
     w_set_winver win98
     cd "$W_CACHE"/mdac28
     if [ $W_UNATTENDED_SLASH_Q ]
@@ -7962,6 +7962,7 @@ wisotool_set_wined3d_var()
     disable*) arg=disabled;;
     enable*) arg=enabled;;
     hard*) arg=hardware;;
+    repack) arg=repack;;
     backbuffer|fbo|gdi|none|opengl|readdraw|readtex) arg=$2;;
     [0-9]*) arg=$2;;
     *) w_die "illegal value $2 for $1";;
@@ -7989,6 +7990,29 @@ load_glsl()
 {
     wisotool_set_wined3d_var UseGLSL $1
 }
+
+#----------------------------------------------------------------
+
+w_metadata multisampling=enabled settings \
+    title="Enable Direct3D multisampling"
+w_metadata multisampling=disabled settings \
+    title="Disable Direct3D multisampling"
+
+load_multisampling()
+{
+    wisotool_set_wined3d_var Multisampling $1
+}
+
+#----------------------------------------------------------------
+
+w_metadata npm=repack settings \
+    title="Set NonPower2Mode to repack"
+
+load_npm()
+{
+    wisotool_set_wined3d_var NonPower2Mode $1
+}
+
 
 #----------------------------------------------------------------
 # DirectDraw settings
@@ -8093,6 +8117,28 @@ load_hosts()
     mkdir -p "$W_WINDIR_UNIX"/system32/drivers/etc
     touch "$W_WINDIR_UNIX"/system32/drivers/etc/hosts
     touch "$W_WINDIR_UNIX"/system32/drivers/etc/services
+}
+
+#----------------------------------------------------------------
+
+w_metadata native_mdac settings \
+    title="Override odbc32, odbccp32 and oledb32"
+
+load_native_mdac()
+{
+    # Set those overrides globally so user programs get MDAC's odbc
+    # instead of wine's unixodbc
+    w_override_dlls native,builtin odbc32 odbccp32 oledb32
+}
+
+#----------------------------------------------------------------
+
+w_metadata native_oleaut32 settings \
+    title="Override oleaut32"
+
+load_native_oleaut32()
+{
+    w_override_dlls native,builtin oleaut32
 }
 
 #----------------------------------------------------------------
@@ -8287,6 +8333,7 @@ execute_command()
     fontsmooth-disable) wisotool_do_app fontsmooth=disable ;;
     fontsmooth-gray) wisotool_do_app fontsmooth=gray ;;
     fontsmooth-rgb) wisotool_do_app fontsmooth=rgb ;;
+    npm-repack) wisotool_do_app npm=repack ;;
     wsh56) wisotool_do_app wsh57 ;;
     vsm-hard) wisotool_do_app vsm=hardware ;;
     comdlg32.ocx) wisotool_do_app comdlg32ocx ;;
