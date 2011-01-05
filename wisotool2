@@ -2188,6 +2188,7 @@ wisotool_handle_option()
     -q|--unattended) W_OPT_UNATTENDED=1
                      W_UNATTENDED_DASH_Q="-q"
                      W_UNATTENDED_SLASH_Q="/q"
+                     W_UNATTENDED_SLASH_Q_T="/qt"
                      W_UNATTENDED_SLASH_S="/S"
                      W_UNATTENDED_DASH_SILENT="-silent"
                      W_UNATTENDED_SLASH_SILENT="/silent"
@@ -4927,6 +4928,35 @@ load_cmake()
     w_try $WINE cmake-2.8.2-win32-x86.exe $W_UNATTENDED_SLASH_S
 
     w_declare_exe "$W_PROGRAMS_X86_WIN\\CMake 2.8\\bin" "cmake-gui.exe"
+}
+
+#----------------------------------------------------------------
+
+w_metadata controlpad apps \
+   title="MS ActiveX Control Pad" \
+   publisher="Microsoft" \
+   year="1997" \
+   media="download" \
+   file1="setuppad.exe" \
+   installed_exe1="$W_PROGRAMS_X86_WIN/ActiveX Control Pad/PED.EXE"
+
+load_controlpad()
+{
+    # http://msdn.microsoft.com/en-us/library/ms968493.aspx
+    w_call wsh57
+    w_download controlpad http://download.microsoft.com/download/activexcontrolpad/install/4.0.0.950/win98mexp/en-us/setuppad.exe 8921e0f52507ca6a373c94d222777c750fb48af7
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/controlpad/setuppad.exe
+
+    echo "If setup says 'Unable to start DDE ...', press Ignore"
+
+    cd "$W_TMP"
+    case "$W_UNATTENDED_SLASH_Q" in
+    "") quiet="" ;;
+    *)  quiet="/qt"
+    esac
+    w_try $WINE setup $quiet
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\ActiveX Control Pad" "PED.EXE"
 }
 
 #----------------------------------------------------------------
