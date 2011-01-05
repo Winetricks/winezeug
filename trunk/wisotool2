@@ -5028,6 +5028,11 @@ load_controlpad()
     esac
     w_try $WINE setup $quiet
 
+    if ! test -f "$W_SYSTEM32_DLLS"/FM20.DLL
+    then
+        w_die "Install failed.  Please report,  If you just wanted fm20.dll, try installing art2min instead."
+    fi
+
     w_declare_exe "$W_PROGRAMS_X86_WIN\\ActiveX Control Pad" "PED.EXE"
 }
 
@@ -8518,19 +8523,20 @@ execute_command()
     gameux=*|mmdevapi=*|oleaut32=*) w_override_dlls $arg $cmd;;
 
     # Hacks for backwards compatibility
-    glsl-enable) wisotool_do_app glsl=enabled ;;
-    glsl-disable) wisotool_do_app glsl=disabled ;;
+    comdlg32.ocx) wisotool_do_app comdlg32ocx ;;
+    fm20) wisotool_do_app controlpad ;;   # art2kmin also comes with fm20.dll
     fontsmooth-bgr) wisotool_do_app fontsmooth=bgr ;;
     fontsmooth-disable) wisotool_do_app fontsmooth=disable ;;
     fontsmooth-gray) wisotool_do_app fontsmooth=gray ;;
     fontsmooth-rgb) wisotool_do_app fontsmooth=rgb ;;
+    glsl-disable) wisotool_do_app glsl=disabled ;;
+    glsl-enable) wisotool_do_app glsl=enabled ;;
     npm-repack) wisotool_do_app npm=repack ;;
-    psm=on) wisotool_do_app psm=enabled ;;
     psm=off) wisotool_do_app psm=disabled ;;
-    wsh56) wisotool_do_app wsh57 ;;
-    vsm-hard) wisotool_do_app vsm=hardware ;;
-    comdlg32.ocx) wisotool_do_app comdlg32ocx ;;
+    psm=on) wisotool_do_app psm=enabled ;;
     vcrun2005sp1) wisotool_do_app vcrun2005 ;;
+    vsm-hard) wisotool_do_app vsm=hardware ;;
+    wsh56) wisotool_do_app wsh57 ;;
 
     # Normal verbs, with metadata and load_ functions
     *)
