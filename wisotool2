@@ -4257,6 +4257,26 @@ load_wmi()
 
 #----------------------------------------------------------------
 
+w_metadata wsh56vb dlls \
+   title="MS Windows scripting 5.6, vbscript only, no cscript" \
+   publisher="Microsoft" \
+   year="2007" \
+   media="download" \
+   file1="vbs56men.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/vbscript.dll"
+
+load_wsh56vb()
+{
+    # This installs vbscript 5.6 (but not jscript)
+    # See also http://www.microsoft.com/downloads/details.aspx?familyid=4F728263-83A3-464B-BCC0-54E63714BC75
+    w_download wsh56vb http://download.microsoft.com/download/IE60/Patch/Q318089/W9XNT4Me/EN-US/vbs56men.exe 48f14a93db33caff271da0c93f334971f9d7cb22
+
+    cd "$W_CACHE"/wsh56vb
+    w_try $WINE vbs56men.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
 w_metadata wsh57 dlls \
    title="MS Windows Scripting Host 5.7" \
    publisher="Microsoft" \
