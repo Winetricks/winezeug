@@ -5609,6 +5609,31 @@ load_vlc()
 
 #----------------------------------------------------------------
 
+w_metadata wme9 apps \
+   title="MS Windows Media Encoder 9 (broken in wine)" \
+   publisher="Microsoft" \
+   year="2002" \
+   media="download" \
+   file1="WMEncoder.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Windows Media Components/Encoder/wmenc.exe"
+
+load_wme9()
+{
+    if [ $W_ARCH = win64 ]
+    then
+        w_die "Installer doesn't support 64-bit architecture."
+    fi
+    # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=5691ba02-e496-465a-bba9-b2f1182cdf24
+    w_download wme9 http://download.microsoft.com/download/8/1/f/81f9402f-efdd-439d-b2a4-089563199d47/WMEncoder.exe 7a3f8781f3e5705651992ef0150ee30bc1295116
+
+    cd "$W_CACHE"/wme9
+    w_try $WINE WMEncoder.exe $W_UNATTENDED_SLASH_Q
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Windows Media Components\\Encoder" "wmenc.exe"
+}
+
+#----------------------------------------------------------------
+
 # helper - not useful by itself
 load_wm9codecs()
 {
