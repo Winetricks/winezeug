@@ -3170,6 +3170,40 @@ load_glut()
 
 #----------------------------------------------------------------
 
+w_metadata allcodecs dlls \
+   title="All codecs (l3codecx, ffdshow, icodecs, xvid)" \
+   publisher="various" \
+   year="1998-2009" \
+   media="download"
+
+load_allcodecs()
+{
+    w_call l3codecx
+    w_call ffdshow
+    w_call icodecs
+    w_call xvid
+}
+
+#----------------------------------------------------------------
+
+w_metadata ffdshow dlls \
+   title="ffdshow video codecs" \
+   publisher="doom9 folks" \
+   year="2010" \
+   media="download" \
+   file1="ffdshow_beta7_rev3154_20091209.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/ffdshow/ff_liba52.dll" \
+   homepage="http://ffdshow-tryout.sourceforge.net"
+
+load_ffdshow()
+{
+    w_download ffdshow $WISOTOOL_SOURCEFORGE/ffdshow-tryout/ffdshow_beta7_rev3154_20091209.exe 8534c31489e51df70ee9583438d6211e6f0696d0
+    cd "$W_CACHE"/ffdshow
+    w_try $WINE ffdshow_beta7_rev3154_20091209.exe $W_UNATTENDED_SLASH_SILENT
+}
+
+#----------------------------------------------------------------
+
 w_metadata icodecs dlls \
    title="Indeo codecs" \
    publisher="Intel" \
