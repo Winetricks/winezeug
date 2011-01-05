@@ -4383,6 +4383,22 @@ load_baekmuk()
 
 #----------------------------------------------------------------
 
+w_metadata cjkfonts fonts \
+   title="All Chinese, Japanese, Korean fonts and aliases" \
+   publisher="various" \
+   date="1999-2010" \
+   media="download"
+
+load_cjkfonts()
+{
+    w_call fakechinese
+    w_call fakejapanese
+    w_call fakekorean
+    w_call unifont
+}
+
+#----------------------------------------------------------------
+
 w_metadata corefonts fonts \
    title="MS Arial, Courier, Times fonts" \
    publisher="Microsoft" \
@@ -4866,7 +4882,7 @@ load_allfonts()
     do
         cmd=`basename $file .vars`
         case $cmd in
-        allfonts) ;;
+        allfonts|cjkfonts) ;;
         *) w_call $cmd;;
         esac
     done
