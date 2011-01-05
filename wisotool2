@@ -3521,14 +3521,14 @@ w_metadata msls31 dlls \
    publisher="Microsoft" \
    year="2001" \
    media="download" \
-   file1="InstMsiA.exe" \
+   file1="../msi2/InstMsiA.exe" \
    installed_file1="$W_SYSTEM32_DLLS_WIN/msls31.dll"
 
 load_msls31()
 {
     # Needed by native richedit and internet explorer
-    w_download msls31 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
-    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msls31/InstMsiA.exe
+    w_download msi2 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msi2/InstMsiA.exe
     w_try cp -f "$W_TMP"/msls31.dll "$W_SYSTEM32_DLLS"
 }
 
@@ -3900,6 +3900,26 @@ load_shockwave() {
     w_download shockwave http://fpdownload.macromedia.com/get/shockwave/default/english/win95nt/latest/sw_lic_full_installer.msi 2ff28665543e80f3bd4ff1933ac05ec9314aaac6
     cd "$W_CACHE"/shockwave
     w_try $WINE msiexec /i sw_lic_full_installer.msi $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
+w_metadata  usp10 dlls \
+   title="Uniscribe 1.325 " \
+   publisher="Microsoft" \
+   year="2001" \
+   media="download" \
+   file1="../msi2/InstMsiA.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/usp10.dll"
+
+load_usp10()
+{
+    # http://en.wikipedia.org/wiki/Uniscribe
+    # http://www.microsoft.com/downloads/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f
+    w_download msi2 http://download.microsoft.com/download/WindowsInstaller/Install/2.0/W9XMe/EN-US/InstMsiA.exe e739c40d747e7c27aacdb07b50925b1635ee7366
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msi2/InstMsiA.exe
+    w_try cp -f "$W_TMP"/usp10.dll "$W_SYSTEM32_DLLS"
+    w_override_dlls native,builtin usp10
 }
 
 #----------------------------------------------------------------
