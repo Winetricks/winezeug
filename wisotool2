@@ -3220,6 +3220,7 @@ load_icodecs()
     w_download icodecs "http://codec.alshow.co.kr/Down/codinstl.exe" 2c5d64f472abe3f601ce352dcca75b4f02996f8a
 
     cd "$W_CACHE"/icodecs
+    # FIXME: support unattended mode, possibly by scripting it with autohotkey
     w_try $WINE codinstl.exe
 
     # Work around bug in codec's installer?
@@ -5277,7 +5278,7 @@ _EOF_
 
 w_metadata mpc apps \
    title="Media Player Classic - Home Cinema" \
-   publisher="casimir666 & tetsuo55" \
+   publisher="doom9 folks" \
    year="2010" \
    media="download" \
    file1="MPC-HomeCinema.1.4.2499.0.x86.zip" \
