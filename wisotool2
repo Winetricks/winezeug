@@ -1031,14 +1031,14 @@ wisotool_mainmenu()
          _W_msg_games='Windows-Spiel installieren'
          _W_msg_settings='Change Wine settings'
          ;;
-    *)   _W_msg_title='Select a package category'
-         _W_msg_body='What would you like to do?'
-         _W_msg_apps='Install a Windows program'
-         _W_msg_benchmarks='Install a Windows benchmark'
-         _W_msg_dlls="Install a Windows DLL"
+    *)   _W_msg_title='Winetricks - Select a package category'
+         _W_msg_body='What would you like to do with Wine?'
+         _W_msg_apps='Install an app'
+         _W_msg_benchmarks='Install a benchmark'
+         _W_msg_dlls="Install a DLL"
          _W_msg_fonts='Install a font'
-         _W_msg_games='Install a Windows game'
-         _W_msg_settings='Change Wine settings'
+         _W_msg_games='Install a game'
+         _W_msg_settings='Change settings'
          ;;
     esac
 
