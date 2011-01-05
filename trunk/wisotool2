@@ -3169,19 +3169,61 @@ load_glut()
 }
 
 #----------------------------------------------------------------
+# um, codecs are kind of clustered here.  They probably deserve their own real category.
 
 w_metadata allcodecs dlls \
-   title="All codecs (l3codecx, ffdshow, icodecs, xvid) except wmp" \
+   title="All codecs (dirac, ffdshow, icodecs, l3codecx, xvid) except wmp" \
    publisher="various" \
    year="1998-2009" \
    media="download"
 
 load_allcodecs()
 {
+    w_call dirac
     w_call l3codecx
     w_call ffdshow
     w_call icodecs
     w_call xvid
+}
+
+#----------------------------------------------------------------
+
+w_metadata dirac dlls \
+   title="The Dirac directshow filter v1.0.2" \
+   publisher="Dirac" \
+   year="2009" \
+   media="download" \
+   file1="DiracDirectShowFilter-1.0.2.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Dirac/DiracDecoder.dll"
+
+load_dirac()
+{
+    w_download dirac $WISOTOOL_SOURCEFORGE/dirac/DiracDirectShowFilter-1.0.2.exe c912d30a8fa500c7841444559feb1f49301611c4
+
+    # Avoid mfc90 not found error.  (DiracSplitter-libschroedinger.ax needs mfc90 to register itself, I think.)
+    w_call vcrun2008
+
+    cd "$W_CACHE"/dirac
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run DiracDirectShowFilter-1.0.2.exe
+        WinWait, Dirac, Welcome
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            ControlClick, Button2
+            WinWait, Dirac, License
+            ControlClick, Button2
+            WinWait, Dirac, Location
+            ControlClick, Button2
+            WinWait, Dirac, Components
+            ControlClick, Button2
+            WinWait, Dirac, environment
+            ControlCLick, Button1
+            WinWait, Dirac, installed
+            ControlClick, Button2
+        }
+        WinWaitClose
+    "
 }
 
 #----------------------------------------------------------------
