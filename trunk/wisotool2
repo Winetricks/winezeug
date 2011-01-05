@@ -1,7 +1,7 @@
 #!/bin/sh
 # LGPL
 # Copyright 2010 Dan Kegel
-# Experimental cleanup of wisotool
+# Experimental cleanup of winetricks
 #
 #--------------------------------------------------------------------
 # See http://code.google.com/p/winezeug/wiki/ConvergedFrontends
@@ -52,8 +52,8 @@
 # Private things internal to this script, not for use by verbs:
 # - Local variables have lowercase names starting with uppercase _W_
 # - Global variables have uppercase names starting with WINETRICKS_
-# - Functions have lowercase names starting with wisotool_
-# FIXME: A few verbs still use wisotool-private functions or variables.
+# - Functions have lowercase names starting with winetricks_
+# FIXME: A few verbs still use winetricks-private functions or variables.
 #
 # Internationalization / localization:
 # - Important or frequently used message should be internationalized
@@ -65,7 +65,7 @@
 #
 #--------------------------------------------------------------------
 
-# Name of this version of wisotool (YYYYMMDD)
+# Name of this version of winetricks (YYYYMMDD)
 WINETRICKS_VERSION=20101124
 
 #---- Public Functions ----
@@ -81,8 +81,8 @@ w_warn()
     # in zenity, so use tr to replace NUL chars with spaces.
     msg="`echo $@ | tr '\000' ' '`"
     case $WINETRICKS_GUI in
-    zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
-    kdialog) kdialog --title Wisotool --error "$msg" ;;
+    zenity) zenity --error --title=winetricks --text="$msg" --no-wrap;;
+    kdialog) kdialog --title winetricks --error "$msg" ;;
     none) ;;
     esac
 }
@@ -135,7 +135,7 @@ w_try_regedit()
     *) unset cmdc ;;
     esac
 
-    w_try wisotool_early_wine $cmdc regedit $W_UNATTENDED_SLASH_S "$@"
+    w_try winetricks_early_wine $cmdc regedit $W_UNATTENDED_SLASH_S "$@"
 }
 
 w_try_regsvr()
@@ -212,7 +212,7 @@ w_pathconv()
         cygpath "$@"
         ;;
      *)
-        wisotool_early_wine winepath "$@"
+        winetricks_early_wine winepath "$@"
         ;;
     esac
 }
@@ -232,7 +232,7 @@ w_verify_sha1sum()
 }
 
 # Execute wget, and if in gui mode, also show a graphical progress bar
-wisotool_wget_progress()
+winetricks_wget_progress()
 {
     case $WINETRICKS_GUI in
     zenity) 
@@ -265,7 +265,7 @@ wisotool_wget_progress()
 
 # Download a file
 # Usage: w_download packagename url [sha1sum [filename [cookie jar]]]
-# Caches downloads in wisotoolcache/$packagename
+# Caches downloads in winetrickscache/$packagename
 w_download()
 {
     _W_packagename="$1"
@@ -346,7 +346,7 @@ w_download()
            # close the connection unless you tell it to (control-C or closing
            # the socket)
            # Disable retries for gog.com (which requires higher level retries)
-           wisotool_wget_progress -O "$_W_file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${_W_cookiejar:+--load-cookies "$_W_cookiejar"} "$_W_url"
+           winetricks_wget_progress -O "$_W_file" -nd -c --read-timeout=300 --tries=1 --retry-connrefused --header "Accept-Encoding: gzip,deflate" ${_W_cookiejar:+--load-cookies "$_W_cookiejar"} "$_W_url"
         else
            # curl doesn't get filename from the location given by the server!
            # fortunately, we know it
@@ -485,15 +485,15 @@ w_mount()
 
     if test -f "$WINETRICKS_IMG"
     then
-        wisotool_mount_cached_iso "$1"
+        winetricks_mount_cached_iso "$1"
     else
         case "$WINETRICKS_OPT_KEEPISOS" in
         0)
-            wisotool_mount_real_volume "$1"
+            winetricks_mount_real_volume "$1"
             ;;
         1)
-            wisotool_cache_iso "$1"
-            wisotool_mount_cached_iso "$1"
+            winetricks_cache_iso "$1"
+            winetricks_mount_cached_iso "$1"
             ;;
         esac
     fi
@@ -805,7 +805,7 @@ w_metadata()
     then
         w_die "bug: stray metadata tags set: somebody forgot a backslash in a w_metadata somewhere.  Run with sh -x to see where."
     fi
-    if wisotool_metadata_exists $1
+    if winetricks_metadata_exists $1
     then
         w_die "bug: a verb named $1 already exists."
     fi
@@ -873,10 +873,10 @@ w_do_call()
         # Unset all known used metadata values, in case this is a nested call
         unset installed_dll1 installed_exe1
 
-        if wisotool_metadata_exists $1
+        if winetricks_metadata_exists $1
         then
             . "$WINETRICKS_METADATA"/*/$1.vars
-        elif wisotool_metadata_exists $cmd
+        elif winetricks_metadata_exists $cmd
         then
             . "$WINETRICKS_METADATA"/*/$cmd.vars
         else
@@ -884,7 +884,7 @@ w_do_call()
         fi
 
         # Don't install if already installed
-        if wisotool_is_installed $1
+        if winetricks_is_installed $1
         then
             echo "$1 already installed, skipping"
             return 0
@@ -964,17 +964,17 @@ _EOF_
 
 #---- Private Functions ----
 
-wisotool_print_version() {
+winetricks_print_version() {
     echo "$WINETRICKS_VERSION"
 }
 
 # Run a windows command without triggering wine's mshtml's gecko install dialog
-wisotool_early_wine()
+winetricks_early_wine()
 {
     WINEDEBUG=-all WINEDLLOVERRIDES=mshtml= $WINE "$@"
 }
 
-wisotool_detect_gui()
+winetricks_detect_gui()
 {
     if test -x "`which zenity 2>/dev/null`"
     then
@@ -990,7 +990,7 @@ wisotool_detect_gui()
 }
 
 # Detect which sudo to use
-wisotool_detect_sudo()
+winetricks_detect_sudo()
 {
     WINETRICKS_SUDO=sudo
     if test "$WINETRICKS_GUI" = "none"
@@ -1010,7 +1010,7 @@ wisotool_detect_sudo()
 }
 
 # Display main menu, get which submenu the user wants
-wisotool_mainmenu()
+winetricks_mainmenu()
 {
     case $LANG in
     da*) _W_msg_title='Vælg en pakke-kategori'
@@ -1085,7 +1085,7 @@ wisotool_mainmenu()
 }
 
 # Display the menu of installed apps, output list of selected apps
-wisotool_installed_menu()
+winetricks_installed_menu()
 {
     case $WINETRICKS_CURMENU in
     run)
@@ -1160,7 +1160,7 @@ wisotool_installed_menu()
              ;;
         esac > "$WINETRICKS_WORKDIR"/zenity.sh
 
-        for verb in `wisotool_list_installed`
+        for verb in `winetricks_list_installed`
         do
             metadatafile="`echo "$WINETRICKS_METADATA"/*/$verb.vars`"
             if ! test -f "$metadatafile"
@@ -1186,7 +1186,7 @@ wisotool_installed_menu()
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
-        wisotool_list_installed | sed 's/\(.*\)/\1 \1 off/' | tr '\012' ' '
+        winetricks_list_installed | sed 's/\(.*\)/\1 \1 off/' | tr '\012' ' '
         ) > "$WINETRICKS_WORKDIR"/kdialog.sh
         sh "$WINETRICKS_WORKDIR"/kdialog.sh
         ;;
@@ -1195,7 +1195,7 @@ wisotool_installed_menu()
     unset _W_msg_body _W_msg_title _W_msg_apps _W_msg_games
 }
 
-wisotool_settings_menu()
+winetricks_settings_menu()
 {
     case $LANG in
     *)   _W_msg_title='Pick a setting'
@@ -1246,7 +1246,7 @@ wisotool_settings_menu()
 
         for metadatafile in "$WINETRICKS_METADATA"/$WINETRICKS_CURMENU/*.vars
         do
-            code=`wisotool_metadata_basename $metadatafile`
+            code=`winetricks_metadata_basename $metadatafile`
             (
             title='?'
             author='?'
@@ -1263,7 +1263,7 @@ wisotool_settings_menu()
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
-        wisotool_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
+        winetricks_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
         ) > "$WINETRICKS_WORKDIR"/kdialog.sh
         sh "$WINETRICKS_WORKDIR"/kdialog.sh
         ;;
@@ -1273,7 +1273,7 @@ wisotool_settings_menu()
 }
 
 # Display the current menu, output list of verbs to execute to stdout
-wisotool_showmenu()
+winetricks_showmenu()
 {
     case $LANG in
     da*) _W_msg_title='Vælg en pakke'
@@ -1339,7 +1339,7 @@ wisotool_showmenu()
 
         for metadatafile in "$WINETRICKS_METADATA"/$WINETRICKS_CURMENU/*.vars
         do
-            code=`wisotool_metadata_basename $metadatafile`
+            code=`winetricks_metadata_basename $metadatafile`
             (
             title='?'
             author='?'
@@ -1359,7 +1359,7 @@ wisotool_showmenu()
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
-        wisotool_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
+        winetricks_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
         ) > "$WINETRICKS_WORKDIR"/kdialog.sh
         sh "$WINETRICKS_WORKDIR"/kdialog.sh
         ;;
@@ -1369,7 +1369,7 @@ wisotool_showmenu()
 }
 
 # Converts a metadata abolute path to its app code
-wisotool_metadata_basename()
+winetricks_metadata_basename()
 {
     # Classic, but too slow on cygwin
     #basename $1 .vars
@@ -1382,14 +1382,14 @@ wisotool_metadata_basename()
 }
 
 # Returns true if given verb has been registered
-wisotool_metadata_exists()
+winetricks_metadata_exists()
 {
    test -f "$WINETRICKS_METADATA"/*/$1.vars
 }
 
 # Returns true if given verb has been cached
 # You must have already loaded its metadata before calling
-wisotool_is_cached()
+winetricks_is_cached()
 {
     # FIXME: also check file2... if given
     _W_path="$W_CACHE/$1/$file1"
@@ -1411,7 +1411,7 @@ wisotool_is_cached()
 
 # Returns true if given verb has been installed
 # You must have already loaded its metadata before calling
-wisotool_is_installed()
+winetricks_is_installed()
 {
     unset _W_file
     if test "$installed_exe1"
@@ -1435,16 +1435,16 @@ wisotool_is_installed()
 }
 
 # List verbs which are already fully cached locally
-wisotool_list_cached()
+winetricks_list_cached()
 {
     for _W_metadatafile in "$WINETRICKS_METADATA"/*/*.vars
     do
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
         (
-        code=`wisotool_metadata_basename $_W_metadatafile`
+        code=`winetricks_metadata_basename $_W_metadatafile`
         . $_W_metadatafile
-        if wisotool_is_cached $code
+        if winetricks_is_cached $code
         then
             echo $code
         fi
@@ -1454,20 +1454,20 @@ wisotool_list_cached()
 }
 
 # List verbs which are automatically downloadable, regardless of whether they're cached yet
-wisotool_list_download()
+winetricks_list_download()
 {
     cd "$WINETRICKS_METADATA"
     grep -l 'media=.download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
 }
 
 # List verbs which are downloadable with user intervention, regardless of whether they're cached yet
-wisotool_list_manual_download()
+winetricks_list_manual_download()
 {
     cd "$WINETRICKS_METADATA"
     grep -l 'media=.manual_download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
 }
 
-wisotool_list_installed()
+winetricks_list_installed()
 {
     (
     case $WINETRICKS_OPT_SHAREDPREFIX in
@@ -1485,9 +1485,9 @@ wisotool_list_installed()
             # Use a subshell to avoid putting metadata in global space
             # If this is too slow, we can unset known metadata by hand
             (
-            code=`wisotool_metadata_basename $_W_metadatafile`
+            code=`winetricks_metadata_basename $_W_metadatafile`
             . $_W_metadatafile
-            if wisotool_is_installed $code
+            if winetricks_is_installed $code
             then
                 echo $code
             fi
@@ -1501,7 +1501,7 @@ wisotool_list_installed()
 }
 
 # Helper for adding a string to a list of flags
-wisotool_append_to_flags()
+winetricks_append_to_flags()
 {
     if test "$flags"
     then
@@ -1512,7 +1512,7 @@ wisotool_append_to_flags()
 
 # List all verbs in category WINETRICKS_CURMENU verbosely
 # Format is "verb  title  (publisher, year) [flags]"
-wisotool_list_all()
+winetricks_list_all()
 {
     case $WINETRICKS_CURMENU in
     main) echo "$WINETRICKS_CATEGORIES" | tr ' ' '\012' ; return;;
@@ -1529,13 +1529,13 @@ wisotool_list_all()
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
         (
-        code=`wisotool_metadata_basename $_W_metadatafile`
+        code=`winetricks_metadata_basename $_W_metadatafile`
         . $_W_metadatafile
 
         # Compute cached and downloadable flags
         flags=""
-        test "$media" = "download" && wisotool_append_to_flags "$_W_download"
-        wisotool_is_cached $code   && wisotool_append_to_flags "$_W_cached"
+        test "$media" = "download" && winetricks_append_to_flags "$_W_download"
+        winetricks_is_cached $code   && winetricks_append_to_flags "$_W_cached"
         test "$flags" && flags="[$flags]"
 
         if ! test "$year" && ! test "$publisher"
@@ -1550,7 +1550,7 @@ wisotool_list_all()
 }
 
 # Abort if user doesn't own the given directory (or its parent, if it doesn't exist yet)
-wisotool_die_if_user_not_dirowner()
+winetricks_die_if_user_not_dirowner()
 {
     if test -d "$1"
     then
@@ -1574,13 +1574,13 @@ wisotool_die_if_user_not_dirowner()
 # http://www.ecma-international.org/publications/techreports/E-TR-071.htm
 
 # Usage: read_bytes offset count device
-wisotool_read_bytes()
+winetricks_read_bytes()
 {
     dd status=noxfer if=$3 bs=1 skip=$1 count=$2 2>/dev/null
 }
 
 # Usage: read_hex offset count device
-wisotool_read_hex()
+winetricks_read_hex()
 {
     hexdump -s $1 -n $2 -e $2'/1 "%01x " "\n"' $3 | sed 's/  *$//'
 }
@@ -1589,12 +1589,12 @@ wisotool_read_hex()
 # Reads four byte word, outputs in decimal.
 # Uses default endianness.
 # udf uses little endian words, so this only works on little endian machines.
-wisotool_read_decimal()
+winetricks_read_decimal()
 {
     hexdump -s $1 -n 4 -e '1/4 "%4d " "\n"' $2
 }
 
-wisotool_read_udf_volume_name()
+winetricks_read_udf_volume_name()
 {
     # "Anchor volume descriptor pointer" starts at sector 256
 
@@ -1621,7 +1621,7 @@ wisotool_read_udf_volume_name()
     # 32     24       volume identifier (dstring)
 
     # 1. check the 16 bit TagIdentifier of the descriptor tag, make sure it's 2
-    tagid=`wisotool_read_hex 524288 2 $1`
+    tagid=`winetricks_read_hex 524288 2 $1`
     : echo tagid is $tagid
     case "$tagid" in
     "2 0") : echo Found AVDP ;;
@@ -1629,13 +1629,13 @@ wisotool_read_udf_volume_name()
     esac
 
     # 2. read the location of the main volume descriptor:
-    offset=`wisotool_read_decimal 524308 $1`
+    offset=`winetricks_read_decimal 524308 $1`
     : echo MVD is at sector $offset
     offset=`expr $offset \* 2048`
     : echo MVD is at byte $offset
 
     # 3. check the TagIdentifier of the MVD's descriptor tag, make sure it's 1
-    tagid=`wisotool_read_hex $offset 2 $1`
+    tagid=`winetricks_read_hex $offset 2 $1`
     : echo tagid is $tagid
     case "$tagid" in
     "1 0") : echo Found MVD ;;
@@ -1644,26 +1644,26 @@ wisotool_read_udf_volume_name()
 
     # 4. Read whether the name is in 8 or 16 bit chars
     offset=`expr $offset + 24`
-    width=`wisotool_read_hex $offset 1 $1`
+    width=`winetricks_read_hex $offset 1 $1`
 
     offset=`expr $offset + 1`
 
     # 5. Profit!
     case $width in
-    8)   wisotool_read_bytes $offset 30 $1 | sed 's/  *$//' ;;
-    10)  wisotool_read_bytes $offset 30 $1 | tr -d '\000' | sed 's/  *$//' ;;
+    8)   winetricks_read_bytes $offset 30 $1 | sed 's/  *$//' ;;
+    10)  winetricks_read_bytes $offset 30 $1 | tr -d '\000' | sed 's/  *$//' ;;
     *) echo "Unhandled dvd volname character width '$width'"; exit 1;;
     esac
 
     echo ""
 }
 
-wisotool_read_iso9660_volume_name()
+winetricks_read_iso9660_volume_name()
 {
-    wisotool_read_bytes 32808 30 $1 | sed 's/  *$//'
+    winetricks_read_bytes 32808 30 $1 | sed 's/  *$//'
 }
 
-wisotool_read_volume_name()
+winetricks_read_volume_name()
 {
     # ECMA-119 says that CD-ROMs have sector size 2k, and at sector 16 have:
     # size  offset contents
@@ -1674,30 +1674,30 @@ wisotool_read_volume_name()
     # "CD001": ecma-119
     # "CDW02": ecma-168
 
-    std_id=`wisotool_read_bytes 32769 5 $1`
+    std_id=`winetricks_read_bytes 32769 5 $1`
     : echo std_id is $std_id
 
     case $std_id in
-    CD001) wisotool_read_iso9660_volume_name $1 ;;
-    BEA01) wisotool_read_udf_volume_name $1; ;;
+    CD001) winetricks_read_iso9660_volume_name $1 ;;
+    BEA01) winetricks_read_udf_volume_name $1; ;;
     *) echo "Unrecognized disk type $std_id"; exit 1 ;;
     esac
 }
 
-wisotool_volname()
+winetricks_volname()
 {
     x=`volname $1 2> /dev/null| sed 's/  *$//'`
     if test "x$x" = "x"
     then
         # UDF?  See https://bugs.launchpad.net/bugs/678419
-        x=`wisotool_read_volume_name $1`
+        x=`winetricks_read_volume_name $1`
     fi
     echo $x
 }
 
 # Really, should take a volume name as argument, and use 'mount' to get
 # mount point if system automounted it.
-wisotool_detect_optical_drive()
+winetricks_detect_optical_drive()
 {
     case "$WINETRICKS_DEV" in
     "") ;;
@@ -1714,13 +1714,13 @@ wisotool_detect_optical_drive()
     esac
 }
 
-wisotool_cache_iso()
+winetricks_cache_iso()
 {
     # WINETRICKS_IMG has already been set by w_mount
     _W_expected_volname="$1"
 
-    wisotool_die_if_user_not_dirowner "$W_CACHE"
-    wisotool_detect_optical_drive
+    winetricks_die_if_user_not_dirowner "$W_CACHE"
+    winetricks_detect_optical_drive
 
     # Horrible hack for Gentoo - make sure we can read from the drive
     if ! test -r $WINETRICKS_DEV
@@ -1746,7 +1746,7 @@ wisotool_cache_iso()
             break
         fi
         # Otherwise try and read it straight from unmounted volume
-        _W_volname=`wisotool_volname $WINETRICKS_DEV`
+        _W_volname=`winetricks_volname $WINETRICKS_DEV`
         if test "$_W_expected_volname" != "$_W_volname"
         then
             case $LANG in
@@ -1778,7 +1778,7 @@ wisotool_cache_iso()
       ;;
     esac
 
-    # Note: if user presses ^C, wisotool_cleanup will call wisotool_iso_cleanup
+    # Note: if user presses ^C, winetricks_cleanup will call winetricks_iso_cleanup
     while ps -p $WINETRICKS_DD_PID > /dev/null 2>&1
     do
       sleep 5
@@ -1791,7 +1791,7 @@ wisotool_cache_iso()
     eject $WINETRICKS_DEV || true    # punt if eject not found (as on cygwin)
 }
 
-wisotool_mount_cached_iso()
+winetricks_mount_cached_iso()
 {
     # On entry, WINETRICKS_IMG is already set
     w_umount
@@ -1830,7 +1830,7 @@ wisotool_mount_cached_iso()
 #   ...
 # Mountpoints may contain spaces.
 
-wisotool_list_mounts()
+winetricks_list_mounts()
 {
     mount | egrep 'udf|iso9660' | sed 's,^\([^ ]*\) on \(.*\) type .*,\1 \2,'| grep "$1\$"
 }
@@ -1840,10 +1840,10 @@ wisotool_list_mounts()
 # shell function exposed several bugs in most shells (except ksh!)
 # related to implicit subshells.  It would be better to output
 # one string to stdout instead.
-wisotool_is_mounted()
+winetricks_is_mounted()
 {
     # First, check for matching mountpoint
-    _W_tmp="`wisotool_list_mounts "$1"`"
+    _W_tmp="`winetricks_list_mounts "$1"`"
     if test "$_W_tmp"
     then
         _W_dev=`echo $_W_tmp | sed 's/ .*//'`
@@ -1855,14 +1855,14 @@ wisotool_is_mounted()
     # If that fails, read volume name the hard way for each volume
     # Have to use file to return results from implicit subshell
     rm -f /tmp/_W_tmp.$LOGNAME
-    wisotool_list_mounts . | while true
+    winetricks_list_mounts . | while true
     do
         IFS= read _W_tmp
 
         _W_dev=`echo $_W_tmp | sed 's/ .*//'`
         test "$_W_dev" || break
         _W_mountpoint="`echo $_W_tmp | sed 's/^[^ ]* //'`"
-        _W_volname=`wisotool_volname $_W_dev`
+        _W_volname=`winetricks_volname $_W_dev`
         if test "$1" = "$_W_volname"
         then
             # Volume found!  Want to return from function here, but can't
@@ -1885,7 +1885,7 @@ wisotool_is_mounted()
     return 1
 }
 
-wisotool_mount_real_volume()
+winetricks_mount_real_volume()
 {
     _W_expected_volname="$1"
 
@@ -1901,7 +1901,7 @@ wisotool_mount_real_volume()
     then
         w_die Windows not yet supported
     else
-        while ! wisotool_is_mounted "$_W_expected_volname"
+        while ! winetricks_is_mounted "$_W_expected_volname"
         do
             w_warn "$_W_mountmsg"
             # In non-gui case, give user two seconds to futz with disc drive before spamming him again
@@ -1922,25 +1922,25 @@ wisotool_mount_real_volume()
     unset _W_mountmsg
 }
 
-wisotool_cleanup()
+winetricks_cleanup()
 {
     test "$WINETRICKS_CACHE_SYMLINK" && rm -f "$WINETRICKS_CACHE_SYMLINK"
     rm -rf "$WINETRICKS_WORKDIR"
 }
 
-wisotool_kill_handler()
+winetricks_kill_handler()
 {
     #echo "Caught signal, cleaning up."
     case "$WINETRICKS_DD_PID" in
     "") ;;
     *) kill $WINETRICKS_DD_PID ;;
     esac
-    wisotool_cleanup
+    winetricks_cleanup
     #echo "Done cleanup, quitting."
     exit
 }
 
-wisotool_init()
+winetricks_init()
 {
     #---- Private Variables ----
 
@@ -1951,7 +1951,7 @@ wisotool_init()
     # Registering a verb creates a file in WINETRICKS_METADATA
     WINETRICKS_METADATA="$WINETRICKS_WORKDIR/metadata"
 
-    # The list of categories is also hardcoded in wisotool_mainmenu() :-(
+    # The list of categories is also hardcoded in winetricks_mainmenu() :-(
     WINETRICKS_CATEGORIES="apps benchmarks dlls fonts games settings"
     for _W_cat in $WINETRICKS_CATEGORIES
     do
@@ -1963,9 +1963,9 @@ wisotool_init()
     WINETRICKS_CURMENU=main
 
     # Delete work directory after each run, on exit either graceful or abrupt
-    trap wisotool_kill_handler 0 1 2 3 6
+    trap winetricks_kill_handler 0 1 2 3 6
 
-    # Which GUI helper to use (none/zenity/kdialog).  See wisotool_detect_gui.
+    # Which GUI helper to use (none/zenity/kdialog).  See winetricks_detect_gui.
     WINETRICKS_GUI=none
 
     # Whether to always cache cached iso's (1) or only use cache if present (0)
@@ -2041,7 +2041,7 @@ wisotool_init()
     W_CACHE_WIN="`w_pathconv -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 
     # The folder-name is localized!
-    W_PROGRAMS_WIN="`wisotool_early_wine cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+    W_PROGRAMS_WIN="`winetricks_early_wine cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
     case "$W_PROGRAMS_WIN" in
     "") w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string" ;;
     %*) w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned unexpanded string... do you own the parent of $WINEPREFIX ?" ;;
@@ -2058,7 +2058,7 @@ wisotool_init()
         W_PROGRAMS_X86_UNIX="${W_PROGRAMS_UNIX}"
     fi
 
-    W_APPDATA_WIN="`wisotool_early_wine cmd.exe /c echo "%AppData%" | tr -d '\015'`"
+    W_APPDATA_WIN="`winetricks_early_wine cmd.exe /c echo "%AppData%" | tr -d '\015'`"
     W_APPDATA_UNIX="`w_pathconv -u "$W_APPDATA_WIN" | tr -d '\015' `"
 
     # FIXME: get fonts path from SHGetFolderPath
@@ -2095,7 +2095,7 @@ wisotool_init()
     done
 
     # Overridden for windows
-    W_ISO_MOUNT_ROOT=/mnt/wisotool
+    W_ISO_MOUNT_ROOT=/mnt/winetricks
     W_ISO_MOUNT_LETTER=i
 
     # Win(e) 32/64?
@@ -2114,7 +2114,7 @@ wisotool_init()
     fi
 }
 
-wisotool_usage()
+winetricks_usage()
 {
     case $LANG in
     da*)
@@ -2182,7 +2182,7 @@ _EOF_
     esac
 }
 
-wisotool_handle_option()
+winetricks_handle_option()
 {
     case "$1" in
     -r|--ddrescue) WINETRICKS_OPT_DD=ddrescue ;;
@@ -2195,8 +2195,8 @@ wisotool_handle_option()
                      W_UNATTENDED_SLASH_SILENT="/silent"
                      ;;  # fixme: can't make this default easily with these here
     -v|--verbose) set -x ;;
-    -V|--version) wisotool_print_version ; exit 0;;
-    -h|--help) wisotool_usage ; exit 0 ;;
+    -V|--version) winetricks_print_version ; exit 0;;
+    -h|--help) winetricks_usage ; exit 0 ;;
     --optin) WINETRICKS_STATS_REPORT=1;;
     --optout) WINETRICKS_STATS_REPORT=0;;
     -*) w_die "unknown option $1" ;;
@@ -2212,15 +2212,15 @@ then
     WINETRICKS_SRCDIR=`cd $WINETRICKS_SRCDIR; /bin/pwd`
 
     # Handle options before init, to avoid starting wine for --help or --version
-    while wisotool_handle_option $1
+    while winetricks_handle_option $1
     do
         shift
     done
 
-    wisotool_init
+    winetricks_init
 fi
 
-wisotool_run_app()
+winetricks_run_app()
 {
     # Find the app
     case $WINETRICKS_OPT_SHAREDPREFIX in
@@ -2240,7 +2240,7 @@ wisotool_run_app()
     WINEPREFIX="$WINETRICKS_RUN_WINEPREFIX" $WINE cmd /c C:\\run-$1.bat
 }
 
-wisotool_install_app()
+winetricks_install_app()
 {
     case $LANG in
     da*) fail_msg="Installationen af pakken $1 fejlede" ;;
@@ -2255,7 +2255,7 @@ wisotool_install_app()
     fi
 }
 
-wisotool_uninstall_app()
+winetricks_uninstall_app()
 {
     # Find the app
     case $WINETRICKS_OPT_SHAREDPREFIX in
@@ -3005,7 +3005,7 @@ load_dsound()
 
 #----------------------------------------------------------------
 
-# FIXME: update wisotool_is_installed to look at installed_file2
+# FIXME: update winetricks_is_installed to look at installed_file2
 w_metadata flash dlls \
    title="Flash Player" \
    publisher="Adobe" \
@@ -4768,7 +4768,7 @@ load_liberation()
       echo "If you get 'ERROR: Certificate verification error for fedorahosted.org: unable to get local issuer certificate':"
       echo "Then you need to add Verisign root certificates to your local keystore."
       echo "OpenSolaris users, see: http://www.linuxtopia.org/online_books/opensolaris_2008/SYSADV1/html/swmgrpatchtasks-14.html"
-      echo "Or edit wisotool2's download function, and add '--no-check-certificate' to the command."
+      echo "Or edit winetricks's download function, and add '--no-check-certificate' to the command."
       ;;
     esac
 
@@ -6492,7 +6492,7 @@ w_metadata cod1 games \
 
 load_cod1()
 {
-    # FIXME: port load_harder from wisotool and use it when caching first disc
+    # FIXME: port load_harder from winetricks and use it when caching first disc
     w_mount COD1
 
     w_read_key
@@ -8150,7 +8150,7 @@ _EOF_
 #----------------------------------------------------------------
 # Direct3D settings
 
-wisotool_set_wined3d_var()
+winetricks_set_wined3d_var()
 {
     # Filter out/correct bad or partial values
     # Confusing because dinput uses 'disable', but d3d uses 'disabled'
@@ -8186,7 +8186,7 @@ w_metadata glsl=disabled settings \
 
 load_glsl()
 {
-    wisotool_set_wined3d_var UseGLSL $1
+    winetricks_set_wined3d_var UseGLSL $1
 }
 
 #----------------------------------------------------------------
@@ -8198,7 +8198,7 @@ w_metadata multisampling=disabled settings \
 
 load_multisampling()
 {
-    wisotool_set_wined3d_var Multisampling $1
+    winetricks_set_wined3d_var Multisampling $1
 }
 
 #----------------------------------------------------------------
@@ -8208,7 +8208,7 @@ w_metadata npm=repack settings \
 
 load_npm()
 {
-    wisotool_set_wined3d_var NonPower2Mode $1
+    winetricks_set_wined3d_var NonPower2Mode $1
 }
 
 #----------------------------------------------------------------
@@ -8220,7 +8220,7 @@ w_metadata psm=disabled settings \
 
 load_psm()
 {
-    wisotool_set_wined3d_var PixelShaderMode $1
+    winetricks_set_wined3d_var PixelShaderMode $1
 }
 
 #----------------------------------------------------------------
@@ -8233,7 +8233,7 @@ w_metadata ddr=opengl settings \
 
 load_ddr()
 {
-    wisotool_set_wined3d_var DirectDrawRenderer $1
+    winetricks_set_wined3d_var DirectDrawRenderer $1
 }
 
 #----------------------------------------------------------------
@@ -8455,7 +8455,7 @@ w_metadata vsm=hardware settings \
 
 load_vsm()
 {
-    wisotool_set_wined3d_var VertexShaders $1
+    winetricks_set_wined3d_var VertexShaders $1
 }
 
 #----------------------------------------------------------------
@@ -8523,7 +8523,7 @@ load_winxp()
 
 #---- Main Program ----
 
-wisotool_stats_init()
+winetricks_stats_init()
 {
     # Load opt-in status if not already set by a commandline option
     if test ! "$WINETRICKS_STATS_REPORT" && test -f $W_CACHE/track_usage
@@ -8565,7 +8565,7 @@ wisotool_stats_init()
 }
 
 # Retrieve a short string with the operating system name and version
-wisotool_os_description()
+winetricks_os_description()
 {
     (
     case "$OS" in
@@ -8592,7 +8592,7 @@ wisotool_os_description()
     ) | tr '\012' ' '
 }
 
-wisotool_stats_report()
+winetricks_stats_report()
 {
     # If and only if user has opted in to usage tracking, report the usage.
     case "$WINETRICKS_STATS_REPORT" in
@@ -8602,7 +8602,7 @@ wisotool_stats_report()
 
     echo "You opted in, so reporting '$WINETRICKS_STATS_BREADCRUMBS' to the winetricks maintainer so he knows which winetricks verbs get used and which don't.  Use --optout to disable future reports."
 
-    report="os=`wisotool_os_description`&winetricks=$WINETRICKS_VERSION&breadcrumbs=$WINETRICKS_STATS_BREADCRUMBS"
+    report="os=`winetricks_os_description`&winetricks=$WINETRICKS_VERSION&breadcrumbs=$WINETRICKS_STATS_BREADCRUMBS"
     # Just do a HEAD request with the raw commandline.  
     # Yes, this can be fooled by caches.  That's ok.
     if [ -x "`which wget 2>/dev/null`" ]
@@ -8616,17 +8616,17 @@ wisotool_stats_report()
 
 # Do whatever the current menu says to the given app
 # Unless you're in the run or uninstall menus, that means to install it.
-wisotool_do_app()
+winetricks_do_app()
 {
     case $WINETRICKS_CURMENU in
     run)
-        wisotool_run_app $1
+        winetricks_run_app $1
         ;;
     uninstall)
-        wisotool_uninstall_app $1
+        winetricks_uninstall_app $1
         ;;
     *)
-        wisotool_install_app $1
+        winetricks_install_app $1
         ;;
     esac
 }
@@ -8651,47 +8651,47 @@ execute_command()
 
     # Late options
     -*)
-        if ! wisotool_handle_option $1
+        if ! winetricks_handle_option $1
         then
-            wisotool_usage
+            winetricks_usage
             exit 1
         fi
         ;;
 
     # Hard-coded verbs
-    list) wisotool_list_all ;;
-    list-cached) wisotool_list_cached ;;
-    list-download) wisotool_list_download ;;
-    list-manual-download) wisotool_list_manual_download ;;
-    list-installed) wisotool_list_installed ;;
+    list) winetricks_list_all ;;
+    list-cached) winetricks_list_cached ;;
+    list-download) winetricks_list_download ;;
+    list-manual-download) winetricks_list_manual_download ;;
+    list-installed) winetricks_list_installed ;;
 
     # Use winecfg if you want a gui for plain old dll overrides
     gameux=*|mmdevapi=*|oleaut32=*) w_override_dlls $arg $cmd;;
 
     # Hacks for backwards compatibility
-    comdlg32.ocx) wisotool_do_app comdlg32ocx ;;
-    fm20) wisotool_do_app controlpad ;;   # art2kmin also comes with fm20.dll
-    fontsmooth-bgr) wisotool_do_app fontsmooth=bgr ;;
-    fontsmooth-disable) wisotool_do_app fontsmooth=disable ;;
-    fontsmooth-gray) wisotool_do_app fontsmooth=gray ;;
-    fontsmooth-rgb) wisotool_do_app fontsmooth=rgb ;;
-    glsl-disable) wisotool_do_app glsl=disabled ;;
-    glsl-enable) wisotool_do_app glsl=enabled ;;
-    npm-repack) wisotool_do_app npm=repack ;;
-    psm=off) wisotool_do_app psm=disabled ;;
-    psm=on) wisotool_do_app psm=enabled ;;
-    vcrun2005sp1) wisotool_do_app vcrun2005 ;;
-    vsm-hard) wisotool_do_app vsm=hardware ;;
-    wsh56) wisotool_do_app wsh57 ;;
+    comdlg32.ocx) winetricks_do_app comdlg32ocx ;;
+    fm20) winetricks_do_app controlpad ;;   # art2kmin also comes with fm20.dll
+    fontsmooth-bgr) winetricks_do_app fontsmooth=bgr ;;
+    fontsmooth-disable) winetricks_do_app fontsmooth=disable ;;
+    fontsmooth-gray) winetricks_do_app fontsmooth=gray ;;
+    fontsmooth-rgb) winetricks_do_app fontsmooth=rgb ;;
+    glsl-disable) winetricks_do_app glsl=disabled ;;
+    glsl-enable) winetricks_do_app glsl=enabled ;;
+    npm-repack) winetricks_do_app npm=repack ;;
+    psm=off) winetricks_do_app psm=disabled ;;
+    psm=on) winetricks_do_app psm=enabled ;;
+    vcrun2005sp1) winetricks_do_app vcrun2005 ;;
+    vsm-hard) winetricks_do_app vsm=hardware ;;
+    wsh56) winetricks_do_app wsh57 ;;
 
     # Normal verbs, with metadata and load_ functions
     *)
-        if wisotool_metadata_exists $1
+        if winetricks_metadata_exists $1
         then
-            wisotool_do_app $1
+            winetricks_do_app $1
         else
             echo Unknown arg $1
-            wisotool_usage
+            winetricks_usage
             exit 1
         fi
         ;;
@@ -8700,7 +8700,7 @@ execute_command()
 
 if ! test "$WINETRICKS_LIB"
 then
-    wisotool_detect_sudo
+    winetricks_detect_sudo
 
     # If user specifies menu on commandline, execute that command, but don't commit to commandline mode
     # FIXME: this code is duplicated several times; unify it
@@ -8713,27 +8713,27 @@ then
     case "$1" in
     volnameof=*)
         # Debug code.  Remove later?
-        # Since linux's volname command can't handle dvds, wisotool has its own,
+        # Since linux's volname command can't handle dvds, winetricks has its own,
         # implemented using dd, old gum, and some string I had laying around.
         # You can try it like this:
-        #  wisotool2 volnameof=/dev/sr0
+        #  winetricks volnameof=/dev/sr0
         # or
-        #  wisotool2 volnameof=foo.iso
+        #  winetricks volnameof=foo.iso
         # This will read the volname from the given image and put it to stdout.
-        wisotool_volname ${1#volnameof=}
+        winetricks_volname ${1#volnameof=}
         ;;
     "")
         # GUI case
         # No non-option arguments given, so read them from GUI, and loop until user quits
-        wisotool_detect_gui
+        winetricks_detect_gui
         while true
         do
             case $WINETRICKS_CURMENU in
-            main) verbs=`wisotool_mainmenu` ;;
-            run) verbs=`wisotool_installed_menu` ;;
-            uninstall) verbs=`wisotool_installed_menu` ;;
-            settings) verbs=`wisotool_settings_menu` ;;
-            *) verbs="`wisotool_showmenu`" ;;
+            main) verbs=`winetricks_mainmenu` ;;
+            run) verbs=`winetricks_installed_menu` ;;
+            uninstall) verbs=`winetricks_installed_menu` ;;
+            settings) verbs=`winetricks_settings_menu` ;;
+            *) verbs="`winetricks_showmenu`" ;;
             esac
 
             if test "$verbs" = ""
@@ -8749,7 +8749,7 @@ then
             then
                 WINETRICKS_CURMENU=$verbs
             else
-                wisotool_stats_init
+                winetricks_stats_init
                 # Otherwise user picked one or more real verbs.
                 for verb in $verbs
                 do
@@ -8760,7 +8760,7 @@ then
         done
         ;;
     *)
-        wisotool_stats_init
+        winetricks_stats_init
         # Commandline case
         # User gave commandline arguments, so just run those verbs and exit
         for verb
@@ -8782,5 +8782,5 @@ then
 
     esac
 
-    wisotool_stats_report
+    winetricks_stats_report
 fi
