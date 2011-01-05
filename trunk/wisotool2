@@ -8642,8 +8642,13 @@ then
 
             if test "$verbs" = ""
             then
-                # "user didn't pick anything, just exit"
-                break
+                # "user didn't pick anything, back up a level in the menu"
+                if test $WISOTOOL_CURMENU = main
+                then
+                    break
+                else
+                    WISOTOOL_CURMENU=main
+                fi
             elif echo "$WISOTOOL_CATEGORIES" "$WISOTOOL_COMMANDMENUS" | grep -w "$verbs" > /dev/null
             then
                 WISOTOOL_CURMENU=$verbs
@@ -8653,7 +8658,7 @@ then
                 do
                     execute_command $verb
                 done
-                break
+                WISOTOOL_CURMENU=main
             fi
         done
         ;;
