@@ -334,6 +334,8 @@ w_download()
         # On Mac, 'which' doesn't return good exit status
         # Need to jam in --header "Accept-Encoding: gzip,deflate" else
         # redhat.com decompresses liberation-fonts.tar.gz!
+        # Note: this causes other sites to compress downloads, hence
+        # the kludge further down.  See http://code.google.com/p/winezeug/issues/detail?id=77
         echo Downloading $_W_url
         if [ -x "`which wget 2>/dev/null`" ]
         then
