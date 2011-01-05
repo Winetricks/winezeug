@@ -2188,7 +2188,6 @@ wisotool_handle_option()
     -q|--unattended) W_OPT_UNATTENDED=1
                      W_UNATTENDED_DASH_Q="-q"
                      W_UNATTENDED_SLASH_Q="/q"
-                     W_UNATTENDED_SLASH_Q_T="/qt"
                      W_UNATTENDED_SLASH_S="/S"
                      W_UNATTENDED_DASH_SILENT="-silent"
                      W_UNATTENDED_SLASH_SILENT="/silent"
