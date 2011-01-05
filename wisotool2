@@ -51,7 +51,7 @@
 #
 # Private things internal to this script, not for use by verbs:
 # - Local variables have lowercase names starting with uppercase _W_
-# - Global variables have uppercase names starting with WISOTOOL_
+# - Global variables have uppercase names starting with WINETRICKS_
 # - Functions have lowercase names starting with wisotool_
 # FIXME: A few verbs still use wisotool-private functions or variables.
 #
@@ -66,7 +66,7 @@
 #--------------------------------------------------------------------
 
 # Name of this version of wisotool (YYYYMMDD)
-WISOTOOL_VERSION=20101124
+WINETRICKS_VERSION=20101124
 
 #---- Public Functions ----
 
@@ -80,7 +80,7 @@ w_warn()
     # For some reason, nulls were showing up in $@?!, causing truncated output
     # in zenity, so use tr to replace NUL chars with spaces.
     msg="`echo $@ | tr '\000' ' '`"
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     zenity) zenity --error --title=Wisotool --text="$msg" --no-wrap;;
     kdialog) kdialog --title Wisotool --error "$msg" ;;
     none) ;;
@@ -186,7 +186,7 @@ w_read_key()
             _W_nokeymsg="No key given"
             ;;
         esac
-        case $WISOTOOL_GUI in
+        case $WINETRICKS_GUI in
         *zenity) W_KEY=`zenity --entry --text "$_W_keymsg"` ;;
         *kdialog) W_KEY=`kdialog --inputbox "$_W_keymsg"` ;;
         *xmessage) w_die "sorry, can't read key from gui with xmessage" ;;
@@ -223,7 +223,7 @@ w_verify_sha1sum()
     _W_vs_wantsum=$1
     _W_vs_file=$2
 
-    _W_vs_gotsum=`$WISOTOOL_SHA1SUM < $_W_vs_file | sed 's/ .*//'`
+    _W_vs_gotsum=`$WINETRICKS_SHA1SUM < $_W_vs_file | sed 's/ .*//'`
     if [ "$_W_vs_gotsum"x != "$_W_vs_wantsum"x ]
     then
        w_die "sha1sum mismatch!  Rename $_W_vs_file and try again."
@@ -234,7 +234,7 @@ w_verify_sha1sum()
 # Execute wget, and if in gui mode, also show a graphical progress bar
 wisotool_wget_progress()
 {
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     zenity) 
         # Usa a subshell so if the user clicks 'Cancel',
         # the --auto-kill kills the subshell, not the current shell
@@ -307,13 +307,13 @@ w_download()
                     fi
                 fi
                 # If checksum matches, declare success and exit loop
-                gotsum=`$WISOTOOL_SHA1SUM < "$_W_cache/$_W_file" | sed 's/(stdin)= //;s/ .*//'`
+                gotsum=`$WINETRICKS_SHA1SUM < "$_W_cache/$_W_file" | sed 's/(stdin)= //;s/ .*//'`
                 if [ "$gotsum"x = "$3"x ]
                 then
                     checksum_ok=1
                     break
                 fi
-                if test ! "$WISOTOOL_CONTINUE_DOWNLOAD"
+                if test ! "$WINETRICKS_CONTINUE_DOWNLOAD"
                 then
                     w_warn "Checksum for $_W_cache/$_W_file did not match, retrying download"
                     mv -f "$_W_cache/$_W_file" "$_W_cache/$_W_file".bak
@@ -480,14 +480,14 @@ w_download_manual()
 # FIXME: should take mount option 'unhide' for poorly mastered discs
 w_mount()
 {
-    WISOTOOL_IMG="$W_CACHE/$W_PACKAGE/$1.iso"
+    WINETRICKS_IMG="$W_CACHE/$W_PACKAGE/$1.iso"
     mkdir -p "$W_CACHE/$W_PACKAGE"
 
-    if test -f "$WISOTOOL_IMG"
+    if test -f "$WINETRICKS_IMG"
     then
         wisotool_mount_cached_iso "$1"
     else
-        case "$WISOTOOL_OPT_KEEPISOS" in
+        case "$WINETRICKS_OPT_KEEPISOS" in
         0)
             wisotool_mount_real_volume "$1"
             ;;
@@ -505,16 +505,16 @@ w_umount()
     then
         w_die Windows not yet supported
     else
-        echo "Running $WISOTOOL_SUDO umount $W_ISO_MOUNT_ROOT"
-        case "$WISOTOOL_SUDO" in
+        echo "Running $WINETRICKS_SUDO umount $W_ISO_MOUNT_ROOT"
+        case "$WINETRICKS_SUDO" in
         gksudo)
           # -l lazy unmount in case executable still running
-          $WISOTOOL_SUDO "umount -l $W_ISO_MOUNT_ROOT"
-          w_try $WISOTOOL_SUDO "rm -rf $W_ISO_MOUNT_ROOT"
+          $WINETRICKS_SUDO "umount -l $W_ISO_MOUNT_ROOT"
+          w_try $WINETRICKS_SUDO "rm -rf $W_ISO_MOUNT_ROOT"
           ;;
         *)
-          $WISOTOOL_SUDO umount -l $W_ISO_MOUNT_ROOT
-          w_try $WISOTOOL_SUDO rm -rf $W_ISO_MOUNT_ROOT
+          $WINETRICKS_SUDO umount -l $W_ISO_MOUNT_ROOT
+          w_try $WINETRICKS_SUDO rm -rf $W_ISO_MOUNT_ROOT
           ;;
         esac
         rm -f "$WINEPREFIX"/dosdevices/${W_ISO_MOUNT_LETTER}:
@@ -767,7 +767,7 @@ w_set_app_winver()
 # True (zero status) on Wine unless good-wineversion-shell-pattern is set
 # and matches the current wine version.
 # For debugging: if you want to skip a bug's workaround, put the bug number in the
-# environment variable WISOTOOL_BLACKLIST to disable it.
+# environment variable WINETRICKS_BLACKLIST to disable it.
 w_workaround_wine_bug()
 {
     if test "$WINE" = ""
@@ -777,7 +777,7 @@ w_workaround_wine_bug()
     fi
     # FIXME: accept wine version number as $2, only apply if before that
     case $1 in
-    "$WISOTOOL_BLACKLIST")
+    "$WINETRICKS_BLACKLIST")
         echo wine bug $1 workaround blacklisted, skipping
         return 1
         ;;
@@ -811,7 +811,7 @@ w_metadata()
     fi
 
     _W_md_cmd="$1"
-    file="$WISOTOOL_METADATA/$2/$1.vars"
+    file="$WINETRICKS_METADATA/$2/$1.vars"
     shift
     shift
     # Echo arguments to file, with double quotes around the values.
@@ -875,10 +875,10 @@ w_do_call()
 
         if wisotool_metadata_exists $1
         then
-            . "$WISOTOOL_METADATA"/*/$1.vars
+            . "$WINETRICKS_METADATA"/*/$1.vars
         elif wisotool_metadata_exists $cmd
         then
-            . "$WISOTOOL_METADATA"/*/$cmd.vars
+            . "$WINETRICKS_METADATA"/*/$cmd.vars
         else
             w_die "No such verb $1"
         fi
@@ -896,7 +896,7 @@ w_do_call()
 
         # User-specific postinstall hook.
         # Source it so the script can call w_download() if needed.
-        postfile="$WISOTOOL_POST/$1/$1-postinstall.sh"
+        postfile="$WINETRICKS_POST/$1/$1-postinstall.sh"
         if test -f "$postfile"
         then
             chmod +x "$postfile"
@@ -965,7 +965,7 @@ _EOF_
 #---- Private Functions ----
 
 wisotool_print_version() {
-    echo "$WISOTOOL_VERSION"
+    echo "$WINETRICKS_VERSION"
 }
 
 # Run a windows command without triggering wine's mshtml's gecko install dialog
@@ -978,11 +978,11 @@ wisotool_detect_gui()
 {
     if test -x "`which zenity 2>/dev/null`"
     then
-        WISOTOOL_GUI=zenity
+        WINETRICKS_GUI=zenity
     elif test -x "`which kdialog 2>/dev/null`"
     then
         echo "Zenity not found!  Using kdialog as poor substitute."
-        WISOTOOL_GUI=kdialog
+        WINETRICKS_GUI=kdialog
     else
         echo "Please install zenity if you want a graphical interface."
         exit 1
@@ -992,8 +992,8 @@ wisotool_detect_gui()
 # Detect which sudo to use
 wisotool_detect_sudo()
 {
-    WISOTOOL_SUDO=sudo
-    if test "$WISOTOOL_GUI" = "none"
+    WINETRICKS_SUDO=sudo
+    if test "$WINETRICKS_GUI" = "none"
     then
         return
     fi
@@ -1001,10 +1001,10 @@ wisotool_detect_sudo()
     then
         if test -x "`which gksudo 2>/dev/null`"
         then
-            WISOTOOL_SUDO=gksudo
+            WINETRICKS_SUDO=gksudo
         elif test -x "`which kdesudo 2>/dev/null`"
         then
-            WISOTOOL_SUDO=kdesudo
+            WINETRICKS_SUDO=kdesudo
         fi
     fi
 }
@@ -1042,9 +1042,9 @@ wisotool_mainmenu()
          ;;
     esac
 
-    # FIXME: don't show uninstall option when $WISOTOOL_OPT_SHAREDPREFIX is 1
+    # FIXME: don't show uninstall option when $WINETRICKS_OPT_SHAREDPREFIX is 1
 
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     zenity)
         zenity \
             --title "$_W_msg_title" \
@@ -1087,7 +1087,7 @@ wisotool_mainmenu()
 # Display the menu of installed apps, output list of selected apps
 wisotool_installed_menu()
 {
-    case $WISOTOOL_CURMENU in
+    case $WINETRICKS_CURMENU in
     run)
         case $LANG in
         de*) _W_msg_title='Pakete auswählen'
@@ -1110,7 +1110,7 @@ wisotool_installed_menu()
         ;;
     esac
 
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     zenity)
         case $LANG in
         da*) echo -n "zenity \
@@ -1158,11 +1158,11 @@ wisotool_installed_menu()
                 --width 900 \
                 "
              ;;
-        esac > "$WISOTOOL_WORKDIR"/zenity.sh
+        esac > "$WINETRICKS_WORKDIR"/zenity.sh
 
         for verb in `wisotool_list_installed`
         do
-            metadatafile="`echo "$WISOTOOL_METADATA"/*/$verb.vars`"
+            metadatafile="`echo "$WINETRICKS_METADATA"/*/$verb.vars`"
             if ! test -f "$metadatafile"
             then
                 continue
@@ -1178,17 +1178,17 @@ wisotool_installed_menu()
                     "\"$year\"" \
                     "\"$media\""
             )
-        done >> $WISOTOOL_WORKDIR/zenity.sh
+        done >> $WINETRICKS_WORKDIR/zenity.sh
 
-        sh "$WISOTOOL_WORKDIR"/zenity.sh | tr '|' ' '
+        sh "$WINETRICKS_WORKDIR"/zenity.sh | tr '|' ' '
         ;;
 
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
         wisotool_list_installed | sed 's/\(.*\)/\1 \1 off/' | tr '\012' ' '
-        ) > "$WISOTOOL_WORKDIR"/kdialog.sh
-        sh "$WISOTOOL_WORKDIR"/kdialog.sh
+        ) > "$WINETRICKS_WORKDIR"/kdialog.sh
+        sh "$WINETRICKS_WORKDIR"/kdialog.sh
         ;;
     esac
 
@@ -1203,7 +1203,7 @@ wisotool_settings_menu()
          ;;
     esac
 
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     zenity)
         case $LANG in
         da*) echo -n "zenity \
@@ -1242,9 +1242,9 @@ wisotool_settings_menu()
                 --width 900 \
                 "
              ;;
-        esac > "$WISOTOOL_WORKDIR"/zenity.sh
+        esac > "$WINETRICKS_WORKDIR"/zenity.sh
 
-        for metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
+        for metadatafile in "$WINETRICKS_METADATA"/$WINETRICKS_CURMENU/*.vars
         do
             code=`wisotool_metadata_basename $metadatafile`
             (
@@ -1255,17 +1255,17 @@ wisotool_settings_menu()
                     $code \
                     "\"$title\""
             )
-        done >> $WISOTOOL_WORKDIR/zenity.sh
+        done >> $WINETRICKS_WORKDIR/zenity.sh
 
-        sh "$WISOTOOL_WORKDIR"/zenity.sh | tr '|' ' '
+        sh "$WINETRICKS_WORKDIR"/zenity.sh | tr '|' ' '
         ;;
 
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
         wisotool_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
-        ) > "$WISOTOOL_WORKDIR"/kdialog.sh
-        sh "$WISOTOOL_WORKDIR"/kdialog.sh
+        ) > "$WINETRICKS_WORKDIR"/kdialog.sh
+        sh "$WINETRICKS_WORKDIR"/kdialog.sh
         ;;
     esac
 
@@ -1287,7 +1287,7 @@ wisotool_showmenu()
          ;;
     esac
 
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     zenity)
         case $LANG in
         da*) echo -n "zenity \
@@ -1335,9 +1335,9 @@ wisotool_showmenu()
                 --width 900 \
                 "
              ;;
-        esac > "$WISOTOOL_WORKDIR"/zenity.sh
+        esac > "$WINETRICKS_WORKDIR"/zenity.sh
 
-        for metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
+        for metadatafile in "$WINETRICKS_METADATA"/$WINETRICKS_CURMENU/*.vars
         do
             code=`wisotool_metadata_basename $metadatafile`
             (
@@ -1351,17 +1351,17 @@ wisotool_showmenu()
                     "\"$year\"" \
                     "\"$media\""
             )
-        done >> $WISOTOOL_WORKDIR/zenity.sh
+        done >> $WINETRICKS_WORKDIR/zenity.sh
 
-        sh "$WISOTOOL_WORKDIR"/zenity.sh | tr '|' ' '
+        sh "$WINETRICKS_WORKDIR"/zenity.sh | tr '|' ' '
         ;;
 
     kdialog)
         (
         echo -n "kdialog --geometry 600x400+100+100 --title '$_W_msg_title' --separate-output --checklist '$_W_msg_body' "
         wisotool_list_all | sed 's/\([^ ]*\)  *\(.*\)/\1 "\1 - \2" off /' | tr '\012' ' '
-        ) > "$WISOTOOL_WORKDIR"/kdialog.sh
-        sh "$WISOTOOL_WORKDIR"/kdialog.sh
+        ) > "$WINETRICKS_WORKDIR"/kdialog.sh
+        sh "$WINETRICKS_WORKDIR"/kdialog.sh
         ;;
     esac
 
@@ -1384,7 +1384,7 @@ wisotool_metadata_basename()
 # Returns true if given verb has been registered
 wisotool_metadata_exists()
 {
-   test -f "$WISOTOOL_METADATA"/*/$1.vars
+   test -f "$WINETRICKS_METADATA"/*/$1.vars
 }
 
 # Returns true if given verb has been cached
@@ -1437,7 +1437,7 @@ wisotool_is_installed()
 # List verbs which are already fully cached locally
 wisotool_list_cached()
 {
-    for _W_metadatafile in "$WISOTOOL_METADATA"/*/*.vars
+    for _W_metadatafile in "$WINETRICKS_METADATA"/*/*.vars
     do
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
@@ -1456,21 +1456,21 @@ wisotool_list_cached()
 # List verbs which are automatically downloadable, regardless of whether they're cached yet
 wisotool_list_download()
 {
-    cd "$WISOTOOL_METADATA"
+    cd "$WINETRICKS_METADATA"
     grep -l 'media=.download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
 }
 
 # List verbs which are downloadable with user intervention, regardless of whether they're cached yet
 wisotool_list_manual_download()
 {
-    cd "$WISOTOOL_METADATA"
+    cd "$WINETRICKS_METADATA"
     grep -l 'media=.manual_download' */*.vars | sed 's,.*/,,;s/\.vars//' | sort -u
 }
 
 wisotool_list_installed()
 {
     (
-    case $WISOTOOL_OPT_SHAREDPREFIX in
+    case $WINETRICKS_OPT_SHAREDPREFIX in
     0)
         # assume there's only one app per bottle (!), and list the bottles that have a matching run batch file.
         for verb in `ls "$W_PREFIXES_ROOT"/*/dosdevices/c:/run-*.bat | sed 's,.*/\([^/]*\)/dosdevices.*,\1,' `
@@ -1480,7 +1480,7 @@ wisotool_list_installed()
         ;;
     1)
         # List packages in default bottle
-        for _W_metadatafile in "$WISOTOOL_METADATA"/*/*.vars
+        for _W_metadatafile in "$WINETRICKS_METADATA"/*/*.vars
         do
             # Use a subshell to avoid putting metadata in global space
             # If this is too slow, we can unset known metadata by hand
@@ -1510,12 +1510,12 @@ wisotool_append_to_flags()
     flags="${flags}$1"
 }
 
-# List all verbs in category WISOTOOL_CURMENU verbosely
+# List all verbs in category WINETRICKS_CURMENU verbosely
 # Format is "verb  title  (publisher, year) [flags]"
 wisotool_list_all()
 {
-    case $WISOTOOL_CURMENU in
-    main) echo "$WISOTOOL_CATEGORIES" | tr ' ' '\012' ; return;;
+    case $WINETRICKS_CURMENU in
+    main) echo "$WINETRICKS_CATEGORIES" | tr ' ' '\012' ; return;;
     esac
 
     case $LANG in
@@ -1524,7 +1524,7 @@ wisotool_list_all()
     *)   _W_cached="cached"   ; _W_download="downloadable"  ;;
     esac
 
-    for _W_metadatafile in "$WISOTOOL_METADATA"/$WISOTOOL_CURMENU/*.vars
+    for _W_metadatafile in "$WINETRICKS_METADATA"/$WINETRICKS_CURMENU/*.vars
     do
         # Use a subshell to avoid putting metadata in global space
         # If this is too slow, we can unset known metadata by hand
@@ -1699,35 +1699,35 @@ wisotool_volname()
 # mount point if system automounted it.
 wisotool_detect_optical_drive()
 {
-    case "$WISOTOOL_DEV" in
+    case "$WINETRICKS_DEV" in
     "") ;;
     *) return ;;
     esac
 
-    for WISOTOOL_DEV in /dev/cdrom /dev/dvd /dev/sr0
+    for WINETRICKS_DEV in /dev/cdrom /dev/dvd /dev/sr0
     do
-        test -b $WISOTOOL_DEV && break
+        test -b $WINETRICKS_DEV && break
     done
 
-    case "$WISOTOOL_DEV" in
+    case "$WINETRICKS_DEV" in
     "x") w_die "can't find cd/dvd drive" ;;
     esac
 }
 
 wisotool_cache_iso()
 {
-    # WISOTOOL_IMG has already been set by w_mount
+    # WINETRICKS_IMG has already been set by w_mount
     _W_expected_volname="$1"
 
     wisotool_die_if_user_not_dirowner "$W_CACHE"
     wisotool_detect_optical_drive
 
     # Horrible hack for Gentoo - make sure we can read from the drive
-    if ! test -r $WISOTOOL_DEV
+    if ! test -r $WINETRICKS_DEV
     then
-        case "$WISOTOOL_SUDO" in
-        gksudo) $WISOTOOL_SUDO "chmod 666 $WISOTOOL_DEV" ;;
-        *) $WISOTOOL_SUDO chmod 666 $WISOTOOL_DEV ;;
+        case "$WINETRICKS_SUDO" in
+        gksudo) $WINETRICKS_SUDO "chmod 666 $WINETRICKS_DEV" ;;
+        *) $WINETRICKS_SUDO chmod 666 $WINETRICKS_DEV ;;
         esac
     fi
 
@@ -1735,7 +1735,7 @@ wisotool_cache_iso()
     do
         # Wait for user to insert disc.
         # Sleep long to make it less likely to close the drive during insertion.
-        while ! dd if=$WISOTOOL_DEV of=/dev/null count=1
+        while ! dd if=$WINETRICKS_DEV of=/dev/null count=1
         do
             sleep 5
         done
@@ -1746,7 +1746,7 @@ wisotool_cache_iso()
             break
         fi
         # Otherwise try and read it straight from unmounted volume
-        _W_volname=`wisotool_volname $WISOTOOL_DEV`
+        _W_volname=`wisotool_volname $WINETRICKS_DEV`
         if test "$_W_expected_volname" != "$_W_volname"
         then
             case $LANG in
@@ -1763,37 +1763,37 @@ wisotool_cache_iso()
 
     # Copy disc to .iso file, display progress every 5 seconds
     # Use conv=noerror,sync to replace unreadable blocks with zeroes
-    case $WISOTOOL_OPT_DD in
+    case $WINETRICKS_OPT_DD in
     dd)
-      dd if=$WISOTOOL_DEV of="$W_CACHE"/temp.iso bs=2048 conv=noerror,sync &
-      WISOTOOL_DD_PID=$!
+      dd if=$WINETRICKS_DEV of="$W_CACHE"/temp.iso bs=2048 conv=noerror,sync &
+      WINETRICKS_DD_PID=$!
       ;;
     ddrescue)
       if test "`which ddrescue`" = ""
       then
           w_die "Please install ddrescue first."
       fi
-      ddrescue -v -b 2048 $WISOTOOL_DEV "$W_CACHE"/temp.iso &
-      WISOTOOL_DD_PID=$!
+      ddrescue -v -b 2048 $WINETRICKS_DEV "$W_CACHE"/temp.iso &
+      WINETRICKS_DD_PID=$!
       ;;
     esac
 
     # Note: if user presses ^C, wisotool_cleanup will call wisotool_iso_cleanup
-    while ps -p $WISOTOOL_DD_PID > /dev/null 2>&1
+    while ps -p $WINETRICKS_DD_PID > /dev/null 2>&1
     do
       sleep 5
       ls -l "$W_CACHE"/temp.iso
     done
-    unset WISOTOOL_DD_PID
+    unset WINETRICKS_DD_PID
 
-    mv "$W_CACHE"/temp.iso "$WISOTOOL_IMG"
+    mv "$W_CACHE"/temp.iso "$WINETRICKS_IMG"
 
-    eject $WISOTOOL_DEV || true    # punt if eject not found (as on cygwin)
+    eject $WINETRICKS_DEV || true    # punt if eject not found (as on cygwin)
 }
 
 wisotool_mount_cached_iso()
 {
-    # On entry, WISOTOOL_IMG is already set
+    # On entry, WINETRICKS_IMG is already set
     w_umount
 
     if test "$WINE" = ""
@@ -1803,21 +1803,21 @@ wisotool_mount_cached_iso()
         # Linux
         # FIXME: find a way to mount or copy from image without sudo
         _W_USERID=`id -u`
-        case "$WISOTOOL_SUDO" in
+        case "$WINETRICKS_SUDO" in
         gksudo)
-          w_try $WISOTOOL_SUDO "mkdir -p $W_ISO_MOUNT_ROOT"
-          w_try $WISOTOOL_SUDO "mount -o ro,loop,uid=$_W_USERID,unhide $WISOTOOL_IMG $W_ISO_MOUNT_ROOT"
+          w_try $WINETRICKS_SUDO "mkdir -p $W_ISO_MOUNT_ROOT"
+          w_try $WINETRICKS_SUDO "mount -o ro,loop,uid=$_W_USERID,unhide $WINETRICKS_IMG $W_ISO_MOUNT_ROOT"
           ;;
         *)
-          w_try $WISOTOOL_SUDO mkdir -p $W_ISO_MOUNT_ROOT
-          w_try $WISOTOOL_SUDO mount -o ro,loop,uid=$_W_USERID,unhide "$WISOTOOL_IMG" $W_ISO_MOUNT_ROOT
+          w_try $WINETRICKS_SUDO mkdir -p $W_ISO_MOUNT_ROOT
+          w_try $WINETRICKS_SUDO mount -o ro,loop,uid=$_W_USERID,unhide "$WINETRICKS_IMG" $W_ISO_MOUNT_ROOT
           ;;
         esac
 
         echo "Mounting as drive ${W_ISO_MOUNT_LETTER}:"
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         rm -f "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"*
-        ln -sf "$WISOTOOL_IMG" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
+        ln -sf "$WINETRICKS_IMG" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
         ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
         unset _W_USERID
     fi
@@ -1907,12 +1907,12 @@ wisotool_mount_real_volume()
             # In non-gui case, give user two seconds to futz with disc drive before spamming him again
             sleep 2
         done
-        WISOTOOL_DEV=$_W_dev
+        WINETRICKS_DEV=$_W_dev
         W_ISO_MOUNT_ROOT="$_W_mountpoint"
 
         # Gotta provide a symlink to the raw disc, else installers that check volume names will fail
         rm -f "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"*
-        ln -sf "$WISOTOOL_DEV" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
+        ln -sf "$WINETRICKS_DEV" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}::"
         ln -sf "$W_ISO_MOUNT_ROOT" "$WINEPREFIX/dosdevices/${W_ISO_MOUNT_LETTER}:"
     fi
 
@@ -1924,16 +1924,16 @@ wisotool_mount_real_volume()
 
 wisotool_cleanup()
 {
-    test "$WISOTOOL_CACHE_SYMLINK" && rm -f "$WISOTOOL_CACHE_SYMLINK"
-    rm -rf "$WISOTOOL_WORKDIR"
+    test "$WINETRICKS_CACHE_SYMLINK" && rm -f "$WINETRICKS_CACHE_SYMLINK"
+    rm -rf "$WINETRICKS_WORKDIR"
 }
 
 wisotool_kill_handler()
 {
     #echo "Caught signal, cleaning up."
-    case "$WISOTOOL_DD_PID" in
+    case "$WINETRICKS_DD_PID" in
     "") ;;
-    *) kill $WISOTOOL_DD_PID ;;
+    *) kill $WINETRICKS_DD_PID ;;
     esac
     wisotool_cleanup
     #echo "Done cleanup, quitting."
@@ -1945,46 +1945,46 @@ wisotool_init()
     #---- Private Variables ----
 
     # Ephemeral files for this run
-    WISOTOOL_WORKDIR=/tmp/w.$LOGNAME.$$
-    rm -rf "$WISOTOOL_WORKDIR"
+    WINETRICKS_WORKDIR=/tmp/w.$LOGNAME.$$
+    rm -rf "$WINETRICKS_WORKDIR"
 
-    # Registering a verb creates a file in WISOTOOL_METADATA
-    WISOTOOL_METADATA="$WISOTOOL_WORKDIR/metadata"
+    # Registering a verb creates a file in WINETRICKS_METADATA
+    WINETRICKS_METADATA="$WINETRICKS_WORKDIR/metadata"
 
     # The list of categories is also hardcoded in wisotool_mainmenu() :-(
-    WISOTOOL_CATEGORIES="apps benchmarks dlls fonts games settings"
-    for _W_cat in $WISOTOOL_CATEGORIES
+    WINETRICKS_CATEGORIES="apps benchmarks dlls fonts games settings"
+    for _W_cat in $WINETRICKS_CATEGORIES
     do
-        mkdir -p "$WISOTOOL_METADATA"/$_W_cat
+        mkdir -p "$WINETRICKS_METADATA"/$_W_cat
     done
-    WISOTOOL_COMMANDMENUS="run uninstall"
+    WINETRICKS_COMMANDMENUS="run uninstall"
 
-    # Which subdirectory of WISOTOOL_METADATA is currently active (or main, if none)
-    WISOTOOL_CURMENU=main
+    # Which subdirectory of WINETRICKS_METADATA is currently active (or main, if none)
+    WINETRICKS_CURMENU=main
 
     # Delete work directory after each run, on exit either graceful or abrupt
     trap wisotool_kill_handler 0 1 2 3 6
 
     # Which GUI helper to use (none/zenity/kdialog).  See wisotool_detect_gui.
-    WISOTOOL_GUI=none
+    WINETRICKS_GUI=none
 
     # Whether to always cache cached iso's (1) or only use cache if present (0)
     # Can be inherited from environment or set via -k, defaults to off
-    WISOTOOL_OPT_KEEPISOS=${WISOTOOL_OPT_KEEPISOS:-0}
+    WINETRICKS_OPT_KEEPISOS=${WINETRICKS_OPT_KEEPISOS:-0}
 
     # what program to use to make disc image (dd or ddrescue)
-    WISOTOOL_OPT_DD=${WISOTOOL_OPT_DD:-dd}
+    WINETRICKS_OPT_DD=${WINETRICKS_OPT_DD:-dd}
 
     # whether to use shared wineprefix (1) or unique wineprefix for each app (0)
-    WISOTOOL_OPT_SHAREDPREFIX=${WISOTOOL_OPT_SHAREDPREFIX:-1}
+    WINETRICKS_OPT_SHAREDPREFIX=${WINETRICKS_OPT_SHAREDPREFIX:-1}
 
     # Mac folks tend to not have sha1sum, but we can make do with openssl
     if [ -x "`which sha1sum 2>/dev/null`" ]
     then
-       WISOTOOL_SHA1SUM="sha1sum"
+       WINETRICKS_SHA1SUM="sha1sum"
     elif [ -x "`which openssl 2>/dev/null`" ]
     then
-       WISOTOOL_SHA1SUM="openssl dgst -sha1"
+       WINETRICKS_SHA1SUM="openssl dgst -sha1"
     else
        w_die "No sha1sum utility available."
     fi
@@ -1993,8 +1993,8 @@ wisotool_init()
     # their mirror picker sometimes persistantly sends you to a broken
     # mirror.
     case `date +%S` in
-    *[3])  WISOTOOL_SOURCEFORGE=http://easynews.dl.sourceforge.net/sourceforge ;;
-    *)     WISOTOOL_SOURCEFORGE=http://downloads.sourceforge.net;;
+    *[3])  WINETRICKS_SOURCEFORGE=http://easynews.dl.sourceforge.net/sourceforge ;;
+    *)     WINETRICKS_SOURCEFORGE=http://downloads.sourceforge.net;;
     esac
 
     #---- Public Variables ----
@@ -2022,11 +2022,11 @@ wisotool_init()
 
     # Where application installers are cached
     # See http://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
-    if test "$WISOTOOL_DIR"
+    if test "$WINETRICKS_DIR"
     then
-        W_CACHE="$WISOTOOL_DIR/cache"
+        W_CACHE="$WINETRICKS_DIR/cache"
     else
-        WISOTOOL_DIR="$HOME/.local/winetricks"
+        WINETRICKS_DIR="$HOME/.local/winetricks"
         if test -d "$HOME/Library/Caches"
         then
             # MacOSX
@@ -2087,8 +2087,8 @@ wisotool_init()
     do
         if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
         then
-            WISOTOOL_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
-            ln -sf "$W_CACHE" "$WISOTOOL_CACHE_SYMLINK"
+            WINETRICKS_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+            ln -sf "$W_CACHE" "$WINETRICKS_CACHE_SYMLINK"
             W_CACHE_WIN=${letter}:
             break
         fi
@@ -2185,8 +2185,8 @@ _EOF_
 wisotool_handle_option()
 {
     case "$1" in
-    -r|--ddrescue) WISOTOOL_OPT_DD=ddrescue ;;
-    -k|--keep_isos) WISOTOOL_OPT_KEEPISOS=1 ;;
+    -r|--ddrescue) WINETRICKS_OPT_DD=ddrescue ;;
+    -k|--keep_isos) WINETRICKS_OPT_KEEPISOS=1 ;;
     -q|--unattended) W_OPT_UNATTENDED=1
                      W_UNATTENDED_DASH_Q="-q"
                      W_UNATTENDED_SLASH_Q="/q"
@@ -2197,8 +2197,8 @@ wisotool_handle_option()
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
-    --optin) WISOTOOL_STATS_REPORT=1;;
-    --optout) WISOTOOL_STATS_REPORT=0;;
+    --optin) WINETRICKS_STATS_REPORT=1;;
+    --optout) WINETRICKS_STATS_REPORT=0;;
     -*) w_die "unknown option $1" ;;
     *) return 1 ;;
     esac
@@ -2206,10 +2206,10 @@ wisotool_handle_option()
 }
 
 # Must initialize variables before calling w_metadata
-if ! test "$WISOTOOL_LIB"
+if ! test "$WINETRICKS_LIB"
 then
-    WISOTOOL_SRCDIR=`dirname $0`
-    WISOTOOL_SRCDIR=`cd $WISOTOOL_SRCDIR; /bin/pwd`
+    WINETRICKS_SRCDIR=`dirname $0`
+    WINETRICKS_SRCDIR=`cd $WINETRICKS_SRCDIR; /bin/pwd`
 
     # Handle options before init, to avoid starting wine for --help or --version
     while wisotool_handle_option $1
@@ -2223,13 +2223,13 @@ fi
 wisotool_run_app()
 {
     # Find the app
-    case $WISOTOOL_OPT_SHAREDPREFIX in
+    case $WINETRICKS_OPT_SHAREDPREFIX in
     0)
-        WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat
+        WINETRICKS_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
+        app="$WINETRICKS_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat
         ;;
     1)
-        WISOTOOL_RUN_WINEPREFIX="$WINEPREFIX"
+        WINETRICKS_RUN_WINEPREFIX="$WINEPREFIX"
         app="$W_DRIVE_C/run-$1.bat"
         ;;
     esac
@@ -2237,7 +2237,7 @@ wisotool_run_app()
     then
         w_die "Can't find app $1 (looked for $app)"
     fi
-    WINEPREFIX="$WISOTOOL_RUN_WINEPREFIX" $WINE cmd /c C:\\run-$1.bat
+    WINEPREFIX="$WINETRICKS_RUN_WINEPREFIX" $WINE cmd /c C:\\run-$1.bat
 }
 
 wisotool_install_app()
@@ -2258,10 +2258,10 @@ wisotool_install_app()
 wisotool_uninstall_app()
 {
     # Find the app
-    case $WISOTOOL_OPT_SHAREDPREFIX in
+    case $WINETRICKS_OPT_SHAREDPREFIX in
     0)
-        WISOTOOL_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
-        app="$WISOTOOL_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat
+        WINETRICKS_RUN_WINEPREFIX="$W_PREFIXES_ROOT"/$1
+        app="$WINETRICKS_RUN_WINEPREFIX"/dosdevices/c:/run-$1.bat
         ;;
     1)
         w_die "Sorry, this tool can't uninstall apps from a shared wineprefix"
@@ -2271,7 +2271,7 @@ wisotool_uninstall_app()
     then
         w_die "Can't find app $1 (looked for $app)"
     fi
-    rm -rf "$WISOTOOL_RUN_WINEPREFIX"
+    rm -rf "$WINETRICKS_RUN_WINEPREFIX"
 }
 
 #---- Builtin Verbs ----
@@ -3202,7 +3202,7 @@ w_metadata dirac dlls \
 
 load_dirac()
 {
-    w_download dirac $WISOTOOL_SOURCEFORGE/dirac/DiracDirectShowFilter-1.0.2.exe c912d30a8fa500c7841444559feb1f49301611c4
+    w_download dirac $WINETRICKS_SOURCEFORGE/dirac/DiracDirectShowFilter-1.0.2.exe c912d30a8fa500c7841444559feb1f49301611c4
 
     # Avoid mfc90 not found error.  (DiracSplitter-libschroedinger.ax needs mfc90 to register itself, I think.)
     w_call vcrun2008
@@ -3243,7 +3243,7 @@ w_metadata ffdshow dlls \
 
 load_ffdshow()
 {
-    w_download ffdshow $WISOTOOL_SOURCEFORGE/ffdshow-tryout/ffdshow_beta7_rev3154_20091209.exe 8534c31489e51df70ee9583438d6211e6f0696d0
+    w_download ffdshow $WINETRICKS_SOURCEFORGE/ffdshow-tryout/ffdshow_beta7_rev3154_20091209.exe 8534c31489e51df70ee9583438d6211e6f0696d0
     cd "$W_CACHE"/ffdshow
     w_try $WINE ffdshow_beta7_rev3154_20091209.exe $W_UNATTENDED_SLASH_SILENT
 }
@@ -4160,7 +4160,7 @@ load_vcrun2003()
     # Load the Visual C++ 2003 runtime libraries
     # Sadly, I know of no Microsoft URL for these
     echo "Installing BZFlag (which comes with the Visual C++ 2003 runtimes)"
-    w_download vcrun2003 $WISOTOOL_SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
+    w_download vcrun2003 $WINETRICKS_SOURCEFORGE/bzflag/BZEditW32_1.6.5_Installer.exe bdd1b32c4202fd77e6513fd507c8236888b09121
     w_try $WINE "$W_CACHE"/vcrun2003/BZEditW32_1.6.5_Installer.exe $W_UNATTENDED_SLASH_S
     w_try cp "$W_PROGRAMS_X86_UNIX/BZEdit1.6.5"/m*71* "$W_SYSTEM32_DLLS"
 }
@@ -4480,17 +4480,17 @@ load_corefonts()
     # Added More Fonts (see msttcorefonts)
     # [*] Pointed w_download locations to sites that actually contained the
     # fonts to w_download (as of 04-03-2008)
-    #w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/andale32.exe c4db8cbe42c566d12468f5fdad38c43721844c69
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/arialb32.exe d45cdab84b7f4c1efd6d1b369f50ed0390e3d344
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/comic32.exe 2371d0327683dcc5ec1684fe7c275a8de1ef9a51
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/courie32.exe 06a745023c034f88b4135f5e294fece1a3c1b057
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/georgi32.exe 90e4070cb356f1d811acb943080bf97e419a8f1e
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/impact32.exe 86b34d650cfbbe5d3512d49d2545f7509a55aad2
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/trebuc32.exe 50aab0988423efcc9cf21fac7d64d534d6d0a34a
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/verdan32.exe f5b93cedf500edc67502f116578123618c64a42a
-    w_download corefonts $WISOTOOL_SOURCEFORGE/corefonts/webdin32.exe 2fb4a42c53e50bc70707a7b3c57baf62ba58398f
+    #w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/andale32.exe c4db8cbe42c566d12468f5fdad38c43721844c69
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/arial32.exe 6d75f8436f39ab2da5c31ce651b7443b4ad2916e
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/arialb32.exe d45cdab84b7f4c1efd6d1b369f50ed0390e3d344
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/comic32.exe 2371d0327683dcc5ec1684fe7c275a8de1ef9a51
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/courie32.exe 06a745023c034f88b4135f5e294fece1a3c1b057
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/georgi32.exe 90e4070cb356f1d811acb943080bf97e419a8f1e
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/impact32.exe 86b34d650cfbbe5d3512d49d2545f7509a55aad2
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/times32.exe 20b79e65cdef4e2d7195f84da202499e3aa83060
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/trebuc32.exe 50aab0988423efcc9cf21fac7d64d534d6d0a34a
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/verdan32.exe f5b93cedf500edc67502f116578123618c64a42a
+    w_download corefonts $WINETRICKS_SOURCEFORGE/corefonts/webdin32.exe 2fb4a42c53e50bc70707a7b3c57baf62ba58398f
 
     # Natively installed versions of these fonts will cause the installers
     # to exit silently. Because there are apps out there that depend on the
@@ -4900,7 +4900,7 @@ load_wenquanyi()
 {
     # See http://wenq.org/enindex.cgi
     # Donate at http://wenq.org/enindex.cgi?Download(en)#MicroHei_Beta if you want to help support free CJK font development
-    w_download wenquanyi $WISOTOOL_SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
+    w_download wenquanyi $WINETRICKS_SOURCEFORGE/wqy/wqy-microhei-0.2.0-beta.tar.gz 28023041b22b6368bcfae076de68109b81e77976
     cd "$W_TMP/"
     gunzip -dc "$W_CACHE/wenquanyi/wqy-microhei-0.2.0-beta.tar.gz" | tar -xf -
     w_try mv wqy-microhei/wqy-microhei.ttc "$W_FONTSDIR_UNIX"
@@ -4941,7 +4941,7 @@ w_metadata allfonts fonts \
 load_allfonts()
 {
     # This verb uses reflection, should probably do it portably instead, but that would require keeping it up to date
-    for file in "$WISOTOOL_METADATA"/fonts/*.vars
+    for file in "$WINETRICKS_METADATA"/fonts/*.vars
     do
         cmd=`basename $file .vars`
         case $cmd in
@@ -5311,7 +5311,7 @@ load_ie7()
     done
 
     # Seeing is believing
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     none)
         w_warn "To start ie7, use the command $WINE '${W_PROGRAMS_WIN}\\\\Internet Explorer\\\\iexplore'"
         ;;
@@ -5436,7 +5436,7 @@ _EOF_
     w_try_regedit "$W_TMP_WIN"\\homepage.reg
 
     # Seeing is believing
-    case $WISOTOOL_GUI in
+    case $WINETRICKS_GUI in
     none)
         w_warn "To start 'ie68', use the command '$WINE iexplore'"
         ;;
@@ -5460,7 +5460,7 @@ w_metadata mpc apps \
 
 load_mpc()
 {
-    w_download mpc $WISOTOOL_SOURCEFORGE/project/mpc-hc/MPC%20HomeCinema%20-%20Win32/MPC-HC%20v1.4.2499.0_32%20bits/MPC-HomeCinema.1.4.2499.0.x86.zip 9f8c4a8e70fa36ffa68f878d13adc8b09b915ece
+    w_download mpc $WINETRICKS_SOURCEFORGE/project/mpc-hc/MPC%20HomeCinema%20-%20Win32/MPC-HC%20v1.4.2499.0_32%20bits/MPC-HomeCinema.1.4.2499.0.x86.zip 9f8c4a8e70fa36ffa68f878d13adc8b09b915ece
 
     mkdir -p "$W_PROGRAMS_X86_UNIX/Media Player Classic"
     cd "$W_PROGRAMS_X86_UNIX/Media Player Classic"
@@ -5501,7 +5501,7 @@ w_metadata python26 apps \
 load_python26()
 {
     w_download python26 http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi 2d1503b0e8b7e4c72a276d4d9027cf4856b208b8
-    w_download python26 $WISOTOOL_SOURCEFORGE/project/pywin32/pywin32/Build%20214/pywin32-214.win32-py2.6.exe eca58f29b810d8e3e7951277ebb3e35ac35794a3
+    w_download python26 $WINETRICKS_SOURCEFORGE/project/pywin32/pywin32/Build%20214/pywin32-214.win32-py2.6.exe eca58f29b810d8e3e7951277ebb3e35ac35794a3
     cd "$W_CACHE"/python26
     w_try $WINE msiexec /i python-2.6.2.msi ALLUSERS=1 $W_UNATTENDED_SLASH_Q
 
@@ -5630,7 +5630,7 @@ w_metadata vlc apps \
 
 load_vlc()
 {
-    w_download vlc $WISOTOOL_SOURCEFORGE/vlc/vlc-1.1.5-win32.exe 11a14856e07b28d5c637c38f5191915f787fb85e
+    w_download vlc $WINETRICKS_SOURCEFORGE/vlc/vlc-1.1.5-win32.exe 11a14856e07b28d5c637c38f5191915f787fb85e
     cd "$W_CACHE"/vlc
     w_try $WINE vlc-1.1.5-win32.exe $W_UNATTENDED_SLASH_S
     w_declare_exe "$W_PROGRAMS_X86_WIN\\VideoLAN\\VLC" "vlc.exe"
@@ -8526,15 +8526,15 @@ load_winxp()
 wisotool_stats_init()
 {
     # Load opt-in status if not already set by a commandline option
-    if test ! "$WISOTOOL_STATS_REPORT" && test -f $W_CACHE/track_usage
+    if test ! "$WINETRICKS_STATS_REPORT" && test -f $W_CACHE/track_usage
     then
-        WISOTOOL_STATS_REPORT=`cat $W_CACHE/track_usage`
+        WINETRICKS_STATS_REPORT=`cat $W_CACHE/track_usage`
     fi
 
-    if test ! "$WISOTOOL_STATS_REPORT" 
+    if test ! "$WINETRICKS_STATS_REPORT" 
     then
         # No opt-in status found.  If GUI active, ask user whether they would like to opt in.
-        case $WISOTOOL_GUI in
+        case $WINETRICKS_GUI in
         zenity) 
             case $LANG in
             *)
@@ -8547,20 +8547,20 @@ wisotool_stats_init()
             if zenity --question --text "$question" --title "$title"
             then
                 zenity --info --text "$thanks"
-                WISOTOOL_STATS_REPORT=1
+                WINETRICKS_STATS_REPORT=1
             else
                 zenity --info --text "$declined"
-                WISOTOOL_STATS_REPORT=0
+                WINETRICKS_STATS_REPORT=0
             fi
-            echo $WISOTOOL_STATS_REPORT > $W_CACHE/track_usage
+            echo $WINETRICKS_STATS_REPORT > $W_CACHE/track_usage
             ;;
         esac
     fi
 
     # Save opt-in status
-    if test "$WISOTOOL_STATS_REPORT"
+    if test "$WINETRICKS_STATS_REPORT"
     then
-        echo "$WISOTOOL_STATS_REPORT" > $W_CACHE/track_usage
+        echo "$WINETRICKS_STATS_REPORT" > $W_CACHE/track_usage
     fi
 }
 
@@ -8595,14 +8595,14 @@ wisotool_os_description()
 wisotool_stats_report()
 {
     # If and only if user has opted in to usage tracking, report the usage.
-    case "$WISOTOOL_STATS_REPORT" in
+    case "$WINETRICKS_STATS_REPORT" in
     1) ;;
     *) return;;
     esac
 
-    echo "You opted in, so reporting '$WISOTOOL_STATS_BREADCRUMBS' to the winetricks maintainer so he knows which winetricks verbs get used and which don't.  Use --optout to disable future reports."
+    echo "You opted in, so reporting '$WINETRICKS_STATS_BREADCRUMBS' to the winetricks maintainer so he knows which winetricks verbs get used and which don't.  Use --optout to disable future reports."
 
-    report="os=`wisotool_os_description`&winetricks=$WISOTOOL_VERSION&breadcrumbs=$WISOTOOL_STATS_BREADCRUMBS"
+    report="os=`wisotool_os_description`&winetricks=$WINETRICKS_VERSION&breadcrumbs=$WINETRICKS_STATS_BREADCRUMBS"
     # Just do a HEAD request with the raw commandline.  
     # Yes, this can be fooled by caches.  That's ok.
     if [ -x "`which wget 2>/dev/null`" ]
@@ -8618,7 +8618,7 @@ wisotool_stats_report()
 # Unless you're in the run or uninstall menus, that means to install it.
 wisotool_do_app()
 {
-    case $WISOTOOL_CURMENU in
+    case $WINETRICKS_CURMENU in
     run)
         wisotool_run_app $1
         ;;
@@ -8635,7 +8635,7 @@ wisotool_do_app()
 execute_command()
 {
     # log what we execute for possible later statistics reporting
-    WISOTOOL_STATS_BREADCRUMBS="$WISOTOOL_STATS_BREADCRUMBS $*"
+    WINETRICKS_STATS_BREADCRUMBS="$WINETRICKS_STATS_BREADCRUMBS $*"
 
     case $1 in
     *=*) arg=`echo $1 | sed 's/.*=//'`; cmd=`echo $1 | sed 's/=.*//'`;;
@@ -8646,7 +8646,7 @@ execute_command()
 
     # FIXME: avoid duplicated code
     apps|benchmarks|dlls|fonts|games|run|uninstall|settings)
-        WISOTOOL_CURMENU=$1
+        WINETRICKS_CURMENU=$1
         ;;
 
     # Late options
@@ -8698,15 +8698,15 @@ execute_command()
     esac
 }
 
-if ! test "$WISOTOOL_LIB"
+if ! test "$WINETRICKS_LIB"
 then
     wisotool_detect_sudo
 
     # If user specifies menu on commandline, execute that command, but don't commit to commandline mode
     # FIXME: this code is duplicated several times; unify it
-    if echo "$WISOTOOL_CATEGORIES" "$WISOTOOL_COMMANDMENUS" | grep -w "$1" > /dev/null
+    if echo "$WINETRICKS_CATEGORIES" "$WINETRICKS_COMMANDMENUS" | grep -w "$1" > /dev/null
     then
-        WISOTOOL_CURMENU=$1
+        WINETRICKS_CURMENU=$1
         shift
     fi
 
@@ -8728,7 +8728,7 @@ then
         wisotool_detect_gui
         while true
         do
-            case $WISOTOOL_CURMENU in
+            case $WINETRICKS_CURMENU in
             main) verbs=`wisotool_mainmenu` ;;
             run) verbs=`wisotool_installed_menu` ;;
             uninstall) verbs=`wisotool_installed_menu` ;;
@@ -8739,15 +8739,15 @@ then
             if test "$verbs" = ""
             then
                 # "user didn't pick anything, back up a level in the menu"
-                if test $WISOTOOL_CURMENU = main
+                if test $WINETRICKS_CURMENU = main
                 then
                     break
                 else
-                    WISOTOOL_CURMENU=main
+                    WINETRICKS_CURMENU=main
                 fi
-            elif echo "$WISOTOOL_CATEGORIES" "$WISOTOOL_COMMANDMENUS" | grep -w "$verbs" > /dev/null
+            elif echo "$WINETRICKS_CATEGORIES" "$WINETRICKS_COMMANDMENUS" | grep -w "$verbs" > /dev/null
             then
-                WISOTOOL_CURMENU=$verbs
+                WINETRICKS_CURMENU=$verbs
             else
                 wisotool_stats_init
                 # Otherwise user picked one or more real verbs.
@@ -8755,7 +8755,7 @@ then
                 do
                     execute_command $verb
                 done
-                WISOTOOL_CURMENU=main
+                WINETRICKS_CURMENU=main
             fi
         done
         ;;
