@@ -3171,7 +3171,7 @@ load_glut()
 #----------------------------------------------------------------
 
 w_metadata allcodecs dlls \
-   title="All codecs (l3codecx, ffdshow, icodecs, xvid)" \
+   title="All codecs (l3codecx, ffdshow, icodecs, xvid) except wmp" \
    publisher="various" \
    year="1998-2009" \
    media="download"
@@ -5464,13 +5464,25 @@ load_vlc()
 
 #----------------------------------------------------------------
 
+# helper - not useful by itself
+load_wm9codecs()
+{
+    # Note: must install WMP9 or 10 first, or installer will complain and abort.
+
+    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
+    w_download wm9codecs http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
+    cd "$W_CACHE/wm9codecs"
+    w_set_winver win2k
+    w_try $WINE WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
+}
+
 w_metadata wmp9 apps \
    title="Windows Media Player 9" \
    publisher="Microsoft" \
    year="2003" \
    media="download" \
    file1="MPSetup.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN/Windows Media Player/wmplayer.exe"
+   installed_file1="$W_SYSTEM32_DLLS"/l3codeca.acm
 
 load_wmp9()
 {
@@ -5491,21 +5503,54 @@ load_wmp9()
     # See also http://www.microsoft.com/windows/windowsmedia/player/9series/default.aspx
     w_download wmp9 http://download.microsoft.com/download/1/b/c/1bc0b1a3-c839-4b36-8f3c-19847ba09299/MPSetup.exe 580536d10657fa3868de2869a3902d31a0de791b
 
-    # Also grab the codecs
-    # See http://www.microsoft.com/downloads/details.aspx?FamilyID=06fcaab7-dcc9-466b-b0c4-04db144bb601
-    w_download wmp9 http://download.microsoft.com/download/5/c/2/5c29d825-61eb-4b16-8eb8-58367d0464d5/WM9Codecs9x.exe 8b76bdcbea0057eb12b7966edab4b942ddacc253
-
     # Have to run twice; see http://bugs.winehq.org/show_bug.cgi?id=1886
     cd "$W_CACHE"/wmp9
     w_try $WINE MPSetup.exe $W_UNATTENDED_SLASH_Q
     w_try $WINE MPSetup.exe $W_UNATTENDED_SLASH_Q
-    w_try $WINE WM9Codecs9x.exe $W_UNATTENDED_SLASH_Q
 
     # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
     w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
     w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
 
     w_unset_winver
+
+    load_wm9codecs
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Windows Media Player" "wmplayer.exe"
+}
+
+#----------------------------------------------------------------
+
+w_metadata wmp10 apps \
+   title="Windows Media Player 10" \
+   publisher="Microsoft" \
+   year="2006" \
+   media="download" \
+   file1="MP10Setup.exe" \
+   installed_file1="$W_SYSTEM32_DLLS"/l3codecp.acm
+
+load_wmp10()
+{
+    # FIXME: what versions of windows are really bundled with wmp10?
+    w_skip_windows wmp10 && return
+
+    # See http://appdb.winehq.org/appview.php?iVersionId=3212
+    w_call wsh57
+
+    # http://www.microsoft.com/downloads/en/details.aspx?FamilyID=b446ae53-3759-40cf-80d5-cde4bbe07999
+    w_download wmp10 http://download.microsoft.com/download/1/2/A/12A31F29-2FA9-4F50-B95D-E45EF7013F87/MP10Setup.exe 69862273a5d9d97b4a2e5a3bd93898d259e86657
+
+    # Crashes on exit, but otherwise ok; see http://bugs.winehq.org/show_bug.cgi?id=12633
+    cd "$W_CACHE"/wmp10
+    w_try $WINE MP10Setup.exe $W_UNATTENDED_SLASH_Q
+
+    # Disable WMP's services, since they depend on unimplemented stuff, they trigger the GUI debugger several times
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdr4_2K"
+    w_try_regedit /D "HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Cdralw2k"
+
+    load_wm9codecs
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Windows Media Player" "wmplayer.exe"
 }
 
 #----------------------------------------------------------------
