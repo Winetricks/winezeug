@@ -3496,6 +3496,26 @@ load_msi2()
 
 #----------------------------------------------------------------
 
+w_metadata msscript dlls \
+   title="MS Windows Script Control" \
+   publisher="Microsoft" \
+   year="2004" \
+   media="download" \
+   file1="sct10en.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/msscript.ocx"
+
+load_msscript()
+{
+    # http://msdn.microsoft.com/scripting/scriptcontrol/x86/sct10en.exe
+    # http://www.microsoft.com/downloads/details.aspx?familyid=d7e31492-2595-49e6-8c02-1426fec693ac
+    w_download msscript http://download.microsoft.com/download/d/2/a/d2a7430c-6d5b-48e9-96c4-3c751be7bffe/sct10en.exe fd9f2f23357ab11ae70682d6864f7e9f188adf2a
+
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msscript/sct10en.exe
+    w_try cp -f "$W_TMP"/msscript.ocx "$W_SYSTEM32_DLLS"
+    w_try_regsvr msscript.ocx
+}
+#----------------------------------------------------------------
+
 w_metadata msls31 dlls \
    title="MS Line Services" \
    publisher="Microsoft" \
