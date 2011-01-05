@@ -2197,6 +2197,8 @@ wisotool_handle_option()
     -v|--verbose) set -x ;;
     -V|--version) wisotool_print_version ; exit 0;;
     -h|--help) wisotool_usage ; exit 0 ;;
+    --optin) WISOTOOL_STATS_REPORT=1;;
+    --optout) WISOTOOL_STATS_REPORT=0;;
     -*) w_die "unknown option $1" ;;
     *) return 1 ;;
     esac
@@ -8521,6 +8523,97 @@ load_winxp()
 
 #---- Main Program ----
 
+wisotool_stats_init()
+{
+    # Load opt-in status if not already set by a commandline option
+    if test ! "$WISOTOOL_STATS_REPORT" && test -f $W_CACHE/track_usage
+    then
+        WISOTOOL_STATS_REPORT=`cat $W_CACHE/track_usage`
+    fi
+
+    if test ! "$WISOTOOL_STATS_REPORT" 
+    then
+        # No opt-in status found.  If GUI active, ask user whether they would like to opt in.
+        case $WISOTOOL_GUI in
+        zenity) 
+            case $LANG in
+            *)
+                title="One-time question about helping Winetricks development"
+                question="Would you like to help winetricks development by letting winetricks report statistics?  You can turn reporting off at any time with the command 'winetricks --optout'"
+                thanks="Thanks!  You won't be asked this question again.  Remember, you can turn reporting off at any time with the command 'winetricks --optout'"
+                declined="OK, winetricks will *not* report statistics.  You won't be asked this question again."
+                ;;
+            esac
+            if zenity --question --text "$question" --title "$title"
+            then
+                zenity --info --text "$thanks"
+                WISOTOOL_STATS_REPORT=1
+            else
+                zenity --info --text "$declined"
+                WISOTOOL_STATS_REPORT=0
+            fi
+            echo $WISOTOOL_STATS_REPORT > $W_CACHE/track_usage
+            ;;
+        esac
+    fi
+
+    # Save opt-in status
+    if test "$WISOTOOL_STATS_REPORT"
+    then
+        echo "$WISOTOOL_STATS_REPORT" > $W_CACHE/track_usage
+    fi
+}
+
+# Retrieve a short string with the operating system name and version
+wisotool_os_description()
+{
+    (
+    case "$OS" in
+    "Windows_NT")
+        echo windows ;;
+    *)  SW_VERS=`which sw_vers 2>/dev/null``
+        LSB_RELEASE=`which lsb_release 2>/dev/null``
+        if test -x "$SW_VERS"
+        then
+            # Mac
+            $SW_VERS -productName; $SW_VERS -productVersion
+        elif test -x "$LSB_RELEASE"
+        then
+            # Linux
+            $LSB_RELEASE -d | sed 's/Description: *//'
+        elif test -f /etc/gentoo-release
+        then
+            cat /etc/gentoo-release
+        else
+            echo "unknown"
+        fi
+        ;;
+    esac 
+    ) | tr '\012' ' '
+}
+
+wisotool_stats_report()
+{
+    # If and only if user has opted in to usage tracking, report the usage.
+    case "$WISOTOOL_STATS_REPORT" in
+    1) ;;
+    *) return;;
+    esac
+
+    echo "You opted in, so reporting '$WISOTOOL_STATS_BREADCRUMBS' to the winetricks maintainer so he knows which winetricks verbs get used and which don't.  Use --optout to disable future reports."
+
+    report="os=`wisotool_os_description`&winetricks=$WISOTOOL_VERSION&breadcrumbs=$WISOTOOL_STATS_BREADCRUMBS"
+    # Just do a HEAD request with the raw commandline.  
+    # Yes, this can be fooled by caches.  That's ok.
+    if [ -x "`which wget 2>/dev/null`" ]
+    then
+        wget --spider "http://kegel.com/data/winetricks-usage?$report" > /dev/null 2>&1 || true
+    elif [ -x "`which curl 2>/dev/null`" ]
+    then
+        curl -I "http://kegel.com/data/winetricks-usage?$report" > /dev/null 2>&1 || true
+    fi
+}
+
 # Do whatever the current menu says to the given app
 # Unless you're in the run or uninstall menus, that means to install it.
 wisotool_do_app()
@@ -8541,6 +8634,9 @@ wisotool_do_app()
 # Usage: execute_command verb[=argument]
 execute_command()
 {
+    # log what we execute for possible later statistics reporting
+    WISOTOOL_STATS_BREADCRUMBS="$WISOTOOL_STATS_BREADCRUMBS $*"
+
     case $1 in
     *=*) arg=`echo $1 | sed 's/.*=//'`; cmd=`echo $1 | sed 's/=.*//'`;;
     *) cmd=$1; arg="" ;;
@@ -8653,6 +8749,7 @@ then
             then
                 WISOTOOL_CURMENU=$verbs
             else
+                wisotool_stats_init
                 # Otherwise user picked one or more real verbs.
                 for verb in $verbs
                 do
@@ -8663,6 +8760,7 @@ then
         done
         ;;
     *)
+        wisotool_stats_init
         # Commandline case
         # User gave commandline arguments, so just run those verbs and exit
         for verb
@@ -8683,4 +8781,6 @@ then
         ;;
 
     esac
+
+    wisotool_stats_report
 fi
