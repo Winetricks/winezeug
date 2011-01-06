@@ -3668,6 +3668,24 @@ load_physx()
 
 #----------------------------------------------------------------
 
+w_metadata pngfilt dlls \
+   title="pngfilt.dll (from ie6)" \
+   publisher="Microsoft" \
+   year="2002" \
+   media="download" \
+   file1="q328970.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/pngfilt.dll"
+
+load_pngfilt()
+{
+    # http://support.microsoft.com/kb/328970
+    w_download pngfilt http://download.microsoft.com/download/IE60/30secpac/6/W98NT42KMeXP/EN-US/q328970.exe 5fd84a335c43d194c0138a091dc0ea151ecc331c
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F pngfilt.dll "$W_CACHE"/pngfilt/q328970.exe
+    w_try_regsvr pngfilt.dll
+}
+
+#----------------------------------------------------------------
+
 w_metadata quartz dlls \
    title="quartz.dll (from Directx 9 user redistributable)" \
    publisher="Microsoft" \
@@ -5226,6 +5244,9 @@ load_ie6()
 
     # Set windows version back to user's default. Leave at win2k for better rendering (is there a bug for that?)
     w_unset_winver
+
+    # the ie6 we use these days lacks pngfilt, so grab that
+    w_call pngfilt
 }
 
 #----------------------------------------------------------------
