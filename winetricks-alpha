@@ -6124,7 +6124,7 @@ load_amnesia_tdd_demo()
         WinWait,Select Setup Language,language
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-            Sleep 500
+            Sleep 2000
             ;ControlClick TNewButton1 ; OK
             send {Enter}              ; button click fails on vista?
             WinWait,Setup - Amnesia - The Dark Descent Demo,Welcome
