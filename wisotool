@@ -1744,7 +1744,7 @@ load_amnesia_tdd_demo()
         SetTitleMatchMode, 2
         run amnesia_tdd_demo_1.0.1.exe
         WinWait,Select Setup Language,language
-        Sleep 500
+        Sleep 2000
         ;ControlClick TNewButton1 ; OK
         send {Enter}              ; button click fails on vista?
         WinWait,Setup - Amnesia - The Dark Descent Demo,Welcome
