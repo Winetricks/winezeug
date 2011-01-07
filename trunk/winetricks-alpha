@@ -2983,6 +2983,25 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata dxdiagn dlls \
+   title="DirectX Diagnostic Library" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dxdiagn.dll"
+
+load_dxdiagn()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F dxdiagn.dll "$W_TMP/dxnt.cab"
+    w_override_dlls native dxdiagn
+}
+
+#----------------------------------------------------------------
+
 w_metadata dsound dlls \
    title="MS DirectSound from DirectX user redistributable" \
    publisher="Microsoft" \
@@ -5110,6 +5129,38 @@ load_cygwin()
     cd "$W_DRIVE_C"/cygpkgs
     w_try $WINE setup.exe $_W_cygopts
     unset _W_cygopts
+}
+
+#----------------------------------------------------------------
+
+w_metadata dxdiag apps \
+   title="DirectX Diagnostic Tool" \
+   publisher="Microsoft" \
+   year="2010" \
+   media="download" \
+   file1="../directx9/directx_feb2010_redist.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/dxdiag.exe"
+
+load_dxdiag()
+{
+    helper_directx_dl
+
+    w_try_cabextract -d "$W_TMP" -L -F dxnt.cab "$W_CACHE"/directx9/$DIRECTX_NAME
+    w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F dxdiag.exe "$W_TMP/dxnt.cab"
+    w_override_dlls native dxdiag.exe
+
+    if w_workaround_wine_bug 1429
+    then
+        w_call dxdiagn
+    fi
+    if w_workaround_wine_bug 25715
+    then
+        w_call quartz
+    fi
+    if w_workaround_wine_bug 25716
+    then
+        w_call devenum
+    fi
 }
 
 #----------------------------------------------------------------
