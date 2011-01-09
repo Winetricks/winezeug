@@ -4381,6 +4381,31 @@ load_vjrun20()
 
 #----------------------------------------------------------------
 
+w_metadata windowscodecs dlls \
+   title="MS Windows Imaging Component" \
+   publisher="Microsoft" \
+   year="2006" \
+   media="download" \
+   file1="wic_x86_enu.exe" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/WindowsCodecs.dll"
+
+load_windowscodecs()
+{
+    w_download windowscodecs http://download.microsoft.com/download/f/f/1/ff178bb1-da91-48ed-89e5-478a99387d4f/wic_x86_enu.exe 53c18652ac2f8a51303deb48a1b7abbdb1db427f
+
+    # Avoid a file existence check.
+    w_try rm -f "$W_SYSTEM32_DLLS"/windowscodecs.dll
+    w_override_dlls native,builtin windowscodecs
+
+    # Always run the WIC installer in passive mode.
+    # See http://bugs.winehq.org/show_bug.cgi?id=16876 and
+    # http://bugs.winehq.org/show_bug.cgi?id=23232
+    cd "$W_CACHE/$W_PACKAGE"
+    w_try $WINE wic_x86_enu.exe /passive
+}
+
+#----------------------------------------------------------------
+
 w_metadata winhttp dlls \
    title="MS Windows HTTP Services" \
    publisher="Microsoft" \
