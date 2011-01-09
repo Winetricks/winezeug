@@ -3596,6 +3596,28 @@ load_msls31()
 
 #----------------------------------------------------------------
 
+w_metadata msmask dlls \
+    title="MS Masked Edit Control" \
+    publisher="Microsoft" \
+    year="2009" \
+    media="download" \
+    file1="MSMASK32.CAB" \
+    installed_file1="$W_SYSTEM32_DLLS/msmask32.ocx"
+
+load_msmask()
+{
+    # http://msdn.microsoft.com/en-us/library/11405hcf(VS.71).aspx
+    # http://bugs.winehq.org/show_bug.cgi?id=2934
+    # old: 3c6b26f68053364ea2e09414b615dbebafb9d5c3
+    # May 2009: 30e55679e4a13fe4d9620404476f215f93239292
+    w_download msmask http://activex.microsoft.com/controls/vb6/MSMASK32.CAB 30e55679e4a13fe4d9620404476f215f93239292
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/msmask/MSMASK32.CAB
+    w_try cp -f "$W_TMP"/[Mm][Ss][Mm][Aa][Ss][Kk]32.[Oo][Cc][Xx] "$W_SYSTEM32_DLLS"/msmask32.ocx
+    w_try_regsvr msmask32.ocx
+}
+
+#----------------------------------------------------------------
+
 w_metadata msxml3 dlls \
    title="MS XML Core Services 3.0" \
    publisher="Microsoft" \
