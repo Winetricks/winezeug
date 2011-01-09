@@ -3317,6 +3317,27 @@ load_jet40()
 
 #----------------------------------------------------------------
 
+w_metadata kde apps \
+    title="KDE for Windows installer" \
+    publisher="various" \
+    year="2011" \
+    media="download" \
+    file1="kdewin-installer-gui-0.9.8-0.exe" \
+    installed_exe1="$W_PROGRAMS_UNIX/kde/etc/installer.ini" \
+    homepage="http://www.kde.org"
+
+load_kde()
+{
+    w_download kde http://www.winkde.org/pub/kde/ports/win32/installer/kdewin-installer-gui-0.9.8-0.exe 467f9e2d3e52aad30cb1d53a0222a7b4027e0560
+
+    mkdir -p "$W_PROGRAMS_UNIX/kde"
+    w_try cp "$W_CACHE"/kde/kdewin-installer-gui-0.9.8-0.exe "$W_PROGRAMS_UNIX/kde"
+    cd "$W_PROGRAMS_UNIX/kde"
+    w_try $WINE kdewin-installer-gui-0.9.8-0.exe
+}
+
+#----------------------------------------------------------------
+
 w_metadata l3codecx dlls \
    title="MPEG Layer-3 Audio Codec for Microsoft DirectShow" \
    publisher="Microsoft" \
