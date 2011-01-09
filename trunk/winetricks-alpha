@@ -3728,6 +3728,26 @@ load_ole2()
 
 #----------------------------------------------------------------
 
+w_metadata pdh dlls \
+    title="MS pdh.dll (Performance Data Helper)" \
+    publisher="Microsoft" \
+    year="2001" \
+    media="download" \
+    file1="pdhinst.exe" \
+    installed_file1="$W_SYSTEM32_DLLS/pdh.dll"
+
+load_pdh()
+{
+    # http://support.microsoft.com/kb/284996
+    w_download pdh http://download.microsoft.com/download/platformsdk/Redist/5.0.2195.2668/NT4/EN-US/pdhinst.exe f42448660def8cd7f42b34aa7bc7264745f4425e
+
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/pdh/pdhinst.exe
+    w_try_unzip -d "$W_TMP" "$W_TMP"/pdh.exe
+    w_try cp -f "$W_TMP"/x86/Pdh.Dll "$W_SYSTEM32_DLLS"/pdh.dll
+}
+
+#----------------------------------------------------------------
+
 w_metadata physx dlls \
    title="PhysX" \
    publisher="NVidia" \
