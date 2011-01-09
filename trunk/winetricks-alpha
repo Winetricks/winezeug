@@ -4474,6 +4474,26 @@ load_wmi()
 
 #----------------------------------------------------------------
 
+w_metadata wsh56js dlls \
+   title="MS Windows scripting 5.6, jscript only, no cscript" \
+   publisher="Microsoft" \
+   year="2006" \
+   media="download" \
+   file1="Windows2000-KB917344-56-x86-enu.exe" \
+   installed_file1="$W_DRIVE_C/windows/inf/jscren.inf"
+
+load_wsh56js()
+{
+    # This installs jscript 5.6 (but not vbscript)
+    # See also http://www.microsoft.com/downloads/details.aspx?FamilyID=16dd21a1-c4ee-4eca-8b80-7bd1dfefb4f8&DisplayLang=en
+    w_download wsh56js http://download.microsoft.com/download/b/c/3/bc3a0c36-fada-497d-a3de-8b0139766f3b/Windows2000-KB917344-56-x86-enu.exe add5f74c5bd4da6cfae47f8306de213ec6ed52c8
+
+    cd "$W_CACHE/$W_PACKAGE"
+    w_try $WINE Windows2000-KB917344-56-x86-enu.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
 w_metadata wsh56vb dlls \
    title="MS Windows scripting 5.6, vbscript only, no cscript" \
    publisher="Microsoft" \
