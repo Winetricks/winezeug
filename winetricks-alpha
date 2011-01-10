@@ -8453,6 +8453,18 @@ load_psm()
 }
 
 #----------------------------------------------------------------
+
+w_metadata strictdrawordering=enabled settings \
+    title="Enable StrictDrawOrdering (default)"
+w_metadata strictdrawordering=disabled settings \
+    title="Disable StrictDrawOrdering"
+
+load_strictdrawordering()
+{
+    winetricks_set_wined3d_var StrictDrawOrdering $1
+}
+
+#----------------------------------------------------------------
 # DirectDraw settings
 
 w_metadata ddr=gdi settings \
