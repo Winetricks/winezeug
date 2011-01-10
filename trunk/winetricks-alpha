@@ -6495,6 +6495,60 @@ load_aoe_demo()
 
 #----------------------------------------------------------------
 
+w_metadata bioshock_demo games \
+    title="Bioshock Demo" \
+    publisher="2K Games" \
+    year="2007" \
+    media="download" \
+    file1="nzd_BioShockPC.zip" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/2K Games/BioShock Demo/Builds/Release/Bioshock.exe"
+
+load_bioshock_demo()
+{
+    w_download $W_PACKAGE http://us.download.nvidia.com/downloads/nZone/demos/nzd_BioShockPC.zip 7a19186602cec5210e4505b58965e8c04945b3cf
+
+    w_try unzip "$W_CACHE/$W_PACKAGE/nzd_BioShockPC.zip" -d "$W_TMP/$W_PACKAGE"
+    cd "$W_TMP/$W_PACKAGE/BioShock PC Demo"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run setup.exe
+        winwait, BioShock Demo - InstallShield Wizard, Choose Setup Language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 2000
+            ControlClick, Button3
+            ControlClick, Button3
+            winwait, BioShock Demo - InstallShield Wizard, Welcome
+            sleep 1000
+            ControlClick, Button1
+            winwait, BioShock Demo - InstallShield Wizard, Please read
+            sleep 1000
+            ControlClick, Button5
+            sleep 1000
+            ControlClick, Button2
+            winwait, BioShock Demo - InstallShield Wizard, Select the setup type
+            sleep 1000
+            ControlClick, Button2
+            winwait, BioShock Demo - InstallShield Wizard, Click Install to begin
+            ControlClick, Button1
+        }
+        winwait, BioShock Demo - InstallShield Wizard, The InstallShield Wizard has successfully installed BioShock
+        if ( u > 0 ) {
+            sleep 1000
+            ControlClick, Button2     ; don't launch
+            ControlClick, Button6     ; don't show readme
+            send {Enter}              ; finish
+        }
+        winwaitclose
+        sleep 3000 ; wait for splash screen to close
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\2K Games\\BioShock Demo\\Builds\\Release" "Bioshock.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  bfbc2 games \
    title="Battlefield Bad Company 2" \
    publisher="EA" \
