@@ -2081,18 +2081,22 @@ winetricks_init()
     # Whether to automate installs (0=no, 1=yes)
     W_OPT_UNATTENDED=${W_OPT_UNATTENDED:-0}
 
-    # For case where z: doesn't exist or / is writable (!),
-    # make a drive letter for W_CACHE.  Clean it up on exit.
-    for letter in y x w v u t s r q p o n m
-    do
-        if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
-        then
-            WINETRICKS_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
-            ln -sf "$W_CACHE" "$WINETRICKS_CACHE_SYMLINK"
-            W_CACHE_WIN=${letter}:
-            break
-        fi
-    done
+    case "$OS" in
+    "Windows_NT")
+        ;;
+    *)
+        # For case where z: doesn't exist or / is writable (!),
+        # make a drive letter for W_CACHE.  Clean it up on exit.
+        for letter in y x w v u t s r q p o n m
+        do
+            if ! test -d "$WINEPREFIX"/dosdevices/${letter}:
+            then
+                WINETRICKS_CACHE_SYMLINK="$WINEPREFIX"/dosdevices/${letter}:
+                ln -sf "$W_CACHE" "$WINETRICKS_CACHE_SYMLINK"
+                break
+            fi
+        done
+    esac
 
     # Overridden for windows
     W_ISO_MOUNT_ROOT=/mnt/winetricks
@@ -7702,7 +7706,7 @@ load_osmos_demo()
         winwait, Osmos, License
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-            sleep 500
+            sleep 1000
             controlclick, Button2, Osmos Demo Setup, License Agreement
             winwait, Osmos Demo Setup, Choose Install Location
             sleep 500
