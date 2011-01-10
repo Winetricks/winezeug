@@ -8390,7 +8390,7 @@ winetricks_set_wined3d_var()
     enable*) arg=enabled;;
     hard*) arg=hardware;;
     repack) arg=repack;;
-    backbuffer|fbo|gdi|none|opengl|readdraw|readtex) arg=$2;;
+    backbuffer|fbo|gdi|none|opengl|readdraw|readtex|texdraw|textex|auto) arg=$2;;
     [0-9]*) arg=$2;;
     *) w_die "illegal value $2 for $1";;
     esac
@@ -8462,6 +8462,26 @@ w_metadata strictdrawordering=disabled settings \
 load_strictdrawordering()
 {
     winetricks_set_wined3d_var StrictDrawOrdering $1
+}
+
+#----------------------------------------------------------------
+
+w_metadata rtlm=auto settings \
+    title="Set RenderTargetLockMode to auto (default)"
+w_metadata rtlm=disabled settings \
+    title="Set RenderTargetLockMode to disabled"
+w_metadata rtlm=readdraw settings \
+    title="Set RenderTargetLockMode to readdraw"
+w_metadata rtlm=readtext settings \
+    title="Set RenderTargetLockMode to readtex"
+w_metadata rtlm=texdraw settings \
+    title="Set RenderTargetLockMode to texdraw"
+w_metadata rtlm=textex settings \
+    title="Set RenderTargetLockMode to textex"
+
+load_rtlm()
+{
+    winetricks_set_wined3d_var RenderTargetLockMode $1
 }
 
 #----------------------------------------------------------------
