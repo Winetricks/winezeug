@@ -8546,6 +8546,18 @@ load_npm()
 }
 
 #----------------------------------------------------------------
+ 
+w_metadata orm=fbo settings \
+    title="Set OffscreenRenderingMode=fbo (default)"
+w_metadata orm=backbuffer settings \
+    title="Set OffscreenRenderingMode=backbuffer"
+
+load_orm()
+{
+    winetricks_set_wined3d_var OffscreenRenderingMode $1
+}
+
+#----------------------------------------------------------------
 
 w_metadata psm=enabled settings \
     title="Set PixelShaderMode to enabled"
