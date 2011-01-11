@@ -524,10 +524,16 @@ w_umount()
 
 w_ahk_do()
 {
-    W_UNATTENDED_SLASH_S="/S" w_call autohotkey
+    if ! test -f "$W_CACHE/ahk/AutoHotkey.exe"
+    then
+        w_download ahk http://www.autohotkey.com/download/AutoHotkey104805.zip b3981b13fbc45823131f69d125992d6330212f27 
+        w_try_unzip -d "$W_CACHE/ahk"  "$W_CACHE/ahk/AutoHotkey104805.zip" AutoHotkey.exe
+        chmod +x "$W_CACHE/ahk/AutoHotkey.exe"
+    fi
+
     _W_CR=`printf \\\\r`
     echo "$@" | sed "s/\$/$CR/" > "$W_TMP"/tmp.ahk
-    $WINE "$W_PROGRAMS_X86_UNIX/AutoHotkey/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
+    $WINE "$W_CACHE_WIN/ahk/AutoHotkey.exe" "$W_TMP_WIN"\\tmp.ahk
     unset _W_CR
 }
 
