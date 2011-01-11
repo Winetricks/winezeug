@@ -8445,6 +8445,91 @@ load_twfc()
 
 #----------------------------------------------------------------
 
+w_metadata ut3 games \
+    title="Unreal Tournament 3" \
+    publisher="Midway Games" \
+    year="2007" \
+    media="dvd" \
+    file1="UT3_RC7.iso" \
+    file2="UT3Patch5.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Unreal Tournament 3/Binaries/UT3.exe"
+
+load_ut3()
+{
+    w_download_manual $W_PACKAGE "http://www.filefront.com/13709855/UT3Patch5.exe" UT3Patch5.exe
+    w_try w_mount UT3_RC7
+
+    w_ahk_do "
+        run ${W_ISO_MOUNT_LETTER}:SetupUT3.exe
+        SetTitleMatchMode, 2
+        WinWait, Choose Setup Language
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 500
+            ControlClick Button1   ; OK
+            WinWait, Unreal Tournament 3, GAMESPY ; License Agreement
+            sleep 500
+            ControlClick Button2   ; Yes
+            WinWait, Unreal Tournament 3, UnrealEd ; License Agreement
+            sleep 500
+            ControlClick Button2   ; Yes
+            WinWait, , Choose Destination
+            sleep 500
+            ControlClick Button1   ; Next
+            WinWait, AGEIA PhysX v7.09.13
+            sleep 500
+            ControlClick Button3   ; Accept
+            ControlClick Button4   ; Next
+            WinWait, AGEIA PhysX v7.09.13, Finish
+            sleep 500
+            ControlClick Button1   ; Finish
+            ; game now begins installing
+        }
+        WinWait, , InstallShield Wizard Complete
+        if ( u > 0 ) {
+            sleep 500
+            ControlClick Button4   ; Finish
+        }
+        WinWaitClose
+    "
+
+    cd "$W_CACHE/$W_PACKAGE"
+  
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        run UT3Patch5.exe
+        WinWait, License
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            sleep 500
+            ControlClick Button1   ; Accept
+            WinWait, End User License Agreement
+            sleep 500
+            ControlClick Button1   ; Accept
+            WinWait, Patch UT3
+            sleep 500
+            ControlClick Button1   ; Yes
+        }
+        WinWait, , UT3 was successfully patched!
+        if ( u > 0 ) {
+            sleep 500
+            ControlClick Button1   ; OK
+        }
+        WinWaitClose
+    "
+
+    if w_workaround_wine_bug 6971
+    then
+        w_call mwo=force
+        w_warn "Mouse will be disabled in in-game menu. Must use keyboard to navigate.  Alternately, patch wine as described in bug 6971 to use xinput2."
+    fi
+
+    # FIXME: enter user's key if -q
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Unreal Tournament 3\\Binaries" "UT3.exe"
+}
+
+#----------------------------------------------------------------
+
 w_metadata  wog games \
     title="World of Goo Demo" \
     publisher="2D Boy" \
