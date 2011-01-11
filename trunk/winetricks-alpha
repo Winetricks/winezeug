@@ -992,6 +992,25 @@ winetricks_detect_gui()
     if test -x "`which zenity 2>/dev/null`"
     then
         WINETRICKS_GUI=zenity
+
+        WINETRICKS_MENU_HEIGHT=500
+        WINETRICKS_MENU_WIDTH=900
+
+        # Reduce menu size if bigger than screen
+        XRANDR="`which xrandr`"
+        if test -x "$XRANDR"
+        then
+            XRANDR_WIDTH=`$XRANDR -q | awk '/current/ {print $8}'`
+            XRANDR_HEIGHT=`$XRANDR -q | awk '/current/ {print $10}' | sed 's/,//'`
+            if test "$XRANDR_HEIGHT" -gt 400 -a "$XRANDR_HEIGHT" -lt $WINETRICKS_MENU_HEIGHT
+            then
+                WINETRICKS_MENU_HEIGHT=$XRANDR_HEIGHT
+            fi
+            if test "$XRANDR_WIDTH" -gt 400 -a "$XRANDR_WIDTH" -lt $WINETRICKS_MENU_WIDTH
+            then
+                WINETRICKS_MENU_WIDTH=$XRANDR_WIDTH
+            fi
+        fi
     elif test -x "`which kdialog 2>/dev/null`"
     then
         echo "Zenity not found!  Using kdialog as poor substitute."
@@ -1067,8 +1086,8 @@ winetricks_mainmenu()
             --column '' \
             --column '' \
             --column '' \
-            --height 500 \
-            --width 900 \
+            --height $WINETRICKS_MENU_HEIGHT \
+            --width $WINETRICKS_MENU_WIDTH \
             --hide-column 2 \
             FALSE dlls       "$_W_msg_dlls" \
             FALSE fonts      "$_W_msg_fonts" \
@@ -1137,8 +1156,8 @@ winetricks_installed_menu()
                 --column Udgiver \
                 --column År \
                 --column Medie \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
        de*) echo -n "zenity \
@@ -1152,8 +1171,8 @@ winetricks_installed_menu()
                 --column Herausgeber \
                 --column Jahr \
                 --column Media \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
         *) echo -n "zenity \
@@ -1167,8 +1186,8 @@ winetricks_installed_menu()
                 --column Publisher \
                 --column Year \
                 --column Media \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
         esac > "$WINETRICKS_WORKDIR"/zenity.sh
@@ -1227,8 +1246,8 @@ winetricks_settings_menu()
                 --column '' \
                 --column Pakke \
                 --column Navn \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
        de*) echo -n "zenity \
@@ -1239,8 +1258,8 @@ winetricks_settings_menu()
                 --column '' \
                 --column Paket \
                 --column Name \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
         *) echo -n "zenity \
@@ -1251,8 +1270,8 @@ winetricks_settings_menu()
                 --column '' \
                 --column Setting \
                 --column Title \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
         esac > "$WINETRICKS_WORKDIR"/zenity.sh
@@ -1314,8 +1333,8 @@ winetricks_showmenu()
                 --column Udgiver \
                 --column År \
                 --column Medie \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
        de*) echo -n "zenity \
@@ -1329,8 +1348,8 @@ winetricks_showmenu()
                 --column Herausgeber \
                 --column Jahr \
                 --column Media \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
         *) echo -n "zenity \
@@ -1344,8 +1363,8 @@ winetricks_showmenu()
                 --column Publisher \
                 --column Year \
                 --column Media \
-                --height 500 \
-                --width 900 \
+                --height $WINETRICKS_MENU_HEIGHT \
+                --width $WINETRICKS_MENU_WIDTH \
                 "
              ;;
         esac > "$WINETRICKS_WORKDIR"/zenity.sh
