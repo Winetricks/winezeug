@@ -829,11 +829,18 @@ w_metadata()
     # If the problem described above happens, you'd see errors like this:
     # /tmp/w.dank.4650/metadata/dlls/comctl32.vars: 6: Syntax error: Unterminated quoted string
     # so check for lines that aren't properly quoted.
-    # FIXME: only check this in maintainer mode, since it's slow on cygwin
-    if grep '[^"]$' "$file"
-    then
-        w_die "bug: w_metadata $_W_md_cmd corrupt, might need forward slashes?"
-    fi
+
+    # Do sanity check unless running on cygwin, where it's way too slow.
+    case "$OS" in
+    "Windows_NT")
+        ;;
+    *)
+        if grep '[^"]$' "$file"
+        then
+            w_die "bug: w_metadata $_W_md_cmd corrupt, might need forward slashes?"
+        fi
+        ;;
+    esac
     unset _W_md_cmd
 }
 
