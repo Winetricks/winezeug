@@ -1059,6 +1059,8 @@ winetricks_mainmenu()
          _W_msg_fonts='Install a font'
          _W_msg_games='Installér et spil'
          _W_msg_settings='Change Wine settings'
+         _W_msg_unattended0="Switch to attended mode, i.e. non-automatic installs"
+         _W_msg_unattended1="Switch to unattended mode, i.e. automatic installs"
          ;;
     de*) _W_msg_title='Pakettyp auswählen'
          _W_msg_body='Was möchten Sie tun?'
@@ -1068,16 +1070,24 @@ winetricks_mainmenu()
          _W_msg_fonts='Schriftart installieren'
          _W_msg_games='Windows-Spiel installieren'
          _W_msg_settings='Change Wine settings'
+         _W_msg_unattended0="Switch to attended mode, i.e. non-automatic installs"
+         _W_msg_unattended1="Switch to unattended mode, i.e. automatic installs"
          ;;
     *)   _W_msg_title="Winetricks - current bottle is '$WINEPREFIX'"
          _W_msg_body='What would you like to do with Wine?'
-         _W_msg_apps='Install an app'
+         _W_msg_apps='Install other software'
          _W_msg_benchmarks='Install a benchmark'
          _W_msg_dlls="Install a DLL"
          _W_msg_fonts='Install a font'
          _W_msg_games='Install a game'
          _W_msg_settings='Change settings'
+         _W_msg_unattended0="Switch to attended mode, i.e. non-automatic installs"
+         _W_msg_unattended1="Switch to unattended mode, i.e. automatic installs"
          ;;
+    esac
+    case "$W_OPT_UNATTENDED" in
+    1) _W_cmd_unattended=attended; _W_msg_unattended="$_W_msg_unattended0" ;;
+    *) _W_cmd_unattended=unattended; _W_msg_unattended="$_W_msg_unattended1" ;;
     esac
 
     # FIXME: don't show uninstall option when $WINETRICKS_OPT_SHAREDPREFIX is 1
@@ -1101,6 +1111,7 @@ winetricks_mainmenu()
             FALSE benchmarks "$_W_msg_benchmarks" \
             FALSE apps       "$_W_msg_apps" \
             FALSE settings   "$_W_msg_settings" \
+            FALSE $_W_cmd_unattended "$_W_msg_unattended" \
          | tr '|' ' '
         ;;
 
@@ -1116,6 +1127,7 @@ winetricks_mainmenu()
                 benchmarks "$_W_msg_benchmarks" off \
                 apps       "$_W_msg_apps" off \
                 settings   "$_W_msg_settings" off \
+                $_W_cmd_unattended "$_W_msg_unattended" off \
 
         ;;
     esac
@@ -1978,6 +1990,29 @@ winetricks_kill_handler()
     exit
 }
 
+winetricks_set_unattended()
+{
+    case $1 in
+    1)
+        W_OPT_UNATTENDED=1
+        # Might want to trim our stable of variables here a bit...
+        W_UNATTENDED_DASH_Q="-q"
+        W_UNATTENDED_SLASH_Q="/q"
+        W_UNATTENDED_SLASH_S="/S"
+        W_UNATTENDED_DASH_SILENT="-silent"
+        W_UNATTENDED_SLASH_SILENT="/silent"
+        ;;
+    *)
+        W_OPT_UNATTENDED=0
+        W_UNATTENDED_DASH_Q=""
+        W_UNATTENDED_SLASH_Q=""
+        W_UNATTENDED_SLASH_S=""
+        W_UNATTENDED_DASH_SILENT=""
+        W_UNATTENDED_SLASH_SILENT=""
+        ;;
+    esac
+}
+
 winetricks_init()
 {
     #---- Private Variables ----
@@ -2117,7 +2152,7 @@ winetricks_init()
     W_PROGRAMS_DRIVE=c
 
     # Whether to automate installs (0=no, 1=yes)
-    W_OPT_UNATTENDED=${W_OPT_UNATTENDED:-0}
+    winetricks_set_unattended ${W_OPT_UNATTENDED:-0}
 
     case "$OS" in
     "Windows_NT")
@@ -2229,13 +2264,7 @@ winetricks_handle_option()
     case "$1" in
     -r|--ddrescue) WINETRICKS_OPT_DD=ddrescue ;;
     -k|--keep_isos) WINETRICKS_OPT_KEEPISOS=1 ;;
-    -q|--unattended) W_OPT_UNATTENDED=1
-                     W_UNATTENDED_DASH_Q="-q"
-                     W_UNATTENDED_SLASH_Q="/q"
-                     W_UNATTENDED_SLASH_S="/S"
-                     W_UNATTENDED_DASH_SILENT="-silent"
-                     W_UNATTENDED_SLASH_SILENT="/silent"
-                     ;;  # fixme: can't make this default easily with these here
+    -q|--unattended) winetricks_set_unattended 1 ;;
     -v|--verbose) set -x ;;
     -V|--version) winetricks_print_version ; exit 0;;
     -h|--help) winetricks_usage ; exit 0 ;;
@@ -9279,6 +9308,8 @@ execute_command()
     list-download) winetricks_list_download ;;
     list-manual-download) winetricks_list_manual_download ;;
     list-installed) winetricks_list_installed ;;
+    unattended) winetricks_set_unattended 1 ;;
+    attended) winetricks_set_unattended 0 ;;
 
     # Use winecfg if you want a gui for plain old dll overrides
     gameux=*|mmdevapi=*|oleaut32=*) w_override_dlls $arg $cmd;;
