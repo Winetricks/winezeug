@@ -49,6 +49,41 @@ http://www.steamgamesonlinux.com/category/playable-steam-games/
 
 http://www.playonlinux.com/repository/?cat=1
 
+They have statistics of which are their most popular apps; see 
+http://www.aplu.fr/polistats/stats_2010.html
+
+A few ideas from there, but pick any that look popular:
+
+Google Chrome
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=20397
+http://www.playonlinux.com/repository/?script=326
+
+Google Sketchup
+http://appdb.winehq.org/objectManager.php?sClass=application&iId=1815
+http://www.playonlinux.com/repository/?script=117
+Needs a registry setting.
+
+Halo Combat Evolved
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=2720&iTestingId=57341
+http://www.playonlinux.com/repository/?script=236
+
+Spotify
+http://appdb.winehq.org/objectManager.php?sClass=application&iId=8514
+http://www.playonlinux.com/repository/?script=386
+Supposedly platinum, and quite popular
+
+Windows live messenger 2008
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=8146
+http://www.playonlinux.com/repository/?script=391 refers to "wlm85.msi".
+That's no longer available from microsoft.com, but there is a copy from
+supposedly an MS MVP at 
+http://www.tech-archive.net/Archive/WinXP/microsoft.public.windowsxp.messenger/2007-12/msg00023.html
+which has the same sha1sum (77eec15c8453d20260d8bf6977eeb6581bd8902f) as
+the one playonlinux points at, 
+
+
+
+
 Wine-Doors supports a dozen or so games, might be worth looking at, even though
 the project is shut down.
 
