@@ -5781,6 +5781,56 @@ load_mspaint()
 
 #----------------------------------------------------------------
 
+w_metadata psdkwin7 apps \
+   title="MS Windows 7 SDK (installing just headers and c++ compiler works)" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="winsdk_web.exe" \
+   installed_exe1="C:/Program Files/Microsoft SDKs/Windows/v7.0/Bin/SetEnv.Cmd"
+
+load_psdkwin7()
+{
+    # http://www.microsoft.com/downloads/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
+    w_call dotnet20
+    if w_workaround_wine_bug 21509 # fixed in wine-1.2
+    then
+        w_call gdiplus     # work around http://bugs.winehq.org/show_bug.cgi?id=21509
+    fi
+    w_call mfc42   # need mfc42u, or setup will abort
+    # don't have a working unattended recipe.  Maybe we'll have to
+    # do an autohotkey script until msft gets its act together:
+    # http://social.msdn.microsoft.com/Forums/en-US/windowssdk/thread/c053b616-7d5b-405d-9841-ec465a8e21d5
+    w_download psdkwin7 http://download.microsoft.com/download/7/A/B/7ABD2203-C472-4036-8BA0-E505528CCCB7/winsdk_web.exe a01dcc67a38f461e80ea649edf1353f306582507
+    cd "$W_CACHE"/psdkwin7
+    if w_workaround_wine_bug 21596
+    then
+        w_warn "When given a choice, select only C++ compilers and headers, the other options don't work yet.  See http://bugs.winehq.org/show_bug.cgi?id=21596"
+    fi
+    w_try $WINE winsdk_web.exe
+
+    # FIXME: don't do this if running on real Windows?
+    # Work around bug http://bugs.winehq.org/show_bug.cgi?id=21362
+    # Assume user installed in default location
+    cat > "$W_TMP"/set-psdk7.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows]
+"CurrentVersion"="v7.0"
+"CurrentInstallFolder"="C:\\\Program Files\\\Microsoft SDKs\\\Windows\\\v7.0\\\"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0]
+"InstallationFolder"="C:\\\Program Files\\\Microsoft SDKs\\\Windows\\\v7.0\\\"
+"ProductVersion"="7.0.7600.16385.40715"
+"ProductName"="Microsoft Windows SDK for Windows 7 (7.0.7600.16385.40715)"
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\set-psdk7.reg
+}
+
+#----------------------------------------------------------------
+
 w_metadata python26 apps \
    title="Python Interpreter, version 2.6.2" \
    publisher="Python Software Foundaton" \
