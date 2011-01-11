@@ -5264,6 +5264,26 @@ load_cmake()
 
 #----------------------------------------------------------------
 
+w_metadata colorprofile apps \
+   title="Standard RGB color profile" \
+   publisher="Microsoft" \
+   year="2005" \
+   media="download" \
+   file1="ColorProfile.exe" \
+   installed_exe1="$W_DRIVE_C/windows/system32/spool/drivers/color/sRGB Color Space Profile.icm"
+
+load_colorprofile()
+{
+    w_download colorprofile http://download.microsoft.com/download/whistler/hwdev1/1.0/wxp/en-us/ColorProfile.exe 6b72836b32b343c82d0760dff5cb51c2f47170eb
+    w_try_unzip -d "$W_TMP" "$W_CACHE"/colorprofile/ColorProfile.exe
+
+    # It's in system32 for both win32/win64
+    mkdir -p "$W_WINDIR_UNIX"/system32/spool/drivers/color
+    w_try cp -f "$W_TMP/sRGB Color Space Profile.icm" "$W_WINDIR_UNIX"/system32/spool/drivers/color
+}
+
+#----------------------------------------------------------------
+
 w_metadata controlpad apps \
    title="MS ActiveX Control Pad" \
    publisher="Microsoft" \
