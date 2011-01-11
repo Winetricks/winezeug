@@ -1063,7 +1063,7 @@ winetricks_mainmenu()
          _W_msg_games='Windows-Spiel installieren'
          _W_msg_settings='Change Wine settings'
          ;;
-    *)   _W_msg_title='Winetricks - Select a package category'
+    *)   _W_msg_title="Winetricks - current bottle is '$WINEPREFIX'"
          _W_msg_body='What would you like to do with Wine?'
          _W_msg_apps='Install an app'
          _W_msg_benchmarks='Install a benchmark'
