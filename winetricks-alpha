@@ -6743,23 +6743,32 @@ load_cod_demo()
         WinWait,Call of Duty Single Player Demo,Welcome
         u = $W_OPT_UNATTENDED
         if ( u > 0 ) {
-            ControlClick Button1 ; I Agree
+            sleep 1000
+            ControlClick Button1 ; next
             WinWait,Call of Duty Single Player Demo,License
-            ControlClick Button4 ; Next
+            sleep 1000
+            WinActivate
+            send A               ; I Agree
             WinWait,Call of Duty Single Player Demo,System
-            ControlClick Button4 ; Next
+            sleep 1000
+            send n               ; Next
             WinWait,Call of Duty Single Player Demo,Location
-            ControlClick Button1 ; Next
+            sleep 1000
+            send {Enter}
             WinWait,Call of Duty Single Player Demo,Select
-            ControlClick Button1 ; Next
+            sleep 1000
+            send n
             WinWait,Call of Duty Single Player Demo,Start
-            ControlClick Button1 ; Install
+            sleep 1000
+            send i               ; Install
             WinWait,Create Shortcut
-            ControlClick Button1 ; Yes
+            sleep 1000
+            send n               ; No
         }
         WinWait,Call of Duty Single Player Demo, Complete
         if ( u > 0 ) {
-            ControlClick Button1 ; Finish
+            sleep 1000
+            send {Enter}         ; Finish
         }
         WinWaitClose
     "
