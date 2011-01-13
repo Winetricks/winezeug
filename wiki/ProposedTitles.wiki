@@ -151,7 +151,8 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; 
 (see also http://en.wikipedia.org/wiki/Project_Torque, http://bugs.winehq.org/show_bug.cgi?id=22152 )
 
 Hegemony Gold beta
-http://www.longbowgames.com/
+( verb posted to winetricks-workers, let's wait until wine bug 25767 is fixed
+before committing? )
 
 Land of Chaos Online Open beta starts aug 3.
 http://pc.ign.com/articles/110/1109105p1.html
