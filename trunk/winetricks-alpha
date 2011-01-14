@@ -9444,6 +9444,7 @@ execute_command()
     python-comtypes) winetricks_do_app python26_comtypes ;;
     vbrun60) winetricks_do_app vb6run ;;
     vcrun2005sp1) winetricks_do_app vcrun2005 ;;
+    vcrun2008sp1) winetricks_do_app vcrun2008 ;;
     vsm-hard) winetricks_do_app vsm=hardware ;;
     wsh56) winetricks_do_app wsh57 ;;
     xlive) winetricks_do_app gfw ;;
