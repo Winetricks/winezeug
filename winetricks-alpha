@@ -5919,6 +5919,29 @@ load_python26()
 
 #----------------------------------------------------------------
 
+w_metadata python26_comtypes apps \
+    title="Comtypes package for Python 2.6" \
+    publisher="theller" \
+    date="2010" \
+    media="download" \
+    file1="comtypes-0.6.2.zip" \
+    installed_file1="c:/Python26/Lib/site-packages/comtypes-0.6.2-py2.6.egg-info" \
+    homepage="http://sourceforge.net/projects/comtypes"
+
+load_python26_comtypes()
+{
+    w_call python26
+
+    w_download python26_comtypes $WINETRICKS_SOURCEFORGE/comtypes/0.6.2/comtypes-0.6.2.zip b84f4e3050652d494e8c8d9d6d6f221c124ffba9
+
+    cd "$W_TMP"
+    w_try_unzip "$W_CACHE/$W_PACKAGE"/comtypes-0.6.2.zip
+    cd comtypes-0.6.2
+    w_try $WINE "C:\Python26\python.exe" setup.py install
+}
+
+#----------------------------------------------------------------
+
 w_metadata  safari apps \
    title="Safari" \
    publisher="Apple" \
@@ -9400,6 +9423,7 @@ execute_command()
     psm=off) winetricks_do_app psm=disabled ;;
     psm=on) winetricks_do_app psm=enabled ;;
     python) winetricks_do_app python26 ;;
+    python-comtypes) winetricks_do_app python26_comtypes ;;
     vcrun2005sp1) winetricks_do_app vcrun2005 ;;
     vsm-hard) winetricks_do_app vsm=hardware ;;
     wsh56) winetricks_do_app wsh57 ;;
