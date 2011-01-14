@@ -9411,6 +9411,7 @@ execute_command()
     gameux=*|mmdevapi=*|oleaut32=*) w_override_dlls $arg $cmd;;
 
     # Hacks for backwards compatibility
+    cc580) winetricks_do_app comctl32 ;;
     comdlg32.ocx) winetricks_do_app comdlg32ocx ;;
     fm20) winetricks_do_app controlpad ;;   # art2kmin also comes with fm20.dll
     fontsmooth-bgr) winetricks_do_app fontsmooth=bgr ;;
