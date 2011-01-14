@@ -9420,6 +9420,7 @@ execute_command()
     fontsmooth-rgb) winetricks_do_app fontsmooth=rgb ;;
     glsl-disable) winetricks_do_app glsl=disabled ;;
     glsl-enable) winetricks_do_app glsl=enabled ;;
+    ie6_full) winetricks_do_app ie6 ;;
     npm-repack) winetricks_do_app npm=repack ;;
     psm=off) winetricks_do_app psm=disabled ;;
     psm=on) winetricks_do_app psm=enabled ;;
