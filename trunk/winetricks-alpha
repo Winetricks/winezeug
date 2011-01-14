@@ -9437,6 +9437,7 @@ execute_command()
     ie6_full) winetricks_do_app ie6 ;;
     mwo=disabled) winetricks_do_app mwo=disable ;;   # FIXME: relax matching so we can handle these spelling differences in verb instead of here
     npm-repack) winetricks_do_app npm=repack ;;
+    oss) winetricks_do_app sound=oss ;;
     psm=off) winetricks_do_app psm=disabled ;;
     psm=on) winetricks_do_app psm=enabled ;;
     python) winetricks_do_app python26 ;;
