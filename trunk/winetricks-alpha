@@ -2894,6 +2894,8 @@ load_dotnet11()
         w_die "This package does not work on a 64-bit installation"
     fi
 
+    w_call fontfix
+
     # http://www.microsoft.com/downloads/details.aspx?FamilyId=262D25E3-F589-4842-8157-034D1E7CF3A3
     w_download dotnet11 http://download.microsoft.com/download/a/a/c/aac39226-8825-44ce-90e3-bf8203e74006/dotnetfx.exe 16a354a2207c4c8846b617cbc78f7b7c1856340e
 
@@ -9423,6 +9425,8 @@ execute_command()
     # Hacks for backwards compatibility
     cc580) winetricks_do_app comctl32 ;;
     comdlg32.ocx) winetricks_do_app comdlg32ocx ;;
+    dotnet1) winetricks_do_app dotnet11 ;;
+    dotnet2) winetricks_do_app dotnet20 ;;
     fm20) winetricks_do_app controlpad ;;   # art2kmin also comes with fm20.dll
     fontsmooth-bgr) winetricks_do_app fontsmooth=bgr ;;
     fontsmooth-disable) winetricks_do_app fontsmooth=disable ;;
