@@ -9040,6 +9040,16 @@ _EOF_
 
 #----------------------------------------------------------------
 
+w_metadata nt40 settings \
+    title="Set windows version to Windows NT 4.0"
+
+load_nt40()
+{
+    w_set_winver nt40
+}
+
+#----------------------------------------------------------------
+
 w_metadata sandbox settings \
     title="Sandbox the wineprefix - remove links to HOME"
 
@@ -9421,6 +9431,7 @@ execute_command()
     glsl-disable) winetricks_do_app glsl=disabled ;;
     glsl-enable) winetricks_do_app glsl=enabled ;;
     ie6_full) winetricks_do_app ie6 ;;
+    mwo=disabled) winetricks_do_app mwo=disable ;;   # FIXME: relax matching so we can handle these spelling differences in verb instead of here
     npm-repack) winetricks_do_app npm=repack ;;
     psm=off) winetricks_do_app psm=disabled ;;
     psm=on) winetricks_do_app psm=enabled ;;
