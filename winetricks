@@ -4651,7 +4651,6 @@ load_windowscodecs()
     w_try $WINE "$W_CACHE"/wic_x86_enu.exe /passive
 }
 
-
 #----------------------------------------------------------------
 
 load_winhttp()
