@@ -9427,6 +9427,7 @@ execute_command()
     vcrun2005sp1) winetricks_do_app vcrun2005 ;;
     vsm-hard) winetricks_do_app vsm=hardware ;;
     wsh56) winetricks_do_app wsh57 ;;
+    xlive) winetricks_do_app gfw ;;
 
     # Normal verbs, with metadata and load_ functions
     *)
