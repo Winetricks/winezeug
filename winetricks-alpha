@@ -9644,6 +9644,7 @@ execute_command()
     glsl-disable) winetricks_do_app glsl=disabled ;;
     glsl-enable) winetricks_do_app glsl=enabled ;;
     ie6_full) winetricks_do_app ie6 ;;
+    jscript) winetricks_do_app wsh56js ;;            # FIXME: use wsh57 instead?
     mwo=disabled) winetricks_do_app mwo=disable ;;   # FIXME: relax matching so we can handle these spelling differences in verb instead of here
     npm-repack) winetricks_do_app npm=repack ;;
     oss) winetricks_do_app sound=oss ;;
