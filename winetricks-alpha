@@ -5533,7 +5533,7 @@ w_metadata firefox4 apps \
    year="2011" \
    media="download" \
    file1="Firefox Setup 4.0 Beta 9.exe" \
-   installed_exe1="$W_PROGRAMS_X86_WIN/Mozilla Firefox/firefox.exe"
+   installed_exe1="$W_PROGRAMS_X86_WIN/Mozilla Firefox 4.0 Beta 9/firefox.exe"
 
 load_firefox4()
 {
