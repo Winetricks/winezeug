@@ -7591,6 +7591,65 @@ load_demolition_company_demo()
 }
 
 #----------------------------------------------------------------
+ 
+w_metadata hegemonygold_demo games \
+    title="Hegemony Gold beta 13" \
+    publisher="Longbow Games" \
+    year="2010" \
+    media="download" \
+    file1="HegemonyGoldInstaller.exe" \
+    installed_exe1="$W_PROGRAMS_X86_WIN/Longbow Digital Arts/Hegemony Gold/Hegemony Gold.exe" \
+    homepage="http://www.longbowgames.com/forums/topic/?id=2146" \
+    rating="bronze"
+
+load_hegemonygold_demo()
+{
+    if w_workaround_wine_bug 25767
+    then
+        w_warn "This game works, but has some rendering glitches in Wine."
+    fi
+
+    w_download hegemonygold_demo "http://www.longbowgames.com/downloads/Hegemony%20Gold%20Installer.exe" cb08360a732b2fb1d42d61f842dbedd0f0535a27 HegemonyGoldInstaller.exe
+
+    cd "$W_CACHE/$W_PACKAGE"
+
+    w_ahk_do "
+        SetTitleMatchMode, 2
+        Run, HegemonyGoldInstaller.exe
+        WinWait,Hegemony
+        u = $W_OPT_UNATTENDED
+        if ( u > 0 ) {
+            Sleep 500
+            ControlClick Button2 ; Next
+            WinWait,Hegemony, License
+            Sleep 500
+            ControlClick Button2 ; Agree
+            WinWait,Hegemony, Components
+            Sleep 500
+            Click, Left, 187, 185
+            Sleep 500
+            ControlClick Button2 ; Next
+            WinWait,Hegemony, Location
+            Sleep 500
+            ControlClick Button2 ; Next
+            WinWait,Hegemony, shortcuts
+            Sleep 500
+            ControlClick Button2 ; Install
+            WinWait,Hegemony, Completing
+            Sleep 500
+            ControlFocus,Button4,launch
+            Sleep 500
+            Send {Space}
+            Sleep 500
+            ControlClick Button2 ; finish
+        }
+        WinWaitClose,Hegemony
+    "
+
+    w_declare_exe "$W_PROGRAMS_X86_WIN\\Longbow Digital Arts\\Hegemony Gold" "Hegemony Gold.exe"
+}
+
+#----------------------------------------------------------------
 
 w_metadata hko games \
     title="Hello Kitty Online" \
