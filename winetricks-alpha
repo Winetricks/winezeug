@@ -6005,6 +6005,31 @@ load_mspaint()
 
 #----------------------------------------------------------------
 
+w_metadata psdk2003 apps \
+   title="MS Platform SDK 2003" \
+   publisher="Microsoft" \
+   year="2003" \
+   media="download" \
+   file1="PSDK-x86.exe" \
+   installed_file1="$W_PROGRAMS_X86_WIN/Microsoft Platform SDK for Windows Server 2003 R2/SetEnv.Cmd"
+
+load_psdk2003()
+{
+    w_call mfc42
+
+    # Note: aborts on 64 bit windows with dialog saying "don't run on WoW"
+    # http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb
+    w_download psdk2003 http://download.microsoft.com/download/f/a/d/fad9efde-8627-4e7a-8812-c351ba099151/PSDK-x86.exe 5c7dc2e1eb902b376d7797cc383fefdfc64ff9c9
+    w_warn "This can take up to an hour."
+
+    cd "$W_CACHE"/psdk2003
+    # FIXME: says it accepts /q, but that doesn't work, so script this
+    # with autohotkey in -q mode.
+    w_try $WINE PSDK-x86.exe
+}
+
+#----------------------------------------------------------------
+
 w_metadata psdkwin7 apps \
    title="MS Windows 7 SDK (installing just headers and c++ compiler works)" \
    publisher="Microsoft" \
