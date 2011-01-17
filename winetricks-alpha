@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# I no longer pull winetricks-alpha from winezeug, it's moved to its own repo
+
 # LGPL
 # Copyright 2010 Dan Kegel
 # Experimental cleanup of winetricks
@@ -94,6 +97,10 @@ w_die()
 
     exit 1
 }
+
+# I no longer pull winetricks-alpha from winezeug, it's moved to its own repo
+xdg-open http://winetricks.googlecode.com
+w_die "winetricks-alpha has moved. Please use the repository http://winetricks.googlecode.com."
 
 # Execute with error checking
 # Put this in front of any command that might fail
