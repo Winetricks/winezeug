@@ -3663,6 +3663,29 @@ load_msasn1()
 
 #----------------------------------------------------------------
 
+w_metadata mshflxgd dlls \
+   title="MS Hierarchical FlexGrid Control (mshflxgd.ocx)" \
+   publisher="Microsoft" \
+   year="2009" \
+   media="download" \
+   file1="MSHFLXGD.CAB" \
+   installed_file1="$W_SYSTEM32_DLLS_WIN/mshflxgd.ocx"
+
+load_mshflxgd()
+{
+    # http://msdn.microsoft.com/en-us/library/aa240864(VS.60).aspx
+    # orig: 5f9c7a81022949bfe39b50f2bbd799c448bb7377
+    # Jan 2009: 7ad74e589d5eefcee67fa14e65417281d237a6b6
+    # May 2009: bd8aa796e16e5f213414af78931e0379d9cbe292
+    w_download mshflxgd http://activex.microsoft.com/controls/vb6/MSHFLXGD.CAB bd8aa796e16e5f213414af78931e0379d9cbe292
+
+    w_try_cabextract --directory="$W_TMP" "$W_CACHE"/mshflxgd/MSHFLXGD.CAB
+    w_try cp -f "$W_TMP"/[Mm][Ss][Hh][Ff][Ll][Xx][Gg][Dd].[Oo][Cc][Xx] "$W_SYSTEM32_DLLS"
+    w_try_regsvr mshflxgd.ocx
+}
+
+#----------------------------------------------------------------
+
 w_metadata msi2 dlls \
    title="Windows Installer 2.0" \
    publisher="Microsoft" \
