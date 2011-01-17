@@ -10,7 +10,7 @@ grep '^w_metadata' winetricks-alpha | grep -v '()' | awk '!/xgames/ {print $2}' 
 cat usage.log |
     cut -d' ' -f1,7 |
     grep winetricks-usage |
-    sed 's,/data/winetricks-usage?[0-9]*-,,;s/%20/ /g' |
+    sed -r 's,/data/winetricks-usage.([0-9]*-|.*breadcrumbs=),,;s/%20/ /g' |
     perl -e 'while (<STDIN>) {chomp; @x=split(" "); $ip=shift(@x); foreach (@x) { print "$ip $_\n"; }}' > usage.raw
 
     cat usage.raw |
@@ -24,7 +24,7 @@ cat usage.log |
     egrep -v '/data/|winetricks=|Version:|version' |
     egrep -w -v 'dlls' |
     fgrep -w -v -f wisotool2.loads |
-    egrep -w -v "fontsmooth-.*|-q|-v|dotnet20sp2|wsh56|comdlg32.ocx|vsm-hard|--optin|npm-repack|vcrun2005sp1|psm=on|fm20|glsl-enable|glsl-disable|ie6_full|cc580|xlive|python|vd=[0-9x]*|list-manual-download|list-installed|list-cached|list-download|list|vbrun60|psm=off|mwo=disabled|dotnet1|dotnet2" |
+    egrep -w -v "unattended|fontsmooth-.*|-q|-v|dotnet20sp2|wsh56|comdlg32.ocx|vsm-hard|--optin|npm-repack|vcrun200[58]sp1|psm=on|fm20|glsl-enable|glsl-disable|ie6_full|cc580|xlive|python|vd=[0-9x]*|list-manual-download|list-installed|list-cached|list-download|list|vbrun60|psm=off|mwo=disabled|dotnet1|dotnet2|jscript" |
     sort -u | 
     cut -d' ' -f2 |
     sort |
