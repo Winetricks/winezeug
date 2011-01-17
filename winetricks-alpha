@@ -4733,6 +4733,38 @@ load_xinput()
 
 #----------------------------------------------------------------
 
+w_metadata xmllite dlls \
+    title="MS xmllite dll" \
+    publisher="Microsoft" \
+    year="2006" \
+    media="download" \
+    file1="WindowsXP-KB915865-v11-x86-ENU.exe" \
+    installed_file1="$W_SYSTEM32_DLLS/xmllite.dll"
+
+load_xmllite()
+{
+    w_download xmllite http://download.microsoft.com/download/f/9/6/f964059a-3747-4ed8-9326-ba1e639031b1/WindowsXP-KB915865-v11-x86-ENU.exe 226d246a1c64e693791de5c727509002d089b0d5
+
+    if w_workaround_wine_bug 16013
+    then
+        # Find instructions to create this file in dlls/wintrust/tests/crypt.c
+        w_download xmllite http://winezeug.googlecode.com/svn/trunk/winetricks_files/winetest.cat ac8f50dd54d011f3bb1dd79240dae9378748449f
+        # Put a dummy catalog file in place
+        mkdir -p "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}
+        w_try cp -f "$W_CACHE"/xmllite/winetest.cat "$W_SYSTEM32_DLLS"/catroot/\{f750e6c3-38ee-11d1-85e5-00c04fc295ee\}/oem0.cat
+        if test $W_OPT_UNATTENDED != 1
+        then
+            w_warn "xmllite's interactive installer will hang at the end, but otherwise work."
+        fi
+    fi
+
+    cd "$W_CACHE"/xmllite
+    w_override_dlls native xmllite
+    w_try $WINE WindowsXP-KB915865-v11-x86-ENU.exe $W_UNATTENDED_SLASH_Q
+}
+
+#----------------------------------------------------------------
+
 w_metadata  xvid dlls \
     title="Xvid Video Codec" \
     publisher="xvid.org" \
