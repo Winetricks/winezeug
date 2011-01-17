@@ -92,6 +92,9 @@ http://en.wikipedia.org/wiki/Wine-Doors
 Likewise, WineBot supported a dozen or so titles, and even used Autohotkey to do it:
 http://winebot.sandbox.cz/tracker/browser/repositories
 
+http://portingteam.com is something like winebottler for games,
+and they have about 32 so far?  (found via random google image search for winetricks)
+
 == Proposed free titles ==
 
 Free Mega Games Pack Vol 1
