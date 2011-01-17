@@ -9247,6 +9247,23 @@ load_forcemono()
 
 #----------------------------------------------------------------
 
+w_metadata heapcheck settings \
+    title="Enable heap checking with GlobalFlag"
+
+load_heapcheck()
+{
+    cat > "$W_TMP"/heapcheck.reg <<_EOF_
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager]
+"GlobalFlag"=dword:00200030
+
+_EOF_
+    w_try_regedit "$W_TMP_WIN"\\heapcheck.reg
+}
+
+#----------------------------------------------------------------
+
 w_metadata hosts settings \
     title="Add empty C:\windows\system32\drivers\etc\{hosts,services} files"
 
