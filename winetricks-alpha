@@ -3822,7 +3822,7 @@ load_msxml6()
 #----------------------------------------------------------------
 
 w_metadata ogg dlls \
-   title="OpenCodecs 0.84: DirectShow codecs for flac, speex, theora, vorbis, and WebM" \
+   title="OpenCodecs 0.84: flac, speex, theora, vorbis, WebM" \
    publisher="xiph.org" \
    year="2010" \
    media="download" \
@@ -4054,7 +4054,7 @@ load_quicktime76()
 #----------------------------------------------------------------
 
 w_metadata riched20 dlls \
-   title="MS RichEdit Control version 2.0 (includes riched20.dll, riched32.dll)" \
+   title="MS RichEdit Control version 2.0 (riched20.dll, riched32.dll)" \
    publisher="Microsoft" \
    year="1999" \
    media="download" \
@@ -4076,7 +4076,7 @@ load_riched20()
 # We may need a better way to distinguish between installed files.
 
 w_metadata riched30 dlls \
-   title="MS RichEdit Control version 3.0 (includes riched20.dll and msls31.dll)" \
+   title="MS RichEdit Control version 3.0 (riched20.dll, msls31.dll)" \
    publisher="Microsoft" \
    year="2001" \
    media="download" \
