@@ -3888,6 +3888,43 @@ load_ole2()
 
 #----------------------------------------------------------------
 
+w_metadata openwatcom apps \
+    title="Open Watcom C/C++ compiler (can compile win16 code!)" \
+    publisher="Watcom" \
+    year="2010" \
+    media="download" \
+    file1="open-watcom-c-win32-1.9.exe" \
+    installed_file1="$W_DRIVE_C/WATCOM/owsetenv.bat" \
+    homepage="http://www.openwatcom.org"
+
+load_openwatcom()
+{
+    w_download openwatcom "http://ftp.openwatcom.org/ftp/open-watcom-c-win32-1.9.exe" 236ac33ebd463006be4ecd83d7ebea1c026eb55a
+
+    if [ $W_UNATTENDED_SLASH_Q ]
+    then
+        # Options documented at http://bugzilla.openwatcom.org/show_bug.cgi?id=898
+        # But they don't seem to work on wine, so jam them into setup.inf
+        # Pick smallest installation that supports 16 bit C and C++
+        cd "$W_TMP"
+        cp "$W_CACHE"/openwatcom/open-watcom-c-win32-1.9.exe .
+        w_try_unzip open-watcom-c-win32-1.9.exe setup.inf
+        sed -i 's/tools16=.*/tools16=true/' setup.inf
+        w_try zip -f open-watcom-c-win32-1.9.exe
+        w_try $WINE open-watcom-c-win32-1.9.exe -s
+    else
+        cd "$W_CACHE/$W_PACKAGE"
+        w_try $WINE open-watcom-c-win32-1.9.exe
+    fi
+
+    if test ! -f "$W_DRIVE_C"/WATCOM/binnt/wcc.exe
+    then
+        w_warn "c:/watcom/binnt/wcc.exe not found; you probably didn't select 16 bit tools, and won't be able to buld win16test"
+    fi
+}
+
+#----------------------------------------------------------------
+
 w_metadata pdh dlls \
     title="MS pdh.dll (Performance Data Helper)" \
     publisher="Microsoft" \
