@@ -1050,3 +1050,69 @@
    ...
    fun:func_heap
 }
+
+# Ignore leaks in Nvidia driver:
+{
+   nvidia_binary
+   Memcheck:Cond
+   obj:/usr/lib/libnvidia-glcore.so.*
+}
+
+# Expected failures, the address is deliberately invalid, to show that the function traps such invalid addresses.
+{
+   crypt32_cert_expected_fail1
+   Memcheck:Addr1
+   fun:CRYPT_AsnDecodeSequence
+   fun:CRYPT_AsnDecodeCertSignedContent
+   fun:CryptDecodeObjectEx
+   fun:CryptVerifyCertificateSignatureEx
+   fun:testVerifyCertSig
+   fun:testCertSigs
+   fun:func_cert
+   fun:run_test
+   fun:main
+}
+{
+   crypt32_encoded_expected_fail1
+   Memcheck:Addr4
+   fun:CRYPT_AsnEncodeIssuingDistPoint
+   fun:CryptEncodeObjectEx
+   fun:test_encodeCRLIssuingDistPoint
+   fun:func_encode
+   fun:run_test
+   fun:main
+} 
+{
+   crypt32_encoded_expected_fail2
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:HeapAlloc
+   fun:GlobalAlloc
+   fun:LocalAlloc
+   fun:CRYPT_DecodeEnsureSpace
+   fun:CRYPT_AsnDecodePKCSSignerInfo
+   fun:CryptDecodeObjectEx
+   fun:test_decodePKCSSignerInfo
+   fun:func_encode
+   fun:run_test
+   fun:main
+}
+{
+   crypt32_encoded_expected_fail3
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:HeapAlloc
+   fun:GlobalAlloc
+   fun:LocalAlloc
+   fun:CRYPT_DecodeEnsureSpace
+   fun:CRYPT_AsnDecodeCMSSignerInfo
+   fun:CryptDecodeObjectEx
+   fun:test_decodeCMSSignerInfo
+   fun:func_encode
+   fun:run_test
+   fun:main
+}
+
+
