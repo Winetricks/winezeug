@@ -37,7 +37,9 @@ then
 fi
 make testclean
 
-# Load gecko and disable the crash dialog
+$WINE wineboot
+
+# Disable the crash dialog and enable heapchecking
 if test ! -f winetricks
 then
     wget http://winezeug.googlecode.com/svn/trunk/winetricks
