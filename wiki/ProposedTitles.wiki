@@ -241,6 +241,11 @@ http://www.telltalegames.com/pokernight
 
 Sims 3 Late Night (or other expansion pack)
 
+Super Meat Boy (non-steam version)
+http://en.wikipedia.org/wiki/Super_Meat_Boy
+http://www.gamerankings.com/pc/604976-super-meat-boy/index.html  91%!
+http://appdb.winehq.org/objectManager.php?sClass=application&iId=12449
+
 Team Fortress 2 (via steam; in timedemo mode, so yagmark, too? )
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
 
