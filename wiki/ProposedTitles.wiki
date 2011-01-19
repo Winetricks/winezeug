@@ -164,6 +164,11 @@ http://www.massively.com/2010/03/11/gdc10-land-of-chaos-online-interview/
 Lego Universe (closed beta, ask Dan for key)
 http://universe.lego.com/
 
+Lugaru demo (now open source, supports linux and mac, but still it'd be nice to show off the windows version in wine
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=20420
+http://www.gamerankings.com/pc/929329-lugaru-hd/index.html
+http://www.wolfire.com/lugaru
+
 Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 
@@ -233,6 +238,8 @@ EG had trouble, he couldn't get past the login screen even with ie6
 
 Poker Night at the Inventory (cheap)
 http://www.telltalegames.com/pokernight
+
+Sims 3 Late Night (or other expansion pack)
 
 Team Fortress 2 (via steam; in timedemo mode, so yagmark, too? )
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=5823
