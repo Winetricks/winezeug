@@ -671,32 +671,6 @@ do_stats()
     done | median 
 }
 
-# Read all results/*/stats.dat files for this system, compute the rank across all
-# such files of each measurement, and create a corresponding results/*/stats.dat.rank 
-# with the same first two columns (var, val) and a new third column (rank/total).
-# This is intended to be useful when watching for performance regressions;
-# they should show up as bad ranks
-# (for FPS or score variables, rank of 1 is great, rank of N is awful).
-run_rank()
-{
-    cd ${RESULTSDIR}
-
-    # Clear all output files (since we build them up by appending)
-    rm -f $SYSTEMID1*/stats.dat.rank 2> /dev/null
-
-    # For each variable in the input data files for this system,
-    for var in `awk '{print $1}' $SYSTEMID1*/stats.dat | sort -u`
-    do
-        awk "\"$var\"==\$1 {print FILENAME, \$2}" $SYSTEMID1*/stats.dat |   # Show values from all input files for that var
-          sort -rn -k +2 |                                                  # Sort them numerically, highest first
-          nl > "$YAGMARK_TMP"/sorted.dat                                    # Add a rank column (highest value = rank 1)
-        n=`wc -l < "$YAGMARK_TMP"/sorted.dat`                               # Note what the lowest rank is
-        awk "{print \"$var\", \$3, \$1\"/\"$n >> \$2\".rank\"}" \           # Generate line for this var in all output files
-            < "$YAGMARK_TMP"/sorted.dat
-    done
-    cd $olddir
-}
-
 # TODO: add a wisotool-style menu
 
 do_clear
