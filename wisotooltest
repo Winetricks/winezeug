@@ -35,35 +35,35 @@ case "$1" in
 download)  verbs="`sh wisotool --help | grep '\[download' | grep -v broken | egrep -v "$BLACKLIST" | awk '{print $1}'`" ;;
 loaded|all|"") verbs="`sh wisotool ls | egrep -v "$BLACKLIST" `" ;;
 activision) verbs="
-	blur
-	codmw2
-	" ;;
+        blur
+        codmw2
+        " ;;
 ea) verbs="
-	bfbc2
-	cnc3_demo                
-	deadspace
-	dragonage
-	fifa10_demo
-	fifaonline3_beta         
-	hphbp
-	hphbp_demo
-	nfsps_demo               
-	nfsshift
-	nfsshift_demo
-	sims3
-	spore 
-	masseffect2
-	" ;;
-	# masseffect install hangs, so do it last
+        bfbc2
+        cnc3_demo                
+        deadspace
+        dragonage
+        fifa10_demo
+        fifaonline3_beta         
+        hphbp
+        hphbp_demo
+        nfsps_demo               
+        nfsshift
+        nfsshift_demo
+        sims3
+        spore 
+        masseffect2
+        " ;;
+        # masseffect install hangs, so do it last
 
 positech) verbs="democracy2_demo gsb_demo kudos2_demo rocklegend_demo" ;;
 
 ubisoft) verbs="
-	assassinscreed
-	avatar_demo  
-	popsot
-	popsot_demo
-	" ;;
+        assassinscreed
+        avatar_demo  
+        popsot
+        popsot_demo
+        " ;;
 *) echo "Guessing you specified a single verb"; verbs=$1;;
 esac
 
@@ -74,7 +74,7 @@ do
     if test -d $HOME/wisotooltest-prefixes/$app
     then
         echo "Skipping $app, already installed"
-	continue
+        continue
         #rm -rf $WINEPREFIX
     fi
     export DRIVE_C="$WINEPREFIX/dosdevices/c:"
@@ -86,7 +86,7 @@ do
     if ! sh wisotool $app
     then
         echo "Installing $app failed!"
-	#exit 1
+        #exit 1
     fi
     echo -n "Done installing $app, disk usage "
     du -sh $WINEPREFIX
