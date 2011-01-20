@@ -3460,9 +3460,9 @@ load_cod5_waw()
 
     if w_workaround_wine_bug 219
     then
-        warn "This game's copy-protection scheme does not currently work in Wine."
+        w_warn "This game's copy-protection scheme does not currently work in Wine."
     else
-        warn "This game is copy-protected, and requires the real disc in a real drive to run."
+        w_warn "This game is copy-protected, and requires the real disc in a real drive to run."
     fi
 }
 
