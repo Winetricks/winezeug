@@ -148,8 +148,17 @@ chomp(@haystacks);
 #print "Got haystacks ";
 #print join("\n", @haystacks);
 
+$olddir = `pwd`;
+chomp $olddir;
 # Look for Microsoft DLLs and EXEs - we don't care what *they* import
 foreach $haystack (@haystacks) {
+    chdir($olddir) || die "could not chdir to $olddir";
+    $dir = $haystack;
+    $file = $haystack;
+    $dir =~ s!^(.*/)[^/]*$!\1!;
+    $file =~ s,.*/,,;
+    chdir($dir) || die "could not chdir to $dir";
+    
     $found = 0;
     if ($haystack =~ m,\b(winsxs|Microsoft.NET|assembly/GAC_32|system32/update/update.exe|system32/spuninst.exe)\b,) {
        $found = 1;
@@ -161,7 +170,7 @@ foreach $haystack (@haystacks) {
             }
         }
         # this is lame - duplicates code from below.
-        open(PIPE, "tr -d '\\000' < '$haystack' | strings | grep -v '<!-- Copyright 1981-2001 Microsoft Corporation -->' | egrep -i 'microsoft corp|ProductNameMicrosoft' |") || die;
+        open(PIPE, "tr -d '\\000' < '$file' | strings | grep -v '<!-- Copyright 1981-2001 Microsoft Corporation -->' | egrep -i 'microsoft corp|ProductNameMicrosoft' |") || die;
         $x = <PIPE>;
         close(PIPE);
         if (length($x) > 3) {
@@ -174,7 +183,7 @@ foreach $haystack (@haystacks) {
     # FIXME: remove code duplication.
     if ($found) {
 	# Note extra backslash in escaped NULL!
-        open(PIPE, "tr -d '\\000' < '$haystack' | egrep -il 'microsoft corp|ProductNameMicrosoft' |") || die;
+        open(PIPE, "tr -d '\\000' < '$file' | egrep -il 'microsoft corp|ProductNameMicrosoft' |") || die;
 	$x = <PIPE>;
 	close(PIPE);
 	if (length($x) < 4) {
@@ -190,6 +199,7 @@ foreach $haystack (@haystacks) {
        push(@nonbundled, $haystack);
     }
 }
+chdir($olddir);
 
 if (@bundled) {
     if (! $opt{'q'}) {
