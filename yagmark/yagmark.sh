@@ -20,7 +20,7 @@ VERSION=20100509
 
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
-RESULTSDIR="${RESULTSDIR:-results}"
+RESULTSDIR="${RESULTSDIR:-`pwd`/results}"
 
 case "$OS" in
  "Windows_NT")
