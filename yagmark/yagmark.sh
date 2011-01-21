@@ -86,6 +86,13 @@ case "$OS" in
 *) 
     # note: next line contains a tab
     osname=`lsb_release -d | sed 's/.*://;s/^[ 	]*//;s/ /_/g'`
+    if test "$osname" = ""
+    then
+        if test -f /etc/gentoo-release
+        then
+            osname=gentoo
+        fi
+    fi
     wineversion=`$WINE --version`
     (lspci || /sbin/lspci || /usr/sbin/lspci) > "$YAGMARK_TMP"/sysinfo.txt
     gputype=`cat "$YAGMARK_TMP"/sysinfo.txt | grep VGA |
