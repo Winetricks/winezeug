@@ -216,11 +216,13 @@ run_3dmark2000()
         "
     cd "$YAGMARK_RESULTS"
     # Parse results, add prefix, and make parse-friendly
-    sed '1,/Platform/d;
-        /Fill Rate/,$d;
+    tr -d '\015' < 3dmark2000.txt |
+      sed '1,/Platform/d;
+        /^SYSTEM/,$d;
+        /^$/d;
         s/^/3dmark2000_/;
         s/[- _][- _]*/_/g;
-        s,:,,' 3dmark2000.txt > 3dmark2000.parsed
+        s,:,,' > 3dmark2000.parsed
     if test -s 3dmark2000.parsed
     then
         cat 3dmark2000.parsed
