@@ -2,5 +2,5 @@
 # Run yagmark in a loop
 while true
 do
-   sh yagmark.sh clear 3dmark2000 3dmark2001 3dmark06
+   sh yagmark.sh 3dmark2000 3dmark2001 3dmark06
 done
