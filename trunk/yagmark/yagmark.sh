@@ -18,6 +18,9 @@
 
 VERSION=20100509
 
+# Set to 1 to do a very short testing run
+TINY=0
+
 WINEPREFIX="${WINEPREFIX:-$HOME/.wine-yagmark}"
 export WINEPREFIX
 RESULTSDIR="${RESULTSDIR:-`pwd`/results}"
@@ -171,7 +174,7 @@ run_3dmark2000()
         run, .${backslash}3DMark2000.exe
         winwait, 3DMark2000, Welcome
         ; set tiny to 1 to do just a tiny benchmark during debugging
-        tiny = 0
+        tiny = $TINY
         if ( tiny > 0 ) {
             ControlClick, New, 3DMark2000, Welcome
             sleep 1000
