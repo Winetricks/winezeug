@@ -4236,16 +4236,16 @@ w_metadata eve games \
     publisher="CCP Games" \
     year="2010" \
     media="download" \
-    file1="EVE_Premium_Setup_177290_m.exe" 
+    file1="EVE_Premium_Setup_222391_m.exe" 
 
 load_eve()
 {
     # FIXME: download function should avoid checksumming huge old files
-    test -s "$W_CACHE/$W_PACKAGE/EVE_Premium_Setup_177290_m.exe" ||
-        w_download $W_PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_177290_m.exe" 92624334ed5a431c1b516161ecf7280882b388f6
+    test -s "$W_CACHE/$W_PACKAGE/EVE_Premium_Setup_222391_m.exe" ||
+        w_download $W_PACKAGE "http://content.eveonline.com/EVE_Premium_Setup_222391_m.exe" 0edd744ab6717fa62c76a3918054b990929227fd
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
-        run, EVE_Premium_Setup_177290_m.exe
+        run, EVE_Premium_Setup_222391_m.exe
         WinWait, EVE Online Installer
         WinActivate
         send {Enter}         ; Next
