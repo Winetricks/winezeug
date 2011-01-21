@@ -498,13 +498,13 @@ do_heaven2()
 
 run_heaven2_d3d9()
 {
-    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app direct3d9 -sound_app openal "
+    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.1.cfg -data_path ./ -video_app direct3d9 -sound_app openal "
     do_heaven2
 }
 
 run_heaven2_gl()
 {
-    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.0.cfg -data_path ./ -video_app opengl -sound_app openal "
+    commandline="./Heaven.exe -extern_define RELEASE,BENCHMARK -engine_config data/heaven_2.1.cfg -data_path ./ -video_app opengl -sound_app openal "
     do_heaven2
 }
 
