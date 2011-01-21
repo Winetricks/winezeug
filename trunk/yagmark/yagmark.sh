@@ -194,6 +194,7 @@ run_3dmark2000()
         send $SAVE_PATH
         send {Enter}
         ; Save it again with .txt, which is what we really want
+        sleep 1000
         send !fa
         winwait, Save
         send !t3
