@@ -163,7 +163,7 @@ run_3dmark2000()
     # Install if needed
     if ! test -f "$exe_dir/3DMark2000.exe"
     then
-        sh wisotool 3dmark2000
+        sh ../wisotool 3dmark2000
     fi
     cd "$exe_dir"
     ahk_do "
@@ -236,7 +236,7 @@ run_3dmark2001()
  # Install if needed
     if ! test -f "$exe_dir/3DMark2001SE.exe"
     then
-        sh wisotool 3dmark2001
+        sh ../wisotool 3dmark2001
     fi
     cd "$exe_dir"
     ahk_do "
@@ -300,7 +300,7 @@ run_3dmark05()
     # Install if needed
     if ! test -f "$exe_dir/3DMark05.exe"
     then
-        sh wisotool 3dmark05
+        sh ../wisotool 3dmark05
     fi
 
     cd "$exe_dir"
@@ -371,7 +371,7 @@ run_3dmark06()
     # Install if needed
     if ! test -f "$exe_dir/3DMark06.exe"
     then
-        sh wisotool 3dmark06
+        sh ../wisotool 3dmark06
     fi
 
     cd "$exe_dir"
@@ -435,7 +435,7 @@ run_re5bench()
     # Install if needed
     if ! test -f "$exe"
     then
-        sh wisotool re5bench
+        sh ../wisotool re5bench
     fi
 
     # Can this be scraped/controlled at all with autohotkey?  Maybe if run in window...
@@ -454,7 +454,7 @@ do_heaven2()
     # Install if needed
     if ! test -f "$exe"
     then
-        sh wisotool unigine_heaven
+        sh ../wisotool unigine_heaven
     fi
 
     cd "$exedir"
