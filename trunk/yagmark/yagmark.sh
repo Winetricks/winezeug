@@ -109,12 +109,6 @@ case "$OS" in
     ;;
 esac
 
-# Put wine version last, since it's so long
-SYSTEMID1="$cputype-"$gputype"-$osname-$host"
-SYSTEMID="$SYSTEMID1-$wineversion"
-
-echo SYSTEMID is $SYSTEMID
-
 #----------------------------------------------------------------
 
 warn() {
@@ -625,81 +619,31 @@ do_system_description()
     echo ">>-------- end system description ---------"
 }
 
-do_report()
-{
-    echo ">>-------- begin yagmark report ---------"
-    announce date
-    echo ">>-------- begin summary ---------"
-    for file in "$YAGMARK_RESULTS"/*.parsed
-    do
-       cat $file
-    done
-    echo ">>-------- end summary ---------"
-    for file in "$YAGMARK_RESULTS"/*.txt
-    do
-       echo ">>-------- begin $file ---------"
-       tr -d '\000' < "$file"
-       echo ">>-------- end $file ---------"
-    done
-
-    do_system_description
-
-    echo ">>-------- end yagmark report ---------"
-}
-
-# Compute median
-# Input and output are lines of form 'variable value'.
-# Multiple lines with same variable represent different measurements.
-# Replaces all the lines for a particular variable
-# with one containing the median of all measurements for that variable.
-median()
-{
-    # Sort first by variable name...
-    sort | perl -e '
-        sub report { 
-            return if !@vals;
-            # ... then sort all values for variable, and take the middle one.
-            @sorted = sort { $a - $b; } @vals; 
-            print $oldvar."\t".$sorted[@sorted/2]."\n";
-            undef @vals;
-        }
-        while (<STDIN>) {
-            ($var,$val)=split(" ");
-            report() if ($var ne $oldvar);
-            push(@vals, $val);
-            $oldvar=$var;
-        }
-        report();
-    '
-}
-
-# Show statistics over all results from given system
-do_stats()
-{
-    dir="$1"
-    for file in $dir/*.txt
-    do
-        sed '1,/begin summary/d;/end summary/,$d' < $file | grep '[ 	]-*[0-9]'
-    done | median 
-}
-
-# TODO: add a wisotool-style menu
-
 do_clear
+
+SYSTEMID="$cputype-"$gputype"-$osname-$host"
+
+echo SYSTEMID is $SYSTEMID
+
+if ! test -d "${RESULTSDIR}/$SYSTEMID"
+then
+    mkdir -p "${RESULTSDIR}/$SYSTEMID"
+    do_system_description > "${RESULTSDIR}/$SYSTEMID"/systemid.txt
+fi
 
 for verb
 do
-   echo running run_$verb
-   run_$verb
+    RUNID=`date +%F-%H.%M.%S`
+    echo running run_$verb
+    run_$verb
+    mkdir -p "${RESULTSDIR}/$SYSTEMID/$wineversion/$RUNID"
+    mv "$YAGMARK_RESULTS"/* "${RESULTSDIR}/$SYSTEMID/$wineversion/$RUNID"
 done
 
-mkdir -p ${RESULTSDIR}/"$SYSTEMID"
-if test `find "$YAGMARK_RESULTS" -type f | wc -l` -gt 0
-then
-    mkdir -p ${RESULTSDIR}/"$SYSTEMID"
-    do_report > ${RESULTSDIR}/"$SYSTEMID"/"$SYSTEMID"-`date +%F-%H.%M`.txt
-    echo "New medians in ${RESULTSDIR}/$SYSTEMID/stats.dat":
-    do_stats results/"$SYSTEMID" | tee results/"$SYSTEMID"/stats.dat
-fi
-
+# Generate simple statistics.  This can be done at any time, 
+# don't need to run it from inside here, but this is easy.
+srcdir=`dirname $0`
+srcdir=`cd $srcdir; pwd`
+cd "{RESULTSDIR}/$SYSTEMID"
+sh $srcdir/yagmark-stats.sh
 exit 0
