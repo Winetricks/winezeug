@@ -2259,8 +2259,8 @@ load_bfme2()
     "
     iso_umount
 
-    download $PACKAGE ftp://ftp.ea.com/pub/eapacific/lotr/lotrbfme2/LotrBfMe2-65542-english.exe 151c3c61bbe0697e3517136a4f66e1d71a01e079
-    cd "$WISOTOOL_CACHE/$PACKAGE"
+    download $W_PACKAGE ftp://ftp.ea.com/pub/eapacific/lotr/lotrbfme2/LotrBfMe2-65542-english.exe 151c3c61bbe0697e3517136a4f66e1d71a01e079
+    cd "$WISOTOOL_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
         run LotrBfMe2-65542-english.exe
@@ -3564,7 +3564,7 @@ w_metadata darknesswithin2_demo games \
 
 load_darknesswithin2_demo()
 {
-    w_download_manual $PACKAGE http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo DarknessWithin2Demo.exe 
+    w_download_manual $W_PACKAGE http://www.bigdownload.com/games/darkness-within-2-the-dark-lineage/pc/darkness-within-2-the-dark-lineage-demo DarknessWithin2Demo.exe 
 
     cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
@@ -4695,7 +4695,7 @@ load_fifa11()
     if [ ! -f "$W_CACHE/$W_PACKAGE/fifa11_download.zip" ]
     then
         # FIXME: Should probably launch webpage for the user and warn instead...
-        w_die "You need to download the game from http://www.amazon.com/FIFA-Soccer-11-Game-Download/sim/B00452VFZS/2 and put the files in $W_CACHE/$PACKAGE/fifa11_download.zip"
+        w_die "You need to download the game from http://www.amazon.com/FIFA-Soccer-11-Game-Download/sim/B00452VFZS/2 and put the files in $W_CACHE/$W_PACKAGE/fifa11_download.zip"
     fi
 
     w_try mkdir -p "$W_TMP/$W_PACKAGE"
@@ -5718,7 +5718,7 @@ w_metadata hphbp_demo games \
     publisher="EA" \
     year="2009" \
     media="download" \
-    file1="Release_HBP_demo_PC_DD_DEMO_FINAL_348428.exe" 
+    file1="Release_HBP_demo_PC_DD_DEMO_Final_348428.exe" 
 
 load_hphbp_demo()
 {
