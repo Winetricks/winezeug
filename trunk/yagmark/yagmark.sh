@@ -67,7 +67,6 @@ olddir=`pwd`
 
 rm -rf "$YAGMARK_TMP"
 mkdir -p "$YAGMARK_TMP"
-mkdir -p "$YAGMARK_RESULTS"
 
 cputype=`cat /proc/cpuinfo | egrep 'model name' | 
         awk '{print $8}' | uniq`
@@ -140,13 +139,6 @@ ahk_do()
 {
    echo "$@" | sed "s/\$//" > "$YAGMARK_TMP"/tmp.ahk
    $WINE "$programfilesdir_x86_unix/AutoHotkey/AutoHotkey.exe" "$YAGMARK_TMP"\\tmp.ahk
-}
-
-#----------------------------------------------------------------
-
-do_clear()
-{
-    rm -f "$YAGMARK_RESULTS"/* 2> /dev/null
 }
 
 #----------------------------------------------------------------
@@ -620,8 +612,6 @@ do_system_description()
     echo ">>-------- end system description ---------"
 }
 
-do_clear
-
 SYSTEMID="$cputype-"$gputype"-$osname-$host"
 
 echo SYSTEMID is $SYSTEMID
@@ -634,6 +624,9 @@ fi
 
 for verb
 do
+    rm -rf "$YAGMARK_RESULTS"
+    mkdir -p "$YAGMARK_RESULTS"
+
     RUNID=`date +%F-%H.%M.%S`
     echo running run_$verb
     run_$verb
