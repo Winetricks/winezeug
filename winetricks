@@ -397,7 +397,9 @@ esac
 
 early_wine()
 {
-    WINEDLLOVERRIDES=mshtml= $WINE "$@"
+    # The sed works around http://bugs.winehq.org/show_bug.cgi?id=25838
+    # which unfortunately got released in wine-1.3.12
+    WINEDEBUG=-all WINEDLLOVERRIDES=mshtml= $WINE "$@" | sed 's/.*1h.=//'
 }
 
 case "$OS" in
@@ -4968,7 +4970,7 @@ mkdir -p "$W_CACHE"
 olddir=`pwd`
 
 # The folder-name is localized!
-W_PROGRAMS_WIN="`unset WINEDEBUG; WINEDLLOVERRIDES=mshtml= $WINE cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
+W_PROGRAMS_WIN="`early_wine cmd.exe /c echo "%ProgramFiles%" | tr -d '\015'`"
 test x"$W_PROGRAMS_WIN" != x || w_die "$WINE cmd.exe /c echo '%ProgramFiles%' returned empty string"
 W_PROGRAMS_UNIX="`unset WINEDEBUG; $XXXPATH -u "$W_PROGRAMS_WIN" | tr -d '\015' `"
 test x"$W_PROGRAMS_UNIX" != x || w_die "winepath -u $W_PROGRAMS_WIN returned empty string"
