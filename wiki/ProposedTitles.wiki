@@ -174,7 +174,7 @@ http://www.wolfire.com/lugaru
 
 Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
-nonsteam? http://www.bigdownload.com/games/mafia-ii/pc/mafia-2-demo/
+(There's also http://www.bigdownload.com/games/mafia-ii/pc/mafia-2-demo/ but that installs steam.)
 
 Momento Mori demo (french/german/spanish, choose one, no english available)
 http://www.gamershell.com/download_37478.shtml
