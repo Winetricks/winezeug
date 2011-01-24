@@ -234,6 +234,10 @@ Deathspank (Steam)
 http://store.steampowered.com/app/18040/
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21793
 
+Dead Rising 2
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=21516
+Was one of the top 5 games of the year on Zero Punctuation: http://www.escapistmagazine.com/videos/view/zero-punctuation/2607-Top-5-of-2010
+
 Far Cry 2
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8522
 
