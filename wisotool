@@ -54,7 +54,7 @@ mkdir -p "$WISOTOOL_VERBS"
 WISOTOOL_POST="${WISOTOOL_POST:-$WISOTOOL_DIR/postinstall}"
 
 # Internal variables; these locations are not too important
-W_CACHE="${W_CACHE:-$HOME/.cache/winetricks}"
+W_CACHE="${WISOTOOL_CACHE:-$HOME/.cache/winetricks}"
 test -d "$W_CACHE" || W_CACHE="$WISOTOOL_DIR/cache"
 W_CACHE_WIN="`$XXXPATH -w $W_CACHE | tr '\012' ' ' | sed 's/ $//'`"
 W_TMP="$W_DRIVE_C"/wisotooltmp
