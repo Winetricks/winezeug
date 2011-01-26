@@ -67,6 +67,9 @@ Halo Combat Evolved
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=2720&iTestingId=57341
 http://www.playonlinux.com/repository/?script=236
 
+Microsoft Office 2007
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=4992
+
 Spotify
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=8514
 http://www.playonlinux.com/repository/?script=386
