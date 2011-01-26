@@ -2260,7 +2260,7 @@ load_bfme2()
     iso_umount
 
     download $W_PACKAGE ftp://ftp.ea.com/pub/eapacific/lotr/lotrbfme2/LotrBfMe2-65542-english.exe 151c3c61bbe0697e3517136a4f66e1d71a01e079
-    cd "$WISOTOOL_CACHE/$W_PACKAGE"
+    cd "$W_CACHE/$W_PACKAGE"
     w_ahk_do "
         SetTitleMatchMode, 2
         run LotrBfMe2-65542-english.exe
