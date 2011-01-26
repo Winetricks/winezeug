@@ -2266,12 +2266,12 @@ _EOF_
 
 load_firefox()
 {
-    w_download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.12/win32/en-US/Firefox%20Setup%203.6.12.exe" c10562f70de6e0dc656a949931ef9f479623fcd6 "Firefox Setup 3.6.12.exe"
+    w_download . "http://releases.mozilla.org//pub/mozilla.org/firefox/releases/3.6.13/win32/en-US/Firefox%20Setup%203.6.13.exe" ac9a021dc07c9a269b547b2a5b07719f61cd9368 "Firefox Setup 3.6.13.exe"
     if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
     then
-       w_try $WINE "$W_CACHE"/"Firefox Setup 3.6.12.exe"
+       w_try $WINE "$W_CACHE"/"Firefox Setup 3.6.13.exe"
     else
-       w_try $WINE "$W_CACHE"/"Firefox Setup 3.6.12.exe" -ms
+       w_try $WINE "$W_CACHE"/"Firefox Setup 3.6.13.exe" -ms
     fi
 }
 
