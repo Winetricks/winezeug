@@ -83,24 +83,25 @@ then
 fi
 
 #----------------------------------------------------------------------------
-# Debian data
-debian_pkgs="\
-bison ccache flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
-libcapi20-3 libcapi20-dev libcups2-dev libdbus-1-dev libesd0-dev libexif-dev \
-libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
-libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev \
-libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
-libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
-libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libsane-dev \
-libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
-libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
-libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
-libxmu-headers libxrandr-dev libxrender-dev libxslt1-dev libxt-dev libxv-dev \
-libxxf86vm-dev linux-libc-dev m4 make mesa-common-dev prelink \
-unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x11proto-fixes-dev  \
+# Debian data, common to Debian GNU/kFreeBSD, GNU/Hurd and GNU/Linux:
+debian_common_pkgs="\
+bison ccache flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev libcups2-dev \
+libdbus-1-dev libelfg0 libesd0-dev libexif-dev libexpat1-dev libfontconfig1-dev libfreetype6-dev \
+libgcrypt11-dev libgif-dev libgl1-mesa-dev libglib2.0-dev libglu1-mesa-dev libgnutls-dev \
+libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev \
+libhal-dev libhal-storage-dev libice-dev libjpeg62-dev liblcms1-dev libldap2-dev libmad0 libmad0-dev \
+libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 libogg-dev  libopenal-dev libopenal1 \
+libpng12-dev libpopt-dev libsane-dev libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 \
+libusb-dev libvorbis-dev libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev \
+libxdmcp-dev libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
+libxmu-headers libxrandr-dev libxrender-dev libxslt1-dev libxt-dev libxv-dev libxxf86vm-dev m4 make \
+mesa-common-dev unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x11proto-fixes-dev \
 x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11proto-xext-dev \
-x11proto-xf86vidmode-dev x11proto-xinerama-dev x-dev xtrans-dev zlib1g-dev \
-libelfg0 libfreebob0 libgif-dev libhal-storage-dev"
+x11proto-xf86vidmode-dev x11proto-xinerama-dev xtrans-dev zlib1g-dev"
+
+# Linux specific: Is libfreebob0 still needed?
+debian_linux_pkgs="\
+libcapi20-3 libcapi20-dev libfreebob0 libieee1284-3-dev linux-libc-dev prelink"
 
 #----------------------------------------------------------------------------
 # Ubuntu data
@@ -224,7 +225,11 @@ openssl-devel pkgconfig unixODBC-devel update-desktop-files xorg-x11-devel zlib-
 #----------------------------------------------------------------------------
 # Code
 
-lsb_release_path=`which lsb_release 2>/dev/null`
+# For some reason, Debian/KFreeBSD has this, but it is broken...
+case "`uname -s`" in
+    *Linux*) lsb_release_path=`which lsb_release 2>/dev/null`;;
+esac
+
 if test "$lsb_release_path" != ""
 then
   distro=`lsb_release -i -r -s`
@@ -245,7 +250,9 @@ Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
-Debian*) apt-get install $debian_pkgs;;
+Debian*Hurd*) apt-get install $debian_common_pkgs ;;
+Debian*Linux*) apt-get install $debian_common_pkgs $debian_linux_pkgs ;;
+Debian*kFreeBSD*) apt-get install $debian_common_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
 esac
 
