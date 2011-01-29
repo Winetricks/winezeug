@@ -54,14 +54,9 @@ http://www.aplu.fr/polistats/stats_2010.html
 
 A few ideas from there, but pick any that look popular:
 
-Google Chrome
+Google Chrome (old version, current is broken)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=20397
 http://www.playonlinux.com/repository/?script=326
-
-Google Sketchup
-http://appdb.winehq.org/objectManager.php?sClass=application&iId=1815
-http://www.playonlinux.com/repository/?script=117
-Needs a registry setting.
 
 Halo Combat Evolved
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=2720&iTestingId=57341
@@ -82,7 +77,7 @@ That's no longer available from microsoft.com, but there is a copy from
 supposedly an MS MVP at 
 http://www.tech-archive.net/Archive/WinXP/microsoft.public.windowsxp.messenger/2007-12/msg00023.html
 which has the same sha1sum (77eec15c8453d20260d8bf6977eeb6581bd8902f) as
-the one playonlinux points at, 
+the one playonlinux points at
 
 
 
@@ -137,11 +132,6 @@ http://appdb.winehq.org/objectManager.php?sClass=application&iId=12280
 Football Manager 2011 demo
 http://www.bigdownload.com/games/football-manager-2011/pc/football-manager-2011-vanilla-demo/
 
-Guild Wars (NCSoft, 2005; free 5 day trial)
-http://www.guildwars.com/
-http://appdb.winehq.org/objectManager.php?sClass=version&iId=9194
-http://www.gamerankings.com/pc/914653-guild-wars/index.html
-
 His gf says these are her favorite five games from bigfish:
   World Mosaics (1, 2 and 3)
   Grimms Hatchery
@@ -178,6 +168,9 @@ http://www.wolfire.com/lugaru
 Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 (There's also http://www.bigdownload.com/games/mafia-ii/pc/mafia-2-demo/ but that installs steam.)
+
+Magicka
+http://www.gamerankings.com/pc/988764-magicka/index.html
 
 Momento Mori demo (french/german/spanish, choose one, no english available)
 http://www.gamershell.com/download_37478.shtml
