@@ -51,6 +51,11 @@ sh winetricks nocrashdialog heapcheck || true
 # Note: running `wineserver -p` is not enough, because that only runs wineserver, not any services
 $WINE start /M winemine
 
+# Disable any hanging tests:
+touch dlls/d3d8/tests/device.ok
+touch dlls/d3d9/tests/device.ok
+touch dlls/d3d9/tests/visual.ok 
+
 # Should we use date or id from git log?
 DATE=`date +%F-%H.%M`
 # Get info about what tree we're testing
