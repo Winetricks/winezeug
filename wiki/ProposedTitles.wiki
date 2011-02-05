@@ -91,7 +91,7 @@ Likewise, WineBot supported a dozen or so titles, and even used Autohotkey to do
 http://winebot.sandbox.cz/tracker/browser/repositories
 
 http://portingteam.com is something like winebottler for games,
-and they have about 32 so far?  (found via random google image search for winetricks)
+and they have about 32 so far?  (found via random google image search for winetricks)  They highlight one per week.  
 
 == Proposed free titles ==
 
