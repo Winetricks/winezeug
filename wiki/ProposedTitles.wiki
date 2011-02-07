@@ -189,6 +189,9 @@ It's really freaky,
 Perpetuum Online closed beta (I got in, can't be too hard; client seems to work with just winetricks d3dx9_36)
 http://www.perpetuum-online.com
 
+Rayman 2 (*really* highly ranked platform game, free demo, but released in 1999)
+http://bugs.winehq.org/show_bug.cgi?id=21159
+
 Risen Demo (Deep Silver, 2009, got 78%).  Don't script unless it works for you,
 but do file bugs.
 http://www.gamerankings.com/pc/952152-risen/index.html
