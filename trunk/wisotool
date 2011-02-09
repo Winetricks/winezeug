@@ -11348,7 +11348,7 @@ do
        *) . ./$1 ;;
        esac
        W_PACKAGE=`echo $1 | sed 's,.*/,,;s,.verb,,'`
-       load_$W_PACKAGE
+       load_$W_PACKAGE || exit 1
        ;;
     *) if verblist_is_legal_verb $W_PACKAGE
        then
