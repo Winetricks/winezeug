@@ -1115,4 +1115,298 @@
    fun:main
 }
 
+# crypt32 intentionally leaks the default provider on process shutdown
+# Expected leak to work around http://bugs.winehq.org/show_bug.cgi?id=11052
+# We want to ignore anything allocated by CRYPT_GetDefaultProvider but that
+# doesn't show up in the stack...
+{
+  ignore_crypt32_message__test_verify_message_signature_leak
+  Memcheck:Leak
+  ...
+  fun:CryptImportPublicKeyInfo
+  fun:CDecodeSignedMsg_VerifySignatureWithKey
+  fun:CDecodeSignedMsg_VerifySignature
+  fun:CDecodeMsg_Control
+  fun:CryptMsgControl
+  fun:CryptVerifyMessageSignature
+  fun:test_verify_message_signature
+}
+
+# Skip gecko leaks:
+
+{
+   load_gecko_leak
+   Memcheck:Addr4
+   obj:*
+   fun:init_xpcom
+   fun:load_gecko
+   fun:NSContainer_Create
+   fun:HTMLDocument_Create
+   fun:ClassFactory_CreateInstance
+}
+
+# Png malloc leak (shows up in gdiplus/image)
+{
+   png_malloc_leak
+   Memcheck:Cond
+   fun:inflateReset2
+   fun:inflateInit2_
+   fun:inflateInit_
+   fun:png_create_read_struct_2
+   fun:png_create_read_struct
+   fun:PngDecoder_Initialize
+}
+
+# A valid bug, but intentional, to test Windows behavior (checked with Vincent Povirk):
+# gdiplus/image
+{
+   gdiplus_image_invalid_read
+   Memcheck:Addr4
+   fun:GdipDisposeImage
+   fun:test_dispose
+   fun:func_image
+   fun:run_test
+   fun:main
+}
+
+# These leaks are (probably) caused by https://bugs.kde.org/show_bug.cgi?id=264785,
+# so suppress them until it is fixed.
+{
+  fake_crypt_leak1
+  Memcheck:Leak
+  fun:notify_alloc
+  fun:RtlAllocateHeap
+  fun:HeapAlloc
+  fun:GlobalAlloc
+  fun:LocalAlloc
+  fun:CRYPT_EncodeEnsureSpace
+  fun:CRYPT_AsnEncodeSequence
+  fun:CRYPT_EncodeDataContentInfoHeader
+  fun:CDataEncodeMsg_Update
+  fun:CryptMsgUpdate
+  fun:test_data_msg_update
+  fun:test_data_msg
+  fun:func_msg
+  fun:run_test
+  fun:main
+}
+
+{
+  fake_crypt_leak2
+  Memcheck:Leak
+  fun:notify_alloc
+  fun:RtlAllocateHeap
+  fun:CryptMemAlloc
+  fun:CDataEncodeMsg_Open
+  fun:CryptMsgOpenToEncode
+  fun:test_data_msg_update
+  fun:test_data_msg
+  fun:func_msg
+  fun:run_test
+  fun:main
+}
+
+{
+  fake_crypt_leak3
+  Memcheck:Leak
+  fun:notify_alloc
+  fun:RtlAllocateHeap
+  fun:CryptMemAlloc
+  fun:init_oid_info
+  fun:crypt_oid_init
+  fun:DllMain
+  fun:__wine_spec_dll_entry
+  obj:/home/austin/wine-git/dlls/ntdll/ntdll.dll.so
+  fun:MODULE_InitDLL
+  fun:process_attach
+  fun:process_attach
+  fun:attach_process_dlls
+  obj:/home/austin/wine-git/libs/wine/libwine.so.1.0
+}
+
+{
+  fake_crypt_leak4
+  Memcheck:Leak
+  fun:notify_alloc
+  fun:RtlAllocateHeap
+  fun:CryptMemAlloc
+  fun:init_oid_info
+  fun:crypt_oid_init
+  fun:DllMain
+  fun:__wine_spec_dll_entry
+  obj:/home/austin/wine-git/dlls/ntdll/ntdll.dll.so
+  fun:MODULE_InitDLL
+  fun:process_attach
+  fun:process_attach
+  fun:attach_process_dlls
+  obj:/home/austin/wine-git/libs/wine/libwine.so.1.0
+}
+
+# Gstreamer is really leaky. These cut down the warnings in dlls/qedit from 415 to 16 (!)
+# FIXME: file gstreamer bug
+{
+   gstreamer_calloc
+   Memcheck:Leak
+   fun:calloc
+   fun:g_malloc0
+   ...
+}
+
+{
+   gstreamer_malloc
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   ...
+}
+
+{
+   gstreamer_realloc
+   Memcheck:Leak
+   ...
+   fun:realloc
+   fun:g_realloc
+   ...
+}
+
+{
+   gstreamer_calloc2
+   Memcheck:Leak
+   fun:calloc
+   ...
+   obj:/usr/lib/libgstreamer-*
+}
+
+{   
+   glib_memalign
+   Memcheck:Leak
+   fun:memalign
+   fun:posix_memalign
+   obj:/lib/libglib-*
+}   
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26045
+{
+   comctl32_bug_26045
+   Memcheck:Addr4
+   fun:is_valid
+   fun:ImageList_Destroy
+   fun:test_iimagelist
+   fun:func_imagelist
+   fun:run_test
+   fun:main
+}
+
+# http://bugs.winehq.org/show_bug.cgi?id=26051
+{  
+   wintrust_bug_26051_part1
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:WINTRUST_Alloc
+   fun:SOFTPUB_GetSIP
+   fun:SOFTPUB_LoadFileMessage
+   fun:SoftpubLoadMessage
+   fun:testObjTrust
+   fun:test_provider_funcs
+   fun:func_softpub
+   fun:run_test
+   fun:main
+}
+
+{
+   wintrust_bug_26051_part2
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:WINTRUST_Alloc
+   fun:WINTRUST_AddSgnr
+   fun:testCertTrust
+   fun:test_provider_funcs
+   fun:func_softpub
+   fun:run_test
+   fun:main
+}
+
+{
+   wintrust_bug_26051_part3
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:WINTRUST_Alloc
+   fun:SOFTPUB_GetMessageFromFile
+   fun:SOFTPUB_LoadFileMessage
+   fun:SoftpubLoadMessage
+   fun:testObjTrust
+   fun:test_provider_funcs
+   fun:func_softpub
+   fun:run_test
+   fun:main
+}
+
+{
+   wintrust_bug_26051_part4
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:WINTRUST_Alloc
+   fun:WINTRUST_AllocateProviderData
+   fun:WINTRUST_DefaultVerify
+   fun:WinVerifyTrust
+   fun:test_wintrust
+   fun:func_softpub
+   fun:run_test
+   fun:main
+}
+
+{
+   wintrust_bug_26051_part5
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlReAllocateHeap
+   fun:WINTRUST_ReAlloc
+   fun:WINTRUST_AddSgnr
+   fun:test_utils
+   fun:test_provider_funcs
+   fun:func_softpub
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=23358 et al
+{
+   user32_dib_exception_handler
+   Memcheck:Addr4
+   fun:StretchDIBits
+   fun:BITMAP_Load
+   fun:LoadImageW
+   fun:LoadImageA
+   fun:test_LoadImageFile
+   fun:test_LoadImage
+   fun:func_cursoricon
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26102
+{
+   pdh_bug_26102_A
+   Memcheck:Addr4
+   fun:PdhCloseQuery
+   fun:test_PdhOpenQueryA
+   fun:func_pdh
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26102
+{
+   pdh_bug_26102_W
+   Memcheck:Addr4
+   fun:PdhCloseQuery
+   fun:test_PdhOpenQueryW
+   fun:func_pdh
+   fun:run_test
+   fun:main
+}
 
