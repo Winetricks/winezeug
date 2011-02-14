@@ -1410,3 +1410,41 @@
    fun:main
 }
 
+# See http://bugs.winehq.org/show_bug.cgi?id=26098#c1
+{
+   rsaenh_crypthashdata
+   Memcheck:Addr4
+   fun:CryptHashData
+   fun:test_hashes
+   fun:func_rsaenh
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26098#c1
+{
+   rsaenh_cryptdestroyhash
+   Memcheck:Addr4
+   fun:CryptDestroyHash
+   fun:test_hashes
+   fun:func_rsaenh
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26098#c1
+{
+   rsaenh_cryptcreatehash_leak
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   fun:HeapAlloc
+   fun:GlobalAlloc
+   fun:LocalAlloc
+   fun:CryptCreateHash
+   fun:test_hashes
+   fun:func_rsaenh
+   fun:run_test
+   fun:main
+}
+
