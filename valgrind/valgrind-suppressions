@@ -1448,6 +1448,21 @@
    fun:main
 }
 
+# See http://bugs.winehq.org/show_bug.cgi?id=26098#c1
+{
+   rsaenh_cryptcreatehash_leak2
+   Memcheck:Leak
+   fun:notify_alloc
+   fun:RtlAllocateHeap
+   obj:*
+   obj:*
+   fun:CryptCreateHash
+   fun:test_hashes
+   fun:func_rsaenh
+   fun:run_test
+   fun:main
+}
+
 # See http://bugs.winehq.org/show_bug.cgi?id=26111
 {
    ntdll_info_invalid_read
