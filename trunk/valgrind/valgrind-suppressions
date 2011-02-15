@@ -1448,3 +1448,79 @@
    fun:main
 }
 
+# See http://bugs.winehq.org/show_bug.cgi?id=26111
+{
+   ntdll_info_invalid_read
+   Memcheck:Addr1
+   fun:virtual_check_buffer_for_write
+   fun:NtReadVirtualMemory
+   fun:test_readvirtualmemory
+   fun:func_info
+   fun:run_test
+   fun:main
+}
+
+# Shows up in mmdevapi tests
+{
+   libc_getaddrinfo_leak
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/libc-2.11.2.so
+   fun:getaddrinfo
+   obj:/usr/lib/libasyncns.so.0.1.0
+   fun:start_thread
+   fun:clone
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26121
+{
+   msacm_invalid_read
+   Memcheck:Addr4
+   fun:MSACM_GetObj
+   fun:MSACM_GetDriver
+   fun:acmDriverClose
+   fun:DriverEnumProc
+   fun:acmDriverEnum
+   fun:msacm_tests
+   fun:func_msacm
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26071
+{
+   urlmon_lstrlen_null_1
+   Memcheck:Addr1
+   fun:strlen
+   fun:lstrlenA
+   fun:test_IUri_GetPropertyLength
+   fun:func_uri
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26071
+{
+   urlmon_lstrlen_null_2
+   Memcheck:Addr1
+   fun:strlen
+   fun:lstrlenA
+   fun:test_IUriBuilder_GetPath
+   fun:test_IUriBuilder
+   fun:func_uri
+   fun:run_test
+   fun:main
+}
+
+# See http://bugs.winehq.org/show_bug.cgi?id=26071
+{
+   urlmon_lstrlen_null_3
+   Memcheck:Addr1
+   fun:strlen
+   fun:lstrlenA
+   fun:test_IUriBuilder_GetPath
+   fun:test_IUriBuilder
+   fun:func_uri
+   fun:run_test
+   fun:main
+}
