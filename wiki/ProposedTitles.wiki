@@ -149,13 +149,14 @@ http://heat-online.net/
 http://appdb.winehq.org/objectManager.php?sClass=application&iId=11955 (bronze; download using torrent, winetricks dotnet20 first)
 (see also http://en.wikipedia.org/wiki/Project_Torque, http://bugs.winehq.org/show_bug.cgi?id=22152 )
 
-Hegemony Gold beta
-( verb posted to winetricks-workers, let's wait until wine bug 25767 is fixed
-before committing? )
-
 Land of Chaos Online Open beta starts aug 3.
 http://pc.ign.com/articles/110/1109105p1.html
 http://www.massively.com/2010/03/11/gdc10-land-of-chaos-online-interview/
+
+Legions Overdrive
+http://appdb.winehq.org/objectManager.php?sClass=version&iId=22630
+http://forum.winehq.org/viewtopic.php?p=56532&sid=b2462ad9a5c63ee611924ab772d0f306
+http://www.legionsoverdrive.com/download/ 
 
 Lego Universe (closed beta, ask Dan for key)
 http://universe.lego.com/
@@ -169,7 +170,7 @@ Mafia II Demo (Steam)
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=21257
 (There's also http://www.bigdownload.com/games/mafia-ii/pc/mafia-2-demo/ but that installs steam.)
 
-Magicka
+Magicka (Scott on this)
 http://www.gamerankings.com/pc/988764-magicka/index.html
 
 Momento Mori demo (french/german/spanish, choose one, no english available)
@@ -198,12 +199,6 @@ http://www.gamerankings.com/pc/952152-risen/index.html
 http://news.bigdownload.com/2009/10/01/download-risen-demo
 http://appdb.winehq.org/objectManager.php?sClass=version&iId=17988
 
-Ski Challenge (kind of like tux racer.  Works fine, but adware, lots of clicks to play.)
-and other similar games from http://www.greentube.com/en/3d_esports
-http://www.ski-challenge.com/
-http://www.fussball-challenge.com/
-http://www.burning-gears.com/
-http://www.mtb-challenge.com/
 
 The new no-battlenet-no-internet-connection-needed demo for Starcraft 2
 http://us.battle.net/sc2/en/blog/1797995
