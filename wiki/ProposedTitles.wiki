@@ -95,6 +95,12 @@ and they have about 32 so far?  (found via random google image search for winetr
 
 == Proposed free titles ==
 
+http://www.amibroker.com/download.html
+It runs in wine, but some guy has a site at amibroker.org with a
+preinstalled bundle of ie6, mfc42, riched20, and some registry changes.
+Maybe if we script it he'll drop that.
+Noticed this because of http://forum.winehq.org/viewtopic.php?t=11230
+
 Free Mega Games Pack Vol 1
 http://www.ubuntugamer.com/2010/09/211-free-wine-compatible-games-in-one-download/
 but see
