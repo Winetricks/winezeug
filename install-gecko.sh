@@ -9,6 +9,10 @@ install_gecko()
         GECKO_VERSION=1.0.0
         GECKO_SHA1SUM=afa22c52bca4ca77dcb9edb3c9936eb23793de01
         ;;
+    gecko-1.2-beta1)
+        GECKO_VERSION=1.2.0-beta1
+        GECKO_SHA1SUM=855147dbe478e6e416e7c4fe0ef978f5bfcf6bf1
+        ;;
     *)
         GECKO_VERSION=1.1.0
         GECKO_SHA1SUM=1b6c637207b6f032ae8a52841db9659433482714
@@ -35,3 +39,4 @@ install_gecko()
 # Install gecko for stable wine and the current dev branch
 install_gecko wine-1.2
 install_gecko wine-1.3.3
+install_gecko gecko-1.2-beta1
