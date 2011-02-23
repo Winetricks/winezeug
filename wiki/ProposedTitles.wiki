@@ -1,5 +1,7 @@
 #summary Windows apps we are thinking about adding to wisotool
 
+This page is now out of date, see http://code.google.com/p/winetricks/wiki/UpcomingTitles
+
 Don't add titles here that you're already looking at - this is
 a reminder list for things we want to look at in the near future.
 
