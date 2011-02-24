@@ -1666,7 +1666,7 @@ load_d3dx11()
     w_download . http://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe 3b90e800086f75fdb129bdb3a5d875e381c89736
 
     # Kinder, less invasive directx10 - only extract and override d3dx10_??.dll
-    w_try_cabextract -d "$W_TMP" -L -F '*d3dx11*x86*' "$W_CACHE"/$DIRECTX_NAME
+    w_try_cabextract -d "$W_TMP" -L -F '*d3dx11*x86*' "$W_CACHE"/directx_Jun2010_redist.exe
     for x in "$W_TMP"/*.cab
     do
       w_try_cabextract -d "$W_SYSTEM32_DLLS" -L -F '*.dll' "$x"
