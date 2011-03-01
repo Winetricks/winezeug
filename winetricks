@@ -2330,8 +2330,9 @@ load_flash()
     # 2010-06-24: sha1sum 6de519569137ec2ba3a4eed59f4052c4d944869c
     # 2010-08-11: sha1sum bd3a91fe450a800dbbc8d070159dc0a599043652
     # 2010-10-21: sha1sum c8bc6b4ead9538aeba24c9a5908dc1912ad443c7
-    # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866    
-    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe 58412bcc83e349be50cafe0e1c46e19088620866 
+    # 2010-11-04: sha1sum 58412bcc83e349be50cafe0e1c46e19088620866
+    # 2011-02-28: sha1sum f2e6a3f486423d6c1be48ad80fb3b7d4cdafd29d
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player_ax.exe f2e6a3f486423d6c1be48ad80fb3b7d4cdafd29d
     cd "$W_CACHE"/flash
 
     if [ $W_UNATTENDED_SLASH_Q ]
@@ -2352,8 +2353,9 @@ load_flash()
     # 2010-06-24: sha1sum a419339ada03076ea0a197b28011b87055c45478
     # 2010-08-11: sha1sum cb011ab4c74d222c8ddb48171a8aa3b5380f8d5a
     # 2010-10-21: sha1sum 26985ca9f8f9c9926d807b591a28cdf2cc35a76a
-    # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f    
-    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 09f2491c5bec7286155234f4e6e1af70c7cef78f
+    # 2010-11-04: sha1sum 09f2491c5bec7286155234f4e6e1af70c7cef78f
+    # 2011-02-28: sha1sum 009c908cdb73fba18b34e798b1f601ed964102a1
+    w_download flash http://fpdownload.macromedia.com/get/flashplayer/current/install_flash_player.exe 009c908cdb73fba18b34e798b1f601ed964102a1
     if [ $W_UNATTENDED_SLASH_Q ]
     then
         w_try $WINE install_flash_player.exe /install
