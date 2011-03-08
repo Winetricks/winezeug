@@ -1961,11 +1961,6 @@ load_dotnet20()
     w_download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     w_try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
 
-    # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
-    # Can't we all just play nice..
-    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
-    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
-
     # http://www.microsoft.com/downloads/details.aspx?FamilyID=0856eacb-4362-4b0d-8edd-aab15c5e04f5
     w_download dotnet20 http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe a3625c59d7a2995fb60877b5f5324892a1693b2a
     if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
@@ -2000,11 +1995,6 @@ load_dotnet20sp2()
     # See http://kegel.com/wine/l_intl-sh.txt for how l_intl.nls was generated
     w_download dotnet20 http://kegel.com/wine/l_intl.nls 0d2e3f025bcdf852b192c9408a361ac2659fa249
     w_try cp -f "$W_CACHE"/dotnet20/l_intl.nls "$W_SYSTEM32_DLLS"
-
-    # Wine tries to help Mono, which breaks .Net. However, this key isn't in older Wine versions (notably 1.2), and deleting fails if the key isn't present.
-    # Can't we all just play nice..
-    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework\policy\v2.0" /f || true
-    $WINE reg delete "HKLM\Software\Microsoft\.NETFramework" /v InstallRoot /f || true
 
     # http://www.microsoft.com/downloads/details.aspx?familyid=5B2C0358-915B-4EB5-9B1D-10E506DA9D0F
     w_download dotnet20 http://download.microsoft.com/download/c/6/e/c6e88215-0178-4c6c-b5f3-158ff77b1f38/NetFx20SP2_x86.exe 22d776d4d204863105a5db99e8b8888be23c61a7
@@ -2054,14 +2044,6 @@ load_dotnet30()
     do
        ln -sf "${W_SYSTEM32_DLLS}/spupdsvc.exe" "${LANGPACKS_BASE_PATH}/dotnetfx3langpack${lang}.exe" 
     done 
-
-    #if w_workaround_wine_bug 25074
-    #then
-    #    # Wine tries to help Mono, which breaks .Net. Can't we all just play nice...
-    #    rm "$W_WINDIR_UNIX/Microsoft.NET/Framework/v1.1.4322/fusion.dll"
-    #    rm -rf "$W_WINDIR_UNIX/Microsoft.NET/Framework/v4.0.30319"
-#	ls -l "$W_WINDIR_UNIX"/Microsoft.NET/Framework
-#    fi
 
     if [ "$W_UNATTENDED_SLASH_Q"x = ""x ]
     then
