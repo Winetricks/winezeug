@@ -8,16 +8,26 @@
 #   rmdir ~/.winetrickscache ~/wisotoolcache ~/.wisotool/cache
 
 set -e
-cd ~/.cache/winetricks
-for filename in */????????????????????????????????????????.iso
+set -x
+#cd ~/.cache/winetricks
+for dir in *
 do
-    volname=`sh ~/winezeug/wisotool2 volnameof=$filename`
-    if ! test "$volname"
+    if cd $dir
     then
-        echo "Cannot get volume name of $filename"
-        exit 1
+        for filename in ????????????????????????????????????????.iso
+        do
+	    if test -f "$filename"
+	    then
+                volname=`winetricks volnameof=$filename`
+                if ! test "$volname"
+                then
+                    echo "Cannot get volume name of $filename"
+                    exit 1
+                fi
+                echo "$filename -> $volname.iso"
+                ln -s "$filename" "$volname.iso"
+	    fi
+	done
+	cd ..
     fi
-    dirname=`dirname $filename`
-    echo "$filename -> $dirname/$volname.iso"
-    mv "$filename" "$dirname/$volname.iso"
 done 
