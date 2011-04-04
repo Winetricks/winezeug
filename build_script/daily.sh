@@ -283,35 +283,37 @@ fi
 # FIXME: Should probably sha1sum it to ensure correct download...
 get_gecko_32() (
     mkdir -p ../gecko
-    if [ -f ../gecko/wine_gecko-1.1.0-x86.cab ]
+    gecko32_file=wine_gecko-1.2.0-x86.msi
+    if [ -f ../gecko/$gecko_file ]
         then
             break
-    elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86.cab ]
+    elif [ -f /usr/local/share/wine/gecko/$gecko_file ]
         then
-            cp /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86.cab ../gecko/
-    elif [ -f /usr/gecko/wine_gecko-1.1.0-x86.cab ]
+            cp /usr/local/share/wine/gecko/$gecko_file ../gecko/
+    elif [ -f /usr/gecko/$gecko_file ]
         then
-            cp /usr/share/wine/gecko/wine_gecko-1.1.0-x86.cab ../gecko/
+            cp /usr/share/wine/gecko/$gecko_file ../gecko/
     else
-        GET http://downloads.sourceforge.net/wine/wine_gecko-1.1.0-x86.cab
-        mv wine_gecko-1.1.0-x86.cab ../gecko/
+        GET http://downloads.sourceforge.net/wine/$gecko_file
+        mv $gecko_file ../gecko/
     fi
 )
 
 get_gecko_64() (
     mkdir -p ../gecko
-    if [ -f ../gecko/wine_gecko-1.1.0-x86_64.cab ]
+    gecko64_file=wine_gecko-1.2.0-x86_64.msi
+    if [ -f ../gecko/$gecko64_file ]
         then
             break
-    elif [ -f /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86_64.cab ]
+    elif [ -f /usr/local/share/wine/gecko/$gecko64_file ]
         then
-            cp /usr/local/share/wine/gecko/wine_gecko-1.1.0-x86_64.cab ../gecko/
-    elif [ -f /usr/gecko/wine_gecko-1.1.0-x86_64.cab ]
+            cp /usr/local/share/wine/gecko/$gecko64_file ../gecko/
+    elif [ -f /usr/gecko/$gecko64_file ]
         then
-            cp /usr/share/wine/gecko/wine_gecko-1.1.0-x86_64.cab ../gecko/
+            cp /usr/share/wine/gecko/$gecko64_file ../gecko/
     else
-        GET http://downloads.sourceforge.net/wine/wine_gecko-1.1.0-x86_64.cab
-        mv wine_gecko-1.1.0-x86_64.cab ../gecko/
+        GET http://downloads.sourceforge.net/wine/$gecko64_file
+        mv $gecko64_file ../gecko/
     fi
 )
 
@@ -883,7 +885,7 @@ mkdir -p $WINETESTDIR
 
 # Get winetricks, used in below tests:
 (cd $WINETESTDIR && 
-GET "http://winezeug.googlecode.com/svn/trunk/winetricks")
+GET "http://winetricks.org/winetricks")
 
 # Get new tree, if it wasn't disabled.
 if [ $NEWTREE = 1 ]
