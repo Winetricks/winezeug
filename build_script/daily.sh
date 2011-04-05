@@ -284,18 +284,18 @@ fi
 get_gecko_32() (
     mkdir -p ../gecko
     gecko32_file=wine_gecko-1.2.0-x86.msi
-    if [ -f ../gecko/$gecko_file ]
+    if [ -f ../gecko/$gecko32_file ]
         then
             break
-    elif [ -f /usr/local/share/wine/gecko/$gecko_file ]
+    elif [ -f /usr/local/share/wine/gecko/$gecko32_file ]
         then
-            cp /usr/local/share/wine/gecko/$gecko_file ../gecko/
-    elif [ -f /usr/gecko/$gecko_file ]
+            cp /usr/local/share/wine/gecko/$gecko32_file ../gecko/
+    elif [ -f /usr/gecko/$gecko32_file ]
         then
-            cp /usr/share/wine/gecko/$gecko_file ../gecko/
+            cp /usr/share/wine/gecko/$gecko32_file ../gecko/
     else
-        GET http://downloads.sourceforge.net/wine/$gecko_file
-        mv $gecko_file ../gecko/
+        GET http://downloads.sourceforge.net/wine/$gecko32_file
+        mv $gecko32_file ../gecko/
     fi
 )
 
