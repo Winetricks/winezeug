@@ -197,6 +197,12 @@ foreach $haystack (@haystacks) {
         }
         $found = 0;
     }
+    if ($found && $file =~ /Battle.net/i) {
+        if (! $opt{'q'}) {
+            print "File $haystack known to be from Blizzard, so assuming not a real Microsoft file.\n";
+        }
+        $found = 0;
+    }
     # Some games (e.g. second life) ship dlls with same name as microsoft ones, 
     # so don't call it a microsoft dll unless it contains the string "microsoft corp"
     # Some old pidgen.dll's, and some WMP executables, have ProductNameMicrosoft instead.
