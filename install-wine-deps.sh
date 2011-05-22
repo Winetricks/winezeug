@@ -11,7 +11,6 @@
 
 if test `uname -o` = Solaris
 then
-
     if test ! -w /
     then
         echo "Usage: pfexec sh $0"
@@ -27,7 +26,19 @@ then
     pkg install SUNWaconf SUNWaudh SUNWbison SUNWcups SUNWflexlex SUNWgcc SUNWgit \
     SUNWGlib SUNWgmake SUNWgnome-common-devel SUNWsane-backend SUNWxorg-headers SUNWxwinc
     exit
+fi
 
+if test `uname -s` = 'FreeBSD'
+then
+    if test ! -w /
+    then
+        echo "Usage: 'sh $0' as root"
+        exit 1
+    fi
+
+    pkg_add -r install bison cups flex git gsm gstreamer-plugins jpeg lcms libGLU \
+    libxslt mpg123 openldap-client sane-backends tiff xorg
+    exit
 fi
 
 if test `uname -s` = 'OpenBSD'
