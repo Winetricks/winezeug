@@ -204,6 +204,17 @@ foreach $haystack (@haystacks) {
         }
         $found = 0;
     }
+    # Files from
+    # http://connect.creativelabs.com/openal/Downloads/oalinst.zip
+    # are not Microsoft, even though they include the strings
+    #   Microsoft Visual C++ Runtime Library
+    #   <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+    if ($found && $file =~ /openal|wrap_oal/i) {
+        if (! $opt{'q'}) {
+            print "File $haystack known to be from Creative, so assuming not a real Microsoft file.\n";
+        }
+        $found = 0;
+    }
     # Some games (e.g. second life) ship dlls with same name as microsoft ones, 
     # so don't call it a microsoft dll unless it contains the string "microsoft corp"
     # Some old pidgen.dll's, and some WMP executables, have ProductNameMicrosoft instead.
