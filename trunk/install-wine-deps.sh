@@ -36,8 +36,20 @@ then
         exit 1
     fi
 
-    pkg_add -r install bison cups flex git gsm gstreamer-plugins jpeg lcms libGLU \
+    pkg_add -r bison cups flex git gsm gstreamer-plugins jpeg lcms libGLU \
     libxslt mpg123 openldap-client sane-backends tiff xorg
+    exit
+fi
+
+if test `uname -s` = 'NetBSD'
+then
+    if test ! -w /
+    then
+        echo "Usage: 'sh $0' as root"
+        exit 1
+    fi
+
+    pkg_add bison cups flex gsm jpeg lcms libxslt mpg123 openldap-client sane-backends scmgit-base tiff
     exit
 fi
 
@@ -110,9 +122,9 @@ mesa-common-dev unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x
 x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11proto-xext-dev \
 x11proto-xf86vidmode-dev x11proto-xinerama-dev xtrans-dev zlib1g-dev"
 
-# Linux specific: Is libfreebob0 still needed?
+# Linux specific:
 debian_linux_pkgs="\
-libcapi20-3 libcapi20-dev libfreebob0 libieee1284-3-dev linux-libc-dev prelink"
+libcapi20-3 libcapi20-dev libieee1284-3-dev linux-libc-dev prelink"
 
 #----------------------------------------------------------------------------
 # Ubuntu data
