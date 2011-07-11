@@ -29,13 +29,12 @@ rm -rf $WINEPREFIX
 mkdir -p logs
 
 # Build a fresh wine, if desired
-if true
+if true 
 then
+    make distclean
     ./configure CFLAGS="-g -O0 -fno-inline"
-    make clean
     time make -j4
 fi
-make testclean
 
 $WINE wineboot
 
@@ -55,6 +54,16 @@ $WINE start /M winemine
 touch dlls/d3d8/tests/device.ok
 touch dlls/d3d9/tests/device.ok
 touch dlls/d3d9/tests/visual.ok 
+touch dlls/mshtml/tests/dom.ok
+touch dlls/mshtml/tests/event.ok
+touch dlls/mshtml/tests/htmldoc.ok
+touch dlls/ole32/tests/marshal.ok
+touch dlls/ole32/tests/moniker.ok # valgrind crash/hang
+touch dlls/shell32/tests/shlexec.ok # pops up lots of 'unknown program' warnings
+touch dlls/user32/tests/cursoricon.ok # valgrind crash/hang
+touch dlls/urlmon/tests/protocol.ok # hangs
+touch dlls/user32/tests/cursoricon.ok # hang
+touch dlls/user32/tests/dde.ok # valgrind crash/hang
 
 # Should we use date or id from git log?
 DATE=`date +%F-%H.%M`
@@ -62,7 +71,7 @@ DATE=`date +%F-%H.%M`
 git log -n 1 > logs/$DATE.log
 
 # Finally run the tests
-export VALGRIND_OPTS="-q --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$WINESRC/tools/valgrind/valgrind-suppressions --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes --vex-iropt-precise-memory-exns=yes"
+export VALGRIND_OPTS="-q --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$WINESRC/tools/valgrind/valgrind-suppressions --suppressions=$WINESRC/tools/valgrind/gst.supp --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes --vex-iropt-precise-memory-exns=yes"
 export WINETEST_TIMEOUT=600
 export WINETEST_WRAPPER=valgrind
 export WINE_HEAP_TAIL_REDZONE=32
