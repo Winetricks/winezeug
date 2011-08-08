@@ -1,0 +1,79 @@
+=== modified file 'arkose/__init__.py'
+--- arkose/__init__.py	2011-07-20 14:58:29 +0000
++++ arkose/__init__.py	2011-08-08 16:16:36 +0000
+@@ -452,7 +452,9 @@
+         if self.video == False:
+             return
+ 
+-        for device in glob.glob("/dev/video*"):
++        devices = glob.glob("/dev/video*")
++        devices.extend(glob.glob("/dev/nvidia*"))
++        for device in devices:
+             target = os.path.join(self.target, device[1:])
+             if not os.path.exists(target):
+                 open(target, "w").close()
+
+=== modified file 'cli/arkose'
+--- cli/arkose	2011-06-27 09:54:18 +0000
++++ cli/arkose	2011-08-08 13:49:23 +0000
+@@ -18,15 +18,29 @@
+ parser.add_argument("--command", "-c", dest="command", type=str, default=["bash"], nargs="+",
+         help="Run specific command in container (command as argument)")
+ parser.add_argument("--home", "-h", dest="home", action="store_true",
+-        help="Use real home directory instead of copy-on-write")
++        help="Use real home directory")
++parser.add_argument("--cowhome", "-H", dest="cowhome", action="store_true",
++        help="Use copy-on-write version of home directory")
+ parser.add_argument("--network", "-n", dest="network", action="store_true",
+         help="Enable networking in the container")
+ parser.add_argument("--size", "-s", dest="size", type=int, default=None, nargs=1,
+-        help="Storage size in MB (default: 2 on ext4, 50%% of RAM on tmpfs)")
++        help="Storage size in GB (default: 2 on ext4, 50%% of RAM on tmpfs)")
+ parser.add_argument("--type", "-t", dest="type", type=str, choices=("ext4","tmpfs"),
+         help="Storage type. Supported values: ext4, tmpfs (default: ext4)",default="ext4")
+ parser.add_argument("--tmp", "-T", dest="tmp", action="store_true",
+         help="Use real tmpfs directory instead of copy-on-write")
++parser.add_argument("--bind", "-B", dest="bind", action="append",
++        help="Use real version of this directory")
++parser.add_argument("--cow", "-C", dest="cow", action="append",
++        help="Use copy-on-write version of this directory")
++parser.add_argument("--restrict", "-R", dest="restrict", action="append",
++        help="Use empty version of this directory")
++parser.add_argument("--xserver", "-x", dest="xserver", action="store", default="none",
++        help="What kind of X access should be allowed: none, direct, or filtered")
++parser.add_argument("--video", "-v", dest="video", default=False, action="store_true",
++        help="whether to enable video access")
++parser.add_argument("--pulseaudio", "-p", dest="pulseaudio", default=False, action="store_true",
++        help="whether to enable pulseaudio access")
+ 
+ parser.add_argument("--help",action="store_true")
+ 
+@@ -41,6 +55,18 @@
+     bind.append(os.getenv("HOME"))
+ if args.tmp:
+     bind.append("/tmp")
++if args.bind:
++    bind.append(args.bind)
++
++cow=[]
++if args.cowhome:
++    cow.append(os.getenv("HOME"))
++if args.cow:
++    cow.append(args.cow)
++
++restrict=[]
++if args.restrict:
++    restrict.append(args.restrict)
+ 
+ if args.size:
+     args.size=args.size[0]
+@@ -48,6 +74,7 @@
+ # Get the current user
+ user=pwd.getpwuid(int(os.getenv("PKEXEC_UID",os.getenv("UID",1000))))
+ 
+-container=arkose.ArkoseContainer(fssize=args.size,fstype=args.type,network=args.network,bind=bind)
++container=arkose.ArkoseContainer(fssize=args.size,fstype=args.type,network=args.network,bind=bind,cow=cow,restrict=restrict,pulseaudio=args.pulseaudio,video=args.video,xserver=args.xserver)
++# fixme: handle multiple arguments properly
+ container.run_command("su %s -c %s" % (user.pw_name, " ".join(args.command)))
+ container.cleanup()
+
