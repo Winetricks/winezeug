@@ -125,6 +125,8 @@ do_test() {
     cd $TOP/sandbox/slave/runtests/build
     rm -rf wineprefix
     export WINEPREFIX=`pwd`/wineprefix
+    # Many tests only work in english locale
+    LANG=en_US.UTF-8
     # winetricks vd=800x600
     ./wine reg add HKCU\\Software\\Wine\\Explorer /v Desktop /d Default
     ./wine reg add HKCU\\Software\\Wine\\Explorer\\Desktops /v Default /d 800x600
@@ -134,14 +136,13 @@ do_test() {
     # http://bugs.winehq.org/show_bug.cgi?id=12053
     touch dlls/user32/tests/msg.ok
     touch dlls/user32/tests/win.ok
+    touch dlls/user32/tests/input.ok
     # http://bugs.winehq.org/show_bug.cgi?id=28038
     touch dlls/wininet/tests/urlcache.ok
     # my machine fails with "capture.c:148: Test failed: waveInOpen(1)"
     touch dlls/winmm/tests/capture.ok
     # Blacklist until http://www.winehq.org/pipermail/wine-patches/2011-August/105358.html in
     touch dlls/winhttp/tests/winhttp.ok
-    # Many tests only work in english locale
-    LANG=en_US.UTF-8
     make -k test
 }
 
