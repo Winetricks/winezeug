@@ -1,0 +1,69 @@
+diff --git a/dlls/gdi32/tests/Makefile.in b/dlls/gdi32/tests/Makefile.in
+index c77f9e2..dd2f559 100644
+--- a/dlls/gdi32/tests/Makefile.in
++++ b/dlls/gdi32/tests/Makefile.in
+@@ -1,5 +1,5 @@
+ TESTDLL   = gdi32.dll
+-IMPORTS   = user32 gdi32 advapi32
++IMPORTS   = user32 gdi32 advapi32 advapi32
+ 
+ C_SRCS = \
+ 	bitmap.c \
+diff --git a/dlls/gdi32/tests/metafile.c b/dlls/gdi32/tests/metafile.c
+index 206e15a..be8374c 100644
+--- a/dlls/gdi32/tests/metafile.c
++++ b/dlls/gdi32/tests/metafile.c
+@@ -25,6 +25,7 @@
+ #include "wine/test.h"
+ #include "winbase.h"
+ #include "wingdi.h"
++#include "winreg.h"
+ #include "winuser.h"
+ #include "winerror.h"
+ 
+@@ -2639,6 +2640,21 @@ static void checkConvertedFrameAndBounds(UINT buffer_size, BYTE * buffer, BOOL m
+   }
+ }
+ 
++static int is_virtual_desktop(void)
++{
++    HKEY key;
++    int ret = FALSE;
++    if (!RegOpenKeyA( HKEY_CURRENT_USER, "Software\\Wine\\Explorer", &key ))
++    {
++        char buffer[256];
++        DWORD len = sizeof(buffer);
++        if (RegQueryValueExA( key, "Desktop", 0, NULL, (LPBYTE)buffer, &len ) == ERROR_SUCCESS)
++            ret = TRUE;
++        RegCloseKey( key );
++    }
++    return ret;
++}
++
+ static void test_SetWinMetaFileBits(void)
+ {
+   HMETAFILE wmf;
+@@ -2702,7 +2718,10 @@ static void test_SetWinMetaFileBits(void)
+   ok(rclBoundsAnisotropic.bottom >= rclBoundsIsotropic.bottom, "SetWinMetaFileBits: Reference bounds: Invalid bottom bound\n");
+   diffx = rclBoundsIsotropic.right - rclBoundsIsotropic.bottom;
+   if (diffx < 0) diffx = -diffx;
+-  ok(diffx <= 1, "SetWinMetaFileBits (MM_ISOTROPIC): Reference bounds are not isotropic\n");
++  if (is_virtual_desktop())
++    skip("virtual desktop, so not checking for isotropic bounds\n");
++  else
++    ok(diffx <= 1, "SetWinMetaFileBits (MM_ISOTROPIC): Reference bounds are not isotropic\n");
+ 
+   dc = CreateCompatibleDC(NULL);
+ 
+@@ -2773,7 +2792,10 @@ static void test_SetWinMetaFileBits(void)
+     /* Wine has a rounding error */
+     diffx = rclBounds.right - rclBounds.bottom;
+     if (diffx < 0) diffx = -diffx;
+-    ok(diffx <= 1, "SetWinMetaFileBits (MM_ISOTROPIC): rclBounds is not isotropic\n");
++    if (is_virtual_desktop())
++      skip("virtual desktop, so not checking for isotropic bounds\n");
++    else
++      ok(diffx <= 1, "SetWinMetaFileBits (MM_ISOTROPIC): rclBounds is not isotropic\n");
+   }
+ 
+   if (getConvertedFrameAndBounds(buffer_size, buffer, FALSE, MM_HIMETRIC, 30000, 20000, &rclBounds, &rclFrame))
