@@ -60,7 +60,7 @@ init_slave() {
     . bin/activate
     easy_install buildbot-slave
     buildslave create-slave slave localhost:9989 example-slave pass
-    cp $SRC/bot.sh $TOP/sandbox/bin/winebuildbot.sh
+    cp $SRC/winebuildbot.sh $TOP/sandbox/bin/winebuildbot.sh
     chmod +x $TOP/sandbox/bin/winebuildbot.sh
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     )
