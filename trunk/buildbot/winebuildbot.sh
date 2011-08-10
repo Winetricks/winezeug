@@ -142,6 +142,8 @@ do_test() {
     touch dlls/wininet/tests/urlcache.ok
     # my machine fails with "capture.c:148: Test failed: waveInOpen(1)"
     touch dlls/winmm/tests/capture.ok
+    # http://bugs.winehq.org/show_bug.cgi?id=28048
+    touch dlls/winmm/tests/wave.ok
     # Blacklist until http://www.winehq.org/pipermail/wine-patches/2011-August/105358.html in
     touch dlls/winhttp/tests/winhttp.ok
     make -k test
