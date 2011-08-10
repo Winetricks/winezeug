@@ -10,7 +10,6 @@ set -e
 SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
 TOP=$HOME/tmp/buildbot
-mkdir -p $TOP
 
 install_prereqs() {
     # For Ubuntu.  Other systems may differ.
@@ -25,6 +24,7 @@ destroy() {
 
 init_master() {
     (
+    mkdir -p $TOP
     # Master
     cd $TOP
     virtualenv --no-site-packages sandbox
@@ -54,6 +54,7 @@ stop_master() {
 
 init_slave() {
     (
+    mkdir -p $TOP
     cd $TOP
     test -d sandbox || virtualenv --no-site-packages sandbox
     cd $TOP/sandbox
@@ -146,22 +147,45 @@ do_test() {
     make -k test
 }
 
-case "$1" in
-d|destroy) destroy;;
-ip|install_prereqs) install_prereqs;;
-im|init_master) init_master;;
-sm|start_master) start_master;;
-is|init_slave) init_slave;;
-ss|start_slave) start_slave;;
-tm|stop_master) stop_master;;
-ts|stop_slave) stop_slave;;
-lm|log_master) tail -f $TOP/sandbox/master/twistd.log;;
-ls|log_slave) tail -f $TOP/sandbox/slave/twistd.log;;
-patch) do_patch;;
-configure) do_configure;;
-build) do_build;;
-test) do_test;;
-restart) restart;;
-all) all;;
-*) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, or all"; exit 1;;
-esac
+do_try() {
+    if test "$1" = ""
+    then
+        echo "need patch name"
+        exit 1
+    fi
+    (
+    cd $TOP/sandbox
+    . bin/activate
+    # FIXME: import username and password from another file so
+    # it doesn't show up in svn.  Must match those in master.cfg.
+    # FIXME: Use real hostname for master.
+    # Always use -p 1 for wine patches, since that's the project's convention.
+    buildbot try --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
+    )
+}
+
+while test "$1"
+do
+    arg="$1"
+    shift
+    case "$arg" in
+    d|destroy) destroy;;
+    ip|install_prereqs) install_prereqs;;
+    im|init_master) init_master;;
+    sm|start_master) start_master;;
+    is|init_slave) init_slave;;
+    ss|start_slave) start_slave;;
+    tm|stop_master) stop_master;;
+    ts|stop_slave) stop_slave;;
+    lm|log_master) tail -f $TOP/sandbox/master/twistd.log;;
+    ls|log_slave) tail -f $TOP/sandbox/slave/twistd.log;;
+    patch) do_patch;;
+    configure) do_configure;;
+    build) do_build;;
+    test) do_test;;
+    restart) restart;;
+    all) all;;
+    try) do_try $1; shift;;
+    *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, try PATCH, or all"; exit 1;;
+    esac
+done
