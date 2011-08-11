@@ -83,7 +83,8 @@ stop_slave() {
     )
 }
 
-all() {
+# Shows how to bring up a demo master and slave.
+demo() {
     destroy
     install_prereqs
     init_master
@@ -146,6 +147,9 @@ do_test() {
     touch dlls/winmm/tests/wave.ok
     # Blacklist until http://www.winehq.org/pipermail/wine-patches/2011-August/105358.html in
     touch dlls/winhttp/tests/winhttp.ok
+    # Avoid race condition with registry that caused some tests to not run
+    # in a virtual desktop?
+    server/wineserver -w
     make -k test
 }
 
@@ -186,8 +190,8 @@ do
     build) do_build;;
     test) do_test;;
     restart) restart;;
-    all) all;;
+    demo) demo;;
     try) do_try $1; shift;;
-    *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, try PATCH, or all"; exit 1;;
+    *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, try PATCH, or demo"; exit 1;;
     esac
 done
