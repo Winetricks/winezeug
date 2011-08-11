@@ -166,8 +166,25 @@ do_try() {
     # it doesn't show up in svn.  Must match those in master.cfg.
     # FIXME: Use real hostname for master.
     # Always use -p 1 for wine patches, since that's the project's convention.
-    buildbot try --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
+    buildbot try --who="bozo" --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
     )
+}
+
+# Try the most recent not-yet-done patch series from source.winehq.org/patches
+do_pulltry() {
+    series=`perl parsepatch.pl 1`
+    if test "$series"
+    then
+        # For now, just concatenate series together into one big patch
+        rm -f series_*.patch
+        for id in $series
+        do
+            wget -O series_$id.patch http://source.winehq.org/patches/data/$id
+        done
+        cat series_*.patch > series.patch
+        # FIXME: preserve metadata about patch series, make it show up in buildbot status page, send email when done
+        do_try `pwd`/series.patch
+    fi
 }
 
 while test "$1"
@@ -191,6 +208,7 @@ do
     test) do_test;;
     restart) restart;;
     demo) demo;;
+    pulltry) do_pulltry;;
     try) do_try $1; shift;;
     *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, try PATCH, or demo"; exit 1;;
     esac
