@@ -8,6 +8,10 @@ set -e
 
 TOP=$HOME/tmp/buildbot
 
+# Get email address of user from environment for use by the 'try' command.
+# If not set, default to username@hostname.
+EMAIL=${EMAIL:-$LOGNAME@`hostname`}
+
 install_prereqs() {
     # For Ubuntu.  Other systems may differ.
     sudo apt-get install python-dev python-virtualenv
@@ -27,12 +31,12 @@ init_master() {
     virtualenv --no-site-packages sandbox
     cd $TOP/sandbox
     . bin/activate
-    if true
+    if false
     then
         easy_install buildbot
     else
-        # You can install from source into the sandbox if you need bugfixes 
-        # not yet in the binary easy_install, e.g.:
+        # Install from source until buildbot-0.8.5 is released,
+        # since it has fixes for the try server / mail notifier.
         wget -c http://buildbot.googlecode.com/files/buildbot-0.8.4p2.tar.gz
         tar -xzvf buildbot-0.8.4p2.tar.gz
         cd buildbot-0.8.4p2
@@ -40,7 +44,28 @@ init_master() {
         cd ..
     fi
     buildbot create-master master
-    mv master/master.cfg.sample master/master.cfg
+    cp master/master.cfg.sample master/master.cfg
+
+    # Extend the tutorial a bit by adding a try scheduler and email notification
+cat >> master/master.cfg <<_EOF_
+###### One more scheduler ########
+# Enable 'buildbot try' and set allowed usernames/passwords and port number
+# You could also use Try_Jobdir, which uses ssh authentication; see
+# http://buildbot.net/buildbot/docs/latest/Try-Schedulers.html
+from buildbot.scheduler import Try_Userpass
+c['schedulers'].append(Try_Userpass(
+                            name='try',
+                            builderNames=['runtests'],
+                            port=5555, userpass=[('sampletryuser','sampletrypassword')]))
+
+###### One more status target ########
+from buildbot.status.mail import MailNotifier
+mn = MailNotifier(
+    fromaddr='$EMAIL',
+    lookup="example-unused-if-try-users-are-email-addresses.com")
+c['status'].append(mn)
+
+_EOF_
     )
 }
 
@@ -97,17 +122,40 @@ all() {
     start_slave
 }
 
-case "$1" in
-d|destroy) destroy;;
-ip|install_prereqs) install_prereqs;;
-im|init_master) init_master;;
-sm|start_master) start_master;;
-is|init_slave) init_slave;;
-ss|start_slave) start_slave;;
-tm|stop_master) stop_master;;
-ts|stop_slave) stop_slave;;
-lm|log_master) tail -f $TOP/sandbox/master/twistd.log;;
-ls|log_slave) tail -f $TOP/sandbox/slave/twistd.log;;
-all) all;;
-*) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, or all"; exit 1;;
-esac
+do_try() {
+    if test "$1" = ""
+    then
+        echo "need patch name"
+        exit 1
+    fi
+    who=$2
+    (
+    cd $TOP/sandbox
+    . bin/activate
+    # Username, password, and port number must match those passed to
+    # Try_Userpass in master.cfg
+    # Note: if your project uses git, you probably want to add "-p 1"
+    buildbot try --who $who --connect=pb --master=127.0.0.1:5555 --username=sampletryuser --passwd=sampletrypassword --diff=$1
+    )
+}
+
+while test "$1"
+do
+    arg="$1"
+    shift
+    case "$arg" in
+    d|destroy) destroy;;
+    ip|install_prereqs) install_prereqs;;
+    im|init_master) init_master;;
+    sm|start_master) start_master;;
+    is|init_slave) init_slave;;
+    ss|start_slave) start_slave;;
+    tm|stop_master) stop_master;;
+    ts|stop_slave) stop_slave;;
+    lm|log_master) tail -f $TOP/sandbox/master/twistd.log;;
+    ls|log_slave) tail -f $TOP/sandbox/slave/twistd.log;;
+    try) do_try $1 $EMAIL; shift;;
+    all) all;;
+    *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, try FOO.patch, or all"; exit 1;;
+    esac
+done
