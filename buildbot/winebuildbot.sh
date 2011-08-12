@@ -159,6 +159,7 @@ do_try() {
         echo "need patch name"
         exit 1
     fi
+    who=$2
     (
     cd $TOP/sandbox
     . bin/activate
@@ -166,7 +167,7 @@ do_try() {
     # it doesn't show up in svn.  Must match those in master.cfg.
     # FIXME: Use real hostname for master.
     # Always use -p 1 for wine patches, since that's the project's convention.
-    buildbot try --who="bozo" --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
+    buildbot try --who $who --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
     )
 }
 
@@ -182,8 +183,8 @@ do_pulltry() {
             wget -O series_$id.patch http://source.winehq.org/patches/data/$id
         done
         cat series_*.patch > series.patch
-        # FIXME: preserve metadata about patch series, make it show up in buildbot status page, send email when done
-        do_try `pwd`/series.patch
+        email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
+        do_try `pwd`/series.patch $email
     fi
 }
 
