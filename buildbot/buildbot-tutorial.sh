@@ -34,14 +34,22 @@ init_master() {
     if false
     then
         easy_install buildbot
-    else
-        # Install from source until buildbot-0.8.5 is released,
-        # since it has fixes for the try server / mail notifier.
+    elif true
+    then
+        # Here's how to install from a source tarball
+        # (Needed until buildbot-0.8.5 is released,
+        # since it has fixes for the try server / mail notifier?)
         wget -c http://buildbot.googlecode.com/files/buildbot-0.8.4p2.tar.gz
         tar -xzvf buildbot-0.8.4p2.tar.gz
         cd buildbot-0.8.4p2
         python setup.py install
         cd ..
+    else
+        # Here's how to install from trunk
+        test -d buildbot-git || git clone https://github.com/buildbot/buildbot.git buildbot-git
+        cd buildbot-git/master
+        python setup.py install
+        cd ../..
     fi
     buildbot create-master master
     cp master/master.cfg.sample master/master.cfg
@@ -63,6 +71,8 @@ from buildbot.status.mail import MailNotifier
 mn = MailNotifier(
     fromaddr='$EMAIL',
     lookup="example-unused-if-try-users-are-email-addresses.com")
+    # Right now, try jobs don't get email, but you can force a recipient, e.g.:
+    #extraRecipients=["user@example.com"],
 c['status'].append(mn)
 
 _EOF_
