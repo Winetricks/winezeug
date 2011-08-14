@@ -72,9 +72,10 @@ c['schedulers'].append(Try_Userpass(
 from buildbot.status.mail import MailNotifier
 mn = MailNotifier(
     fromaddr='$EMAIL',
-    lookup="example-unused-if-try-users-are-email-addresses.com")
-    # Right now, try jobs don't get email, but you can force a recipient, e.g.:
+    # By default, results are emailed to the email address given in the --who argument to try,
+    # but you can add extra recipients like this:
     #extraRecipients=["user@example.com"],
+    lookup="example-unused-if-try-users-are-email-addresses.com")
 c['status'].append(mn)
 
 _EOF_
