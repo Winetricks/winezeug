@@ -11,6 +11,10 @@ SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
 TOP=$HOME/tmp/buildbot
 
+# Get email address of user from environment for use by the 'try' command.
+# If not set, default to username@hostname.
+EMAIL=${EMAIL:-$LOGNAME@`hostname`}
+
 install_prereqs() {
     # For Ubuntu.  Other systems may differ.
     sudo apt-get install python-dev python-virtualenv
@@ -24,13 +28,34 @@ destroy() {
 
 init_master() {
     (
-    mkdir -p $TOP
     # Master
+    mkdir -p $TOP
     cd $TOP
     virtualenv --no-site-packages sandbox
     cd $TOP/sandbox
     . bin/activate
-    easy_install buildbot
+    if false
+    then
+        easy_install buildbot
+    elif false
+    then
+        # Here's how to install from a source tarball
+        wget -c http://buildbot.googlecode.com/files/buildbot-0.8.4p2.tar.gz
+        tar -xzvf buildbot-0.8.4p2.tar.gz
+        cd buildbot-0.8.4p2
+        python setup.py install
+        cd ..
+    else
+        # Here's how to install master from trunk
+        # (Needed until buildbot-0.8.5 is released,
+        # since it has fixes for the try server / mail notifier.)
+        # BTW rerunning 'pip install -emaster' takes less than a second, 
+        # and seems to be how buildbot developers test their code
+        test -d buildbot-git || git clone https://github.com/buildbot/buildbot.git buildbot-git
+        cd buildbot-git
+        pip install -emaster
+        cd ..
+    fi
     buildbot create-master master
     )
 }
@@ -160,6 +185,7 @@ do_try() {
         exit 1
     fi
     who=$2
+    subject=$3
     (
     cd $TOP/sandbox
     . bin/activate
@@ -167,7 +193,7 @@ do_try() {
     # it doesn't show up in svn.  Must match those in master.cfg.
     # FIXME: Use real hostname for master.
     # Always use -p 1 for wine patches, since that's the project's convention.
-    buildbot try --who $who --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
+    buildbot try --who $who --properties=comment="$subject" --connect=pb --master=127.0.0.1:5555 --username=sampletryuser --passwd=sampletrypassword --diff=$1 -p 1
     )
 }
 
@@ -183,8 +209,9 @@ do_pulltry() {
             wget -O series_$id.patch http://source.winehq.org/patches/data/$id
         done
         cat series_*.patch > series.patch
-        email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
-        do_try `pwd`/series.patch $email
+        author_email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
+        subject="`grep '^Subject:' < series.patch | uniq`"
+        do_try `pwd`/series.patch $author_email "$subject"
     fi
 }
 
@@ -210,7 +237,7 @@ do
     restart) restart;;
     demo) demo;;
     pulltry) do_pulltry;;
-    try) do_try $1; shift;;
+    try) do_try $1 $EMAIL; shift;;
     *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, try PATCH, or demo"; exit 1;;
     esac
 done
