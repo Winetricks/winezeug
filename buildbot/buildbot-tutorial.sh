@@ -34,22 +34,24 @@ init_master() {
     if false
     then
         easy_install buildbot
-    elif true
+    elif false
     then
         # Here's how to install from a source tarball
-        # (Needed until buildbot-0.8.5 is released,
-        # since it has fixes for the try server / mail notifier?)
         wget -c http://buildbot.googlecode.com/files/buildbot-0.8.4p2.tar.gz
         tar -xzvf buildbot-0.8.4p2.tar.gz
         cd buildbot-0.8.4p2
         python setup.py install
         cd ..
     else
-        # Here's how to install from trunk
+        # Here's how to install master from trunk
+        # (Needed until buildbot-0.8.5 is released,
+        # since it has fixes for the try server / mail notifier.)
+        # BTW rerunning 'pip install -emaster' takes less than a second, 
+        # and seems to be how buildbot developers test their code
         test -d buildbot-git || git clone https://github.com/buildbot/buildbot.git buildbot-git
-        cd buildbot-git/master
-        python setup.py install
-        cd ../..
+        cd buildbot-git
+        pip install -emaster
+        cd ..
     fi
     buildbot create-master master
     cp master/master.cfg.sample master/master.cfg
