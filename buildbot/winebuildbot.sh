@@ -211,7 +211,7 @@ do_pulltry() {
         cat series_*.patch > series.patch
         author_email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
         subject="`grep '^Subject:' < series.patch | uniq`"
-        do_try `pwd`/series.patch $author_email "$subject"
+        do_try `pwd`/series.patch $author_email "${id}: ${subject}"
     fi
 }
 
