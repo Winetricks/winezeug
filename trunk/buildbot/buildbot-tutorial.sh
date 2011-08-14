@@ -147,7 +147,7 @@ do_try() {
     # Username, password, and port number must match those passed to
     # Try_Userpass in master.cfg
     # Note: if your project uses git, you probably want to add "-p 1"
-    buildbot try --who $who --connect=pb --master=127.0.0.1:5555 --username=sampletryuser --passwd=sampletrypassword --diff=$1
+    buildbot try --who $who --properties=comment="Description of patch for builder status page" --connect=pb --master=127.0.0.1:5555 --username=sampletryuser --passwd=sampletrypassword --diff=$1
     )
 }
 
