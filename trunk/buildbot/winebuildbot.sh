@@ -246,7 +246,7 @@ do_patchwatcher() {
     wait="--wait"
     while true
     do
-       do_pulltry
+       do_pulltry || true
        sleep 10
     done
 }
