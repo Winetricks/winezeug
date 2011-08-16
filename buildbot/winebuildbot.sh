@@ -51,8 +51,9 @@ init_master() {
         # since it has fixes for the try server / mail notifier.)
         # BTW rerunning 'pip install -emaster' takes less than a second, 
         # and seems to be how buildbot developers test their code
-        test -d buildbot-git || git clone https://github.com/buildbot/buildbot.git buildbot-git
+        test -d buildbot-git || git clone git://github.com/buildbot/buildbot.git buildbot-git
         cd buildbot-git
+        export PIP_USE_MIRRORS=true
         pip install -emaster
         cd ..
     fi
@@ -140,6 +141,11 @@ do_patch() {
 
 do_configure() {
     cd $TOP/sandbox/slave/runtests/build
+    # Running make_makefiles without adding new source files to git
+    # generates invalid Makefile.in's; let's hope each patch that adds a new
+    # source file contains the needed Makefile.in changes.
+    #tools/make_makefiles
+    autoconf
     CFLAGS="-g -O0" ./configure
 }
 
@@ -193,7 +199,7 @@ do_try() {
     # it doesn't show up in svn.  Must match those in master.cfg.
     # FIXME: Use real hostname for master.
     # Always use -p 1 for wine patches, since that's the project's convention.
-    buildbot try --wait --who $who --properties=comment="$subject" --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
+    buildbot try $wait --who $who --properties=comment="$subject" --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
     )
 }
 
@@ -213,6 +219,16 @@ do_pulltry() {
         subject="`grep '^Subject:' < series.patch | uniq`"
         do_try `pwd`/series.patch $author_email "${id}: ${subject}"
     fi
+}
+
+# Sit and test new patches forever
+do_patchwatcher() {
+    wait="--wait"
+    while true
+    do
+       do_pulltry
+       sleep 10
+    done
 }
 
 while test "$1"
@@ -237,6 +253,7 @@ do
     restart) restart;;
     demo) demo;;
     pulltry) do_pulltry;;
+    pw|patchwatcher) do_patchwatcher;;
     try) do_try $1 $EMAIL; shift;;
     *) echo "bad arg; expected destroy, install_prereqs, {init,start,log}_{master,slave}, {patch,configure,build,test}, restart, try PATCH, or demo"; exit 1;;
     esac
