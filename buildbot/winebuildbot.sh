@@ -11,6 +11,18 @@ SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
 TOP=$HOME/tmp/buildbot
 
+if test "$NUMBER_OF_PROCESSORS"
+then
+    NCPUS=$NUMBER_OF_PROCESSORS
+elif sysctl -n hw.ncpu
+then
+    # Mac, freebsd
+    NCPUS=`sysctl -n hw.ncpu`
+else
+    # x86 linux
+    NCPUS=`grep '^processor' /proc/cpuinfo | wc -l`
+fi
+
 # Get email address of user from environment for use by the 'try' command.
 # If not set, default to username@hostname.
 EMAIL=${EMAIL:-$LOGNAME@`hostname`}
@@ -151,7 +163,7 @@ do_configure() {
 
 do_build() {
     cd $TOP/sandbox/slave/runtests/build
-    make -j9
+    make -j$NCPUS
 }
 
 do_test() {
@@ -181,7 +193,8 @@ do_test() {
     # Avoid race condition with registry that caused some tests to not run
     # in a virtual desktop?
     server/wineserver -w
-    make -k test
+    # Get elapsed time of each test
+    WINETEST_WRAPPER=time make -k test
 }
 
 do_try() {
