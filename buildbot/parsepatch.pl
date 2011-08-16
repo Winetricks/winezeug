@@ -24,8 +24,8 @@ if (-f "parsepatches_done.dat") {
     close(DONE);
 }
 
-#open(PIPE, "wget -O- http://source.winehq.org/patches/|") || die "can't fetch patch status";
-open(PIPE, "index.html");
+open(PIPE, "wget -O- http://source.winehq.org/patches/|") || die "can't fetch patch status";
+#open(PIPE, "index.html");
 while (<PIPE>) {
     s/&#39;/'/g;
     if (m,<tr class=".* nil"><td class="id">(\d*)</td><td class="status"><a href="#legend">New</a></td><td class="author">([^<]*)</td><td class="subject"><a href="data/\d*">(.*)</a></td><td class="testbot">(\S*)</td></tr>,) {
