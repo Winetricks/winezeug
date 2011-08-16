@@ -193,7 +193,7 @@ do_try() {
     # it doesn't show up in svn.  Must match those in master.cfg.
     # FIXME: Use real hostname for master.
     # Always use -p 1 for wine patches, since that's the project's convention.
-    buildbot try --who $who --properties=comment="$subject" --connect=pb --master=127.0.0.1:5555 --username=sampletryuser --passwd=sampletrypassword --diff=$1 -p 1
+    buildbot try --wait --who $who --properties=comment="$subject" --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
     )
 }
 
