@@ -244,11 +244,11 @@ do_pulltry() {
 
 # Sit and test new patches forever
 do_patchwatcher() {
-    wait="--wait"
     while true
     do
        do_pulltry || true
-       sleep 10
+       # Launch at most one patch per minute
+       sleep 60
     done
 }
 
