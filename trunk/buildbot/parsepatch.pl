@@ -14,6 +14,9 @@ if (@ARGV != 1) {
 }
 
 $maxpatches=$ARGV[0];
+# Ignore patches this far down in the queue and lower
+# This needs to be as big as the biggest expected patch series
+$maxage=15;
 
 if (-f "parsepatches_done.dat") {
     open(DONE, "parsepatches_done.dat");
@@ -35,7 +38,7 @@ while (<PIPE>) {
         $testbotstatus=$4;
         $author =~ s/\s*$//;
         # Don't consider really old patches
-        if ($numpatches++ > 50) {
+        if ($numpatches++ > $maxage) {
             last;
         }
         if ($testbotstatus eq "Failed") {
