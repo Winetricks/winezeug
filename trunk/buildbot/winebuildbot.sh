@@ -205,14 +205,15 @@ do_test() {
 }
 
 do_try() {
+    (
     if test "$1" = ""
     then
         echo "need patch name"
         exit 1
     fi
     who=$2
-    subject=$3
-    (
+    # The --properties flag uses comma as a delimiter, so we have to change all commas in comments to something else
+    subject="`echo $3 | tr ',' ';'`"
     cd $TOP/sandbox
     . bin/activate
     # FIXME: import username and password from another file so
