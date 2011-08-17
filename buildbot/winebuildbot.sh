@@ -191,12 +191,16 @@ do_test() {
     touch dlls/user32/tests/input.ok
     # http://bugs.winehq.org/show_bug.cgi?id=28038
     touch dlls/wininet/tests/urlcache.ok
-    # my machine fails with "capture.c:148: Test failed: waveInOpen(1)"
+    # http://bugs.winehq.org/show_bug.cgi?id=28109
     touch dlls/winmm/tests/capture.ok
     # http://bugs.winehq.org/show_bug.cgi?id=28048
     touch dlls/winmm/tests/wave.ok
     # Blacklist until http://www.winehq.org/pipermail/wine-patches/2011-August/105358.html in
     touch dlls/winhttp/tests/winhttp.ok
+    # http://bugs.winehq.org/show_bug.cgi?id=28102
+    touch dlls/ws2_32/tests/sock.ok
+    # http://bugs.winehq.org/show_bug.cgi?id=28108
+    touch dlls/urlmon/tests/url.ok
     # Avoid race condition with registry that caused some tests to not run
     # in a virtual desktop?
     server/wineserver -w
