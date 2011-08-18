@@ -233,7 +233,7 @@ do
     info) system_info;;
     install_prereqs) install_prereqs;;
     destroy) destroy;;
-    create) create_slave;;
+    create) create_slave $1 $2 $3; shift 3;;
     start) start_slave;;
     stop) stop_slave;;
     tail) tail -f $TOP/sandbox/slave/twistd.log;;
