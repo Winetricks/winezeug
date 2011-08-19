@@ -23,7 +23,8 @@ if (@ARGV != 1) {
 $maxpatches=$ARGV[0];
 # Ignore patches this far down in the queue and lower
 # This needs to be as big as the biggest expected patch series
-$maxage=100;
+# but small enough that newer patches don't languish behind old ones during startup
+$maxage=25;
 
 $verbose = 0;
 
@@ -161,7 +162,9 @@ foreach $from (sort(keys(%patches_by_author))) {
 # Output the most recent $maxpatches patch series
 for ($i=0; $i < $maxpatches; $i++) {
     print $result[$i];
-    $done_ids{$result[$i]}++;
+    foreach $id (split(" ", $result[$i])) {
+       $done_ids{$id}++;
+    }
 }
 
 # Remember which patches we've output
