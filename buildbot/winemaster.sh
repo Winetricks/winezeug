@@ -133,12 +133,11 @@ do_pulltry() {
     if test "$series"
     then
         # For now, just concatenate series together into one big patch
-        rm -f series_*.patch
+        > series.patch
         for id in $series
         do
-            wget -O series_$id.patch http://source.winehq.org/patches/data/$id
+            cat cached_patches/cache-$id.patch >> series.patch
         done
-        cat series_*.patch > series.patch
         author_email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
         subject="`grep '^Subject:' < series.patch | uniq`"
         do_try `pwd`/series.patch $author_email "${id}: ${subject}"
