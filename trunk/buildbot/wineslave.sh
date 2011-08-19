@@ -29,7 +29,13 @@ usage() {
 
 system_osname() {
     # FIXME: do this portably
-    lsb_release -d -s
+    lsb_release -d -s | tr -d '\012'
+    echo ", "
+    uname -r | tr -d '\012'
+    echo ", "
+    pulseaudio --version | tr -d '\012'
+    echo ", "
+    cat /proc/asound/version
 }
 
 system_cpuname() {
