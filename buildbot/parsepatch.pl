@@ -36,7 +36,7 @@ sub update_cache() {
         chomp $last_id;
         close(LAST);
     } else {
-        $last_id = 77450;
+        $last_id = 77570;
     }
     # Update our cache of patches
     mkdir("cached_patches");
@@ -113,25 +113,28 @@ foreach (<cached_patches/cache-*.patch>) {
     push(@$ref_patches_by_this_user, \@patch);
 }
 
-# Consider each author's patches in the order sent
-foreach $from (sort(keys(%patches_by_author))) {
-    $ref_patches_by_this_user = $patches_by_author{$from};
-    $oldnum = 0;
-    $series = "";
-    foreach (sort bydate @$ref_patches_by_this_user) {
-        @x = grep(/^Date:/, @$_);
-        $date = $x[0];
+# @_ is all the patches sent by a particular author, in the order they were sent.
+# Scan through this list for contiguous series of patches. 
+# If any found, append their IDs to @result.
+# A series has subject lines containing things like 1/3, 2/3, and 3/3.
+# Series that are sent out of order (not uncommon) are *ignored*.
+sub scan_for_series {
+    my $oldnum = 0;
+    my $series = "";
+    foreach (@_) {
+        my @x = grep(/^Date:/, @$_);
+        my $date = $x[0];
         $date =~ s/^Date: //;
         @x = grep(/^Subject:/, @$_);
         $subject = $x[0];
         $subject =~ s/^Subject: //;
         @x = grep(/^testbotId:/, @$_);
-        $patch_id = $x[0];
+        my $patch_id = $x[0];
         $patch_id =~ s/^testbotId: //;
         print "Considering id $patch_id, date $date, author $from, subject $subject\n" if ($verbose > 1);
         if ($subject =~ m,\[\D*(\d+)/(\d+)\D*\],) {
-            $num = $1;
-            $len = $2;
+            my $num = $1;
+            my $len = $2;
             if ($num > 0 && $num <= $len) {
                 if ($num == 1) {
                     $oldnum = $num;
@@ -154,6 +157,12 @@ foreach $from (sort(keys(%patches_by_author))) {
             push(@result, "$patch_id\n");
         }
     }
+}
+
+# Consider each author's patches in the order sent
+foreach $from (sort(keys(%patches_by_author))) {
+    $ref_patches_by_this_user = $patches_by_author{$from};
+    scan_for_series (sort bydate @$ref_patches_by_this_user);
 }
 
 # Sort numerically, highest first
