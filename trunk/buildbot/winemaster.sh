@@ -134,15 +134,19 @@ do_pulltry() {
     series=`perl parsepatch.pl 1`
     if test "$series"
     then
-        # For now, just concatenate series together into one big patch
-        > series.patch
-        for id in $series
+        maxlen=`echo $series | wc -w`
+        for len in `seq 1 $maxlen`
         do
-            cat cached_patches/cache-$id.patch >> series.patch
+            # Concatenate first len patches of the series
+            > series.patch
+            for id in `echo $series | tr ' ' '\012' | head -n $len`
+            do
+                cat cached_patches/cache-$id.patch >> series.patch
+                subject="`grep '^Subject:' < cached_patches/cache-$id.patch | head -n 1`"
+            done
+            author_email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
+            do_try `pwd`/series.patch $author_email "${id}: ${subject}"
         done
-        author_email=`grep '^From:' < series.patch | head -n 1 | sed 's/^From: //;s/.*<//;s/>.*//'`
-        subject="`grep '^Subject:' < series.patch | uniq`"
-        do_try `pwd`/series.patch $author_email "${id}: ${subject}"
     fi
 }
 
