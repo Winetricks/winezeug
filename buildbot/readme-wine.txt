@@ -3,14 +3,15 @@ To get started with buildbot and wine, first do
   cd winezeug/buildbot
 
 Then try running
+  sh winemaster.sh demo
+to create a local buildbot master, and
   sh ../install-wine-deps.sh
   sh ../install-gecko.sh
   sh wineslave.sh demo
-to create a local buildbot slave, and
-  sh winemaster.sh demo
-to create a local buildbot master.  By default, the master
-watches for new git commits, and runs a single build once
-the tree is stable.
+to create a local buildbot slave.
+
+By default, the master watches for new git commits, and runs a single
+build once the tree is stable.
 If you also want to feed it patches from wine-patches, run
   sh winemaster.sh patchwatcher > patchwatcher.log 2>&1 &
 
