@@ -34,7 +34,9 @@ usage() {
 install_prereqs() {
     # For Ubuntu.  Other systems may differ.
     # Needed for buildbot
-    sudo apt-get install python-dev python-virtualenv 
+    sudo apt-get install python-dev python-virtualenv
+    # Needed for fetching buildbot from git
+    sudo apt-get install git
     # Needed for parsepatch.pl
     sudo apt-get install libdatetime-format-mail-perl
 }
