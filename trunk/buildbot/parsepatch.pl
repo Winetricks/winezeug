@@ -12,7 +12,7 @@
 # For each author:
 #   Sort patches by the first Date: line in each patch
 #   Scan from oldest to newest, parsing [%d/%d], looking for an unbroken series
-# Outputs most recent patch series first.
+# Outputs oldest patch (or patch series) first.
 
 use DateTime::Format::Mail;
 
@@ -21,7 +21,7 @@ if (@ARGV != 1) {
 }
 
 $maxpatches=$ARGV[0];
-# Ignore patches this far down in the queue and lower
+# Catch up this many patches
 # This needs to be as big as the biggest expected patch series
 # but small enough that newer patches don't languish behind old ones during startup
 $maxage=25;
@@ -36,7 +36,7 @@ sub update_cache() {
         chomp $last_id;
         close(LAST);
     } else {
-        $last_id = 77570;
+        $last_id = 77630;
     }
     # Update our cache of patches
     mkdir("cached_patches");
@@ -90,12 +90,12 @@ if (-f "parsepatches_done.dat") {
 # Result is saved in %patches_by_author
 my %patches_by_author;
 foreach (<cached_patches/cache-*.patch>) {
-    # Skip it if we've already processed it (really, we could delete the file from the cache instead)
     /.*cache-(\d+).patch/ || die;
     $patch_id = $1;
-    next if $done_ids{$patch_id};
     # Skip it if it's too old
     next if $last_id - $patch_id > $maxage;
+    # Skip it if we've already processed it (really, we could delete the file from the cache instead)
+    next if $done_ids{$patch_id};
 
     open(PATCH, $_) || die;
     my @patch;
@@ -165,8 +165,8 @@ foreach $from (sort(keys(%patches_by_author))) {
     scan_for_series (sort bydate @$ref_patches_by_this_user);
 }
 
-# Sort numerically, highest first
-@result = sort {$b - $a} @result;
+# Sort numerically, lowest first
+@result = sort {$a - $b} @result;
 
 # Output the most recent $maxpatches patch series
 for ($i=0; $i < $maxpatches; $i++) {
