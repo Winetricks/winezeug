@@ -240,7 +240,7 @@ do_test() {
 	    itss jscript kernel32 localspl localui lz32 mapi32 mlang msacm32 \
 	    mscms mscoree msi mstask msvcp90 msvcr90 msvcrt msvcrtd msvfw32 \
 	    msxml3 netapi32 ntdll ntdsapi ntprint odbccp32 ole32 oleacc \
-	    oleaut32 oledb32 openal32 pdh propsys psapi qedit qmgr \
+	    oleaut32 oledb32 pdh propsys psapi qedit qmgr \
 	    quartz rasapi32 rpcrt4 rsaenh schannel secur32 serialui setupapi \
 	    shdocvw shlwapi snmpapi spoolss sti twain_32 urlmon userenv \
 	    uxtheme vbscript version wer windowscodecs winhttp wininet \
