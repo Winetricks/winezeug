@@ -224,6 +224,7 @@ do_test() {
     then
         echo "DISPLAY not set, doing headless tests"
 	# Individual blacklist of tests that fail with DISPLAY unset
+	touch dlls/kernel32/tests/console.ok
 	touch dlls/kernel32/tests/process.ok
 	touch dlls/ole32/tests/dragdrop.ok
 	touch dlls/ole32/tests/marshal.ok
