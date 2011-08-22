@@ -80,9 +80,12 @@ install_prereqs() {
     # For Ubuntu.  Other systems may differ.
     # Needed for buildbot
     sudo apt-get install python-dev python-virtualenv 
+    # Needed to report on GPU type
+    sudo apt-get install mesa-utils
     # Needed to apply patches
     sudo apt-get install autoconf
     # Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
+    # On Squeeze, add contrib to /etc/apt/sources.list for this to work
     sudo apt-get install ttf-mscorefonts-installer
     # Needed to pass rpcrt4 tests
     sudo apt-get install winbind
