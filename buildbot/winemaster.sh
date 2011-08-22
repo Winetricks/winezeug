@@ -24,7 +24,6 @@ usage() {
     echo "   start"
     echo "   tail"
     echo "   demo"
-    echo "   patchwatcher"
 
     exit 1
 }
@@ -82,6 +81,7 @@ create_master() {
     fi
     buildbot create-master master
     )
+    cp parsepatch.pl $TOP/sandbox/bin/parsepatch.pl
 }
 
 start_master() {
@@ -90,6 +90,8 @@ start_master() {
     . bin/activate
     cp $SRC/master.cfg $VIRTUAL_ENV/master
     buildbot start $VIRTUAL_ENV/master
+    do_patchwatcher > $TOP/sandbox/master/patchwatcher.log 2>&1 &
+    echo $! > $TOP/sandbox/master/patchwatcher.pid
     )
 }
 
@@ -98,6 +100,7 @@ stop_master() {
     cd $TOP/sandbox
     . bin/activate
     buildbot stop $VIRTUAL_ENV/master
+    kill `cat $TOP/sandbox/master/patchwatcher.pid`
     )
 }
 
@@ -131,9 +134,9 @@ do_try() {
     )
 }
 
-# Try the most recent not-yet-done patch series from source.winehq.org/patches
+# Try the oldest but-not-too-old not-yet-done patch series from source.winehq.org/patches
 do_pulltry() {
-    series=`perl parsepatch.pl 1`
+    series=`perl $TOP/sandbox/bin/parsepatch.pl 1`
     if test "$series"
     then
         maxlen=`echo $series | wc -w`
@@ -179,13 +182,11 @@ do
     case "$arg" in
     destroy) destroy;;
     install_prereqs) install_prereqs;;
-    create_master) create_master;;
+    create) create_master;;
     start) start_master;;
     stop) stop_master;;
     tail) tail -f $TOP/sandbox/master/twistd.log;;
     demo) demo;;
-    pulltry) do_pulltry;;
-    pw|patchwatcher) do_patchwatcher;;
     try) do_try $1 $EMAIL; shift;;
     *) usage ;;
     esac
