@@ -223,44 +223,44 @@ do_test() {
     if test "$DISPLAY" = ""
     then
         echo "DISPLAY not set, doing headless tests"
-	# Individual blacklist of tests that fail with DISPLAY unset
-	touch dlls/kernel32/tests/console.ok
-	touch dlls/kernel32/tests/process.ok
-	touch dlls/ole32/tests/dragdrop.ok
-	touch dlls/ole32/tests/marshal.ok
-	touch dlls/quartz/tests/videorenderer.ok
-	touch dlls/shlwapi/tests/ordinal.ok
-	touch dlls/wininet/tests/ftp.ok
-	touch dlls/ws2_32/tests/sock.ok
-	for dir in \
-	    advpack amstream avifil32 browseui cabinet comcat credui crypt32 \
-	    cryptnet cryptui d3d10 d3d10core d3d9 d3dcompiler_43 d3drm d3dxof \
-	    dispex dmime dmloader dnsapi dplayx dxdiagn dxgi faultrep fusion \
-	    gameux hlink imagehlp imm32 inetcomm inetmib1 infosoft iphlpapi \
-	    itss jscript kernel32 localspl localui lz32 mapi32 mlang msacm32 \
-	    mscms mscoree msi mstask msvcp90 msvcr90 msvcrt msvcrtd msvfw32 \
-	    msxml3 netapi32 ntdll ntdsapi ntprint odbccp32 ole32 oleacc \
-	    oleaut32 oledb32 pdh propsys psapi qedit qmgr \
-	    quartz rasapi32 rpcrt4 rsaenh schannel secur32 serialui setupapi \
-	    shdocvw shlwapi snmpapi spoolss sti twain_32 urlmon userenv \
-	    uxtheme vbscript version wer windowscodecs winhttp wininet \
-	    winspool.drv wintab32 wintrust wldap32 ws2_32 xinput1_3 xmllite
-	do
-	    cd dlls/$dir/tests
-	    WINETEST_WRAPPER=time make -k test || echo dir $dir failed
-	    cd ../../..
-	done
-	for dir in \
-	    cmd regedit
-	do
-	    cd dlls/$dir/tests
-	    WINETEST_WRAPPER=time make -k test || echo dir $dir failed
-	    cd ../../..
-	done
+        # Individual blacklist of tests that fail with DISPLAY unset
+        touch dlls/kernel32/tests/console.ok
+        touch dlls/kernel32/tests/process.ok
+        touch dlls/ole32/tests/dragdrop.ok
+        touch dlls/ole32/tests/marshal.ok
+        touch dlls/quartz/tests/videorenderer.ok
+        touch dlls/shlwapi/tests/ordinal.ok
+        touch dlls/wininet/tests/ftp.ok
+        touch dlls/ws2_32/tests/sock.ok
+        for dir in \
+            advpack amstream avifil32 browseui cabinet comcat credui crypt32 \
+            cryptnet cryptui d3d10 d3d10core d3d9 d3dcompiler_43 d3drm d3dxof \
+            dispex dmime dmloader dnsapi dplayx dxdiagn dxgi faultrep fusion \
+            gameux hlink imagehlp imm32 inetcomm inetmib1 infosoft iphlpapi \
+            itss jscript kernel32 localspl localui lz32 mapi32 mlang msacm32 \
+            mscms mscoree msi mstask msvcp90 msvcr90 msvcrt msvcrtd msvfw32 \
+            msxml3 netapi32 ntdll ntdsapi ntprint odbccp32 ole32 oleacc \
+            oleaut32 oledb32 pdh propsys psapi qedit qmgr \
+            quartz rasapi32 rpcrt4 rsaenh schannel secur32 serialui setupapi \
+            shdocvw shlwapi snmpapi spoolss sti twain_32 urlmon userenv \
+            uxtheme vbscript version wer windowscodecs winhttp wininet \
+            winspool.drv wintab32 wintrust wldap32 ws2_32 xinput1_3 xmllite
+        do
+            cd dlls/$dir/tests
+            WINETEST_WRAPPER=time make -k test || echo dir $dir failed
+            cd ../../..
+        done
+        for dir in \
+            cmd regedit
+        do
+            cd dlls/$dir/tests
+            WINETEST_WRAPPER=time make -k test || echo dir $dir failed
+            cd ../../..
+        done
     else
         echo "DISPLAY set, doing full tests"
-	# Get elapsed time of each test
-	WINETEST_WRAPPER=time make -k test
+        # Get elapsed time of each test
+        WINETEST_WRAPPER=time make -k test
     fi
 }
 
