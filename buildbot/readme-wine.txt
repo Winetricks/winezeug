@@ -10,10 +10,10 @@ to create a local buildbot master, and
   sh wineslave.sh demo
 to create a local buildbot slave.
 
-By default, the master watches for new git commits, and runs a single
-build once the tree is stable.
-If you also want to feed it patches from wine-patches, run
-  sh winemaster.sh patchwatcher > patchwatcher.log 2>&1 &
+By default, the master watches for new git commits as well as
+patches from wine-patches.  
+(A single build is done per batch of git commits, but each patch 
+in a patch series gets its own build.)
 
 Put your name and email address in ~/wineslave.dir/sandbox/slave/info/admin
 and restart the slave, e.g.
