@@ -226,8 +226,12 @@ do_test() {
         # Individual blacklist of tests that fail with DISPLAY unset
         touch dlls/kernel32/tests/console.ok
         touch dlls/kernel32/tests/process.ok
+        touch dlls/ole32/tests/clipboard.ok
         touch dlls/ole32/tests/dragdrop.ok
         touch dlls/ole32/tests/marshal.ok
+        touch dlls/oleaut32/tests/olepicture.ok
+        touch dlls/quartz/tests/filtergraph.ok
+        touch dlls/quartz/tests/misc.ok
         touch dlls/quartz/tests/videorenderer.ok
         touch dlls/shlwapi/tests/ordinal.ok
         touch dlls/wininet/tests/ftp.ok
@@ -253,7 +257,7 @@ do_test() {
         for dir in \
             cmd regedit
         do
-            cd dlls/$dir/tests
+            cd programs/$dir/tests
             WINETEST_WRAPPER=time make -k test || echo dir $dir failed
             cd ../../..
         done
