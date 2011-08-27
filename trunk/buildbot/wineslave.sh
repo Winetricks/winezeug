@@ -89,6 +89,8 @@ install_prereqs() {
     sudo apt-get install ttf-mscorefonts-installer
     # Needed to pass rpcrt4 tests
     sudo apt-get install winbind
+    # Needed to avoid gecko prompt
+    sh ../install-gecko.sh
 }
 
 destroy() {
