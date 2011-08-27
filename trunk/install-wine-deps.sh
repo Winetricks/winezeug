@@ -108,7 +108,7 @@ fi
 #----------------------------------------------------------------------------
 # Debian data, common to Debian GNU/kFreeBSD, GNU/Hurd and GNU/Linux:
 debian_common_pkgs="\
-bison ccache flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev libcups2-dev \
+bison ccache flex fontforge gcc gettext git-core libasound2-dev libaudio-dev libc6-dev libcups2-dev \
 libdbus-1-dev libelfg0 libesd0-dev libexif-dev libexpat1-dev libfontconfig1-dev libfreetype6-dev \
 libgcrypt11-dev libgif-dev libgl1-mesa-dev libglib2.0-dev libglu1-mesa-dev libgnutls-dev \
 libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev \
@@ -129,7 +129,7 @@ libcapi20-3 libcapi20-dev libieee1284-3-dev linux-libc-dev prelink"
 #----------------------------------------------------------------------------
 # Ubuntu data
 ubuntu_common_pkgs="\
-bison ccache cvs flex fontforge gcc git-core libasound2-dev libaudio-dev libc6-dev \
+bison ccache cvs flex fontforge gcc gettext git-core libasound2-dev libaudio-dev libc6-dev \
 libcapi20-3 libcapi20-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev \
@@ -271,6 +271,7 @@ Linux*Mint*7|Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkg
 Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
+Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*Hurd*) apt-get install $debian_common_pkgs ;;
