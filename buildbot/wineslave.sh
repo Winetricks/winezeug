@@ -221,6 +221,16 @@ do_test() {
     touch dlls/urlmon/tests/url.ok
     # http://bugs.winehq.org/show_bug.cgi?id=28216
     touch dlls/shell32/tests/shlfolder.ok
+
+    # System-specific blacklists
+    case `system_osname` in
+    *"Ubuntu 10"*)
+        # http://bugs.winehq.org/show_bug.cgi?id=28071
+        # Just need alsa-base-1.0.24 or later
+        touch dlls/winmm/tests/mci.ok
+        ;;
+    esac
+
     # Avoid race condition with registry that caused some tests to not run
     # in a virtual desktop?
     server/wineserver -w
