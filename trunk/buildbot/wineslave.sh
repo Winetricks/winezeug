@@ -219,6 +219,8 @@ do_test() {
     touch dlls/ws2_32/tests/sock.ok
     # http://bugs.winehq.org/show_bug.cgi?id=28108
     touch dlls/urlmon/tests/url.ok
+    # http://bugs.winehq.org/show_bug.cgi?id=28216
+    touch dlls/shell32/tests/shlfolder.ok
     # Avoid race condition with registry that caused some tests to not run
     # in a virtual desktop?
     server/wineserver -w
