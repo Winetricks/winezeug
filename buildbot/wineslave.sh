@@ -84,6 +84,8 @@ install_prereqs() {
     sudo apt-get install mesa-utils
     # Needed to apply patches
     sudo apt-get install autoconf
+    # Needed to make repeated builds of same files go faster
+    sudo apt-get install ccache
     # Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
     # On Squeeze, add contrib to /etc/apt/sources.list for this to work
     sudo apt-get install ttf-mscorefonts-installer
@@ -183,7 +185,9 @@ do_configure() {
     # source file contains the needed Makefile.in changes.
     #tools/make_makefiles
     autoconf
-    CFLAGS="-g -O0" ./configure
+    # ccache seems to bring build times down by about a factor 
+    # of 2-3 on a wide range of machines
+    CC="ccache gcc -m32" CFLAGS="-g -O0" ./configure
 }
 
 do_build() {
