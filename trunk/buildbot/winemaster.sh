@@ -75,6 +75,8 @@ create_master() {
         # and seems to be how buildbot developers test their code
         test -d buildbot-git || git clone git://github.com/buildbot/buildbot.git buildbot-git
         cd buildbot-git
+        # Work around crash when attaching patches that are in utf-8
+        patch -p1 < $SRC/buildbot-workaround-bug2091.patch
         export PIP_USE_MIRRORS=true
         pip install -emaster
         cd ..
