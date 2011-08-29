@@ -322,8 +322,20 @@ do_test() {
         # Neither use much CPU, so this should save time even on slow computers
         do_background_tests > background.log 2>&1 &
         do_foreground_tests
-        wait
+        # Under set -e, script aborts early for foreground failures, and on wait %1 for background failures,
+        # making it hard to show the background log before aborting.
+        # So use set +e, and check status of background and foreground manually.
+        foreground_status=$?
+        set +e
+        wait %1
+        background_status=$?
         cat background.log
+        if test $foreground_status -ne 0 || test $background_status -ne 0
+        then
+            echo "FAIL: background_status $background_status, foreground_status $foreground_status"
+            exit 1
+        fi
+        set -e
     fi
 }
 
