@@ -1,0 +1,14 @@
+# Same as 'winetricks nocrashdialog', but works when that doesn't
+diff --git a/programs/winedbg/crashdlg.c b/programs/winedbg/crashdlg.c
+index 4a24dcc..2a1f303 100644
+--- a/programs/winedbg/crashdlg.c
++++ b/programs/winedbg/crashdlg.c
+@@ -159,7 +159,7 @@ BOOL display_crash_dialog(void)
+     /* dbg_curr_process->handle is not set */
+     HANDLE hProcess;
+ 
+-    if (!DBG_IVAR(ShowCrashDialog))
++    if (1 || !DBG_IVAR(ShowCrashDialog))
+         return TRUE;
+ 
+     hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dbg_curr_pid);
