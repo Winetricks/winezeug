@@ -6,7 +6,6 @@ Then try running
   sh winemaster.sh demo
 to create a local buildbot master, and
   sh ../install-wine-deps.sh
-  sh ../install-gecko.sh
   sh wineslave.sh demo
 to create a local buildbot slave.
 
@@ -37,3 +36,15 @@ and tell Gnome to do
   sh wineslave.sh start
 on startup.
 (You can't start the slave from crontab, since it needs the desktop to run properly.)
+
+Tips
+- All slaves need at least 1 GB of RAM.  More is better.
+- General purpose buildslaves should have a CPU that is as fast or faster than
+  an intel core 2 duo e8400 (i.e. scores 2400 or higher in
+  http://www.cpubenchmark.net/cpu_list.php ) as well as a reasonable nvidia
+  graphics card (e.g. a GeForce 8500 or later), should run the buildslave in
+  the foreground on a logged in console, and should not be doing anything 
+  else (not even web browsing).  
+- Special purpose buildslaves (e.g. for alternate compilers or architectures)
+  can be slower, can share the computer, and can run in the background from
+  /etc/init.d or cron.
