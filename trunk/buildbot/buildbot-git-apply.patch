@@ -1,0 +1,20 @@
+diff --git a/slave/buildslave/commands/base.py b/slave/buildslave/commands/base.py
+index 227f1fd..8ec6f10 100644
+--- a/slave/buildslave/commands/base.py
++++ b/slave/buildslave/commands/base.py
+@@ -575,12 +575,10 @@ class SourceBaseCommand(Command):
+         if len(self.patch) >= 3:
+             root = self.patch[2]
+         command = [
+-            utils.getCommand("patch"),
++            utils.getCommand("git"),
++            'apply',
+             '-p%d' % patchlevel,
+-            '--remove-empty-files',
+-            '--force',
+-            '--forward',
+-            '-i', '.buildbot-diff',
++            '.buildbot-diff',
+         ]
+         dir = os.path.join(self.builder.basedir, self.workdir)
+         # Mark the directory so we don't try to update it later, or at least try

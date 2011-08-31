@@ -127,7 +127,29 @@ create_slave() {
     test -d sandbox || virtualenv --no-site-packages sandbox
     cd $TOP/sandbox
     . bin/activate
-    easy_install buildbot-slave
+    if false
+    then
+        easy_install buildbot-slave
+    elif false
+    then
+        # Here's how to install from a source tarball
+        # untested, copied from winemaster.sh
+        wget -c http://buildbot.googlecode.com/files/buildbot-0.8.4p2.tar.gz
+        tar -xzvf buildbot-0.8.4p2.tar.gz
+        cd buildbot-0.8.4p2
+        python setup.py install
+        cd ..
+    else
+        # Here's how to install slave from trunk
+        # (Needed to use git apply instead of patch)
+        test -d buildbot-git || git clone git://github.com/buildbot/buildbot.git buildbot-git
+        cd buildbot-git
+        # use git to apply patches
+        patch -p1 < $SRC/buildbot-git-apply.patch
+        export PIP_USE_MIRRORS=true
+        pip install -eslave
+        cd ..
+    fi
     buildslave create-slave slave $1 $2 $3
     cp $SRC/wineslave.sh $TOP/sandbox/bin/wineslave.sh
     chmod +x $TOP/sandbox/bin/wineslave.sh
