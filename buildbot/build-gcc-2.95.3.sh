@@ -3,6 +3,20 @@
 set -e
 set -x
 
+system_numcpus() {
+    if test "$NUMBER_OF_PROCESSORS"
+    then
+        echo $NUMBER_OF_PROCESSORS
+    elif sysctl -n hw.ncpu 2> /dev/null
+    then
+        # Mac, freebsd
+        :
+    else
+        # x86 linux
+        grep '^processor' /proc/cpuinfo | wc -l
+    fi
+}
+
 if ! test -d /usr/include/asm
 then
     sudo ln -s /usr/include/i386-linux-gnu/asm /usr/include/asm
@@ -27,5 +41,5 @@ tar -xzvf gcc-core-2.95.3.tar.gz
 patch -p0 < gcc-2.95.3-collect2.patch
 cd gcc-2.95.3/
 ./configure --enable-languages=c --prefix=/usr/local/gcc-2.95.3
-make -j3
-#sudo make install
+make -j`system_numcpus`
+sudo make install
