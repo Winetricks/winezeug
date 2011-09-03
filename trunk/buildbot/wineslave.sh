@@ -217,22 +217,9 @@ do_build() {
     make -j`system_numcpus`
 }
 
-# DLLs whose tests don't need DISPLAY set
-HEADLESS_DLLS="\
-    advpack amstream avifil32 browseui cabinet comcat credui crypt32 \
-    cryptnet cryptui d3d10 d3d10core d3dxof \
-    dispex dmime dmloader dnsapi dplayx dxdiagn dxgi faultrep fusion \
-    gameux hlink imagehlp imm32 inetcomm inetmib1 infosoft iphlpapi \
-    itss jscript localspl localui lz32 mapi32 mlang msacm32 \
-    mscms mscoree msi mstask msvcp90 msvcr90 msvcrt msvcrtd msvfw32 \
-    msxml3 netapi32 ntdll ntdsapi ntprint odbccp32 oleacc \
-    oledb32 pdh propsys psapi qedit qmgr \
-    rasapi32 rpcrt4 rsaenh schannel secur32 serialui setupapi \
-    shdocvw snmpapi spoolss sti twain_32 urlmon userenv \
-    uxtheme vbscript version wer windowscodecs winhttp \
-    winspool.drv wintab32 wintrust wldap32 xinput1_3 xmllite"
+do_test() {
+    cd $TOP/sandbox/slave/runtests/build
 
-do_prepare_wineprefix() {
     rm -rf $WINEPREFIX
     # winetricks vd=800x600
     ./wine reg add HKCU\\Software\\Wine\\Explorer /v Desktop /d Default
@@ -240,125 +227,8 @@ do_prepare_wineprefix() {
     # Avoid race condition with registry that caused some tests to not run
     # in a virtual desktop?
     server/wineserver -w
-}
 
-# Run all tests that don't require the display
-do_background_tests() {
-    (
-    unset DISPLAY
-    export WINEPREFIX=`pwd`/wineprefix-background
-    do_prepare_wineprefix
-    cd dlls
-    for dir in *
-    do
-        if echo $HEADLESS_DLLS | grep -qw $dir && cd $dir/tests
-        then
-            make -k test || echo dir $dir failed
-            cd ../..
-        fi
-    done
-    cd ..
-    cd programs
-    for dir in *
-    do
-        if cd $dir/tests
-        then
-            make -k test || echo dir $dir failed
-            cd ../..
-        fi
-    done
-    )
-}
-
-# Run all tests that do require the display
-do_foreground_tests() {
-    (
-    export WINEPREFIX=`pwd`/wineprefix-foreground
-    do_prepare_wineprefix
-    cd dlls
-    for dir in *
-    do
-        if echo $HEADLESS_DLLS | grep -vqw $dir && cd $dir/tests
-        then
-            make -k test || echo dir $dir failed
-            cd ../..
-        fi
-    done
-    cd ..
-    )
-}
-
-# Mark buggy tests as "to be skipped"
-do_blacklist() {
-    # http://bugs.winehq.org/show_bug.cgi?id=12053
-    touch dlls/user32/tests/msg.ok
-    touch dlls/user32/tests/win.ok
-    touch dlls/user32/tests/input.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28038
-    touch dlls/wininet/tests/urlcache.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28109
-    touch dlls/winmm/tests/capture.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28048
-    touch dlls/winmm/tests/wave.ok
-    # Blacklist until http://www.winehq.org/pipermail/wine-patches/2011-August/105358.html in
-    touch dlls/winhttp/tests/winhttp.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28101 - ftp tests take 1 minute
-    touch dlls/wininet/tests/ftp.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28102
-    touch dlls/ws2_32/tests/sock.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28108
-    touch dlls/urlmon/tests/url.ok
-    # http://bugs.winehq.org/show_bug.cgi?id=28216
-    touch dlls/shell32/tests/shlfolder.ok
-
-    # System-specific blacklists
-    case `system_osname` in
-    *"Ubuntu 10"*)
-        # http://bugs.winehq.org/show_bug.cgi?id=28071
-        # Just need alsa-base-1.0.24 or later
-        touch dlls/winmm/tests/mci.ok
-        ;;
-    esac
-}
-
-do_test() {
-    cd $TOP/sandbox/slave/runtests/build
-    do_blacklist
-
-    # Many tests only work in english locale
-    LANG=en_US.UTF-8
-    export LANG
-
-    # Get elapsed time of each test
-    WINETEST_WRAPPER=time
-    export WINETEST_WRAPPER
-
-    if test "$DISPLAY" = ""
-    then
-        echo "DISPLAY not set, doing headless tests"
-        do_background_tests
-    else
-        echo "DISPLAY set, doing full tests"
-        # Run two groups of tests in parallel
-        # The background tests don't need the display, and use their own wineprefix
-        # Neither use much CPU, so this should save time even on slow computers
-        do_background_tests > background.log 2>&1 &
-        do_foreground_tests
-        # Under set -e, script aborts early for foreground failures, and on wait %1 for background failures,
-        # making it hard to show the background log before aborting.
-        # So use set +e, and check status of background and foreground manually.
-        foreground_status=$?
-        set +e
-        wait %1
-        background_status=$?
-        cat background.log
-        if test $foreground_status -ne 0 || test $background_status -ne 0
-        then
-            echo "FAIL: background_status $background_status, foreground_status $foreground_status"
-            exit 1
-        fi
-        set -e
-    fi
+    sh $SRC/dotests.sh goodtests
 }
 
 #--------- Main program ---------------------------------------------------------
