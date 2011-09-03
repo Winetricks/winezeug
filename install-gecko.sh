@@ -27,7 +27,7 @@ install_gecko()
         ;;
     esac
 
-    if test ! -f /usr/share/wine/gecko/wine_gecko-$GECKO_VERSION-x86.cab
+    if test ! -f /usr/share/wine/gecko/wine_gecko-$GECKO_VERSION-x86$GECKO_SUFFIX
     then
         rm -f wine_gecko-$GECKO_VERSION-x86$GECKO_SUFFIX
         wget http://downloads.sourceforge.net/wine/wine_gecko-$GECKO_VERSION-x86$GECKO_SUFFIX
