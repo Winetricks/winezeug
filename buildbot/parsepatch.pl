@@ -36,7 +36,7 @@ sub update_cache() {
         chomp $last_id;
         close(LAST);
     } else {
-        $last_id = 77630;
+        $last_id = 78336;
     }
     # Update our cache of patches
     mkdir("cached_patches");
