@@ -94,6 +94,11 @@ install_prereqs() {
     sudo apt-get install winbind
     # Needed to avoid gecko prompt
     sh ../install-gecko.sh
+    # Needed if building with gcc-2.95
+    if ! test -x /usr/local/gcc-2.95.3/bin/gcc
+    then
+        sh build-gcc-2.95.3.sh
+    fi
 }
 
 destroy() {
@@ -191,23 +196,26 @@ demo() {
 }
 
 #--------- Functions used while slave is running; invoked by master.cfg ---------
+#---- Current directory is the top of the wine tree for the current builder -----
 
 # Apply patches needed to skip flaky tests
 do_patch() {
-    cd $TOP/sandbox/slave/runtests/build
     for p in $SRC/*-ignore-*.patch
     do
-        echo $p
-        patch -p1 < $p
+        if test -f $p
+        then
+            echo $p
+            patch -p1 < $p
+        fi
     done
 }
 
+do_configure_gcc295() {
+    autoconf
+    CC="ccache /usr/local/gcc-2.95.3/bin/gcc" CFLAGS="-g -O0" ./configure
+}
+
 do_configure() {
-    cd $TOP/sandbox/slave/runtests/build
-    # Running make_makefiles without adding new source files to git
-    # generates invalid Makefile.in's; let's hope each patch that adds a new
-    # source file contains the needed Makefile.in changes.
-    #tools/make_makefiles
     autoconf
     # ccache seems to bring build times down by about a factor 
     # of 2-3 on a wide range of machines
@@ -220,13 +228,10 @@ do_configure() {
 }
 
 do_build() {
-    cd $TOP/sandbox/slave/runtests/build
     make -j`system_numcpus`
 }
 
 do_test() {
-    cd $TOP/sandbox/slave/runtests/build
-
     rm -rf $WINEPREFIX
     # winetricks vd=800x600
     ./wine reg add HKCU\\Software\\Wine\\Explorer /v Desktop /d Default
@@ -242,6 +247,7 @@ do_test() {
 
 SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
+echo wineslave.sh started in directory `pwd` with arguments $@
 
 if ! test "$1"
 then
@@ -262,6 +268,7 @@ do
     tail) tail -f $TOP/sandbox/slave/twistd.log;;
     patch) do_patch;;
     configure) do_configure;;
+    configure_gcc295) do_configure_gcc295;;
     build) do_build;;
     test) do_test;;
     heaptest) 
@@ -271,6 +278,6 @@ do
             do_test
         );;
     demo) demo;;
-    *) usage;;
+    *) echo "Invalid argument $arg"; usage;;
     esac
 done
