@@ -1,0 +1,47 @@
+diff --git a/dlls/ole32/usrmarshal.c b/dlls/ole32/usrmarshal.c
+index 8f5feef..acc3144 100644
+--- a/dlls/ole32/usrmarshal.c
++++ b/dlls/ole32/usrmarshal.c
+@@ -50,6 +50,12 @@ WINE_DEFAULT_DEBUG_CHANNEL(ole);
+   ( (DWORD)'U'         | ( (DWORD)'s' << 8 ) | \
+   ( (DWORD)'e' << 16 ) | ( (DWORD)'r' << 24 ) )
+ 
++#ifdef _WIN64
++static const ULONG WDT_INPROC_CALL_THISARCH = WDT_INPROC64_CALL;
++#else
++static const ULONG WDT_INPROC_CALL_THISARCH = WDT_INPROC_CALL;
++#endif
++
+ static const char* debugstr_user_flags(ULONG *pFlags)
+ {
+     char buf[12];
+@@ -482,8 +488,7 @@ unsigned char * __RPC_USER HGLOBAL_UserUnmarshal(ULONG *pFlags, unsigned char *p
+     fContext = *(ULONG *)pBuffer;
+     pBuffer += sizeof(ULONG);
+ 
+-    if (((fContext == WDT_INPROC_CALL) && (sizeof(*phGlobal) < 8)) ||
+-        ((fContext == WDT_INPROC64_CALL) && (sizeof(*phGlobal) == 8)))
++    if (fContext == WDT_INPROC_CALL_THISARCH)
+     {
+         *phGlobal = *(HGLOBAL *)pBuffer;
+         pBuffer += sizeof(*phGlobal);
+@@ -1095,8 +1100,7 @@ unsigned char * __RPC_USER HMETAFILE_UserUnmarshal(ULONG *pFlags, unsigned char
+     fContext = *(ULONG *)pBuffer;
+     pBuffer += sizeof(ULONG);
+ 
+-    if (((fContext == WDT_INPROC_CALL) && (sizeof(*phmf) < 8)) ||
+-        ((fContext == WDT_INPROC64_CALL) && (sizeof(*phmf) == 8)))
++    if (fContext == WDT_INPROC_CALL_THISARCH)
+     {
+         *phmf = *(HMETAFILE *)pBuffer;
+         pBuffer += sizeof(*phmf);
+@@ -1287,8 +1291,7 @@ unsigned char * __RPC_USER HENHMETAFILE_UserUnmarshal(ULONG *pFlags, unsigned ch
+     fContext = *(ULONG *)pBuffer;
+     pBuffer += sizeof(ULONG);
+ 
+-    if (((fContext == WDT_INPROC_CALL) && (sizeof(*phEmf) < 8)) ||
+-        ((fContext == WDT_INPROC64_CALL) && (sizeof(*phEmf) == 8)))
++    if (fContext == WDT_INPROC_CALL_THISARCH)
+     {
+         *phEmf = *(HENHMETAFILE *)pBuffer;
+         pBuffer += sizeof(*phEmf);
