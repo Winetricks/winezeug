@@ -3,6 +3,7 @@
 # skipping tests listed in bugzilla as failing.
 
 set -e
+set -x
 
 usage() {
     cat <<_EOF_
@@ -137,6 +138,7 @@ get_blacklist() {
 do_goodtests() {
     # Skip all tests that might fail
     match='SYS|FLAKY|CRASHY'
+    echo "Checking WINEDEBUG ($WINEDEBUG)"
     case "$WINEDEBUG" in
     *warn+heap*) match="$match|HEAP" ;;
     esac
