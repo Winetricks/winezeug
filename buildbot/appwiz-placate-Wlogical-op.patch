@@ -1,0 +1,19 @@
+diff --git a/dlls/appwiz.cpl/addons.c b/dlls/appwiz.cpl/addons.c
+index 95e4fe8..72f9a5a 100644
+--- a/dlls/appwiz.cpl/addons.c
++++ b/dlls/appwiz.cpl/addons.c
+@@ -272,8 +272,12 @@ static BOOL install_from_default_dir(void)
+ 
+     if (!ret)
+         ret = install_from_unix_file(INSTALL_DATADIR "/wine/gecko/" GECKO_FILE_NAME);
+-    if (!ret && strcmp(INSTALL_DATADIR, "/usr/share"))
+-        ret = install_from_unix_file("/usr/share/wine/gecko/" GECKO_FILE_NAME);
++    if (!ret) {
++        if (strcmp(INSTALL_DATADIR, "/usr/share") != 0) {
++            /* Also try loading from standard install's location */
++            ret = install_from_unix_file("/usr/share/wine/gecko/" GECKO_FILE_NAME);
++        }
++    }
+     return ret;
+ }
+ 
