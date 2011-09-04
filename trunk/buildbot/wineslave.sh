@@ -161,6 +161,7 @@ create_slave() {
     cp $SRC/dotests.sh $TOP/sandbox/bin/dotests.sh
     chmod +x $TOP/sandbox/bin/wineslave.sh
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
+    cp $SRC/*-placate-*.patch $TOP/sandbox/bin
     )
 
     echo "Filling in $TOP/sandbox/slave/info/host with following info:"
@@ -200,7 +201,7 @@ demo() {
 
 # Apply patches needed to skip flaky tests
 do_patch() {
-    for p in $SRC/*-ignore-*.patch
+    for p in $SRC/*-ignore-*.patch $SRC/*-ignore-*.patch
     do
         if test -f $p
         then
