@@ -211,7 +211,12 @@ do_configure() {
     autoconf
     # ccache seems to bring build times down by about a factor 
     # of 2-3 on a wide range of machines
-    CC="ccache gcc -m32" CFLAGS="-g -O0" ./configure
+    # Using -Werror seems safe on 32 bit machines, but see
+    # http://bugs.winehq.org/show_bug.cgi?id=28275 for some files we miss.
+    # Also note that -Werror might not catch everything until -O2,
+    # so if Alexandre runs -Werror -O2 and notices we miss some errors,
+    # we might need to arrange for one builder to use the slower -O2.
+    CC="ccache gcc -m32" CFLAGS="-g -O0 -Werror" ./configure
 }
 
 do_build() {
