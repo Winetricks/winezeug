@@ -21,6 +21,7 @@ usage() {
     echo "   configure"
     echo "   build"
     echo "   test"
+    echo "   heaptest"
     echo "   demo"
 
     system_info
@@ -152,6 +153,7 @@ create_slave() {
     fi
     buildslave create-slave slave $1 $2 $3
     cp $SRC/wineslave.sh $TOP/sandbox/bin/wineslave.sh
+    cp $SRC/dotests.sh $TOP/sandbox/bin/dotests.sh
     chmod +x $TOP/sandbox/bin/wineslave.sh
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     )
@@ -257,6 +259,12 @@ do
     configure) do_configure;;
     build) do_build;;
     test) do_test;;
+    heaptest) 
+        (
+            WINEDEBUG=warn+heap 
+            export WINEDEBUG
+            do_test
+        );;
     demo) demo;;
     *) usage;;
     esac
