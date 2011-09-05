@@ -253,6 +253,8 @@ do_build() {
 }
 
 do_test() {
+    WINEPREFIX=`cd ..; pwd`/wineprefix
+    export WINEPREFIX
     rm -rf $WINEPREFIX
     # winetricks vd=800x600
     ./wine reg add HKCU\\Software\\Wine\\Explorer /v Desktop /d Default
