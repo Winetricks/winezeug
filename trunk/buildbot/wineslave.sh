@@ -255,16 +255,6 @@ do_build() {
 }
 
 do_test() {
-    WINEPREFIX=`cd ..; pwd`/wineprefix
-    export WINEPREFIX
-    rm -rf $WINEPREFIX
-    # winetricks vd=800x600
-    ./wine reg add HKCU\\Software\\Wine\\Explorer /v Desktop /d Default
-    ./wine reg add HKCU\\Software\\Wine\\Explorer\\Desktops /v Default /d 800x600
-    # Avoid race condition with registry that caused some tests to not run
-    # in a virtual desktop?
-    server/wineserver -w
-
     sh $SRC/dotests.sh goodtests
 }
 
