@@ -327,9 +327,8 @@ linksos()
             gnutls-devel.i686 libgphoto2-devel.i686 openal-soft-devel.i686 isdn4k-utils-devel.i686 \
             gsm-devel.i686 libv4l-devel.i686 cups-devel.i686 libtiff-devel.i686
         ;;
-    Ubuntu*10.04|Ubuntu*10.10)
-        # Should be all that's needed now
-        apt-get install ia32-libs
+    Ubuntu*10.04|Ubuntu*10.10|Ubuntu*11.04)
+        apt-get install ia32-libs lib32asound2-dev lib32ncurses5-dev lib32v4l-dev lib32z1-dev
         ;;
     *)
         echo "I do not know how to install 32 bit libraries for distro $distro yet"
