@@ -44,7 +44,9 @@ HEADLESS_DLLS="\
 
 # Run all tests that don't require the display
 do_background_tests() {
-    (
+    background_errors=0
+   
+    OLDDISPLAY=DISPLAY
     unset DISPLAY
     export WINEPREFIX=`pwd`/wineprefix-background
     cd dlls
@@ -52,7 +54,7 @@ do_background_tests() {
     do
         if echo $HEADLESS_DLLS | grep -qw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make test
+            make -k test || background_errors=`expr $background_errors + 1`
             cd ../..
         fi
     done
@@ -62,28 +64,46 @@ do_background_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            make test
+            make -k test || background_errors=`expr $background_errors + 1`
             cd ../..
         fi
     done
-    )
+
+    # probably not needed, but...
+    case "$OLDDISPLAY" in
+    "") ;;
+    *) DISPLAY=$OLDDISPLAY; export DISPLAY;;
+    esac
+
+    case $background_errors in
+    0) echo "do_background_tests pass."; return 0 ;;
+    *) echo "do_background_tests fail: $background_errors directories had errors." ; return 1;;
+    esac
 }
 
 # Run all tests that do require the display
 do_foreground_tests() {
-    (
+    foreground_errors=0
     export WINEPREFIX=`pwd`/wineprefix-foreground
     cd dlls
     for dir in *
     do
         if echo $HEADLESS_DLLS | grep -vqw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make test
+            make -k test || foreground_errors=`expr $foreground_errors + 1`
             cd ../..
         fi
     done
     cd ..
-    )
+
+    # In win64, currently iexplore and rpcss hang around after tests
+    # causing buildbot to not detect that tests have completed.
+    server/wineserver -k
+
+    case $foreground_errors in
+    0) echo "do_foreground_tests pass."; return 0 ;;
+    *) echo "do_foreground_tests fail: $foreground_errors directories had errors." ; return 1;;
+    esac
 }
 
 # Blacklist format
@@ -169,12 +189,12 @@ do_goodtests() {
         # The background tests don't need the display, and use their own wineprefix
         # Neither use much CPU, so this should save time even on slow computers
         do_background_tests > background.log 2>&1 &
-        do_foreground_tests
         # Under set -e, script aborts early for foreground failures, and on wait %1 for background failures,
         # making it hard to show the background log before aborting.
         # So use set +e, and check status of background and foreground manually.
-        foreground_status=$?
         set +e
+        do_foreground_tests
+        foreground_status=$?
         wait %1
         background_status=$?
         cat background.log
