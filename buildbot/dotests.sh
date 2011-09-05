@@ -52,7 +52,7 @@ do_background_tests() {
     do
         if echo $HEADLESS_DLLS | grep -qw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make -k test || echo dir $dir failed
+            make test
             cd ../..
         fi
     done
@@ -62,7 +62,7 @@ do_background_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            make -k test || echo dir $dir failed
+            make test
             cd ../..
         fi
     done
@@ -78,7 +78,7 @@ do_foreground_tests() {
     do
         if echo $HEADLESS_DLLS | grep -vqw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make -k test || echo dir $dir failed
+            make test
             cd ../..
         fi
     done
