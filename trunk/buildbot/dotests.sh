@@ -95,6 +95,7 @@ do_foreground_tests() {
 # SYS - always fails on some systems, not on others
 # HEAP - fails or crashes if warn+heap
 # NOTTY - test fails if output redirected
+# BAD64 - always fails on 64 bits
 
 cat > /tmp/blacklist.txt <<_EOF_
     dlls/kernel32/tests/heap.ok     HEAP
@@ -105,6 +106,8 @@ cat > /tmp/blacklist.txt <<_EOF_
     dlls/user32/tests/input.ok      SYS    12053
     dlls/user32/tests/msg.ok        SYS    12053
     dlls/user32/tests/win.ok        SYS    12053
+    dlls/oleaut32/tests/tmarshal.ok BAD64  26768
+    dlls/ieframe/tests/ie.ok        BAD64  26768
     dlls/ws2_32/tests/sock.ok       CRASHY 28012
     dlls/wininet/tests/urlcache.ok  FLAKY  28038
     dlls/winmm/tests/wave.ok        SYS    28048
@@ -120,6 +123,7 @@ cat > /tmp/blacklist.txt <<_EOF_
     dlls/dsound/tests/ds3d.ok       HEAP   28260
     dlls/mshtml/tests/style.ok      HEAP   28262
     dlls/winhttp/tests/winhttp.ok   SYS    28267
+    programs/wscript/tests/run.ok   BAD64  28285
 _EOF_
 
 
@@ -138,6 +142,9 @@ get_blacklist() {
 do_goodtests() {
     # Skip all tests that might fail
     match='SYS|FLAKY|CRASHY'
+    case `arch` in
+    x86_64) match="$match|BAD64";;
+    esac
     echo "Checking WINEDEBUG ($WINEDEBUG)"
     case "$WINEDEBUG" in
     *warn+heap*) match="$match|HEAP" ;;
