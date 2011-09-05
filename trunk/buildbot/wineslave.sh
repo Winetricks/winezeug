@@ -222,7 +222,7 @@ do_configure_gcc295() {
     case `arch` in
     i686)
         autoconf
-        CC="ccache /usr/local/gcc-2.95.3/bin/gcc" CFLAGS="-g -O0" ./configure
+        ./configure CC="ccache /usr/local/gcc-2.95.3/bin/gcc" CFLAGS="-g -O0" 
         ;;
     *)
         echo "gcc-2.95 is only supported on 32 bit x86"
@@ -242,8 +242,10 @@ do_configure() {
     # we might need to arrange for one builder to use the slower -O2.
     # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix.
     case `arch` in
-    i686) CC="ccache gcc" CFLAGS="-g -O0 -Werror" ./configure ;;
-    x86_64) CC="ccache gcc" CFLAGS="-g -O0" ./configure ;;
+    i686)
+        ./configure CC="ccache gcc" CFLAGS="-g -O0 -Werror" ;;
+    x86_64)
+        ./configure CC="ccache gcc" CFLAGS="-g -O0" --enable-win64 ;;
     *) echo "Unknown arch"; exit 1;;
     esac
 }
