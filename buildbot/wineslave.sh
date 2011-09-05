@@ -201,7 +201,7 @@ demo() {
 
 # Apply patches needed to skip flaky tests
 do_patch() {
-    for p in $SRC/*-ignore-*.patch $SRC/*-ignore-*.patch
+    for p in $SRC/*-ignore-*.patch $SRC/*-placate-*.patch
     do
         if test -f $p
         then
