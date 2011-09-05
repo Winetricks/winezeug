@@ -94,11 +94,18 @@ install_prereqs() {
     sudo apt-get install winbind
     # Needed to avoid gecko prompt
     sh ../install-gecko.sh
-    # Needed if building with gcc-2.95
-    if ! test -x /usr/local/gcc-2.95.3/bin/gcc
-    then
-        sh build-gcc-2.95.3.sh
-    fi
+    case `arch` in
+    i686)
+        # Needed if building with gcc-2.95
+        if ! test -x /usr/local/gcc-2.95.3/bin/gcc
+        then
+            sh build-gcc-2.95.3.sh
+        fi
+        ;;
+    x86_64)
+        sudo apt-get install libc6-dev-i386 ia32-libs
+        ;;
+    esac
 }
 
 destroy() {
@@ -212,8 +219,16 @@ do_patch() {
 }
 
 do_configure_gcc295() {
-    autoconf
-    CC="ccache /usr/local/gcc-2.95.3/bin/gcc" CFLAGS="-g -O0" ./configure
+    case `arch` in
+    i686)
+        autoconf
+        CC="ccache /usr/local/gcc-2.95.3/bin/gcc" CFLAGS="-g -O0" ./configure
+        ;;
+    *)
+        echo "gcc-2.95 is only supported on 32 bit x86"
+        exit 1
+        ;;
+    esac
 }
 
 do_configure() {
@@ -225,7 +240,12 @@ do_configure() {
     # Also note that -Werror might not catch everything until -O2,
     # so if Alexandre runs -Werror -O2 and notices we miss some errors,
     # we might need to arrange for one builder to use the slower -O2.
-    CC="ccache gcc -m32" CFLAGS="-g -O0 -Werror" ./configure
+    # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix.
+    case `arch` in
+    i686) CC="ccache gcc" CFLAGS="-g -O0 -Werror" ./configure ;;
+    x86_64) CC="ccache gcc" CFLAGS="-g -O0" ./configure ;;
+    *) echo "Unknown arch"; exit 1;;
+    esac
 }
 
 do_build() {
