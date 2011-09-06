@@ -134,6 +134,7 @@ cat > /tmp/blacklist.txt <<_EOF_
     dlls/winhttp/tests/winhttp.ok   SYS    28267
     programs/wscript/tests/run.ok   BAD64  28285
     dlls/msctf/tests/inputprocessor.ok FLAKY 28288
+    dlls/shell32/tests/shelllink.ok FLAKY  28290
 _EOF_
 
 
