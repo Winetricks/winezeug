@@ -166,6 +166,7 @@ create_slave() {
     buildslave create-slave slave $1 $2 $3
     cp $SRC/wineslave.sh $TOP/sandbox/bin/wineslave.sh
     cp $SRC/dotests.sh $TOP/sandbox/bin/dotests.sh
+    cp $SRC/dotests_blacklist.txt $TOP/sandbox/bin/dotests.sh
     chmod +x $TOP/sandbox/bin/wineslave.sh
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     cp $SRC/*-placate-*.patch $TOP/sandbox/bin
