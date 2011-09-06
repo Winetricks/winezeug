@@ -5,6 +5,9 @@
 set -e
 set -x
 
+SRC=`dirname $0`
+SRC=`cd $SRC; pwd`
+
 usage() {
     cat <<_EOF_
 Usage: $0 command
@@ -106,40 +109,6 @@ do_foreground_tests() {
 # NOTTY - test fails if output redirected
 # BAD64 - always fails on 64 bits
 
-cat > /tmp/blacklist.txt <<_EOF_
-    dlls/kernel32/tests/heap.ok     HEAP
-    dlls/dsound/tests/ds3d8.ok      SYS    8668
-    dlls/dsound/tests/ds3d.ok       SYS    8668
-    dlls/dsound/tests/dsound8.ok    SYS    8668
-    dlls/dsound/tests/dsound.ok     SYS    8668
-    dlls/user32/tests/input.ok      SYS    12053
-    dlls/user32/tests/msg.ok        SYS    12053
-    dlls/user32/tests/win.ok        SYS    12053
-    dlls/user32/tests/static.ok     FLAKY  20149
-    dlls/oleaut32/tests/tmarshal.ok BAD64  26768
-    dlls/ieframe/tests/ie.ok        BAD64  26768
-    dlls/ws2_32/tests/sock.ok       CRASHY 28012
-    dlls/wininet/tests/urlcache.ok  FLAKY  28038
-    dlls/winmm/tests/wave.ok        SYS    28048
-    dlls/winmm/tests/mci.ok         SYS    28071
-    dlls/urlmon/tests/url.ok        FLAKY  28108
-    dlls/winmm/tests/capture.ok     SYS    28109
-    dlls/shell32/tests/shlfolder.ok SYS    28216
-    dlls/kernel32/tests/process.ok  NOTTY  28220
-    dlls/d3dx9_36/tests/shader.ok   HEAP   28255
-    dlls/kernel32/tests/pipe.ok     HEAP   28257
-    programs/cmd/tests/batch.ok     HEAP   28258
-    dlls/dsound/tests/ds3d8.ok      HEAP   28260
-    dlls/dsound/tests/ds3d.ok       HEAP   28260
-    dlls/mshtml/tests/style.ok      HEAP   28262
-    dlls/winhttp/tests/winhttp.ok   SYS    28267
-    programs/wscript/tests/run.ok   BAD64  28285
-    dlls/msctf/tests/inputprocessor.ok FLAKY 28288
-    dlls/shell32/tests/shelllink.ok FLAKY  28290
-    dlls/mshtml/tests/htmldoc.ok    FLAKY  28295
-_EOF_
-
-
 # Return tests that match given criterion
 # Usage: get_blacklist regexp
 # e.g.
@@ -147,7 +116,7 @@ _EOF_
 #  get_blacklist 'FLAKY|CRASHY' gets all tests that fail or crash occasionally
 
 get_blacklist() {
-    egrep "$1" < /tmp/blacklist.txt | awk '{print $1}' | sort -u
+    egrep "$1" < $SRC/dotests_blacklist.txt | awk '{print $1}' | sort -u
 }
 
 # Run all the known good tests
@@ -251,5 +220,3 @@ badtests)    do_badtests .              ;;
 flakytests)  do_badtests 'FLAKY|CRASHY' ;;
 *) usage;;
 esac
-
-rm /tmp/blacklist.txt
