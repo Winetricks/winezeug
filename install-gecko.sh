@@ -18,7 +18,7 @@ install_gecko()
     gecko-1.3)
         GECKO_VERSION=1.3
         case $myarch in
-        i686)   GECKO_SHA1SUM=acc6a5bc15ebb3574e00f8ef4f23912239658b41 ;;
+        x86)   GECKO_SHA1SUM=acc6a5bc15ebb3574e00f8ef4f23912239658b41 ;;
         x86_64) GECKO_SHA1SUM=5bcf29c48677dffa7a9112d481f7f5474cd255d4 ;;
         esac
         GECKO_SUFFIX=.msi
@@ -54,7 +54,7 @@ install_gecko wine-1.2
 install_gecko wine-1.3.3
 install_gecko gecko-1.2
 case `arch` in
-x86_64)
+amd64|x86_64)
     myarch=x86_64
     install_gecko gecko-1.3
     ;;
