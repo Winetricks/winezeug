@@ -16,17 +16,6 @@ _EOF_
     exit 1
 }
 
-system_osname() {
-    # FIXME: do this portably
-    lsb_release -d -s | tr -d '\012'
-    echo ", "
-    uname -r | tr -d '\012'
-    echo ", "
-    pulseaudio --version | tr -d '\012'
-    echo ", "
-    cat /proc/asound/version
-}
-
 # DLLs whose tests don't need DISPLAY set
 HEADLESS_DLLS="\
     advpack amstream avifil32 browseui cabinet comcat credui crypt32 \
