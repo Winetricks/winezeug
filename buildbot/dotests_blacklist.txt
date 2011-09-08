@@ -9,7 +9,7 @@ dlls/user32/tests/win.ok        SYS    12053
 dlls/user32/tests/static.ok     FLAKY  20149
 dlls/oleaut32/tests/tmarshal.ok BAD64  26768
 dlls/ieframe/tests/ie.ok        BAD64  26768
-dlls/ws2_32/tests/sock.ok       CRASHY 28012
+dlls/ws2_32/tests/sock.ok       CRASHY 28102
 dlls/wininet/tests/urlcache.ok  CRASHY 28038
 dlls/winmm/tests/wave.ok        SYS    28048
 dlls/winmm/tests/mci.ok         SYS    28071
