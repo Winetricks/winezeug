@@ -3,7 +3,7 @@
 # skipping tests listed in bugzilla as failing.
 
 set -e
-set -x
+#set -x
 
 SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
@@ -15,6 +15,7 @@ Commands:
    goodtests
    badtests
    flakytests
+   crashytests
 _EOF_
     exit 1
 }
@@ -183,20 +184,22 @@ do_badtests() {
 
     for badtest in `get_blacklist $1`
     do
+        reasons="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $2}' | sort -u | tr '\012' ' '`"
+        bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}' | sort -u | tr '\012' ' '`"
+        if ! test "$bugs"
+        then
+            echo "$badtest is listed as $reasons, but is not listed as a bug, so skipping."
+            continue
+        fi
         badtestdir=${badtest%/*}
         badtestfile=${badtest##*/}
         (
         cd $badtestdir
         if make $badtestfile
         then
-            reasons="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $2}'`"
-            bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}'`"
-            if test "$bugs"
-            then
-                echo "$badtest passed; the blacklist says this test is $reasons, and is mentioned in bug $bugs."
-            fi
+            echo "$badtest passed; blacklist says $reasons, see bug $bugs."
         else
-            echo "$badtest FAILED."
+            echo "$badtest FAILED; blacklist says $reasons, see bug $bugs."
         fi
         )
     done
@@ -217,6 +220,7 @@ shift
 case "$arg" in
 goodtests)   do_goodtests               ;;
 badtests)    do_badtests .              ;;
-flakytests)  do_badtests 'FLAKY|CRASHY' ;;
+flakytests)  do_badtests FLAKY          ;;
+crashytests) do_badtests CRASHY         ;;
 *) usage;;
 esac
