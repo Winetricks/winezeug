@@ -19,6 +19,7 @@ dlls/shell32/tests/shlfolder.ok SYS    28216
 dlls/kernel32/tests/process.ok  NOTTY  28220
 dlls/d3dx9_36/tests/shader.ok   HEAP   28255
 dlls/kernel32/tests/pipe.ok     HEAP   28257
+dlls/kernel32/tests/pipe.ok     FLAKY  28257
 programs/cmd/tests/batch.ok     HEAP   28258
 dlls/dsound/tests/ds3d8.ok      HEAP   28260
 dlls/dsound/tests/ds3d.ok       HEAP   28260
@@ -29,3 +30,4 @@ dlls/msctf/tests/inputprocessor.ok FLAKY 28288
 dlls/shell32/tests/shelllink.ok FLAKY  28290
 dlls/mshtml/tests/htmldoc.ok    FLAKY  28295
 dlls/riched20/tests/editor.ok   FLAKY  28298 
+dlls/ddraw/tests/visual.ok      FLAKY  28301
