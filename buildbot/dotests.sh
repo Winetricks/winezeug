@@ -189,8 +189,8 @@ do_badtests() {
         cd $badtestdir
         if make $badtestfile
         then
-            reasons="`grep $badtest < /tmp/blacklist.txt | awk '{print $2}'`"
-            bugs="`grep $badtest < /tmp/blacklist.txt | awk '{print $3}'`"
+            reasons="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $2}'`"
+            bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}'`"
             if test "$bugs"
             then
                 echo "$badtest passed; the blacklist says this test is $reasons, and is mentioned in bug $bugs."
