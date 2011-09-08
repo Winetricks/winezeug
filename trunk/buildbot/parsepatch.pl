@@ -26,18 +26,22 @@ $maxpatches=$ARGV[0];
 # but small enough that newer patches don't languish behind old ones during startup
 $maxage=25;
 
-$verbose = 0;
+$verbose = 2;
 
 sub update_cache() {
+    print "Updating cache\n" if ($verbose > 1);
     my $last_id;
     if (-f "parsepatches_last.dat") {
         open(LAST, "parsepatches_last.dat");
         $last_id = <LAST>;
         chomp $last_id;
         close(LAST);
-    } else {
-        $last_id = 78336;
     }
+    if ($last_id < $latest_committed) {
+        $last_id = $latest_committed;
+    }
+    print "latest_committed $latest_committed\n" if ($verbose > 1);
+
     # Update our cache of patches
     mkdir("cached_patches");
     for (;;) {
@@ -73,8 +77,22 @@ sub bydate() {
     return $datetime_a <=> $datetime_b;
 }
 
+sub update_latest_committed() {
+    # FIXME: make this less fragile
+    print "Fetching patch index\n" if ($verbose > 0);
+    unlink("patches_index.html");
+    if (!system("wget -O patches_index.html http://source.winehq.org/patches > /dev/null 2>&1")) {
+        $latest_committed = `grep Committed < patches_index.html | head -n 1 | sed 's,.*id.>,,;s,<.*,,'`;
+    } else {
+        warn "Could not contact source.winehq.org";
+    }
+    print "Done fetching patch index\n" if ($verbose > 0);
+}
+
 #---------- Main program ---------------
 
+# Find out what the most recent committed patch is, and only test newer ones
+update_latest_committed();
 update_cache();
 
 if (-f "parsepatches_done.dat") {
@@ -94,6 +112,7 @@ foreach (<cached_patches/cache-*.patch>) {
     $patch_id = $1;
     # Skip it if it's too old
     next if $last_id - $patch_id > $maxage;
+    next if $patch_id <= $latest_committed;
     # Skip it if we've already processed it (really, we could delete the file from the cache instead)
     next if $done_ids{$patch_id};
 
