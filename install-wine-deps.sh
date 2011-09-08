@@ -105,6 +105,14 @@ then
     exit 1
 fi
 
+#
+# Alpine Linux:
+alpine_pkgs="\
+alsa-lib-dev autoconf automake bison build-base cups-dev flex fontconfig-dev freetype-dev git gnutls-dev gsm-dev \
+gst-plugins-base-dev gstreamer-dev jpeg-dev lcms-dev libgphoto2-dev libpng-dev libxcomposite-dev libxcursor-dev \
+libxdamage-dev libxinerama-dev libxml2-dev libxrandr-dev libxrender-dev libxslt-dev libxxf86dga-dev mesa-dev \
+mpg123-dev ncurses-dev openal-soft-dev openldap-dev openssl-dev paxctl tiff-dev v4l-utils-dev winbind zlib-dev"
+
 #----------------------------------------------------------------------------
 # Debian data, common to Debian GNU/kFreeBSD, GNU/Hurd and GNU/Linux:
 debian_common_pkgs="\
@@ -264,6 +272,7 @@ else
 fi
 
 case $distro in
+*Alpine*Linux*) apk add $alpine_pkgs;;
 Ubuntu*7.10) apt-get install $ubuntu_common_pkgs $ubuntu_gutsy_pkgs;;
 Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
