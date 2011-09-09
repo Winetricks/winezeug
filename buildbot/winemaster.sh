@@ -110,7 +110,10 @@ stop_master() {
 # Shows how to bring up a demo master
 demo() {
     destroy
-    install_prereqs
+    if x`which virtualenv` = x
+    then
+        install_prereqs
+    fi
     create_master
     start_master
 }
@@ -190,7 +193,7 @@ do
     stop) stop_master;;
     tail) tail -f $TOP/sandbox/master/twistd.log;;
     demo) demo;;
-    try) do_try $1 $EMAIL $SUBJECT; shift;;
+    try) do_try $1 $EMAIL "$SUBJECT"; shift;;
     *) usage ;;
     esac
 done
