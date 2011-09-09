@@ -31,3 +31,4 @@ dlls/shell32/tests/shelllink.ok FLAKY  28290
 dlls/mshtml/tests/htmldoc.ok    FLAKY  28295
 dlls/riched20/tests/editor.ok   FLAKY  28298 
 dlls/ddraw/tests/visual.ok      FLAKY  28301
+dlls/urlmon/tests/protocol.ok   FLAKY  28323
