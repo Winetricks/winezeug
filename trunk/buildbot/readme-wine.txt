@@ -44,7 +44,7 @@ Tips
 - If your computers use Network Manager, the way to use Google's DNS is
   to add the line
      prepend domain-name-servers 8.8.8.8, 8.8.4.4;
-  to /etc/dhcp/dhclient.conf.  (/etc/dhcp3/dhclient.conf is outdated, don't edit that.)
+  to /etc/dhcp/dhclient.conf.  (Or, if you don't have that, /etc/dhcp3/dhclient.conf.)
 
 - Buildmaster system requirements: a recent Linux on any computer at all should do.
 
