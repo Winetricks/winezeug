@@ -38,30 +38,39 @@ on startup.
 (You can't start the slave from crontab, since it needs the desktop to run properly.)
 
 Tips
-- All slaves need at least 1 GB of RAM.  More is better.
-- General purpose buildslaves should have a CPU that is as fast or faster than
-  an intel core 2 duo e8400 (i.e. scores 2400 or higher in
-  http://www.cpubenchmark.net/cpu_list.php ) as well as a reasonable nvidia
-  graphics card (e.g. a GeForce 8500 or later), should run the buildslave in
-  the foreground on a logged in console, and should not be doing anything 
-  else (not even web browsing).  
-- Special purpose buildslaves (e.g. for alternate compilers or architectures)
-  can be slower, can share the computer, and can run in the background from
-  /etc/init.d or cron.
-- If the second ccache'd build takes longer than 2 minutes on an i7
-  or 6 minutes on an e7300, something's wrong; check ccache -s and make
-  sure the hit rate is ok.  (It ought to be, now that wineslave.sh sets
-  CCACHE_SLOPPINESS.)
-- ext4 is 20% or so faster than ext3.  Make sure the buildbot is using
-  that for the build directory and for ~/.ccache
-- Heat can be a problem; try 
+
+- If your ISP's dns is flaky, use Google's instead, else some tests may hang.
+
+- If your computers use Network Manager, the way to use Google's DNS is
+  to add the line
+     prepend domain-name-servers 8.8.8.8, 8.8.4.4;
+  to /etc/dhcp/dhclient.conf.  (/etc/dhcp3/dhclient.conf is outdated, don't edit that.)
+
+- Buildmaster system requirements: a recent Linux on any computer at all should do.
+
+- Buildslave system requirements:
+  - RAM: 1GB (4GB if possible)
+  - CPU: core 2 duo or faster
+  - Graphics: none needed if you just want to run the headless subset of tests,
+    nvidia geforce 8500 or later for the full set 
+  - Slaves that are running the full set of tests should not be doing anything
+    else, not even web browsing)
+
+- Performance debugging tips:
+  - If the second ccache'd build takes longer than 2 minutes on an i7
+    or 6 minutes on an e7300, something's wrong; check ccache -s and make
+    sure the hit rate is ok.  (It ought to be, now that wineslave.sh sets
+    CCACHE_SLOPPINESS.)
+  - ext4 is 20% or so faster than ext3.  Make sure the buildbot is using
+    that for the build directory and for ~/.ccache
+  - Heat can be a problem; try 
      apt-get install lm-sensors
      sensors-detect
      watch sensors
-  and verify that your cpu isn't getting near the critical temperature during
-  a build.
-- Power saving measures may affect speed.
-  Try "cpufreq-set -g performance -r" or "cpufreq-set -g conservative -r"
-  and then verify that the setting took on all cores with cpufreq-info
-  If it didn't, try setting it individually for each core with e.g.
-  "for core in `seq 1 8`; do cpufreq-set -g performance -c$core; done"
+    and verify that your cpu isn't getting near the critical temperature 
+    during a build.
+  - Power saving measures may affect speed.
+    Try "cpufreq-set -g performance -r" or "cpufreq-set -g conservative -r"
+    and then verify that the setting took on all cores with cpufreq-info
+    If it didn't, try setting it individually for each core with e.g.
+    "for core in `seq 1 8`; do cpufreq-set -g performance -c$core; done"
