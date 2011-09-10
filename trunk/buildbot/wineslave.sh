@@ -252,6 +252,11 @@ do_configure() {
 }
 
 do_build() {
+    # If your hit rate per 'ccache -s' is too low, turn the log file on and look at it
+    #export CCACHE_LOGFILE=/tmp/ccache.log
+    # The ccache manpage explains when these are needed.  
+    # Turning them on really helped on my e7300.
+    export CCACHE_SLOPPINESS="file_macro,time_macros,include_file_mtime" 
     make -j`system_numcpus`
 }
 
