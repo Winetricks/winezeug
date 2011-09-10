@@ -48,3 +48,20 @@ Tips
 - Special purpose buildslaves (e.g. for alternate compilers or architectures)
   can be slower, can share the computer, and can run in the background from
   /etc/init.d or cron.
+- If the second ccache'd build takes longer than 2 minutes on an i7
+  or 6 minutes on an e7300, something's wrong; check ccache -s and make
+  sure the hit rate is ok.  (It ought to be, now that wineslave.sh sets
+  CCACHE_SLOPPINESS.)
+- ext4 is 20% or so faster than ext3.  Make sure the buildbot is using
+  that for the build directory and for ~/.ccache
+- Heat can be a problem; try 
+     apt-get install lm-sensors
+     sensors-detect
+     watch sensors
+  and verify that your cpu isn't getting near the critical temperature during
+  a build.
+- Power saving measures may affect speed.
+  Try "cpufreq-set -g performance -r" or "cpufreq-set -g conservative -r"
+  and then verify that the setting took on all cores with cpufreq-info
+  If it didn't, try setting it individually for each core with e.g.
+  "for core in `seq 1 8`; do cpufreq-set -g performance -c$core; done"
