@@ -26,7 +26,7 @@ $maxpatches=$ARGV[0];
 # but small enough that newer patches don't languish behind old ones during startup
 $maxage=25;
 
-$verbose = 2;
+$verbose = 0;
 
 sub update_cache() {
     print "Updating cache\n" if ($verbose > 1);
