@@ -26,7 +26,6 @@ dlls/dsound/tests/ds3d.ok       HEAP   28260
 dlls/mshtml/tests/style.ok      HEAP   28262
 dlls/winhttp/tests/winhttp.ok   SYS    28267
 programs/wscript/tests/run.ok   BAD64  28285
-dlls/msctf/tests/inputprocessor.ok FLAKY 28288
 dlls/shell32/tests/shelllink.ok FLAKY  28290
 dlls/mshtml/tests/htmldoc.ok    FLAKY  28295
 dlls/riched20/tests/editor.ok   FLAKY  28298 
