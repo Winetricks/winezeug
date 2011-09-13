@@ -121,6 +121,15 @@ foreach (<cached_patches/cache-*.patch>) {
     push(@patch, "testbotId: $patch_id");
     push(@patch, grep(chomp, <PATCH>));
     close PATCH;
+
+    # Skip it if it doesn't contain a patch line that affects wine
+    @files = grep(/^\+\+\+ /, @patch);
+    print "Got files ".join(" ", @files)."\n" if ($verbose > 1);
+    if (!grep(m,"/Make|/aclocal|/configure|/dlls|/fonts|/include|/loader|/po|/programs|/server|/tools,, @files)) {
+        print "Skipping non-matching patch $patch_id\n" if ($verbose > 1);
+        next;
+    }
+
     @x = grep(/^From:/, @patch);
     $from = $x[0];
     $from =~ s/^From: //;
