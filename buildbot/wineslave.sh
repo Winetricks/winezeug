@@ -252,6 +252,12 @@ do_configure() {
 }
 
 do_build() {
+    # Try to work around http://bugs.winehq.org/show_bug.cgi?id=28373 
+    # "make depend" with -j higher than 4 seems to be dangerous, so let's do it explicitly here.
+    # (-j2 is about 20 seconds faster than -j1, and all my build machines are dual-core or
+    # better, so let's use -j2 for make depend.)
+    make -j2 depend
+
     # If your hit rate per 'ccache -s' is too low, turn the log file on and look at it
     #export CCACHE_LOGFILE=/tmp/ccache.log
     # The ccache manpage explains when these are needed.  
