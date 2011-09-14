@@ -110,7 +110,7 @@ stop_master() {
 # Shows how to bring up a demo master
 demo() {
     destroy
-    if x`which virtualenv` = x
+    if test x`which virtualenv` = x
     then
         install_prereqs
     fi
