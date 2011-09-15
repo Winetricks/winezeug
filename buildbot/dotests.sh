@@ -109,6 +109,7 @@ do_foreground_tests() {
 # HEAP - fails or crashes if warn+heap
 # NOTTY - test fails if output redirected
 # BAD64 - always fails on 64 bits
+# ATI - fails on ATI graphics
 
 # Return tests that match given criterion
 # Usage: get_blacklist regexp
@@ -135,6 +136,10 @@ do_goodtests() {
     if ! test -t 1
     then
         match="$match|NOTTY"
+    fi
+    if lspci | grep VGA.*ATI
+    then
+        match="$match|ATI"
     fi
     touch `get_blacklist "$match"`
 

@@ -32,3 +32,7 @@ dlls/riched20/tests/editor.ok   FLAKY  28298
 dlls/ddraw/tests/visual.ok      FLAKY  28301
 dlls/kernel32/tests/debugger.ok HEAP   28316
 dlls/urlmon/tests/protocol.ok   FLAKY  28323
+dlls/d3d9/tests/query.ok        ATI    28385
+dlls/d3d9/tests/visual.ok       ATI    28386
+dlls/d3d8/tests/device.ok       ATI    28387
+dlls/d3d9/tests/device.ok       ATI    28387
