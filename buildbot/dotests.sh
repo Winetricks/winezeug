@@ -42,6 +42,7 @@ do_background_tests() {
     OLDDISPLAY=DISPLAY
     unset DISPLAY
     export WINEPREFIX=`pwd`/wineprefix-background
+    rm -rf $WINEPREFIX
     cd dlls
     for dir in *
     do
@@ -78,6 +79,7 @@ do_background_tests() {
 do_foreground_tests() {
     foreground_errors=0
     export WINEPREFIX=`pwd`/wineprefix-foreground
+    rm -rf $WINEPREFIX
     cd dlls
     for dir in *
     do
