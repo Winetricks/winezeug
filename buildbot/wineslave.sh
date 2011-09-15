@@ -97,7 +97,7 @@ install_prereqs() {
     case `arch` in
     i686)
         # Needed if building with gcc-2.95
-        if ! test -x /usr/local/gcc-2.95.3/bin/gcc
+        if false && ! test -x /usr/local/gcc-2.95.3/bin/gcc
         then
             sh build-gcc-2.95.3.sh
         fi
