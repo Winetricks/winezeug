@@ -7,6 +7,11 @@ set -e
 
 TOP=$HOME/wineslave.dir
 
+case `arch` in
+i686) geckoarch=x86;;
+x86_64) geckoarch=x86_64;;
+esac
+
 #----- Helper functions -----------------------------------------------------
 
 usage() {
@@ -136,9 +141,9 @@ create_slave() {
         exit 1
     fi
 
-    if ! test -f $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
+    if ! test -f $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2
     then
-        wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-x86-dbg.tar.bz2 -O $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
+        wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 -O $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2
     fi
 
     mkdir -p $TOP
@@ -176,7 +181,7 @@ create_slave() {
     chmod +x $TOP/sandbox/bin/wineslave.sh
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     cp $SRC/*-placate-*.patch $TOP/sandbox/bin
-    cp $SRC/wine_gecko*bz2 $TOP/sandbox/bin
+    cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 $TOP/sandbox/bin
     )
 
     echo "Filling in $TOP/sandbox/slave/info/host with following info:"
@@ -277,7 +282,7 @@ do_build() {
 }
 
 do_test() {
-    cp $SRC/wine_gecko*bz2 .
+    cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 .
     sh $SRC/dotests.sh goodtests
 }
 
