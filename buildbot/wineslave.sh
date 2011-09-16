@@ -206,7 +206,10 @@ stop_slave() {
 # A real slave would connect to, say, buildbot.winehq.org instead of localhost.
 demo() {
     destroy
-    install_prereqs
+    if test x`which ccache` = x
+    then
+        install_prereqs
+    fi
     create_slave localhost:9989 example-slave pass
     start_slave
 }
