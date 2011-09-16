@@ -17,7 +17,6 @@ dlls/urlmon/tests/url.ok        FLAKY  28108
 dlls/winmm/tests/capture.ok     SYS    28109
 dlls/shell32/tests/shlfolder.ok SYS    28216
 dlls/kernel32/tests/process.ok  NOTTY  28220
-dlls/d3dx9_36/tests/shader.ok   HEAP   28255
 dlls/kernel32/tests/pipe.ok     HEAP   28257
 dlls/kernel32/tests/pipe.ok     FLAKY  28257
 programs/cmd/tests/batch.ok     HEAP   28258
