@@ -80,6 +80,13 @@ do_foreground_tests() {
     foreground_errors=0
     export WINEPREFIX=`pwd`/wineprefix-foreground
     rm -rf $WINEPREFIX
+    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
+    then
+        ./wine cmd /c echo "initializing wineprefix to install debug gecko"
+        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    fi
     cd dlls
     for dir in *
     do
@@ -221,6 +228,12 @@ fi
 # Get elapsed time of each test
 WINETEST_WRAPPER=time
 export WINETEST_WRAPPER
+
+# If you want debug gecko, put it in current directory before running
+#if ! test -f wine_gecko-1.3-x86-dbg.tar.bz2
+#then
+#    wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-x86-dbg.tar.bz2
+#fi
 
 arg="$1"
 shift
