@@ -259,9 +259,10 @@ do_configure() {
     # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix.
     case `arch` in
     i686)
-        ./configure CC="ccache gcc" CFLAGS="-g -O0 -Werror" ;;
+        # Reuse configure cache between runs, saves 30 seconds
+        ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="-g -O0 -Werror" ;;
     x86_64)
-        ./configure CC="ccache gcc" CFLAGS="-g -O0" --enable-win64 ;;
+        ./configure --cache-file=../x86_64.config.cache CC="ccache gcc" CFLAGS="-g -O0" --enable-win64 ;;
     *) echo "Unknown arch"; exit 1;;
     esac
 }
