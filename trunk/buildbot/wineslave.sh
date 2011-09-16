@@ -106,10 +106,6 @@ install_prereqs() {
         sudo apt-get install libc6-dev-i386 ia32-libs
         ;;
     esac
-    if ! test -f $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
-    then
-        wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-x86-dbg.tar.bz2 -O $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
-    fi
 }
 
 destroy() {
@@ -139,6 +135,12 @@ create_slave() {
         echo "need slave password"
         exit 1
     fi
+
+    if ! test -f $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
+    then
+        wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-x86-dbg.tar.bz2 -O $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
+    fi
+
     mkdir -p $TOP
     cd $TOP
     test -d sandbox || virtualenv --no-site-packages sandbox
