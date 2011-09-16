@@ -106,6 +106,10 @@ install_prereqs() {
         sudo apt-get install libc6-dev-i386 ia32-libs
         ;;
     esac
+    if ! test -f $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
+    then
+        wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-x86-dbg.tar.bz2 -O $SRC/wine_gecko-1.3-x86-dbg.tar.bz2
+    fi
 }
 
 destroy() {
@@ -170,6 +174,7 @@ create_slave() {
     chmod +x $TOP/sandbox/bin/wineslave.sh
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     cp $SRC/*-placate-*.patch $TOP/sandbox/bin
+    cp $SRC/wine_gecko*bz2 $TOP/sandbox/bin
     )
 
     echo "Filling in $TOP/sandbox/slave/info/host with following info:"
@@ -267,6 +272,7 @@ do_build() {
 }
 
 do_test() {
+    cp $SRC/wine_gecko*bz2 .
     sh $SRC/dotests.sh goodtests
 }
 
