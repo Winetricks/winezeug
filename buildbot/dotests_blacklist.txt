@@ -36,3 +36,4 @@ dlls/d3d9/tests/query.ok        ATI    28385
 dlls/d3d9/tests/visual.ok       ATI    28386
 dlls/d3d8/tests/device.ok       ATI    28387
 dlls/d3d9/tests/device.ok       ATI    28387
+dlls/gdi32/tests/bitmap.ok      SYS    28397
