@@ -74,3 +74,5 @@ Tips
     and then verify that the setting took on all cores with cpufreq-info
     If it didn't, try setting it individually for each core with e.g.
     "for core in `seq 1 8`; do cpufreq-set -g performance -c$core; done"
+    performance is faster than ondemand by 30% (!) on a8-3850 
+    processors, and by about 4% on i7 or q9300 processors.
