@@ -1,0 +1,26 @@
+diff --git a/master/buildbot/sourcestamp.py b/master/buildbot/sourcestamp.py
+index cbe0c54..533cb09 100644
+--- a/master/buildbot/sourcestamp.py
++++ b/master/buildbot/sourcestamp.py
+@@ -240,6 +241,8 @@ class SourceStamp(util.ComparableMixin, styles.Versioned):
+         result['changes'] = [c.asDict() for c in getattr(self, 'changes', [])]
+         result['project'] = self.project
+         result['repository'] = self.repository
++        if self.patch_info:
++            result['patch_comment'] = self.patch_info[1]
+         return result
+ 
+     def __setstate__(self, d):
+diff --git a/master/buildbot/status/web/templates/grid_macros.html b/master/buildbot/status/web/templates/grid_macros.html
+index 81160fa..4e1989c 100644
+--- a/master/buildbot/status/web/templates/grid_macros.html
++++ b/master/buildbot/status/web/templates/grid_macros.html
+@@ -23,7 +23,7 @@
+     {{ ss.revision|shortrev(ss.repository) }}
+     {%- else %}latest{% endif %}
+     {%- if ss.branch %} in {{ ss.branch|e }}{% endif %}
+-    {%- if ss.hasPatch %} [patch]{% endif %}
++    {%- if ss.hasPatch %} [{{ss.patch_comment}}]{% endif %}
+   </td>
+ {%- endmacro %}
+ 

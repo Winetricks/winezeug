@@ -1,0 +1,12 @@
+diff --git a/master/buildbot/sourcestamp.py b/master/buildbot/sourcestamp.py
+index cbe0c54..6230e05 100644
+--- a/master/buildbot/sourcestamp.py
++++ b/master/buildbot/sourcestamp.py
+@@ -211,6 +211,7 @@ class SourceStamp(util.ComparableMixin, styles.Versioned):
+     def getAbsoluteSourceStamp(self, got_revision):
+         return SourceStamp(branch=self.branch, revision=got_revision,
+                            patch=self.patch, repository=self.repository,
++                           patch_info=self.patch_info,
+                            project=self.project, changes=self.changes,
+                            _ignoreChanges=True)
+ 
