@@ -4,6 +4,7 @@
 # LGPL
 
 set -e
+set -x
 
 TOP=$HOME/wineslave.dir
 
@@ -235,11 +236,9 @@ do_patch() {
             # rely to be uncommitted so dotests.sh can detect what user changed
             awk '/^\+\+\+/ {print $2}' < $p | sed 's,^[^/]*/,,' > pfiles
             git apply $p
-            git add `cat pfiles`
-            git commit -m "committing $p"
+            git commit -m "committing $p" `cat pfiles`
         fi
     done
-    git commit -a -m "committing wineslave.sh's kludge patches"
 }
 
 do_configure_gcc295() {
