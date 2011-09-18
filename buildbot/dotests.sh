@@ -108,6 +108,29 @@ do_foreground_tests() {
     esac
 }
 
+# Run all tests in given directory (or directories)
+do_subset_tests() {
+    subset_errors=0
+
+    export WINEPREFIX=`pwd`/wineprefix-subset
+    rm -rf $WINEPREFIX
+    for dir
+    do
+        if test -d $dir/tests && cd $dir/tests
+        then
+            make -k test || subset_errors=`expr $subset_errors + 1`
+            # set up for next iteration; this function is called multiple times
+            make testclean
+            cd ../../..
+        fi
+    done
+
+    case $subset_errors in
+    0) echo "do_subset_tests pass."; return 0 ;;
+    *) echo "do_subset_tests fail: $subset_errors directories had errors." ; return 1;;
+    esac
+}
+
 # Blacklist format
 # test condition [bug]
 # Tests may appear multiple times in the list.
@@ -130,6 +153,35 @@ get_blacklist() {
     egrep "$1" < $SRC/dotests_blacklist.txt | awk '{print $1}' | sort -u
 }
 
+# If this was a really simple change, say which directory to build/test.
+is_simple_change() {
+    # (Ideally buildbot would tell us this, but for now,
+    # grub around in git.)
+    # Get a list of modified directories
+    # (ignoring created or deleted files for now)
+    git status | grep modified: | grep -v configure | awk '{print $3}' | sed 's,/[^/]*$,,' | sort -u > dirs.txt
+
+    # Look for simple tests changes to dlls
+    if test `wc -l < dirs.txt` = 1 && grep 'dlls/.*/tests$' < dirs.txt
+    then
+        # Only one tests directory changed, return its parent
+        cat dirs.txt | sed 's,/tests,,'
+        return 0
+    fi
+
+    sed 's,/tests$,,' < dirs.txt | uniq > dirs2.txt
+
+    if test `wc -l < dirs2.txt` = 1 && grep programs < dirs2.txt > /dev/null
+    then
+        # Only one directory and its tests changed, and it's a program, return it
+        cat dirs2.txt
+        return 0
+    fi
+
+    # some more complex change happened
+    return 1
+}
+
 # Run all the known good tests
 # This takes a while, so speed things up a bit by running some tests in background
 do_goodtests() {
@@ -150,11 +202,29 @@ do_goodtests() {
     then
         match="$match|ATI"
     fi
-    touch `get_blacklist "$match"`
+    blacklist=`get_blacklist "$match"`
+    touch $blacklist
 
     # Many tests only work in english locale
     LANG=en_US.UTF-8
     export LANG
+
+    if dir=`is_simple_change`
+    then
+        # Run tests five times, it's cheap
+        for run in `seq 1 5`
+        do
+            echo run $run of 5
+            if ! do_subset_tests $dir
+            then
+                echo "FAIL: subset_status $?"
+                exit 1
+            fi
+            touch $blacklist
+        done
+        echo "goodtests on single directory $dir done"
+        return 0
+    fi
 
     if test "$DISPLAY" = ""
     then
