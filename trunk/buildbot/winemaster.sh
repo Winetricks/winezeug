@@ -77,6 +77,8 @@ create_master() {
         cd buildbot-git
         # Fix bug that failed to preserve comment
         patch -p1 < $SRC/buildbot-propagate-comment.patch
+        # Hack out patch attachment, which still crashes
+        patch -p1 < $SRC/buildbot-workaround-bug2091.patch
         # hack status page to show comment
         patch -p1 < $SRC/buildbot-show-comment.patch
         # hack to show more rows of grid
