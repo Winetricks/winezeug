@@ -233,7 +233,10 @@ do_patch() {
             # The local repository goes away after each test, it's not a permanent thing
             # Hopefully this will not also commit the user's patch, which we
             # rely to be uncommitted so dotests.sh can detect what user changed
-            git am $p
+            awk '/^\+\+\+/ {print $2}' < $p | sed 's,^[^/]*/,,' > pfiles
+            git apply $p
+            git add `cat pfiles`
+            git commit -m "committing $p"
         fi
     done
     git commit -a -m "committing wineslave.sh's kludge patches"
