@@ -3,7 +3,7 @@
 # skipping tests listed in bugzilla as failing.
 
 set -e
-#set -x
+set -x
 
 SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
@@ -178,6 +178,9 @@ is_simple_change() {
         return 0
     fi
 
+    echo "Not a simple change; here's the list of changed directories" >&2
+    cat dirs.txt >&2
+    
     # some more complex change happened
     return 1
 }
