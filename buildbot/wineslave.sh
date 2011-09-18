@@ -229,9 +229,14 @@ do_patch() {
         if test -f $p
         then
             echo $p
-            patch -p1 < $p
+            # commit them so they don't show up in list of modified files
+            # The local repository goes away after each test, it's not a permanent thing
+            # Hopefully this will not also commit the user's patch, which we
+            # rely to be uncommitted so dotests.sh can detect what user changed
+            git am $p
         fi
     done
+    git commit -a -m "committing wineslave.sh's kludge patches"
 }
 
 do_configure_gcc295() {
