@@ -159,7 +159,7 @@ is_simple_change() {
     # grub around in git.)
     # Get a list of modified directories
     # (ignoring created or deleted files for now)
-    git status | grep modified: | grep -v configure | awk '{print $3}' | sed 's,/[^/]*$,,' | sort -u > dirs.txt
+    time git status | grep modified: | grep -v configure | awk '{print $3}' | sed 's,/[^/]*$,,' | sort -u > dirs.txt
 
     # Look for simple tests changes to dlls
     if test `wc -l < dirs.txt` = 1 && grep 'dlls/.*/tests$' < dirs.txt
