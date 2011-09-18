@@ -216,9 +216,14 @@ do_goodtests() {
     if dir=`is_simple_change`
     then
         # Run tests five times, it's cheap
-        for run in `seq 1 5`
+        # FIXME: remove this when cmd is fixed
+        case $dir in
+        programs/cmd*) n=1 ;;
+        *) n=5 ;;
+        esac
+        for run in `seq 1 $n`
         do
-            echo run $run of 5
+            echo run $run of $n
             if ! do_subset_tests $dir
             then
                 echo "FAIL: subset_status $?"
