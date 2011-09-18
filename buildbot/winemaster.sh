@@ -79,6 +79,8 @@ create_master() {
         patch -p1 < $SRC/buildbot-propagate-comment.patch
         # hack status page to show comment
         patch -p1 < $SRC/buildbot-show-comment.patch
+        # hack to show more rows of grid
+        patch -p1 < $SRC/buildbot-grid-length.patch
         export PIP_USE_MIRRORS=true
         pip install -emaster
         cd ..

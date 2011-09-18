@@ -1,0 +1,13 @@
+diff --git a/master/buildbot/status/web/grid.py b/master/buildbot/status/web/grid.py
+index a94b8a1..6539719 100644
+--- a/master/buildbot/status/web/grid.py
++++ b/master/buildbot/status/web/grid.py
+@@ -226,7 +226,7 @@ class TransposedGridStatusResource(HtmlResource, GridStatusMixin):
+         """
+ 
+         # get url parameters
+-        numBuilds = int(request.args.get("length", [5])[0])
++        numBuilds = int(request.args.get("length", [20])[0])
+         categories = request.args.get("category", [])
+         branch = request.args.get("branch", [ANYBRANCH])[0]
+         if branch == 'trunk': branch = None
