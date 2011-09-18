@@ -209,6 +209,7 @@ do_goodtests() {
     LANG=en_US.UTF-8
     export LANG
 
+    echo "Checking whether change is so simple we don't need to run all tests"
     if dir=`is_simple_change`
     then
         # Run tests five times, it's cheap
