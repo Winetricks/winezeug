@@ -196,7 +196,7 @@ start_slave() {
     cp $SRC/dotests.sh $TOP/sandbox/bin/dotests.sh
     cp $SRC/dotests_blacklist.txt $TOP/sandbox/bin/
     chmod +x $TOP/sandbox/bin/wineslave.sh
-    rm $TOP/sandbox/bin/*.patch
+    rm -f $TOP/sandbox/bin/*.patch
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     cp $SRC/*-placate-*.patch $TOP/sandbox/bin
 
