@@ -76,7 +76,7 @@ create_master() {
         test -d buildbot-git || git clone git://github.com/buildbot/buildbot.git buildbot-git
         cd buildbot-git
         # Fix bug that failed to preserve comment
-        patch -p1 < $SRC/buildbot-propagate-comment.patch
+        #patch -p1 < $SRC/buildbot-propagate-comment.patch
         # Hack out patch attachment, which still crashes
         patch -p1 < $SRC/buildbot-workaround-bug2091.patch
         # hack status page to show comment
