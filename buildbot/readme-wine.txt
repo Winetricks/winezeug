@@ -46,7 +46,17 @@ Tips
      prepend domain-name-servers 8.8.8.8, 8.8.4.4;
   to /etc/dhcp/dhclient.conf.  (Or, if you don't have that, /etc/dhcp3/dhclient.conf.)
 
-- Buildmaster system requirements: a recent Linux on any computer at all should do.
+- Don't switch away from the tests with "switch user", they really need the foreground
+  (else they may fail or hang)
+
+- ATI graphics cards, at least with fglrx, don't like running
+  without a monitor, so always keep a real monitor plugged in.
+  Nvidia seems happy as long as you log in and start up with
+  a real monitor plugged in, after that you can unplug it.
+
+- Buildmaster system requirements: a recent Linux on any computer at
+  all should do, though if lots of people start hitting it, or we add
+  lots of slaves, it will need to be reasonably fast.
 
 - Buildslave system requirements:
   - RAM: 1GB (4GB if possible)
