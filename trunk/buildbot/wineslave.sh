@@ -176,12 +176,6 @@ create_slave() {
         cd ..
     fi
     buildslave create-slave slave $1 $2 $3
-    cp $SRC/wineslave.sh $TOP/sandbox/bin/wineslave.sh
-    cp $SRC/dotests.sh $TOP/sandbox/bin/dotests.sh
-    cp $SRC/dotests_blacklist.txt $TOP/sandbox/bin/
-    chmod +x $TOP/sandbox/bin/wineslave.sh
-    cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
-    cp $SRC/*-placate-*.patch $TOP/sandbox/bin
     cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 $TOP/sandbox/bin
     )
 
@@ -196,6 +190,16 @@ start_slave() {
     (
     cd $TOP/sandbox
     . bin/activate
+
+    # in case someone did 'stop; svn up; start'
+    cp $SRC/wineslave.sh $TOP/sandbox/bin/wineslave.sh
+    cp $SRC/dotests.sh $TOP/sandbox/bin/dotests.sh
+    cp $SRC/dotests_blacklist.txt $TOP/sandbox/bin/
+    chmod +x $TOP/sandbox/bin/wineslave.sh
+    rm $TOP/sandbox/bin/*.patch
+    cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
+    cp $SRC/*-placate-*.patch $TOP/sandbox/bin
+
     buildslave start $VIRTUAL_ENV/slave
     )
 }
