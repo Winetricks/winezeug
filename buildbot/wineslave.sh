@@ -273,6 +273,10 @@ do_configure() {
         then
             cflags="$cflags -Wnoerror=unused-but-set-variable"
         fi
+        if gcc -Wnoerror=unused-but-set-parameter -c empty.c
+        then
+            cflags="$cflags -Wnoerror=unused-but-set-parameter"
+        fi
         rm -f empty.o || true
         # Reuse configure cache between runs, saves 30 seconds
         ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
