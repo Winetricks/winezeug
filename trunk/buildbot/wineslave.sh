@@ -267,7 +267,7 @@ do_configure() {
     case `arch` in
     i686)
         > empty.c
-        cflags="-g -O0"
+        cflags="-g -O0 -Werror"
         # gcc 4.6 produces warnings that haven't been preened out of wine's tree yet, so mark them as nonfatal
         if gcc -Wnoerror=unused-but-set-variable -c empty.c
         then
@@ -279,7 +279,12 @@ do_configure() {
         fi
         rm -f empty.o || true
         # Reuse configure cache between runs, saves 30 seconds
-        ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
+        if ! ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
+        then
+            # If cache failed, clean it out and try again
+            rm ../i686.config.cache
+            ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
+        fi
         ;;
     x86_64)
         # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix,
