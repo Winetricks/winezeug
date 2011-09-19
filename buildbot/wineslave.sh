@@ -273,13 +273,13 @@ do_configure() {
         > empty.c
         cflags="-g -O0 -Werror"
         # gcc 4.6 produces warnings that haven't been preened out of wine's tree yet, so mark them as nonfatal
-        if gcc -Wno-error=unused-but-set-variable -c empty.c
+        if gcc -Wno-unused-but-set-variable -c empty.c
         then
-            cflags="$cflags -Wno-error=unused-but-set-variable"
+            cflags="$cflags -Wno-unused-but-set-variable"
         fi
-        if gcc -Wno-error=unused-but-set-parameter -c empty.c
+        if gcc -Wno-unused-but-set-parameter -c empty.c
         then
-            cflags="$cflags -Wno-error=unused-but-set-parameter"
+            cflags="$cflags -Wno-unused-but-set-parameter"
         fi
         rm -f empty.o || true
         # Reuse configure cache between runs, saves 30 seconds
