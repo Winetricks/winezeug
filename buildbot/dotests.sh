@@ -35,6 +35,20 @@ HEADLESS_DLLS="\
     uxtheme vbscript version wer windowscodecs winhttp \
     winspool.drv wintab32 wintrust wldap32 xinput1_3 xmllite"
 
+# Run make -k, but if there are any errors, precede every line with ]]
+# so they can easily be extracted into an error log
+make_highlit_log() {
+    if make -k test > /tmp/wineslave.$$.log 2>&1
+    then
+        cat /tmp/wineslave.$$.log 2>&1
+        return 0
+    else
+        mstatus=$?
+        sed 's/^/]] /' < /tmp/wineslave.$$.log
+        return $mstatus
+    fi
+}
+
 # Run all tests that don't require the display
 do_background_tests() {
     background_errors=0
@@ -48,7 +62,7 @@ do_background_tests() {
     do
         if echo $HEADLESS_DLLS | grep -qw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make -k test || background_errors=`expr $background_errors + 1`
+            make_highlit_log || background_errors=`expr $background_errors + 1`
             cd ../..
         fi
     done
@@ -58,7 +72,7 @@ do_background_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            make -k test || background_errors=`expr $background_errors + 1`
+            make_highlit_log || background_errors=`expr $background_errors + 1`
             cd ../..
         fi
     done
@@ -92,7 +106,7 @@ do_foreground_tests() {
     do
         if echo $HEADLESS_DLLS | grep -vqw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make -k test || foreground_errors=`expr $foreground_errors + 1`
+            make_highlit_log || foreground_errors=`expr $foreground_errors + 1`
             cd ../..
         fi
     done
@@ -118,7 +132,7 @@ do_subset_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            make -k test || subset_errors=`expr $subset_errors + 1`
+            make_highlit_log || subset_errors=`expr $subset_errors + 1`
             # set up for next iteration; this function is called multiple times
             make testclean
             cd ../../..
@@ -288,7 +302,7 @@ do_badtests() {
         badtestfile=${badtest##*/}
         (
         cd $badtestdir
-        if make $badtestfile
+        if make_highlit_log $badtestfile
         then
             echo "$badtest passed; blacklist says $reasons, see bug $bugs."
         else
