@@ -37,4 +37,5 @@ dlls/d3d8/tests/device.ok       ATI    28387
 dlls/d3d9/tests/device.ok       ATI    28387
 dlls/gdi32/tests/bitmap.ok      SYS    28397
 dlls/secur32/tests/schannel.ok  SYS    28383
+dlls/winmm/tests/midi.ok        FLAKY  28388
 dlls/vbscript/tests/run.ok      HEAP   28408
