@@ -263,12 +263,23 @@ do_configure() {
     # Also note that -Werror might not catch everything until -O2,
     # so if Alexandre runs -Werror -O2 and notices we miss some errors,
     # we might need to arrange for one builder to use the slower -O2.
-    # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix.
+
     case `arch` in
     i686)
+        > empty.c
+        cflags="-g -O0"
+        # gcc 4.6 produces warnings that haven't been preened out of wine's tree yet, so mark them as nonfatal
+        if gcc -Wnoerror=unused-but-set-variable -c empty.c
+        then
+            cflags="$cflags -Wnoerror=unused-but-set-variable"
+        fi
+        rm -f empty.o || true
         # Reuse configure cache between runs, saves 30 seconds
-        ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="-g -O0 -Werror" ;;
+        ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
+        ;;
     x86_64)
+        # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix,
+        # so no -Werror there.
         ./configure --cache-file=../x86_64.config.cache CC="ccache gcc" CFLAGS="-g -O0" --enable-win64 ;;
     *) echo "Unknown arch"; exit 1;;
     esac
