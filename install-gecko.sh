@@ -43,7 +43,7 @@ install_gecko()
         fi
 
         sudo mkdir -p /usr/share/wine/gecko
-        sudo cp wine_gecko-$GECKO_VERSION-$myarch$GECKO_SUFFIX /usr/share/wine/gecko/
+        sudo mv wine_gecko-$GECKO_VERSION-$myarch$GECKO_SUFFIX /usr/share/wine/gecko/
     fi
 }
 
