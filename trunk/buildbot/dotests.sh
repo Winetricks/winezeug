@@ -136,6 +136,7 @@ do_subset_tests() {
             # set up for next iteration; this function is called multiple times
             make testclean
             cd ../../..
+            server/wineserver -k
         fi
     done
 
