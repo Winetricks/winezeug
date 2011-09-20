@@ -1539,3 +1539,21 @@
    fun:run_test
    fun:main
 }
+
+# fontconfig invalid reads, debian bug 635609
+{
+   fontconfig1
+   Memcheck:Addr4
+   obj:/usr/lib/i386-linux-gnu/libfontconfig.so.1.4.4
+}
+
+# libX11
+{
+   libxcb_writv_param
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   obj:*
+}
+
