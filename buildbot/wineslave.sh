@@ -24,7 +24,7 @@ usage() {
     echo "   start"
     echo "   tail"
     echo "   patch"
-    echo "   configure"
+    echo "   configure [COMPILER, e.g. 'ccache gcc']"
     echo "   build"
     echo "   test"
     echo "   heaptest"
@@ -245,57 +245,74 @@ do_patch() {
     done
 }
 
-do_configure_gcc295() {
-    case `arch` in
-    i686)
-        autoconf
-        ./configure CC="ccache /usr/local/gcc-2.95.3/bin/gcc" CFLAGS="-g -O0" 
-        ;;
-    *)
-        echo "gcc-2.95 is only supported on 32 bit x86"
-        exit 1
-        ;;
-    esac
-}
-
 do_configure() {
-    autoconf
-    # ccache seems to bring build times down by about a factor 
-    # of 2-3 on a wide range of machines
-    # Using -Werror seems safe on 32 bit machines, but see
-    # http://bugs.winehq.org/show_bug.cgi?id=28275 for some files we miss.
-    # Also note that -Werror might not catch everything until -O2,
-    # so if Alexandre runs -Werror -O2 and notices we miss some errors,
-    # we might need to arrange for one builder to use the slower -O2.
+    cat > hello.c <<__EOF__
+#include <stdio.h>
 
-    case `arch` in
-    i686)
-        > empty.c
-        cflags="-g -O0 -Werror"
-        # gcc 4.6 produces warnings that haven't been preened out of wine's tree yet, so mark them as nonfatal
-        if gcc -Wno-unused-but-set-variable -c empty.c
-        then
-            cflags="$cflags -Wno-unused-but-set-variable"
-        fi
-        if gcc -Wno-unused-but-set-parameter -c empty.c
-        then
-            cflags="$cflags -Wno-unused-but-set-parameter"
-        fi
-        rm -f empty.o || true
-        # Reuse configure cache between runs, saves 30 seconds
-        if ! ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
-        then
-            # If cache failed, clean it out and try again
-            rm ../i686.config.cache
-            ./configure --cache-file=../i686.config.cache CC="ccache gcc" CFLAGS="$cflags"
-        fi
-        ;;
-    x86_64)
-        # There are still 35 warnings on win64, and the ones in oleaut32 will be some work to fix,
-        # so no -Werror there.
-        ./configure --cache-file=../x86_64.config.cache CC="ccache gcc" CFLAGS="-g -O0" --enable-win64 ;;
-    *) echo "Unknown arch"; exit 1;;
+int main(void)
+{
+    printf("Hello, world?\n");
+    return 0;
+}
+__EOF__
+
+    # If user specified a compiler, use it, else default to "ccache gcc"
+    case "$1" in
+    "") CC="ccache gcc";;
+    *)  CC="$1";;
     esac
+
+    # Figure out whether this is a 32 or 64 bit build
+    # FIXME: this should also depend on commandline
+    case `arch` in
+    x86_64) buildwidth=64 ;;
+    *)      buildwidth=32 ;;
+    esac
+
+    # Verify that compiler works
+    $CC hello.c -o hello
+    if [ "`./hello`" != "Hello, world?" ]
+    then
+        rm -f hello
+        echo "compiler failed to produce a working executable."
+        exit 1
+    fi
+
+    # Figure out right compiler options
+    cflags="-g -O0"
+    # http://bugs.winehq.org/show_bug.cgi?id=28275 shows wine's not
+    # ready for -Werror on 64 bits
+    if test $buildwidth = 32 && $CC -Werror -c hello.c -o hello
+    then
+        cflags="$cflags -Werror"
+    fi
+    # gcc-4.6 produces warnings that haven't been preened out of wine's tree yet, so disable them
+    if $CC -Werror -Wno-unused-but-set-variable hello.c -o hello
+    then
+        cflags="$cflags -Wno-unused-but-set-variable"
+    fi
+    if $CC -Werror -Wno-unused-but-set-parameter hello.c -o hello
+    then
+        cflags="$cflags -Wno-unused-but-set-parameter"
+    fi
+    rm -f hello || true
+
+    # FIXME: should do 'git commit' and 'tools/make_makefiles'
+
+    # Generate ./configure
+    autoconf
+
+    # Reuse configure cache between runs, saves 30 seconds
+    configopts="--cache-file=../config-$buildwidth.cache"
+    case $buildwidth in
+    64) configopts="$configopts --enable-win64";;
+    esac
+    if ! ./configure $configopts CC="$CC" CFLAGS="$cflags"
+    then
+        # If cache failed, clean it out and try again
+        rm ../config-$buildwidth.cache
+        ./configure $configopts CC="$CC" CFLAGS="$cflags"
+    fi
 }
 
 do_build() {
@@ -342,8 +359,15 @@ do
     stop) stop_slave;;
     tail) tail -f $TOP/sandbox/slave/twistd.log;;
     patch) do_patch;;
-    configure) do_configure;;
-    configure_gcc295) do_configure_gcc295;;
+    configure)
+        # defaults to "ccache gcc", but only if last verb on commandline
+        do_configure $1
+        # bash bug: shift || true fails?!, must avoid doing it if last parameter
+        if test "$1"
+        then
+            shift || true
+        fi
+        ;;
     build) do_build;;
     test) do_test;;
     heaptest) 
