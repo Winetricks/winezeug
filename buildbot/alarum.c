@@ -95,7 +95,6 @@ int main(int argc, char **argv)
     int i;
     int waitresult;
     int ret;
-    char testid[64];
     int logfd;
     FILE *logfp;
     char logfilename[1024];
@@ -118,7 +117,7 @@ int main(int argc, char **argv)
     newargv[newargc] = NULL;
 
     /* Redirect child's output and stderr to a temporary file ... */
-    sprintf(logfilename, "%s.tmplog", testid);
+    sprintf(logfilename, "%d.tmplog", getpid());
     logfd = open(logfilename, O_RDWR|O_CREAT, 0660);
     if (logfd == -1) {
         perror(logfilename);
