@@ -15,6 +15,7 @@ dlls/winmm/tests/wave.ok        SYS    28048
 dlls/winmm/tests/mci.ok         SYS    28071
 dlls/urlmon/tests/url.ok        FLAKY  28108
 dlls/winmm/tests/capture.ok     SYS    28109
+dlls/twain_32/tests/dsm.ok      CRASHY 28133
 dlls/shell32/tests/shlfolder.ok SYS    28216
 dlls/kernel32/tests/process.ok  NOTTY  28220
 dlls/kernel32/tests/pipe.ok     HEAP   28257
