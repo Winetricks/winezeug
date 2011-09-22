@@ -308,8 +308,9 @@ fi
 
 if test x`which alarum` != x
 then
-    # Shut down each test after 60 seconds.  Life is too short.
-    WINETEST_WRAPPER="alarum 60"
+    # Shut down each test after 5 minutes. (60 seconds should be fine,
+    # but cmd and mshtml/events seem to time out there.)
+    WINETEST_WRAPPER="alarum 300"
     export WINETEST_WRAPPER
 fi
 
