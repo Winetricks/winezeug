@@ -1557,3 +1557,11 @@
    obj:*
 }
 
+# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=642387
+{
+   xgetvisualinfo_leak
+   Memcheck:Leak
+   fun:malloc
+   fun:XGetVisualInfo
+   obj:*
+}
