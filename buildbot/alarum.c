@@ -100,6 +100,7 @@ int main(int argc, char **argv)
     char logfilename[1024];
 #define MYBUFLEN 128000
     static char buf[MYBUFLEN];
+    time_t t0, t1;
 
     if (argc < 3) {
         fprintf(stderr, "Usage: alarum timeout-in-seconds command ...\n");
@@ -124,6 +125,8 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    time(&t0);
+
     /* Run test */
     child_pid = fork();
     if (child_pid == 0) {
@@ -144,6 +147,7 @@ int main(int argc, char **argv)
     waitresult = 0;
     while ((ret = wait(&waitresult)) == -1 && errno == EINTR)
         ;
+    time(&t1);
 
     if (close(logfd)) {
         perror("closing log fd");
@@ -161,6 +165,13 @@ int main(int argc, char **argv)
     if (loglockfd != -1) 
        flock(loglockfd, LOCK_EX);
 
+    if (!WIFEXITED(waitresult) || (WEXITSTATUS(waitresult) != 0)) {
+        printf("]] alarum: failed command was ");
+        for (i=0; i<newargc; i++) {
+            printf("%s ", newargv[i]);
+        }
+        printf("\n");
+    }
     /* Copy the temporary file to stdout, line by line, prepending error status if needed */
     while (fgets(buf, MYBUFLEN, logfp)) {
         if (!WIFEXITED(waitresult) || (WEXITSTATUS(waitresult) != 0)) {
@@ -175,6 +186,8 @@ int main(int argc, char **argv)
     /* Report crashes */
     if (!WIFEXITED(waitresult))
         printf("]] alarum: %s terminated abnormally\n", newargv[0]);
+    else
+        printf("alarum: elapsed time %d seconds\n", (int) (t1 - t0));
 
     if (loglockfd != -1) 
        flock(loglockfd, LOCK_UN);
