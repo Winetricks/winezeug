@@ -199,6 +199,7 @@ start_slave() {
     rm -f $TOP/sandbox/bin/*.patch
     cp $SRC/*-ignore-*.patch $TOP/sandbox/bin
     cp $SRC/*-placate-*.patch $TOP/sandbox/bin
+    gcc $SRC/alarum.c -o $TOP/sandbox/bin/alarum
 
     buildslave start $VIRTUAL_ENV/slave
     )
@@ -332,7 +333,7 @@ do_build() {
 
 do_test() {
     cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 .
-    sh $SRC/dotests.sh goodtests
+    PATH="${SRC}:$PATH" sh $SRC/dotests.sh goodtests
 }
 
 #--------- Main program ---------------------------------------------------------

@@ -35,20 +35,6 @@ HEADLESS_DLLS="\
     uxtheme vbscript version wer windowscodecs winhttp \
     winspool.drv wintab32 wintrust wldap32 xinput1_3 xmllite"
 
-# Run make -k, but if there are any errors, precede every line with ]]
-# so they can easily be extracted into an error log
-make_highlit_log() {
-    if make -k test > /tmp/wineslave.$$.log 2>&1
-    then
-        cat /tmp/wineslave.$$.log 2>&1
-        return 0
-    else
-        mstatus=$?
-        sed 's/^/]] /' < /tmp/wineslave.$$.log
-        return $mstatus
-    fi
-}
-
 # Run all tests that don't require the display
 do_background_tests() {
     background_errors=0
@@ -62,7 +48,7 @@ do_background_tests() {
     do
         if echo $HEADLESS_DLLS | grep -qw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make_highlit_log || background_errors=`expr $background_errors + 1`
+            make -k test || background_errors=`expr $background_errors + 1`
             cd ../..
         fi
     done
@@ -72,7 +58,7 @@ do_background_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            make_highlit_log || background_errors=`expr $background_errors + 1`
+            make -k test || background_errors=`expr $background_errors + 1`
             cd ../..
         fi
     done
@@ -106,7 +92,7 @@ do_foreground_tests() {
     do
         if echo $HEADLESS_DLLS | grep -vqw $dir && test -d $dir/tests && cd $dir/tests
         then
-            make_highlit_log || foreground_errors=`expr $foreground_errors + 1`
+            make -k test || foreground_errors=`expr $foreground_errors + 1`
             cd ../..
         fi
     done
@@ -132,7 +118,8 @@ do_subset_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            make_highlit_log || subset_errors=`expr $subset_errors + 1`
+            ./wine cmd /c echo "initializing wineprefix so it isn't included in timeout"
+            make -k test || subset_errors=`expr $subset_errors + 1`
             # set up for next iteration; this function is called multiple times
             make testclean
             cd ../../..
@@ -303,7 +290,7 @@ do_badtests() {
         badtestfile=${badtest##*/}
         (
         cd $badtestdir
-        if make_highlit_log $badtestfile
+        if make -k test $badtestfile
         then
             echo "$badtest passed; blacklist says $reasons, see bug $bugs."
         else
@@ -319,9 +306,12 @@ then
     usage
 fi
 
-# Get elapsed time of each test
-WINETEST_WRAPPER=time
-export WINETEST_WRAPPER
+if test x`which alarum` != x
+then
+    # Shut down each test after 60 seconds.  Life is too short.
+    WINETEST_WRAPPER="alarum 60"
+    export WINETEST_WRAPPER
+fi
 
 # If you want debug gecko, put it in current directory before running
 #if ! test -f wine_gecko-1.3-x86-dbg.tar.bz2
