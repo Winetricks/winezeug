@@ -160,9 +160,10 @@ sub scan_for_series {
         my $patch_id = $x[0];
         $patch_id =~ s/^testbotId: //;
         print "Considering id $patch_id, date $date, author $from, subject $subject\n" if ($verbose > 1);
-        if ($subject =~ m,\[.*\s*(\d+)/(\d+)\s*.*\],) {
+        if ($subject =~ m,\[.*?\s*(\d+)/(\d+)\s*.*?\],) {
             my $num = $1;
             my $len = $2;
+            print "Subject $subject matched: num $num, len $len\n" if ($verbose > 1);
             if ($num > 0 && $num <= $len) {
                 if ($num == 1) {
                     $oldnum = $num;
