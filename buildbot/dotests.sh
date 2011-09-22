@@ -118,7 +118,7 @@ do_subset_tests() {
     do
         if test -d $dir/tests && cd $dir/tests
         then
-            ./wine cmd /c echo "initializing wineprefix so it isn't included in timeout"
+            ../../../wine cmd /c echo "initializing wineprefix so it isn't included in timeout"
             make -k test || subset_errors=`expr $subset_errors + 1`
             # set up for next iteration; this function is called multiple times
             make testclean
