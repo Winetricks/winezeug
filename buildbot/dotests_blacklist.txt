@@ -39,3 +39,8 @@ dlls/gdi32/tests/bitmap.ok      SYS    28397
 dlls/secur32/tests/schannel.ok  SYS    28383
 dlls/winmm/tests/midi.ok        FLAKY  28388
 dlls/vbscript/tests/run.ok      HEAP   28408
+dlls/qmgr/tests/file.ok         HEAP   28470
+dlls/qmgr/tests/job.ok          HEAP   28470
+dlls/qmgr/tests/qmgr.ok         HEAP   28470
+dlls/qmgr/tests/enum_files.ok   HEAP   28470
+dlls/qmgr/tests/enum_jobs.ok    HEAP   28470
