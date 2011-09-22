@@ -9,7 +9,7 @@ set -x
 TOP=$HOME/wineslave.dir
 
 case `arch` in
-i686) geckoarch=x86;;
+i?86) geckoarch=x86;;
 x86_64) geckoarch=x86_64;;
 esac
 
@@ -101,7 +101,7 @@ install_prereqs() {
     # Needed to avoid gecko prompt
     sh ../install-gecko.sh
     case `arch` in
-    i686)
+    i?86)
         # Needed if building with gcc-2.95
         if false && ! test -x /usr/local/gcc-2.95.3/bin/gcc
         then
