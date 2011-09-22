@@ -35,14 +35,36 @@ HEADLESS_DLLS="\
     uxtheme vbscript version wer windowscodecs winhttp \
     winspool.drv wintab32 wintrust wldap32 xinput1_3 xmllite"
 
+create_wineprefix() {
+    export WINEPREFIX=`pwd`/wineprefix-$1
+    rm -rf $WINEPREFIX
+    ./wine cmd /c echo "initializing wineprefix"
+
+    # Set a virtual desktop; helps when you can't always have a monitor connected
+    cat > vd.reg <<_EOF_
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Explorer]
+"Desktop"="Default"
+[HKEY_CURRENT_USER\Software\Wine\Explorer\Desktops]
+"Default"="800x600"
+
+_EOF_
+    ./wine regedit vd.reg
+    # Sadly, you have to wait for wineserver to finish before the virtual desktop takes effect
+    server/wineserver -w
+    #./wine winemine
+    #sleep 20
+    #exit 1
+}
+
 # Run all tests that don't require the display
 do_background_tests() {
     background_errors=0
    
     OLDDISPLAY=DISPLAY
     unset DISPLAY
-    export WINEPREFIX=`pwd`/wineprefix-background
-    rm -rf $WINEPREFIX
+    create_wineprefix background
     cd dlls
     for dir in *
     do
@@ -78,8 +100,7 @@ do_background_tests() {
 # Run all tests that do require the display
 do_foreground_tests() {
     foreground_errors=0
-    export WINEPREFIX=`pwd`/wineprefix-foreground
-    rm -rf $WINEPREFIX
+    create_wineprefix foreground
     if test -f wine_gecko-1.3-x86-dbg.tar.bz2
     then
         ./wine cmd /c echo "initializing wineprefix to install debug gecko"
@@ -112,8 +133,7 @@ do_foreground_tests() {
 do_subset_tests() {
     subset_errors=0
 
-    export WINEPREFIX=`pwd`/wineprefix-subset
-    rm -rf $WINEPREFIX
+    create_wineprefix subset
     for dir
     do
         if test -d $dir/tests && cd $dir/tests
