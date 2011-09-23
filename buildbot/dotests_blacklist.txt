@@ -29,7 +29,7 @@ programs/wscript/tests/run.ok   BAD64  28285
 dlls/shell32/tests/shelllink.ok FLAKY  28290
 dlls/mshtml/tests/htmldoc.ok    FLAKY  28295
 dlls/riched20/tests/editor.ok   FLAKY  28298 
-dlls/kernel32/tests/debugger.ok HEAP   28316
+dlls/kernel32/tests/debugger.ok FLAKY  28316
 dlls/urlmon/tests/protocol.ok   FLAKY  28323
 dlls/d3d9/tests/query.ok        ATI    28385
 dlls/d3d9/tests/visual.ok       ATI    28386
