@@ -178,6 +178,9 @@ get_blacklist() {
 }
 
 # If this was a really simple change, say which directory to build/test.
+# i.e.
+# If a DLL's tests change, return that DLL.
+# If a program or its tests change, return that program.
 is_simple_change() {
     # (Ideally buildbot would tell us this, but for now,
     # grub around in git.)
@@ -185,27 +188,24 @@ is_simple_change() {
     # (ignoring created or deleted files for now)
     time git status | grep modified: | grep -v configure | awk '{print $3}' | sed 's,/[^/]*$,,' | sort -u > dirs.txt
 
-    # Look for simple tests changes to dlls
+    sed 's,/tests$,,' < dirs.txt | sort -u > basedirs.txt
+
+    # Did only a single DLL's test directory change?
     if test `wc -l < dirs.txt` = 1 && grep 'dlls/.*/tests$' < dirs.txt
     then
-        # Only one tests directory changed, return its parent
-        cat dirs.txt | sed 's,/tests,,'
+        cat basedirs.txt
         return 0
     fi
 
-    sed 's,/tests$,,' < dirs.txt | uniq > dirs2.txt
-
-    if test `wc -l < dirs2.txt` = 1 && grep programs < dirs2.txt > /dev/null
+    # Did only a single program (and/or its tests) change?
+    if test `wc -l < basedirs.txt` = 1 && grep programs < basedirs.txt > /dev/null
     then
-        # Only one directory and its tests changed, and it's a program, return it
-        cat dirs2.txt
+        cat basedirs.txt
         return 0
     fi
 
     echo "Not a simple change; here's the list of changed directories" >&2
     cat dirs.txt >&2
-    
-    # some more complex change happened
     return 1
 }
 
@@ -253,7 +253,7 @@ do_goodtests() {
                 echo "FAIL: subset_status $?"
                 exit 1
             fi
-            if cd $dir
+            if cd $dir/tests
             then
                 make testclean
                 cd ../../..
