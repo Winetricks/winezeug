@@ -35,6 +35,10 @@ HEADLESS_DLLS="\
     uxtheme vbscript version wer windowscodecs winhttp \
     winspool.drv wintab32 wintrust wldap32 xinput1_3 xmllite"
 
+# DLLs with some slow tests (but no 3d, and no listening sockets, and no forcing the mouse)
+SLOW_DLLS="\
+    dlls/advapi32 dlls/explorerframe dlls/kernel32 dlls/shell32 dlls/winmm"
+
 create_wineprefix() {
     export WINEPREFIX=`pwd`/wineprefix-$1
     rm -rf $WINEPREFIX
@@ -111,7 +115,7 @@ do_foreground_tests() {
     cd dlls
     for dir in *
     do
-        if echo $HEADLESS_DLLS | grep -vqw $dir && test -d $dir/tests && cd $dir/tests
+        if echo $HEADLESS_DLLS $SLOW_DLLS | grep -vqw $dir && test -d $dir/tests && cd $dir/tests
         then
             make -k test || foreground_errors=`expr $foreground_errors + 1`
             cd ../..
@@ -140,8 +144,6 @@ do_subset_tests() {
         then
             ../../../wine cmd /c echo "initializing wineprefix so it isn't included in timeout"
             make -k test || subset_errors=`expr $subset_errors + 1`
-            # set up for next iteration; this function is called multiple times
-            make testclean
             cd ../../..
             server/wineserver -k
         fi
@@ -251,6 +253,11 @@ do_goodtests() {
                 echo "FAIL: subset_status $?"
                 exit 1
             fi
+            if cd $dir
+            then
+                make testclean
+                cd ../../..
+            fi
             touch $blacklist
         done
         echo "goodtests on single directory $dir done"
@@ -267,6 +274,9 @@ do_goodtests() {
         # The background tests don't need the display, and use their own wineprefix
         # Neither use much CPU, so this should save time even on slow computers
         do_background_tests > background.log 2>&1 &
+        # A few foreground tests are safe to do in their own virtual desktop, and are slow, so spawn them off now:
+        do_subset_tests $SLOW_DLLS > slow.log 2>&1 &
+
         # Under set -e, script aborts early for foreground failures, and on wait %1 for background failures,
         # making it hard to show the background log before aborting.
         # So use set +e, and check status of background and foreground manually.
@@ -276,9 +286,12 @@ do_goodtests() {
         wait %1
         background_status=$?
         cat background.log
-        if test $foreground_status -ne 0 || test $background_status -ne 0
+        wait %2
+        slow_status=$?
+        cat slow.log
+        if test $foreground_status -ne 0 || test $background_status -ne 0 || test $slow_status -ne 0
         then
-            echo "FAIL: background_status $background_status, foreground_status $foreground_status"
+            echo "FAIL: background_status $background_status, foreground_status $foreground_status, slow_status $slow_status"
             exit 1
         fi
         set -e
