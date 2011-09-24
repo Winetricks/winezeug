@@ -84,34 +84,31 @@ system_info() {
 #----- Functions invoked by user when setting up or starting slave -----------
 
 install_prereqs() {
-    # For Ubuntu.  Other systems may differ.
-    # Needed for buildbot
-    sudo apt-get install python-dev python-virtualenv 
-    # Needed to report on GPU type
-    sudo apt-get install mesa-utils
-    # Needed to apply patches
-    sudo apt-get install autoconf
-    # Needed to make repeated builds of same files go faster
-    sudo apt-get install ccache
-    # Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
-    # On Squeeze, add contrib to /etc/apt/sources.list for this to work
-    sudo apt-get install ttf-mscorefonts-installer
-    # Needed to pass rpcrt4 tests
-    sudo apt-get install winbind
-    # Needed to avoid gecko prompt
-    sh ../install-gecko.sh
-    case `arch` in
-    i?86)
-        # Needed if building with gcc-2.95
-        if false && ! test -x /usr/local/gcc-2.95.3/bin/gcc
-        then
-            sh build-gcc-2.95.3.sh
-        fi
-        ;;
-    x86_64)
-        sudo apt-get install libc6-dev-i386 ia32-libs
+    case `system_osname` in
+    *buntu*|*ebian*)
+	# Needed for buildbot
+	sudo apt-get install python-dev python-virtualenv 
+	# Needed to report on GPU type
+	sudo apt-get install mesa-utils
+	# Needed to apply patches
+	sudo apt-get install autoconf
+	# Needed to make repeated builds of same files go faster
+	sudo apt-get install ccache
+	# Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
+	# On Squeeze, add contrib to /etc/apt/sources.list for this to work
+	sudo apt-get install ttf-mscorefonts-installer
+	# Needed to pass rpcrt4 tests
+	sudo apt-get install winbind
+        case `arch` in
+        x86_64)
+            sudo apt-get install libc6-dev-i386 ia32-libs
+            ;;
+        esac
         ;;
     esac
+
+    # Needed to avoid gecko prompt
+    sh ../install-gecko.sh
 }
 
 destroy() {
