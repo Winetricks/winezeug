@@ -49,6 +49,11 @@ Tips
 - Don't switch away from the tests with "switch user", they really need the foreground
   (else they may fail or hang)
 
+- I've noticed that, with heaptests, some tests fail more reliably on
+  the e8400, some fail more reliably on the i7.  It might be good to
+  have a heaptests-dualcore and a heaptests-quadcore queue, or something,
+  so we always run both.
+
 - ATI graphics cards, at least with fglrx, don't like running
   without a monitor, so always keep a real monitor plugged in.
   Nvidia seems happy as long as you log in and start up with
