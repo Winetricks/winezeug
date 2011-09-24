@@ -176,6 +176,11 @@ create_slave() {
     cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 $TOP/sandbox/bin
     )
 
+    # Large patches cause problems without this.  Need on both sides,
+    # see http://twistedmatrix.com/documents/current/core/howto/pb-limits.html
+    sed -i.bak -e 's/SIZE_LIMIT =.*/SIZE_LIMIT = 2 * 1024 * 1024/' \
+        $TOP/sandbox/lib/python2.?/site-packages/twisted/spread/banana.py
+
     echo "Filling in $TOP/sandbox/slave/info/host with following info:"
     system_info
     system_info > $TOP/sandbox/slave/info/host
