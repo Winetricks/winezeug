@@ -100,6 +100,11 @@ create_master() {
     buildbot create-master master
     )
     cp parsepatch.pl $TOP/sandbox/bin/parsepatch.pl
+
+    # Large patches cause problems without this.  Need on both sides,
+    # see http://twistedmatrix.com/documents/current/core/howto/pb-limits.html
+    sed -i.bak -e 's/SIZE_LIMIT =.*/SIZE_LIMIT = 2 * 1024 * 1024/' \
+        $TOP/sandbox/lib/python2.?/site-packages/twisted/spread/banana.py
 }
 
 start_master() {
