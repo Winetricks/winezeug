@@ -28,16 +28,26 @@ usage() {
     exit 1
 }
 
+system_osname() {
+    # FIXME: do this portably
+    lsb_release -d -s | tr -d '\012'
+    echo ", "
+    uname -r | tr -d '\012'
+}
+
 #----- Functions invoked by user when setting up or starting master -----------
 
 install_prereqs() {
-    # For Ubuntu.  Other systems may differ.
-    # Needed for buildbot
-    sudo apt-get install python-dev python-virtualenv
-    # Needed for fetching buildbot from git
-    sudo apt-get install git || sudo apt-get install git-core
-    # Needed for parsepatch.pl
-    sudo apt-get install libdatetime-format-mail-perl
+    case `system_osname` in
+    *buntu*|*ebian*)
+	# Needed for buildbot
+	sudo apt-get install python-dev python-virtualenv
+	# Needed for fetching buildbot from git
+	sudo apt-get install git || sudo apt-get install git-core
+	# Needed for parsepatch.pl
+	sudo apt-get install libdatetime-format-mail-perl
+        ;;
+    esac
 }
 
 destroy() {
