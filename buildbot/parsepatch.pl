@@ -12,6 +12,7 @@
 # For each author:
 #   Sort patches by the first Date: line in each patch
 #   Scan from oldest to newest, parsing [%d/%d], looking for an unbroken series
+# (%d/%d) is also accepted, since that's what Juan sends.
 # Outputs oldest patch (or patch series) first.
 
 use DateTime::Format::Mail;
@@ -160,7 +161,7 @@ sub scan_for_series {
         my $patch_id = $x[0];
         $patch_id =~ s/^testbotId: //;
         print "Considering id $patch_id, date $date, author $from, subject $subject\n" if ($verbose > 1);
-        if ($subject =~ m,\[.*?\s*(\d+)/(\d+)\s*.*?\],) {
+        if ($subject =~ m,[([].*?\s*(\d+)/(\d+)\s*.*?[)\]],) {
             my $num = $1;
             my $len = $2;
             print "Subject $subject matched: num $num, len $len\n" if ($verbose > 1);
