@@ -46,3 +46,4 @@ dlls/qmgr/tests/enum_files.ok   HEAP   28470
 dlls/qmgr/tests/enum_jobs.ok    HEAP   28470
 dlls/user32/tests/clipboard.ok  FLAKY  28472
 dlls/comctl32/tests/treeview.ok SYS    28503
+dlls/oleaut32/tests/olepicture.ok SYS  28503
