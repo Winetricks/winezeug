@@ -242,7 +242,10 @@ do_patch() {
             # Hopefully this will not also commit the user's patch, which we
             # rely to be uncommitted so dotests.sh can detect what user changed
             awk '/^\+\+\+/ {print $2}' < $p | sed 's,^[^/]*/,,' > pfiles
-            git apply $p
+            # Have to use git apply -C 1 since it's quite common for patches
+            # to require fuzz of 2.  If that screws up, the build will just
+            # fail horribly a bit later.
+            git apply -C 1 $p
             git commit -m "committing $p" `cat pfiles`
         fi
     done
