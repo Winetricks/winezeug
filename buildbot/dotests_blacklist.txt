@@ -31,6 +31,7 @@ dlls/mshtml/tests/htmldoc.ok    FLAKY  28295
 dlls/riched20/tests/editor.ok   FLAKY  28298 
 dlls/kernel32/tests/debugger.ok FLAKY  28316
 dlls/urlmon/tests/protocol.ok   FLAKY  28323
+dlls/mshtml/tests/events.ok     FLAKY  28362
 dlls/d3d9/tests/query.ok        ATI    28385
 dlls/d3d9/tests/visual.ok       ATI    28386
 dlls/d3d8/tests/device.ok       ATI    28387
