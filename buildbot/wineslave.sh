@@ -86,19 +86,19 @@ system_info() {
 install_prereqs() {
     case `system_osname` in
     *buntu*|*ebian*)
-	# Needed for buildbot
-	sudo apt-get install python-dev python-virtualenv 
-	# Needed to report on GPU type
-	sudo apt-get install mesa-utils
-	# Needed to apply patches
-	sudo apt-get install autoconf
-	# Needed to make repeated builds of same files go faster
-	sudo apt-get install ccache
-	# Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
-	# On Squeeze, add contrib to /etc/apt/sources.list for this to work
-	sudo apt-get install ttf-mscorefonts-installer
-	# Needed to pass rpcrt4 tests
-	sudo apt-get install winbind
+    # Needed for buildbot
+    sudo apt-get install python-dev python-virtualenv 
+    # Needed to report on GPU type
+    sudo apt-get install mesa-utils
+    # Needed to apply patches
+    sudo apt-get install autoconf
+    # Needed to make repeated builds of same files go faster
+    sudo apt-get install ccache
+    # Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
+    # On Squeeze, add contrib to /etc/apt/sources.list for this to work
+    sudo apt-get install ttf-mscorefonts-installer
+    # Needed to pass rpcrt4 tests
+    sudo apt-get install winbind
         case `arch` in
         x86_64)
             sudo apt-get install libc6-dev-i386 ia32-libs
