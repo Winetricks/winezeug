@@ -300,7 +300,9 @@ __EOF__
     fi
     rm -f hello || true
 
-    # FIXME: should do 'git commit' and 'tools/make_makefiles'
+    git commit -a -m "commit so we can do make_makefiles"
+    tools/make_makefiles
+    tools/make_requests
 
     # Generate ./configure
     autoconf
