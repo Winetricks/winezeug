@@ -211,6 +211,7 @@ is_simple_change() {
 
 # Run all the flaky tests.  If one fails once, try it one more time before declaring failure.
 do_retry_flakytests() {
+    flaky_errors=0
     create_wineprefix flaky
     if test -f wine_gecko-1.3-x86-dbg.tar.bz2
     then
@@ -223,12 +224,11 @@ do_retry_flakytests() {
         bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}' | sort -u | tr '\012' ' '`"
         badtestdir=${badtest%/*}
         badtestfile=${badtest##*/}
-        echo "badtest $badtest, badtestdir $badtestdir, badtestfile $badtestfile"
         (
         cd $badtestdir
         if make $badtestfile
         then
-            echo "$badtest passed on first try even though it's marked flaky; see bug $bugs."
+            echo "$badtest passed on first try even though it's marked flaky"
         else
             echo "$badtest did not pass on first try, but it's marked flaky, so trying again, see bug $bugs."
             if make $badtestfile
@@ -236,11 +236,13 @@ do_retry_flakytests() {
                 echo "$badtest passed on second try."
             else
                 echo "$badtest FAILED on second try; see bug $bugs."
+                flaky_errors=`expr $flaky_errors + 1`
             fi
         fi
         )
     done
-    echo "badtests $1 done."
+    echo "badtests done, $flaky_errors tests failed both tries."
+    return $flaky_errors
 }
 
 # Run all the known good tests
@@ -313,6 +315,9 @@ do_goodtests() {
         set +e
         do_foreground_tests
         foreground_status=$?
+        # The tests marked as flaky require a little special treatment
+        do_retry_flakytests
+        flaky_status=$?
         wait %1
         background_status=$?
         cat background.log
@@ -320,9 +325,9 @@ do_goodtests() {
         slow_status=$?
         cat slow.log
 
-        if test $foreground_status -ne 0 || test $background_status -ne 0 || test $slow_status -ne 0
+        if test $foreground_status -ne 0 || test $flaky_status -ne 0 || test $background_status -ne 0 || test $slow_status -ne 0
         then
-            echo "FAIL: background_status $background_status, foreground_status $foreground_status, slow_status $slow_status"
+            echo "FAIL: background_status $background_status, foreground_status $foreground_status, flaky_status $flaky_status, slow_status $slow_status"
             exit 1
         fi
         set -e
