@@ -337,6 +337,16 @@ do_build() {
 
 do_test() {
     cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 .
+    # Get a fresh copy every single time?
+    (
+         rm -rf tmp-svn
+         mkdir tmp-svn
+         cd tmp-svn
+         if svn export https://winezeug.googlecode.com/svn/trunk/buildbot/dotests_blacklist.txt
+         then
+             cp dotests_blacklist.txt ${SRC}
+         fi
+    )
     PATH="${SRC}:$PATH" sh $SRC/dotests.sh goodtests
 }
 
