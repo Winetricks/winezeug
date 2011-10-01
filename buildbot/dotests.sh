@@ -15,6 +15,7 @@ Commands:
    goodtests
    badtests
    flakytests
+   retry_flakytests
    crashytests
 _EOF_
     exit 1
@@ -208,6 +209,40 @@ is_simple_change() {
     return 1
 }
 
+# Run all the flaky tests.  If one fails once, try it one more time before declaring failure.
+do_retry_flakytests() {
+    create_wineprefix flaky
+    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
+    then
+        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    fi
+    for badtest in `get_blacklist FLAKY`
+    do
+        bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}' | sort -u | tr '\012' ' '`"
+        badtestdir=${badtest%/*}
+        badtestfile=${badtest##*/}
+        echo "badtest $badtest, badtestdir $badtestdir, badtestfile $badtestfile"
+        (
+        cd $badtestdir
+        if make $badtestfile
+        then
+            echo "$badtest passed on first try even though it's marked flaky; see bug $bugs."
+        else
+            echo "$badtest did not pass on first try, but it's marked flaky, so trying again, see bug $bugs."
+            if make $badtestfile
+            then
+                echo "$badtest passed on second try."
+            else
+                echo "$badtest FAILED on second try; see bug $bugs."
+            fi
+        fi
+        )
+    done
+    echo "badtests $1 done."
+}
+
 # Run all the known good tests
 # This takes a while, so speed things up a bit by running some tests in background
 do_goodtests() {
@@ -230,10 +265,6 @@ do_goodtests() {
     fi
     blacklist=`get_blacklist "$match"`
     touch $blacklist
-
-    # Many tests only work in english locale
-    LANG=en_US.UTF-8
-    export LANG
 
     echo "Checking whether change is so simple we don't need to run all tests"
     if dir=`is_simple_change`
@@ -288,6 +319,7 @@ do_goodtests() {
         wait %2
         slow_status=$?
         cat slow.log
+
         if test $foreground_status -ne 0 || test $background_status -ne 0 || test $slow_status -ne 0
         then
             echo "FAIL: background_status $background_status, foreground_status $foreground_status, slow_status $slow_status"
@@ -304,11 +336,6 @@ do_goodtests() {
 #  do_badtests . - to get all tests that fail somewhere sometimes
 #  do_badtests 'FLAKY|CRASHY' - to get only the unreliably unreliable tests
 do_badtests() {
-    # Many tests only work in english locale
-    # FIXME Someday change this to choose a non-english locale
-    LANG=en_US.UTF-8
-    export LANG
-
     for badtest in `get_blacklist $1`
     do
         reasons="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $2}' | sort -u | tr '\012' ' '`"
@@ -352,12 +379,18 @@ fi
 #    wget http://downloads.sourceforge.net/wine/wine_gecko-1.3-x86-dbg.tar.bz2
 #fi
 
+# Many tests only work in english locale
+# FIXME Someday change this to choose a non-english locale
+LANG=en_US.UTF-8
+export LANG
+
 arg="$1"
 shift
 case "$arg" in
 goodtests)   do_goodtests               ;;
 badtests)    do_badtests .              ;;
 flakytests)  do_badtests FLAKY          ;;
+retry_flakytests) do_retry_flakytests   ;;
 crashytests) do_badtests CRASHY         ;;
 *) usage;;
 esac
