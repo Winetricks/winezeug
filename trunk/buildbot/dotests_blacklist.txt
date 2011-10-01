@@ -13,7 +13,7 @@ dlls/ws2_32/tests/sock.ok       CRASHY 28102
 dlls/wininet/tests/urlcache.ok  CRASHY 28038
 dlls/winmm/tests/wave.ok        SYS    28048
 dlls/winmm/tests/mci.ok         SYS    28071
-dlls/urlmon/tests/url.ok        FLAKY  28108
+dlls/urlmon/tests/url.ok        CRASHY 28108
 dlls/winmm/tests/capture.ok     SYS    28109
 dlls/twain_32/tests/dsm.ok      CRASHY 28133
 dlls/shell32/tests/shlfolder.ok SYS    28216
@@ -32,7 +32,7 @@ dlls/riched20/tests/editor.ok   FLAKY  28298
 dlls/kernel32/tests/debugger.ok FLAKY  28316
 dlls/urlmon/tests/protocol.ok   FLAKY  28323
 dlls/mshtml/tests/events.ok     FLAKY  28362
-dlls/mshtml/tests/location.ok   FLAKY  28362
+dlls/mshtml/tests/htmllocation.ok FLAKY 28362
 dlls/d3d9/tests/query.ok        ATI    28385
 dlls/d3d9/tests/visual.ok       ATI    28386
 dlls/d3d8/tests/device.ok       ATI    28387
