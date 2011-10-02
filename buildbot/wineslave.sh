@@ -358,12 +358,17 @@ __EOF__
     fi
     rm -f hello || true
 
-    git commit -a -m "commit so we can do make_makefiles"
-    tools/make_makefiles
-    tools/make_requests
+    # If the source tree is changed at all, regenerate build system and protocol
+    # FIXME: this causes dotests.h to always run all tests!
+    if test -n "`git status --porcelain | grep -v '^??'`"
+    then
+        git commit -a -m "commit so we can do make_makefiles"
+        tools/make_makefiles
+        tools/make_requests
 
-    # Generate ./configure
-    autoconf
+        # Generate ./configure and include/config.h.in
+        autoreconf
+    fi
 
     # Reuse configure cache between runs, saves 30 seconds
     configopts="--cache-file=../config-$buildwidth.cache"
