@@ -37,17 +37,56 @@ system_osname() {
 
 #----- Functions invoked by user when setting up or starting master -----------
 
+install_prereqs_apt() {
+    # Needed for buildbot
+    sudo apt-get install python-dev python-virtualenv
+    # Needed for fetching buildbot from git
+    sudo apt-get install git || sudo apt-get install git-core
+    # Needed for parsepatch.pl
+    sudo apt-get install libdatetime-format-mail-perl
+}
+
+install_prereqs_macports() {
+    # For Mac OS X with MacPorts.
+    # Needed for buildbot
+    sudo port install py-virtualenv
+    # Needed for fetching buildbot from git
+    sudo port install git-core
+    # Needed for parsepatch.pl
+    sudo port install p5-datetime-format-mail
+}
+
+install_prereqs_portage() {
+    # For Gentoo.
+    # Needed for buildbot
+    $sudo emerge dev-python/virtualenv
+    # Needed for fetching buildbot from git
+    $sudo emerge dev-vcs/git
+    # Needed for parsepatch.pl
+    $sudo emerge dev-perl/DateTime-Format-Mail
+}
+
 install_prereqs() {
-    case `system_osname` in
-    *buntu*|*ebian*)
-	# Needed for buildbot
-	sudo apt-get install python-dev python-virtualenv
-	# Needed for fetching buildbot from git
-	sudo apt-get install git || sudo apt-get install git-core
-	# Needed for parsepatch.pl
-	sudo apt-get install libdatetime-format-mail-perl
-        ;;
-    esac
+    if test x`which port` != x
+    then
+        install_prereqs_macports
+    elif test x`which emerge` != x
+    then
+        # Check for Gentoo Prefix
+        if emerge --info | grep "prefix"
+        then
+            sudo=
+        else
+            sudo=sudo
+        fi
+        install_prereqs_portage
+    elif test x`which apt-get` != x
+    then
+        install_prereqs_apt
+    else
+        echo "unknown operating system" >&2
+        exit 1
+    fi
 }
 
 destroy() {

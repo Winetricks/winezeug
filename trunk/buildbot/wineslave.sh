@@ -83,9 +83,7 @@ system_info() {
 
 #----- Functions invoked by user when setting up or starting slave -----------
 
-install_prereqs() {
-    case `system_osname` in
-    *buntu*|*ebian*)
+install_prereqs_apt() {
     # Needed for buildbot
     sudo apt-get install python-dev python-virtualenv 
     # Needed to report on GPU type
@@ -99,16 +97,76 @@ install_prereqs() {
     sudo apt-get install ttf-mscorefonts-installer
     # Needed to pass rpcrt4 tests
     sudo apt-get install winbind
-        case `arch` in
-        x86_64)
-            sudo apt-get install libc6-dev-i386 ia32-libs
-            ;;
-        esac
+    case `arch` in
+    x86_64)
+        sudo apt-get install libc6-dev-i386 ia32-libs
         ;;
     esac
 
     # Needed to avoid gecko prompt
     sh ../install-gecko.sh
+}
+
+install_prereqs_macports() {
+    # For Mac OS X with MacPorts.
+    # Needed for buildbot
+    sudo port install py-virtualenv
+    # Needed to report on GPU type
+    sudo port install glxinfo
+    # Needed to apply patches
+    sudo port install autoconf
+    # Needed to make repeated builds of same files go faster
+    sudo port install ccache
+    # Needed to pass rpcrt4 tests
+    sudo port install samba3 +universal
+    # Needed to avoid gecko prompt
+    sh ../install-gecko.sh
+}
+
+install_prereqs_portage() {
+    # For Gentoo.  Other systems may differ.
+    # Needed for buildbot
+    $sudo emerge dev-python/virtualenv 
+    # Needed to report on GPU type
+    $sudo emerge x11-apps/mesa-progs
+    # Needed to apply patches
+    $sudo emerge sys-devel/autoconf
+    # Needed to make repeated builds of same files go faster
+    $sudo emerge dev-util/ccache
+    # Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
+    #$sudo emerge ttf-mscorefonts-installer # Don't know where to get it...
+    # Needed to pass rpcrt4 tests
+    $sudo env USE="winbind" emerge net-fs/samba
+    # Needed to avoid gecko prompt
+    sh ../install-gecko.sh
+    case `arch` in
+    x86_64)
+        $sudo emerge app-emulation/emul-linux-x86-baselibs app-emulation/emul-linux-x86-opengl app-emulation/emul-linux-x86-xlibs app-emulation/emul-linux-x86-medialibs app-emulation/emul-linux-x86-soundlibs
+        ;;
+    esac
+}
+
+install_prereqs() {
+    if test x`which port` != x
+    then
+        install_prereqs_macports
+    elif test x`which emerge` != x
+    then
+        # Check for Gentoo Prefix
+        if emerge --info | grep "prefix"
+        then
+            sudo=
+        else
+            sudo=sudo
+        fi
+        install_prereqs_portage
+    elif test x`which apt-get` != x
+    then
+        install_prereqs_apt
+    else
+        echo "unknown operating system" >&2
+        exit 1
+    fi
 }
 
 destroy() {
