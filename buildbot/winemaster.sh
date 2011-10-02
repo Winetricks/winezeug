@@ -124,6 +124,8 @@ create_master() {
         # and seems to be how buildbot developers test their code
         test -d buildbot-git || git clone git://github.com/buildbot/buildbot.git buildbot-git
         cd buildbot-git
+        # Work around recent regression, see http://thread.gmane.org/gmane.comp.python.buildbot.devel/7791
+        git reset --hard dc63ce030fc5156cb84ad44516a6db6ae0238851
         # Fix bug that failed to preserve comment
         #patch -p1 < $SRC/buildbot-propagate-comment.patch
         # Hack out patch attachment, which still crashes
