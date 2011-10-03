@@ -171,11 +171,13 @@ install_prereqs_portage() {
     # Needed to work around http://bugs.winehq.org/show_bug.cgi?id=28097
     #$sudo emerge ttf-mscorefonts-installer # Don't know where to get it...
     # Needed to pass rpcrt4 tests
-    $sudo env USE="winbind" emerge net-fs/samba
+    # Note: Gentoo Prefix does not have samba yet, so don't abort if package missing
+    $sudo env USE="winbind" emerge net-fs/samba || true
     # Needed to avoid gecko prompt
     sh ../install-gecko.sh
-    case `arch` in
-    x86_64)
+    # linux x86 32 bit compatibility packages are only present on Linux x86_64 64 bit systems (and not e.g. on mac or solaris)
+    case `uname -s`:`arch` in
+    Linux:x86_64)
         $sudo emerge app-emulation/emul-linux-x86-baselibs app-emulation/emul-linux-x86-opengl app-emulation/emul-linux-x86-xlibs app-emulation/emul-linux-x86-medialibs app-emulation/emul-linux-x86-soundlibs
         ;;
     esac
