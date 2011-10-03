@@ -19,7 +19,7 @@ dlls/twain_32/tests/dsm.ok      CRASHY 28133
 dlls/shell32/tests/shlfolder.ok SYS    28216
 dlls/kernel32/tests/process.ok  NOTTY  28220
 dlls/kernel32/tests/pipe.ok     HEAP   28257
-dlls/kernel32/tests/pipe.ok     FLAKY  28257
+dlls/kernel32/tests/pipe.ok     WICKED 28257
 programs/cmd/tests/batch.ok     HEAP   28258
 dlls/dsound/tests/ds3d8.ok      HEAP   28260
 dlls/dsound/tests/ds3d.ok       HEAP   28260

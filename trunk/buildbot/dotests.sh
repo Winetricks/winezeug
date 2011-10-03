@@ -160,6 +160,7 @@ do_subset_tests() {
 # Tests may appear multiple times in the list.
 # Supported conditions:
 # FLAKY - fails sometimes
+# WICKED - fails sometimes, but if you run it again, still fails
 # CRASHY - crashes sometimes
 # SYS - always fails on some systems, not on others
 # HEAP - fails or crashes if warn+heap
@@ -171,7 +172,7 @@ do_subset_tests() {
 # Usage: get_blacklist regexp
 # e.g.
 #  get_blacklist 'SYS' gets all tests that reliably crash on some systems
-#  get_blacklist 'FLAKY|CRASHY' gets all tests that fail or crash occasionally
+#  get_blacklist 'WICKED|FLAKY|CRASHY' gets all tests that fail or crash occasionally
 
 get_blacklist() {
     egrep "$1" < $SRC/dotests_blacklist.txt | awk '{print $1}' | sort -u
@@ -248,7 +249,7 @@ do_retry_flakytests() {
 # This takes a while, so speed things up a bit by running some tests in background
 do_goodtests() {
     # Skip all tests that might fail
-    match='SYS|FLAKY|CRASHY'
+    match='SYS|WICKED|FLAKY|CRASHY'
     case `arch` in
     x86_64) match="$match|BAD64";;
     esac
@@ -338,7 +339,7 @@ do_goodtests() {
 # Usage: do_badtests regexp
 # e.g.
 #  do_badtests . - to get all tests that fail somewhere sometimes
-#  do_badtests 'FLAKY|CRASHY' - to get only the unreliably unreliable tests
+#  do_badtests 'WICKED|FLAKY|CRASHY' - to get only the unreliably unreliable tests
 do_badtests() {
     for badtest in `get_blacklist $1`
     do
