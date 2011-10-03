@@ -4,7 +4,7 @@
 # LGPL
 
 set -e
-set -x
+#set -x
 
 TOP=$HOME/wineslave.dir
 
@@ -35,19 +35,46 @@ usage() {
 }
 
 system_osname() {
-    # FIXME: do this portably
-    lsb_release -d -s | tr -d '\012'
+    # Let's start off with the basics...
+    uname -sr | tr -d '\012'
     echo ", "
-    uname -r | tr -d '\012'
-    echo ", "
-    pulseaudio --version | tr -d '\012'
-    echo ", "
-    cat /proc/asound/version
+
+    if test x`which lsb_release` != x
+    then
+        lsb_release -d -s
+    elif test x`which sw_vers` != x
+    then
+        sw_vers -productName
+        echo " "
+        sw_vers -productVersion
+    fi | tr -d '\012'
+}
+
+system_audioinfo() {
+    if test x`which pulseaudio` != x
+    then
+        pulseaudio --version | tr -d '\012'
+    fi
+    if test -r /proc/asound/version
+    then
+        echo ", "
+        cat /proc/asound/version
+    fi
 }
 
 system_cpuname() {
-    # FIXME: do this portably
-    cat /proc/cpuinfo  | grep "model name" | uniq | sed 's/model name.: //'
+    if test -r /proc/cpuinfo
+    then
+        # Linux
+        cat /proc/cpuinfo  | grep "model name" | uniq | sed 's/model name.: //'
+    elif test x`uname -s` = xDarwin
+    then
+        # Mac
+        sysctl -n machdep.cpu.brand_string
+    else 
+        # Works on FreeBSD, don't know about others
+        sysctl -n hw.model
+    fi
 }
 
 system_numcpus() {
@@ -66,7 +93,14 @@ system_numcpus() {
 
 system_ram_megabytes() {
     # FIXME: do this portably
-    free | awk '/Mem:/ {printf("%d\n", $2 / 1024); }'
+    if test x`which free` != x
+    then
+        free | awk '/Mem:/ {printf("%d\n", $2 / 1024); }'
+    elif test x`which sysctl` != x
+    then
+        # Mac, freebsd
+        sysctl -n hw.memsize | awk '{printf("%d\n", $0 / 1048576);}'
+    fi
 }
 
 system_gpu() {
@@ -75,9 +109,10 @@ system_gpu() {
 }
 
 system_info() {
-    echo "os:    " `system_osname`
-    echo "ram:   " `system_ram_megabytes` MB
     echo "cpu:   " `system_cpuname`
+    echo "ram:   " `system_ram_megabytes` MB
+    echo "os:    " `system_osname`
+    echo "audio: " `system_audioinfo`
     echo "gpu:   " `system_gpu`
 }
 
