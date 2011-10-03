@@ -224,7 +224,6 @@ do_retry_flakytests() {
         bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}' | sort -u | tr '\012' ' '`"
         badtestdir=${badtest%/*}
         badtestfile=${badtest##*/}
-        (
         cd $badtestdir
         if make $badtestfile
         then
@@ -239,7 +238,7 @@ do_retry_flakytests() {
                 flaky_errors=`expr $flaky_errors + 1`
             fi
         fi
-        )
+        cd ../../..
     done
     echo "badtests done, $flaky_errors tests failed both tries."
     return $flaky_errors
