@@ -52,4 +52,3 @@ dlls/comctl32/tests/treeview.ok SYS    28503
 dlls/oleaut32/tests/olepicture.ok SYS  28503
 dlls/kernel32/tests/change.ok   FLAKY  28506
 dlls/user32/tests/monitor.ok    FLAKY  28508
-dlls/gdiplus/tests/image.ok     BAD64  28567
