@@ -197,7 +197,11 @@ do_try() {
     # it doesn't show up in svn.  Must match those in master.cfg.
     # FIXME: Use real hostname for master.
     # Always use -p 1 for wine patches, since that's the project's convention.
-    buildbot try $wait --who $who --comment "$subject"  --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
+    # Tell buildbot to apply patch against revision current as of now, since 
+    # by the time it actually tries to apply the patch, it might already have
+    # been committed!
+    baserev=`wget -O- http://source.winehq.org/git/wine.git/patch | head -1 | awk '{print $2}'`
+    buildbot try --baserev=$baserev $wait --who $who --comment "$subject"  --connect=pb --master=127.0.0.1:5555 --username=fred --passwd=trybot --diff=$1 -p 1
     )
 }
 
