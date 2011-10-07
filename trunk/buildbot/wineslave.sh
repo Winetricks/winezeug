@@ -461,6 +461,18 @@ then
     usage
 fi
 
+# If system needs a reboot, refuse to run tests, since 
+# kernel updates can cause 3d tests to fail if a
+# proprietary driver is in use.
+if test -f /var/run/reboot-required
+then
+    # Nasty!  We don't really have a good way of logging this.
+    # See also http://trac.buildbot.net/ticket/849
+    echo System needs reboot.  Shutting down buildslave.  Please reboot.
+    $TOP/buildslave stop
+    exit 1
+fi
+
 while test "$1"
 do
     arg="$1"
