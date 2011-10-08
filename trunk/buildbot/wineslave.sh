@@ -263,6 +263,8 @@ create_slave() {
         cd buildbot-git
         # use git to apply patches
         patch -p1 < $SRC/buildbot-git-apply.patch
+        # don't fail if git branch -M fails
+        patch -p1 < $SRC/buildbot-git-1.7.7.patch
         export PIP_USE_MIRRORS=true
         pip install -eslave
         cd ..
@@ -384,6 +386,12 @@ __EOF__
     then
         cflags="$cflags -Werror"
     fi
+    # Disable deprecation warnings on Mac (see
+    # http://bugs.winehq.org/show_bug.cgi?id=16107)
+    if test x`uname -s` = xDarwin
+    then
+        cflags="$cflags -Wno-error=deprecated-declarations"
+    fi
     # gcc-4.6 produces warnings that haven't been preened out of wine's tree yet, so disable them
     if $CC -Werror -Wno-unused-but-set-variable hello.c -o hello
     then
@@ -412,6 +420,15 @@ __EOF__
     case $buildwidth in
     64) configopts="$configopts --enable-win64";;
     esac
+    if test x`uname -s` = xDarwin -a
+    then
+        if test -d /opt/X11
+        then
+            configopts="$configopts --x-includes=/opt/X11/include --x-libraries=/opt/X11/lib"
+        else
+            configopts="$configopts --x-includes=/usr/X11/include --x-libraries=/usr/X11/lib"
+        fi
+    fi
     if ! ./configure $configopts CC="$CC" CFLAGS="$cflags"
     then
         # If cache failed, clean it out and try again
