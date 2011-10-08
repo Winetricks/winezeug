@@ -502,6 +502,15 @@ then
     exit 1
 fi
 
+# If system running in failsafe graphics, X probably crashed.
+if ps augxw | grep failsafeXServer | grep -v grep
+then
+    # Nasty!  We don't really have a good way of logging this.
+    echo X running in failsafe mode.  Shutting down buildslave.  Please reboot.
+    $TOP/buildslave stop
+    exit 1
+fi
+
 while test "$1"
 do
     arg="$1"
