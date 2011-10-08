@@ -498,7 +498,7 @@ then
     # Nasty!  We don't really have a good way of logging this.
     # See also http://trac.buildbot.net/ticket/849
     echo System needs reboot.  Shutting down buildslave.  Please reboot.
-    $TOP/buildslave stop
+    stop_slave
     exit 1
 fi
 
@@ -507,7 +507,7 @@ if ps augxw | grep failsafeXServer | grep -v grep
 then
     # Nasty!  We don't really have a good way of logging this.
     echo X running in failsafe mode.  Shutting down buildslave.  Please reboot.
-    $TOP/buildslave stop
+    stop_slave
     exit 1
 fi
 
