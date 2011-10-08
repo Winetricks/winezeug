@@ -420,7 +420,7 @@ __EOF__
     case $buildwidth in
     64) configopts="$configopts --enable-win64";;
     esac
-    if test x`uname -s` = xDarwin -a
+    if test x`uname -s` = xDarwin
     then
         if test -d /opt/X11
         then
