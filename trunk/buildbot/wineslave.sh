@@ -442,14 +442,26 @@ do_build() {
     # "make depend" with -j higher than 4 seems to be dangerous, so let's do it explicitly here.
     # (-j2 is about 20 seconds faster than -j1, and all my build machines are dual-core or
     # better, so let's use -j2 for make depend.)
-    make -j2 depend
+
+    # When run in a normal locale, gcc inserts non-ascii characters into
+    # its error message stream.  This causes a crash when the error messages
+    # are inserted into the build failure email
+    # File "buildbot/status/mail.py", line 520, in createEmail
+    # text = msgdict['body'].encode(ENCODING)
+    # exceptions.UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 
+    #                                in position 557: ordinal not in range(128)
+    # So set C locale when running make.
+    # (Alternately, we could have our message formatter or error extractor
+    # convert the unicode char into one that fits in ascii.)
+
+    LANG=C make -j2 depend
 
     # If your hit rate per 'ccache -s' is too low, turn the log file on and look at it
     #export CCACHE_LOGFILE=/tmp/ccache.log
     # The ccache manpage explains when these are needed.  
     # Turning them on really helped on my e7300.
     export CCACHE_SLOPPINESS="file_macro,time_macros,include_file_mtime" 
-    make -j`system_numcpus`
+    LANG=C make -j`system_numcpus`
 }
 
 do_test() {
