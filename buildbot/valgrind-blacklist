@@ -1,0 +1,10 @@
+{
+   wine_bug_28628
+   Memcheck:Cond
+   fun:RtlEqualSid
+   fun:EqualSid
+   fun:IsWellKnownSid
+   fun:LookupAccountSidW
+   fun:LookupAccountSidA
+   fun:test_token_attr
+}
