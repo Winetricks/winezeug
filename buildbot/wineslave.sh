@@ -404,12 +404,22 @@ __EOF__
     rm -f hello || true
 
     # If the source tree is changed at all, regenerate build system and protocol
-    # FIXME: this causes dotests.h to always run all tests!
     if test -n "`git status --porcelain | grep -v '^??'`"
     then
         git commit -a -m "commit so we can do make_makefiles"
         tools/make_makefiles
+
+        # If make_requests didn't actually change the protocol, don't change the protocol number
+        cp -p include/wine/server_protocol.h include/wine/server_protocol.h.bak
         tools/make_requests
+        diff include/wine/server_protocol.h.bak include/wine/server_protocol.h || true
+        if ! diff -u include/wine/server_protocol.h.bak include/wine/server_protocol.h | grep -v SERVER_PROTOCOL_VERSION | grep -v server_protocol.h | egrep '^[-+]'
+        then
+            cp -p include/wine/server_protocol.h.bak include/wine/server_protocol.h
+        fi
+
+        # Undo the git commit, but not the patches, so dotests.sh can tell what to test
+        git reset 'HEAD^'
 
         # Generate ./configure and include/config.h.in
         autoreconf
