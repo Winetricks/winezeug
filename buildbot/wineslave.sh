@@ -503,20 +503,23 @@ fi
 # If system needs a reboot, refuse to run tests, since 
 # kernel updates can cause 3d tests to fail if a
 # proprietary driver is in use.
+# FIXME: detect problem modes in non-Ubuntu/Debian buildslaves, too
 if test -f /var/run/reboot-required
 then
-    # Nasty!  We don't really have a good way of logging this.
-    # See also http://trac.buildbot.net/ticket/849
+    # Sleep after message so slave has time to propagate message to master
     echo System needs reboot.  Shutting down buildslave.  Please reboot.
+    sleep 15
     stop_slave
     exit 1
 fi
 
 # If system running in failsafe graphics, X probably crashed.
+# FIXME: detect problem modes in non-Ubuntu/Debian buildslaves, too
 if ps augxw | grep failsafeXServer | grep -v grep
 then
-    # Nasty!  We don't really have a good way of logging this.
+    # Sleep after message so slave has time to propagate message to master
     echo X running in failsafe mode.  Shutting down buildslave.  Please reboot.
+    sleep 15
     stop_slave
     exit 1
 fi
