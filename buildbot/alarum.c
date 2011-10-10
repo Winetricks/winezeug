@@ -101,6 +101,7 @@ int main(int argc, char **argv)
 #define MYBUFLEN 128000
     static char buf[MYBUFLEN];
     time_t t0, t1;
+    int valgrinderr;
 
     if (argc < 3) {
         fprintf(stderr, "Usage: alarum timeout-in-seconds command ...\n");
@@ -160,6 +161,19 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    /* Check for valgrind errors */
+    valgrinderr = 0;
+    if (strstr(newargv[0], "valgrind")) {
+        char grepcmd[5000];
+        int status;
+        /* ok, a real programm would use regcomp()/regexec(), but I'm lazy */
+        sprintf(grepcmd, "grep -q '==.*ERROR SUMMARY: [1-9]' %s", logfilename);
+        status = system(grepcmd);
+        if (status != -1 && WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            valgrinderr = 1;
+        }
+    }
+
     /* Get an exclusive lock so logs don't get mixed together */
     int loglockfd = open("log.lock", O_RDWR|O_CREAT, 0600);
     if (loglockfd != -1) 
@@ -174,7 +188,7 @@ int main(int argc, char **argv)
     }
     /* Copy the temporary file to stdout, line by line, prepending error status if needed */
     while (fgets(buf, MYBUFLEN, logfp)) {
-        if (!WIFEXITED(waitresult) || (WEXITSTATUS(waitresult) != 0)) {
+        if (valgrinderr || !WIFEXITED(waitresult) || (WEXITSTATUS(waitresult) != 0)) {
             printf("]] ");
         }
         fputs(buf, stdout);
@@ -192,8 +206,10 @@ int main(int argc, char **argv)
     if (loglockfd != -1) 
        flock(loglockfd, LOCK_UN);
 
-    /* Finally, exit with test program's exit code, or 99 if crashed */
+    /* Finally, exit with test program's exit code, or 99 if crashed, or 98 if valgrind error */
     if (!WIFEXITED(waitresult))
         return 99;
+    if (valgrinderr)
+        return 98;
     return WEXITSTATUS(waitresult);
 }

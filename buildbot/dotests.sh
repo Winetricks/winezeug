@@ -15,6 +15,7 @@ Commands:
    goodtests
    badtests
    flakytests
+   valgrindtests
    retry_flakytests
    crashytests
 _EOF_
@@ -245,6 +246,58 @@ do_retry_flakytests() {
     return $flaky_errors
 }
 
+# DLLs to run through valgrind
+# For now, just run one that's known to be broken
+VALGRIND_WHITELIST_DLLS="advapi32"
+# Here are a set known to be good:
+#    amstream avifil32 comcat credui cryptnet 
+#    cryptui d3d10core d3d10 d3dxof dmloader 
+#    dnsapi dpnet dxgi faultrep gameux inetmib1 
+#    infosoft itss localui mapi32"
+
+# Run VALGRIND_WHITELIST_DLLS though valgrind
+# FIXME: replace this with code to run just the DLL involved in a simple change through valgrind
+do_valgrind_tests() {
+    valgrind_errors=0
+    create_wineprefix valgrind
+    # FIXME: move this into create_wineprefix
+    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
+    then
+        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    fi
+
+    # Start winemine so wineboot doesn't get run by valgrind (too slow?)
+    ./wine winemine &
+    winemine_pid=$!
+
+    sleep 1
+
+    VALGRIND_OPTS="--trace-children=yes --track-origins=yes \
+      --gen-suppressions=all --suppressions=$SRC/suppressions \
+      --leak-check=no --num-callers=20  --workaround-gcc296-bugs=yes \
+      --vex-iropt-precise-memory-exns=yes"
+    export VALGRIND_OPTS
+
+    for test in $VALGRIND_WHITELIST_DLLS
+    do
+        cd dlls/$test/tests
+
+        rm -f *.ok
+        if ! WINETEST_WRAPPER="alarum 300 valgrind" make test
+        then
+            echo "$test FAILED"
+            valgrind_errors=`expr $valgrind_errors + 1`
+        fi
+        cd ../../..
+    done
+    kill $winemine_pid
+    server/wineserver -k
+    echo "do_valgrind_tests done, $valgrind_errors tests had failures."
+    return $valgrind_errors
+}
+
 # Run all the known good tests
 # This takes a while, so speed things up a bit by running some tests in background
 do_goodtests() {
@@ -392,10 +445,11 @@ export LANG
 arg="$1"
 shift
 case "$arg" in
-goodtests)   do_goodtests               ;;
-badtests)    do_badtests .              ;;
-flakytests)  do_badtests FLAKY          ;;
-retry_flakytests) do_retry_flakytests   ;;
-crashytests) do_badtests CRASHY         ;;
+good*)   do_goodtests               ;;
+bad*)    do_badtests .              ;;
+flaky*)  do_badtests FLAKY          ;;
+retry_flaky*) do_retry_flakytests   ;;
+valgrind*) do_valgrind_tests        ;;
+crashy*) do_badtests CRASHY         ;;
 *) usage;;
 esac
