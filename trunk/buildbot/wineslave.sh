@@ -8,7 +8,7 @@ set -e
 
 TOP=$HOME/wineslave.dir
 
-case `arch` in
+case `uname -m` in
 i?86) geckoarch=x86;;
 x86_64) geckoarch=x86_64;;
 esac
@@ -132,7 +132,7 @@ install_prereqs_apt() {
     sudo apt-get install ttf-mscorefonts-installer
     # Needed to pass rpcrt4 tests
     sudo apt-get install winbind
-    case `arch` in
+    case `uname -m` in
     x86_64)
         sudo apt-get install libc6-dev-i386 ia32-libs
         ;;
@@ -176,7 +176,7 @@ install_prereqs_portage() {
     # Needed to avoid gecko prompt
     sh ../install-gecko.sh
     # linux x86 32 bit compatibility packages are only present on Linux x86_64 64 bit systems (and not e.g. on mac or solaris)
-    case `uname -s`:`arch` in
+    case `uname -s`:`uname -m` in
     Linux:x86_64)
         $sudo emerge app-emulation/emul-linux-x86-baselibs app-emulation/emul-linux-x86-opengl app-emulation/emul-linux-x86-xlibs app-emulation/emul-linux-x86-medialibs app-emulation/emul-linux-x86-soundlibs
         ;;
@@ -362,7 +362,7 @@ __EOF__
 
     # Figure out whether this is a 32 or 64 bit build
     # FIXME: this should also depend on commandline
-    case `arch` in
+    case `uname -m` in
     x86_64) buildwidth=64 ;;
     *)      buildwidth=32 ;;
     esac

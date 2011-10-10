@@ -303,7 +303,7 @@ do_valgrind_tests() {
 do_goodtests() {
     # Skip all tests that might fail
     match='SYS|WICKED|FLAKY|CRASHY'
-    case `arch` in
+    case `uname -m` in
     x86_64) match="$match|BAD64";;
     esac
     echo "Checking WINEDEBUG ($WINEDEBUG)"
