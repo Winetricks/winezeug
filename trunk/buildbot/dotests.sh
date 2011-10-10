@@ -318,6 +318,11 @@ do_goodtests() {
     then
         match="$match|ATI"
     fi
+    if test `pgrep pulseaudio`
+    then
+        match="$match|PULSE"
+    fi
+
     blacklist=`get_blacklist "$match"`
     touch $blacklist
 
