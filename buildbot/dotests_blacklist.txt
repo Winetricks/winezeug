@@ -1,8 +1,8 @@
 dlls/kernel32/tests/heap.ok     HEAP
-dlls/dsound/tests/ds3d8.ok      SYS    8668
-dlls/dsound/tests/ds3d.ok       SYS    8668
-dlls/dsound/tests/dsound8.ok    SYS    8668
-dlls/dsound/tests/dsound.ok     SYS    8668
+dlls/dsound/tests/ds3d8.ok      PULSE  8668
+dlls/dsound/tests/ds3d.ok       PULSE  8668
+dlls/dsound/tests/dsound8.ok    PULSE  8668
+dlls/dsound/tests/dsound.ok     PULSE  8668
 dlls/user32/tests/input.ok      SYS    12053
 dlls/user32/tests/msg.ok        SYS    12053
 dlls/user32/tests/win.ok        SYS    12053
