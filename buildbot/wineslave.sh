@@ -523,6 +523,13 @@ then
     stop_slave
     exit 1
 fi
+if grep "Server aborting" /var/log/Xorg.log.0.old
+then
+    echo X server seems to have crashed.  Shutting down buildslave.  Please remove /var/log/Xorg.log.0.old and reboot.
+    sleep 15
+    stop_slave
+    exit 1
+fi
 
 while test "$1"
 do
