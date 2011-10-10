@@ -96,7 +96,7 @@ system_ram_megabytes() {
     if test x`which free` != x
     then
         free | awk '/Mem:/ {printf("%d\n", $2 / 1024); }'
-    elif test x`uname s` = xDarwin
+    elif test x`uname -s` = xDarwin
     then
         sysctl -n hw.memsize | awk '{printf("%d\n", $0 / 1048576);}'
     elif test x`uname -s` = xFreeBSD
