@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/file.h>
+#include <sys/signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
