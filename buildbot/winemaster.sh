@@ -102,7 +102,15 @@ create_master() {
     # Master
     mkdir -p $TOP
     cd $TOP
-    virtualenv --no-site-packages sandbox
+    # --no-site-packages doesn't work well on FreeBSD, sqlite fails to import. There's some info at
+    # http://forums.freebsd.org/showthread.php?t=16197, but none of that worked on FreeBSD9/x86 for Austin English.
+    # Also consulted #FreeBSD on FreeNode, but no one new a solution.
+    if test x`uname -s` = xFreeBSD
+    then
+        virtualenv sandbox
+    else
+        virtualenv --no-site-packages sandbox
+    fi
     cd $TOP/sandbox
     . bin/activate
     if false
