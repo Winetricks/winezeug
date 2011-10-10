@@ -263,8 +263,6 @@ create_slave() {
         cd buildbot-git
         # use git to apply patches
         patch -p1 < $SRC/buildbot-git-apply.patch
-        # don't fail if git branch -M fails
-        patch -p1 < $SRC/buildbot-git-1.7.7.patch
         export PIP_USE_MIRRORS=true
         pip install -eslave
         cd ..
