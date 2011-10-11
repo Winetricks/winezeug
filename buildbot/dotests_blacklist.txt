@@ -53,3 +53,4 @@ dlls/user32/tests/monitor.ok    FLAKY  28508
 dlls/msi/tests/install.ok       FLAKY  28609
 dlls/kernel32/tests/thread.ok   SYS    28640
 dlls/ole32/tests/clipboard.ok   FLAKY  28643
+dlls/mmdevapi/tests/dependency.ok FLAKY 28653
