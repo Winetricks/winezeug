@@ -6,6 +6,7 @@ dlls/dsound/tests/dsound.ok     PULSE  8668
 dlls/user32/tests/input.ok      SYS    12053
 dlls/user32/tests/msg.ok        SYS    12053
 dlls/user32/tests/win.ok        SYS    12053
+dlls/ntdll/tests/file.ok        FLAKY  14841
 dlls/user32/tests/static.ok     FLAKY  20149
 dlls/oleaut32/tests/tmarshal.ok BAD64  26768
 dlls/ieframe/tests/ie.ok        BAD64  26768
@@ -60,4 +61,3 @@ dlls/ntdll/tests/exception.ok   FREEBSD 12891
 dlls/kernel32/tests/thread.ok   FREEBSD 12894
 dlls/gdi32/tests/path.ok        FREEBSD 15538
 dlls/quartz/tests/referencemapper.ok FREEBSD 15539
-
