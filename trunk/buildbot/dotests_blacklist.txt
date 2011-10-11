@@ -51,3 +51,4 @@ dlls/oleaut32/tests/olepicture.ok SYS  28503
 dlls/kernel32/tests/change.ok   FLAKY  28506
 dlls/user32/tests/monitor.ok    FLAKY  28508
 dlls/msi/tests/install.ok       FLAKY  28609
+dlls/kernel32/tests/thread.ok   SYS    28640
