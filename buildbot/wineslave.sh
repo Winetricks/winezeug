@@ -144,6 +144,22 @@ install_prereqs_apt() {
     sh ../install-gecko.sh
 }
 
+install_prereqs_freebsd() {
+    # Needed for buildbot:
+    cd /usr/ports/
+    for x in \
+        devel/autoconf \
+        devel/ccache \
+        devel/py-virtualenv \
+        graphics/mesa-demos
+    do
+        cd $x
+        make
+        make install
+        cd -
+    done
+}
+
 install_prereqs_macports() {
     # For Mac OS X with MacPorts.
     # Needed for buildbot
@@ -202,6 +218,14 @@ install_prereqs() {
     elif test x`which apt-get` != x
     then
         install_prereqs_apt
+    elif test x`uname -s` = xFreeBSD
+    then
+        if test x`whoami` != xroot
+        then
+            echo "You need root privileges to install the prereqs"
+            exit 1
+        fi 
+        install_prereqs_freebsd
     else
         echo "unknown operating system" >&2
         exit 1
