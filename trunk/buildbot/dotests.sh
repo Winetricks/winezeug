@@ -310,19 +310,27 @@ do_goodtests() {
     case "$WINEDEBUG" in
     *warn+heap*) match="$match|HEAP" ;;
     esac
+    
     if ! test -t 1
     then
         match="$match|NOTTY"
     fi
+    
     if lspci | grep VGA.*ATI
     then
         match="$match|ATI"
     fi
+    
     if test `pgrep pulseaudio`
     then
         match="$match|PULSE"
     fi
 
+    if test x`uname -s` = xFreeBSD
+    then
+        match="$match|FREEBSD"
+    fi
+    
     blacklist=`get_blacklist "$match"`
     touch $blacklist
 
