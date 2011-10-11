@@ -493,17 +493,19 @@ do_build() {
     # exceptions.UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 
     #                                in position 557: ordinal not in range(128)
     # So set C locale when running make.
+    # (Have to set LC_CTYPE, too, since buildbot sets that explicitly.)
+    #
     # (Alternately, we could have our message formatter or error extractor
     # convert the unicode char into one that fits in ascii.)
 
-    LANG=C make -j2 depend
+    LANG=C LC_CTYPE=C make -j2 depend
 
     # If your hit rate per 'ccache -s' is too low, turn the log file on and look at it
     #export CCACHE_LOGFILE=/tmp/ccache.log
     # The ccache manpage explains when these are needed.  
     # Turning them on really helped on my e7300.
     export CCACHE_SLOPPINESS="file_macro,time_macros,include_file_mtime" 
-    LANG=C make -j`system_numcpus`
+    LANG=C LC_CTYPE=C make -j`system_numcpus`
 }
 
 do_test() {
