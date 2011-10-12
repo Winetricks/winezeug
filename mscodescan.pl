@@ -204,6 +204,12 @@ foreach $haystack (@haystacks) {
         }
         $found = 0;
     }
+    if ($found && $file =~ /unins000/i) {
+        if (! $opt{'q'}) {
+            print "File $haystack known to be Ventica uninstaller, so assuming not a real Microsoft file.\n";
+        }
+        $found = 0;
+    }
     # Files from
     # http://connect.creativelabs.com/openal/Downloads/oalinst.zip
     # are not Microsoft, even though they include the strings
