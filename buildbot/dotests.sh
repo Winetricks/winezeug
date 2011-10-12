@@ -59,9 +59,14 @@ _EOF_
     ./wine regedit vd.reg
     # Sadly, you have to wait for wineserver to finish before the virtual desktop takes effect
     server/wineserver -w
-    #./wine winemine
-    #sleep 20
-    #exit 1
+
+    # FIXME: unpack this once before running this script, and just symlink to it here
+    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
+    then
+        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    fi
 }
 
 # Run all tests that don't require the display
@@ -107,12 +112,6 @@ do_background_tests() {
 do_foreground_tests() {
     foreground_errors=0
     create_wineprefix foreground
-    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
-    then
-        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-    fi
     cd dlls
     for dir in *
     do
@@ -215,12 +214,6 @@ is_simple_change() {
 do_retry_flakytests() {
     flaky_errors=0
     create_wineprefix flaky
-    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
-    then
-        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-    fi
     for badtest in `get_blacklist FLAKY`
     do
         bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}' | sort -u | tr '\012' ' '`"
@@ -261,12 +254,6 @@ do_valgrind_tests() {
     valgrind_errors=0
     create_wineprefix valgrind
     # FIXME: move this into create_wineprefix
-    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
-    then
-        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-    fi
 
     # Start winemine so wineboot doesn't get run by valgrind (too slow?)
     ./wine winemine &
