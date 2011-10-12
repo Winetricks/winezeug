@@ -69,4 +69,5 @@ dlls/gdi32/tests/path.ok        FREEBSD 15538
 dlls/quartz/tests/referencemapper.ok FREEBSD 15539
 dlls/rpcrt4/tests/server.ok     FREEBSD 28659
 dlls/kernel32/tests/loader.ok   FREEBSD 28662
-
+dlls/qedit/tests/mediadet.ok    FREEBSD 28664
+dlls/ntdll/tests/directory.ok   FREEBSD 28665
