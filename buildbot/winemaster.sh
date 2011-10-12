@@ -22,6 +22,7 @@ usage() {
     echo "   install_prereqs"
     echo "   create"
     echo "   start"
+    echo "   stop"
     echo "   tail"
     echo "   demo"
 
@@ -136,7 +137,7 @@ create_master() {
         git reset --hard dc63ce030fc5156cb84ad44516a6db6ae0238851
         # Fix bug that failed to preserve comment
         #patch -p1 < $SRC/buildbot-propagate-comment.patch
-        # Hack out patch attachment, which still crashes
+        # Don't attach patch, since it is sometimes so large the mail bounces
         patch -p1 < $SRC/buildbot-workaround-bug2091.patch
         # hack status page to show comment
         patch -p1 < $SRC/buildbot-show-comment.patch
