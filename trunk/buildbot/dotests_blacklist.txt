@@ -61,3 +61,12 @@ dlls/msi/tests/install.ok       FLAKY  28609
 dlls/kernel32/tests/thread.ok   SYS    28640
 dlls/ole32/tests/clipboard.ok   FLAKY  28643
 dlls/mmdevapi/tests/dependency.ok FLAKY 28653
+dlls/kernel32/tests/change.ok   FREEBSD 12840
+dlls/ntdll/tests/change.ok      FREEBSD 12854
+dlls/ntdll/tests/exception.ok   FREEBSD 12891
+dlls/kernel32/tests/thread.ok   FREEBSD 12894
+dlls/gdi32/tests/path.ok        FREEBSD 15538
+dlls/quartz/tests/referencemapper.ok FREEBSD 15539
+dlls/rpcrt4/tests/server.ok     FREEBSD 28659
+dlls/kernel32/tests/loader.ok   FREEBSD 28662
+
