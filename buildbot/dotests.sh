@@ -182,6 +182,9 @@ get_blacklist() {
 # i.e.
 # If a DLL's tests change, return that DLL.
 # If a program or its tests change, return that program.
+# Argument is regular expression for simple non-test changes, e.g. 'programs' if
+# you think only changes to programs are simple, or 'programs|dlls' if you
+# think either are simple.
 is_simple_change() {
     # (Ideally buildbot would tell us this, but for now,
     # grub around in git.)
@@ -199,7 +202,7 @@ is_simple_change() {
     fi
 
     # Did only a single program (and/or its tests) change?
-    if test `wc -l < basedirs.txt` = 1 && grep programs < basedirs.txt > /dev/null
+    if test `wc -l < basedirs.txt` = 1 && egrep "$1" < basedirs.txt > /dev/null
     then
         cat basedirs.txt
         return 0
@@ -239,18 +242,25 @@ do_retry_flakytests() {
     return $flaky_errors
 }
 
-# DLLs to run through valgrind
-# For now, just run one that's known to be broken
-VALGRIND_WHITELIST_DLLS="advapi32"
-# Here are a set known to be good:
-#    amstream avifil32 comcat credui cryptnet 
-#    cryptui d3d10core d3d10 d3dxof dmloader 
-#    dnsapi dpnet dxgi faultrep gameux inetmib1 
-#    infosoft itss localui mapi32"
+# DLLs known to pass under valgrind, and not show any valgrind errors (plus one ringer, advapi32):
+VALGRIND_WHITELIST_DLLS="dlls/advapi32
+    dlls/amstream dlls/avifil32 dlls/comcat dlls/credui dlls/cryptnet 
+    dlls/cryptui dlls/d3d10core dlls/d3d10 dlls/d3dxof dlls/dmloader 
+    dlls/dnsapi dlls/dpnet dlls/dxgi dlls/faultrep dlls/gameux dlls/inetmib1 
+    dlls/infosoft dlls/itss dlls/localui dlls/mapi32"
 
-# Run VALGRIND_WHITELIST_DLLS though valgrind
-# FIXME: replace this with code to run just the DLL involved in a simple change through valgrind
 do_valgrind_tests() {
+    if ! dir=`is_simple_change dlls`
+    then
+        echo "Complex change - no obvious thing to valgrind"
+        return 0
+    fi
+    if ! echo "$VALGRIND_WHITELIST_DLLS" | grep -w $dir
+    then
+        echo "Directory $dir is not in the list of valgrind-clean directories, so not valgrinding"
+        return 0
+    fi
+
     valgrind_errors=0
     create_wineprefix valgrind
 
@@ -266,18 +276,17 @@ do_valgrind_tests() {
       --vex-iropt-precise-memory-exns=yes"
     export VALGRIND_OPTS
 
-    for test in $VALGRIND_WHITELIST_DLLS
-    do
-        cd dlls/$test/tests
+    cd $dir/tests
 
-        rm -f *.ok
-        if ! WINETEST_WRAPPER="alarum 300 valgrind" make test
-        then
-            echo "$test FAILED"
-            valgrind_errors=`expr $valgrind_errors + 1`
-        fi
-        cd ../../..
-    done
+    rm -f *.ok
+    # FIXME: loop through the tests so we can really count errors
+    if ! WINETEST_WRAPPER="alarum 300 valgrind" make -k test
+    then
+        echo "$test FAILED"
+        valgrind_errors=`expr $valgrind_errors + 1`
+    fi
+    cd ../../..
+
     kill $winemine_pid
     server/wineserver -k
     echo "do_valgrind_tests done, $valgrind_errors tests had failures."
@@ -321,7 +330,7 @@ do_goodtests() {
     touch $blacklist
 
     echo "Checking whether change is so simple we don't need to run all tests"
-    if dir=`is_simple_change`
+    if dir=`is_simple_change programs`
     then
         # Run tests five times, it's cheap
         # FIXME: remove this when cmd is fixed
