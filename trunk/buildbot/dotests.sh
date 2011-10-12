@@ -253,7 +253,6 @@ VALGRIND_WHITELIST_DLLS="advapi32"
 do_valgrind_tests() {
     valgrind_errors=0
     create_wineprefix valgrind
-    # FIXME: move this into create_wineprefix
 
     # Start winemine so wineboot doesn't get run by valgrind (too slow?)
     ./wine winemine &
