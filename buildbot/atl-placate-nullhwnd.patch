@@ -1,0 +1,16 @@
+diff --git a/dlls/atl/atl_ax.c b/dlls/atl/atl_ax.c
+index 9166aa0..ecf292c 100644
+--- a/dlls/atl/atl_ax.c
++++ b/dlls/atl/atl_ax.c
+@@ -914,7 +914,10 @@ static HRESULT IOCS_Init( IOCS *This )
+ 
+     IOleObject_SetHostNames( This->control, AXWIN, AXWIN );
+ 
+-    GetClientRect( This->hWnd, &rect );
++    if (!GetClientRect( This->hWnd, &rect )) {
++        FIXME("GetClientRect failed, hWnd %p\n", This->hWnd);
++        ZeroMemory(&rect, sizeof(RECT));
++    }
+     IOCS_OnSize( This, &rect );
+     IOleObject_DoVerb( This->control, OLEIVERB_INPLACEACTIVATE, NULL, &This->IOleClientSite_iface,
+                        0, This->hWnd, &rect );
