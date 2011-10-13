@@ -580,7 +580,7 @@ do
     patch) do_patch;;
     configure)
         # defaults to "ccache gcc", but only if last verb on commandline
-        do_configure $1
+        do_configure "$1"
         # bash bug: shift || true fails?!, must avoid doing it if last parameter
         if test "$1"
         then
