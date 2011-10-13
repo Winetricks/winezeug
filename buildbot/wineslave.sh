@@ -454,6 +454,7 @@ __EOF__
         git reset 'HEAD^'
 
         # Generate ./configure and include/config.h.in
+        # FIXME: only do this if needed?
         autoreconf
     fi
 
@@ -471,9 +472,9 @@ __EOF__
             configopts="$configopts --x-includes=/usr/X11/include --x-libraries=/usr/X11/lib"
         fi
     fi
-    if ! ./configure $configopts CC="$CC" CFLAGS="$cflags"
+    if ! ./configure $configopts CC="$CC" CFLAGS="$cflags" 2>&1 | tee config.stdout || grep "configure: error:" config.stdout
     then
-        # If cache failed, clean it out and try again
+        echo "configuring with cache failed, so clearing cache and trying again"
         rm ../config-$buildwidth.cache
         ./configure $configopts CC="$CC" CFLAGS="$cflags"
     fi
