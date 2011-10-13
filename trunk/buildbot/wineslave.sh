@@ -24,7 +24,7 @@ usage() {
     echo "   start"
     echo "   tail"
     echo "   patch"
-    echo "   configure [COMPILER, e.g. 'ccache gcc']"
+    echo "   configure [COMPILER, e.g. 'ccache gcc' [OPTIMIZATION, e.g. -O1]]"
     echo "   build"
     echo "   test"
     echo "   heaptest"
@@ -394,6 +394,12 @@ __EOF__
     *)  CC="$1";;
     esac
 
+    # If user specified an optimization level, use it, else default to -O0
+    case "$2" in
+    "") OPTIMIZATION="-O0";;
+    *)  OPTIMIZATION="$2";;
+    esac
+
     # Figure out whether this is a 32 or 64 bit build
     # FIXME: this should also depend on commandline
     case `uname -m` in
@@ -411,7 +417,7 @@ __EOF__
     fi
 
     # Figure out right compiler options
-    cflags="-g -O0"
+    cflags="-g $OPTIMIZATION"
     # http://bugs.winehq.org/show_bug.cgi?id=28275 shows wine's not
     # ready for -Werror on 64 bits
     if test $buildwidth = 32 && $CC -Werror -c hello.c -o hello
@@ -524,6 +530,24 @@ do_test() {
     PATH="${SRC}:$PATH" sh $SRC/dotests.sh goodtests
 }
 
+do_valgrind_test() {
+    cp $SRC/wine_gecko-1.3-$geckoarch-dbg.tar.bz2 .
+    # Get a fresh copy every single time?
+    (
+         rm -rf tmp-svn
+         mkdir tmp-svn
+         cd tmp-svn
+         if svn export https://winezeug.googlecode.com/svn/trunk/buildbot/dotests_blacklist.txt &&
+            svn export https://winezeug.googlecode.com/svn/trunk/buildbot/valgrind_blacklist.txt &&
+            svn export https://winezeug.googlecode.com/svn/trunk/valgrind/valgrind-suppressions
+         then
+             cp dotests_blacklist.txt ${SRC}
+             cat valgrind-suppressions valgrind_blacklist.txt > ${SRC}/suppressions
+         fi
+    )
+    PATH="${SRC}:$PATH" sh $SRC/dotests.sh valgrind
+}
+
 #--------- Main program --------------------------------------------------------
 
 SRC=`dirname $0`
@@ -581,8 +605,13 @@ do
     patch) do_patch;;
     configure)
         # defaults to "ccache gcc", but only if last verb on commandline
-        do_configure "$1"
+        do_configure "$1" "$2"
         # bash bug: shift || true fails?!, must avoid doing it if last parameter
+        if test "$1"
+        then
+            shift || true
+        fi
+        # defaults to "-O0", but only if last verb on commandline
         if test "$1"
         then
             shift || true
@@ -590,6 +619,7 @@ do
         ;;
     build) do_build;;
     test) do_test;;
+    valgrind) do_valgrind_test;;
     heaptest) 
         (
             WINEDEBUG=warn+heap 
