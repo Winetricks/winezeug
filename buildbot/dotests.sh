@@ -242,8 +242,8 @@ do_retry_flakytests() {
     return $flaky_errors
 }
 
-# DLLs known to pass under valgrind, and not show any valgrind errors (plus one ringer, advapi32):
-VALGRIND_WHITELIST_DLLS="dlls/advapi32
+# DLLs known to pass under valgrind, and not show any valgrind errors
+VALGRIND_WHITELIST_DLLS="
     dlls/amstream dlls/avifil32 dlls/comcat dlls/credui dlls/cryptnet 
     dlls/cryptui dlls/d3d10core dlls/d3d10 dlls/d3dxof dlls/dmloader 
     dlls/dnsapi dlls/dpnet dlls/dxgi dlls/faultrep dlls/gameux dlls/inetmib1 
