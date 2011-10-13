@@ -356,8 +356,8 @@ demo() {
     start_slave
 }
 
-#--------- Functions used while slave is running; invoked by master.cfg ---------
-#---- Current directory is the top of the wine tree for the current builder -----
+#--------- Functions used while slave is running; invoked by master.cfg --------
+#---- Current directory is the top of the wine tree for the current builder ----
 
 # Apply patches needed to skip flaky tests
 do_patch() {
@@ -523,7 +523,7 @@ do_test() {
     PATH="${SRC}:$PATH" sh $SRC/dotests.sh goodtests
 }
 
-#--------- Main program ---------------------------------------------------------
+#--------- Main program --------------------------------------------------------
 
 SRC=`dirname $0`
 SRC=`cd $SRC; pwd`
