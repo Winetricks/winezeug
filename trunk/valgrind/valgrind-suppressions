@@ -15,29 +15,16 @@
    Memcheck:Cond
    fun:strcat
 }
-# These two are because ioctl often involves structs with holes.
-# We need to either add one of these per ioctl, or
-# just make it apply for *any* call to NtFsControlFile.
+# ioctl often involves structs with holes.
 {
    wine_struct_hole_FILE_PIPE_WAIT_FOR_BUFFER
    Memcheck:Param
-   writev(vector[1])
-   obj:*
+   writev(vector[...])
+   ...
    fun:wine_server_call
+   ...
    fun:server_ioctl_file
    fun:NtFsControlFile
-   fun:WaitNamedPipeW
-}
-{
-   wine_struct_hole_FILE_PIPE_WAIT_FOR_BUFFER_NONOPTIMIZED
-   Memcheck:Param
-   writev(vector[1])
-   obj:*
-   fun:send_request
-   fun:wine_server_call
-   fun:server_ioctl_file
-   fun:NtFsControlFile
-   fun:WaitNamedPipeW
 }
 {
    # See http://www.winehq.org/pipermail/wine-devel/2008-November/070539.html
@@ -1145,16 +1132,13 @@
    fun:ClassFactory_CreateInstance
 }
 
-# Png malloc leak (shows up in gdiplus/image)
+# zlib problems
 {
-   png_malloc_leak
+   # Fixed in zlib-1.4.4.  See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577135
+   zlib_1_3_3_bug
    Memcheck:Cond
    fun:inflateReset2
    fun:inflateInit2_
-   fun:inflateInit_
-   fun:png_create_read_struct_2
-   fun:png_create_read_struct
-   fun:PngDecoder_Initialize
 }
 
 # A valid bug, but intentional, to test Windows behavior (checked with Vincent Povirk):
@@ -1564,4 +1548,13 @@
    fun:malloc
    fun:XGetVisualInfo
    obj:*
+}
+{
+   # See http://www.winehq.org/pipermail/wine-patches/2011-October/107830.html
+   opaque_alsa_blobs
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   fun:snd_ctl_pcm_info
+   fun:alsa_enum_devices
 }
