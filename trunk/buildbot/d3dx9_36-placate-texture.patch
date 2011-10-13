@@ -1,0 +1,28 @@
+diff --git a/dlls/d3dx9_36/texture.c b/dlls/d3dx9_36/texture.c
+index 20d8880..54647e7 100644
+--- a/dlls/d3dx9_36/texture.c
++++ b/dlls/d3dx9_36/texture.c
+@@ -1008,6 +1008,7 @@ HRESULT WINAPI D3DXFillTexture(LPDIRECT3DTEXTURE9 texture,
+                             comp_value = value.y;
+                             break;
+                         case 3: /* Blue */
++                        default: /* to avoid spurious "'comp_value' may be used uninitialized" warning */
+                             comp_value = value.z;
+                             break;
+                     }
+@@ -1152,6 +1153,7 @@ HRESULT WINAPI D3DXFillCubeTexture(LPDIRECT3DCUBETEXTURE9 texture,
+                                 comp_value = value.y;
+                                 break;
+                             case 3: /* Blue */
++                            default: /* to avoid spurious "'comp_value' may be used uninitialized" warning */
+                                 comp_value = value.z;
+                                 break;
+                         }
+@@ -1250,6 +1252,7 @@ HRESULT WINAPI D3DXFillVolumeTexture(LPDIRECT3DVOLUMETEXTURE9 texture,
+                                 comp_value = value.y;
+                                 break;
+                             case 3: /* Blue */
++                                default: /* to avoid spurious "'comp_value' may be used uninitialized" warning */
+                                 comp_value = value.z;
+                                 break;
+                         }
