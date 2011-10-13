@@ -1,0 +1,13 @@
+diff --git a/dlls/msxml3/xdr.c b/dlls/msxml3/xdr.c
+index af86907..0e08773 100644
+--- a/dlls/msxml3/xdr.c
++++ b/dlls/msxml3/xdr.c
+@@ -519,6 +519,8 @@ static xmlNodePtr XDR_E_ElementType(xmlNodePtr xdr, xmlNodePtr parent)
+ 
+     TRACE("(%p, %p)\n", xdr, parent);
+ 
++    xsd_child = NULL;       /* silence a gcc warning */
++
+     str = xmlGetProp(xdr, xs_model);
+     if (str && !xmlStrEqual(str, xs_open))
+         is_open = FALSE;
