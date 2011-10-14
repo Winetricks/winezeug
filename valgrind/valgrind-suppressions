@@ -906,7 +906,7 @@
    expected_double_free_wintrust_tests_crypt
    Memcheck:Addr4
    fun:CryptCATAdminReleaseContext
-   fun:test_context
+   ...
    fun:func_crypt
    fun:run_test
    fun:main
