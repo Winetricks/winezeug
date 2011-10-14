@@ -1511,20 +1511,7 @@
 {
    urlmon_lstrlen_null_2
    Memcheck:Addr1
-   fun:strlen
-   fun:lstrlenA
-   fun:test_IUriBuilder_GetPath
-   fun:test_IUriBuilder
-   fun:func_uri
-   fun:run_test
-   fun:main
-}
-
-# See http://bugs.winehq.org/show_bug.cgi?id=26071
-{
-   urlmon_lstrlen_null_3
-   Memcheck:Addr1
-   fun:strlen
+   ...
    fun:lstrlenA
    fun:test_IUriBuilder_GetPath
    fun:test_IUriBuilder
