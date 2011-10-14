@@ -921,6 +921,15 @@
    fun:main
 }
 {
+   expected_bad_pointer_wininet_tests_http_2
+   Memcheck:Addr1
+   fun:convert_accept_types
+   fun:HttpOpenRequestA
+   fun:func_http
+   fun:run_test
+   fun:main
+}
+{
    expected_use_after_free_user32_tests_dialog
    Memcheck:Addr4
    fun:DIALOG_CreateIndirect
