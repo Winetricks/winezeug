@@ -8,3 +8,16 @@
    fun:LookupAccountSidA
    fun:test_token_attr
 }
+{
+   wine_bug_28712
+   Memcheck:Addr4
+   fun:check_notification
+   fun:send_callback
+   fun:release_object
+   fun:connect_destroy
+   fun:release_object
+   fun:request_destroy
+   fun:release_object
+   fun:task_thread
+   fun:worker_thread_proc
+}
