@@ -1499,7 +1499,7 @@
 {
    urlmon_lstrlen_null_1
    Memcheck:Addr1
-   fun:strlen
+   ...
    fun:lstrlenA
    fun:test_IUri_GetPropertyLength
    fun:func_uri
