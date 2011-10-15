@@ -21,3 +21,15 @@
    fun:task_thread
    fun:worker_thread_proc
 }
+{
+   wine_bug_28715
+   Memcheck:Value4
+   fun:wine_cp_mbstowcs
+   fun:MultiByteToWideChar
+   fun:LCMapStringA
+   fun:MSVCRT__create_locale
+   fun:MSVCRT_setlocale
+   fun:func_locale
+   fun:run_test
+   fun:main
+}
