@@ -112,6 +112,16 @@
    fun:test_token_attr
 }
 {
+   wine_bug_28708
+   Memcheck:Cond
+   fun:*
+   fun:convert_to_1
+   fun:convert_bitmapinfo
+   fun:SetDIBits
+   fun:nulldrv_StretchDIBits
+   fun:StretchDIBits
+}
+{
    wine_bug_28712
    Memcheck:Addr4
    fun:check_notification
