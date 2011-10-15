@@ -58,6 +58,7 @@
    Memcheck:Value4
    fun:wine_utf8_mbstowcs
    fun:MultiByteToWideChar
+   ...
    fun:test_click_make_new_folder_button
    fun:func_brsfolder
    fun:run_test
