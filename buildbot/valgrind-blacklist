@@ -85,6 +85,22 @@
    fun:run_test
 }
 {
+   wine_bug_26128
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   fun:send_request
+   fun:wine_server_call
+   fun:put_message_in_queue
+   fun:send_inter_thread_message
+   fun:send_message
+   fun:SendMessageTimeoutW
+   fun:SHAppBarMessage
+   fun:func_appbar
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_28628
    Memcheck:Cond
    fun:RtlEqualSid
