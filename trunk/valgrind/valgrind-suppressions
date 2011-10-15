@@ -1288,6 +1288,19 @@
    fun:run_test
    fun:main
 }
+# invalid instance handle used on purpose in comctl32/tests/toolbar.c
+{
+   comctl32_addstring_intentional_bad_handle
+   Memcheck:Addr2
+   fun:RtlImageNtHeader
+   ...
+   fun:TOOLBAR_AddStringW
+   ...
+   fun:test_add_string
+   fun:func_toolbar
+   fun:run_test
+   fun:main
+}
 
 # http://bugs.winehq.org/show_bug.cgi?id=26051
 {  
