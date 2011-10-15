@@ -1283,8 +1283,7 @@
    comctl32_bug_26045
    Memcheck:Addr4
    fun:is_valid
-   fun:ImageList_Destroy
-   fun:test_iimagelist
+   ...
    fun:func_imagelist
    fun:run_test
    fun:main
