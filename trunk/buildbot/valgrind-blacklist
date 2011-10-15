@@ -1,4 +1,31 @@
 {
+   wine_bug_14078
+   Memcheck:Cond
+   fun:serialize_param
+   fun:serialize_param
+   fun:xCall
+   obj:*
+   fun:func_tmarshal
+   fun:run_test
+   fun:main
+}
+{
+   # this one's a little wide, sigh
+   wine_bug_14078
+   Memcheck:Cond
+   fun:deserialize_param
+   fun:deserialize_param
+   fun:TMStubImpl_Invoke
+   fun:RPC_ExecuteCall
+   fun:apartment_wndproc
+   obj:user32.dll.so
+   fun:call_window_proc
+   fun:WINPROC_CallProcAtoW
+   fun:WINPROC_call_window
+   fun:DispatchMessageA
+   fun:host_object_proc
+}
+{
    wine_bug_28628
    Memcheck:Cond
    fun:RtlEqualSid
