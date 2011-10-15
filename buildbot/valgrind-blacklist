@@ -33,3 +33,11 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28736
+   Memcheck:Cond
+   fun:testQuery
+   fun:func_env
+   fun:run_test
+   fun:main
+}
