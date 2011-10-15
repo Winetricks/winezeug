@@ -26,6 +26,27 @@
    fun:host_object_proc
 }
 {
+   wine_bug_26101
+   Memcheck:Cond
+   fun:default_dbgstr_wn
+   fun:NTDLL_dbgstr_wn
+   fun:wine_dbgstr_wn
+   fun:ME_CallWordBreakProc
+   fun:ME_MoveCursorWords
+}
+{
+   wine_bug_26101
+   Memcheck:Cond
+   fun:WINPROC_CallProcWtoA
+   fun:WINPROC_call_window
+   fun:call_window_proc
+   fun:send_message
+   fun:SendMessageW
+   fun:test_EM_FINDWORDBREAK_A
+   fun:func_editor
+   fun:run_test
+}
+{
    wine_bug_28628
    Memcheck:Cond
    fun:RtlEqualSid
