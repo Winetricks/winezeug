@@ -26,6 +26,25 @@
    fun:host_object_proc
 }
 {
+   wine_bug_17414
+   Memcheck:Addr2
+   fun:strlenW
+   fun:CompareStringW
+   fun:lstrcmpW
+   fun:dde_server_wndprocW
+   obj:user32.dll.so
+   fun:call_window_proc
+   fun:WINPROC_call_window
+   fun:DispatchMessageW
+   fun:WDML_SyncWaitTransactionReply
+   fun:WDML_ClientHandle
+   fun:DdeClientTransaction
+   fun:test_dde_aw_transaction
+   fun:func_dde
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_20896
    Memcheck:Addr2
    fun:GlobalFree
