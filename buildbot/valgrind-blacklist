@@ -26,6 +26,19 @@
    fun:host_object_proc
 }
 {
+   wine_bug_26068
+   Memcheck:Cond
+   fun:GDI_GetObjPtr
+   ...
+   fun:get_dc_ptr
+   fun:GetDCHook
+   fun:release_dc
+   fun:ReleaseDC
+   fun:func_dce
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26070
    Memcheck:Addr2
    fun:RtlImageNtHeader
