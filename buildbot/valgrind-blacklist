@@ -26,6 +26,24 @@
    fun:host_object_proc
 }
 {
+   wine_bug_26070
+   Memcheck:Addr2
+   fun:RtlImageNtHeader
+   fun:RtlImageDirectoryEntryToData
+   fun:find_entry
+   fun:LdrFindResource_U
+   fun:find_resourceW
+   fun:FindResourceExW
+   fun:FindResourceW
+   fun:LoadMenuW
+   fun:WIN_CreateWindowEx
+   fun:CreateWindowExA
+   fun:check_instance_
+   fun:func_class
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26101
    Memcheck:Cond
    fun:default_dbgstr_wn
@@ -80,6 +98,12 @@
    fun:func_locale
    fun:run_test
    fun:main
+}
+{
+   wine_bug_28732
+   Memcheck:Addr4
+   fun:MONTHCAL_UpdateSize
+   fun:MONTHCAL_WindowProc
 }
 {
    wine_bug_28736
