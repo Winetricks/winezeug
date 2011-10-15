@@ -576,6 +576,14 @@
   fun:run_test
   fun:main
 }
+# We really shouldn't even run valgrind on kernel32/tests/debugger.c.
+{
+   ignore_wine_kernel32_tests__debugger
+   Memcheck:Addr1
+   fun:func_debugger
+   fun:run_test
+   fun:main
+}
 {
    ignore_rsaenh_test_expected_bad_access
    Memcheck:Addr4
