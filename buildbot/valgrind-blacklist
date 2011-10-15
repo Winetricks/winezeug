@@ -150,3 +150,13 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28737
+   Memcheck:Free
+   fun:notify_free
+   fun:RtlFreeHeap
+   fun:IMalloc_fnFree
+   fun:CoTaskMemFree
+   fun:SHFree
+   fun:BrsFolderDlgProc
+}
