@@ -245,6 +245,35 @@
    fun:test_end_to_end_server
 }
 {
+   wine_bug_28783_b
+   Memcheck:Addr1
+   ...
+   fun:dde_server_wndprocW
+   ...
+   fun:WDML_SyncWaitTransactionReply
+   fun:WDML_ClientHandle
+   fun:DdeClientTransaction
+   fun:test_dde_aw_transaction
+}
+{
+   wine_bug_28783_c
+   Memcheck:Addr2
+   ...
+   fun:dde_server_wndprocA
+   ...
+   fun:WDML_SyncWaitTransactionReply
+   fun:WDML_ClientHandle
+   fun:DdeClientTransaction
+   fun:test_dde_aw_transaction
+}
+{
+   wine_bug_28738_d
+   Memcheck:Addr4
+   fun:WDML_GetConv
+   fun:DdeQueryConvInfo
+   fun:test_dde_aw_transaction
+}
+{
    wine_bug_28742
    Memcheck:Addr4
    fun:memcpy
