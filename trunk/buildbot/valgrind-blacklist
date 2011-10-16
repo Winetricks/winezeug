@@ -18,12 +18,6 @@
    fun:TMStubImpl_Invoke
    fun:RPC_ExecuteCall
    fun:apartment_wndproc
-   obj:user32.dll.so
-   fun:call_window_proc
-   fun:WINPROC_CallProcAtoW
-   fun:WINPROC_call_window
-   fun:DispatchMessageA
-   fun:host_object_proc
 }
 {
    wine_bug_17414
