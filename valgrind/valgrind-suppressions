@@ -1324,6 +1324,18 @@
    fun:run_test
    fun:main
 }
+# invalid coordinate in comctl32/tests/monthcal.c's test_hittest??
+{
+   wine_bug_28741
+   Memcheck:Cond
+   ...
+   fun:RtlTimeToTimeFields
+   ...
+   fun:test_hittest
+   fun:func_monthcal
+   fun:run_test
+   fun:main
+}
 
 # http://bugs.winehq.org/show_bug.cgi?id=26051
 {  
