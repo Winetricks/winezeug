@@ -1316,8 +1316,6 @@
    fun:CompareFileTime
    fun:MONTHCAL_CompareSystemTime
    fun:MONTHCAL_CompareMonths
-   fun:MONTHCAL_GetDayPos
-   fun:MONTHCAL_UpdateToday
    ...
    fun:test_today
    fun:func_monthcal
