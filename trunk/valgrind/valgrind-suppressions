@@ -1534,7 +1534,7 @@
    fun:acmDriverClose
    fun:DriverEnumProc
    fun:acmDriverEnum
-   fun:msacm_tests
+   ...
    fun:func_msacm
    fun:run_test
    fun:main
