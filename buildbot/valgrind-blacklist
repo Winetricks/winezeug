@@ -234,4 +234,18 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28742
+   Memcheck:Addr4
+   fun:memcpy
+   fun:MONTHCAL_NotifyDayState
+   fun:MONTHCAL_UpdateSize
+   fun:MONTHCAL_WindowProc
+   ...
+   fun:create_monthcal_control
+   fun:test_daystate
+   fun:func_monthcal
+   fun:run_test
+   fun:main
+}
 
