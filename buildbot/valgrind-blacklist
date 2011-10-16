@@ -138,6 +138,19 @@
    fun:main
 }
 {
+   wine_bug_26110
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:WriteFile
+   fun:rpcrt4_conn_np_write
+   fun:RPCRT4_SendWithAuth
+   fun:RPCRT4_Send
+   fun:process_request_packet
+   fun:RPCRT4_worker_thread
+   fun:worker_thread_proc
+}
+{
    wine_bug_26122
    Memcheck:Value4
    fun:wine_cp_mbstowcs
