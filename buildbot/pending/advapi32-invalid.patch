@@ -1,0 +1,25 @@
+diff --git a/dlls/advapi32/tests/crypt.c b/dlls/advapi32/tests/crypt.c
+index 1180275..9b4eaf7 100644
+--- a/dlls/advapi32/tests/crypt.c
++++ b/dlls/advapi32/tests/crypt.c
+@@ -209,7 +209,19 @@ static void test_acquire_context(void)
+ 		pCryptReleaseContext(hProv, 0);
+ }
+ 
+-static void test_incorrect_api_usage(void)
++
++/* Keep this function from being inlined so backtraces clearly show
++ * that any invalid access was intended.
++ */
++#ifndef NOINLINE
++# if defined(__GNUC__) && ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 2)))
++#  define NOINLINE __attribute__((noinline))
++# else
++#  define NOINLINE 
++# endif
++#endif
++
++static NOINLINE void test_incorrect_api_usage(void)
+ {
+     BOOL result;
+     HCRYPTPROV hProv, hProv2;
