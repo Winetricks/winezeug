@@ -590,6 +590,26 @@
    fun:CryptReleaseContext
    fun:clean_up_base_environment
 }
+{
+   # See bug 26109
+   ignore_ole32_test_expected_bad_access
+   Memcheck:Addr2
+   fun:GlobalLock
+   fun:HGLOBALStreamImpl_Read
+   fun:FIXME
+   fun:func_hglobalstream
+   fun:run_test
+   fun:main
+}
+{
+   ignore_ole32_test_expected_bad_access2
+   Memcheck:Addr4
+   fun:GlobalReAlloc
+   fun:FIXME
+   fun:func_hglobalstream
+   fun:run_test
+   fun:main
+}
 
 # Back to system suppressions that aren't wine's fault
 # gecko is #1 in the list of offending upstream libraries...
