@@ -1309,6 +1309,21 @@
    fun:run_test
    fun:main
 }
+# invalid dates used on purpose in comctl32/tests/monthcal.c's test_today()
+{
+   comctl32_tests_monthcal__test_today
+   Memcheck:Cond
+   fun:CompareFileTime
+   fun:MONTHCAL_CompareSystemTime
+   fun:MONTHCAL_CompareMonths
+   fun:MONTHCAL_GetDayPos
+   fun:MONTHCAL_UpdateToday
+   ...
+   fun:test_today
+   fun:func_monthcal
+   fun:run_test
+   fun:main
+}
 
 # http://bugs.winehq.org/show_bug.cgi?id=26051
 {  
