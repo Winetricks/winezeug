@@ -314,15 +314,3 @@
    fun:run_test
    fun:main
 }
-{
-   wine_bug_28746
-   Memcheck:Addr4
-   fun:MSACM_GetObj
-   fun:MSACM_GetDriver
-   fun:acmDriverClose
-   fun:DriverEnumProc
-   fun:acmDriverEnum
-   fun:func_msacm
-   fun:run_test
-   fun:main
-}
