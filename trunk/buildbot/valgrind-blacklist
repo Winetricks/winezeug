@@ -221,6 +221,15 @@
    fun:main
 }
 {
+   wine_bug_28736b
+   Memcheck:Cond
+   fun:bcmp
+   fun:testQuery
+   fun:func_env
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_28737
    Memcheck:Free
    fun:notify_free
