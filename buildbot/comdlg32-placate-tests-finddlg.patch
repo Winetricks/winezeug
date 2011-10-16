@@ -1,0 +1,14 @@
+diff --git a/dlls/comdlg32/tests/finddlg.c b/dlls/comdlg32/tests/finddlg.c
+index 4a10909..6441355 100644
+--- a/dlls/comdlg32/tests/finddlg.c
++++ b/dlls/comdlg32/tests/finddlg.c
+@@ -45,6 +45,9 @@ static void test_param_check(void)
+     FINDREPLACEA fr, *pFr;
+     WNDCLASSA wc;
+ 
++    strcpy(findbuffer, "abc");
++    strcpy(replacebuffer, "def");
++
+     ZeroMemory(&wc, sizeof(wc));
+     wc.lpfnWndProc = OwnerWndProc;
+     wc.lpszClassName = "test_param_check";

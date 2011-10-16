@@ -1,0 +1,16 @@
+diff --git a/dlls/comdlg32/itemdlg.c b/dlls/comdlg32/itemdlg.c
+index 9e90276..607e5ef 100644
+--- a/dlls/comdlg32/itemdlg.c
++++ b/dlls/comdlg32/itemdlg.c
+@@ -1106,7 +1106,10 @@ static SIZE update_layout(FileDialogImpl *This)
+     static const UINT vspacing = 4, hspacing = 4;
+     SIZE ret;
+ 
+-    GetClientRect(This->dlg_hwnd, &dialog_rc);
++    if (!GetClientRect(This->dlg_hwnd, &dialog_rc)) {
++        TRACE("Couldn't get client rect?  dlg_hwnd %p\n", This->dlg_hwnd);
++        ZeroMemory(&dialog_rc, sizeof(dialog_rc));
++    }
+ 
+     missing_width = max(0, 320 - dialog_rc.right);
+     missing_height = max(0, 200 - dialog_rc.bottom);
