@@ -127,6 +127,20 @@
    fun:run_test
 }
 {
+   wine_bug_26122
+   Memcheck:Value4
+   fun:wine_cp_mbstowcs
+   fun:MultiByteToWideChar
+   fun:CompareStringA
+   fun:StrCmpNIA
+   fun:SHLWAPI_StrStrHelperA
+   fun:StrStrIA
+   fun:test_loadlibraryshim
+   fun:func_mscoree
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26128
    Memcheck:Param
    writev(vector[...])
@@ -287,4 +301,28 @@
    fun:run_test
    fun:main
 }
-
+{
+   wine_bug_28745
+   Memcheck:Cond
+   fun:callback
+   fun:DSPROPERTY_enumWtoA
+   fun:enum_callback
+   fun:enumerate_mmdevices
+   fun:DSPROPERTY_EnumerateW
+   fun:IKsPrivatePropertySetImpl_Get
+   fun:func_propset
+   fun:run_test
+   fun:main
+}
+{
+   wine_bug_28746
+   Memcheck:Addr4
+   fun:MSACM_GetObj
+   fun:MSACM_GetDriver
+   fun:acmDriverClose
+   fun:DriverEnumProc
+   fun:acmDriverEnum
+   fun:func_msacm
+   fun:run_test
+   fun:main
+}
