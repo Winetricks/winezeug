@@ -241,14 +241,8 @@
    fun:WDML_InvokeCallback
    fun:WDML_ServerHandle
    fun:WDML_ServerConvProc
-   obj:user32.dll.so
-   fun:call_window_proc
-   fun:WINPROC_call_window
-   fun:DispatchMessageA
+   ...
    fun:test_end_to_end_server
-   fun:func_dde
-   fun:run_test
-   fun:main
 }
 {
    wine_bug_28742
