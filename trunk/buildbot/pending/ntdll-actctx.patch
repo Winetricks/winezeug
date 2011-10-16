@@ -1,0 +1,13 @@
+diff --git a/dlls/ntdll/actctx.c b/dlls/ntdll/actctx.c
+index 380ce8f..afde53b 100644
+--- a/dlls/ntdll/actctx.c
++++ b/dlls/ntdll/actctx.c
+@@ -1877,7 +1877,7 @@ static WCHAR *lookup_manifest_file( HANDLE dir, struct assembly_identity *ai )
+             if (build == min_build && revision < min_revision) continue;
+             tmp = strchrW(tmp, '_') + 1;
+             tmp = strchrW(tmp, '_') + 1;
+-            if (!strcmpiW( tmp, wine_trailerW ))
++            if (!strncmpiW( tmp, wine_trailerW, dir_info->FileNameLength/sizeof(WCHAR) - (tmp - dir_info->FileName) ))
+             {
+                 /* prefer a non-Wine manifest if we already have one */
+                 /* we'll still load the builtin dll if specified through DllOverrides */
