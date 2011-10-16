@@ -181,6 +181,16 @@
    fun:main
 }
 {
+   wine_bug_26139
+   Memcheck:Cond
+   fun:EqualRect
+   fun:FileOpenDlgProc95
+   ...
+   fun:GetFileDialog95A
+   fun:GetOpenFileNameA
+   fun:test_create_view_window2
+}
+{
    wine_bug_28628
    Memcheck:Cond
    fun:RtlEqualSid
