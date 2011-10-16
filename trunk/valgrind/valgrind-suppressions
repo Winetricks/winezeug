@@ -1070,7 +1070,7 @@
    fun:CRYPT_AsnDecodeCertSignedContent
    fun:CryptDecodeObjectEx
    fun:CryptVerifyCertificateSignatureEx
-   fun:testVerifyCertSig
+   ...
    fun:testCertSigs
    fun:func_cert
    fun:run_test
