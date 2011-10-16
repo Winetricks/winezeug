@@ -194,6 +194,19 @@
    fun:main
 }
 {
+   wine_bug_28715b
+   Memcheck:Value4
+   fun:wine_cp_mbstowcs
+   fun:MultiByteToWideChar
+   fun:LCMapStringA
+   fun:MSVCRT__create_locale
+   fun:MSVCRT_setlocale
+   fun:test_mbstowcs
+   fun:func_string
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_28732
    Memcheck:Addr4
    fun:MONTHCAL_UpdateSize
