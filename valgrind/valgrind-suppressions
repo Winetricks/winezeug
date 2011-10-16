@@ -533,7 +533,7 @@
    Memcheck:Jump
    obj:*
    fun:CryptMsgUpdate
-   fun:test_data_msg_update
+   ...
    fun:test_data_msg
 }
 # These two functions test error returned by file read/write with null buffers 
