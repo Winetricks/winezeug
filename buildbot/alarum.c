@@ -198,11 +198,16 @@ int main(int argc, char **argv)
 
     remove(logfilename);
 
-    /* Report crashes */
+    /* Report status to stdout in a way that's easy to grep */
+    buf[0] = 0;
+    for (i=0; i<newargc; i++) {
+        strcat(buf, newargv[i]);
+        strcat(buf, " ");
+    }
     if (!WIFEXITED(waitresult))
-        printf("]] alarum: %s terminated abnormally\n", newargv[0]);
+        printf("]] alarum: terminated abnormally, command '%s'\n", buf);
     else
-        printf("alarum: elapsed time %d seconds\n", (int) (t1 - t0));
+        printf("alarum: elapsed time %d seconds, command '%s'\n", (int) (t1 - t0), buf);
 
     if (loglockfd != -1) 
        flock(loglockfd, LOCK_UN);
