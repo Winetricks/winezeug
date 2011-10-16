@@ -348,3 +348,25 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28756
+   Memcheck:Cond
+   fun:get_cached_fd
+   fun:server_get_unix_fd
+   fun:wine_server_handle_to_fd
+   fun:WS2_recv_base
+   fun:WSARecv
+   fun:recv_thread
+}
+{
+   wine_bug_28756_b
+   Memcheck:Param
+   write(buf)
+   obj:libpthread-*.so
+   fun:wine_server_call
+   fun:server_get_unix_fd
+   fun:wine_server_handle_to_fd
+   fun:WS2_recv_base
+   fun:WSARecv
+   fun:recv_thread
+}
