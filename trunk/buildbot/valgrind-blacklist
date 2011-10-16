@@ -127,6 +127,17 @@
    fun:run_test
 }
 {
+   wine_bug_26108
+   Memcheck:Cond
+   fun:StorageImpl_CreateDirEntry
+   fun:StorageBaseImpl_CreateStream
+   fun:init_ole_stream
+   fun:DefaultHandler_IPersistStorage_InitNew
+   fun:func_defaulthandler
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26122
    Memcheck:Value4
    fun:wine_cp_mbstowcs
