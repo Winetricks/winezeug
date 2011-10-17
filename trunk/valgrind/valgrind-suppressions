@@ -1448,21 +1448,10 @@
 
 # See http://bugs.winehq.org/show_bug.cgi?id=26102
 {
-   pdh_bug_26102_A
+   pdh_bug_26102
    Memcheck:Addr4
    fun:PdhCloseQuery
-   fun:test_PdhOpenQueryA
-   fun:func_pdh
-   fun:run_test
-   fun:main
-}
-
-# See http://bugs.winehq.org/show_bug.cgi?id=26102
-{
-   pdh_bug_26102_W
-   Memcheck:Addr4
-   fun:PdhCloseQuery
-   fun:test_PdhOpenQueryW
+   ...
    fun:func_pdh
    fun:run_test
    fun:main
