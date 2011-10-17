@@ -616,6 +616,7 @@
    ignore_ole32_test_expected_bad_access2
    Memcheck:Addr4
    fun:GlobalReAlloc
+   ...
    fun:test_freed_hglobal
    fun:func_hglobalstream
    fun:run_test
