@@ -168,7 +168,7 @@
    Memcheck:Param
    writev(vector[...])
    fun:writev
-   fun:send_request
+   ...
    fun:wine_server_call
    fun:put_message_in_queue
    fun:send_inter_thread_message
