@@ -477,3 +477,22 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28769
+   Memcheck:Addr1
+   fun:foldermanager_GetFolder
+   fun:test_knownFolders
+   fun:func_shellpath
+   fun:run_test
+   fun:main
+}
+{
+   wine_bug_28769_b
+   Memcheck:Free
+   fun:RtlFreeHeap
+   fun:foldermanager_Release
+   fun:test_knownFolders
+   fun:func_shellpath
+   fun:run_test
+   fun:main
+}
