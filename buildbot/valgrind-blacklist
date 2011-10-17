@@ -210,6 +210,65 @@
    fun:test_token_attr
 }
 {
+   wine_bug_28695
+   Memcheck:Cond
+   fun:REBAR_CommonSetupBand
+   fun:REBAR_WindowProc
+   obj:user32.dll.so
+   fun:call_window_proc
+   fun:WINPROC_call_window
+   fun:call_window_proc
+   fun:send_message
+   fun:SendMessageW
+   fun:create_rebar
+   fun:ie_window_proc
+}
+{
+   wine_bug_28695_b
+   Memcheck:Cond
+   fun:REBAR_ValidateBand
+   fun:REBAR_WindowProc
+   obj:user32.dll.so
+   fun:call_window_proc
+   fun:WINPROC_call_window
+   fun:call_window_proc
+   fun:send_message
+   fun:SendMessageW
+   fun:create_rebar
+   fun:ie_window_proc
+}
+{
+   wine_bug_28696
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:WriteFile
+   fun:FileLockBytesImpl_WriteAt
+   fun:StorageImpl_WriteAt
+   fun:StorageImpl_WriteBigBlock
+   fun:BlockChainStream_Flush
+   fun:StorageImpl_Flush
+   fun:StgStreamImpl_Write
+   fun:PropertyStorage_WritePropertyToStream
+   fun:PropertyStorage_PropertiesWriter
+   fun:dictionary_enumerate
+   fun:IPropertyStorage_fnCommit
+   fun:test_ReadAndWriteProperties
+   fun:func_intshcut
+   fun:run_test
+   fun:main
+}
+{
+   wine_bug_28698
+   Memcheck:Cond
+   fun:winetest_vok
+   fun:winetest_ok
+   fun:test_ReadAndWriteProperties
+   fun:func_intshcut
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_28708
    Memcheck:Cond
    fun:*
