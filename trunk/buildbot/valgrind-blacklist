@@ -54,6 +54,12 @@
    fun:main
 }
 {
+   wine_bug_26046
+   Memcheck:Cond
+   ....
+   fun:test_today
+}
+{
    wine_bug_26068
    Memcheck:Cond
    fun:GDI_GetObjPtr
