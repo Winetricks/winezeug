@@ -1092,7 +1092,15 @@
 {
    nvidia_binary
    Memcheck:Cond
-   obj:/usr/lib/libnvidia-glcore.so.*
+   obj:libnvidia-glcore.so.*
+}
+# Ignore other errors in Nvidia drivers, since they get triggered in 
+# indirect ways by our tests.
+# FIXME: is this too permissive?
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Addr4
+   obj:libnvidia-glcore.so.*
 }
 
 # Expected failures, the address is deliberately invalid, to show that the function traps such invalid addresses.
