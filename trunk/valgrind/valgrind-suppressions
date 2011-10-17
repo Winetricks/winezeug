@@ -1098,11 +1098,15 @@
 # indirect ways by our tests.
 # FIXME: is this too permissive?
 {
-   <insert_a_suppression_name_here>
+   nvidia_binary_bad_addr1
+   Memcheck:Addr1
+   obj:libnvidia-glcore.so.*
+}
+{
+   nvidia_binary_bad_addr4
    Memcheck:Addr4
    obj:libnvidia-glcore.so.*
 }
-
 # Expected failures, the address is deliberately invalid, to show that the function traps such invalid addresses.
 {
    crypt32_cert_expected_fail1
