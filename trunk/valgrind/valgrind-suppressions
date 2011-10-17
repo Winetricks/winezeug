@@ -389,9 +389,20 @@
    todo_suppress_exception_addr4
    Memcheck:Addr4
    fun:__wine_call_from_32_regs
-   obj:/home/dank/wine-git/dlls/ntdll/ntdll.dll.so
-   obj:/home/dank/wine-git/dlls/ntdll/ntdll.dll.so
+   obj:ntdll.dll.so
+   obj:ntdll.dll.so
    fun:raise_exception
+}
+{
+   wine_ignore_ntdll__func_exception
+   Memcheck:Cond
+   fun:handler
+   ...
+   fun:raise_exception
+   fun:NtRaiseException
+   fun:raise_segv_exception
+   obj:*
+   fun:func_exception
 }
 {
    todo_ignore_bogus_writes_in_req_handler
@@ -407,7 +418,7 @@
    fun:strlen
    fun:lstrlenA
    fun:threadFunc1
-   obj:/home/dank/wine-git/dlls/ntdll/ntdll.dll.so
+   obj:ntdll.dll.so
    fun:call_thread_func
 }
 # test_UnpackDDElParam intentionally passes a bad pointer
