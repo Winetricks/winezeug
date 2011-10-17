@@ -1645,13 +1645,11 @@
 {
    ignore_wine_ddraw__test_DirectDrawEnumerateA_invalid
    Memcheck:Jump
-   # obj:*
-   ... # fun:test_DirectDrawEnumerateA   # inlined
+   ...
    fun:func_ddrawmodes
    fun:run_test
    fun:main
 }
-
 # fontconfig invalid reads, debian bug 635609
 {
    fontconfig1
