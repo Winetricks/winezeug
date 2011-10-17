@@ -56,7 +56,7 @@
 {
    wine_bug_26046
    Memcheck:Cond
-   ....
+   ...
    fun:test_today
 }
 {
