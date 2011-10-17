@@ -464,3 +464,16 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28767
+   Memcheck:Cond
+   fun:__mktime_internal
+   fun:mktime
+   fun:TRASH_EnumItems
+   fun:SHQueryRecycleBinW
+   fun:SHQueryRecycleBinA
+   fun:test_query_recyclebin
+   fun:func_recyclebin
+   fun:run_test
+   fun:main
+}
