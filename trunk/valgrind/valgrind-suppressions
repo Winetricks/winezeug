@@ -868,6 +868,19 @@
    fun:SECUR32_initializeProviders
 }
 {
+   # Probably expected
+   wine_secure32_ignore_funky_handshake
+   Memcheck:Cond
+   ...
+   fun:gnutls_handshake
+   fun:schan_imp_handshake
+   fun:schan_InitializeSecurityContextW
+   fun:schan_InitializeSecurityContextA
+   fun:InitializeSecurityContextA
+   fun:test_communication
+   fun:func_schannel
+}
+{
    wine_bug_20548_ConnectNamedPipe
    Memcheck:Leak
    ...
