@@ -180,13 +180,6 @@ int main(int argc, char **argv)
     if (loglockfd != -1) 
        flock(loglockfd, LOCK_EX);
 
-    if (!WIFEXITED(waitresult) || (WEXITSTATUS(waitresult) != 0)) {
-        printf("]] alarum: failed command was ");
-        for (i=0; i<newargc; i++) {
-            printf("%s ", newargv[i]);
-        }
-        printf("\n");
-    }
     /* Copy the temporary file to stdout, line by line, prepending error status if needed */
     while (fgets(buf, MYBUFLEN, logfp)) {
         if (valgrinderr || !WIFEXITED(waitresult) || (WEXITSTATUS(waitresult) != 0)) {
@@ -205,7 +198,11 @@ int main(int argc, char **argv)
         strcat(buf, " ");
     }
     if (!WIFEXITED(waitresult))
-        printf("]] alarum: terminated abnormally, command '%s'\n", buf);
+        printf("]] alarum: fail: terminated abnormally, command '%s'\n", buf);
+    else if (WEXITSTATUS(waitresult) != 0)
+        printf("]] alarum: fail: exit status %d, command '%s'\n", WEXITSTATUS(waitresult), buf);
+    else if (valgrinderr)
+        printf("]] alarum: fail: valgrind errors, command '%s'\n", buf);
     else
         printf("alarum: elapsed time %d seconds, command '%s'\n", (int) (t1 - t0), buf);
 
