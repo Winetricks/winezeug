@@ -347,20 +347,7 @@
 {
    wine_bug_28745
    Memcheck:Cond
-   fun:callback
-   fun:DSPROPERTY_enumWtoA
-   fun:enum_callback
-   fun:enumerate_mmdevices
-   fun:DSPROPERTY_EnumerateW
-   fun:IKsPrivatePropertySetImpl_Get
-   fun:func_propset
-   fun:run_test
-   fun:main
-}
-{
-   wine_bug_28745_b
-   Memcheck:Cond
-   fun:callbackW
+   ...
    fun:enum_callback
    fun:enumerate_mmdevices
    fun:DSPROPERTY_EnumerateW
