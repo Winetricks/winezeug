@@ -1585,6 +1585,30 @@
    fun:main
 }
 
+# See http://bugs.winehq.org/show_bug.cgi?id=26103
+{
+   opengl32_tests_test_deletecontext_double_free
+   Memcheck:Addr4
+   fun:wglDeleteContext
+   fun:func_opengl
+   fun:run_test
+   fun:main
+}
+# Related to http://bugs.winehq.org/show_bug.cgi?id=26103
+{
+   opengl32_tests_test_deletecontext_hmm
+   Memcheck:Cond
+   fun:flush_gl_drawable
+   fun:X11DRV_ExtEscape
+   fun:xrenderdrv_ExtEscape
+   fun:ExtEscape
+   fun:X11DRV_wglFinish
+   fun:wine_glFinish
+   fun:func_opengl
+   fun:run_test
+   fun:main
+}
+
 # fontconfig invalid reads, debian bug 635609
 {
    fontconfig1
