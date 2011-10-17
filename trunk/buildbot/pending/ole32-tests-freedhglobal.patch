@@ -1,0 +1,26 @@
+To make suppressing bug 26109 possible without suppressing things we might want to see.
+
+diff --git a/dlls/ole32/tests/hglobalstream.c b/dlls/ole32/tests/hglobalstream.c
+index 769d5a1..69f0484 100644
+--- a/dlls/ole32/tests/hglobalstream.c
++++ b/dlls/ole32/tests/hglobalstream.c
+@@ -458,7 +458,18 @@ static void test_copyto(void)
+     IStream_Release(pStream);
+ }
+ 
+-static void test_freed_hglobal(void)
++/* Keep this function from being inlined so backtraces clearly show
++ * that any invalid access was intended.
++ */
++#ifndef NOINLINE
++# if defined(__GNUC__) && ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 2)))
++#  define NOINLINE __attribute__((noinline))
++# else
++#  define NOINLINE 
++# endif
++#endif
++
++static NOINLINE void test_freed_hglobal(void)
+ {
+     static const char teststring[] = "this is a test string";
+     HRESULT hr;
