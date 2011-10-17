@@ -1087,16 +1087,14 @@
    ...
    fun:func_heap
 }
-
-# Ignore leaks in Nvidia driver:
+# Ignore errors in Nvidia drivers, since they get triggered in 
+# indirect ways by our tests.
+# FIXME: is this too permissive?
 {
    nvidia_binary
    Memcheck:Cond
    obj:libnvidia-glcore.so.*
 }
-# Ignore other errors in Nvidia drivers, since they get triggered in 
-# indirect ways by our tests.
-# FIXME: is this too permissive?
 {
    nvidia_binary_bad_addr1
    Memcheck:Addr1
