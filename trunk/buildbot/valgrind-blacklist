@@ -60,6 +60,16 @@
    fun:test_today
 }
 {
+   wine_bug_26066
+   Memcheck:Addr4
+   fun:X11DRV_GetKeyboardLayout
+   fun:GetKeyboardLayout
+   fun:IMM_DestroyContext
+   fun:IMM_FreeThreadData
+   ...
+   fun:LdrShutdownThread
+}
+{
    wine_bug_26068
    Memcheck:Cond
    fun:GDI_GetObjPtr
@@ -368,4 +378,31 @@
    fun:WS2_recv_base
    fun:WSARecv
    fun:recv_thread
+}
+{
+   wine_bug_28761_a
+   Memcheck:Addr4
+   fun:ddraw_surface_delete_attached_surface
+   fun:ddraw_surface_wined3d_object_destroyed
+   fun:wined3d_surface_decref
+   fun:wined3d_device_uninit_3d
+   fun:ddraw_surface_cleanup
+   fun:ddraw_surface_release_iface
+   fun:ddraw_surface7_Release
+   fun:func_d3d
+   fun:run_test
+   fun:main
+}
+{
+   wine_bug_28761_b
+   Memcheck:Addr4
+   fun:surface_cleanup
+   fun:wined3d_surface_decref
+   fun:ddraw_surface_destroy
+   fun:ddraw_surface_cleanup
+   fun:ddraw_surface_release_iface
+   fun:ddraw_surface7_Release
+   fun:func_overlay
+   fun:run_test
+   fun:main
 }
