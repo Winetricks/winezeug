@@ -1620,6 +1620,26 @@
    fun:run_test
    fun:main
 }
+# Probably benign
+{
+   ignore_wine_ddraw_dsurface__test_lockrect_invalid
+   Memcheck:Cond
+   fun:DDSD2_to_DDSD
+   fun:ddraw_surface1_Lock
+   fun:test_lockrect_invalid
+   fun:func_dsurface
+   fun:run_test
+   fun:main
+}
+{
+   ignore_wine_ddraw__test_DirectDrawEnumerateA_invalid
+   Memcheck:Jump
+   # obj:*
+   ... # fun:test_DirectDrawEnumerateA   # inlined
+   fun:func_ddrawmodes
+   fun:run_test
+   fun:main
+}
 
 # fontconfig invalid reads, debian bug 635609
 {
