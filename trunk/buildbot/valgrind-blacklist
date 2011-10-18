@@ -501,3 +501,23 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28796
+   Memcheck:Cond
+   ...
+   fun:lookup_manifest_file
+   ...
+   fun:RtlCreateActivationContext
+}
+{
+   wine_bug_28797
+   Memcheck:Cond
+   fun:strlenW
+   fun:DrawTextExW
+   fun:DrawTextW
+   fun:NC_DrawCaption
+   fun:NC_DoNCPaint
+...
+   fun:CreateWindowExW
+}
+
