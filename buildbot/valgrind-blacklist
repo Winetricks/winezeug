@@ -325,6 +325,7 @@
    wine_bug_28732_b
    Memcheck:Addr4
    fun:memcpy
+   ...
    fun:MONTHCAL_UpdateSize
 }
 {
