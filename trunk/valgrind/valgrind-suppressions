@@ -1663,7 +1663,7 @@
 # (without useful backtrace, possibly due to a gcc bug)
 # Shame this has to be so wide!
 {
-   <insert_a_suppression_name_here>
+   strange_ubuntu_11_10_set_wm_hints
    Memcheck:Param
    writev(vector[...])
    fun:writev
