@@ -298,7 +298,7 @@ do_valgrind_tests() {
 
     VALGRIND_OPTS="--trace-children=yes --track-origins=yes \
       --gen-suppressions=all --suppressions=$SRC/suppressions \
-      --leak-check=no --num-callers=25  --workaround-gcc296-bugs=yes \
+      --leak-check=no --num-callers=40  --workaround-gcc296-bugs=yes \
       --vex-iropt-precise-memory-exns=yes -v"
     export VALGRIND_OPTS
 
