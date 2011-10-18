@@ -320,7 +320,12 @@
    wine_bug_28732
    Memcheck:Addr4
    fun:MONTHCAL_UpdateSize
-   fun:MONTHCAL_WindowProc
+}
+{
+   wine_bug_28732_b
+   Memcheck:Addr4
+   fun:memcpy
+   fun:MONTHCAL_UpdateSize
 }
 {
    wine_bug_28736
