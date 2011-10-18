@@ -167,6 +167,7 @@ do_subset_tests() {
 # NOTTY - test fails if output redirected
 # BAD64 - always fails on 64 bits
 # ATI - fails on ATI graphics
+# VALGRIND - has too many valgrind warnings to write suppressions for
 
 # Return tests that match given criterion
 # Usage: get_blacklist regexp
@@ -176,6 +177,40 @@ do_subset_tests() {
 
 get_blacklist() {
     egrep "$1" < $SRC/dotests_blacklist.txt | awk '{print $1}' | sort -u
+}
+
+get_current_blacklist() {
+    # Skip all tests that might fail
+    match='SYS|WICKED|FLAKY|CRASHY'
+    case `uname -m` in
+    x86_64) match="$match|BAD64";;
+    esac
+    echo "Checking WINEDEBUG ($WINEDEBUG)"
+    case "$WINEDEBUG" in
+    *warn+heap*) match="$match|HEAP" ;;
+    esac
+    
+    if ! test -t 1
+    then
+        match="$match|NOTTY"
+    fi
+    
+    if lspci | grep VGA.*ATI
+    then
+        match="$match|ATI"
+    fi
+    
+    if test `pgrep pulseaudio`
+    then
+        match="$match|PULSE"
+    fi
+
+    if test x`uname -s` = xFreeBSD
+    then
+        match="$match|FREEBSD"
+    fi
+    
+    get_blacklist "$match"
 }
 
 # If this was a really simple change, say which directory to build/test.
@@ -242,107 +277,15 @@ do_retry_flakytests() {
     return $flaky_errors
 }
 
-# DLLs known to pass under valgrind, and not show any valgrind errors
-VALGRIND_WHITELIST_DLLS="
-    dlls/advpack \
-    dlls/amstream \
-    dlls/atl \
-    dlls/avifil32 \
-    dlls/browseui \
-    dlls/cabinet \
-    dlls/comcat \
-    dlls/credui \
-    dlls/cryptnet \
-    dlls/cryptui \
-    dlls/d3d10core \
-    dlls/d3d10 \
-    dlls/d3dcompiler_43 \
-    dlls/d3drm \
-    dlls/d3dxof \
-    dlls/ddrawex \
-    dlls/dinput8 \
-    dlls/dinput \
-    dlls/dispex \
-    dlls/dmime \
-    dlls/dmloader \
-    dlls/dnsapi \
-    dlls/dplayx \
-    dlls/dpnet \
-    dlls/dxdiagn \
-    dlls/dxgi \
-    dlls/explorerframe \
-    dlls/faultrep \
-    dlls/fusion \
-    dlls/gameux \
-    dlls/hlink \
-    dlls/imagehlp \
-    dlls/imm32 \
-    dlls/inetcomm \
-    dlls/inetmib1 \
-    dlls/infosoft \
-    dlls/iphlpapi \
-    dlls/itss \
-    dlls/jscript \
-    dlls/localspl \
-    dlls/localui \
-    dlls/lz32 \
-    dlls/mapi32 \
-    dlls/mscms \
-    dlls/msctf \
-    dlls/msi \
-    dlls/mstask \
-    dlls/msvcp90 \
-    dlls/msvcr90 \
-    dlls/msvcrtd \
-    dlls/msvfw32 \
-    dlls/netapi32 \
-    dlls/ntdsapi \
-    dlls/ntprint \
-    dlls/odbccp32 \
-    dlls/oleacc \
-    dlls/oledb32 \
-    dlls/propsys \
-    dlls/psapi \
-    dlls/qedit \
-    dlls/qmgr \
-    dlls/quartz \
-    dlls/rasapi32 \
-    dlls/riched32 \
-    dlls/rsaenh \
-    dlls/schannel \
-    dlls/serialui \
-    dlls/setupapi \
-    dlls/shdocvw \
-    dlls/shlwapi \
-    dlls/snmpapi \
-    dlls/spoolss \
-    dlls/sti \
-    dlls/twain_32 \
-    dlls/userenv \
-    dlls/uxtheme \
-    dlls/vbscript \
-    dlls/version \
-    dlls/wer \
-    dlls/windowscodecs \
-    dlls/winspool.drv \
-    dlls/wintab32 \
-    dlls/wldap32 \
-    dlls/wshom.ocx \
-    dlls/xinput1_3 \
-    dlls/xmllite \
-"
-
 do_valgrind_tests() {
     if ! dir=`is_simple_change dlls`
     then
         echo "Complex change - no obvious thing to valgrind"
         return 0
     fi
-    if ! echo "$VALGRIND_WHITELIST_DLLS" | grep -w $dir
-    then
-        echo "Directory $dir is not in the list of valgrind-clean directories, so not valgrinding"
-        return 0
-    fi
+    blacklist=`get_blacklist "$match"`
+    make testclean
+    touch $blacklist
 
     valgrind_errors=0
     create_wineprefix valgrind
@@ -361,7 +304,6 @@ do_valgrind_tests() {
 
     cd $dir/tests
 
-    rm -f *.ok
     # FIXME: loop through the tests so we can really count errors
     if ! WINETEST_WRAPPER="alarum 300 valgrind" make -k test
     then
@@ -380,36 +322,7 @@ do_valgrind_tests() {
 # This takes a while, so speed things up a bit by running some tests in background
 do_goodtests() {
     # Skip all tests that might fail
-    match='SYS|WICKED|FLAKY|CRASHY'
-    case `uname -m` in
-    x86_64) match="$match|BAD64";;
-    esac
-    echo "Checking WINEDEBUG ($WINEDEBUG)"
-    case "$WINEDEBUG" in
-    *warn+heap*) match="$match|HEAP" ;;
-    esac
-    
-    if ! test -t 1
-    then
-        match="$match|NOTTY"
-    fi
-    
-    if lspci | grep VGA.*ATI
-    then
-        match="$match|ATI"
-    fi
-    
-    if test `pgrep pulseaudio`
-    then
-        match="$match|PULSE"
-    fi
-
-    if test x`uname -s` = xFreeBSD
-    then
-        match="$match|FREEBSD"
-    fi
-    
-    blacklist=`get_blacklist "$match"`
+    blacklist=`get_current_blacklist`
     touch $blacklist
 
     echo "Checking whether change is so simple we don't need to run all tests"
