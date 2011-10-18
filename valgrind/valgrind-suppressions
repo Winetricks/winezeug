@@ -1382,7 +1382,7 @@
    wine_bug_28741
    Memcheck:Cond
    ...
-   fun:RtlTimeToTimeFields
+   fun:FileTimeToSystemTime
    ...
    fun:test_hittest
    fun:func_monthcal
