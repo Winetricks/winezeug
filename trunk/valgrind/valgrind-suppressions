@@ -212,7 +212,7 @@
    todo_suppress_libfontconfig_leak
    Memcheck:Leak
    fun:malloc
-   obj:libfontconfig.so.1.*
+   obj:*/libfontconfig.so.1.*
 }
 # thread_detach() should clean this up??
 {
@@ -1645,7 +1645,7 @@
 {
    fontconfig1
    Memcheck:Addr4
-   obj:libfontconfig.so.1.4.4
+   obj:*/libfontconfig.so.1.4.4
 }
 
 # libX11
