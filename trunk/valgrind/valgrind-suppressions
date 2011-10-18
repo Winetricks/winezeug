@@ -1657,6 +1657,18 @@
    obj:*/libxcb.so.1.1.0
    obj:*
 }
+# ubuntu 11.10 has these all over the place, all with the clue
+# Uninitialised value was created by a stack allocation
+#   at 0x5144D5F: set_wm_hints (window.c:1128)
+# (without useful backtrace, possibly due to a gcc bug)
+# Shame this has to be so wide!
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   obj:*
+}
 
 # http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=642387
 {
