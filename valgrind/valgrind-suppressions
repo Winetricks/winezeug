@@ -67,42 +67,42 @@
 {
    bogus_cond_libglcore
    Memcheck:Cond
-   obj:libGLcore.so.*
+   obj:*/libGLcore.so.*
 }
 {
    bogus_value4_libglcore
    Memcheck:Value4
-   obj:libGLcore.so.*
+   obj:*/libGLcore.so.*
 }
 {   
    bogus_addr2_libglcore
    Memcheck:Addr2
-   obj:libGLcore.so.*
+   obj:*/libGLcore.so.*
 }
 {
    suppress_ioctl_libglcore
    Memcheck:Param
    ioctl(generic)
    fun:ioctl
-   obj:libGLcore.so.*
+   obj:*/libGLcore.so.*
 }
 {
    bogus_addr4_libgl
    Memcheck:Addr4
-   obj:libGL.so.*
+   obj:*/libGL.so.*
 }
 {
    suppress_leak_libgl
    Memcheck:Leak
    fun:malloc
-   obj:libGL.so.*
+   obj:*/libGL.so.*
 }
 {
    bogus_X11_1
    Memcheck:Param
    write(buf)
    obj:*
-   obj:libX11.so.6.2.0
+   obj:*/libX11.so.6.2.0
 }
 {
    bogus_X11_2
@@ -110,82 +110,82 @@
    write(buf)
    obj:*
    obj:*
-   obj:libX11.so.6.2.0
+   obj:*/libX11.so.6.2.0
 }
 {
    bogus_Xcursor
    Memcheck:Cond
-   obj:libXcursor.so.1.0.2
+   obj:*/libXcursor.so.1.0.2
 }
 {
    bogus_libxcb
    Memcheck:Param
    writev(vector[...])
    obj:*
-   obj:libxcb.so*
+   obj:*/libxcb.so*
 }
 {
    suppress_i915_ioctl
    Memcheck:Param
    ioctl(generic)
    obj:*
-   obj:i915_dri.so
+   obj:*/i915_dri.so
 }
 {
    suppress_i915_cond
    Memcheck:Cond
-   obj:i915_dri.so
+   obj:*/i915_dri.so
 }
 {
    suppress_i915_value
    Memcheck:Value4
-   obj:i915_dri.so
+   obj:*/i915_dri.so
 }
 {
    suppress_i915_leak1
    Memcheck:Leak
    fun:malloc
-   obj:i915_dri.so
+   obj:*/i915_dri.so
 }
 {
    suppress_i915_leak2
    Memcheck:Leak
    fun:memalign
    fun:*
-   obj:i915_dri.so
+   obj:*/i915_dri.so
 }
 {
    suppress_libasound_overlap
    Memcheck:Overlap
    fun:memcpy
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    suppress_libasound_connect
    Memcheck:Param
    socketcall.connect(serv_addr..sun_path)
    obj:*
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    suppress_libasound_connect2
    Memcheck:Cond
    fun:snd_pcm_direct_client_connect
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    suppress_libasound_bind
    Memcheck:Param
    socketcall.bind(my_addr..sun_path)
    obj:*
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    suppress_libasound_ioctl
    Memcheck:Param
    ioctl(arg)
    obj:*
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    suppress_libasound_ioctl2
@@ -639,57 +639,57 @@
 {
    todo_openssl_warnings_r_us1a
    Memcheck:Addr4
-   obj:libcrypto.so*
+   obj:*/libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us1b
    Memcheck:Value4
-   obj:*libcrypto.so*
+   obj:*/*libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us1c
    Memcheck:Cond
-   obj:*libcrypto.so*
+   obj:*/*libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us2a
    Memcheck:Addr4
    obj:*
-   obj:*libcrypto.so*
+   obj:*/*libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us2b
    Memcheck:Value4
    obj:*
-   obj:*libcrypto.so*
+   obj:*/*libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us2c
    Memcheck:Cond
    obj:*
-   obj:*libcrypto.so*
+   obj:*/*libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us1d
    Memcheck:Param
    write(buf)
    obj:*
-   obj:*libcrypto.so*
+   obj:*/*libcrypto.so*
 }
 {
    todo_openssl_warnings_r_us3a
    Memcheck:Addr4
-   obj:*libssl.so*
+   obj:*/*libssl.so*
 }
 {
    todo_openssl_warnings_r_us3b
    Memcheck:Value4
-   obj:*libssl.so*
+   obj:*/*libssl.so*
 }
 {
    todo_openssl_warnings_r_us3c
    Memcheck:Cond
-   obj:*libssl.so*
+   obj:*/*libssl.so*
 }
 {
    # http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=532059
@@ -745,14 +745,14 @@
    Memcheck:Leak
    fun:calloc
    fun:pa_xmalloc0
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
-   obj:libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
+   obj:*/libpulse.so.0.7.1
    fun:pa_mainloop_dispatch
 }
 # and msacm32? possible bad stack from valgrind?
@@ -1025,7 +1025,7 @@
    ntlm_auth_leaks
    Memcheck:Leak
    ...
-   obj:ntlm_auth
+   obj:*/ntlm_auth
 }
 {
    ntlm_auth_leaks
@@ -1272,12 +1272,12 @@
   fun:crypt_oid_init
   fun:DllMain
   fun:__wine_spec_dll_entry
-  obj:ntdll.dll.so
+  obj:*/ntdll.dll.so
   fun:MODULE_InitDLL
   fun:process_attach
   fun:process_attach
   fun:attach_process_dlls
-  obj:libwine.so.1.0
+  obj:*/libwine.so.1.0
 }
 
 {
@@ -1290,12 +1290,12 @@
   fun:crypt_oid_init
   fun:DllMain
   fun:__wine_spec_dll_entry
-  obj:ntdll.dll.so
+  obj:*/ntdll.dll.so
   fun:MODULE_InitDLL
   fun:process_attach
   fun:process_attach
   fun:attach_process_dlls
-  obj:libwine.so.1.0
+  obj:*/libwine.so.1.0
 }
 
 # Gstreamer is really leaky. These cut down the warnings in dlls/qedit from 415 to 16 (!)
@@ -1330,7 +1330,7 @@
    Memcheck:Leak
    fun:calloc
    ...
-   obj:libgstreamer-*
+   obj:*/libgstreamer-*
 }
 
 {   
@@ -1564,7 +1564,7 @@
    fun:malloc
    obj:/lib/libc-2.11.2.so
    fun:getaddrinfo
-   obj:libasyncns.so.0.1.0
+   obj:*/libasyncns.so.0.1.0
    fun:start_thread
    fun:clone
 }
@@ -1654,7 +1654,7 @@
    Memcheck:Param
    writev(vector[...])
    fun:writev
-   obj:libxcb.so.1.1.0
+   obj:*/libxcb.so.1.1.0
    obj:*
 }
 
