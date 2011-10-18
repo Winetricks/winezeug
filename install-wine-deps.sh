@@ -152,11 +152,12 @@ libxxf86vm-dev linux-libc-dev m4 make mesa-common-dev \
 unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x11proto-fixes-dev  \
 x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11proto-xext-dev \
 x11proto-xf86vidmode-dev x11proto-xinerama-dev xtrans-dev zlib1g-dev \
-libelfg0 libfreebob0 libgif-dev libhal-storage-dev libjack-dev"
+libelfg0 libgif-dev libhal-storage-dev libjack-dev"
 
 ubuntu_gutsy_pkgs="\
 cogito \
 libcupsys2-dev \
+libfreebob0 \
 libglib1.2-dev \
 libltdl3 \
 libltdl3-dev \
@@ -170,6 +171,7 @@ x-dev \
 
 ubuntu_hardy_pkgs="\
 libcupsys2-dev \
+libfreebob0 \
 libglib1.2-dev \
 libltdl3 \
 libltdl3-dev \
@@ -181,6 +183,7 @@ x-dev \
 
 ubuntu_ibex_pkgs="\
 libcups2-dev \
+libfreebob0 \
 libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
@@ -191,6 +194,7 @@ x-dev \
 
 ubuntu_jaunty_pkgs="\
 libcups2-dev \
+libfreebob0 \
 libglib1.2-dev \
 liblzo-dev \
 libltdl7 \
@@ -201,6 +205,7 @@ x-dev \
 
 ubuntu_karmic_pkgs="\
 libcups2-dev \
+libfreebob0 \
 liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
@@ -211,6 +216,17 @@ x-dev \
 "
 
 ubuntu_maverick_pkgs="\
+libcups2-dev \
+libfreebob0 \
+liblzo2-dev \
+libltdl7 \
+libltdl7-dev \
+libgstreamermm-0.10-dev \
+odbcinst \
+prelink \
+"
+
+ubuntu_oneiric_pkgs="\
 libcups2-dev \
 liblzo2-dev \
 libltdl7 \
@@ -281,6 +297,7 @@ Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkg
 Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
 Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
+Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*Hurd*) apt-get install $debian_common_pkgs ;;
