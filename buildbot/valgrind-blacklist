@@ -510,6 +510,14 @@
    fun:RtlCreateActivationContext
 }
 {
+   wine_bug_28796_b
+   Memcheck:Value4
+   ...
+   fun:lookup_manifest_file
+   ...
+   fun:RtlCreateActivationContext
+}
+{
    wine_bug_28797
    Memcheck:Cond
    fun:strlenW
