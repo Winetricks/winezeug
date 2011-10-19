@@ -271,8 +271,10 @@
    fun:PropertyStorage_WritePropertyToStream
    fun:PropertyStorage_PropertiesWriter
    fun:dictionary_enumerate
+   ...
    fun:IPropertyStorage_fnCommit
    fun:test_ReadAndWriteProperties
+   ...
    fun:func_intshcut
    fun:run_test
    fun:main
@@ -283,6 +285,7 @@
    fun:winetest_vok
    fun:winetest_ok
    fun:test_ReadAndWriteProperties
+   ...
    fun:func_intshcut
    fun:run_test
    fun:main
