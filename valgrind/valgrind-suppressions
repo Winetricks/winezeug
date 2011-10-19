@@ -417,7 +417,7 @@
    fun:raise_exception
    fun:NtRaiseException
    fun:raise_segv_exception
-   obj:*
+   ...
    fun:func_exception
 }
 {
