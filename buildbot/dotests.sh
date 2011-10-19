@@ -167,6 +167,9 @@ do_subset_tests() {
 # NOTTY - test fails if output redirected
 # BAD64 - always fails on 64 bits
 # ATI - fails on ATI graphics
+# MAC - fails on Mac OS X
+# MAC106 - fails on Mac OS 10.6 and below
+# MACATI - fails on Mac OS X with ATI graphics
 # VALGRIND - has too many valgrind warnings to write suppressions for
 
 # Return tests that match given criterion
@@ -195,9 +198,13 @@ get_current_blacklist() {
         match="$match|NOTTY"
     fi
     
-    if lspci | grep VGA.*ATI
+    if glxinfo | grep "OpenGL vendor string:" | grep "ATI"
     then
         match="$match|ATI"
+        if test x`uname -s` = xDarwin
+        then
+            match="$match|MACATI"
+        fi
     fi
     
     if test `pgrep pulseaudio`
@@ -208,6 +215,16 @@ get_current_blacklist() {
     if test x`uname -s` = xFreeBSD
     then
         match="$match|FREEBSD"
+    fi
+    
+    if test x`uname -s` = xDarwin
+    then
+        match="$match|MAC"
+        # Darwin 10 = Mac OS 10.6, Darwin 11 = Mac OS 10.7
+        if test `uname -r | cut -d. -f1` -le 10
+        then
+            match="$match|MAC106"
+        fi
     fi
     
     get_blacklist "$match"
