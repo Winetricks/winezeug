@@ -198,6 +198,7 @@
 {
    wine_bug_26122
    Memcheck:Value4
+   ...
    fun:wine_cp_mbstowcs
    fun:MultiByteToWideChar
    fun:CompareStringA
