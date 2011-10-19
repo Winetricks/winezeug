@@ -464,9 +464,9 @@
 {
    wine_bug_28754
    Memcheck:Cond
-   fun:ctrl_container_resize
+   ...
    fun:update_layout
-   fun:IFileDialog2_fnSetOkButtonLabel
+   ...
    fun:test_basics
    fun:func_itemdlg
    fun:run_test
