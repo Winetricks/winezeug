@@ -11,13 +11,31 @@
 }
 {
    # this one's a little wide, sigh
-   wine_bug_14078
+   wine_bug_14078_b
    Memcheck:Cond
    fun:deserialize_param
    fun:deserialize_param
    fun:TMStubImpl_Invoke
    fun:RPC_ExecuteCall
    fun:apartment_wndproc
+}
+{
+   wine_bug_14078_c
+   Memcheck:Addr4
+   fun:memcpy
+   fun:xbuf_add
+   fun:serialize_param
+   fun:serialize_param
+   fun:TMStubImpl_Invoke
+   fun:RPC_ExecuteCall
+   fun:apartment_wndproc
+   obj:*/user32.dll.so
+   fun:call_window_proc
+   fun:WINPROC_call_window
+   fun:DispatchMessageW
+   fun:IEWinMain
+   fun:WinMain
+   fun:main
 }
 {
    wine_bug_17414
@@ -231,8 +249,9 @@
    wine_bug_28695
    Memcheck:Cond
    fun:REBAR_CommonSetupBand
+   ...
    fun:REBAR_WindowProc
-   obj:user32.dll.so
+   obj:*/user32.dll.so
    fun:call_window_proc
    fun:WINPROC_call_window
    fun:call_window_proc
@@ -245,8 +264,9 @@
    wine_bug_28695_b
    Memcheck:Cond
    fun:REBAR_ValidateBand
+   ...
    fun:REBAR_WindowProc
-   obj:user32.dll.so
+   obj:*/user32.dll.so
    fun:call_window_proc
    fun:WINPROC_call_window
    fun:call_window_proc
