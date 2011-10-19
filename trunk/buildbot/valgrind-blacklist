@@ -196,6 +196,20 @@
    fun:process_request_packet
 }
 {
+   wine_bug_26120
+   Memcheck:Cond
+   fun:memcpy
+   fun:NTDLL_create_struct_sd
+   fun:NtCreateEvent
+   fun:CreateEventExW
+   fun:CreateEventExA
+   fun:CreateEventA
+   fun:test_event
+   fun:func_sync
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26122
    Memcheck:Value4
    ...
