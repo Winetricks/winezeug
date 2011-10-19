@@ -75,3 +75,4 @@ dlls/d3d9/tests/visual.ok       VALGRIND 28801
 dlls/d3dx9_36/tests/mesh.ok     VALGRIND 28810
 dlls/mmdevapi/tests/render.ok   VALGRIND 28814
 dlls/kernel32/tests/fiber.ok    VALGRIND 28815
+dlls/kernel32/tests/loader.ok   VALGRIND 28816
