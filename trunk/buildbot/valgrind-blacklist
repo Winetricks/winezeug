@@ -196,6 +196,16 @@
    fun:process_request_packet
 }
 {
+   wine_bug_26118
+   Memcheck:Cond
+   fun:wine_dbgstr_wn
+   fun:wine_dbgstr_w
+   fun:test_readdirectorychanges_cr
+   fun:func_change
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26120
    Memcheck:Cond
    fun:memcpy
