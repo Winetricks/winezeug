@@ -584,7 +584,7 @@
    wine_bug_28799
    Memcheck:Overlap
    fun:memcpy
-   fun:weld_float16_2
+   fun:weld_float16_*
    fun:weld_component
    fun:D3DXWeldVertices
    fun:test_weld_vertices
