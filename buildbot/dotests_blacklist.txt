@@ -69,7 +69,7 @@ dlls/kernel32/tests/loader.ok   FREEBSD 28662
 dlls/qedit/tests/mediadet.ok    FREEBSD 28664
 dlls/ntdll/tests/directory.ok   FREEBSD 28665
 dlls/ntdll/tests/exception.ok   VALGRIND 28735
-dlls/ddraw/tests/drawmodes.ok   VALGRIND 28735
+dlls/ddraw/tests/ddrawmodes.ok  VALGRIND 28735
 dlls/shell32/tests/brsfolder.ok FLAKY   28737
 dlls/d3d8/tests/device.ok       VALGRIND 28800
 dlls/d3d9/tests/device.ok       VALGRIND 28800
