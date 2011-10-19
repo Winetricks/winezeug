@@ -496,6 +496,7 @@
    wine_bug_28754_b
    Memcheck:Param
    write(buf)
+   ...
    fun:update_layout
    ...
    fun:test_basics
