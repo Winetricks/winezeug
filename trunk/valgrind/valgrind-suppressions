@@ -1583,7 +1583,16 @@
    fun:run_test
    fun:main
 }
-
+{
+   ignore_wine_msxml3_expected_null
+   Memcheck:Addr1
+   fun:lstrlenA
+   fun:test_mxwriter_startendelement_batch
+   fun:test_mxwriter_startendelement
+   fun:func_saxreader
+   fun:run_test
+   fun:main
+}
 # See http://bugs.winehq.org/show_bug.cgi?id=26071
 {
    urlmon_lstrlen_null_1
