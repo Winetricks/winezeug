@@ -196,6 +196,22 @@
    obj:*/libasound.so.2.0.0
 }
 {
+   # Uninitialised value was created by a stack allocation
+   #   at 0x5562C62: ??? (in /usr/lib/i386-linux-gnu/libasound.so.2.0.0)
+   suppress_libasound_ioctl3
+   Memcheck:Param
+   ioctl(arg)
+   fun:ioctl
+   fun:DSOUND_ReopenDevice
+}
+{
+   suppress_libasound_ioctl4
+   Memcheck:Param
+   ioctl(arg)
+   fun:ioctl
+   fun:AudioStreamVolume_Release
+}
+{
    suppress_libasound_semctl
    Memcheck:Param
    semctl(IPC_SET, arg.buf)
@@ -415,11 +431,9 @@
 {
    suppress_wine_verify_lstrlenA_deadbeef_zero
    Memcheck:Addr1
-   fun:strlen
+   ...
    fun:lstrlenA
    fun:threadFunc1
-   obj:*/ntdll.dll.so
-   fun:call_thread_func
 }
 # test_UnpackDDElParam intentionally passes a bad pointer
 {
@@ -510,7 +524,7 @@
 {   
    suppress_wine_dlls_kernel32_tests__CreateThread_basic_badaccess
    Memcheck:Addr1
-   fun:strlen
+   ...
    fun:lstrlenA
    fun:test_CreateThread_basic
 }
