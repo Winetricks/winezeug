@@ -665,3 +665,13 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28821
+   Memcheck:Value4
+   fun:wcstombs_sbcs
+   fun:wine_cp_wcstombs
+   fun:WideCharToMultiByte
+   fun:GetCalendarInfoA
+   fun:test_GetCalendarInfo
+   fun:func_time
+}
