@@ -54,6 +54,25 @@
    fun:main
 }
 {
+   wine_bug_26044
+   Memcheck:Cond
+   ...
+   fun:test_AtlAxAttachControl
+   fun:func_atl_ax
+   fun:run_test
+   fun:main
+}
+{
+   wine_bug_26044_b
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:test_AtlAxAttachControl
+   fun:func_atl_ax
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_26046
    Memcheck:Cond
    ...
@@ -526,7 +545,18 @@
    fun:DrawTextW
    fun:NC_DrawCaption
    fun:NC_DoNCPaint
-...
+   ...
    fun:CreateWindowExW
 }
-
+{
+   wine_bug_28799
+   Memcheck:Overlap
+   fun:memcpy
+   fun:weld_float16_2
+   fun:weld_component
+   fun:D3DXWeldVertices
+   fun:test_weld_vertices
+   fun:func_mesh
+   fun:run_test
+   fun:main
+}
