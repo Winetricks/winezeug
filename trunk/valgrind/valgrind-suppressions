@@ -193,20 +193,20 @@
    ioctl(arg)
    obj:*
    fun:ioctl
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    suppress_libasound_semctl
    Memcheck:Param
    semctl(IPC_SET, arg.buf)
    obj:*
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    todo_suppress_libasound_leak
    Memcheck:Leak
    ...
-   obj:libasound.so.2.0.0
+   obj:*/libasound.so.2.0.0
 }
 {
    todo_suppress_libfontconfig_leak
@@ -389,8 +389,8 @@
    todo_suppress_exception_addr4
    Memcheck:Addr4
    fun:__wine_call_from_32_regs
-   obj:ntdll.dll.so
-   obj:ntdll.dll.so
+   obj:*/ntdll.dll.so
+   obj:*/ntdll.dll.so
    fun:raise_exception
 }
 {
@@ -418,7 +418,7 @@
    fun:strlen
    fun:lstrlenA
    fun:threadFunc1
-   obj:ntdll.dll.so
+   obj:*/ntdll.dll.so
    fun:call_thread_func
 }
 # test_UnpackDDElParam intentionally passes a bad pointer
@@ -1105,17 +1105,17 @@
 {
    nvidia_binary
    Memcheck:Cond
-   obj:libnvidia-glcore.so.*
+   obj:*/libnvidia-glcore.so.*
 }
 {
    nvidia_binary_bad_addr1
    Memcheck:Addr1
-   obj:libnvidia-glcore.so.*
+   obj:*/libnvidia-glcore.so.*
 }
 {
    nvidia_binary_bad_addr4
    Memcheck:Addr4
-   obj:libnvidia-glcore.so.*
+   obj:*/libnvidia-glcore.so.*
 }
 # Expected failures, the address is deliberately invalid, to show that the function traps such invalid addresses.
 {
