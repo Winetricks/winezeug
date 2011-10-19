@@ -456,7 +456,9 @@
    fun:enum_callback
    fun:enumerate_mmdevices
    fun:DSPROPERTY_EnumerateW
+   ...
    fun:IKsPrivatePropertySetImpl_Get
+   ...
    fun:func_propset
    fun:run_test
    fun:main
