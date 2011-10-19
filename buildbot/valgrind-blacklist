@@ -493,6 +493,17 @@
    fun:main
 }
 {
+   wine_bug_28754_b
+   Memcheck:Param
+   write(buf)
+   fun:update_layout
+   ...
+   fun:test_basics
+   fun:func_itemdlg
+   fun:run_test
+   fun:main
+}
+{
    wine_bug_28756
    Memcheck:Cond
    fun:get_cached_fd
