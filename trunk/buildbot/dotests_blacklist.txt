@@ -48,6 +48,7 @@ dlls/d3d9/tests/device.ok       ATI    28387
 dlls/winmm/tests/midi.ok        FLAKY  28388
 dlls/wininet/tests/http.ok      FLAKY  28394
 dlls/gdi32/tests/bitmap.ok      SYS    28397
+dlls/msvcrt/tests/string.ok     VALGRIND 28422
 dlls/qmgr/tests/enum_files.ok   HEAP   28470
 dlls/qmgr/tests/enum_jobs.ok    HEAP   28470
 dlls/qmgr/tests/file.ok         HEAP   28470
