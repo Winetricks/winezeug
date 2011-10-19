@@ -71,3 +71,4 @@ dlls/shell32/tests/brsfolder.ok FLAKY   28737
 dlls/d3d8/tests/device.ok       VALGRIND 28800
 dlls/d3d9/tests/device.ok       VALGRIND 28800
 dlls/d3d9/tests/visual.ok       VALGRIND 28801
+dlls/d3dx9_36/tests/mesh.ok     VALGRIND 28810
