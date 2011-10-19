@@ -99,3 +99,4 @@ dlls/ole32/tests/usrmarshal.ok  VALGRIND 20919
 dlls/oleaut32/tests/safearray.ok VALGRIND 20919
 dlls/shell32/tests/shlexec.ok   VALGRIND 20919
 dlls/urlmon/tests/url.ok        VALGRIND 20919
+dlls/dsound/tests/capture.ok    VALGRIND 20919
