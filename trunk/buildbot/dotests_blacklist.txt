@@ -14,6 +14,7 @@ dlls/ntdll/tests/file.ok        FLAKY   14841
 dlls/gdi32/tests/path.ok        FREEBSD 15538
 dlls/quartz/tests/referencemapper.ok FREEBSD 15539
 dlls/user32/tests/static.ok     FLAKY  20149
+dlls/crypt32/tests/msg.ok       VALGRIND 20985
 dlls/ieframe/tests/ie.ok        BAD64  26768
 dlls/oleaut32/tests/tmarshal.ok BAD64  26768
 dlls/wininet/tests/urlcache.ok  CRASHY 28038
