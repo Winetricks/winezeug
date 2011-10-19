@@ -608,3 +608,28 @@
    fun:run_test
    fun:main
 }
+{
+   wine_bug_28811
+   Memcheck:Addr2
+   fun:else_break
+   fun:BREAK_line
+   fun:ScriptBreak
+}
+{
+   wine_bug_28812
+   Memcheck:Cond
+   ...
+   fun:oriya_lex
+   ...
+   fun:test_ScriptShapeOpenType
+}
+{
+   wine_bug_28813
+   Memcheck:Cond
+   fun:get_glyph_cluster_advance
+   fun:ScriptXtoCP
+   fun:test_ScriptXtoX
+   fun:func_usp10
+   fun:run_test
+   fun:main
+}
