@@ -592,3 +592,19 @@
    fun:run_test
    fun:main
 }
+# nasty stack smash?
+{
+   wine_bug_25826
+   Memcheck:Overlap
+   fun:memcpy
+   fun:format_string
+   fun:vsnprintfW
+   fun:sprintfW
+   fun:CategoryMgr_FindClosestCategory
+   fun:next_LanguageProfile
+   fun:EnumTfLanguageProfiles_Next
+   fun:test_EnumLanguageProfiles
+   fun:func_inputprocessor
+   fun:run_test
+   fun:main
+}
