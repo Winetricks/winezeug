@@ -1,13 +1,19 @@
 dlls/kernel32/tests/heap.ok     HEAP
 dlls/dsound/tests/ds3d8.ok      PULSE  8668
+dlls/dsound/tests/ds3d8.ok      MAC    21655
 dlls/dsound/tests/ds3d.ok       PULSE  8668
+dlls/dsound/tests/ds3d.ok       MAC    21655
 dlls/dsound/tests/dsound8.ok    PULSE  8668
+dlls/dsound/tests/dsound8.ok    MAC    21655
 dlls/dsound/tests/dsound.ok     PULSE  8668
+dlls/dsound/tests/dsound.ok     MAC    21655
 dlls/user32/tests/input.ok      SYS    12053
 dlls/user32/tests/msg.ok        SYS    12053
 dlls/user32/tests/win.ok        SYS    12053
 dlls/kernel32/tests/change.ok   FREEBSD 12840
+dlls/kernel32/tests/change.ok   MAC    12840
 dlls/ntdll/tests/change.ok      FREEBSD 12854
+dlls/ntdll/tests/change.ok      MAC    12854
 dlls/ntdll/tests/exception.ok   FREEBSD 12891
 dlls/kernel32/tests/thread.ok   FREEBSD 12894
 dlls/ntdll/tests/file.ok        FLAKY   14841
@@ -20,11 +26,14 @@ dlls/oleaut32/tests/tmarshal.ok BAD64  26768
 dlls/wininet/tests/urlcache.ok  CRASHY 28038
 dlls/winmm/tests/wave.ok        SYS    28048
 dlls/winmm/tests/mci.ok         SYS    28071
+dlls/ws2_32/tests/sock.ok       MAC    14831
 dlls/ws2_32/tests/sock.ok       CRASHY 28102
 dlls/urlmon/tests/url.ok        CRASHY 28108
+dlls/urlmon/tests/protocol.ok   FLAKY  28323
 dlls/winmm/tests/capture.ok     SYS    28109
 dlls/twain_32/tests/dsm.ok      CRASHY 28133
 dlls/shell32/tests/shlfolder.ok SYS    28216
+dlls/shell32/tests/shellpath.ok FLAKY  28769
 dlls/kernel32/tests/process.ok  NOTTY  28220
 dlls/kernel32/tests/pipe.ok     HEAP   28257
 dlls/kernel32/tests/pipe.ok     WICKED 28257
@@ -45,6 +54,7 @@ dlls/d3d9/tests/query.ok        ATI    28385
 dlls/d3d9/tests/visual.ok       ATI    28386
 dlls/d3d8/tests/device.ok       ATI    28387
 dlls/d3d9/tests/device.ok       ATI    28387
+dlls/ddraw/tests/visual.ok      MACATI 12842
 dlls/winmm/tests/midi.ok        FLAKY  28388
 dlls/wininet/tests/http.ok      FLAKY  28394
 dlls/gdi32/tests/bitmap.ok      SYS    28397
@@ -61,16 +71,23 @@ dlls/kernel32/tests/change.ok   FLAKY  28506
 dlls/user32/tests/monitor.ok    FLAKY  28508
 dlls/user32/tests/cursoricon.ok FLAKY  28573
 dlls/msi/tests/install.ok       FLAKY  28609
+dlls/gdi32/tests/dc.ok          MAC    25312
+dlls/ntdll/tests/exception.ok   MAC106
+dlls/advapi32/tests/cred.ok     MAC    28792
 dlls/kernel32/tests/thread.ok   SYS    28640
 dlls/ole32/tests/clipboard.ok   FLAKY  28643
 dlls/mmdevapi/tests/dependency.ok FLAKY 28653
+dlls/mmdevapi/tests/render.ok   MAC    27184
 dlls/rpcrt4/tests/server.ok     FREEBSD 28659
 dlls/kernel32/tests/loader.ok   FREEBSD 28662
 dlls/qedit/tests/mediadet.ok    FREEBSD 28664
+dlls/qedit/tests/mediadet.ok    MAC    28664
 dlls/ntdll/tests/directory.ok   FREEBSD 28665
+dlls/ntdll/tests/directory.ok   MAC    28665
 dlls/ntdll/tests/exception.ok   VALGRIND 28735
 dlls/ddraw/tests/ddrawmodes.ok  VALGRIND 28735
 dlls/shell32/tests/brsfolder.ok FLAKY   28737
+dlls/iphlpapi/tests/iphlpapi.ok FLAKY  28818
 dlls/d3d8/tests/device.ok       VALGRIND 28800
 dlls/d3d9/tests/device.ok       VALGRIND 28800
 dlls/d3d9/tests/visual.ok       VALGRIND 28801
