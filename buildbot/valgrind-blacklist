@@ -293,8 +293,7 @@
    fun:*
    fun:convert_to_1
    fun:convert_bitmapinfo
-   fun:SetDIBits
-   fun:nulldrv_StretchDIBits
+   ...
    fun:StretchDIBits
 }
 {
