@@ -1600,6 +1600,7 @@
 {
    ignore_wine_msxml3_expected_null
    Memcheck:Addr1
+   ...
    fun:lstrlenA
    fun:test_mxwriter_startendelement_batch
    fun:test_mxwriter_startendelement
