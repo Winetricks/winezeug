@@ -157,8 +157,8 @@
    fun:default_dbgstr_wn
    fun:NTDLL_dbgstr_wn
    fun:wine_dbgstr_wn
+   ...
    fun:ME_CallWordBreakProc
-   fun:ME_MoveCursorWords
 }
 {
    wine_bug_26101
