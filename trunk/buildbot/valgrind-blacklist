@@ -172,11 +172,10 @@
    ...
    fun:WriteFile
    fun:rpcrt4_conn_np_write
+   ...
    fun:RPCRT4_SendWithAuth
    fun:RPCRT4_Send
    fun:process_request_packet
-   fun:RPCRT4_worker_thread
-   fun:worker_thread_proc
 }
 {
    wine_bug_26122
