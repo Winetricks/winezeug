@@ -67,6 +67,7 @@
    fun:GlobalFree
    fun:WDML_FreeTransaction
    fun:DdeClientTransaction
+   ...
    fun:func_dde
    fun:run_test
    fun:main
