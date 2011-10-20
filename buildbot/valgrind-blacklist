@@ -570,6 +570,7 @@
 {
    wine_bug_28769
    Memcheck:Addr1
+   ...
    fun:foldermanager_GetFolder
    fun:test_knownFolders
    fun:func_shellpath
@@ -579,6 +580,7 @@
 {
    wine_bug_28769_b
    Memcheck:Free
+   ...
    fun:RtlFreeHeap
    fun:foldermanager_Release
    fun:test_knownFolders
@@ -689,4 +691,18 @@
    fun:ME_KeyDown
    ...
    fun:test_word_movement
+}
+{
+   wine_bug_28824
+   Memcheck:Cond
+   fun:__mktime_internal
+   fun:mktime
+   fun:TRASH_GetDetails
+   fun:TRASH_EnumItems
+   fun:SHQueryRecycleBinW
+   fun:SHQueryRecycleBinA
+   fun:test_query_recyclebin
+   fun:func_recyclebin
+   fun:run_test
+   fun:main
 }
