@@ -1,5 +1,36 @@
 dlls/kernel32/tests/heap.ok          HEAP                       
 dlls/ntdll/tests/exception.ok        MAC106                     
+dlls/d3d8/tests/stateblock.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/shader.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/texture.ok           MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dcompiler_43/tests/hlsl.ok    MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/texture.ok       MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddrawex/tests/ddrawex.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d8/tests/surface.ok           MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/d3d9ex.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/volume.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddraw/tests/overlay.ok          MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/vertexdeclaration.ok MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/surface.ok       MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/core.ok          MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d8/tests/buffer.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/surface.ok           MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/effect.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/opengl32/tests/opengl.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/stateblock.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddrawex/tests/surface.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d8/tests/volume.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/mesh.ok          MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/effect.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddraw/tests/dsurface.ok         MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddraw/tests/refcount.ok         MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/buffer.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d8/tests/visual.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddraw/tests/ddrawmodes.ok       MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d9/tests/vertexdeclaration.ok MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/shader.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3dx9_36/tests/line.ok          MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/ddraw/tests/d3d.ok              MAC            http://xquartz.macosforge.org/trac/ticket/512
 dlls/dsound/tests/ds3d8.ok           PULSE          8668        
 dlls/dsound/tests/ds3d.ok            PULSE          8668        
 dlls/dsound/tests/dsound8.ok         PULSE          8668        
