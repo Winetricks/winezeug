@@ -411,6 +411,7 @@
    fun:IMalloc_fnFree
    fun:CoTaskMemFree
    fun:SHFree
+   ...
    fun:BrsFolderDlgProc
 }
 {
