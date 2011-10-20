@@ -652,8 +652,17 @@
    fun:test_ScriptShapeOpenType
 }
 {
+   wine_bug_28812_b
+   Memcheck:Value4
+   ...
+   fun:oriya_lex
+   ...
+   fun:test_ScriptShapeOpenType
+}
+{
    wine_bug_28813
    Memcheck:Cond
+   ...
    fun:get_glyph_cluster_advance
    fun:ScriptXtoCP
    fun:test_ScriptXtoX
