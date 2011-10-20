@@ -255,6 +255,14 @@
    fun:test_create_view_window2
 }
 {
+   wine_bug_28465
+   Memcheck:Cond
+   fun:strlenW
+   ...
+   fun:test_PathCombineA
+   fun:func_path
+}
+{
    wine_bug_28628
    Memcheck:Cond
    fun:RtlEqualSid
