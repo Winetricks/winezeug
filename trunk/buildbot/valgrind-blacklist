@@ -263,6 +263,14 @@
    fun:func_path
 }
 {
+   wine_bug_28465_b
+   Memcheck:Cond
+   fun:strlenW
+   ...
+   fun:test_PathAppendA
+   fun:func_path
+}
+{
    wine_bug_28628
    Memcheck:Cond
    fun:RtlEqualSid
