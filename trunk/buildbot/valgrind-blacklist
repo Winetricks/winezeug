@@ -413,10 +413,8 @@
    wine_bug_28738
    Memcheck:Addr2
    fun:wine_dbgstr_wn
+   ...
    fun:server_end_to_end_callback
-   fun:WDML_InvokeCallback
-   fun:WDML_ServerHandle
-   fun:WDML_ServerConvProc
    ...
    fun:test_end_to_end_server
 }
@@ -424,7 +422,7 @@
    wine_bug_28783_b
    Memcheck:Addr1
    ...
-   fun:dde_server_wndprocW
+   fun:dde_server_wndproc*
    ...
    fun:WDML_SyncWaitTransactionReply
    fun:WDML_ClientHandle
@@ -435,7 +433,7 @@
    wine_bug_28783_c
    Memcheck:Addr2
    ...
-   fun:dde_server_wndprocA
+   fun:dde_server_wndproc*
    ...
    fun:WDML_SyncWaitTransactionReply
    fun:WDML_ClientHandle
