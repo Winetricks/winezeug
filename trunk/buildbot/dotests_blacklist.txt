@@ -81,10 +81,12 @@ dlls/oleaut32/tests/tmarshal.ok      BAD64          26768
 dlls/mmdevapi/tests/render.ok        MAC            27184       
 dlls/wininet/tests/urlcache.ok       CRASHY         28038       
 dlls/winmm/tests/wave.ok             SYS            28048       
+dlls/winmm/tests/wave.ok             VALGRIND       28048       
 dlls/winmm/tests/mci.ok              SYS            28071       
 dlls/ws2_32/tests/sock.ok            CRASHY         28102       
 dlls/urlmon/tests/url.ok             CRASHY         28108       
 dlls/winmm/tests/capture.ok          SYS            28109       
+dlls/winmm/tests/capture.ok          VALGRIND       28109       
 dlls/twain_32/tests/dsm.ok           CRASHY         28133       
 dlls/shell32/tests/shlfolder.ok      SYS            28216       
 dlls/kernel32/tests/process.ok       NOTTY          28220       
