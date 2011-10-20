@@ -150,3 +150,4 @@ dlls/kernel32/tests/loader.ok        VALGRIND       28816
 dlls/kernel32/tests/thread.ok        VALGRIND       28817       
 dlls/iphlpapi/tests/iphlpapi.ok      FLAKY          28818       
 dlls/oleaut32/tests/vartype.ok       VALGRIND       28820       
+dlls/ddraw/tests/d3d.ok              VALGRIND       28832
