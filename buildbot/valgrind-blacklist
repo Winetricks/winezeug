@@ -149,8 +149,7 @@
 {
    wine_bug_26101
    Memcheck:Cond
-   fun:default_dbgstr_wn
-   fun:NTDLL_dbgstr_wn
+   ...
    fun:wine_dbgstr_wn
    ...
    fun:ME_CallWordBreakProc
