@@ -69,6 +69,7 @@ dlls/ole32/tests/clipboard.ok        VALGRIND       20919
 dlls/ole32/tests/dragdrop.ok         VALGRIND       20919       
 dlls/ole32/tests/usrmarshal.ok       VALGRIND       20919       
 dlls/oleaut32/tests/safearray.ok     VALGRIND       20919       
+dlls/oleaut32/tests/usrmarshal.ok    VALGRIND       20919       
 dlls/shell32/tests/shlexec.ok        VALGRIND       20919       
 dlls/urlmon/tests/url.ok             VALGRIND       20919       
 dlls/crypt32/tests/msg.ok            VALGRIND       20985       
@@ -103,7 +104,6 @@ dlls/shell32/tests/shelllink.ok      FLAKY          28290
 dlls/mshtml/tests/htmldoc.ok         FLAKY          28295       
 dlls/riched20/tests/editor.ok        FLAKY          28298       
 dlls/kernel32/tests/debugger.ok      FLAKY          28316       
-dlls/urlmon/tests/protocol.ok        FLAKY          28323       
 dlls/urlmon/tests/protocol.ok        FLAKY          28323       
 dlls/mshtml/tests/events.ok          FLAKY          28362       
 dlls/mshtml/tests/htmllocation.ok    FLAKY          28362       
@@ -150,4 +150,5 @@ dlls/kernel32/tests/loader.ok        VALGRIND       28816
 dlls/kernel32/tests/thread.ok        VALGRIND       28817       
 dlls/iphlpapi/tests/iphlpapi.ok      FLAKY          28818       
 dlls/oleaut32/tests/vartype.ok       VALGRIND       28820       
+dlls/mmdevapi/tests/capture.ok       VALGRIND       28822
 dlls/ddraw/tests/d3d.ok              VALGRIND       28832
