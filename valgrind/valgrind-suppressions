@@ -1013,10 +1013,7 @@
    fun:RtlImageDirectoryEntryToData
    fun:find_entry
    fun:LdrFindResource_U
-   fun:find_resourceA
-   fun:FindResourceExA
-   fun:FindResourceA
-   fun:LoadMenuA
+   ...
    fun:WIN_CreateWindowEx
    fun:CreateWindowExA
    fun:check_instance_
