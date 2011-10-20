@@ -337,8 +337,7 @@
    fun:check_notification
    fun:send_callback
    fun:release_object
-   fun:connect_destroy
-   fun:release_object
+   ...
    fun:request_destroy
    fun:release_object
    fun:task_thread
