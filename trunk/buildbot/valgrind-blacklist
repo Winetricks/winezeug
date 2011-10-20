@@ -675,3 +675,17 @@
    fun:test_GetCalendarInfo
    fun:func_time
 }
+{
+   wine_bug_28823
+   Memcheck:Value4
+   fun:_itoa_word
+   ...
+   fun:debugstr_wn
+   fun:ME_WordBreakProc
+   fun:ME_CallWordBreakProc
+   fun:ME_MoveCursorWords
+   fun:ME_ArrowKey
+   fun:ME_KeyDown
+   ...
+   fun:test_word_movement
+}
