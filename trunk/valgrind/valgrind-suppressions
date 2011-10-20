@@ -875,6 +875,21 @@
    fun:schan_InitializeSecurityContextW
    fun:InitializeSecurityContextW
 }
+{
+   ignore_libtasn1_read_overrun
+   Memcheck:Addr4
+   fun:asn1_der_coding
+   ...
+   fun:InitializeSecurityContextA
+   fun:test_communication
+   fun:func_schannel
+}
+{
+   ignore_libgcrypt_uninit
+   Memcheck:Cond
+   fun:_gcry_mpi_print
+   fun:gcry_mpi_print
+}
 # leak on thread creation?
 {
    wine_bug_20552
