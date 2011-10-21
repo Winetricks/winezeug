@@ -463,6 +463,10 @@ fi
 LANG=en_US.UTF-8
 export LANG
 
+# Trying to get a handle on the darn pulseaudio problems
+PULSE_LOG=4
+export PULSE_LOG
+
 arg="$1"
 shift
 case "$arg" in
