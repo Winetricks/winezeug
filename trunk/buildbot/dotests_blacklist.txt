@@ -154,3 +154,4 @@ dlls/oleaut32/tests/vartype.ok       VALGRIND       28820
 dlls/mmdevapi/tests/capture.ok       VALGRIND       28822
 dlls/ddraw/tests/d3d.ok              VALGRIND       28832
 dlls/setupapi/tests/devinst.ok       VALGRIND       28834
+dlls/rpcrt4/tests/rpc_protseq.ok     VALGRIND       28835
