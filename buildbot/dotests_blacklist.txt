@@ -67,6 +67,7 @@ dlls/mshtml/tests/script.ok          VALGRIND       20919
 dlls/mshtml/tests/style.ok           VALGRIND       20919       
 dlls/ole32/tests/clipboard.ok        VALGRIND       20919       
 dlls/ole32/tests/dragdrop.ok         VALGRIND       20919       
+dlls/ole32/tests/moniker.ok          VALGRIND       20919       
 dlls/ole32/tests/usrmarshal.ok       VALGRIND       20919       
 dlls/oleaut32/tests/safearray.ok     VALGRIND       20919       
 dlls/oleaut32/tests/usrmarshal.ok    VALGRIND       20919       
@@ -152,3 +153,4 @@ dlls/iphlpapi/tests/iphlpapi.ok      FLAKY          28818
 dlls/oleaut32/tests/vartype.ok       VALGRIND       28820       
 dlls/mmdevapi/tests/capture.ok       VALGRIND       28822
 dlls/ddraw/tests/d3d.ok              VALGRIND       28832
+dlls/setupapi/tests/devinst.ok       VALGRIND       28834
