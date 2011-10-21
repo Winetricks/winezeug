@@ -538,11 +538,11 @@ do_valgrind_test() {
          mkdir tmp-svn
          cd tmp-svn
          if svn export https://winezeug.googlecode.com/svn/trunk/buildbot/dotests_blacklist.txt &&
-            svn export https://winezeug.googlecode.com/svn/trunk/buildbot/valgrind_blacklist.txt &&
+            svn export https://winezeug.googlecode.com/svn/trunk/buildbot/valgrind-blacklist &&
             svn export https://winezeug.googlecode.com/svn/trunk/valgrind/valgrind-suppressions
          then
              cp dotests_blacklist.txt ${SRC}
-             cat valgrind-suppressions valgrind_blacklist.txt > ${SRC}/suppressions
+             cat valgrind-suppressions valgrind-blacklist > ${SRC}/suppressions
          fi
     )
     PATH="${SRC}:$PATH" sh $SRC/dotests.sh valgrind
