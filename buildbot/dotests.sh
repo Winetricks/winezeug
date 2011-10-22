@@ -183,9 +183,15 @@ get_blacklist() {
     egrep "$1" < $SRC/dotests_blacklist.txt | awk '{print $1}' | sort -u
 }
 
+# Get list of all tests that will probably fail
+# By default, list does not include flaky tests; to include them too, give argument FLAKY 
 get_current_blacklist() {
     # Skip all tests that might fail
-    match='SYS|WICKED|FLAKY|CRASHY'
+    match='SYS|WICKED|CRASHY'
+    if test x$1 = xFLAKY
+    then
+        match="$match|FLAKY"
+    fi
     case `uname -m` in
     x86_64) match="$match|BAD64";;
     esac
@@ -273,9 +279,20 @@ is_simple_change() {
 do_retry_flakytests() {
     flaky_errors=0
     create_wineprefix flaky
-    for badtest in `get_blacklist FLAKY`
+    nonflaky_blacklist=`get_current_blacklist`
+    flaky_blacklist=`get_blacklist FLAKY`
+    for badtest in $flaky_blacklist
     do
         bugs="`grep $badtest < $SRC/dotests_blacklist.txt | awk '{print $3}' | sort -u | tr '\012' ' '`"
+        # Skip tests that might fail for some reason other than flakiness
+        case "$nonflaky_blacklist" in
+        *$badtest*)
+            echo "Skipping $badtest; see bugs $bugs."
+            continue
+            ;;
+        esac
+        echo this should really be run
+        continue
         badtestdir=${badtest%/*}
         badtestfile=${badtest##*/}
         cd $badtestdir
@@ -324,7 +341,7 @@ do_valgrind_tests() {
     fi
     export WINETEST_WRAPPER="alarum 300 valgrind"
 
-    blacklist=`get_current_blacklist`
+    blacklist=`get_current_blacklist FLAKY`
     make testclean
     touch $blacklist
 
@@ -366,7 +383,7 @@ do_valgrind_tests() {
 # This takes a while, so speed things up a bit by running some tests in background
 do_goodtests() {
     # Skip all tests that might fail
-    blacklist=`get_current_blacklist`
+    blacklist=`get_current_blacklist FLAKY`
     touch $blacklist
 
     echo "Checking whether change is so simple we don't need to run all tests"
