@@ -313,10 +313,11 @@ do_valgrind_tests() {
 
     sleep 1
 
+    # Use a high --max-stackframe to keep valgrind from crashing?
     VALGRIND_OPTS="--trace-children=yes --track-origins=yes \
       --gen-suppressions=all --suppressions=$SRC/suppressions \
       --leak-check=no --num-callers=40  --workaround-gcc296-bugs=yes \
-      --vex-iropt-precise-memory-exns=yes -v --max-stackframe=1065078436"
+      --vex-iropt-precise-memory-exns=yes -v --max-stackframe=3123456789"
     export VALGRIND_OPTS
 
     cd $dir/tests
