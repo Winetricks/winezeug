@@ -1,6 +1,7 @@
 dlls/kernel32/tests/heap.ok          HEAP                       
 dlls/ntdll/tests/exception.ok        MAC106                     
 dlls/d3d8/tests/stateblock.ok        MAC            http://xquartz.macosforge.org/trac/ticket/512
+dlls/d3d8/tests/texture.ok           MAC            http://xquartz.macosforge.org/trac/ticket/512
 dlls/d3d9/tests/shader.ok            MAC            http://xquartz.macosforge.org/trac/ticket/512
 dlls/d3d9/tests/texture.ok           MAC            http://xquartz.macosforge.org/trac/ticket/512
 dlls/d3dcompiler_43/tests/hlsl.ok    MAC            http://xquartz.macosforge.org/trac/ticket/512
