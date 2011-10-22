@@ -1125,6 +1125,29 @@
    ...
    fun:func_heap
 }
+# Ignore errors in ATI drivers
+{
+   ati_binary_1
+   Memcheck:Addr4
+   obj:*/fglrx_dri.so
+}
+{
+   ati_binary_2
+   Memcheck:Addr8
+   obj:*/fglrx_dri.so
+}
+{
+   ati_binary_3
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   obj:*/fglrx_dri.so
+}
+{
+   ati_binary_4
+   Memcheck:Cond
+   obj:*/fglrx_dri.so
+}
 # Ignore errors in Nvidia drivers, since they get triggered in 
 # indirect ways by our tests.
 # FIXME: is this too permissive?
