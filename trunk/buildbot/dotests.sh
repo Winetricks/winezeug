@@ -61,12 +61,13 @@ _EOF_
     server/wineserver -w
 
     # FIXME: unpack this once before running this script, and just symlink to it here
-    if test -f wine_gecko-1.3-x86-dbg.tar.bz2
-    then
-        rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-        tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
-    fi
+    # Might make Valgrind explode, so commenting out for now
+    #if test -f wine_gecko-1.3-x86-dbg.tar.bz2
+    #then
+    #    rm -rf $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    #    mkdir -p $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    #    tar -xjvf wine_gecko-1.3-x86-dbg.tar.bz2 -C $WINEPREFIX/drive_c/windows/system32/gecko/1.3
+    #fi
 }
 
 # Run all tests that don't require the display
