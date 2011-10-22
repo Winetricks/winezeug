@@ -1149,6 +1149,11 @@
    obj:*/fglrx_dri.so
 }
 {
+   ati_binary_5
+   Memcheck:Addr8
+   obj:*/libGL.so.*.*
+}
+{
    ati_binary_man_this_blows_can_ati_please_fix_this
    Memcheck:Param
    ioctl(generic)
