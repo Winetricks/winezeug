@@ -1148,6 +1148,13 @@
    Memcheck:Cond
    obj:*/fglrx_dri.so
 }
+{
+   ati_binary_man_this_blows_can_ati_please_fix_this
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   obj:*
+}
 # Ignore errors in Nvidia drivers, since they get triggered in 
 # indirect ways by our tests.
 # FIXME: is this too permissive?
