@@ -189,7 +189,6 @@ get_current_blacklist() {
     case `uname -m` in
     x86_64) match="$match|BAD64";;
     esac
-    echo "Checking WINEDEBUG ($WINEDEBUG)"
     case "$WINEDEBUG" in
     *warn+heap*) match="$match|HEAP" ;;
     esac
@@ -199,7 +198,7 @@ get_current_blacklist() {
         match="$match|NOTTY"
     fi
     
-    if glxinfo | grep "OpenGL vendor string:" | grep "ATI"
+    if glxinfo | grep "OpenGL vendor string:" | grep "ATI" > /dev/null
     then
         match="$match|ATI"
         if test x`uname -s` = xDarwin
@@ -227,7 +226,11 @@ get_current_blacklist() {
             match="$match|MAC106"
         fi
     fi
-    
+
+    case "$WINETEST_WRAPPER" in
+    *valgrind*) match="$match|VALGRIND" ;;
+    esac
+
     get_blacklist "$match"
 }
 
@@ -295,13 +298,33 @@ do_retry_flakytests() {
     return $flaky_errors
 }
 
+list_dependent_tests() {
+    case $1 in
+    dlls/wined3d) echo dlls/d3d9 ;;
+    esac
+}
+
 do_valgrind_tests() {
+    (
     if ! dir=`is_simple_change dlls`
     then
         echo "Complex change - no obvious thing to valgrind"
         return 0
     fi
-    blacklist=`get_blacklist "$match"`
+    if ! test -d $dir/tests
+    then
+        newdir=`list_dependent_tests $dir`
+        if test $newdir
+        then
+            dir="$newdir"
+        else
+            echo "There are no tests for $dir.  FIXME: add entry to table"
+            return 0
+        fi
+    fi
+    export WINETEST_WRAPPER="alarum 300 valgrind"
+
+    blacklist=`get_current_blacklist`
     make testclean
     touch $blacklist
 
@@ -324,7 +347,7 @@ do_valgrind_tests() {
     cd $dir/tests
 
     # FIXME: loop through the tests so we can really count errors
-    if ! WINETEST_WRAPPER="alarum 300 valgrind" make -k test
+    if ! make -k test
     then
         echo "$test FAILED"
         valgrind_errors=`expr $valgrind_errors + 1`
@@ -335,6 +358,8 @@ do_valgrind_tests() {
     server/wineserver -k
     echo "do_valgrind_tests done, $valgrind_errors tests had failures."
     return $valgrind_errors
+
+    )
 }
 
 # Run all the known good tests
