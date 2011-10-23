@@ -291,8 +291,6 @@ do_retry_flakytests() {
             continue
             ;;
         esac
-        echo this should really be run
-        continue
         badtestdir=${badtest%/*}
         badtestfile=${badtest##*/}
         cd $badtestdir
