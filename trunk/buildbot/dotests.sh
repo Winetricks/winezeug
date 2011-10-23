@@ -321,22 +321,27 @@ list_dependent_tests() {
 
 do_valgrind_tests() {
     (
-    if ! dir=`is_simple_change dlls`
+    if ! dirs=`is_simple_change dlls`
     then
         echo "Complex change - no obvious thing to valgrind"
         return 0
     fi
-    if ! test -d $dir/tests
-    then
-        newdir=`list_dependent_tests $dir`
-        if test $newdir
+    # If the change was just in a test directory, get its parent
+    dirs=`echo $dirs | sed 's,/tests,,' | tr ' ' '\012' | sort -u`
+    for dir in $dirs
+    do
+        if ! test -d $dir/tests
         then
-            dir="$newdir"
-        else
-            echo "There are no tests for $dir.  FIXME: add entry to table"
-            return 0
+            newdir=`list_dependent_tests $dir`
+            if test $newdir && test -d $newdir/tests
+            then
+                dirs="$dirs $newdir"
+            else
+                echo "There are no tests for $dir.  FIXME: add entry to table"
+                return 0
+            fi
         fi
-    fi
+    done
     export WINETEST_WRAPPER="alarum 300 valgrind"
 
     blacklist=`get_current_blacklist FLAKY`
@@ -352,22 +357,25 @@ do_valgrind_tests() {
 
     sleep 1
 
-    # Use a high --max-stackframe to keep valgrind from crashing?
     VALGRIND_OPTS="--trace-children=yes --track-origins=yes \
       --gen-suppressions=all --suppressions=$SRC/suppressions \
       --leak-check=no --num-callers=40  --workaround-gcc296-bugs=yes \
       --vex-iropt-precise-memory-exns=yes -v"
     export VALGRIND_OPTS
 
-    cd $dir/tests
-
-    # FIXME: loop through the tests so we can really count errors
-    if ! make -k test
-    then
-        echo "$test FAILED"
-        valgrind_errors=`expr $valgrind_errors + 1`
-    fi
-    cd ../../..
+    for dir in $dirs
+    do
+        if cd $dir/tests
+        then
+            # FIXME: loop through the tests so we can really count errors
+            if ! make -k test
+            then
+                echo "$test FAILED"
+                valgrind_errors=`expr $valgrind_errors + 1`
+            fi
+            cd ../../..
+        fi
+    done
 
     kill $winemine_pid
     server/wineserver -k
