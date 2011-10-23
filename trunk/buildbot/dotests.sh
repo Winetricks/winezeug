@@ -234,7 +234,7 @@ get_current_blacklist() {
     fi
 
     case "$WINETEST_WRAPPER" in
-    *valgrind*) match="$match|VALGRIND" ;;
+    *valgrind*) match="$match|VALGRIND|HEAP" ;;
     esac
 
     get_blacklist "$match"
@@ -518,5 +518,7 @@ flaky*)  do_badtests FLAKY          ;;
 retry_flaky*) do_retry_flakytests   ;;
 valgrind*) do_valgrind_tests        ;;
 crashy*) do_badtests CRASHY         ;;
+bl)  get_current_blacklist FLAKY    ;;
+blf) get_current_blacklist FLAKY    ;;
 *) usage;;
 esac
