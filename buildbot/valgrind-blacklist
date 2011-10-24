@@ -684,17 +684,16 @@
    fun:run_test
    fun:main
 }
-# Comment one out so we can see error emails in action
-#{
-#   wine_bug_28821
-#   Memcheck:Value4
-#   fun:wcstombs_sbcs
-#   fun:wine_cp_wcstombs
-#   fun:WideCharToMultiByte
-#   fun:GetCalendarInfoA
-#   fun:test_GetCalendarInfo
-#   fun:func_time
-#}
+{
+   wine_bug_28821
+   Memcheck:Value4
+   fun:wcstombs_sbcs
+   fun:wine_cp_wcstombs
+   fun:WideCharToMultiByte
+   fun:GetCalendarInfoA
+   fun:test_GetCalendarInfo
+   fun:func_time
+}
 {
    wine_bug_28823
    Memcheck:Value4
