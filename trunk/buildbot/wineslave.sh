@@ -4,7 +4,7 @@
 # LGPL
 
 set -e
-#set -x
+set -x
 
 TOP=$HOME/wineslave.dir
 
