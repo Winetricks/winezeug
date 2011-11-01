@@ -10,8 +10,9 @@ rem call "c:\Program Files\Microsoft Visual Studio 8\Common7\Tools\vsvars32.bat"
 REM Windows 7 Platform SDK
 call "c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"
 set LIB=c:/Program Files/Microsoft SDKs/Windows/v7.0/Lib;%LIB%
-REM For some reason, vcvars32 doesn't completely set PATH
+REM On Wine, sadly, vcvars32.bat doesn't work.
 PATH %PATH%;C:\Program Files\Microsoft SDKs\Windows\v7.0\Bin
+set INCLUDE=C:\Program Files\Microsoft SDKs\Windows\v7.0\Include;%INCLUDE%
 
 REM Third party libraries and tools
 
