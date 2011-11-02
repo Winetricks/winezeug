@@ -3,13 +3,14 @@
 # Can be run in cygwin or in linux
 # 
 set -x
+set -e
 
 WINE="${WINE:-wine}"
 export WINE
 
 run() {
     case "$OS" in
-    "Windows_NT") cmd /c $* ;;
+    "Windows_NT") chmod +x $1; cmd /c $* ;;
     *) $WINE $* ;;
     esac
 }
@@ -24,7 +25,7 @@ run boost_1_47_setup.exe
 test -f winetricks || wget http://winetricks.googlecode.com/svn/trunk/src/winetricks
 # Do as silent an install as winetricks knows how to do
 # In the Platform SDK dialog, choose just the windows headers, libraries, and compiler
-sh winetricks --no-isolate -q psdkwin7 
+# sh winetricks --no-isolate -q psdkwin7 
 
 # Some examples might require Visual C++ later
 # sh winetricks vc2005express
