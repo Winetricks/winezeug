@@ -23,6 +23,14 @@ install_gecko()
         esac
         GECKO_SUFFIX=.msi
         ;;
+    gecko-1.4)
+        GECKO_VERSION=1.4
+        case $myarch in
+        x86)   GECKO_SHA1SUM=c30aa99621e98336eb4b7e2074118b8af8ea2ad5 ;;
+        x86_64) GECKO_SHA1SUM=bf0aaf56a8cf9abd75be02b56b05e5c4e9a4df93 ;;
+        esac
+        GECKO_SUFFIX=.msi
+        ;;
     *)
         GECKO_VERSION=1.1.0
         GECKO_SHA1SUM=1b6c637207b6f032ae8a52841db9659433482714
@@ -49,6 +57,7 @@ install_gecko()
 
 # Install gecko for stable wine and the current dev branch
 myarch=x86
+install_gecko gecko-1.4
 install_gecko gecko-1.3
 install_gecko wine-1.2
 install_gecko wine-1.3.3
