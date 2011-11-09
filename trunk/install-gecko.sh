@@ -65,6 +65,7 @@ install_gecko gecko-1.2
 case `arch` in
 amd64|x86_64)
     myarch=x86_64
+    install_gecko gecko-1.4
     install_gecko gecko-1.3
     ;;
 esac
