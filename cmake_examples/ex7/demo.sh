@@ -11,6 +11,7 @@ cd build
 # Generate null projects for each source directory by hand
 # rather than asking the cdt generator to do it, since 
 # it can't handle more than one
+# Unfortunately, eclipse doesn't know to build when these projects change...
 for dir in demo libsrc
 do
     sed "s/PROJNAME/_$dir/" < ../skeleton.project > ../$dir/.project
