@@ -158,3 +158,4 @@ dlls/setupapi/tests/devinst.ok       VALGRIND       28834
 dlls/rpcrt4/tests/rpc_protseq.ok     VALGRIND       28835
 dlls/ddraw/tests/d3d.ok              ATI            28984
 dlls/kernel32/tests/time.ok          SYS            29006
+dlls/wldap32/tests/parse.ok          CRASHY         29072
