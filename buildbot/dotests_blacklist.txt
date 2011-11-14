@@ -50,6 +50,7 @@ dlls/ws2_32/tests/sock.ok            MAC            14831
 dlls/ntdll/tests/file.ok             FLAKY          14841       
 dlls/gdi32/tests/path.ok             FREEBSD        15538       
 dlls/quartz/tests/referencemapper.ok FREEBSD        15539       
+dlls/winhttp/tests/notification.ok   FLAKY          15716       
 dlls/user32/tests/static.ok          FLAKY          20149       
 dlls/dsound/tests/capture.ok         VALGRIND       20919       
 dlls/dsound/tests/dsound8.ok         VALGRIND       20919       
