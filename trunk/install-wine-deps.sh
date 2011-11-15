@@ -294,10 +294,10 @@ Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
 Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
 Linux*Mint*7|Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
 Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
-Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
-Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
-Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
-Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
+Linux*Mint*9|Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
+Linux*Mint*10|Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
+Linux*Mint*11|Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
+Linux*Mint*12|Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*Hurd*) apt-get install $debian_common_pkgs ;;
@@ -353,7 +353,7 @@ linksos()
             gnutls-devel.i686 libgphoto2-devel.i686 openal-soft-devel.i686 isdn4k-utils-devel.i686 \
             gsm-devel.i686 libv4l-devel.i686 cups-devel.i686 libtiff-devel.i686
         ;;
-    Ubuntu*10.04|Ubuntu*10.10|Ubuntu*11.04)
+    Linux*Mint*9|Linux*Mint*10|Linux*Mint*11|Ubuntu*10.04|Ubuntu*10.10|Ubuntu*11.04)
         apt-get install ia32-libs lib32asound2-dev lib32ncurses5-dev lib32v4l-dev lib32z1-dev
         ;;
     *)
