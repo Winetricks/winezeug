@@ -24,7 +24,7 @@ to the end of ~/eclipse/eclipse.ini as described in the JavaHL web page.
 Once you've verified that SVN shows up in the Team preferences menu,
 *now* import this example project!  i.e. do
   rm -rf build
-  sh build.sh
+  sh demo.sh
 then do
   File / Import / Existing PROJECTS from filesystem
 and select
