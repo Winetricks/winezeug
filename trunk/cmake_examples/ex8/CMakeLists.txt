@@ -12,6 +12,7 @@ add_custom_command(
 )
 add_custom_target(blah ALL 
 	DEPENDS b/foo.dat
+	COMMAND cat b/foo.dat
 )
 
 # The glue to tie them together
