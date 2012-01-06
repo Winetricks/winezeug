@@ -14,7 +14,7 @@ add_custom_command(
 )
 
 # Consume it
-add_custom_target(sink ALL 
+add_custom_target(sink ALL
 	DEPENDS b/foo.dat
 )
 add_custom_command(
