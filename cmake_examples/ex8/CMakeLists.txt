@@ -1,3 +1,5 @@
+# Same as ex9, but with output files instead of targets
+
 # Given two rules,
 # one that builds a file but puts it into directory X,
 # and another that consumes that file but expects it in directory Y,
@@ -7,6 +9,7 @@
 # The two rules you're trying to glue together
 
 # Generate the file
+
 add_custom_command(
 	OUTPUT a/foo.dat
 	COMMAND ${CMAKE_COMMAND} -E make_directory a
