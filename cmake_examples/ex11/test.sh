@@ -19,10 +19,10 @@ uninstall_all_java() {
 install_one_java() {
     sudo aptitude -y install $*
 
+    # Work around bug in ubuntu 11.10 and 12.04, see
+    # https://bugs.launchpad.net/ubuntu/+source/openjdk-6/+bug/905808
     if grep precise /etc/issue
     then
-        # Work around bug in ubuntu 12.04, see
-        # https://bugs.launchpad.net/ubuntu/+source/openjdk-6/+bug/905808
         case $* in
         openjdk-7-jdk)
            sudo /usr/share/debconf/frontend /var/lib/dpkg/info/openjdk-7-jre-headless\:amd64.postinst configure
@@ -34,6 +34,15 @@ install_one_java() {
            ;;
         esac
     fi
+    if grep 11.10 /etc/issue
+    then
+        case $* in
+        openjdk-6-jdk)
+           sudo /usr/share/debconf/frontend /var/lib/dpkg/info/openjdk-6-jre-headless.postinst configure
+           sudo /usr/share/debconf/frontend /var/lib/dpkg/info/openjdk-6-jdk.postinst configure
+           ;;
+        esac
+    fi
 }
 
 try() {
@@ -42,10 +51,20 @@ try() {
     sh demo.sh
 }
 
-try openjdk-7-jdk
+if grep precise /etc/issue
+then
+    # Too broken on 11.10 to try, see
+    # https://bugs.launchpad.net/ubuntu/+source/java-access-bridge/+bug/881218
+    try openjdk-7-jdk
+fi
+
 try openjdk-6-jdk
 try gcj-4.6-jdk
 try gcj-4.5-jdk
-# gcj-4.4-jdk is broken, see
-# https://bugs.launchpad.net/ubuntu/+source/gcj-4.4/+bug/917961
-#try gcj-4.4-jdk 
+
+if ! grep precise /etc/issue
+then
+    # gcj-4.4-jdk is broken on 12.04 alpha 1, see
+    # https://bugs.launchpad.net/ubuntu/+source/gcj-4.4/+bug/917961
+    try gcj-4.4-jdk 
+fi
