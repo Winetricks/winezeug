@@ -121,7 +121,7 @@ libdbus-1-dev libelfg0 libesd0-dev libexif-dev libexpat1-dev libfontconfig1-dev 
 libgcrypt11-dev libgif-dev libgl1-mesa-dev libglib2.0-dev libglu1-mesa-dev libgnutls-dev \
 libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev \
 libhal-dev libhal-storage-dev libice-dev libjpeg62-dev liblcms1-dev libldap2-dev libmad0 libmad0-dev \
-libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 libogg-dev  libopenal-dev libopenal1 \
+libmpg123-dev libncurses5-dev libodbcinstq1c2 libogg-dev  libopenal-dev libopenal1 \
 libpng12-dev libpopt-dev libsane-dev libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 \
 libusb-dev libvorbis-dev libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev \
 libxdmcp-dev libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
@@ -141,10 +141,10 @@ bison ccache cvs flex fontforge gcc gettext git-core libasound2-dev libaudio-dev
 libcapi20-3 libcapi20-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev \
-libgstreamer-plugins-base0.10-dev libhal-dev libice-dev libieee1284-3-dev libjpeg62-dev liblcms1-dev \
-libldap2-dev libmad0 libmad0-dev libmng-dev libmpg123-dev libncurses5-dev libodbcinstq1c2 \
-libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev libsane-dev \
-libsm-dev libssl-dev libtasn1-3-dev libtiff4-dev libtiffxx0c2 libusb-dev libvorbis-dev \
+libgstreamer-plugins-base0.10-dev libhal-dev libice-dev libieee1284-3-dev liblcms1-dev \
+libldap2-dev libmad0 libmad0-dev libmpg123-dev libncurses5-dev \
+libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev \
+libsm-dev libssl-dev libtasn1-3-dev libtiffxx0c2 libusb-dev libvorbis-dev \
 libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
 libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
 libxmu-headers libxrandr-dev libxrender-dev libxslt1-dev libxt-dev libxv-dev \
@@ -159,12 +159,16 @@ cogito \
 libcupsys2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libjpeg62-dev \
 libltdl3 \
 libltdl3-dev \
 liblzo-dev \
+libodbcinstq1c2 \
 libopencdk8-dev \
-odbcinst1debian1 \
-render-dev \
+libsane-dev \
+libtiff4-dev \
+obcinst1debian1 \
+xrender-dev \
 x11proto-render-dev \
 x-dev \
 "
@@ -173,10 +177,14 @@ ubuntu_hardy_pkgs="\
 libcupsys2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libjpeg62-dev \
 libltdl3 \
 libltdl3-dev \
 liblzo-dev \
+libodbcinstq1c2 \
 libopencdk10-dev \
+libsane-dev \
+libtiff4-dev \
 odbcinst1debian1 \
 x-dev \
 "
@@ -185,9 +193,13 @@ ubuntu_ibex_pkgs="\
 libcups2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libjpeg62-dev \
 liblzo-dev \
 libltdl7 \
 libltdl7-dev \
+libodbcinstq1c2 \
+libsane-dev \
+libtiff4-dev \
 odbcinst1debian1 \
 x-dev \
 "
@@ -196,9 +208,13 @@ ubuntu_jaunty_pkgs="\
 libcups2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libjpeg62-dev \
 liblzo-dev \
 libltdl7 \
 libltdl7-dev \
+libodbcinstq1c2 \
+libsane-dev \
+libtiff4-dev \
 odbcinst1debian1 \
 x-dev \
 "
@@ -206,10 +222,14 @@ x-dev \
 ubuntu_karmic_pkgs="\
 libcups2-dev \
 libfreebob0 \
+libjpeg62-dev \
 liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
+libodbcinstq1c2 \
+libsane-dev \
+libtiff4-dev \
 odbcinst1debian1 \
 prelink \
 x-dev \
@@ -218,21 +238,39 @@ x-dev \
 ubuntu_maverick_pkgs="\
 libcups2-dev \
 libfreebob0 \
+libjpeg62-dev \
 liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
+libodbcinstq1c2 \
+libsane-dev \
+libtiff4-dev \
 odbcinst \
 prelink \
 "
 
 ubuntu_oneiric_pkgs="\
 libcups2-dev \
+libjpeg62-dev \
 liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
+libodbcinstq1c2 \
+libsane-dev \
+libtiff4-dev \
 odbcinst \
+prelink \
+"
+
+ubuntu_precise_pkgs="\
+libcups2-dev \
+libjpeg-turbo8-dev \
+libsane-dev \
+libtiff4-dev \
+libv4l-dev \
+oss4-dev \
 prelink \
 "
 
@@ -298,6 +336,7 @@ Linux*Mint*9|Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pk
 Linux*Mint*10|Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Linux*Mint*11|Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Linux*Mint*12|Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
+Ubuntu*12.04) apt-get install $ubuntu_common_pkgs $ubuntu_precise_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*Hurd*) apt-get install $debian_common_pkgs ;;
