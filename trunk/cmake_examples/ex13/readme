@@ -1,0 +1,1 @@
+Demonstrates overriding CFLAGS and CXXFLAGS and linking C to C++ in both 32 and 64 bits
