@@ -2,8 +2,8 @@
 # Script to install build-time dependencies for Wine.
 # If your distro isn't supported here, please add it.
 # Home page (until accepted into wine tree): http://winezeug.googlecode.com
-# Copyright 2006-2009 Dan Kegel
-# Copyright 2009 Austin English
+# Copyright 2006-2011 Dan Kegel
+# Copyright 2008-2012 Austin English
 # Please report bugs to http://code.google.com/p/winezeug/issues/list
 # LGPL
 
