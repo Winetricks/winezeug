@@ -161,4 +161,3 @@ dlls/ddraw/tests/d3d.ok              ATI            28984
 dlls/kernel32/tests/time.ok          SYS            29006
 dlls/wldap32/tests/parse.ok          CRASHY         29072
 dlls/mmdevapi/tests/capture.ok       SYS            29714
-dlls/gdi32/tests/font.ok             SYS            29840
