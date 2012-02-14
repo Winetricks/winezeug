@@ -59,6 +59,10 @@ Tips
   Nvidia seems happy as long as you log in and start up with
   a real monitor plugged in, after that you can unplug it.
 
+- FreeBSD users will need to manually apply
+  http://cgit.freedesktop.org/mesa/mesa/commit/?id=6699cd4e8d88a8fd58a885bfac7e379313334283
+  to avoid a compiler warning (which breaks -Werror).
+
 - Buildmaster system requirements: a recent Linux on any computer at
   all should do, though if lots of people start hitting it, or we add
   lots of slaves, it will need to be reasonably fast.
