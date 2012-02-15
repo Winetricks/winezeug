@@ -478,7 +478,26 @@ __EOF__
             configopts="$configopts --x-includes=/usr/X11/include --x-libraries=/usr/X11/lib"
         fi
     fi
-    if ! ./configure $configopts CC="$CC" CFLAGS="$cflags" 2>&1 | tee config.stdout || grep "configure: error:" config.stdout
+    if test x`uname -s` = xFreeBSD
+    then
+        configopts="$configopts CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib"
+        # Make sure we have a good Flex version:
+        if test "x`flex --version`" = "xflex version 2.5.4"
+        then
+            if test -x /usr/local/bin/flex
+            then
+                flex_version=`/usr/local/bin/flex --version | awk '{ print $NF }'`
+                case "$flex_version" in 
+                    "2.5.32"|"2.5.33"|"2.5.34") 
+                        configopts="$configopts FLEX=/usr/local/bin/flex" ;;
+                    *) 
+                        echo "flex version "$flex_version" is too old, need at least 2.5.32!" ;
+                        exit 1 ;;
+                esac 
+            fi
+        fi
+    fi
+    if ! ./configure $configopts CC="$CC" CFLAGS="$cflags"
     then
         echo "configuring with cache failed, so clearing cache and trying again"
         rm ../config-$buildwidth.cache
