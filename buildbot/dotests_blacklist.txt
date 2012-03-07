@@ -162,3 +162,4 @@ dlls/kernel32/tests/time.ok          SYS            29006
 dlls/wldap32/tests/parse.ok          CRASHY         29072
 dlls/mmdevapi/tests/capture.ok       SYS            29714
 dlls/msvcr90/tests/msvcr90.ok        FLAKY          29969
+dlls/ieframe/tests/webbrowser.ok     FLAKY          30102
