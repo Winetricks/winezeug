@@ -7,6 +7,89 @@
 # Please report bugs to http://code.google.com/p/winezeug/issues/list
 # LGPL
 
+if test "`lsb_release -i -r -s`" = "CentOS 5.8"
+then
+centos_5_pkgs="\
+alsa-lib-devel \
+audiofile-devel \
+bison \
+cups-devel \
+dbus-devel \
+esound-devel \
+flex \
+fontconfig-devel \
+fontforge \
+freetype-devel \
+gcc \
+giflib-devel \
+glibc-devel \
+gnutls-devel \
+gphoto2-devel \
+hal-devel \
+isdn4k-utils-devel \
+lcms-devel \
+libICE-devel \
+libjpeg-devel \
+libpng-devel \
+libSM-devel \
+libusb-devel \
+libX11-devel \
+libXau-devel \
+libXcomposite-devel \
+libXcursor-devel \
+libXext-devel \
+libXi-devel \
+libXinerama-devel \
+libXrandr-devel \
+libXrender-devel \
+libxslt-devel \
+libXt-devel \
+libXv-devel \
+libXxf86vm-devel \
+llibxml2-devel \
+mesa-libGL-devel \
+mesa-libGLU-devel \
+ncurses-devel \
+openldap-devel \
+openssl-devel \
+pkgconfig \
+prelink \
+pulseaudio-libs-devel \
+sane-backends-devel \
+XFree86-devel \
+xorg-x11-proto-devel \
+"
+
+centos_5_pkgs_64="\
+autoconf.i386 \
+automake.i386 \
+binutils.i386 \
+bzip2-devel.i386 \
+ccache.i386 \
+elf*.i386 \
+gcc-c++.i386 \
+gcc.i386 \
+glibc-devel.i386 \
+libstdc++-devel.i386 \
+libtool.i386 \
+libX*-devel.i386 \
+libX*.i386 \
+lua.i386 \
+make.i386 \
+mesa*-devel.i386 \
+patchutils.i386 \
+pkgconfig.i386 \
+tolua++.i386 \
+zlib-devel.i386 \
+"
+
+    yum -y groupinstall "Development Tools"
+    yum -y groupinstall "X Window System"
+    yum -y install $centos_5_pkgs $centos_5_pkgs_64
+    exit
+
+fi
+
 # OpenSolaris stuff...
 
 if test `uname -o` = Solaris
