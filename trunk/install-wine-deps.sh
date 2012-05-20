@@ -9,10 +9,14 @@
 
 if test "`lsb_release -i -r -s`" = "CentOS 5.8"
 then
+    set -e
+    echo "If you haven't already, please add the EPEL repository; see http://fedoraproject.org/wiki/EPEL"
+
 centos_5_pkgs="\
 alsa-lib-devel \
 audiofile-devel \
 bison \
+bzip2-devel \
 cups-devel \
 dbus-devel \
 esound-devel \
@@ -24,6 +28,7 @@ gcc \
 giflib-devel \
 glibc-devel \
 gnutls-devel \
+gmp-devel \
 gphoto2-devel \
 hal-devel \
 isdn4k-utils-devel \
@@ -46,7 +51,8 @@ libxslt-devel \
 libXt-devel \
 libXv-devel \
 libXxf86vm-devel \
-llibxml2-devel \
+libxml2-devel \
+lzma \
 mesa-libGL-devel \
 mesa-libGLU-devel \
 ncurses-devel \
@@ -58,6 +64,7 @@ pulseaudio-libs-devel \
 sane-backends-devel \
 XFree86-devel \
 xorg-x11-proto-devel \
+zlib-devel \
 "
 
 centos_5_pkgs_64="\
@@ -70,6 +77,7 @@ elf*.i386 \
 gcc-c++.i386 \
 gcc.i386 \
 glibc-devel.i386 \
+gmp-devel.i386 \
 libstdc++-devel.i386 \
 libtool.i386 \
 libX*-devel.i386 \
@@ -83,9 +91,62 @@ tolua++.i386 \
 zlib-devel.i386 \
 "
 
-    yum -y groupinstall "Development Tools"
-    yum -y groupinstall "X Window System"
-    yum -y install $centos_5_pkgs $centos_5_pkgs_64
+yum -y groupinstall "Development Tools"
+yum -y groupinstall "X Window System"
+yum -y install $centos_5_pkgs $centos_5_pkgs_64
+
+# Some repo packages are too old for wine, so build those
+# from source, and put them in /usr/local/winedeps so they
+# don't clash with the system versions.
+
+# nettle
+if test ! -f /usr/local/winedeps/lib64/libnettle.a
+then
+    wget -c http://www.lysator.liu.se/~nisse/archive/nettle-2.4.tar.gz
+    rm -rf nettle-2.4
+    tar -xzf nettle-2.4.tar.gz
+    cd nettle-2.4
+    ./configure prefix=/usr/local/winedeps
+    make
+    make install
+    cd ..
+fi
+
+# gnutls
+if test ! -f /usr/local/winedeps/lib/libgnutls.a
+then
+    wget -c http://ftp.gnu.org/gnu/gnutls/gnutls-3.0.19.tar.xz
+    xzcat < gnutls-3.0.19.tar.xz > gnutls-3.0.19.tar
+    tar -xf gnutls-3.0.19.tar
+    cd gnutls-3.0.19
+    ./configure prefix=/usr/local/winedeps CFLAGS="-I/usr/local/winedeps/include -L/usr/local/winedeps/lib64"
+    cores=`cat /proc/cpuinfo | grep 'processor' | wc -l`
+    cores=`expr $cores - 1`
+    make -j$cores
+    make install
+    cd ..
+fi
+
+# flex
+if test ! -f /usr/local/winedeps/bin/flex
+then
+    wget -c 'http://prdownloads.sourceforge.net/flex/flex-2.5.35.tar.bz2?download'
+    tar -xjf flex-2.5.35.tar.bz2
+    cd flex-2.5.35
+    ./configure prefix=/usr/local/winedeps
+    make
+    make install
+    cd ..
+fi
+
+echo 'Now configure and build wine with'
+echo 'PATH=/usr/local/winedeps/bin:$PATH'
+echo 'export PATH'
+echo 'cd ~/wine64'
+echo '../wine-git/configure --enable-win64 CC=gcc44 CFLAGS="-L/usr/local/winedeps/lib -I/usr/local/winedeps/include"'
+echo 'make'
+echo 'etc'
+
     exit
 
 fi
