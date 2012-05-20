@@ -139,13 +139,19 @@ then
     cd ..
 fi
 
-echo 'Now configure and build wine with'
+echo 'Now configure and build wine with e.g.'
 echo 'PATH=/usr/local/winedeps/bin:$PATH'
 echo 'export PATH'
-echo 'cd ~/wine64'
-echo '../wine-git/configure --enable-win64 CC=gcc44 CFLAGS="-L/usr/local/winedeps/lib -I/usr/local/winedeps/include"'
+echo 'cd $HOME'
+echo 'mkdir wine64'
+echo 'cd wine64'
+echo '../wine-git/configure --enable-win64 CC=gcc44 CFLAGS="-L/usr/local/winedeps/lib -I/usr/local/winedeps/include -g -O2"'
 echo 'make'
-echo 'etc'
+echo 'cd $HOME'
+echo 'mkdir wine32'
+echo 'cd wine32'
+echo '../wine-git/configure --with-wine64=../wine64 CC=gcc44'
+echo 'make'
 
     exit
 
