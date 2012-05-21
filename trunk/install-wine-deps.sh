@@ -31,7 +31,7 @@ fontconfig-devel \
 fontforge \
 freetype-devel \
 fuse-devel \
-gcc \
+gcc44 \
 gd-devel \
 giflib-devel \
 glibc-devel \
