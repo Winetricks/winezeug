@@ -7,38 +7,47 @@
 # Please report bugs to http://code.google.com/p/winezeug/issues/list
 # LGPL
 
-if test "`lsb_release -i -r -s`" = "CentOS 5.8"
+if test "`lsb_release -i -r -s`" = "CentOS 5.8" || test "`lsb_release -i -r -s`" = "CentOS 6.2"
 then
     set -e
     echo "If you haven't already, please add the EPEL repository; see http://fedoraproject.org/wiki/EPEL"
+    echo "Also, you might want to add the El Repo repository; see http://elrepo.org/"
+    echo "Then you can e.g. install nvidia drivers with:"
+    echo 'yum install libXvMC; yum --disablerepo=\* --enablerepo=elrepo install kmod-nvidia nvidia-x11-drv  nvidia-x11-drv-32bit'
 
-centos_5_pkgs="\
+centos_pkgs="\
 SDL-devel \
 Xaw3d-devel \
 alsa-lib-devel \
 audiofile-devel \
+autoconf \
 bison \
 bzip2-devel \
 cups-devel \
 curl-devel \
 cyrus-sasl-devel \
 dbus-devel \
+desktop-file-utils \
 e2fsprogs-devel \
 esound-devel \
 expat-devel \
 flex \
 fontconfig-devel \
 fontforge \
+freeglut-devel \
 freetype-devel \
 fuse-devel \
-gcc44 \
+gcc \
 gd-devel \
 giflib-devel \
 glibc-devel \
+glut-devel \
 gmp-devel \
 gnutls-devel \
 gphoto2-devel \
+gstreamer-devel \
 hal-devel \
+icoutils \
 isdn4k-utils-devel \
 kernel-devel \
 keyutils-libs-devel \
@@ -48,7 +57,6 @@ libICE-devel \
 libSM-devel \
 libX11-devel \
 libXScrnSaver-devel \
-libXTrap-devel \
 libXau-devel \
 libXaw-devel \
 libXcomposite-devel \
@@ -59,7 +67,6 @@ libXevie-devel \
 libXext-devel \
 libXfixes-devel \
 libXfont-devel \
-libXfontcache-devel \
 libXft-devel \
 libXi-devel \
 libXinerama-devel \
@@ -80,6 +87,7 @@ libfontenc-devel \
 libgcrypt-devel \
 libgpg-error-devel \
 libidn-devel \
+libieee1284-devel \
 libjpeg-devel \
 libmng-devel \
 libpng-devel \
@@ -93,6 +101,7 @@ libxslt-devel \
 lzma \
 mesa-libGL-devel \
 mesa-libGLU-devel \
+mpg123-devel \
 ncurses-devel \
 netpbm-devel \
 openldap-devel \
@@ -101,9 +110,16 @@ pkgconfig \
 prelink \
 pulseaudio-libs-devel \
 sane-backends-devel \
+unixODBC-devel \
 xorg-x11-proto-devel \
 xorg-x11-xtrans-devel \
 zlib-devel \
+"
+
+centos_5_pkgs="\
+gcc44 \
+libXTrap-devel \
+libXfontcache-devel \
 "
 
 centos_5_pkgs_64="\
@@ -120,53 +136,148 @@ tolua++.i386 \
 zlib-devel.i386 \
 "
 
+centos_6_pkgs_64="\
+alsa-lib-devel.i686 \
+audiofile-devel.i686 \
+bzip2-devel.i686 \
+cups-devel.i686 \
+cyrus-sasl-devel.i686 \
+dbus-devel.i686 \
+e2fsprogs-devel.i686 \
+elf*.i686 \
+esound-devel.i686 \
+expat-devel.i686 \
+fontconfig-devel.i686 \
+freetype-devel.i686 \
+fuse-devel.i686 \
+gd-devel.i686 \
+giflib-devel.i686 \
+glibc-devel.i686 \
+gmp-devel.i686 \
+gnutls-devel.i686 \
+gstreamer-devel.i686 \
+hal-devel.i686 \
+isdn4k-utils-devel.i686 \
+keyutils-libs-devel.i686 \
+krb5-devel.i686 \
+lcms-devel.i686 \
+libdrm-devel.i686 \
+libfontenc-devel.i686 \
+libgcrypt-devel.i686 \
+libgpg-error-devel.i686 \
+libICE-devel.i686 \
+libidn-devel.i686 \
+libieee1284-devel.i686 \
+libjpeg-devel.i686 \
+libmng-devel.i686 \
+libpng-devel.i686 \
+libsepol-devel.i686 \
+libSM-devel.i686 \
+libstdc++-devel.i686 \
+libtiff-devel.i686 \
+libusb-devel.i686 \
+libX11-devel.i686 \
+libXau-devel.i686 \
+libXaw-devel.i686 \
+libXcomposite-devel.i686 \
+libXcursor-devel.i686 \
+libXdamage-devel.i686 \
+libX*-devel.i686 \
+libXdmcp-devel.i686 \
+libXevie-devel.i686 \
+libXext-devel.i686 \
+libXfixes-devel.i686 \
+libXfont-devel.i686 \
+libXft-devel.i686 \
+libX*.i686 \
+libXi-devel.i686 \
+libxml2-devel.i686 \
+libXmu-devel.i686 \
+libXpm-devel.i686 \
+libXrandr-devel.i686 \
+libXrender-devel.i686 \
+libXres-devel.i686 \
+libXScrnSaver-devel.i686 \
+libxslt-devel.i686 \
+libXt-devel.i686 \
+libXtst-devel.i686 \
+libXv-devel.i686 \
+libXvMC-devel.i686 \
+libXxf86dga-devel.i686 \
+libXxf86misc-devel.i686 \
+libXxf86vm-devel.i686 \
+lua.i686 \
+mesa*-devel.i686 \
+mesa-libGL-devel.i686 \
+mesa-libGLU-devel.i686 \
+ncurses-devel.i686 \
+netpbm-devel.i686 \
+openldap-devel.i686 \
+openssl-devel.i686 \
+pulseaudio-libs-devel.i686 \
+sane-backends-devel.i686 \
+SDL-devel.i686 \
+unixODBC-devel.i686 \
+Xaw3d-devel.i686 \
+zlib-devel.i686 \
+"
+
 yum -y groupinstall "Development Tools"
 yum -y groupinstall "X Window System"
-yum -y install $centos_5_pkgs $centos_5_pkgs_64
+yum -y groupinstall $centos_pkgs
 
-# Some repo packages are too old for wine, so build those
-# from source, and put them in /usr/local/winedeps so they
-# don't clash with the system versions.
+case "`lsb_release -i -r -s`" in
+*"CentOS 6."*)
+    yum -y install $centos_6_pkgs_64
+    ;;
+*"CentOS 5."*)
+    yum -y install $centos_5_pkgs $centos_5_pkgs_64 
 
-# nettle
-if test ! -f /usr/local/winedeps/lib64/libnettle.a
-then
-    wget -c http://www.lysator.liu.se/~nisse/archive/nettle-2.4.tar.gz
-    rm -rf nettle-2.4
-    tar -xzf nettle-2.4.tar.gz
-    cd nettle-2.4
-    ./configure prefix=/usr/local/winedeps
-    make
-    make install
-    cd ..
-fi
+    # Some centos 5 packages are too old for wine, so build those
+    # from source, and put them in /usr/local/winedeps so they
+    # don't clash with the system versions.
 
-# gnutls
-if test ! -f /usr/local/winedeps/lib/libgnutls.a
-then
-    wget -c http://ftp.gnu.org/gnu/gnutls/gnutls-3.0.19.tar.xz
-    xzcat < gnutls-3.0.19.tar.xz > gnutls-3.0.19.tar
-    tar -xf gnutls-3.0.19.tar
-    cd gnutls-3.0.19
-    ./configure prefix=/usr/local/winedeps CFLAGS="-I/usr/local/winedeps/include -L/usr/local/winedeps/lib64"
-    cores=`cat /proc/cpuinfo | grep 'processor' | wc -l`
-    cores=`expr $cores - 1`
-    make -j$cores
-    make install
-    cd ..
-fi
+    # nettle
+    if test ! -f /usr/local/winedeps/lib64/libnettle.a
+    then
+        wget -c http://www.lysator.liu.se/~nisse/archive/nettle-2.4.tar.gz
+        rm -rf nettle-2.4
+        tar -xzf nettle-2.4.tar.gz
+        cd nettle-2.4
+        ./configure prefix=/usr/local/winedeps
+        make
+        make install
+        cd ..
+    fi
 
-# flex
-if test ! -f /usr/local/winedeps/bin/flex
-then
-    wget -c 'http://prdownloads.sourceforge.net/flex/flex-2.5.35.tar.bz2?download'
-    tar -xjf flex-2.5.35.tar.bz2
-    cd flex-2.5.35
-    ./configure prefix=/usr/local/winedeps
-    make
-    make install
-    cd ..
-fi
+    # gnutls
+    if test ! -f /usr/local/winedeps/lib/libgnutls.a
+    then
+        wget -c http://ftp.gnu.org/gnu/gnutls/gnutls-3.0.19.tar.xz
+        xzcat < gnutls-3.0.19.tar.xz > gnutls-3.0.19.tar
+        tar -xf gnutls-3.0.19.tar
+        cd gnutls-3.0.19
+        ./configure prefix=/usr/local/winedeps CFLAGS="-I/usr/local/winedeps/include -L/usr/local/winedeps/lib64"
+        cores=`cat /proc/cpuinfo | grep 'processor' | wc -l`
+        cores=`expr $cores - 1`
+        make -j$cores
+        make install
+        cd ..
+    fi
+
+    # flex
+    if test ! -f /usr/local/winedeps/bin/flex
+    then
+        wget -c 'http://prdownloads.sourceforge.net/flex/flex-2.5.35.tar.bz2?download'
+        tar -xjf flex-2.5.35.tar.bz2
+        cd flex-2.5.35
+        ./configure prefix=/usr/local/winedeps
+        make
+        make install
+        cd ..
+    fi
+    ;;
+esac
 
 echo 'Now configure and build wine with e.g.'
 echo 'PATH=/usr/local/winedeps/bin:$PATH'
