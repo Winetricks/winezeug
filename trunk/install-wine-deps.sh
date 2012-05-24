@@ -10,6 +10,7 @@
 if test "`lsb_release -i -r -s`" = "CentOS 5.8" || test "`lsb_release -i -r -s`" = "CentOS 6.2"
 then
     set -e
+    set -x
     echo "If you haven't already, please add the EPEL repository; see http://fedoraproject.org/wiki/EPEL"
     echo "Also, you might want to add the El Repo repository; see http://elrepo.org/"
     echo "Then you can e.g. install nvidia drivers with:"
@@ -224,7 +225,7 @@ zlib-devel.i686 \
 
 yum -y groupinstall "Development Tools"
 yum -y groupinstall "X Window System"
-yum -y groupinstall $centos_pkgs
+yum -y install $centos_pkgs
 
 case "`lsb_release -i -r -s`" in
 *"CentOS 6."*)
