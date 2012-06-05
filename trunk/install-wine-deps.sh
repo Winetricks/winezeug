@@ -632,7 +632,7 @@ Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
 Debian*Hurd*) apt-get install $debian_common_pkgs ;;
 Debian*Linux*) apt-get install $debian_common_pkgs $debian_linux_pkgs ;;
-Debian*6.0.2*) apt-get install $debian_common_pkgs $debian_linux_pkgs ;;
+Debian*6.0.*) apt-get install $debian_common_pkgs $debian_linux_pkgs ;;
 Debian*kFreeBSD*) apt-get install $debian_common_pkgs ;;
 *) echo "distro $distro not supported"; exit 1;;
 esac
