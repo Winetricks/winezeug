@@ -52,7 +52,6 @@ if (! -d $wineprefix) {
 # MS DLLs for which we don't have fake DLLs
 push(@needles, 
    "atl70",
-   "atl80",
    "atl90",
    "drmstor",
    "drmv2clt",
@@ -75,18 +74,6 @@ push(@needles,
    "mstime",
    "msvcm70",
    "msvcm71",
-   "msvcm80",
-   "msvcm90",
-   "msvcp60",
-   "msvcp70",
-   "msvcp71",
-   "msvcp80",
-   "msvcp90",
-   "msvcr70",
-   "msvcr71",
-   "msvcr80",
-   "msvcr90",
-   "msvcr100",
    "msxml3a",
    "msxml3r",
    "rpclts5",
@@ -141,7 +128,7 @@ foreach $needle (@needles) {
 #}
 
 # List all non-placeholder dlls and executables
-$command = "find . \\( -iname '*.dll' -o -iname '*.exe' \\) \\! -exec grep -q 'Wine placeholder DLL' {} \\; -print | grep -v wine_gecko";
+$command = "find . \\( -iname '*.dll' -o -iname '*.exe' \\) \\! -exec grep -q 'Wine placeholder DLL' {} \\; -print | grep -v wine_gecko | grep -v mono";
 #print "Executing $command\n";
 open(NAMES, "$command |") || die;
 @haystacks = <NAMES>;
