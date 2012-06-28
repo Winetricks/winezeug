@@ -5,7 +5,7 @@ set -x
 set -e
 
 # Must be run from the wine tree
-WINESRC="$HOME/wine-git"
+WINESRC="$HOME/wine-valgrind"
 # Prepare for calling winetricks
 export WINEPREFIX=$HOME/.wine-test
 export WINE=$WINESRC/wine
@@ -23,7 +23,10 @@ fi
 # We grep error messages, so make them all English
 LANG=C
 
-$WINESERVER -k || true
+if [ -f $WINESERVER ]
+then
+    $WINESERVER -k || true
+fi
 rm -rf $WINEPREFIX
 
 mkdir -p logs
@@ -31,7 +34,10 @@ mkdir -p logs
 # Build a fresh wine, if desired
 if true 
 then
-    make distclean
+    if [ -f Makefile ]
+    then
+        make distclean
+    fi
     ./configure CFLAGS="-g -O0 -fno-inline"
     time make -j4
 fi
