@@ -18,9 +18,12 @@ install_prereqs() {
 }
 
 destroy() {
-    stop_master || true
-    stop_slave || true
-    rm -rf $TOP || true
+    if test -d $TOP
+    then
+        stop_master || true
+        stop_slave || true
+        rm -rf $TOP || true
+    fi
 }
 
 init_master() {
