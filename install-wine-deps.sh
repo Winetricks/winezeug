@@ -474,6 +474,7 @@ libltdl3-dev \
 liblzo-dev \
 libodbcinstq1c2 \
 libopencdk10-dev \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 odbcinst1debian1 \
@@ -489,6 +490,7 @@ liblzo-dev \
 libltdl7 \
 libltdl7-dev \
 libodbcinstq1c2 \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 odbcinst1debian1 \
@@ -504,6 +506,7 @@ liblzo-dev \
 libltdl7 \
 libltdl7-dev \
 libodbcinstq1c2 \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 odbcinst1debian1 \
@@ -519,6 +522,7 @@ libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
 libodbcinstq1c2 \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 odbcinst1debian1 \
@@ -535,6 +539,7 @@ libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
 libodbcinstq1c2 \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 odbcinst \
@@ -549,6 +554,7 @@ libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
 libodbcinstq1c2 \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 odbcinst \
@@ -558,6 +564,7 @@ prelink \
 ubuntu_precise_pkgs="\
 libcups2-dev \
 libjpeg-turbo8-dev \
+libosmesa6-dev \
 libsane-dev \
 libtiff4-dev \
 libv4l-dev \
