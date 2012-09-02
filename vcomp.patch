@@ -31,7 +31,7 @@ index d256526..5dfd503 100644
  @MAKE_DLL_RULES@
 diff --git a/dlls/vcomp/atomic.c b/dlls/vcomp/atomic.c
 new file mode 100644
-index 0000000..d2f259e
+index 0000000..f3d2bdf
 --- /dev/null
 +++ b/dlls/vcomp/atomic.c
 @@ -0,0 +1,67 @@
@@ -66,44 +66,44 @@ index 0000000..d2f259e
 +
 +WINE_DEFAULT_DEBUG_CHANNEL(vcomp);
 +
-+void CDECL vcomp_atomic_add_i1(char   *p, char   val) { *p += val; }
-+void CDECL vcomp_atomic_add_i2(short  *p, short  val) { *p += val; }
-+void CDECL vcomp_atomic_add_i4(int    *p, int    val) { *p += val; }
-+void CDECL vcomp_atomic_add_i8(INT64  *p, INT64  val) { *p += val; }
-+void CDECL vcomp_atomic_add_r4(float  *p, float  val) { *p += val; }
-+void CDECL vcomp_atomic_add_r8(double *p, double val) { *p += val; }
-+void CDECL vcomp_atomic_and_i1(char   *p, char   val) { *p &= val; }
-+void CDECL vcomp_atomic_and_i2(short  *p, short  val) { *p &= val; }
-+void CDECL vcomp_atomic_and_i4(int    *p, int    val) { *p &= val; }
-+void CDECL vcomp_atomic_and_i8(INT64  *p, INT64  val) { *p &= val; }
-+void CDECL vcomp_atomic_div_i1(char   *p, char   val) { *p /= val; }
-+void CDECL vcomp_atomic_div_i2(short  *p, short  val) { *p /= val; }
-+void CDECL vcomp_atomic_div_i4(int    *p, int    val) { *p /= val; }
-+void CDECL vcomp_atomic_div_i8(INT64  *p, INT64  val) { *p /= val; }
-+void CDECL vcomp_atomic_div_r4(float  *p, float  val) { *p /= val; }
-+void CDECL vcomp_atomic_div_r8(double *p, double val) { *p /= val; }
-+void CDECL vcomp_atomic_mul_i1(char   *p, char   val) { *p *= val; }
-+void CDECL vcomp_atomic_mul_i2(short  *p, short  val) { *p *= val; }
-+void CDECL vcomp_atomic_mul_i4(int    *p, int    val) { *p *= val; }
-+void CDECL vcomp_atomic_mul_i8(INT64  *p, INT64  val) { *p *= val; }
-+void CDECL vcomp_atomic_mul_r4(float  *p, float  val) { *p *= val; }
-+void CDECL vcomp_atomic_mul_r8(double *p, double val) { *p += val; }
-+void CDECL vcomp_atomic_or_i1 (char   *p, char   val) { *p |= val; }
-+void CDECL vcomp_atomic_or_i2 (short  *p, short  val) { *p |= val; }
-+void CDECL vcomp_atomic_or_i4 (int    *p, int    val) { *p |= val; }
-+void CDECL vcomp_atomic_or_i8 (INT64  *p, INT64  val) { *p |= val; }
-+void CDECL vcomp_atomic_sub_i1(char   *p, char   val) { *p -= val; }
-+void CDECL vcomp_atomic_sub_i2(short  *p, short  val) { *p -= val; }
-+void CDECL vcomp_atomic_sub_i4(int    *p, int    val) { *p -= val; }
-+void CDECL vcomp_atomic_sub_i8(INT64  *p, INT64  val) { *p -= val; }
-+void CDECL vcomp_atomic_sub_r4(float  *p, float  val) { *p -= val; }
-+void CDECL vcomp_atomic_sub_r8(double *p, double val) { *p -= val; }
-+void CDECL vcomp_atomic_xor_i1(char   *p, char   val) { *p ^= val; }
-+void CDECL vcomp_atomic_xor_i2(short  *p, short  val) { *p ^= val; }
-+void CDECL vcomp_atomic_xor_i4(int    *p, int    val) { *p ^= val; }
-+void CDECL vcomp_atomic_xor_i8(INT64  *p, INT64  val) { *p ^= val; }
++void CDECL _vcomp_atomic_add_i1(char   *p, char   val) { *p += val; }
++void CDECL _vcomp_atomic_add_i2(short  *p, short  val) { *p += val; }
++void CDECL _vcomp_atomic_add_i4(int    *p, int    val) { *p += val; }
++void CDECL _vcomp_atomic_add_i8(INT64  *p, INT64  val) { *p += val; }
++void CDECL _vcomp_atomic_add_r4(float  *p, float  val) { *p += val; }
++void CDECL _vcomp_atomic_add_r8(double *p, double val) { *p += val; }
++void CDECL _vcomp_atomic_and_i1(char   *p, char   val) { *p &= val; }
++void CDECL _vcomp_atomic_and_i2(short  *p, short  val) { *p &= val; }
++void CDECL _vcomp_atomic_and_i4(int    *p, int    val) { *p &= val; }
++void CDECL _vcomp_atomic_and_i8(INT64  *p, INT64  val) { *p &= val; }
++void CDECL _vcomp_atomic_div_i1(char   *p, char   val) { *p /= val; }
++void CDECL _vcomp_atomic_div_i2(short  *p, short  val) { *p /= val; }
++void CDECL _vcomp_atomic_div_i4(int    *p, int    val) { *p /= val; }
++void CDECL _vcomp_atomic_div_i8(INT64  *p, INT64  val) { *p /= val; }
++void CDECL _vcomp_atomic_div_r4(float  *p, float  val) { *p /= val; }
++void CDECL _vcomp_atomic_div_r8(double *p, double val) { *p /= val; }
++void CDECL _vcomp_atomic_mul_i1(char   *p, char   val) { *p *= val; }
++void CDECL _vcomp_atomic_mul_i2(short  *p, short  val) { *p *= val; }
++void CDECL _vcomp_atomic_mul_i4(int    *p, int    val) { *p *= val; }
++void CDECL _vcomp_atomic_mul_i8(INT64  *p, INT64  val) { *p *= val; }
++void CDECL _vcomp_atomic_mul_r4(float  *p, float  val) { *p *= val; }
++void CDECL _vcomp_atomic_mul_r8(double *p, double val) { *p += val; }
++void CDECL _vcomp_atomic_or_i1 (char   *p, char   val) { *p |= val; }
++void CDECL _vcomp_atomic_or_i2 (short  *p, short  val) { *p |= val; }
++void CDECL _vcomp_atomic_or_i4 (int    *p, int    val) { *p |= val; }
++void CDECL _vcomp_atomic_or_i8 (INT64  *p, INT64  val) { *p |= val; }
++void CDECL _vcomp_atomic_sub_i1(char   *p, char   val) { *p -= val; }
++void CDECL _vcomp_atomic_sub_i2(short  *p, short  val) { *p -= val; }
++void CDECL _vcomp_atomic_sub_i4(int    *p, int    val) { *p -= val; }
++void CDECL _vcomp_atomic_sub_i8(INT64  *p, INT64  val) { *p -= val; }
++void CDECL _vcomp_atomic_sub_r4(float  *p, float  val) { *p -= val; }
++void CDECL _vcomp_atomic_sub_r8(double *p, double val) { *p -= val; }
++void CDECL _vcomp_atomic_xor_i1(char   *p, char   val) { *p ^= val; }
++void CDECL _vcomp_atomic_xor_i2(short  *p, short  val) { *p ^= val; }
++void CDECL _vcomp_atomic_xor_i4(int    *p, int    val) { *p ^= val; }
++void CDECL _vcomp_atomic_xor_i8(INT64  *p, INT64  val) { *p ^= val; }
 diff --git a/dlls/vcomp/main.c b/dlls/vcomp/main.c
-index 0a3c4f5..d800aea 100644
+index 0a3c4f5..80c1e66 100644
 --- a/dlls/vcomp/main.c
 +++ b/dlls/vcomp/main.c
 @@ -21,14 +21,346 @@
@@ -135,76 +135,76 @@ index 0a3c4f5..d800aea 100644
 +/* FIXME: match real definition */
 +typedef int omp_lock_t;
 +
-+void CDECL VCOMP_omp_set_num_threads(int num_threads)
++void CDECL omp_set_num_threads(int num_threads)
 +{
 +    TRACE("(%d): stub\n", num_threads);
 +}
 +
-+int CDECL VCOMP_omp_get_max_threads(void)
++int CDECL omp_get_max_threads(void)
 +{
 +    TRACE("stub\n");
 +    return 1;
 +}
 +
-+int CDECL VCOMP_omp_get_num_threads(void)
++int CDECL omp_get_num_threads(void)
 +{
 +    TRACE("stub\n");
 +    return 1;
 +}
 +
-+int CDECL VCOMP_omp_get_thread_num(void)
++int CDECL omp_get_thread_num(void)
 +{
 +    TRACE("stub\n");
 +    return 0;
 +}
 +
-+int CDECL VCOMP_omp_get_num_procs(void)
++int CDECL omp_get_num_procs(void)
 +{
 +    TRACE("stub\n");
 +    return 1;
 +}
 +
-+void CDECL VCOMP_omp_set_dynamic(int val)
++void CDECL omp_set_dynamic(int val)
 +{
 +    TRACE("(%d): stub\n", val);
 +}
 +
-+int CDECL VCOMP_omp_get_dynamic(void)
++int CDECL omp_get_dynamic(void)
 +{
 +    TRACE("stub\n");
 +    return 0;
 +}
 +
-+int CDECL VCOMP_omp_in_parallel(void)
++int CDECL omp_in_parallel(void)
 +{
 +    TRACE("stub\n");
 +    return 0;
 +}
 +
-+void CDECL VCOMP_omp_set_nested(int nested)
++void CDECL omp_set_nested(int nested)
 +{
 +    TRACE("(%d): stub\n", nested);
 +}
 +
-+int CDECL VCOMP_omp_get_nested(void)
++int CDECL omp_get_nested(void)
 +{
 +    TRACE("stub\n");
 +    return 0;
 +}
 +
-+void VCOMP_omp_init_lock(omp_lock_t *lock)
++void omp_init_lock(omp_lock_t *lock)
 +{
 +    TRACE("(%p): stub\n", lock);
 +    *lock = UNLOCKED;
 +}
 +
-+void VCOMP_omp_destroy_lock(omp_lock_t *lock)
++void omp_destroy_lock(omp_lock_t *lock)
 +{
 +    TRACE("(%p): stub\n", lock);
 +    *lock = INIT;
 +}
 +
-+void VCOMP_omp_set_lock(omp_lock_t *lock)
++void omp_set_lock(omp_lock_t *lock)
 +{
 +    TRACE("(%p): stub\n", lock);
 +    if (*lock == UNLOCKED) {
@@ -218,7 +218,7 @@ index 0a3c4f5..d800aea 100644
 +    }
 +}
 +
-+void CDECL VCOMP_omp_unset_lock(omp_lock_t *lock)
++void CDECL omp_unset_lock(omp_lock_t *lock)
 +{
 +    TRACE("(%p): stub\n", lock);
 +    if (*lock == LOCKED) {
@@ -232,7 +232,7 @@ index 0a3c4f5..d800aea 100644
 +    }
 +}
 +
-+int CDECL VCOMP_omp_test_lock(omp_lock_t *lock)
++int CDECL omp_test_lock(omp_lock_t *lock)
 +{
 +    TRACE("(%p): stub\n", lock);
 +    if (*lock == UNLOCKED) {
@@ -256,19 +256,19 @@ index 0a3c4f5..d800aea 100644
 +
 +enum {MASTER = 0};
 +
-+void VCOMP_omp_init_nest_lock(omp_nest_lock_t * lock)
++void omp_init_nest_lock(omp_nest_lock_t * lock)
 +{
 +    lock->owner = UNLOCKED;
 +    lock->count = 0;
 +}
 +
-+void VCOMP_omp_destroy_nest_lock(omp_nest_lock_t * lock)
++void omp_destroy_nest_lock(omp_nest_lock_t * lock)
 +{
 +    lock->owner = UNLOCKED;
 +    lock->count = UNLOCKED;
 +}
 +
-+void VCOMP_omp_set_nest_lock(omp_nest_lock_t * lock)
++void omp_set_nest_lock(omp_nest_lock_t * lock)
 +{
 +    if (lock->owner == MASTER && lock->count >= 1) {
 +	lock->count++;
@@ -281,7 +281,7 @@ index 0a3c4f5..d800aea 100644
 +    }
 +}
 +
-+void VCOMP_omp_unset_nest_lock(omp_nest_lock_t * lock)
++void omp_unset_nest_lock(omp_nest_lock_t * lock)
 +{
 +    if (lock->owner == MASTER && lock->count >= 1) {
 +	lock->count--;
@@ -297,31 +297,31 @@ index 0a3c4f5..d800aea 100644
 +    }
 +}
 +
-+int VCOMP_omp_test_nest_lock(omp_nest_lock_t * lock)
++int omp_test_nest_lock(omp_nest_lock_t * lock)
 +{
-+    VCOMP_omp_set_nest_lock(lock);
++    omp_set_nest_lock(lock);
 +    return lock->count;
 +}
 +
-+void CDECL VCOMP__vcomp_enter_critsect(void *section)
++void CDECL _vcomp_enter_critsect(void *section)
 +{
 +    TRACE("(%p): stub\n", section);
 +}
 +
-+void CDECL VCOMP__vcomp_leave_critsect(void *section)
++void CDECL _vcomp_leave_critsect(void *section)
 +{
 +    TRACE("(%p): stub\n", section);
 +}
 +
-+void CDECL VCOMP__vcomp_barrier(void)
++void CDECL _vcomp_barrier(void)
 +{
 +    TRACE("stub\n");
 +}
 +
 +#ifdef __i386__
-+extern void WINAPIV VCOMP__vcomp_fork(DWORD parallel, int ncount, void (__cdecl *helper)(__ms_va_list), ...);
++extern void WINAPIV _vcomp_fork(DWORD parallel, int ncount, void (__cdecl *helper)(__ms_va_list), ...);
 +/* Call helper with the ncount args after ncount */
-+__ASM_GLOBAL_FUNC( VCOMP__vcomp_fork,
++__ASM_GLOBAL_FUNC( _vcomp_fork,
 +                   "push %ebp\n\t"
 +                   "movl %esp,%ebp\n\t"
 +                   "leal 20(%ebp),%edx\n\t" /* first varadic arg */
@@ -341,20 +341,20 @@ index 0a3c4f5..d800aea 100644
 +                   "ret\n\t"
 +                 )
 +#elif defined(__x86_64__)
-+void WINAPIV VCOMP__vcomp_fork(DWORD parallel, int ncount, void (__cdecl *helper)(__ms_va_list), ...)
++void WINAPIV _vcomp_fork(DWORD parallel, int ncount, void (__cdecl *helper)(__ms_va_list), ...)
 +{
 +    FIXME("stub\n");
 +}
 +#endif
 +
-+void CDECL VCOMP__vcomp_for_static_simple_init(int first, int last, int mystep, int step, int *pfirst, int *plast)
++void CDECL _vcomp_for_static_simple_init(int first, int last, int mystep, int step, int *pfirst, int *plast)
 +{
 +    TRACE("(%d, %d, %d, %d, %p, %p): stub\n", first, last, mystep, step, pfirst, plast);
 +    *pfirst = first;
 +    *plast = last;
 +}
 +
-+void CDECL VCOMP__vcomp_for_static_end(void)
++void CDECL _vcomp_for_static_end(void)
 +{
 +    TRACE("stub\n");
 +}
@@ -365,7 +365,7 @@ index 0a3c4f5..d800aea 100644
 +static int vcomp_loop_iterations_remaining;
 +static int vcomp_loop_chunksize;
 +
-+void CDECL VCOMP__vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int chunksize)
++void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int chunksize)
 +{
 +    TRACE("(%d, %d, %d, %d, %d): stub\n", flags, first, last, mystep, chunksize);
 +    vcomp_loop_counter = first;
@@ -378,7 +378,7 @@ index 0a3c4f5..d800aea 100644
 +    vcomp_loop_iterations_remaining = 1 + (last - first) / vcomp_loop_step;
 +}
 +
-+int CDECL VCOMP__vcomp_for_dynamic_next(int *pcounter, int *pchunklimit)
++int CDECL _vcomp_for_dynamic_next(int *pcounter, int *pchunklimit)
 +{
 +    int n;
 +    TRACE("(%p, %p): stub. counter %d, remaining %d\n", pcounter, pchunklimit, vcomp_loop_counter, vcomp_loop_iterations_remaining);
@@ -394,14 +394,14 @@ index 0a3c4f5..d800aea 100644
 +    return (n > 0);
 +}
 +
-+double CDECL VCOMP_omp_get_wtick(void)
++double CDECL omp_get_wtick(void)
 +{
 +    TRACE("stub\n");
 +    /* Wild guess */
 +    return 0.001;
 +}
 +
-+double CDECL VCOMP_omp_get_wtime(void)
++double CDECL omp_get_wtime(void)
 +{
 +    TRACE("stub\n");
 +    return GetTickCount() / (double) 1000.0;
@@ -410,42 +410,42 @@ index 0a3c4f5..d800aea 100644
 +/* FIXME: where should this be stored? */
 +static int vcomp_section_counter;
 +
-+void CDECL VCOMP__vcomp_sections_init(int n)
++void CDECL _vcomp_sections_init(int n)
 +{
 +    TRACE("(%d): stub\n", n);
 +    vcomp_section_counter = 0;
 +}
 +
-+int CDECL VCOMP__vcomp_sections_next(void)
++int CDECL _vcomp_sections_next(void)
 +{
 +    TRACE("stub; returning %d\n", vcomp_section_counter);
 +    return vcomp_section_counter++;
 +}
 +
-+void CDECL VCOMP__vcomp_set_num_threads(int num_threads)
++void CDECL _vcomp_set_num_threads(int num_threads)
 +{
 +    TRACE("(%d): stub\n", num_threads);
-+    VCOMP_omp_set_num_threads(num_threads);
++    omp_set_num_threads(num_threads);
 +}
 +
-+int CDECL VCOMP__vcomp_master_begin(void)
++int CDECL _vcomp_master_begin(void)
 +{
 +    TRACE("stub\n");
 +    return TRUE;
 +}
 +
-+void CDECL VCOMP__vcomp_master_end(void)
++void CDECL _vcomp_master_end(void)
 +{
 +    TRACE("stub\n");
 +}
 +
-+int CDECL VCOMP__vcomp_single_begin(int flags)
++int CDECL _vcomp_single_begin(int flags)
 +{
 +    TRACE("(%x): stub\n", flags);
 +    return TRUE;
 +}
 +
-+void CDECL VCOMP__vcomp_single_end(void)
++void CDECL _vcomp_single_end(void)
 +{
 +    TRACE("stub\n");
 +}
@@ -803,7 +803,7 @@ index 0000000..d22f1a5
 +/* @makedep: vcomp.manifest */
 +1 RT_MANIFEST vcomp.manifest
 diff --git a/dlls/vcomp/vcomp.spec b/dlls/vcomp/vcomp.spec
-index cd5a964..3a84760 100644
+index cd5a964..6934646 100644
 --- a/dlls/vcomp/vcomp.spec
 +++ b/dlls/vcomp/vcomp.spec
 @@ -1,33 +1,33 @@
@@ -823,22 +823,22 @@ index cd5a964..3a84760 100644
 -@ stub _vcomp_atomic_div_i8
 -@ stub _vcomp_atomic_div_r4
 -@ stub _vcomp_atomic_div_r8
-+@ cdecl _vcomp_atomic_add_i1(ptr long) vcomp_atomic_add_i1
-+@ cdecl _vcomp_atomic_add_i2(ptr long) vcomp_atomic_add_i2
-+@ cdecl _vcomp_atomic_add_i4(ptr long) vcomp_atomic_add_i4
-+@ cdecl _vcomp_atomic_add_i8(ptr int64) vcomp_atomic_add_i8
-+@ cdecl _vcomp_atomic_add_r4(ptr float) vcomp_atomic_add_r4
-+@ cdecl _vcomp_atomic_add_r8(ptr double) vcomp_atomic_add_r8
-+@ cdecl _vcomp_atomic_and_i1(ptr long) vcomp_atomic_and_i1
-+@ cdecl _vcomp_atomic_and_i2(ptr long) vcomp_atomic_and_i2
-+@ cdecl _vcomp_atomic_and_i4(ptr long) vcomp_atomic_and_i4
-+@ cdecl _vcomp_atomic_and_i8(ptr int64) vcomp_atomic_and_i8
-+@ cdecl _vcomp_atomic_div_i1(ptr long) vcomp_atomic_div_i1
-+@ cdecl _vcomp_atomic_div_i2(ptr long) vcomp_atomic_div_i2
-+@ cdecl _vcomp_atomic_div_i4(ptr long) vcomp_atomic_div_i4
-+@ cdecl _vcomp_atomic_div_i8(ptr int64) vcomp_atomic_div_i8
-+@ cdecl _vcomp_atomic_div_r4(ptr float) vcomp_atomic_div_r4
-+@ cdecl _vcomp_atomic_div_r8(ptr double) vcomp_atomic_div_r8
++@ cdecl _vcomp_atomic_add_i1(ptr long)
++@ cdecl _vcomp_atomic_add_i2(ptr long)
++@ cdecl _vcomp_atomic_add_i4(ptr long)
++@ cdecl _vcomp_atomic_add_i8(ptr int64)
++@ cdecl _vcomp_atomic_add_r4(ptr float)
++@ cdecl _vcomp_atomic_add_r8(ptr double)
++@ cdecl _vcomp_atomic_and_i1(ptr long)
++@ cdecl _vcomp_atomic_and_i2(ptr long)
++@ cdecl _vcomp_atomic_and_i4(ptr long)
++@ cdecl _vcomp_atomic_and_i8(ptr int64)
++@ cdecl _vcomp_atomic_div_i1(ptr long)
++@ cdecl _vcomp_atomic_div_i2(ptr long)
++@ cdecl _vcomp_atomic_div_i4(ptr long)
++@ cdecl _vcomp_atomic_div_i8(ptr int64)
++@ cdecl _vcomp_atomic_div_r4(ptr float)
++@ cdecl _vcomp_atomic_div_r8(ptr double)
  @ stub _vcomp_atomic_div_ui1
  @ stub _vcomp_atomic_div_ui2
  @ stub _vcomp_atomic_div_ui4
@@ -853,16 +853,16 @@ index cd5a964..3a84760 100644
 -@ stub _vcomp_atomic_or_i2
 -@ stub _vcomp_atomic_or_i4
 -@ stub _vcomp_atomic_or_i8
-+@ cdecl _vcomp_atomic_mul_i1(ptr long) vcomp_atomic_mul_i1
-+@ cdecl _vcomp_atomic_mul_i2(ptr long) vcomp_atomic_mul_i2
-+@ cdecl _vcomp_atomic_mul_i4(ptr long) vcomp_atomic_mul_i4
-+@ cdecl _vcomp_atomic_mul_i8(ptr int64) vcomp_atomic_mul_i8
-+@ cdecl _vcomp_atomic_mul_r4(ptr float) vcomp_atomic_mul_r4
-+@ cdecl _vcomp_atomic_mul_r8(ptr double) vcomp_atomic_mul_r8
-+@ cdecl _vcomp_atomic_or_i1(ptr long) vcomp_atomic_or_i1
-+@ cdecl _vcomp_atomic_or_i2(ptr long) vcomp_atomic_or_i2
-+@ cdecl _vcomp_atomic_or_i4(ptr long) vcomp_atomic_or_i4
-+@ cdecl _vcomp_atomic_or_i8(ptr int64) vcomp_atomic_or_i8
++@ cdecl _vcomp_atomic_mul_i1(ptr long)
++@ cdecl _vcomp_atomic_mul_i2(ptr long)
++@ cdecl _vcomp_atomic_mul_i4(ptr long)
++@ cdecl _vcomp_atomic_mul_i8(ptr int64)
++@ cdecl _vcomp_atomic_mul_r4(ptr float)
++@ cdecl _vcomp_atomic_mul_r8(ptr double)
++@ cdecl _vcomp_atomic_or_i1(ptr long)
++@ cdecl _vcomp_atomic_or_i2(ptr long)
++@ cdecl _vcomp_atomic_or_i4(ptr long)
++@ cdecl _vcomp_atomic_or_i8(ptr int64)
  @ stub _vcomp_atomic_shl_i1
  @ stub _vcomp_atomic_shl_i2
  @ stub _vcomp_atomic_shl_i4
@@ -881,45 +881,45 @@ index cd5a964..3a84760 100644
 -@ stub _vcomp_atomic_xor_i4
 -@ stub _vcomp_atomic_xor_i8
 -@ stub _vcomp_barrier
-+@ cdecl _vcomp_atomic_sub_i1(ptr long) vcomp_atomic_sub_i1
-+@ cdecl _vcomp_atomic_sub_i2(ptr long) vcomp_atomic_sub_i2
-+@ cdecl _vcomp_atomic_sub_i4(ptr long) vcomp_atomic_sub_i4
-+@ cdecl _vcomp_atomic_sub_i8(ptr int64) vcomp_atomic_sub_i8
-+@ cdecl _vcomp_atomic_sub_r4(ptr float) vcomp_atomic_sub_r4
-+@ cdecl _vcomp_atomic_sub_r8(ptr double) vcomp_atomic_sub_r8
-+@ cdecl _vcomp_atomic_xor_i1(ptr long) vcomp_atomic_xor_i1
-+@ cdecl _vcomp_atomic_xor_i2(ptr long) vcomp_atomic_xor_i2
-+@ cdecl _vcomp_atomic_xor_i4(ptr long) vcomp_atomic_xor_i4
-+@ cdecl _vcomp_atomic_xor_i8(ptr int64) vcomp_atomic_xor_i8
-+@ cdecl _vcomp_barrier() VCOMP__vcomp_barrier
++@ cdecl _vcomp_atomic_sub_i1(ptr long)
++@ cdecl _vcomp_atomic_sub_i2(ptr long)
++@ cdecl _vcomp_atomic_sub_i4(ptr long)
++@ cdecl _vcomp_atomic_sub_i8(ptr int64)
++@ cdecl _vcomp_atomic_sub_r4(ptr float)
++@ cdecl _vcomp_atomic_sub_r8(ptr double)
++@ cdecl _vcomp_atomic_xor_i1(ptr long)
++@ cdecl _vcomp_atomic_xor_i2(ptr long)
++@ cdecl _vcomp_atomic_xor_i4(ptr long)
++@ cdecl _vcomp_atomic_xor_i8(ptr int64)
++@ cdecl _vcomp_barrier()
  @ stub _vcomp_copyprivate_broadcast
  @ stub _vcomp_copyprivate_receive
 -@ stub _vcomp_enter_critsect
-+@ cdecl _vcomp_enter_critsect(ptr) VCOMP__vcomp_enter_critsect
++@ cdecl _vcomp_enter_critsect(ptr)
  @ stub _vcomp_flush
 -@ stub _vcomp_for_dynamic_init
-+@ cdecl _vcomp_for_dynamic_init(long long long long long) VCOMP__vcomp_for_dynamic_init
++@ cdecl _vcomp_for_dynamic_init(long long long long long)
  @ stub _vcomp_for_dynamic_init_i8
 -@ stub _vcomp_for_dynamic_next
-+@ cdecl _vcomp_for_dynamic_next(ptr) VCOMP__vcomp_for_dynamic_next
++@ cdecl _vcomp_for_dynamic_next(ptr)
  @ stub _vcomp_for_dynamic_next_i8
 -@ stub _vcomp_for_static_end
-+@ cdecl _vcomp_for_static_end() VCOMP__vcomp_for_static_end
++@ cdecl _vcomp_for_static_end()
  @ stub _vcomp_for_static_init
  @ stub _vcomp_for_static_init_i8
 -@ stub _vcomp_for_static_simple_init
-+@ cdecl _vcomp_for_static_simple_init(long long long long ptr ptr) VCOMP__vcomp_for_static_simple_init
++@ cdecl _vcomp_for_static_simple_init(long long long long ptr ptr)
  @ stub _vcomp_for_static_simple_init_i8
 -@ stub _vcomp_fork
-+@ varargs _vcomp_fork(long long ptr) VCOMP__vcomp_fork
++@ varargs _vcomp_fork(long long ptr)
  @ stub _vcomp_get_thread_num
 -@ stub _vcomp_leave_critsect
-+@ cdecl _vcomp_leave_critsect(ptr) VCOMP__vcomp_leave_critsect
++@ cdecl _vcomp_leave_critsect(ptr)
  @ stub _vcomp_master_barrier
 -@ stub _vcomp_master_begin
 -@ stub _vcomp_master_end
-+@ cdecl _vcomp_master_begin() VCOMP__vcomp_master_begin
-+@ cdecl _vcomp_master_end() VCOMP__vcomp_master_end
++@ cdecl _vcomp_master_begin()
++@ cdecl _vcomp_master_end()
  @ stub _vcomp_ordered_begin
  @ stub _vcomp_ordered_end
  @ stub _vcomp_ordered_loop_end
@@ -954,33 +954,33 @@ index cd5a964..3a84760 100644
 -@ stub omp_test_nest_lock
 -@ stub omp_unset_lock
 -@ stub omp_unset_nest_lock
-+@ cdecl _vcomp_sections_init(long) VCOMP__vcomp_sections_init
-+@ cdecl _vcomp_sections_next() VCOMP__vcomp_sections_next
-+@ cdecl _vcomp_set_num_threads(long) VCOMP__vcomp_set_num_threads
-+@ cdecl _vcomp_single_begin(long) VCOMP__vcomp_single_begin
-+@ cdecl _vcomp_single_end() VCOMP__vcomp_single_end
-+@ cdecl omp_destroy_lock(ptr) VCOMP_omp_destroy_lock
-+@ cdecl omp_destroy_nest_lock(ptr) VCOMP_omp_destroy_nest_lock
-+@ cdecl omp_get_dynamic() VCOMP_omp_get_dynamic
-+@ cdecl omp_get_max_threads() VCOMP_omp_get_max_threads
-+@ cdecl omp_get_nested() VCOMP_omp_get_nested
-+@ cdecl omp_get_num_procs() VCOMP_omp_get_num_procs
-+@ cdecl omp_get_num_threads() VCOMP_omp_get_num_threads
-+@ cdecl omp_get_thread_num() VCOMP_omp_get_thread_num
-+@ cdecl omp_get_wtick() VCOMP_omp_get_wtick
-+@ cdecl omp_get_wtime() VCOMP_omp_get_wtime
-+@ cdecl omp_in_parallel() VCOMP_omp_in_parallel
-+@ cdecl omp_init_lock(ptr) VCOMP_omp_init_lock
-+@ cdecl omp_init_nest_lock(ptr) VCOMP_omp_init_nest_lock
-+@ cdecl omp_set_dynamic(long) VCOMP_omp_set_dynamic
-+@ cdecl omp_set_lock(ptr) VCOMP_omp_set_lock
-+@ cdecl omp_set_nest_lock(ptr) VCOMP_omp_set_nest_lock
-+@ cdecl omp_set_nested(long) VCOMP_omp_set_nested
-+@ cdecl omp_set_num_threads(long) VCOMP_omp_set_num_threads
-+@ cdecl omp_test_lock(ptr) VCOMP_omp_test_lock
-+@ cdecl omp_test_nest_lock(ptr) VCOMP_omp_test_nest_lock
-+@ cdecl omp_unset_lock(ptr) VCOMP_omp_unset_lock
-+@ cdecl omp_unset_nest_lock(ptr) VCOMP_omp_unset_nest_lock
++@ cdecl _vcomp_sections_init(long)
++@ cdecl _vcomp_sections_next()
++@ cdecl _vcomp_set_num_threads(long)
++@ cdecl _vcomp_single_begin(long)
++@ cdecl _vcomp_single_end()
++@ cdecl omp_destroy_lock(ptr)
++@ cdecl omp_destroy_nest_lock(ptr)
++@ cdecl omp_get_dynamic()
++@ cdecl omp_get_max_threads()
++@ cdecl omp_get_nested()
++@ cdecl omp_get_num_procs()
++@ cdecl omp_get_num_threads()
++@ cdecl omp_get_thread_num()
++@ cdecl omp_get_wtick()
++@ cdecl omp_get_wtime()
++@ cdecl omp_in_parallel()
++@ cdecl omp_init_lock(ptr)
++@ cdecl omp_init_nest_lock(ptr)
++@ cdecl omp_set_dynamic(long)
++@ cdecl omp_set_lock(ptr)
++@ cdecl omp_set_nest_lock(ptr)
++@ cdecl omp_set_nested(long)
++@ cdecl omp_set_num_threads(long)
++@ cdecl omp_test_lock(ptr)
++@ cdecl omp_test_nest_lock(ptr)
++@ cdecl omp_unset_lock(ptr)
++@ cdecl omp_unset_nest_lock(ptr)
 diff --git a/dlls/vcomp100/main.c b/dlls/vcomp100/main.c
 index a5105d3..8c5af11 100644
 --- a/dlls/vcomp100/main.c
