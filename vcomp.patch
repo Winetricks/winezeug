@@ -749,7 +749,7 @@ index 0000000..f496410
 +}
 diff --git a/dlls/vcomp/tests/vcomp.manifest b/dlls/vcomp/tests/vcomp.manifest
 new file mode 100644
-index 0000000..e6c2bc1
+index 0000000..6bc5dc1
 --- /dev/null
 +++ b/dlls/vcomp/tests/vcomp.manifest
 @@ -0,0 +1,21 @@
@@ -767,8 +767,8 @@ index 0000000..e6c2bc1
 +    <assemblyIdentity
 +        type="win32"
 +        name="Microsoft.VC80.OpenMP"
-+        version="8.0.50727.762"
-+        processorArchitecture="*"
++        version="8.0.50608.0"
++        processorArchitecture="x86"
 +        publicKeyToken="1fc8b3b9a1e18e3b"
 +    />
 +  </dependentAssembly>
