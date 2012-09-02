@@ -10089,7 +10089,7 @@ w_metadata unigine_heaven benchmarks \
     title="Unigen Heaven 2.1 Benchmark" \
     publisher="Unigen" \
     year="2010" \
-    media="download" \
+    media="manual_download" \
     file1="Unigine_Heaven-2.1.msi" 
 
 load_unigine_heaven()
