@@ -551,10 +551,10 @@ index 0000000..ca433a1
 +}
 diff --git a/dlls/vcomp/tests/main.c b/dlls/vcomp/tests/main.c
 new file mode 100644
-index 0000000..87a34b8
+index 0000000..01ba302
 --- /dev/null
 +++ b/dlls/vcomp/tests/main.c
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,179 @@
 +/*
 + * Unit test suite for vcomp functions.
 + *
@@ -591,6 +591,8 @@ index 0000000..87a34b8
 +void WINAPIV _vcomp_fork(DWORD, DWORD, void *, ...);
 +void CDECL _vcomp_for_static_simple_init(int first, int last, int mystep, int step, int *pfirst, int *plast);
 +void CDECL _vcomp_for_static_end(void);
++int CDECL _vcomp_for_dynamic_next(int *pcounter, int *pfoo);
++void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int otherflags);
 +void CDECL _vcomp_atomic_add_i4(int    *p, int    val);
 +
 +void test_omp_get_num_threads(void)
@@ -690,6 +692,34 @@ index 0000000..87a34b8
 +    ok(nsum == 6*13, "expected sum 6*13, got %d\n", nsum);
 +}
 +
++void worker_dynamic_for(void)
++{
++    int i, foo;
++
++    InterlockedIncrement(&ncalls);
++
++    /* for (i=0; i<=12; i++) */
++    _vcomp_for_dynamic_init(98, 0, 12, 1, 0);
++
++    printf("top of loop\n");
++    while (_vcomp_for_dynamic_next(&i, &foo)) {
++        printf("i is %d\n", i);
++        _vcomp_atomic_add_i4(&nsum, i);
++    }
++
++    printf("Loop is done, nsum is %d\n", nsum);
++}
++
++void test_dynamic_for(void)
++{
++    ncalls = 0;
++    nsum = 0;
++    _vcomp_fork(1, 0, worker_dynamic_for);
++    printf("with parallel=1, ncalls is %d, nsum is %d\n", ncalls, nsum);
++    ok(ncalls >= 1, "expected >= 1 call, got %d\n", ncalls);
++    ok(nsum == 6*13, "expected sum 6*13, got %d\n", nsum);
++}
++
 +START_TEST(main)
 +{
 +    printf("Starting test\n");
@@ -700,6 +730,7 @@ index 0000000..87a34b8
 +    test_omp_in_parallel();
 +    test_vcomp_fork();
 +    test_simple_for();
++    test_dynamic_for();
 +
 +    printf("Main test over.\n");
 +}
@@ -1040,10 +1071,10 @@ index 0000000..3b1df44
 +}
 diff --git a/dlls/vcomp100/tests/main.c b/dlls/vcomp100/tests/main.c
 new file mode 100644
-index 0000000..87a34b8
+index 0000000..01ba302
 --- /dev/null
 +++ b/dlls/vcomp100/tests/main.c
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,179 @@
 +/*
 + * Unit test suite for vcomp functions.
 + *
@@ -1080,6 +1111,8 @@ index 0000000..87a34b8
 +void WINAPIV _vcomp_fork(DWORD, DWORD, void *, ...);
 +void CDECL _vcomp_for_static_simple_init(int first, int last, int mystep, int step, int *pfirst, int *plast);
 +void CDECL _vcomp_for_static_end(void);
++int CDECL _vcomp_for_dynamic_next(int *pcounter, int *pfoo);
++void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int otherflags);
 +void CDECL _vcomp_atomic_add_i4(int    *p, int    val);
 +
 +void test_omp_get_num_threads(void)
@@ -1179,6 +1212,34 @@ index 0000000..87a34b8
 +    ok(nsum == 6*13, "expected sum 6*13, got %d\n", nsum);
 +}
 +
++void worker_dynamic_for(void)
++{
++    int i, foo;
++
++    InterlockedIncrement(&ncalls);
++
++    /* for (i=0; i<=12; i++) */
++    _vcomp_for_dynamic_init(98, 0, 12, 1, 0);
++
++    printf("top of loop\n");
++    while (_vcomp_for_dynamic_next(&i, &foo)) {
++        printf("i is %d\n", i);
++        _vcomp_atomic_add_i4(&nsum, i);
++    }
++
++    printf("Loop is done, nsum is %d\n", nsum);
++}
++
++void test_dynamic_for(void)
++{
++    ncalls = 0;
++    nsum = 0;
++    _vcomp_fork(1, 0, worker_dynamic_for);
++    printf("with parallel=1, ncalls is %d, nsum is %d\n", ncalls, nsum);
++    ok(ncalls >= 1, "expected >= 1 call, got %d\n", ncalls);
++    ok(nsum == 6*13, "expected sum 6*13, got %d\n", nsum);
++}
++
 +START_TEST(main)
 +{
 +    printf("Starting test\n");
@@ -1189,6 +1250,7 @@ index 0000000..87a34b8
 +    test_omp_in_parallel();
 +    test_vcomp_fork();
 +    test_simple_for();
++    test_dynamic_for();
 +
 +    printf("Main test over.\n");
 +}
