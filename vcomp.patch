@@ -103,10 +103,10 @@ index 0000000..d2f259e
 +void CDECL vcomp_atomic_xor_i4(int    *p, int    val) { *p ^= val; }
 +void CDECL vcomp_atomic_xor_i8(INT64  *p, INT64  val) { *p ^= val; }
 diff --git a/dlls/vcomp/main.c b/dlls/vcomp/main.c
-index 0a3c4f5..2de07cb 100644
+index 0a3c4f5..d800aea 100644
 --- a/dlls/vcomp/main.c
 +++ b/dlls/vcomp/main.c
-@@ -21,14 +21,336 @@
+@@ -21,14 +21,346 @@
  
  #include "config.h"
  
@@ -363,11 +363,13 @@ index 0a3c4f5..2de07cb 100644
 +static int vcomp_loop_counter;
 +static int vcomp_loop_step;
 +static int vcomp_loop_iterations_remaining;
++static int vcomp_loop_chunksize;
 +
-+void CDECL VCOMP__vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int otherflags)
++void CDECL VCOMP__vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int chunksize)
 +{
-+    TRACE("(%d, %d, %d, %d, %d): stub\n", flags, first, last, mystep, otherflags);
++    TRACE("(%d, %d, %d, %d, %d): stub\n", flags, first, last, mystep, chunksize);
 +    vcomp_loop_counter = first;
++    vcomp_loop_chunksize = chunksize;
 +    if (flags & 0x40) {
 +        vcomp_loop_step = mystep;
 +    } else {
@@ -376,12 +378,20 @@ index 0a3c4f5..2de07cb 100644
 +    vcomp_loop_iterations_remaining = 1 + (last - first) / vcomp_loop_step;
 +}
 +
-+int CDECL VCOMP__vcomp_for_dynamic_next(int *pcounter, int *pfoo)
++int CDECL VCOMP__vcomp_for_dynamic_next(int *pcounter, int *pchunklimit)
 +{
-+    TRACE("(%p, %p): stub. counter %d, remaining %d\n", pcounter, pfoo, vcomp_loop_counter, vcomp_loop_iterations_remaining);
++    int n;
++    TRACE("(%p, %p): stub. counter %d, remaining %d\n", pcounter, pchunklimit, vcomp_loop_counter, vcomp_loop_iterations_remaining);
++    n = vcomp_loop_chunksize;
++    if (n > vcomp_loop_iterations_remaining)
++        n = vcomp_loop_iterations_remaining;
 +    *pcounter = vcomp_loop_counter;
-+    vcomp_loop_counter += vcomp_loop_step;
-+    return (vcomp_loop_iterations_remaining-- > 0);
++    vcomp_loop_counter += vcomp_loop_step * n;
++    *pchunklimit = vcomp_loop_counter - 1;
++    vcomp_loop_iterations_remaining -= n;
++
++    TRACE("at exit, counter %d, remaining %d, n %d\n", vcomp_loop_counter, vcomp_loop_iterations_remaining, n);
++    return (n > 0);
 +}
 +
 +double CDECL VCOMP_omp_get_wtick(void)
@@ -551,10 +561,10 @@ index 0000000..ca433a1
 +}
 diff --git a/dlls/vcomp/tests/main.c b/dlls/vcomp/tests/main.c
 new file mode 100644
-index 0000000..01ba302
+index 0000000..f496410
 --- /dev/null
 +++ b/dlls/vcomp/tests/main.c
-@@ -0,0 +1,179 @@
+@@ -0,0 +1,182 @@
 +/*
 + * Unit test suite for vcomp functions.
 + *
@@ -591,8 +601,8 @@ index 0000000..01ba302
 +void WINAPIV _vcomp_fork(DWORD, DWORD, void *, ...);
 +void CDECL _vcomp_for_static_simple_init(int first, int last, int mystep, int step, int *pfirst, int *plast);
 +void CDECL _vcomp_for_static_end(void);
-+int CDECL _vcomp_for_dynamic_next(int *pcounter, int *pfoo);
-+void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int otherflags);
++int CDECL _vcomp_for_dynamic_next(int *pcounter, int *plimit);
++void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int chunksize);
 +void CDECL _vcomp_atomic_add_i4(int    *p, int    val);
 +
 +void test_omp_get_num_threads(void)
@@ -694,17 +704,20 @@ index 0000000..01ba302
 +
 +void worker_dynamic_for(void)
 +{
-+    int i, foo;
++    int i, limit;
 +
 +    InterlockedIncrement(&ncalls);
 +
-+    /* for (i=0; i<=12; i++) */
-+    _vcomp_for_dynamic_init(98, 0, 12, 1, 0);
++    /* pragma omp schedule(dynamic,16) */
++    /* for (i=0; i<=17; i++) */
++    _vcomp_for_dynamic_init(98, 0, 17, 1, 16);
 +
 +    printf("top of loop\n");
-+    while (_vcomp_for_dynamic_next(&i, &foo)) {
-+        printf("i is %d\n", i);
-+        _vcomp_atomic_add_i4(&nsum, i);
++    while (_vcomp_for_dynamic_next(&i, &limit)) {
++        for (; i<=limit; i++) {
++            printf("i is %d, limit is %d\n", i, limit);
++            _vcomp_atomic_add_i4(&nsum, i);
++        }
 +    }
 +
 +    printf("Loop is done, nsum is %d\n", nsum);
@@ -717,7 +730,7 @@ index 0000000..01ba302
 +    _vcomp_fork(1, 0, worker_dynamic_for);
 +    printf("with parallel=1, ncalls is %d, nsum is %d\n", ncalls, nsum);
 +    ok(ncalls >= 1, "expected >= 1 call, got %d\n", ncalls);
-+    ok(nsum == 6*13, "expected sum 6*13, got %d\n", nsum);
++    ok(nsum == 9*17, "expected sum 9*17, got %d\n", nsum);
 +}
 +
 +START_TEST(main)
@@ -968,6 +981,19 @@ index cd5a964..3a84760 100644
 +@ cdecl omp_test_nest_lock(ptr) VCOMP_omp_test_nest_lock
 +@ cdecl omp_unset_lock(ptr) VCOMP_omp_unset_lock
 +@ cdecl omp_unset_nest_lock(ptr) VCOMP_omp_unset_nest_lock
+diff --git a/dlls/vcomp100/main.c b/dlls/vcomp100/main.c
+index a5105d3..8c5af11 100644
+--- a/dlls/vcomp100/main.c
++++ b/dlls/vcomp100/main.c
+@@ -27,7 +27,7 @@
+ #include "winbase.h"
+ #include "wine/debug.h"
+ 
+-WINE_DEFAULT_DEBUG_CHANNEL(vcomp100);
++WINE_DEFAULT_DEBUG_CHANNEL(vcomp);
+ 
+ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+ {
 diff --git a/dlls/vcomp100/tests/Makefile.in b/dlls/vcomp100/tests/Makefile.in
 new file mode 100644
 index 0000000..8cec8d1
@@ -1071,10 +1097,10 @@ index 0000000..3b1df44
 +}
 diff --git a/dlls/vcomp100/tests/main.c b/dlls/vcomp100/tests/main.c
 new file mode 100644
-index 0000000..01ba302
+index 0000000..f496410
 --- /dev/null
 +++ b/dlls/vcomp100/tests/main.c
-@@ -0,0 +1,179 @@
+@@ -0,0 +1,182 @@
 +/*
 + * Unit test suite for vcomp functions.
 + *
@@ -1111,8 +1137,8 @@ index 0000000..01ba302
 +void WINAPIV _vcomp_fork(DWORD, DWORD, void *, ...);
 +void CDECL _vcomp_for_static_simple_init(int first, int last, int mystep, int step, int *pfirst, int *plast);
 +void CDECL _vcomp_for_static_end(void);
-+int CDECL _vcomp_for_dynamic_next(int *pcounter, int *pfoo);
-+void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int otherflags);
++int CDECL _vcomp_for_dynamic_next(int *pcounter, int *plimit);
++void CDECL _vcomp_for_dynamic_init(int flags, int first, int last, int mystep, int chunksize);
 +void CDECL _vcomp_atomic_add_i4(int    *p, int    val);
 +
 +void test_omp_get_num_threads(void)
@@ -1214,17 +1240,20 @@ index 0000000..01ba302
 +
 +void worker_dynamic_for(void)
 +{
-+    int i, foo;
++    int i, limit;
 +
 +    InterlockedIncrement(&ncalls);
 +
-+    /* for (i=0; i<=12; i++) */
-+    _vcomp_for_dynamic_init(98, 0, 12, 1, 0);
++    /* pragma omp schedule(dynamic,16) */
++    /* for (i=0; i<=17; i++) */
++    _vcomp_for_dynamic_init(98, 0, 17, 1, 16);
 +
 +    printf("top of loop\n");
-+    while (_vcomp_for_dynamic_next(&i, &foo)) {
-+        printf("i is %d\n", i);
-+        _vcomp_atomic_add_i4(&nsum, i);
++    while (_vcomp_for_dynamic_next(&i, &limit)) {
++        for (; i<=limit; i++) {
++            printf("i is %d, limit is %d\n", i, limit);
++            _vcomp_atomic_add_i4(&nsum, i);
++        }
 +    }
 +
 +    printf("Loop is done, nsum is %d\n", nsum);
@@ -1237,7 +1266,7 @@ index 0000000..01ba302
 +    _vcomp_fork(1, 0, worker_dynamic_for);
 +    printf("with parallel=1, ncalls is %d, nsum is %d\n", ncalls, nsum);
 +    ok(ncalls >= 1, "expected >= 1 call, got %d\n", ncalls);
-+    ok(nsum == 6*13, "expected sum 6*13, got %d\n", nsum);
++    ok(nsum == 9*17, "expected sum 9*17, got %d\n", nsum);
 +}
 +
 +START_TEST(main)
@@ -1255,7 +1284,7 @@ index 0000000..01ba302
 +    printf("Main test over.\n");
 +}
 diff --git a/dlls/vcomp100/vcomp100.spec b/dlls/vcomp100/vcomp100.spec
-index cd5a964..f781084 100644
+index cd5a964..5e0f221 100644
 --- a/dlls/vcomp100/vcomp100.spec
 +++ b/dlls/vcomp100/vcomp100.spec
 @@ -1,33 +1,33 @@
@@ -1332,6 +1361,7 @@ index cd5a964..f781084 100644
 -@ stub _vcomp_atomic_xor_i2
 -@ stub _vcomp_atomic_xor_i4
 -@ stub _vcomp_atomic_xor_i8
+-@ stub _vcomp_barrier
 +@ cdecl _vcomp_atomic_sub_i1(ptr long) vcomp._vcomp_atomic_sub_i1
 +@ cdecl _vcomp_atomic_sub_i2(ptr long) vcomp._vcomp_atomic_sub_i2
 +@ cdecl _vcomp_atomic_sub_i4(ptr long) vcomp._vcomp_atomic_sub_i4
@@ -1342,7 +1372,7 @@ index cd5a964..f781084 100644
 +@ cdecl _vcomp_atomic_xor_i2(ptr long) vcomp._vcomp_atomic_xor_i2
 +@ cdecl _vcomp_atomic_xor_i4(ptr long) vcomp._vcomp_atomic_xor_i4
 +@ cdecl _vcomp_atomic_xor_i8(ptr int64) vcomp._vcomp_atomic_xor_i8
- @ stub _vcomp_barrier
++@ cdecl _vcomp_barrier() vcomp._vcomp_barrier
  @ stub _vcomp_copyprivate_broadcast
  @ stub _vcomp_copyprivate_receive
 -@ stub _vcomp_enter_critsect
@@ -1446,7 +1476,7 @@ index 0000000..48dafbd
 +@MAKE_DLL_RULES@
 diff --git a/dlls/vcomp90/main.c b/dlls/vcomp90/main.c
 new file mode 100644
-index 0000000..4c2d864
+index 0000000..58a62d4
 --- /dev/null
 +++ b/dlls/vcomp90/main.c
 @@ -0,0 +1,48 @@
@@ -1479,7 +1509,7 @@ index 0000000..4c2d864
 +#include "winbase.h"
 +#include "wine/debug.h"
 +
-+WINE_DEFAULT_DEBUG_CHANNEL(vcomp90);
++WINE_DEFAULT_DEBUG_CHANNEL(vcomp);
 +
 +BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 +{
@@ -1498,62 +1528,6 @@ index 0000000..4c2d864
 +
 +    return TRUE;
 +}
-diff --git a/dlls/vcomp90/tests/vcomp90.manifest b/dlls/vcomp90/tests/vcomp90.manifest
-new file mode 100644
-index 0000000..99af2f1
---- /dev/null
-+++ b/dlls/vcomp90/tests/vcomp90.manifest
-@@ -0,0 +1,22 @@
-+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-+  <assemblyIdentity
-+      type="win32"
-+      name="Wine.vcomp90.Test"
-+      version="1.0.0.0"
-+      processorArchitecture="*"
-+  />
-+<description>Wine vcomp90 test suite</description>
-+<dependency>
-+  <dependentAssembly>
-+    <assemblyIdentity
-+        type="win32"
-+        name="microsoft.vc90.OpenMP"
-+        version="9.0.20718.0"
-+        processorArchitecture="*"
-+        publicKeyToken="1fc8b3b9a1e18e3b"
-+        language="*"
-+    />
-+</dependentAssembly>
-+</dependency>
-+</assembly>
-diff --git a/dlls/vcomp90/tests/vcomp90.rc b/dlls/vcomp90/tests/vcomp90.rc
-new file mode 100644
-index 0000000..ce60a9c
---- /dev/null
-+++ b/dlls/vcomp90/tests/vcomp90.rc
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (c) 2010 Detlef Riekenberg
-+ *
-+ * This library is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU Lesser General Public
-+ * License as published by the Free Software Foundation; either
-+ * version 2.1 of the License, or (at your option) any later version.
-+ *
-+ * This library is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * Lesser General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU Lesser General Public
-+ * License along with this library; if not, write to the Free Software
-+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-+ */
-+
-+#include "winuser.h"
-+
-+/* @makedep: vcomp90.manifest */
-+1 RT_MANIFEST vcomp90.manifest
 diff --git a/dlls/vcomp90/vcomp90.spec b/dlls/vcomp90/vcomp90.spec
 new file mode 100644
 index 0000000..5e0f221
