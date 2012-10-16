@@ -100,6 +100,7 @@ install_mono()
 {
     case $1 in
     0.0.4) MONO_SHA1SUM=7d827f7d28a88ae0da95a136573783124ffce4b1;;
+    0.0.8) MONO_SHA1SUM=dd349e72249ce5ff981be0e9dae33ac4a46a9f60;;
     *) return;;
     esac
 
@@ -145,3 +146,4 @@ esac
 
 # And mono, too
 install_mono 0.0.4
+install_mono 0.0.8
