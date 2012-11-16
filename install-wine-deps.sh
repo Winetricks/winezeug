@@ -597,12 +597,18 @@ libxslt-devel libXt-devel libXv-devel libXxf86vm-devel make mesa-libGL-devel \
 mesa-libGLU-devel ncurses-devel openldap-devel openssl-devel patch pkgconfig \
 prelink samba-winbind sane-backends-devel xorg-x11-proto-devel"
 
-suse_pkgs="\
+suse_common_pkgs="\
 alsa-devel audiofile bison capi4linux-devel cups-devel desktop-file-utils flex \
 fontconfig-devel freeglut-devel freetype2-devel gcc giflib-devel git-core glibc-devel \
-gnutls-devel hal-devel jack-devel libgphoto2-devel libjpeg-devel liblcms-devel \
-libpng-devel libxml2-devel libxslt-devel make Mesa-devel ncurses-devel openldap2-devel \
-openssl-devel pkgconfig unixODBC-devel update-desktop-files xorg-x11-devel zlib-devel"
+libgphoto2-devel liblcms-devel libxml2-devel libxslt-devel make Mesa-devel ncurses-devel \
+openldap2-devel unixODBC-devel update-desktop-files xorg-x11-devel zlib-devel"
+
+suse_11_1_pkgs="\
+gnutls-devel hal-devel jack-devel libjpeg-devel libpng-devel openssl-devel pkgconfig"
+
+suse_12_2_pkgs="\
+libgnutls-devel libjack-devel libjpeg62-devel libopenssl-devel libpng12-compat-devel \
+libudev-devel pkg-config"
 
 
 #----------------------------------------------------------------------------
@@ -636,7 +642,8 @@ Linux*Mint*11|Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick
 Linux*Mint*12|Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
 Ubuntu*12.04) apt-get install $ubuntu_common_pkgs $ubuntu_precise_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
-SUSE*LINUX*11.1) zypper install $suse_pkgs ;;
+SUSE*LINUX*11.1) zypper install $suse_common_pkgs $suse_11_1_pkgs ;;
+SUSE*LINUX*12.2) zypper install $suse_common_pkgs $suse_12_2_pkgs ;;
 Debian*Hurd*) apt-get install $debian_common_pkgs ;;
 Debian*Linux*) apt-get install $debian_common_pkgs $debian_linux_pkgs ;;
 Debian*6.0.*) apt-get install $debian_common_pkgs $debian_linux_pkgs ;;
