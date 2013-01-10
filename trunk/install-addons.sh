@@ -72,6 +72,14 @@ install_gecko()
         esac
         GECKO_SUFFIX=.msi
         ;;
+    gecko-1.9)
+        GECKO_VERSION=1.9
+        case $myarch in
+        x86)   GECKO_SHA1SUM=d2553224848a926eacfa8685662ff1d7e8be2428;;
+        x86_64) GECKO_SHA1SUM=c7cd0994f89dd15b36ce8dacaa33d0ec47c407d1;;
+        esac
+        GECKO_SUFFIX=.msi
+        ;;
     *)
         GECKO_VERSION=1.1.0
         GECKO_SHA1SUM=1b6c637207b6f032ae8a52841db9659433482714
@@ -121,17 +129,18 @@ install_mono()
     fi
 }
 
-# Install gecko for stable wine and the current dev branch
+# Install gecko for stable wine and recent versions of the current dev branch
 myarch=x86
-install_gecko gecko-1.8
-install_gecko gecko-1.7
-install_gecko gecko-1.6
-install_gecko gecko-1.5
-install_gecko gecko-1.4
-install_gecko gecko-1.3
-install_gecko wine-1.2
-install_gecko wine-1.3.3
-install_gecko gecko-1.2
+install_gecko gecko-1.9     # 1.5.22-
+install_gecko gecko-1.8     # 1.5.15-1.5.21
+install_gecko gecko-1.7     # 1.5.10-1.5.14
+#install_gecko gecko-1.6    # 1.5.7-1.5.9
+#install_gecko gecko-1.5    # 1.5.0-1.5.6
+install_gecko gecko-1.4     # 1.3.33-1.4
+#install_gecko gecko-1.3    # 1.3.27-1.3.32
+#install_gecko gecko-1.2    # 1.3.16-1.3.26
+#install_gecko wine-1.2
+#install_gecko wine-1.3.3
 case `arch` in
 amd64|x86_64)
     myarch=x86_64
