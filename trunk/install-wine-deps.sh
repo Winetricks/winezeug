@@ -655,6 +655,7 @@ Linux*Mint*11|Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick
 Linux*Mint*12|Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
 Linux*Mint*13|Ubuntu*12.04) apt-get install $ubuntu_common_pkgs $ubuntu_precise_pkgs;;
 Linux*Mint*14|Ubuntu*12.10) apt-get install $ubuntu_common_pkgs $ubuntu_quantal_pkgs;;
+Linux*Mint*15|Ubuntu*13.04) apt-get install $ubuntu_common_pkgs $ubuntu_quantal_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_common_pkgs $suse_11_1_pkgs ;;
 SUSE*LINUX*12.2) zypper install $suse_common_pkgs $suse_12_2_pkgs ;;
