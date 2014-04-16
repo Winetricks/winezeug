@@ -47,14 +47,14 @@ $WINE wineboot
 # Disable the crash dialog and enable heapchecking
 if test ! -f winetricks
 then
-    wget http://winezeug.googlecode.com/svn/trunk/winetricks
+    wget http://winetricks.org/winetricks
 fi
 
 sh winetricks nocrashdialog heapcheck || true
 
 # start a minimized winemine to avoid repeated startup penalty even though that hides some errors
 # Note: running `wineserver -p` is not enough, because that only runs wineserver, not any services
-$WINE start /M winemine
+$WINE start /min winemine
 
 # Disable any hanging tests:
 touch dlls/d3d8/tests/device.ok
@@ -77,7 +77,7 @@ DATE=`date +%F-%H.%M`
 git log -n 1 > logs/$DATE.log
 
 # Finally run the tests
-export VALGRIND_OPTS="-q --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$WINESRC/tools/valgrind/valgrind-suppressions --suppressions=$WINESRC/tools/valgrind/gst.supp --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes --vex-iropt-precise-memory-exns=yes"
+export VALGRIND_OPTS="-q --trace-children=yes --track-origins=yes --gen-suppressions=all --suppressions=$WINESRC/tools/valgrind/valgrind-suppressions --suppressions=$WINESRC/tools/valgrind/gst.supp --leak-check=full --num-callers=20  --workaround-gcc296-bugs=yes --vex-iropt-register-updates=allregs-at-mem-access"
 export WINETEST_TIMEOUT=600
 export WINETEST_WRAPPER=valgrind
 export WINE_HEAP_TAIL_REDZONE=32
