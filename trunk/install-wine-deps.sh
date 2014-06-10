@@ -432,10 +432,10 @@ bison ccache cvs flex fontforge gcc gettext git-core libasound2-dev libaudio-dev
 libcapi20-3 libcapi20-dev libdbus-1-dev libesd0-dev libexif-dev \
 libexpat1-dev libfontconfig1-dev libfreetype6-dev libgcrypt11-dev libgl1-mesa-dev \
 libglib2.0-dev libglu1-mesa-dev libgnutls-dev libgpg-error-dev libgphoto2-2-dev libgsm1-dev libgstreamer0.10-dev \
-libgstreamer-plugins-base0.10-dev libhal-dev libice-dev libieee1284-3-dev liblcms1-dev \
+libgstreamer-plugins-base0.10-dev libice-dev libieee1284-3-dev liblcms1-dev \
 libldap2-dev libmad0 libmad0-dev libmpg123-dev libncurses5-dev \
 libogg-dev  libopenal-dev libopenal1 libpng12-dev libpopt-dev \
-libsm-dev libssl-dev libtasn1-3-dev libtiffxx0c2 libusb-dev libvorbis-dev \
+libsm-dev libssl-dev libtasn1-3-dev libusb-dev libvorbis-dev \
 libvorbisfile3 libx11-dev libxau-dev libxcomposite-dev libxcursor-dev libxdmcp-dev \
 libxext-dev libxfixes-dev libxft-dev libxi-dev libxinerama-dev libxml2-dev libxmu-dev \
 libxmu-headers libxrandr-dev libxrender-dev libxslt1-dev libxt-dev libxv-dev \
@@ -443,13 +443,15 @@ libxxf86vm-dev linux-libc-dev m4 make mesa-common-dev \
 unixodbc unixodbc-dev x11proto-composite-dev x11proto-core-dev x11proto-fixes-dev  \
 x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11proto-xext-dev \
 x11proto-xf86vidmode-dev x11proto-xinerama-dev xtrans-dev zlib1g-dev \
-libelfg0 libgif-dev libhal-storage-dev libjack-dev"
+libelfg0 libgif-dev libjack-dev"
 
 ubuntu_gutsy_pkgs="\
 cogito \
 libcupsys2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libjpeg62-dev \
 libltdl3 \
 libltdl3-dev \
@@ -457,6 +459,7 @@ liblzo-dev \
 libodbcinstq1c2 \
 libopencdk8-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 obcinst1debian1 \
 xrender-dev \
@@ -468,6 +471,8 @@ ubuntu_hardy_pkgs="\
 libcupsys2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libjpeg62-dev \
 libltdl3 \
 libltdl3-dev \
@@ -476,6 +481,7 @@ libodbcinstq1c2 \
 libopencdk10-dev \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 odbcinst1debian1 \
 x-dev \
@@ -485,6 +491,8 @@ ubuntu_ibex_pkgs="\
 libcups2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libjpeg62-dev \
 liblzo-dev \
 libltdl7 \
@@ -492,6 +500,7 @@ libltdl7-dev \
 libodbcinstq1c2 \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 odbcinst1debian1 \
 x-dev \
@@ -501,6 +510,8 @@ ubuntu_jaunty_pkgs="\
 libcups2-dev \
 libfreebob0 \
 libglib1.2-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libjpeg62-dev \
 liblzo-dev \
 libltdl7 \
@@ -508,6 +519,7 @@ libltdl7-dev \
 libodbcinstq1c2 \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 odbcinst1debian1 \
 x-dev \
@@ -521,9 +533,12 @@ liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libodbcinstq1c2 \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 odbcinst1debian1 \
 prelink \
@@ -538,9 +553,12 @@ liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libodbcinstq1c2 \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 odbcinst \
 prelink \
@@ -553,9 +571,12 @@ liblzo2-dev \
 libltdl7 \
 libltdl7-dev \
 libgstreamermm-0.10-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libodbcinstq1c2 \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 odbcinst \
 prelink \
@@ -563,9 +584,12 @@ prelink \
 
 ubuntu_precise_pkgs="\
 libcups2-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libjpeg-turbo8-dev \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
 libtiff4-dev \
 libv4l-dev \
 oss4-dev \
@@ -575,9 +599,26 @@ winbind \
 
 ubuntu_quantal_pkgs="\
 libcups2-dev \
+libhal-dev \
+libhal-storage-dev-dev \
 libjpeg-turbo8-dev \
 libosmesa6-dev \
 libsane-dev \
+libtiffxx0c2 \
+libtiff5-dev \
+libv4l-dev \
+oss4-dev \
+prelink \
+winbind \
+"
+
+ubuntu_trusty_pkgs="\
+libcups2-dev \
+libjpeg-turbo8-dev \
+liblcms2-dev \
+libosmesa6-dev \
+libsane-dev \
+libtiffxx5 \
 libtiff5-dev \
 libv4l-dev \
 oss4-dev \
@@ -644,6 +685,7 @@ fi
 
 case $distro in
 *Alpine*Linux*) apk add $alpine_pkgs;;
+Linux*Mint*17|Ubuntu*14.04) apt-get install $ubuntu_common_pkgs $ubuntu_trusty_pkgs;;
 Linux*Mint*15|Ubuntu*13.04) apt-get install $ubuntu_common_pkgs $ubuntu_quantal_pkgs;;
 Linux*Mint*14|Ubuntu*12.10) apt-get install $ubuntu_common_pkgs $ubuntu_quantal_pkgs;;
 Linux*Mint*13|Ubuntu*12.04) apt-get install $ubuntu_common_pkgs $ubuntu_precise_pkgs;;
