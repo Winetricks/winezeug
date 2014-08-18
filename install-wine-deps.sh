@@ -445,86 +445,6 @@ x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-video-dev x11prot
 x11proto-xf86vidmode-dev x11proto-xinerama-dev xtrans-dev zlib1g-dev \
 libelfg0 libgif-dev libjack-dev"
 
-ubuntu_gutsy_pkgs="\
-cogito \
-libcupsys2-dev \
-libfreebob0 \
-libglib1.2-dev \
-libhal-dev \
-libhal-storage-dev-dev \
-libjpeg62-dev \
-libltdl3 \
-libltdl3-dev \
-liblzo-dev \
-libodbcinstq1c2 \
-libopencdk8-dev \
-libsane-dev \
-libtiffxx0c2 \
-libtiff4-dev \
-obcinst1debian1 \
-xrender-dev \
-x11proto-render-dev \
-x-dev \
-"
-
-ubuntu_hardy_pkgs="\
-libcupsys2-dev \
-libfreebob0 \
-libglib1.2-dev \
-libhal-dev \
-libhal-storage-dev-dev \
-libjpeg62-dev \
-libltdl3 \
-libltdl3-dev \
-liblzo-dev \
-libodbcinstq1c2 \
-libopencdk10-dev \
-libosmesa6-dev \
-libsane-dev \
-libtiffxx0c2 \
-libtiff4-dev \
-odbcinst1debian1 \
-x-dev \
-"
-
-ubuntu_ibex_pkgs="\
-libcups2-dev \
-libfreebob0 \
-libglib1.2-dev \
-libhal-dev \
-libhal-storage-dev-dev \
-libjpeg62-dev \
-liblzo-dev \
-libltdl7 \
-libltdl7-dev \
-libodbcinstq1c2 \
-libosmesa6-dev \
-libsane-dev \
-libtiffxx0c2 \
-libtiff4-dev \
-odbcinst1debian1 \
-x-dev \
-"
-
-ubuntu_jaunty_pkgs="\
-libcups2-dev \
-libfreebob0 \
-libglib1.2-dev \
-libhal-dev \
-libhal-storage-dev-dev \
-libjpeg62-dev \
-liblzo-dev \
-libltdl7 \
-libltdl7-dev \
-libodbcinstq1c2 \
-libosmesa6-dev \
-libsane-dev \
-libtiffxx0c2 \
-libtiff4-dev \
-odbcinst1debian1 \
-x-dev \
-"
-
 ubuntu_karmic_pkgs="\
 libcups2-dev \
 libfreebob0 \
@@ -564,24 +484,6 @@ odbcinst \
 prelink \
 "
 
-ubuntu_oneiric_pkgs="\
-libcups2-dev \
-libjpeg62-dev \
-liblzo2-dev \
-libltdl7 \
-libltdl7-dev \
-libgstreamermm-0.10-dev \
-libhal-dev \
-libhal-storage-dev-dev \
-libodbcinstq1c2 \
-libosmesa6-dev \
-libsane-dev \
-libtiffxx0c2 \
-libtiff4-dev \
-odbcinst \
-prelink \
-"
-
 ubuntu_precise_pkgs="\
 libcups2-dev \
 libhal-dev \
@@ -591,21 +493,6 @@ libosmesa6-dev \
 libsane-dev \
 libtiffxx0c2 \
 libtiff4-dev \
-libv4l-dev \
-oss4-dev \
-prelink \
-winbind \
-"
-
-ubuntu_quantal_pkgs="\
-libcups2-dev \
-libhal-dev \
-libhal-storage-dev-dev \
-libjpeg-turbo8-dev \
-libosmesa6-dev \
-libsane-dev \
-libtiffxx0c2 \
-libtiff5-dev \
 libv4l-dev \
 oss4-dev \
 prelink \
@@ -625,17 +512,6 @@ oss4-dev \
 prelink \
 winbind \
 "
-
-ubuntu_64_ibex_usr_lib32_sos="\
-libcapi20.so.3 libcrypto.so.0.9.8 libcups.so.2 libfontconfig.so.1 libfreetype.so.6 \
-libGL.so.1 libGLU.so.1 libgnutls.so.26 libgphoto2_port.so.0 libgphoto2.so.2 \
-libhal.so.1 libjack.so.0 libjpeg.so.62 libmpg123.so.0.2.4 liblcms.so.1 \
-libodbc.so.1 libpng12.so.0 libsane.so.1 \
-libssl.so.0.9.8 libX11.so.6 libXcomposite.so.1 libXcursor.so.1 libXext.so.6 \
-libXinerama.so.1 libXi.so.6 libxml2.so.2 libXrandr.so.2 libXrender.so.1 \
-libxslt.so.1 libXxf86vm.so.1 libz.so.1"
-
-ubuntu_64_ibex_lib32_sos="libdbus-1.so.3"
 
 #----------------------------------------------------------------------------
 # rpm-based distros
@@ -686,18 +562,8 @@ fi
 case $distro in
 *Alpine*Linux*) apk add $alpine_pkgs;;
 Linux*Mint*17|Ubuntu*14.04) apt-get install $ubuntu_common_pkgs $ubuntu_trusty_pkgs;;
-Linux*Mint*15|Ubuntu*13.04) apt-get install $ubuntu_common_pkgs $ubuntu_quantal_pkgs;;
-Linux*Mint*14|Ubuntu*12.10) apt-get install $ubuntu_common_pkgs $ubuntu_quantal_pkgs;;
 Linux*Mint*13|Ubuntu*12.04) apt-get install $ubuntu_common_pkgs $ubuntu_precise_pkgs;;
-Linux*Mint*12|Ubuntu*11.10) apt-get install $ubuntu_common_pkgs $ubuntu_oneiric_pkgs;;
-Linux*Mint*11|Ubuntu*11.04) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
-Linux*Mint*10|Ubuntu*10.10) apt-get install $ubuntu_common_pkgs $ubuntu_maverick_pkgs;;
 Linux*Mint*9|Ubuntu*10.04) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
-Linux*Mint*8|Ubuntu*9.10) apt-get install $ubuntu_common_pkgs $ubuntu_karmic_pkgs;;
-Linux*Mint*7|Ubuntu*9.04) apt-get install $ubuntu_common_pkgs $ubuntu_jaunty_pkgs;;
-Linux*Mint*6|Ubuntu*8.10) apt-get install $ubuntu_common_pkgs $ubuntu_ibex_pkgs;;
-Linux*Mint*5|Ubuntu*8.04) apt-get install $ubuntu_common_pkgs $ubuntu_hardy_pkgs;;
-Linux*Mint*4|Ubuntu*7.10) apt-get install $ubuntu_common_pkgs $ubuntu_gutsy_pkgs;;
 Fedora*release*) yum install $fedora_pkgs ;;
 SUSE*LINUX*11.1) zypper install $suse_common_pkgs $suse_11_1_pkgs ;;
 SUSE*LINUX*12.2) zypper install $suse_common_pkgs $suse_12_2_pkgs ;;
@@ -729,18 +595,6 @@ linksos()
 }
 
     case $distro in
-    Linux*Mint*7|Linux*Mint*8|Ubuntu*8.04|Ubuntu*8.10|Ubuntu*9.04|Ubuntu*9.10) 
-        apt-get install ia32-libs lib32asound2-dev lib32z1-dev 
-	linksos /usr/lib32 $ubuntu_64_ibex_usr_lib32_sos
-	linksos /lib32 $ubuntu_64_ibex_lib32_sos
-	# Special cases
-	test -f /usr/lib32/libpng.so || ln -s /usr/lib32/libpng12.so /usr/lib32/libpng.so
-	test -f /usr/lib32/libldap.so || ln -s /usr/lib32/libldap-2.4.so /usr/lib32/libldap.so
-	test -f /usr/lib32/liblber.so || ln -s /usr/lib32/liblber-2.4.so.2 /usr/lib32/liblber.so
-	test -f /usr/lib32/libldap_r.so || ln -s /usr/lib32/libldap_r-2.4.so.2 /usr/lib32/libldap_r.so
-	# For some reason not installed by default
-	apt-get install lib32ncurses5-dev
-	;;
     Fedora*release*)
         yum install alsa-lib-devel.i686 audiofile-devel.i686 cups-devel.i686 dbus-devel.i686 esound-devel.i686 \
             fontconfig-devel.i686 freetype.i686 freetype-devel.i686 giflib-devel.i686 glib2-devel.i686 gsm-devel.i686 \
@@ -756,7 +610,7 @@ linksos()
             gnutls-devel.i686 libgphoto2-devel.i686 openal-soft-devel.i686 isdn4k-utils-devel.i686 \
             gsm-devel.i686 libv4l-devel.i686 cups-devel.i686 libtiff-devel.i686
         ;;
-    Linux*Mint*9|Linux*Mint*10|Linux*Mint*11|Ubuntu*10.04|Ubuntu*10.10|Ubuntu*11.04)
+    Linux*Mint*9|Ubuntu*10.04)
         apt-get install ia32-libs lib32asound2-dev lib32ncurses5-dev lib32v4l-dev lib32z1-dev
         ;;
     *)
